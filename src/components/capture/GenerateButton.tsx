@@ -3,6 +3,7 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_rediscoveryRequired } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_entityNameChanged,
@@ -10,7 +11,6 @@ import {
 } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_rediscoveryRequired } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import useDiscoverCapture from './useDiscoverCapture';
 
@@ -29,7 +29,7 @@ function CaptureGenerateButton({
     createWorkflowMetadata,
 }: Props) {
     const isEdit = useEntityWorkflow_Editing();
-    const rediscoveryRequired = useResourceConfig_rediscoveryRequired();
+    const rediscoveryRequired = useBinding_rediscoveryRequired();
 
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,

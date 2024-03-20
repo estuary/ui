@@ -4,18 +4,18 @@ import { Check } from 'iconoir-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_allBindingsDisabled,
+    useBinding_backfillAllBindings,
+    useBinding_backfilledBindings,
+    useBinding_collections,
+    useBinding_currentBinding,
+    useBinding_setBackfilledBindings,
+} from 'stores/Binding/hooks';
+import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_allBindingsDisabled,
-    useResourceConfig_backfillAllBindings,
-    useResourceConfig_backfilledCollections,
-    useResourceConfig_collections,
-    useResourceConfig_currentCollection,
-    useResourceConfig_setBackfilledCollections,
-} from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import useUpdateBackfillCounter, {
@@ -32,6 +32,15 @@ interface Props {
 function Backfill({ description, bindingIndex = -1 }: Props) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
+    // Binding Store
+    const currentBinding = useBinding_currentBinding();
+    const collections = useBinding_collections();
+    const allBindingsDisabled = useBinding_allBindingsDisabled();
+
+    const backfillAllBindings = useBinding_backfillAllBindings();
+    const backfilledBindings = useBinding_backfilledBindings();
+    const setBackfilledBindings = useBinding_setBackfilledBindings();
+
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
@@ -39,30 +48,19 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
-    const collections = useResourceConfig_collections();
-
-    const backfilledCollections = useResourceConfig_backfilledCollections();
-    const setBackfilledCollections =
-        useResourceConfig_setBackfilledCollections();
-
-    const backfillAllBindings = useResourceConfig_backfillAllBindings();
-    const allBindingsDisabled = useResourceConfig_allBindingsDisabled();
-
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
             return backfillAllBindings;
         }
 
-        return currentCollection
-            ? backfilledCollections.includes(currentCollection)
+        return currentBinding?.uuid
+            ? backfilledBindings.includes(currentBinding.uuid)
             : false;
     }, [
         backfillAllBindings,
-        backfilledCollections,
+        backfilledBindings,
         bindingIndex,
-        currentCollection,
+        currentBinding?.uuid,
     ]);
 
     const value: BooleanString = useMemo(
@@ -85,19 +83,19 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentCollection) {
+            if (currentBinding?.uuid) {
                 return increment === 'true'
-                    ? !backfilledCollections.includes(currentCollection)
-                    : backfilledCollections.includes(currentCollection);
+                    ? !backfilledBindings.includes(currentBinding.uuid)
+                    : backfilledBindings.includes(currentBinding.uuid);
             }
 
             return false;
         },
         [
             backfillAllBindings,
-            backfilledCollections,
+            backfilledBindings,
             bindingIndex,
-            currentCollection,
+            currentBinding?.uuid,
         ]
     );
 
@@ -108,11 +106,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             if (draftSpec && serverUpdateRequired) {
                 setFormState({ status: FormStatus.UPDATING, error: null });
 
-                const singleBindingUpdate =
-                    bindingIndex > -1 && currentCollection;
+                const singleBindingUpdate = bindingIndex > -1 && currentBinding;
 
                 const bindingMetadata: BindingMetadata[] = singleBindingUpdate
-                    ? [{ collection: currentCollection, bindingIndex }]
+                    ? [{ collection: currentBinding.collection, bindingIndex }]
                     : [];
 
                 updateBackfillCounter(
@@ -121,11 +118,11 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                     bindingMetadata
                 ).then(
                     () => {
-                        const targetCollection = singleBindingUpdate
-                            ? currentCollection
+                        const targetBindingUUID = singleBindingUpdate
+                            ? currentBinding.uuid
                             : undefined;
 
-                        setBackfilledCollections(increment, targetCollection);
+                        setBackfilledBindings(increment, targetBindingUUID);
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -142,10 +139,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
         },
         [
             bindingIndex,
-            currentCollection,
+            currentBinding,
             draftSpec,
             evaluateServerDifferences,
-            setBackfilledCollections,
+            setBackfilledBindings,
             setFormState,
             updateBackfillCounter,
         ]

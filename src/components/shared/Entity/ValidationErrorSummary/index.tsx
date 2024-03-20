@@ -1,5 +1,4 @@
 import { AlertTitle, Collapse } from '@mui/material';
-import { useBindingsEditorStore_fullSourceErrorsExist } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import DetailsErrors from 'components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
@@ -11,16 +10,17 @@ import useGlobalSearchParams, {
 import useScrollIntoView from 'hooks/useScrollIntoView';
 import { useEffect, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
+import {
+    useBinding_fullSourceErrorsExist,
+    useBinding_hydrationErrorsExist,
+    useBinding_resourceConfigErrorsExist,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
-import {
-    useResourceConfig_hydrationErrorsExist,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -39,6 +39,11 @@ function ValidationErrorSummary({
 
     const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
+    // Binding Store
+    const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+
     // Details form
     const detailsFormErrorsExist = useDetailsForm_errorsExist();
 
@@ -51,18 +56,8 @@ function ValidationErrorSummary({
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
-    // Resource Config Store
-    const resourceConfigHydrationErrorsExist =
-        useResourceConfig_hydrationErrorsExist();
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
-
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
-
     const hydrationErrorsExist =
-        endpointConfigHydrationErrorsExist ||
-        resourceConfigHydrationErrorsExist;
+        endpointConfigHydrationErrorsExist || bindingHydrationErrorsExist;
 
     const formErrorsExist =
         detailsFormErrorsExist ||

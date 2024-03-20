@@ -14,7 +14,7 @@ import UpdateSchemaButton from 'components/editor/Bindings/SchemaInference/Dialo
 import { CodeBrackets } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 interface Props {
     open: boolean;
@@ -25,8 +25,8 @@ interface Props {
 const TITLE_ID = 'inferred-schema-dialog-title';
 
 function SchemaInferenceDialog({ open, setOpen, height }: Props) {
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
 
     return currentCollection ? (
         <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>

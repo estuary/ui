@@ -6,30 +6,31 @@ import {
 } from 'components/editor/Store/hooks';
 import { useCallback, useMemo } from 'react';
 
+import {
+    useBinding_currentBindingIndex,
+    useBinding_fullSourceOfBinding,
+    useBinding_updateFullSourceConfig,
+} from 'stores/Binding/hooks';
+import { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
 import { Schema } from 'types';
 import {
     getBindingIndex,
     getCollectionNameProp,
     getFullSourceSetting,
 } from 'utils/workflow-utils';
-import {
-    useBindingsEditorStore_fullSourceOfCollection,
-    useBindingsEditorStore_updateFullSourceConfig,
-} from '../Store/hooks';
-import { FullSourceJsonForms } from '../Store/types';
 
-function useTimeTravel(collectionName: string) {
+function useTimeTravel(bindingUUID: string, collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const updateFullSourceConfig =
-        useBindingsEditorStore_updateFullSourceConfig();
+    const stagedBindingIndex = useBinding_currentBindingIndex();
+    const updateFullSourceConfig = useBinding_updateFullSourceConfig();
 
     const updateTimeTravel = useCallback(
         async (formData: FullSourceJsonForms, skipServerUpdate?: boolean) => {
             // Make sure we update the store so it stays in sync also in case we need to run this through generate button
-            updateFullSourceConfig(collectionName, formData);
+            updateFullSourceConfig(bindingUUID, formData);
 
             if (
                 skipServerUpdate === true ||
@@ -48,7 +49,8 @@ function useTimeTravel(collectionName: string) {
                 // See which binding we need to update
                 const existingBindingIndex = getBindingIndex(
                     spec.bindings,
-                    collectionName
+                    collectionName,
+                    stagedBindingIndex
                 );
 
                 // We only want to update existing bindings here. If they do not exist then we can just
@@ -62,16 +64,17 @@ function useTimeTravel(collectionName: string) {
                     spec.bindings[existingBindingIndex][collectionNameProp] =
                         getFullSourceSetting(
                             noMergingNeeded
-                                ? { [collectionName]: { data: formData.data } }
+                                ? { [bindingUUID]: { data: formData.data } }
                                 : {
-                                      [collectionName]: {
+                                      [bindingUUID]: {
                                           ...spec.bindings[
                                               existingBindingIndex
                                           ][collectionNameProp],
                                           ...{ data: formData.data },
                                       },
                                   },
-                            collectionName
+                            collectionName,
+                            bindingUUID
                         );
 
                     const updateResponse = await modifyDraftSpec(spec, {
@@ -92,16 +95,17 @@ function useTimeTravel(collectionName: string) {
             }
         },
         [
+            bindingUUID,
             collectionName,
             draftId,
             draftSpecs,
             mutateDraftSpecs,
+            stagedBindingIndex,
             updateFullSourceConfig,
         ]
     );
 
-    const fullSource =
-        useBindingsEditorStore_fullSourceOfCollection(collectionName);
+    const fullSource = useBinding_fullSourceOfBinding(bindingUUID);
 
     return useMemo(
         () => ({ updateTimeTravel, fullSource }),

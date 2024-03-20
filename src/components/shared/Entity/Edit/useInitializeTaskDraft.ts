@@ -10,7 +10,6 @@ import {
     getLiveSpecsByLiveSpecId,
     LiveSpecsExtQuery_ByLiveSpecId,
 } from 'api/liveSpecsExt';
-import { useBindingsEditorStore_prefillFullSourceConfigs } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
@@ -63,9 +62,6 @@ function useInitializeTaskDraft() {
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
-
-    const prefillFullSourceConfigs =
-        useBindingsEditorStore_prefillFullSourceConfigs();
 
     // Get catalog name and task spec from live specs
     const getTask =
@@ -211,11 +207,8 @@ function useInitializeTaskDraft() {
             const task = await getTask();
 
             if (task) {
-                const {
-                    existingDraftSpecsResponse,
-                    evaluatedDraftId,
-                    draftSpecsRequestConfig,
-                } = await getTaskDraft(task);
+                const { evaluatedDraftId, draftSpecsRequestConfig } =
+                    await getTaskDraft(task);
 
                 if (evaluatedDraftId) {
                     const draftSpecsError = await getTaskDraftSpecs(
@@ -225,13 +218,6 @@ function useInitializeTaskDraft() {
                     );
 
                     if (!draftSpecsError) {
-                        if (task.spec_type === 'materialization') {
-                            prefillFullSourceConfigs(
-                                existingDraftSpecsResponse
-                                    ? existingDraftSpecsResponse.spec.bindings
-                                    : task.spec.bindings
-                            );
-                        }
                         setDraftId(evaluatedDraftId);
                         setPersistedDraftId(evaluatedDraftId);
 
@@ -277,7 +263,6 @@ function useInitializeTaskDraft() {
             getTaskDraftSpecs,
             liveSpecId,
             navigateToEdit,
-            prefillFullSourceConfigs,
             prefillLiveSpecIds,
             setDraftId,
             setDraftInitializationError,

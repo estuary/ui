@@ -8,33 +8,42 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import {
-    useResourceConfig_hydrated,
-    useResourceConfig_resourceConfigOfCollectionProperty,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_currentBindingIndex,
+    useBinding_hydrated,
+    useBinding_resourceConfigOfMetaBindingProperty,
+} from 'stores/Binding/hooks';
 import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
+    bindingUUID: string;
     collectionName: string;
     readOnly?: boolean;
 }
 
-function ResourceConfig({ collectionName, readOnly = false }: Props) {
+function ResourceConfig({
+    bindingUUID,
+    collectionName,
+    readOnly = false,
+}: Props) {
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
-    const hydrated = useResourceConfig_hydrated();
+    const hydrated = useBinding_hydrated();
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const draftedBindingIndex =
-        useEditorStore_queryResponse_draftedBindingIndex(collectionName);
+        useEditorStore_queryResponse_draftedBindingIndex(
+            collectionName,
+            stagedBindingIndex
+        );
 
     // If the collection is disabled then it will not come back in the built spec
     //  binding list. This means the user could end up clicking "See Fields" button
     //  forever and never get fields listed.
-    const collectionDisabled =
-        useResourceConfig_resourceConfigOfCollectionProperty(
-            collectionName,
-            'disable'
-        );
+    const collectionDisabled = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'disable'
+    );
 
     return (
         <>
@@ -45,6 +54,7 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             <Box sx={{ width: '100%' }}>
                 {hydrated ? (
                     <ResourceConfigForm
+                        bindingUUID={bindingUUID}
                         collectionName={collectionName}
                         readOnly={readOnly}
                     />
@@ -65,11 +75,17 @@ function ResourceConfig({ collectionName, readOnly = false }: Props) {
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
-                <FieldSelectionViewer collectionName={collectionName} />
+                <FieldSelectionViewer
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             ) : null}
 
             {entityType === 'materialization' ? (
-                <TimeTravel collectionName={collectionName} />
+                <TimeTravel
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
             ) : null}
         </>
     );

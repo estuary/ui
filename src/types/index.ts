@@ -164,6 +164,7 @@ export interface Tenants {
     tenant: string;
     trial_start: string;
     updated_at: string;
+    gcm_account_id?: string | null;
 }
 
 export type Capability = 'admin' | 'read' | 'write';

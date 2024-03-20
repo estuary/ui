@@ -4,13 +4,13 @@ import {
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
-import {
-    useBindingsEditorStore_recommendFields,
-    useBindingsEditorStore_selections,
-    useBindingsEditorStore_setSingleSelection,
-} from 'components/editor/Bindings/Store/hooks';
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { useMemo } from 'react';
+import {
+    useBinding_recommendFields,
+    useBinding_selections,
+    useBinding_setSingleSelection,
+} from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     evaluateRecommendedIncludedFields,
@@ -18,30 +18,36 @@ import {
 } from 'utils/workflow-utils';
 
 interface Props {
+    bindingUUID: string;
     field: string;
     constraint: TranslatedConstraint;
     selectionType: FieldSelectionType | null;
 }
 
 const evaluateSelectionType = (
-    recommendFields: boolean,
+    recommended: boolean,
     toggleValue: FieldSelectionType,
     selectedValue: FieldSelectionType | null,
     singleValue: FieldSelectionType | null
-) =>
-    selectedValue === toggleValue && recommendFields ? 'default' : singleValue;
+) => (selectedValue === toggleValue && recommended ? 'default' : singleValue);
 
-function FieldActions({ field, constraint }: Props) {
+function FieldActions({ bindingUUID, field, constraint }: Props) {
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
+    const recommendFields = useBinding_recommendFields();
 
-    const selections = useBindingsEditorStore_selections();
-    const setSingleSelection = useBindingsEditorStore_setSingleSelection();
+    const selections = useBinding_selections();
+    const setSingleSelection = useBinding_setSingleSelection();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
-    const selectedValue = useMemo(() => selections[field], [field, selections]);
+    const selectedValue = useMemo(
+        () =>
+            Object.hasOwn(selections, bindingUUID)
+                ? selections[bindingUUID][field]
+                : null,
+        [bindingUUID, field, selections]
+    );
 
     const includeRequired = evaluateRequiredIncludedFields(constraint.type);
     const includeRecommended = evaluateRecommendedIncludedFields(
@@ -98,13 +104,13 @@ function FieldActions({ field, constraint }: Props) {
                                 : null;
 
                         const selectionType = evaluateSelectionType(
-                            recommendFields,
+                            recommendFields[bindingUUID],
                             'include',
                             selectedValue,
                             singleValue
                         );
 
-                        setSingleSelection(field, selectionType);
+                        setSingleSelection(bindingUUID, field, selectionType);
                     }}
                 />
 
@@ -119,13 +125,13 @@ function FieldActions({ field, constraint }: Props) {
                             selectedValue !== 'exclude' ? 'exclude' : null;
 
                         const selectionType = evaluateSelectionType(
-                            recommendFields,
+                            recommendFields[bindingUUID],
                             'exclude',
                             selectedValue,
                             singleValue
                         );
 
-                        setSingleSelection(field, selectionType);
+                        setSingleSelection(bindingUUID, field, selectionType);
                     }}
                 />
             </ToggleButtonGroup>

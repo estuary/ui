@@ -12,6 +12,11 @@ import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecCont
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
+import {
+    useBinding_bindings,
+    useBinding_resourceConfigs,
+    useBinding_serverUpdateRequired,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_connectorImage_imagePath } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -19,7 +24,6 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'stores/EndpointConfig/hooks';
 
-import { useResourceConfig_resourceConfig } from 'stores/ResourceConfig/hooks';
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
 function useDiscoverDraftUpdate(options?: {
@@ -42,7 +46,10 @@ function useDiscoverDraftUpdate(options?: {
     const setPreviousEndpointConfig =
         useEndpointConfigStore_setPreviousEndpointConfig();
 
-    const resourceConfig = useResourceConfig_resourceConfig();
+    const bindings = useBinding_bindings();
+    const resourceConfig = useBinding_resourceConfigs();
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
 
     const processedEntityName = useEntityNameSuffix(
         !isEdit && options?.initiateDiscovery
@@ -92,7 +99,9 @@ function useDiscoverDraftUpdate(options?: {
                     imagePath,
                     encryptedEndpointConfigResponse,
                     resourceConfig,
-                    existingTaskData
+                    existingTaskData,
+                    resourceConfigServerUpdateRequired,
+                    bindings
                 );
 
                 if (draftSpecsResponse.error) {
@@ -123,6 +132,7 @@ function useDiscoverDraftUpdate(options?: {
             return true;
         },
         [
+            bindings,
             callFailed,
             draftId,
             endpointConfigData,
@@ -133,6 +143,7 @@ function useDiscoverDraftUpdate(options?: {
             postGenerateMutate,
             processedEntityName,
             resourceConfig,
+            resourceConfigServerUpdateRequired,
             setDraftId,
             setEncryptedEndpointConfig,
             setPreviousEndpointConfig,

@@ -6,10 +6,6 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import {
-    useBindingsEditorStore_fullSourceConfigs,
-    useBindingsEditorStore_fullSourceErrorsExist,
-} from 'components/editor/Bindings/Store/hooks';
-import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setCatalogName,
@@ -21,6 +17,15 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
+import {
+    useBinding_bindings,
+    useBinding_fullSourceConfigs,
+    useBinding_fullSourceErrorsExist,
+    useBinding_resetRediscoverySettings,
+    useBinding_resourceConfigErrorsExist,
+    useBinding_resourceConfigs,
+    useBinding_serverUpdateRequired,
+} from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage_connectorId,
     useDetailsForm_connectorImage_id,
@@ -43,11 +48,6 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import {
-    useResourceConfig_resetRediscoverySettings,
-    useResourceConfig_resourceConfig,
-    useResourceConfig_resourceConfigErrorsExist,
-} from 'stores/ResourceConfig/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
@@ -89,17 +89,16 @@ function useGenerateCatalog() {
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
 
-    // Resource Config Store
-    const resourceConfig = useResourceConfig_resourceConfig();
-    const resourceConfigErrorsExist =
-        useResourceConfig_resourceConfigErrorsExist();
-    const resetRediscoverySettings =
-        useResourceConfig_resetRediscoverySettings();
+    // Binding Store
+    const bindings = useBinding_bindings();
+    const resourceConfigs = useBinding_resourceConfigs();
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
+    const resetRediscoverySettings = useBinding_resetRediscoverySettings();
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
 
-    // Bindings store
-    const fullSourceConfigs = useBindingsEditorStore_fullSourceConfigs();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const fullSourceConfigs = useBinding_fullSourceConfigs();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
     const sourceCapture = useStore(
@@ -208,10 +207,11 @@ function useGenerateCatalog() {
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
                     { image: imagePath, config: encryptedEndpointConfig.data },
-                    resourceConfig,
+                    resourceConfigs,
+                    resourceConfigServerUpdateRequired,
+                    bindings,
                     existingTaskData,
-                    sourceCapture,
-                    fullSourceConfigs
+                    { fullSource: fullSourceConfigs, sourceCapture }
                 );
 
                 // If there is a draft already with task data then update. We do not match on
@@ -279,6 +279,7 @@ function useGenerateCatalog() {
             }
         },
         [
+            bindings,
             callFailed,
             detailsFormsErrorsExist,
             endpointConfigData,
@@ -293,8 +294,9 @@ function useGenerateCatalog() {
             processedEntityName,
             resetEditorState,
             resetRediscoverySettings,
-            resourceConfig,
+            resourceConfigs,
             resourceConfigErrorsExist,
+            resourceConfigServerUpdateRequired,
             serverEndpointConfigData,
             serverUpdateRequired,
             setCatalogName,

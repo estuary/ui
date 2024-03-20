@@ -11,6 +11,7 @@ import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -18,10 +19,9 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
-import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
 function MaterializationEdit() {
     usePageTitle({
@@ -64,7 +64,7 @@ function MaterializationEdit() {
         <DraftInitializer>
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
+                    <BindingHydrator>
                         <MutateDraftSpecProvider value={updateDraftSpecs}>
                             <EntityEdit
                                 title="routeTitle.materializationEdit"
@@ -99,7 +99,7 @@ function MaterializationEdit() {
                                 }
                             />
                         </MutateDraftSpecProvider>
-                    </ResourceConfigHydrator>
+                    </BindingHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>
         </DraftInitializer>

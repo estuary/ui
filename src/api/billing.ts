@@ -145,8 +145,9 @@ export const getPaymentMethodsForTenants = async (
 
     tenants.some((tenantDetail) => {
         if (
+            !tenantDetail.trial_start ||
             tenantDetail.payment_provider === 'external' ||
-            !tenantDetail.trial_start
+            tenantDetail.gcm_account_id
         ) {
             promises.push(
                 new Promise((resolve) => {

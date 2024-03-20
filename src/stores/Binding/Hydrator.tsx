@@ -2,18 +2,17 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import invariableStores from 'context/Zustand/invariableStores';
 import { useEffect, useRef } from 'react';
-
 import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
 import { BaseComponentProps } from 'types';
 import { useStore } from 'zustand';
 import {
-    useResourceConfig_hydrateState,
-    useResourceConfig_setActive,
-    useResourceConfig_setHydrated,
-    useResourceConfig_setHydrationErrorsExist,
+    useBinding_hydrateState,
+    useBinding_setActive,
+    useBinding_setHydrated,
+    useBinding_setHydrationErrorsExist,
 } from './hooks';
 
-export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
+export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
     const rehydrating = useRef(false);
 
@@ -24,10 +23,10 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const connectorTagId = useDetailsForm_connectorImage_id();
 
-    const setHydrated = useResourceConfig_setHydrated();
-    const setActive = useResourceConfig_setActive();
-    const setHydrationErrorsExist = useResourceConfig_setHydrationErrorsExist();
-    const hydrateState = useResourceConfig_hydrateState();
+    const setHydrated = useBinding_setHydrated();
+    const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
+    const setActive = useBinding_setActive();
+    const hydrateState = useBinding_hydrateState();
 
     const setPrefilledCapture = useStore(
         invariableStores['source-capture'],
@@ -63,6 +62,8 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
                 .finally(() => {
                     rehydrating.current = true;
                     setHydrated(true);
+
+                    setActive(false);
                 });
         }
     }, [
@@ -81,4 +82,4 @@ export const ResourceConfigHydrator = ({ children }: BaseComponentProps) => {
     return <>{children}</>;
 };
 
-export default ResourceConfigHydrator;
+export default BindingHydrator;

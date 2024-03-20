@@ -1,23 +1,25 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
-    useBindingsEditorStore_recommendFields,
-    useBindingsEditorStore_selections,
-} from 'components/editor/Bindings/Store/hooks';
-import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
+import {
+    useBinding_currentBindingIndex,
+    useBinding_recommendFields,
+    useBinding_selections,
+} from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
 
-function useFieldSelection(collectionName: string) {
+function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
-    const recommendFields = useBindingsEditorStore_recommendFields();
-    const selections = useBindingsEditorStore_selections();
+    const recommendFields = useBinding_recommendFields();
+    const selections = useBinding_selections();
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -30,7 +32,8 @@ function useFieldSelection(collectionName: string) {
             //  we just pass in the index along with it? Not sure how to do this and make it feel good.
             const bindingIndex: number = getBindingIndex(
                 draftSpec.spec.bindings,
-                collectionName
+                collectionName,
+                stagedBindingIndex
             );
 
             if (!mutateDraftSpecs || bindingIndex === -1) {
@@ -38,19 +41,27 @@ function useFieldSelection(collectionName: string) {
             } else {
                 const spec: Schema = draftSpec.spec;
 
+                const recommended = Object.hasOwn(recommendFields, bindingUUID)
+                    ? recommendFields[bindingUUID]
+                    : true;
+
                 spec.bindings[bindingIndex].fields = {
-                    recommended: recommendFields,
+                    recommended,
                     exclude: [],
                     include: {},
                 };
 
-                const includedFields: string[] = Object.entries(selections)
+                const includedFields: string[] = Object.entries(
+                    selections[bindingUUID]
+                )
                     .filter(
                         ([_field, selectionType]) => selectionType === 'include'
                     )
                     .map(([field]) => field);
 
-                const excludedFields: string[] = Object.entries(selections)
+                const excludedFields: string[] = Object.entries(
+                    selections[bindingUUID]
+                )
                     .filter(
                         ([_field, selectionType]) => selectionType === 'exclude'
                     )
@@ -59,7 +70,7 @@ function useFieldSelection(collectionName: string) {
                 if (
                     hasLength(includedFields) ||
                     hasLength(excludedFields) ||
-                    !recommendFields
+                    !recommended
                 ) {
                     // Remove the include property if no fields are marked for explicit inclusion, otherwise set the property.
                     if (hasLength(includedFields)) {
@@ -109,7 +120,15 @@ function useFieldSelection(collectionName: string) {
                 return mutateDraftSpecs();
             }
         },
-        [mutateDraftSpecs, collectionName, draftId, recommendFields, selections]
+        [
+            bindingUUID,
+            collectionName,
+            draftId,
+            mutateDraftSpecs,
+            recommendFields,
+            selections,
+            stagedBindingIndex,
+        ]
     );
 }
 

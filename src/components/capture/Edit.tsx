@@ -19,9 +19,9 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
@@ -67,7 +67,7 @@ function CaptureEdit() {
         <DraftInitializer>
             <DetailsFormHydrator>
                 <EndpointConfigHydrator>
-                    <ResourceConfigHydrator>
+                    <BindingHydrator>
                         <MutateDraftSpecProvider value={updateDraftSpecs}>
                             <EntityEdit
                                 title="routeTitle.captureEdit"
@@ -112,7 +112,7 @@ function CaptureEdit() {
                                 }
                             />
                         </MutateDraftSpecProvider>
-                    </ResourceConfigHydrator>
+                    </BindingHydrator>
                 </EndpointConfigHydrator>
             </DetailsFormHydrator>
         </DraftInitializer>

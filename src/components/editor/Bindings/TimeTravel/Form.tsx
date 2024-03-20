@@ -1,23 +1,27 @@
+import { materialCells } from '@jsonforms/material-renderers';
+import { JsonForms } from '@jsonforms/react';
 import { StyledEngineProvider } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
-import { useSnackbar } from 'notistack';
 import { snackbarSettings } from 'utils/notification-utils';
 import useTimeTravel from './useTimeTravel';
 
 interface Props {
+    bindingUUID: string;
     collectionName: string;
 }
 
-function TimeTravelForm({ collectionName }: Props) {
+function TimeTravelForm({ bindingUUID, collectionName }: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
-    const { updateTimeTravel, fullSource } = useTimeTravel(collectionName);
+    const { updateTimeTravel, fullSource } = useTimeTravel(
+        bindingUUID,
+        collectionName
+    );
 
     const [localCopy, setLocalCopy] = useState(fullSource ?? {});
 
@@ -26,9 +30,9 @@ function TimeTravelForm({ collectionName }: Props) {
     useEffect(() => {
         skipServer.current = true;
         setLocalCopy(fullSource ?? {});
-        // When the collection name changes we want to basically do a mini-reset of the form state
+        // When the binding UUID changes we want to basically do a mini-reset of the form state
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [collectionName]);
+    }, [bindingUUID]);
 
     const [schema, uiSchema] = useMemo(() => {
         const schemaVal = {

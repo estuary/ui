@@ -11,7 +11,7 @@ import FieldEditor from 'components/editor/Bindings/FieldSelection/EditProjectio
 import { Projection } from 'components/editor/Bindings/FieldSelection/types';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 interface Props {
     open: boolean;
@@ -23,7 +23,8 @@ interface Props {
 const TITLE_ID = 'field-selection-dialog-title';
 
 function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
-    const currentCollection = useResourceConfig_currentCollection();
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
 
     return (
         <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>

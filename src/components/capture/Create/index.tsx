@@ -17,13 +17,13 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CustomEvents } from 'services/types';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_entityNameChanged,
 } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 function CaptureCreate() {
@@ -85,14 +85,16 @@ function CaptureCreate() {
     return (
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
-                <ResourceConfigHydrator>
+                <BindingHydrator>
                     <MutateDraftSpecProvider value={updateDraftSpecs}>
                         <EntityCreate
                             entityType={entityType}
                             draftSpecMetadata={draftSpecsMetadata}
                             toolbar={
                                 <EntityToolbar
-                                    waitTimes={{ generate: MAX_DISCOVER_TIME }}
+                                    waitTimes={{
+                                        generate: MAX_DISCOVER_TIME,
+                                    }}
                                     GenerateButton={
                                         <CaptureGenerateButton
                                             entityType={entityType}
@@ -128,7 +130,7 @@ function CaptureCreate() {
                             }
                         />
                     </MutateDraftSpecProvider>
-                </ResourceConfigHydrator>
+                </BindingHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>
     );

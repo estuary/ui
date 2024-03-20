@@ -21,6 +21,7 @@ import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetai
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import {
     useDetailsForm_connectorImage,
     useDetailsForm_draftedEntityName,
@@ -36,12 +37,11 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import ValidationErrorSummary from '../ValidationErrorSummary';
+import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;
@@ -69,6 +69,9 @@ function EntityCreate({
         isValidating,
     } = useConnectorWithTagDetail(entityType);
 
+    // Binding Store
+    const bindingServerUpdateRequired = useBinding_serverUpdateRequired();
+
     // Details Form Store
     const imageTag = useDetailsForm_connectorImage();
     const entityName = useDetailsForm_draftedEntityName();
@@ -94,10 +97,6 @@ function EntityCreate({
 
     const formSubmitError = useFormStateStore_error();
 
-    // Resource Config Store
-    const resourceConfigServerUpdateRequired =
-        useResourceConfig_serverUpdateRequired();
-
     const { draftSpecs } = draftSpecMetadata;
 
     const taskDraftSpec = useMemo(
@@ -114,7 +113,7 @@ function EntityCreate({
         const resetDraftIdFlag =
             entityNameChanged ||
             endpointConfigServerUpdateRequired ||
-            resourceConfigServerUpdateRequired;
+            bindingServerUpdateRequired;
 
         setDraftId(resetDraftIdFlag ? null : persistedDraftId);
     }, [
@@ -122,7 +121,7 @@ function EntityCreate({
         endpointConfigServerUpdateRequired,
         entityNameChanged,
         persistedDraftId,
-        resourceConfigServerUpdateRequired,
+        bindingServerUpdateRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.

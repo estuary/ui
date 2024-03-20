@@ -4,10 +4,11 @@ import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
 import {
-    useResourceConfig_discoveredCollections,
-    useResourceConfig_setResourceConfig,
-    useResourceConfig_setRestrictedDiscoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_discoveredCollections,
+    useBinding_prefillResourceConfigs,
+    useBinding_setRestrictedDiscoveredCollections,
+} from 'stores/Binding/hooks';
+import { hasLength } from 'utils/misc-utils';
 
 import { useStore } from 'zustand';
 
@@ -19,10 +20,11 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-    const setResourceConfig = useResourceConfig_setResourceConfig();
+    const prefillResourceConfigs = useBinding_prefillResourceConfigs();
+    const discoveredCollections = useBinding_discoveredCollections();
+
     const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
+        useBinding_setRestrictedDiscoveredCollections();
 
     const close = () => {
         const value = Array.from(selected).map(([_id, row]) => {
@@ -31,14 +33,12 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             };
         });
 
-        setResourceConfig(
+        prefillResourceConfigs(
             value.map(({ name }) => name),
-            undefined,
-            false,
             true
         );
 
-        if (value.length > 0 && discoveredCollections) {
+        if (value.length > 0 && hasLength(discoveredCollections)) {
             const latestCollection = value[value.length - 1].name;
 
             if (discoveredCollections.includes(latestCollection)) {
