@@ -30,33 +30,32 @@ export const getDiscriminatorDefaultValue = (
 //  `user_pass` option contains two fields that are encrypted and so they are empty
 //  during edit. This mean that JsonForms would not find the
 export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
-    let indexOfFittingSchema: number | undefined;
-
     const discriminatorProperty = getDiscriminator(schema);
 
     if (
-        discriminatorProperty &&
-        schema &&
-        keyword &&
-        typeof schema[keyword] !== 'undefined'
+        !discriminatorProperty ||
+        !data ||
+        !data[discriminatorProperty] ||
+        !schema ||
+        !schema[keyword]
     ) {
-        schema[keyword].some((keywordSchema: any, index: number) => {
-            const defaultVal = getDiscriminatorDefaultValue(
-                keywordSchema.properties,
-                discriminatorProperty
-            );
-
-            if (
-                data[discriminatorProperty] ===
-                defaultVal[discriminatorProperty]
-            ) {
-                indexOfFittingSchema = index;
-                return true;
-            }
-
-            return false;
-        });
+        return;
     }
+
+    let indexOfFittingSchema: number | undefined;
+    schema[keyword].some((keywordSchema: any, index: number) => {
+        const defaultVal = getDiscriminatorDefaultValue(
+            keywordSchema.properties,
+            discriminatorProperty
+        );
+
+        if (data[discriminatorProperty] === defaultVal[discriminatorProperty]) {
+            indexOfFittingSchema = index;
+            return true;
+        }
+
+        return false;
+    });
 
     return indexOfFittingSchema;
 };
