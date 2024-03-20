@@ -13,11 +13,14 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmountPromise } from 'react-use';
 import getInferredSchema from 'services/schema-inference';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 import { moveUpdatedSchemaToReadSchema } from 'utils/schema-utils';
 
 function SchemaInferenceButton() {
     const workflow = useEntityWorkflow();
+
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -31,9 +34,6 @@ function SchemaInferenceButton() {
 
     const setLoadingInferredSchema =
         useBindingsEditorStore_setLoadingInferredSchema();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     const [open, setOpen] = useState<boolean>(false);
 

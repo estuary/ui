@@ -1,18 +1,19 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import ChipListCell from 'components/tables/cells/ChipList';
+import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
 import {
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'context/Theme';
 import { orderBy } from 'lodash';
+import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
 import { SortDirection, TableColumns } from 'types';
 import {
     basicSort_string,
     compareInitialCharacterType,
 } from 'utils/misc-utils';
-import ConstraintDetails from '../cells/fieldSelection/ConstraintDetails';
 import { optionalColumnIntlKeys } from '.';
 
 interface RowProps {
@@ -81,6 +82,8 @@ const displayOptionalColumn = (columns: TableColumns[], intlKey: string) =>
     columns.some((column) => column.headerIntlKey === intlKey);
 
 function Row({ columns, row }: RowProps) {
+    const currentBindingUUID = useBinding_currentBindingUUID();
+
     const pointerColumnDisplayed = displayOptionalColumn(
         columns,
         optionalColumnIntlKeys.pointer
@@ -124,8 +127,9 @@ function Row({ columns, row }: RowProps) {
                 )
             ) : null}
 
-            {row.constraint ? (
+            {currentBindingUUID && row.constraint ? (
                 <FieldActions
+                    bindingUUID={currentBindingUUID}
                     field={row.field}
                     constraint={row.constraint}
                     selectionType={row.selectionType}

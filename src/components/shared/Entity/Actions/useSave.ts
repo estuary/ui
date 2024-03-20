@@ -3,10 +3,7 @@ import {
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
-import {
-    useBindingsEditorStore_fullSourceErrorsExist,
-    useBindingsEditorStore_setIncompatibleCollections,
-} from 'components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
@@ -20,6 +17,10 @@ import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
+import {
+    useBinding_collections,
+    useBinding_fullSourceErrorsExist,
+} from 'stores/Binding/hooks';
 import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
 import {
     useFormStateStore_messagePrefix,
@@ -30,7 +31,6 @@ import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { useResourceConfig_collections } from 'stores/ResourceConfig/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 const trackEvent = (logEvent: any, payload: any) => {
@@ -76,9 +76,8 @@ function useSave(
         notificationStoreSelectors.showNotification
     );
 
-    const collections = useResourceConfig_collections();
-    const fullSourceErrorsExist =
-        useBindingsEditorStore_fullSourceErrorsExist();
+    const collections = useBinding_collections();
+    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -178,7 +177,7 @@ function useSave(
 
     return useCallback(
         async (draftId: string | null, hideLogs?: boolean) => {
-            // FullSource updates the draft directly and does not require a new generattion so
+            // FullSource updates the draft directly and does not require a new generation so
             //  need to check for errors. We might want to add all the errors here just to be safe or
             //  in the future when we directly update drafts
             if (fullSourceErrorsExist) {
@@ -206,7 +205,7 @@ function useSave(
             updateFormStatus(status, hideLogs);
 
             // If there are bound collections then we need to potentially handle clean up
-            if (collections && collections.length > 0) {
+            if (collections.length > 0) {
                 const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
                     draftId,
                     'collection'

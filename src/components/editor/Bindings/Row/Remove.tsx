@@ -4,40 +4,40 @@ import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel } from 'iconoir-react';
 import React from 'react';
 import {
-    useResourceConfig_discoveredCollections,
-    useResourceConfig_removeCollection,
-    useResourceConfig_setRestrictedDiscoveredCollections,
-} from 'stores/ResourceConfig/hooks';
+    useBinding_discoveredCollections,
+    useBinding_removeBinding,
+    useBinding_removeFullSourceConfig,
+    useBinding_setRestrictedDiscoveredCollections,
+} from 'stores/Binding/hooks';
+import { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
-import { useBindingsEditorStore_removeFullSourceConfig } from '../Store/hooks';
 
 interface Props {
-    collection: string;
+    binding: BindingMetadata;
     disabled: boolean;
     draftId: string | null;
     task: string;
 }
 
-function BindingsSelectorRemove({
-    collection,
-    disabled,
-    draftId,
-    task,
-}: Props) {
+function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     const workflow = useEntityWorkflow();
-    const discoveredCollections = useResourceConfig_discoveredCollections();
-    const removeCollection = useResourceConfig_removeCollection();
+
+    const removeBinding = useBinding_removeBinding();
+    const discoveredCollections = useBinding_discoveredCollections();
+
     const setRestrictedDiscoveredCollections =
-        useResourceConfig_setRestrictedDiscoveredCollections();
-    const removeFullSourceConfig =
-        useBindingsEditorStore_removeFullSourceConfig();
+        useBinding_setRestrictedDiscoveredCollections();
+
+    const removeFullSourceConfig = useBinding_removeFullSourceConfig();
 
     const handlers = {
-        removeCollection: (event: React.MouseEvent<HTMLElement>) => {
+        removeBinding: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            removeCollection(collection);
-            removeFullSourceConfig(collection);
+            const { collection, uuid } = binding;
+
+            removeBinding(binding);
+            removeFullSourceConfig(uuid);
 
             if (
                 workflow === 'capture_edit' &&
@@ -55,7 +55,7 @@ function BindingsSelectorRemove({
                 setRestrictedDiscoveredCollections(collection);
             }
 
-            if (draftId && !discoveredCollections?.includes(collection)) {
+            if (draftId && !discoveredCollections.includes(collection)) {
                 void deleteDraftSpecsByCatalogName(draftId, 'collection', [
                     collection,
                 ]);
@@ -67,7 +67,7 @@ function BindingsSelectorRemove({
         <IconButton
             disabled={disabled}
             size="small"
-            onClick={handlers.removeCollection}
+            onClick={handlers.removeBinding}
             sx={{ color: (theme) => theme.palette.text.primary }}
         >
             <Cancel />

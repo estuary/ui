@@ -13,12 +13,6 @@ import {
 } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import {
-    useBindingsEditorStore_initializeSelections,
-    useBindingsEditorStore_selectionSaving,
-    useBindingsEditorStore_setRecommendFields,
-    useBindingsEditorStore_setSelectionSaving,
-} from 'components/editor/Bindings/Store/hooks';
-import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
@@ -34,6 +28,14 @@ import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import {
+    useBinding_currentBindingIndex,
+    useBinding_initializeSelections,
+    useBinding_selectionSaving,
+    useBinding_serverUpdateRequired,
+    useBinding_setRecommendFields,
+    useBinding_setSelectionSaving,
+} from 'stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -41,7 +43,6 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_serverUpdateRequired } from 'stores/ResourceConfig/hooks';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { Schema, TableColumns } from 'types';
 import { WithRequiredNonNullProperty } from 'types/utils';
@@ -54,6 +55,7 @@ import RefreshStatus from './RefreshStatus';
 import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 interface Props {
+    bindingUUID: string;
     collectionName: string;
 }
 
@@ -118,7 +120,7 @@ const optionalColumns = columns.filter(
             : false
 );
 
-function FieldSelectionViewer({ collectionName }: Props) {
+function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
@@ -130,16 +132,16 @@ function FieldSelectionViewer({ collectionName }: Props) {
         CompositeProjection[] | null | undefined
     >();
 
-    const applyFieldSelections = useFieldSelection(collectionName);
+    const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
     const { refresh } = useFieldSelectionRefresh();
 
-    // Bindings Editor Store
-    const setRecommendFields = useBindingsEditorStore_setRecommendFields();
+    // Bindings Store
+    const setRecommendFields = useBinding_setRecommendFields();
+    const initializeSelections = useBinding_initializeSelections();
+    const stagedBindingIndex = useBinding_currentBindingIndex();
 
-    const initializeSelections = useBindingsEditorStore_initializeSelections();
-
-    const selectionSaving = useBindingsEditorStore_selectionSaving();
-    const setSelectionSaving = useBindingsEditorStore_setSelectionSaving();
+    const selectionSaving = useBinding_selectionSaving();
+    const setSelectionSaving = useBinding_setSelectionSaving();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -151,7 +153,7 @@ function FieldSelectionViewer({ collectionName }: Props) {
     const setFormState = useFormStateStore_setFormState();
 
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
-    const resourceRequiresUpdate = useResourceConfig_serverUpdateRequired();
+    const resourceRequiresUpdate = useBinding_serverUpdateRequired();
 
     useEffect(() => {
         return () => {
@@ -188,75 +190,86 @@ function FieldSelectionViewer({ collectionName }: Props) {
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
-            // Select the binding from the built spec that corresponds to the current collection
-            //  to extract the projection information.
-            // Defaulting to empty array. This is to handle when a user has disabled a collection
-            //  which causes the binding to not be included in the built_spec
-            const builtSpecBindings: BuiltSpec_Binding[] =
-                draftSpecs[0].built_spec.bindings ?? [];
+            if (!formActive) {
+                // Select the binding from the built spec that corresponds to the current collection
+                //  to extract the projection information.
+                // Defaulting to empty array. This is to handle when a user has disabled a collection
+                //  which causes the binding to not be included in the built_spec
+                const builtSpecBindings: BuiltSpec_Binding[] =
+                    draftSpecs[0].built_spec.bindings ?? [];
 
-            const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
-                builtSpecBindings.find(
-                    (binding) => binding.collection.name === collectionName
-                );
+                const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
+                    builtSpecBindings.find(
+                        (binding) => binding.collection.name === collectionName
+                    );
 
-            if (selectedBuiltSpecBinding) {
-                const evaluatedProjections =
-                    selectedBuiltSpecBinding.collection.projections;
+                if (selectedBuiltSpecBinding) {
+                    const evaluatedProjections =
+                        selectedBuiltSpecBinding.collection.projections;
 
-                // The validation phase of a publication produces a document which correlates each binding projection
-                // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
-                // from the validation document that corresponds to the current collection to extract the constraint types.
-                const validationBindings: ValidationResponse_Binding[] =
-                    draftSpecs[0].validated.bindings;
+                    // The validation phase of a publication produces a document which correlates each binding projection
+                    // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
+                    // from the validation document that corresponds to the current collection to extract the constraint types.
+                    const validationBindings: ValidationResponse_Binding[] =
+                        draftSpecs[0].validated.bindings;
 
-                const evaluatedConstraints: ConstraintDictionary | undefined =
-                    validationBindings.find((binding) =>
+                    const evaluatedConstraints:
+                        | ConstraintDictionary
+                        | undefined = validationBindings.find((binding) =>
                         isEqual(
                             binding.resourcePath,
                             selectedBuiltSpecBinding.resourcePath
                         )
                     )?.constraints;
 
-                const bindingIndex: number = getBindingIndex(
-                    draftSpecs[0].spec.bindings,
-                    collectionName
-                );
-                const selectedBinding: Schema | undefined =
-                    bindingIndex > -1
-                        ? draftSpecs[0].spec.bindings[bindingIndex]
-                        : undefined;
-                let evaluatedFieldMetadata: FieldMetadata | undefined;
-
-                if (
-                    selectedBinding &&
-                    Object.hasOwn(selectedBinding, 'fields')
-                ) {
-                    evaluatedFieldMetadata = selectedBinding.fields;
-
-                    setRecommendFields(selectedBinding.fields.recommended);
-                } else {
-                    setRecommendFields(true);
-                }
-
-                if (evaluatedConstraints) {
-                    const compositeProjections = mapConstraintsToProjections(
-                        evaluatedProjections,
-                        evaluatedConstraints,
-                        evaluatedFieldMetadata
+                    const bindingIndex: number = getBindingIndex(
+                        draftSpecs[0].spec.bindings,
+                        collectionName,
+                        stagedBindingIndex
                     );
+                    const selectedBinding: Schema | undefined =
+                        bindingIndex > -1
+                            ? draftSpecs[0].spec.bindings[bindingIndex]
+                            : undefined;
+                    let evaluatedFieldMetadata: FieldMetadata | undefined;
 
-                    const selections = compositeProjections.map(
-                        ({ field, selectionType }) => ({ field, selectionType })
-                    );
+                    if (
+                        selectedBinding &&
+                        Object.hasOwn(selectedBinding, 'fields')
+                    ) {
+                        evaluatedFieldMetadata = selectedBinding.fields;
 
-                    initializeSelections(selections);
-                    setData(compositeProjections);
+                        setRecommendFields(
+                            bindingUUID,
+                            selectedBinding.fields.recommended
+                        );
+                    } else {
+                        setRecommendFields(bindingUUID, true);
+                    }
+
+                    if (evaluatedConstraints) {
+                        const compositeProjections =
+                            mapConstraintsToProjections(
+                                evaluatedProjections,
+                                evaluatedConstraints,
+                                evaluatedFieldMetadata
+                            );
+
+                        const selections = compositeProjections.map(
+                            ({ field, selectionType }) => ({
+                                field,
+                                selectionType,
+                            })
+                        );
+
+                        initializeSelections(bindingUUID, selections);
+                        setData(compositeProjections);
+                    } else {
+                        setData(null);
+                    }
                 } else {
                     setData(null);
                 }
-            } else {
-                setData(null);
             }
         } else {
             if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
@@ -271,13 +284,16 @@ function FieldSelectionViewer({ collectionName }: Props) {
             setData(null);
         }
     }, [
+        bindingUUID,
         collectionName,
         draftId,
         draftSpecs,
+        formActive,
         formStatus,
         initializeSelections,
         refresh,
         setRecommendFields,
+        stagedBindingIndex,
     ]);
 
     const draftSpec = useMemo(

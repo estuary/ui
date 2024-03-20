@@ -18,6 +18,7 @@ import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useBinding_resetState } from 'stores/Binding/hooks';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
@@ -26,7 +27,6 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_resetState } from 'stores/ResourceConfig/hooks';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -39,6 +39,9 @@ function useEntityWorkflowHelpers() {
     const navigate = useNavigate();
     const entityType = useEntityType();
     const intl = useIntl();
+
+    // Binding Store
+    const resetBindingState = useBinding_resetState();
 
     // Bindings Editor Store
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
@@ -59,9 +62,6 @@ function useEntityWorkflowHelpers() {
     const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
 
-    // Resource Config Store
-    const resetResourceConfigState = useResourceConfig_resetState();
-
     // Schema Evolution Store
     const resetSchemaEvolutionState = useSchemaEvolution_resetState();
 
@@ -78,19 +78,19 @@ function useEntityWorkflowHelpers() {
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
-        resetResourceConfigState();
+        resetBindingState(undefined, true);
         resetEditorStore();
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
     }, [
+        resetBindingState,
         resetBindingsEditorStore,
         resetDetailsFormState,
         resetEditorStore,
         resetEndpointConfigState,
         resetFormState,
-        resetResourceConfigState,
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,

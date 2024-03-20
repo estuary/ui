@@ -16,10 +16,10 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import { useDetailsForm_connectorImage } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import ResourceConfigHydrator from 'stores/ResourceConfig/Hydrator';
 
 function MaterializationCreate() {
     usePageTitle({
@@ -68,7 +68,7 @@ function MaterializationCreate() {
     return (
         <DetailsFormHydrator>
             <EndpointConfigHydrator>
-                <ResourceConfigHydrator>
+                <BindingHydrator>
                     <MutateDraftSpecProvider value={updateDraftSpecs}>
                         <EntityCreate
                             entityType={entityType}
@@ -101,7 +101,7 @@ function MaterializationCreate() {
                             }
                         />
                     </MutateDraftSpecProvider>
-                </ResourceConfigHydrator>
+                </BindingHydrator>
             </EndpointConfigHydrator>
         </DetailsFormHydrator>
     );

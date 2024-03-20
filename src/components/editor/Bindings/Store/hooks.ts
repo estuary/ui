@@ -1,4 +1,3 @@
-import { FullSourceDictionary } from 'components/editor/Bindings/Store/types';
 import { useBindingsEditorStore } from './create';
 
 export const useBindingsEditorStore_collectionData = () => {
@@ -134,80 +133,6 @@ export const useBindingsEditorStore_inferSchemaResponseError = () => {
 
 export const useBindingsEditorStore_populateInferSchemaResponse = () => {
     return useBindingsEditorStore((state) => state.populateInferSchemaResponse);
-};
-
-export const useBindingsEditorStore_recommendFields = () => {
-    return useBindingsEditorStore((state) => state.recommendFields);
-};
-
-export const useBindingsEditorStore_setRecommendFields = () => {
-    return useBindingsEditorStore((state) => state.setRecommendFields);
-};
-
-export const useBindingsEditorStore_selections = () => {
-    return useBindingsEditorStore((state) => state.selections);
-};
-
-export const useBindingsEditorStore_initializeSelections = () => {
-    return useBindingsEditorStore((state) => state.initializeSelections);
-};
-
-export const useBindingsEditorStore_setSingleSelection = () => {
-    return useBindingsEditorStore((state) => state.setSingleSelection);
-};
-
-export const useBindingsEditorStore_selectionSaving = () => {
-    return useBindingsEditorStore((state) => state.selectionSaving);
-};
-
-export const useBindingsEditorStore_setSelectionSaving = () => {
-    return useBindingsEditorStore((state) => state.setSelectionSaving);
-};
-
-export const useBindingsEditorStore_fullSourceConfigs = () => {
-    return useBindingsEditorStore((state) => state.fullSourceConfigs);
-};
-
-export const useBindingsEditorStore_fullSourceErrorsExist = () => {
-    return useBindingsEditorStore((state) => state.fullSourceErrorsExist);
-};
-
-export const useBindingsEditorStore_prefillFullSourceConfigs = () => {
-    return useBindingsEditorStore((state) => state.prefillFullSourceConfigs);
-};
-
-export const useBindingsEditorStore_fullSourceOfCollection = (
-    collection: any
-) => {
-    return useBindingsEditorStore((state) => {
-        if (!collection) {
-            return null;
-        }
-
-        return state.fullSourceConfigs[collection]?.data;
-    });
-};
-
-export const useBindingsEditorStore_fullSourceOfCollectionProperty = (
-    collection: any,
-    property: keyof FullSourceDictionary
-) => {
-    return useBindingsEditorStore((state) => {
-        if (!collection) {
-            return null;
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        return state.fullSourceConfigs[collection]?.[property];
-    });
-};
-
-export const useBindingsEditorStore_updateFullSourceConfig = () => {
-    return useBindingsEditorStore((state) => state.updateFullSourceConfig);
-};
-
-export const useBindingsEditorStore_removeFullSourceConfig = () => {
-    return useBindingsEditorStore((state) => state.removeFullSourceConfig);
 };
 
 export const useBindingsEditorStore_resetState = () => {

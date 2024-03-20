@@ -5,17 +5,17 @@ import {
     useEditorStore_persistedDraftId,
 } from 'components/editor/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useResourceConfig_currentCollection } from 'stores/ResourceConfig/hooks';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 
 function ExistingSchemaCommands() {
     const intl = useIntl();
 
+    // Binding Store
+    const currentCollection = useBinding_currentCollection();
+
     // Draft Editor Store
     const draftId = useEditorStore_id();
     const persistedDraftId = useEditorStore_persistedDraftId();
-
-    // Resource Config Store
-    const currentCollection = useResourceConfig_currentCollection();
 
     const pullDraftCommands = {
         1: intl.formatMessage(

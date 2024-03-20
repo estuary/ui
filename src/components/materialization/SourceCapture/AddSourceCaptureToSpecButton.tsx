@@ -3,8 +3,8 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 
 import { FormattedMessage } from 'react-intl';
-import { useResourceConfig_setResourceConfig } from 'stores/ResourceConfig/hooks';
 
+import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
 import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
 
@@ -25,7 +25,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const updateDraft = useSourceCapture();
 
-    const setResourceConfig = useResourceConfig_setResourceConfig();
+    // Binding Store
+    const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
@@ -39,12 +40,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             setSourceCapture(updatedSourceCapture);
 
             if (selectedRow?.writes_to) {
-                setResourceConfig(
-                    selectedRow.writes_to,
-                    undefined,
-                    false,
-                    true
-                );
+                prefillResourceConfigs(selectedRow.writes_to, true);
             }
 
             await updateDraft(updatedSourceCapture);

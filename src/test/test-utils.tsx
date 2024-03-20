@@ -1,14 +1,16 @@
+import { AuthSession, Session, User } from '@supabase/supabase-js';
+import { Auth } from '@supabase/ui';
+import { RenderOptions, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import AppProviders from 'context';
+import ThemeProvider from 'context/Theme';
+import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { render, RenderOptions } from '@testing-library/react';
-import AppProviders from 'context';
-import { AuthSession, Session, User } from '@supabase/supabase-js';
-import { mockDeep } from 'vitest-mock-extended';
-import { Auth } from '@supabase/ui';
-import { SwrSupabaseContext } from 'hooks/supabase-swr';
-import ThemeProvider from 'context/Theme';
-import userEvent from '@testing-library/user-event';
 import { supabaseClient } from 'services/supabase';
+import { ResourceConfig } from 'stores/Binding/types';
+import { Entity, Schema } from 'types';
+import { mockDeep } from 'vitest-mock-extended';
 import { ConnectorConfig } from '../../flow_deps/flow';
 
 export const generateMockUserMetadata = (
@@ -53,6 +55,43 @@ export const generateMockConnectorConfig = (): ConnectorConfig => {
             schema: 'public',
             user: 'testing',
             sops: {},
+        },
+    });
+};
+
+export const generateMockResourceConfig = (
+    collectionName: string,
+    bindingIndex: number
+): ResourceConfig => {
+    return mockDeep<ResourceConfig>({
+        data: {
+            fiz: 'resource',
+        },
+        errors: [],
+        meta: {
+            collectionName,
+            bindingIndex,
+            disable: false,
+            previouslyDisabled: false,
+        },
+    });
+};
+
+export const generateMockBinding = (
+    collectionName: string,
+    entityType: Entity,
+    options?: { resourceConfig?: Schema }
+): Schema => {
+    const collectionNameProp =
+        entityType === 'materialization' ? 'source' : 'target';
+
+    return mockDeep<Schema>({
+        resource: options?.resourceConfig ?? {
+            fiz: 'resource',
+        },
+        [collectionNameProp]: collectionName,
+        fields: {
+            recommended: true,
         },
     });
 };

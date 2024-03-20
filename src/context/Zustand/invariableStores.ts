@@ -2,6 +2,7 @@ import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create'
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { billingStore } from 'stores/Billing/Store';
+import { bindingStore } from 'stores/Binding/Store';
 import {
     captureDetailsForm,
     collectionDetailsForm,
@@ -15,6 +16,7 @@ import {
     AdminStoreNames,
     BillingStoreNames,
     BindingsEditorStoreNames,
+    BindingStoreNames,
     DetailsFormStoreNames,
     EditorStoreNames,
     EndpointConfigStoreNames,
@@ -23,13 +25,11 @@ import {
     GlobalStoreNames,
     JournalDataStoreNames,
     MiscStoreNames,
-    ResourceConfigStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
     TransformCreateStoreNames,
 } from 'stores/names';
-import { createResourceConfigStore } from 'stores/ResourceConfig/Store';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
@@ -45,6 +45,9 @@ import { MessagePrefixes } from 'types';
 const invariableStores = {
     // Billing Store
     [BillingStoreNames.GENERAL]: billingStore,
+
+    // Binding Store
+    [BindingStoreNames.GENERAL]: bindingStore,
 
     // Bindings Editor Store
     [BindingsEditorStoreNames.GENERAL]: useBindingsEditorStore,
@@ -93,11 +96,6 @@ const invariableStores = {
     [FormStateStoreNames.MATERIALIZATION_EDIT]: createFormStateStore(
         FormStateStoreNames.MATERIALIZATION_EDIT,
         MessagePrefixes.MATERIALIZATION_EDIT
-    ),
-
-    // Resource Config Store
-    [ResourceConfigStoreNames.GENERAL]: createResourceConfigStore(
-        ResourceConfigStoreNames.GENERAL
     ),
 
     // Schema Evolution Store

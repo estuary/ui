@@ -5,10 +5,13 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
-import { useResourceConfig_backfilledCollections } from 'stores/ResourceConfig/hooks';
+import {
+    useBinding_backfilledBindings,
+    useBinding_bindings,
+} from 'stores/Binding/hooks';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { getBackfillCounter, getCollectionName } from 'utils/workflow-utils';
+import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
@@ -38,12 +41,13 @@ function useUpdateBackfillCounter() {
     const intl = useIntl();
     const entityType = useEntityType();
 
+    // Binding Store
+    const bindings = useBinding_bindings();
+    const backfilledBindings = useBinding_backfilledBindings();
+
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
-
-    // Resource Config Store
-    const backfilledCollections = useResourceConfig_backfilledCollections();
 
     const updateBackfillCounter = useCallback(
         async (
@@ -93,24 +97,37 @@ function useUpdateBackfillCounter() {
                     }
                 });
             } else {
-                spec.bindings.forEach((binding: Schema, index: number) => {
-                    const collection = getCollectionName(binding);
-                    const collectionBackfilled =
-                        backfilledCollections.includes(collection);
+                Object.entries(bindings).forEach(
+                    ([collection, bindingUUIDs]) => {
+                        bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
+                            const existingBindingIndex = getBindingIndex(
+                                spec.bindings,
+                                collection,
+                                iteratedIndex
+                            );
 
-                    const shouldIncrement =
-                        !collectionBackfilled && increment === 'true';
+                            if (existingBindingIndex > -1) {
+                                const backfilled =
+                                    backfilledBindings.includes(bindingUUID);
 
-                    const shouldDecrement =
-                        collectionBackfilled && increment === 'false';
+                                const shouldIncrement =
+                                    !backfilled && increment === 'true';
 
-                    if (shouldIncrement || shouldDecrement) {
-                        spec.bindings[index].backfill = evaluateBackfillCounter(
-                            binding,
-                            increment
-                        );
+                                const shouldDecrement =
+                                    backfilled && increment === 'false';
+
+                                if (shouldIncrement || shouldDecrement) {
+                                    spec.bindings[
+                                        existingBindingIndex
+                                    ].backfill = evaluateBackfillCounter(
+                                        spec.bindings[existingBindingIndex],
+                                        increment
+                                    );
+                                }
+                            }
+                        });
                     }
-                });
+                );
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
@@ -125,7 +142,14 @@ function useUpdateBackfillCounter() {
 
             return mutateDraftSpecs();
         },
-        [backfilledCollections, draftId, entityType, intl, mutateDraftSpecs]
+        [
+            backfilledBindings,
+            bindings,
+            draftId,
+            entityType,
+            intl,
+            mutateDraftSpecs,
+        ]
     );
 
     return { updateBackfillCounter };

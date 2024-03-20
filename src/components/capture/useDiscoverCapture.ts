@@ -7,12 +7,13 @@ import {
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback, useMemo } from 'react';
+import { useBinding_resourceConfigErrorsExist } from 'stores/Binding/hooks';
 import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
 import {
-    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -20,7 +21,6 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useResourceConfig_resourceConfigErrorsExist } from 'stores/ResourceConfig/hooks';
 import { Entity } from 'types';
 import useDiscoverConfigEncrypt from './useCaptureConfigEncrypt';
 import useDiscoverDraftUpdate from './useCaptureDraftUpdate';
@@ -39,6 +39,9 @@ function useDiscoverCapture(
     const startDiscovery = useDiscoverStartDiscovery(entityType);
 
     const isEdit = useEntityWorkflow_Editing();
+
+    // Binding Store
+    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
 
     // Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -61,10 +64,6 @@ function useDiscoverCapture(
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
-    // Resource Config Store
-    const resourceConfigHasErrors =
-        useResourceConfig_resourceConfigErrorsExist();
-
     // If we are doing an initial discovery add the name name to the name
     // If not we are either refreshing collections during create OR during edit
     //  Refreshing during:
@@ -83,7 +82,7 @@ function useDiscoverCapture(
             if (
                 detailsFormsHasErrors ||
                 endpointConfigErrorsExist ||
-                resourceConfigHasErrors
+                resourceConfigErrorsExist
             ) {
                 setFormState({
                     status: FormStatus.FAILED,
@@ -147,7 +146,7 @@ function useDiscoverCapture(
             persistedDraftId,
             processedEntityName,
             resetEditorState,
-            resourceConfigHasErrors,
+            resourceConfigErrorsExist,
             serverEndpointConfigData,
             serverUpdateRequired,
             setCatalogName,

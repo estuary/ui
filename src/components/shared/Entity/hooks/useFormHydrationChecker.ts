@@ -1,8 +1,8 @@
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useMemo } from 'react';
+import { useBinding_hydrated } from 'stores/Binding/hooks';
 import { useDetailsForm_hydrated } from 'stores/DetailsForm/hooks';
 import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
-import { useResourceConfig_hydrated } from 'stores/ResourceConfig/hooks';
 
 export const useFormHydrationChecker = () => {
     // For edit we need to make sure resource is there.
@@ -11,19 +11,19 @@ export const useFormHydrationChecker = () => {
 
     const detailsFormStoreHydrated = useDetailsForm_hydrated();
     const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
-    const resourceConfigStoreHydrated = useResourceConfig_hydrated();
+    const bindingsHydrated = useBinding_hydrated();
 
     const storeHydrationComplete = useMemo(() => {
         return includeResourceConfig
             ? detailsFormStoreHydrated &&
                   endpointConfigStoreHydrated &&
-                  resourceConfigStoreHydrated
+                  bindingsHydrated
             : detailsFormStoreHydrated && endpointConfigStoreHydrated;
     }, [
+        bindingsHydrated,
         detailsFormStoreHydrated,
         endpointConfigStoreHydrated,
         includeResourceConfig,
-        resourceConfigStoreHydrated,
     ]);
 
     return storeHydrationComplete;

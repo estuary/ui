@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateTaskSpec > when existing data and new data > duplicates in existing bindings > will update all copies in the bindings 1`] = `
+exports[`generateTaskSpec > when existing data and new data > duplicates in existing bindings > when the resource config contains a single instance of a duplicated binding, update one binding instance 1`] = `
 [
   {
     "resource": {
@@ -17,13 +17,15 @@ exports[`generateTaskSpec > when existing data and new data > duplicates in exis
   },
   {
     "resource": {
-      "bar": "updated",
+      "delta_updates": false,
+      "table": "table_name",
     },
     "target": "mock/binding/one",
   },
   {
     "resource": {
-      "bar": "updated",
+      "delta_updates": false,
+      "table": "table_name",
     },
     "target": "mock/binding/one",
   },

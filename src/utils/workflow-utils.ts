@@ -5,18 +5,18 @@ import {
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import {
-    FullSource,
-    FullSourceDictionary,
-} from 'components/editor/Bindings/Store/types';
-import {
     ConnectorTagWithDetailTags,
     ConnectorWithTagDetailQuery,
 } from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
-import { REMOVE_DURING_GENERATION } from 'stores/ResourceConfig/shared';
-import { ResourceConfigDictionary } from 'stores/ResourceConfig/types';
+import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
+import {
+    FullSource,
+    FullSourceDictionary,
+} from 'stores/Binding/slices/TimeTravel';
+import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../flow_deps/flow';
@@ -53,15 +53,33 @@ export const getCollectionName = (binding: any) => {
     return getCollectionNameDirectly(scopedBinding);
 };
 
+export const isValidIndex = (index: number) => index > -1;
+
 export const getBindingIndex = (
-    bindings: any[] | null | undefined,
-    collectionName: string
+    existingBindings: any[],
+    collectionName: string,
+    stagedBindingIndex: number
 ) => {
-    return bindings?.findIndex
-        ? bindings.findIndex(
-              (binding: any) => getCollectionName(binding) === collectionName
-          )
-        : -1;
+    const matchedCollectionIndices = existingBindings
+        .map((binding: any, index) => {
+            if (getCollectionName(binding) === collectionName) {
+                return index;
+            } else {
+                return -1;
+            }
+        })
+        .filter(isValidIndex);
+
+    if (matchedCollectionIndices.length === 1) {
+        return matchedCollectionIndices[0];
+    } else if (
+        stagedBindingIndex > -1 &&
+        matchedCollectionIndices.length > stagedBindingIndex
+    ) {
+        return matchedCollectionIndices[stagedBindingIndex];
+    } else {
+        return -1;
+    }
 };
 
 export const getDisableProps = (disable: boolean | undefined) => {
@@ -118,9 +136,11 @@ export const addOrRemoveSourceCapture = (
 
 export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
-    collectionName: string
+    collectionName: string,
+    bindingUUID: string
 ) => {
-    const fullSourceConfig = fullSource?.[collectionName]?.data;
+    const fullSourceConfig = fullSource?.[bindingUUID]?.data;
+
     return !isEmpty(fullSourceConfig)
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;
@@ -132,10 +152,14 @@ export const updateFullSource = () => {};
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
     connectorConfig: ConnectorConfig,
-    resourceConfigs: ResourceConfigDictionary | null,
+    resourceConfigs: ResourceConfigDictionary,
+    resourceConfigServerUpdateRequired: boolean,
+    bindings: Bindings,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-    sourceCapture: string | null,
-    fullSource: FullSourceDictionary | null
+    options: {
+        fullSource: FullSourceDictionary | null;
+        sourceCapture: string | null;
+    }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
         ? {
@@ -146,60 +170,76 @@ export const generateTaskSpec = (
 
     draftSpec.endpoint.connector = connectorConfig;
 
-    if (resourceConfigs) {
+    if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
+        const { fullSource } = options;
 
-        const boundCollectionNames = Object.keys(resourceConfigs);
+        Object.entries(bindings).forEach(([_collection, bindingUUIDs]) => {
+            bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
+                const resourceConfig = resourceConfigs[bindingUUID].data;
 
-        boundCollectionNames.forEach((collectionName) => {
-            const resourceConfig = resourceConfigs[collectionName].data;
+                const { bindingIndex, collectionName, disable } =
+                    resourceConfigs[bindingUUID].meta;
 
-            // Check if disable is a boolean otherwise default to false
-            const { disable } = resourceConfigs[collectionName];
-            const resourceDisable = isBoolean(disable) ? disable : false;
+                // Check if disable is a boolean otherwise default to false
+                const bindingDisabled = isBoolean(disable) ? disable : false;
 
-            // See which binding we need to update
-            const existingBindingIndex = getBindingIndex(
-                draftSpec.bindings,
-                collectionName
-            );
+                // See which binding we need to update
+                const existingBindingIndex = resourceConfigServerUpdateRequired
+                    ? getBindingIndex(
+                          draftSpec.bindings,
+                          collectionName,
+                          iteratedIndex
+                      )
+                    : hasLength(draftSpec.bindings)
+                    ? bindingIndex
+                    : -1;
 
-            if (existingBindingIndex > -1) {
-                // Include disable otherwise totally remove it
-                if (resourceDisable) {
-                    draftSpec.bindings[existingBindingIndex].disable =
-                        resourceDisable;
-                } else {
-                    delete draftSpec.bindings[existingBindingIndex].disable;
+                if (existingBindingIndex > -1) {
+                    // Include disable otherwise totally remove it
+                    if (bindingDisabled) {
+                        draftSpec.bindings[existingBindingIndex].disable =
+                            bindingDisabled;
+                    } else {
+                        delete draftSpec.bindings[existingBindingIndex].disable;
+                    }
+
+                    // Only update if there is a fullSource to populate. Otherwise just set the name.
+                    //  This handles both captures that do not have these settings AND when
+                    draftSpec.bindings[existingBindingIndex] = {
+                        ...draftSpec.bindings[existingBindingIndex],
+                        resource: {
+                            ...resourceConfig,
+                        },
+                        [collectionNameProp]: getFullSourceSetting(
+                            fullSource,
+                            collectionName,
+                            bindingUUID
+                        ),
+                    };
+                } else if (Object.keys(resourceConfig).length > 0) {
+                    const disabledProps = getDisableProps(bindingDisabled);
+
+                    draftSpec.bindings.push({
+                        [collectionNameProp]: getFullSourceSetting(
+                            fullSource,
+                            collectionName,
+                            bindingUUID
+                        ),
+                        ...disabledProps,
+                        resource: {
+                            ...resourceConfig,
+                        },
+                    });
                 }
-
-                draftSpec.bindings[existingBindingIndex].resource = {
-                    ...resourceConfig,
-                };
-
-                // Only update if there is a fullSource to populate. Otherwise just set the name.
-                //  This handles both captures that do not have these settings AND when
-                draftSpec.bindings[existingBindingIndex][collectionNameProp] =
-                    getFullSourceSetting(fullSource, collectionName);
-            } else if (Object.keys(resourceConfig).length > 0) {
-                const disabledProps = getDisableProps(resourceDisable);
-
-                draftSpec.bindings.push({
-                    [collectionNameProp]: getFullSourceSetting(
-                        fullSource,
-                        collectionName
-                    ),
-                    ...disabledProps,
-                    resource: {
-                        ...resourceConfig,
-                    },
-                });
-            }
+            });
         });
 
         if (hasLength(draftSpec.bindings)) {
+            const boundCollections = Object.keys(bindings);
+
             draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
-                boundCollectionNames.includes(
+                boundCollections.includes(
                     getCollectionName(binding[collectionNameProp])
                 )
             );
@@ -210,7 +250,7 @@ export const generateTaskSpec = (
 
     // Try adding at the end because this setting could be added/changed at any time
     if (entityType === 'materialization') {
-        addOrRemoveSourceCapture(draftSpec, sourceCapture);
+        addOrRemoveSourceCapture(draftSpec, options.sourceCapture);
     }
 
     return draftSpec;
@@ -273,15 +313,18 @@ export const modifyExistingCaptureDraftSpec = async (
     connectorImage: string,
     encryptedEndpointConfig: Schema,
     resourceConfig: ResourceConfigDictionary,
-    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null
+    existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
+    resourceConfigServerUpdateRequired: boolean,
+    bindings: Bindings
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
         { image: connectorImage, config: encryptedEndpointConfig },
         resourceConfig,
+        resourceConfigServerUpdateRequired,
+        bindings,
         existingTaskData,
-        null,
-        null
+        { fullSource: null, sourceCapture: null }
     );
 
     return modifyDraftSpec(draftSpec, {
