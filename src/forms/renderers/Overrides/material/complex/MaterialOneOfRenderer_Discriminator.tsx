@@ -128,7 +128,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         handleChange(path, null);
         openNewTab(newSelectedIndex);
         setOpen(false);
-    }, []);
+    }, [handleChange, newSelectedIndex]);
 
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
