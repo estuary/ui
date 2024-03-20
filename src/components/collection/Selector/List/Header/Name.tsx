@@ -30,7 +30,7 @@ function CollectionSelectorHeaderName({
             )}
             size="small"
             variant="outlined"
-            value={inputValue}
+            defaultValue={inputValue}
             InputProps={{
                 endAdornment: (
                     <ClearInput
