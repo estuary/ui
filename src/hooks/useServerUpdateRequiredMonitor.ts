@@ -14,7 +14,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const setServerUpdateRequired = useBinding_setServerUpdateRequired();
 
     const resourceConfigUpdated = useMemo(() => {
-        console.log('here');
         if (draftSpecs.length > 0) {
             if (
                 draftSpecs[0].spec.bindings.length ===
@@ -35,25 +34,23 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
                                 const { resource, disable } = binding;
 
+                                // Ensure the associated collection matches before comparing binding properties.
+                                if (collection !== getCollectionName(binding)) {
+                                    return true;
+                                }
+
                                 // Do a quick simple disabled check before comparing the entire object
                                 if (
-                                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                                    resourceConfigs[bindingUUID]?.meta
+                                    resourceConfigs[bindingUUID].meta
                                         .disable !==
                                     getDisableProps(disable).disable
                                 ) {
                                     return true;
                                 }
 
-                                // Ensure the associated collection matches before comparing binding resources.
-                                if (collection !== getCollectionName(binding)) {
-                                    return true;
-                                }
-
                                 // Since we checked disabled up above we can not just check if the data changed
                                 return !isEqual(
-                                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                                    resourceConfigs[bindingUUID]?.data,
+                                    resourceConfigs[bindingUUID].data,
                                     resource
                                 );
                             }
