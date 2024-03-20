@@ -692,11 +692,13 @@ export const custom_generateDefaultUISchema = (
 
 export const derefSchema = async (schema: any) => {
     try {
+        // Removing for now as oneOf with discriminators will mess up when the
+        //  oneOf options use $ref
         // If there is no root ref then skip as handling nested
         //  refs are handled in generateUISchema
-        if (!schema.$ref) {
-            return schema;
-        }
+        // if (!schema.$ref) {
+        //     return schema;
+        // }
 
         const resolveResponse = !schema
             ? null
