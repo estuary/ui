@@ -31,7 +31,6 @@ import {
     and,
     CombinatorRendererProps,
     createCombinatorRenderInfos,
-    createDefaultValue,
     isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
@@ -39,7 +38,7 @@ import {
     rankWith,
     schemaMatches,
 } from '@jsonforms/core';
-import { JsonFormsDispatch, withJsonFormsOneOfProps } from '@jsonforms/react';
+import { JsonFormsDispatch } from '@jsonforms/react';
 import {
     Button,
     Dialog,
@@ -51,9 +50,11 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
-import { forIn, keys } from 'lodash';
+import { getDiscriminatorDefaultValue } from 'forms/renderers/shared';
+import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
+import { withCustomJsonFormsOneOfProps } from 'services/jsonforms/JsonFormsContext';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
@@ -66,27 +67,6 @@ export const getDiscriminator = (schema: any) => {
     return (schema as any)[discriminator]
         ? (schema as any)[discriminator].propertyName
         : null;
-};
-
-export const getDefaultValue = (
-    tabSchemaProps: any,
-    discriminatorProperty: string
-) => {
-    // Go through all the props and set them into the object.
-    //  If it is the discriminator then try to set the default
-    //      value, then the const, and finally default to an empty string.
-    //  If it is any other value then go ahead and create the value
-    const defaultVal: {
-        [k: string]: any;
-    } = {};
-    forIn(tabSchemaProps, (val: any, key: string) => {
-        defaultVal[key] =
-            key === discriminatorProperty
-                ? val.default ?? val.const ?? ''
-                : createDefaultValue(val, tabSchemaProps);
-    });
-
-    return defaultVal;
 };
 
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
@@ -139,7 +119,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         const { properties: tabSchemaProps } = tabSchema;
 
         // Customization: Handle setting the oneOf discriminator properly
-        const defaultVal = getDefaultValue(
+        const defaultVal = getDiscriminatorDefaultValue(
             tabSchemaProps,
             discriminatorProperty
         );
@@ -152,7 +132,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         handleChange(path, null);
         openNewTab(newSelectedIndex);
         setOpen(false);
-    }, [handleChange, createDefaultValue, newSelectedIndex]);
+    }, []);
 
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
@@ -247,6 +227,6 @@ export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
     )
 );
 
-export default withJsonFormsOneOfProps(
+export default withCustomJsonFormsOneOfProps(
     Custom_MaterialOneOfRenderer_Discriminator
 );

@@ -23,26 +23,74 @@
   THE SOFTWARE.
 */
 
-// import { CombinatorRendererProps, OwnPropsOfControl } from '@jsonforms/core';
-// import { withJsonFormsContext } from '@jsonforms/react';
-// import React, { Component, ComponentType } from 'react';
+import {
+    CombinatorKeyword,
+    CombinatorRendererProps,
+    getUISchemas,
+    mapStateToControlProps,
+    OwnPropsOfControl,
+    StatePropsOfCombinator,
+} from '@jsonforms/core';
+import {
+    ctxDispatchToControlProps,
+    withJsonFormsContext,
+} from '@jsonforms/react';
+import { getDiscriminatorIndex } from 'forms/renderers/shared';
+import React, { ComponentType } from 'react';
 
-// const withContextToOneOfPropsCustom =
-//     (
-//         Component: ComponentType<CombinatorRendererProps>
-//     ): ComponentType<OwnPropsOfControl> =>
-//     ({ ctx, props }: JsonFormsStateContext & CombinatorRendererProps) => {
-//         const props = mapStateToOneOfProps({ jsonforms: { ...ctx } }, ownProps);
-//         const dispatchProps = ctxDispatchToControlProps(ctx.dispatch);
-//         return <Component {...props} {...oneOfProps} {...dispatchProps} />;
-//     };
+// All these functions are customized just so we can end up with the custom function
+//  mapCustomStateToCombinatorRendererProps calling into out own getDiscriminatorIndex
+// based on : packages/core/src/util/renderer.ts @ mapStateToCombinatorRendererProps
+export const mapCustomStateToCombinatorRendererProps = (
+    state: any, // JsonFormsState,
+    ownProps: OwnPropsOfControl,
+    keyword: CombinatorKeyword
+): StatePropsOfCombinator => {
+    const { data, schema, rootSchema, ...props } = mapStateToControlProps(
+        state,
+        ownProps
+    );
 
-// export const withJsonFormsOneOfProps = (
-//     Component: ComponentType<CombinatorRendererProps>,
-//     memoize = true
-// ): ComponentType<OwnPropsOfControl> =>
-//     withJsonFormsContext(
-//         withContextToOneOfPropsCustom(
-//             memoize ? React.memo(Component) : Component
-//         )
-//     );
+    const indexOfFittingSchema: any = getDiscriminatorIndex(
+        schema,
+        data,
+        keyword
+    );
+
+    // @ts-expect-error this is how it works in the original so leaving it
+    return {
+        data,
+        schema,
+        rootSchema,
+        ...props,
+        indexOfFittingSchema,
+        uischemas: getUISchemas(state),
+    };
+};
+
+// based on : packages/react/src/JsonFormsContext.tsx @ withContextToOneOfProps
+const withCustomContextToOneOfProps =
+    (
+        Component: ComponentType<CombinatorRendererProps>
+    ): ComponentType<OwnPropsOfControl> =>
+    // eslint-disable-next-line react/display-name
+    ({ ctx, props }: any) => {
+        const oneOfProps = mapCustomStateToCombinatorRendererProps(
+            { jsonforms: { ...ctx } },
+            props,
+            'oneOf'
+        );
+        const dispatchProps = ctxDispatchToControlProps(ctx.dispatch);
+        return <Component {...props} {...oneOfProps} {...dispatchProps} />;
+    };
+
+// based on : packages/react/src/JsonFormsContext.tsx @ withJsonFormsOneOfProps
+export const withCustomJsonFormsOneOfProps = (
+    Component: ComponentType<CombinatorRendererProps>,
+    memoize = true
+): ComponentType<OwnPropsOfControl> =>
+    withJsonFormsContext(
+        withCustomContextToOneOfProps(
+            memoize ? React.memo(Component) : Component
+        )
+    );
