@@ -375,11 +375,9 @@ const getInitialState = (
             } else if (data?.resource_spec_schema) {
                 const { setResourceSchema } = get();
 
-                setResourceSchema(
+                await setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
-                ).catch(() => {
-                    setHydrationErrorsExist(true);
-                });
+                );
             }
         }
 
