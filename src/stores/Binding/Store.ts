@@ -377,7 +377,9 @@ const getInitialState = (
 
                 setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
-                );
+                ).catch(() => {
+                    setHydrationErrorsExist(true);
+                });
             }
         }
 
