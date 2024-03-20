@@ -53,6 +53,8 @@ export const getCollectionName = (binding: any) => {
     return getCollectionNameDirectly(scopedBinding);
 };
 
+export const isValidIndex = (index: number) => index > -1;
+
 export const getBindingIndex = (
     existingBindings: any[],
     collectionName: string,
@@ -66,7 +68,7 @@ export const getBindingIndex = (
                 return -1;
             }
         })
-        .filter((bindingIndex) => bindingIndex > -1);
+        .filter(isValidIndex);
 
     if (matchedCollectionIndices.length === 1) {
         return matchedCollectionIndices[0];
