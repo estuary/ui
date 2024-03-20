@@ -85,7 +85,7 @@ const withCustomContextToOneOfProps =
     };
 
 // based on : packages/react/src/JsonFormsContext.tsx @ withJsonFormsOneOfProps
-export const withCustomJsonFormsOneOfProps = (
+export const withCustomJsonFormsOneOfDiscriminatorProps = (
     Component: ComponentType<CombinatorRendererProps>,
     memoize = true
 ): ComponentType<OwnPropsOfControl> =>

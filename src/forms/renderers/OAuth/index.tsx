@@ -13,8 +13,7 @@ import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/ho
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
-import { getDiscriminator } from '../Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
-import { getDiscriminatorDefaultValue } from '../shared';
+import { getDiscriminator, getDiscriminatorDefaultValue } from '../shared';
 import { INJECTED_VALUES, NO_PROVIDER } from './shared';
 import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
 import { useOauthHandler } from './useOauthHandler';

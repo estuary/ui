@@ -1,6 +1,11 @@
 import { createDefaultValue } from '@jsonforms/core';
 import { forIn } from 'lodash';
-import { getDiscriminator } from './Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+
+export const discriminator = 'discriminator';
+
+export const getDiscriminator = (schema: any) => {
+    return schema[discriminator] ? schema[discriminator].propertyName : null;
+};
 
 export const getDiscriminatorDefaultValue = (
     tabSchemaProps: any,

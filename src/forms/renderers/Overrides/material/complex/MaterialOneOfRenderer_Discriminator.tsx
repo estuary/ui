@@ -50,24 +50,20 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
-import { getDiscriminatorDefaultValue } from 'forms/renderers/shared';
+import {
+    discriminator,
+    getDiscriminator,
+    getDiscriminatorDefaultValue,
+} from 'forms/renderers/shared';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
-import { withCustomJsonFormsOneOfProps } from 'services/jsonforms/JsonFormsContext';
+import { withCustomJsonFormsOneOfDiscriminatorProps } from 'services/jsonforms/JsonFormsContext';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
 }
-
-const discriminator = 'discriminator';
-
-export const getDiscriminator = (schema: any) => {
-    return (schema as any)[discriminator]
-        ? (schema as any)[discriminator].propertyName
-        : null;
-};
 
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
     handleChange,
@@ -227,6 +223,6 @@ export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
     )
 );
 
-export default withCustomJsonFormsOneOfProps(
+export default withCustomJsonFormsOneOfDiscriminatorProps(
     Custom_MaterialOneOfRenderer_Discriminator
 );
