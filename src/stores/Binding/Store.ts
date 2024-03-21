@@ -375,7 +375,7 @@ const getInitialState = (
             } else if (data?.resource_spec_schema) {
                 const { setResourceSchema } = get();
 
-                setResourceSchema(
+                await setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
                 );
             }
@@ -400,7 +400,7 @@ const getInitialState = (
                         prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
-                            draftSpecs[0].spec.bindings
+                            sortBindings(draftSpecs[0].spec.bindings)
                         );
                     }
                 } else {
