@@ -1,3 +1,4 @@
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -12,6 +13,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const bindings = useBinding_bindings();
     const resourceConfigs = useBinding_resourceConfigs();
     const setServerUpdateRequired = useBinding_setServerUpdateRequired();
+    const editing = useEntityWorkflow_Editing();
 
     const resourceConfigUpdated = useMemo(() => {
         if (draftSpecs.length > 0) {
@@ -65,8 +67,8 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
             }
         }
 
-        return false;
-    }, [bindings, draftSpecs, resourceConfigs]);
+        return !editing;
+    }, [bindings, draftSpecs, editing, resourceConfigs]);
 
     useEffect(() => {
         setServerUpdateRequired(resourceConfigUpdated);
