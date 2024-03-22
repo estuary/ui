@@ -579,9 +579,6 @@ const getInitialState = (
                     };
                 });
 
-                // TODO (resource sorting): Consider always selecting the first binding listed
-                //   given the changes to the binding sort order.
-
                 // If previous state had no collections set to first
                 // If selected item is removed set to first.
                 // If adding new ones set to last
