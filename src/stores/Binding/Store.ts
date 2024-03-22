@@ -56,13 +56,13 @@ import {
 
 const STORE_KEY = 'Bindings';
 
-// const sortBindings = (bindings: any) => {
-//     return orderBy(
-//         bindings,
-//         ['disable', (binding) => getCollectionName(binding)],
-//         ['desc', 'asc']
-//     );
-// };
+const sortBindings = (bindings: any) => {
+    return orderBy(
+        bindings,
+        ['disable', (binding) => getCollectionName(binding)],
+        ['desc', 'asc']
+    );
+};
 
 const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
     const sortedResources: ResourceConfigDictionary = {};
@@ -338,25 +338,24 @@ const getInitialState = (
                 const discoveredBindings: any[] =
                     draftSpecResponse.data[0].spec.bindings;
 
-                discoveredBindings.forEach((binding: any, index) => {
-                    const collection = getCollectionName(binding);
-                    const UUID = crypto.randomUUID();
+                sortBindings(discoveredBindings).forEach(
+                    (binding: any, index) => {
+                        const collection = getCollectionName(binding);
+                        const UUID = crypto.randomUUID();
 
-                    initializeBinding(state, collection, UUID);
-                    initializeResourceConfig(state, binding, UUID, index);
-                });
+                        initializeBinding(state, collection, UUID);
+                        initializeResourceConfig(state, binding, UUID, index);
+                    }
+                );
 
                 state.discoveredCollections = Object.values(
                     state.resourceConfigs
                 ).map(({ meta }) => meta.collectionName);
 
-                const sortedResourceConfigs = sortResourceConfigs(
-                    state.resourceConfigs
-                );
-                populateResourceConfigErrors(state, sortedResourceConfigs);
+                populateResourceConfigErrors(state, state.resourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, sortedResourceConfigs);
+                initializeCurrentBinding(state, state.resourceConfigs);
             }),
             false,
             'Discovered bindings evaluated'
