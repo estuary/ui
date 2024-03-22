@@ -1,7 +1,6 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingStoreNames } from 'stores/names';
 import { useShallow } from 'zustand/react/shallow';
-import { sortResourceConfigs } from './Store';
 import { FullSource, FullSourceDictionary } from './slices/TimeTravel';
 import { BindingState, ResourceConfig } from './types';
 
@@ -156,20 +155,6 @@ export const useBinding_bindings = () => {
     return useZustandStore<BindingState, BindingState['bindings']>(
         BindingStoreNames.GENERAL,
         (state) => state.bindings
-    );
-};
-
-export const useBinding_sortedMappedBindings = () => {
-    return useZustandStore<BindingState, [string, string][]>(
-        BindingStoreNames.GENERAL,
-        useShallow((state) =>
-            sortResourceConfigs(Object.entries(state.resourceConfigs)).map(
-                ([bindingUUID, config]) => [
-                    bindingUUID,
-                    config.meta.collectionName,
-                ]
-            )
-        )
     );
 };
 

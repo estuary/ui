@@ -18,7 +18,7 @@ import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import {
     useBinding_currentBindingUUID,
-    useBinding_sortedMappedBindings,
+    useBinding_resourceConfigs,
 } from 'stores/Binding/hooks';
 import { BindingState } from 'stores/Binding/types';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
@@ -96,7 +96,7 @@ function CollectionSelectorList({
 
     // Binding Store
     const currentBindingUUID = useBinding_currentBindingUUID();
-    const sortedBindings = useBinding_sortedMappedBindings();
+    const resourceConfigs = useBinding_resourceConfigs();
 
     // Form State Store
     const formStatus = useFormStateStore_status();
@@ -119,19 +119,24 @@ function CollectionSelectorList({
 
     const rows = useMemo(() => {
         // If we have no bindings we can just return an empty array
-        if (isEmpty(sortedBindings)) {
+        if (isEmpty(resourceConfigs)) {
             return [];
         }
 
         // We have bindings so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
         //  `id` property.
-        return sortedBindings.map(([bindingUUID, collection]) => ({
-            [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
-            [COLLECTION_SELECTOR_NAME_COL]: collection,
-            [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]: stripPathing(collection),
-        }));
-    }, [sortedBindings]);
+        return Object.entries(resourceConfigs).map(([bindingUUID, config]) => {
+            const collection = config.meta.collectionName;
+
+            return {
+                [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
+                [COLLECTION_SELECTOR_NAME_COL]: collection,
+                [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
+                    stripPathing(collection),
+            };
+        });
+    }, [resourceConfigs]);
 
     const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
 
