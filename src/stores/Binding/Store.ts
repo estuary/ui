@@ -56,6 +56,31 @@ import {
 
 const STORE_KEY = 'Bindings';
 
+const sortBindings = (bindings: any) => {
+    return orderBy(
+        bindings,
+        ['disable', (binding) => getCollectionName(binding)],
+        ['desc', 'asc']
+    );
+};
+
+const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
+    const sortedResources: ResourceConfigDictionary = {};
+
+    orderBy(
+        Object.entries(resourceConfigs),
+        [
+            ([_uuid, config]) => config.meta.disable,
+            ([_uuid, config]) => config.meta.collectionName,
+        ],
+        ['desc', 'asc']
+    ).forEach(([uuid, config]) => {
+        sortedResources[uuid] = config;
+    });
+
+    return sortedResources;
+};
+
 const initializeBinding = (
     state: BindingState,
     collection: string,
@@ -127,14 +152,6 @@ const populateResourceConfigErrors = (
 
     state.resourceConfigErrors = configErrors;
     state.resourceConfigErrorsExist = hasErrors;
-};
-
-const sortBindings = (bindings: any) => {
-    return orderBy(
-        bindings,
-        ['disable', (binding) => getCollectionName(binding)],
-        ['desc', 'asc']
-    );
 };
 
 const whatChanged = (
@@ -289,11 +306,15 @@ const getInitialState = (
                     }
                 );
 
-                state.resourceConfigs = modifiedResourceConfigs;
-                populateResourceConfigErrors(state, modifiedResourceConfigs);
+                const sortedResourceConfigs = sortResourceConfigs(
+                    modifiedResourceConfigs
+                );
+
+                state.resourceConfigs = sortedResourceConfigs;
+                populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, modifiedResourceConfigs);
+                initializeCurrentBinding(state, sortedResourceConfigs);
             }),
             false,
             'Empty bindings added'
@@ -314,7 +335,7 @@ const getInitialState = (
 
                 state.resourceConfigs = {};
 
-                const discoveredBindings =
+                const discoveredBindings: any[] =
                     draftSpecResponse.data[0].spec.bindings;
 
                 sortBindings(discoveredBindings).forEach(
@@ -400,13 +421,13 @@ const getInitialState = (
                         prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
-                            sortBindings(draftSpecs[0].spec.bindings)
+                            draftSpecs[0].spec.bindings
                         );
                     }
                 } else {
                     prefillBindingDependentState(
                         entityType,
-                        sortBindings(liveSpecs[0].spec.bindings)
+                        liveSpecs[0].spec.bindings
                     );
                 }
             }
@@ -495,10 +516,15 @@ const getInitialState = (
                     }
                 });
 
-                populateResourceConfigErrors(state, state.resourceConfigs);
+                const sortedResourceConfigs = sortResourceConfigs(
+                    state.resourceConfigs
+                );
+
+                state.resourceConfigs = sortedResourceConfigs;
+                populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, state.resourceConfigs);
+                initializeCurrentBinding(state, sortedResourceConfigs);
             }),
             false,
             'Binding dependent state prefilled'
@@ -556,6 +582,9 @@ const getInitialState = (
                 // If previous state had no collections set to first
                 // If selected item is removed set to first.
                 // If adding new ones set to last
+                state.resourceConfigs = sortResourceConfigs(
+                    state.resourceConfigs
+                );
                 const bindingUUIDs = Object.keys(state.resourceConfigs);
 
                 const selectedBindingUUID =
