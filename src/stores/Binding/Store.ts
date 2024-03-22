@@ -70,11 +70,26 @@ const initializeBinding = (
     state.bindings[collection] = existingBindingUUIDs.concat(bindingUUID);
 };
 
+export const sortResourceConfigs = (
+    resourceConfigEntries: [string, ResourceConfig][]
+): [string, ResourceConfig][] => {
+    return orderBy(
+        resourceConfigEntries,
+        [
+            ([_uuid, config]) => config.meta.disable,
+            ([_uuid, config]) => config.meta.collectionName,
+        ],
+        ['desc', 'asc']
+    );
+};
+
 const initializeCurrentBinding = (
     state: BindingState,
     resourceConfigs: ResourceConfigDictionary
 ) => {
-    const initialConfig = Object.entries(resourceConfigs).at(0);
+    const initialConfig = sortResourceConfigs(
+        Object.entries(resourceConfigs)
+    ).at(0);
 
     if (initialConfig) {
         const [bindingUUID, resourceConfig] = initialConfig;
@@ -129,7 +144,7 @@ const populateResourceConfigErrors = (
     state.resourceConfigErrorsExist = hasErrors;
 };
 
-const sortBindings = (bindings: any) => {
+export const sortBindings = (bindings: any) => {
     return orderBy(
         bindings,
         ['disable', (binding) => getCollectionName(binding)],
@@ -400,13 +415,13 @@ const getInitialState = (
                         prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
-                            sortBindings(draftSpecs[0].spec.bindings)
+                            draftSpecs[0].spec.bindings
                         );
                     }
                 } else {
                     prefillBindingDependentState(
                         entityType,
-                        sortBindings(liveSpecs[0].spec.bindings)
+                        liveSpecs[0].spec.bindings
                     );
                 }
             }
