@@ -13,10 +13,7 @@ import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/ho
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
-import {
-    getDefaultValue,
-    getDiscriminator,
-} from '../Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import { getDiscriminator, getDiscriminatorDefaultValue } from '../shared';
 import { INJECTED_VALUES, NO_PROVIDER } from './shared';
 import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
 import { useOauthHandler } from './useOauthHandler';
@@ -82,7 +79,7 @@ const OAuthproviderRenderer = ({
     // Reset the configuration either to injected values or
     //  to special default values that we can check for
     const setConfigToDefault = () => {
-        const defaults = getDefaultValue(
+        const defaults = getDiscriminatorDefaultValue(
             // If Oauth is not inside oneOf (ex: slack materialization)
             //      We get the schema is for the ENTIRE config. So we need to
             //      fetch just the credential config otherwise we'll end up nesting
