@@ -7,8 +7,8 @@ import useLoginStateHandler from 'hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-const EnterpriseLogin = () => {
-    useBrowserTitle('routeTitle.loginEnterprise');
+const MagicLinkLogin = () => {
+    useBrowserTitle('routeTitle.loginMagicLink');
     useLoginBodyClass();
 
     const intl = useIntl();
@@ -42,8 +42,8 @@ const EnterpriseLogin = () => {
                     <FormattedMessage
                         id={
                             isRegister
-                                ? 'login.enterprise.register.message'
-                                : 'login.enterprise.login.message'
+                                ? 'login.magicLink.register.message'
+                                : 'login.magicLink.login.message'
                         }
                     />
                 </Typography>
@@ -58,4 +58,4 @@ const EnterpriseLogin = () => {
     );
 };
 
-export default EnterpriseLogin;
+export default MagicLinkLogin;

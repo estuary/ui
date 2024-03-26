@@ -28,7 +28,7 @@ import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
 import MarketplaceCallback from 'pages/marketplace/Callback';
 import MarketplaceVerification from 'pages/marketplace/Verification';
-import EnterpriseLogin from 'pages/login/Enterprise';
+import MagicLinkLogin from 'pages/login/MagicLink';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
@@ -87,10 +87,10 @@ const router = createBrowserRouter(
             />
 
             <Route
-                path={unauthenticatedRoutes.enterprise.login.fullPath}
+                path={unauthenticatedRoutes.poc.login.fullPath}
                 element={
                     <RequireAuth firstLoad checkForGrant>
-                        <EnterpriseLogin />
+                        <MagicLinkLogin />
                     </RequireAuth>
                 }
             />
