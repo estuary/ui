@@ -50,7 +50,7 @@ const MagicLinkLogin = () => {
 
                 <Stack direction="column" spacing={2}>
                     <Box>
-                        <MagicLink grantToken={grantToken} />
+                        <MagicLink hideCodeInput grantToken={grantToken} />
                     </Box>
                 </Stack>
             </Box>

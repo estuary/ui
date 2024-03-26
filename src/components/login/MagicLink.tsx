@@ -11,6 +11,7 @@ import { getLoginSettings } from 'utils/env-utils';
 
 interface Props {
     grantToken?: string;
+    hideCodeInput?: boolean;
 }
 
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
@@ -20,7 +21,7 @@ const redirectToBase = `${window.location.origin}/auth`;
 
 const loginSettings = getLoginSettings();
 
-const MagicLink = ({ grantToken }: Props) => {
+const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
     const supabaseClient = useClient();
@@ -119,22 +120,24 @@ const MagicLink = ({ grantToken }: Props) => {
                 />
             )}
 
-            <Button
-                variant="text"
-                onClick={() => setShowTokenValidation(!showTokenValidation)}
-                sx={{
-                    alignSelf: 'center',
-                    width: 'auto',
-                }}
-            >
-                <FormattedMessage
-                    id={
-                        showTokenValidation
-                            ? 'login.magicLink.requestOTP'
-                            : 'login.magicLink.verifyOTP'
-                    }
-                />
-            </Button>
+            {hideCodeInput ? null : (
+                <Button
+                    variant="text"
+                    onClick={() => setShowTokenValidation(!showTokenValidation)}
+                    sx={{
+                        alignSelf: 'center',
+                        width: 'auto',
+                    }}
+                >
+                    <FormattedMessage
+                        id={
+                            showTokenValidation
+                                ? 'login.magicLink.requestOTP'
+                                : 'login.magicLink.verifyOTP'
+                        }
+                    />
+                </Button>
+            )}
         </Stack>
     );
 };
