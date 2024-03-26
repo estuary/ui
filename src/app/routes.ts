@@ -253,6 +253,13 @@ export const unauthenticatedRoutes = {
     auth: {
         path: '/auth',
     },
+    enterprise: {
+        path: '/enterprise',
+        login: {
+            path: 'enterprise',
+            fullPath: '/enterprise/login',
+        },
+    },
     logout: {
         path: '/logout',
     },
