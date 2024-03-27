@@ -10,7 +10,7 @@ import {
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
-import { Entity, SortDirection } from 'types';
+import { Entity } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {
@@ -18,7 +18,6 @@ interface Props {
     gridSpacing: number;
     hideProtocol?: boolean;
     setProtocol: Dispatch<SetStateAction<string | null>>;
-    setSortDirection: Dispatch<SetStateAction<SortDirection>>;
     setSearchQuery: Dispatch<SetStateAction<string | null>>;
 }
 
@@ -32,7 +31,6 @@ function ConnectorToolbar({
     gridSpacing,
     hideProtocol,
     setProtocol,
-    setSortDirection,
     setSearchQuery,
 }: Props) {
     const intl = useIntl();
@@ -59,24 +57,6 @@ function ConnectorToolbar({
         },
     ]);
 
-    const sortDirectionOptions: {
-        direction: SortDirection;
-        message: string;
-    }[] = useConstant(() => [
-        {
-            direction: 'asc',
-            message: intl.formatMessage({
-                id: 'sortDirection.ascending',
-            }),
-        },
-        {
-            direction: 'desc',
-            message: intl.formatMessage({
-                id: 'sortDirection.descending',
-            }),
-        },
-    ]);
-
     const handlers = {
         setProtocol: (_event: SyntheticEvent, value: string | null) => {
             const selectedProtocol = protocolOptions.find(
@@ -84,13 +64,6 @@ function ConnectorToolbar({
             )?.protocol;
 
             setProtocol(selectedProtocol ? selectedProtocol : null);
-        },
-        switchSortDirection: (_event: SyntheticEvent, value: string | null) => {
-            const selectedDirection = sortDirectionOptions.find(
-                (option) => option.message === value
-            )?.direction;
-
-            setSortDirection(selectedDirection ? selectedDirection : 'asc');
         },
         filterTiles: debounce(
             (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -119,28 +92,13 @@ function ConnectorToolbar({
                     justifyContent: 'flex-end',
                 }}
             >
-                <Grid item xs={12} md={hideProtocol ? 6 : 4}>
+                <Grid item xs={12} md={hideProtocol ? 12 : 6}>
                     <SearchField
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
                         })}
                         changeHandler={handlers.filterTiles}
                         autoFocus={true}
-                    />
-                </Grid>
-
-                <Grid item xs={hideProtocol ? 6 : 4} md={2}>
-                    <AutocompletedField
-                        label={intl.formatMessage({
-                            id: 'connectorTable.label.sortDirection',
-                        })}
-                        options={sortDirectionOptions.map(
-                            ({ message }) => message
-                        )}
-                        defaultValue={intl.formatMessage({
-                            id: 'sortDirection.ascending',
-                        })}
-                        changeHandler={handlers.switchSortDirection}
                     />
                 </Grid>
 
