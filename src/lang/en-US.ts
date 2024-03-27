@@ -241,6 +241,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.login': `Login`,
+    'routeTitle.loginEnterprise': `Enterprise Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
@@ -342,11 +343,13 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.tabs.login': `Sign In`,
     'login.tabs.register': `Register`,
     'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
+    'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
     'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
+    'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
-    'login.magicLink.verifyOTP': 'Already have an OTP?',
+    'login.magicLink.verifyOTP': 'Already have an OTP code?',
     'login.magicLink.requestOTP': 'Request a magic link',
 
     'login.email.description': `Any valid email you want to use to sign in with`,
