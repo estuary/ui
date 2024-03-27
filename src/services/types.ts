@@ -1,4 +1,5 @@
 export enum CustomEvents {
+    BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
     CAPTURE_CREATE = 'Capture_Create',
     CAPTURE_CREATE_CONFIG_CREATE = 'Capture_Create_Config_Create',
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
