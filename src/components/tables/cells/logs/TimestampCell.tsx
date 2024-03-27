@@ -7,9 +7,9 @@ interface Props {
 }
 
 function TimestampCell({ ts }: Props) {
-    const formattedDateTime = DateTime.fromISO(ts).toFormat(
-        'yyyy-LL-dd HH:mm:ss.SSS ZZZZ'
-    );
+    const formattedDateTime = DateTime.fromISO(ts, {
+        zone: 'UTC',
+    }).toFormat('yyyy-LL-dd HH:mm:ss.SSS ZZZZ');
 
     return (
         <TableCell sx={BaseCellSx} component="div">
