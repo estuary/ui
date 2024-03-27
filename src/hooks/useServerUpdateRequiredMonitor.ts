@@ -2,6 +2,8 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBinding_bindings,
     useBinding_resourceConfigs,
@@ -33,6 +35,17 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                     draftSpecs[0].spec.bindings[
                                         expectedBindingIndex
                                     ];
+
+                                // We might end up returning `true` here but adding this logging
+                                //  to get more information before making that change.
+                                if (!binding) {
+                                    logRocketEvent(
+                                        CustomEvents.BINDINGS_EXPECTED_MISSING,
+                                        {
+                                            expectedBindingIndex,
+                                        }
+                                    );
+                                }
 
                                 const { resource, disable } = binding;
 

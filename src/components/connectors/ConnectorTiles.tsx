@@ -18,7 +18,6 @@ import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
 import {
     EntityWithCreateWorkflow,
-    SortDirection,
     TableIntlConfig,
     TableState,
     TableStatuses,
@@ -55,15 +54,14 @@ function ConnectorTiles({
         protocolPreset ?? null
     );
     const [searchQuery, setSearchQuery] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
 
     const query = useMemo(() => {
-        return getConnectors(searchQuery, sortDirection, protocol);
-    }, [searchQuery, sortDirection, protocol]);
+        return getConnectors(searchQuery, 'asc', protocol);
+    }, [searchQuery, protocol]);
 
     const {
         data: useSelectResponse,
@@ -111,7 +109,6 @@ function ConnectorTiles({
                     gridSpacing={2}
                     hideProtocol={!!protocolPreset}
                     setProtocol={setProtocol}
-                    setSortDirection={setSortDirection}
                     setSearchQuery={setSearchQuery}
                 />
             </Grid>
