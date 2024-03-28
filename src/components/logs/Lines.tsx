@@ -1,4 +1,4 @@
-import { List, Paper } from '@mui/material';
+import { List, Paper, useTheme } from '@mui/material';
 import { useLayoutEffect, useRef } from 'react';
 import useStayScrolled from 'react-stay-scrolled';
 import { hasLength } from 'utils/misc-utils';
@@ -13,6 +13,10 @@ interface Props {
 }
 
 function LogLines({ height, spinnerOptions }: Props) {
+    const theme = useTheme();
+    const textOptions =
+        theme.palette.mode === 'light' ? ['opaque', 'darken'] : ['opaque'];
+
     const disableSpinner = spinnerOptions?.disable ?? false;
     const runningKey = spinnerOptions?.messages?.runningKey ?? undefined;
     const stoppedKey = spinnerOptions?.messages?.stoppedKey ?? undefined;
@@ -51,6 +55,7 @@ function LogLines({ height, spinnerOptions }: Props) {
                         key={`logLine-${index}`}
                         line={line}
                         lineNumber={index}
+                        textOptions={textOptions}
                     />
                 ))}
                 {!disableSpinner || !hasLength(logs) ? (

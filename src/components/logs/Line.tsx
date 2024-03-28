@@ -11,6 +11,7 @@ interface Props {
     lineNumber: number | string | any;
     disableBorder?: boolean;
     disableSelect?: boolean;
+    textOptions?: string[];
 }
 
 export const lineNumberColor = '#666';
@@ -19,16 +20,22 @@ export const lineNumberColor = '#666';
 //     return line.stream.slice(0, line.stream.lastIndexOf(':')) as ParsedStream;
 // };
 
-function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
+function LogLine({
+    line,
+    lineNumber,
+    disableBorder,
+    disableSelect,
+    textOptions,
+}: Props) {
     let parsedLine: AnsiColored;
 
     if (line instanceof Object) {
-        parsedLine = Ansi.parse(line.log_line);
+        parsedLine = Ansi.parse(line.log_line, textOptions);
     } else {
         parsedLine = Ansi.parse(line);
     }
 
-    const reneredParsedLine = useMemo(() => {
+    const renderedParsedLine = useMemo(() => {
         return parsedLine.spans.map((span, index, array) => (
             <LinePart
                 key={`logs-linePart-${lineNumber}__${index}`}
@@ -75,7 +82,7 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
                     flexWrap: 'wrap',
                 }}
             >
-                {reneredParsedLine}
+                {renderedParsedLine}
             </ListItemText>
         </ListItem>
     );
