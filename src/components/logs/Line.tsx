@@ -23,12 +23,12 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
     let parsedLine: AnsiColored;
 
     if (line instanceof Object) {
-        parsedLine = Ansi.parse(line.log_line);
+        parsedLine = Ansi.parse(line.log_line, true);
     } else {
         parsedLine = Ansi.parse(line);
     }
 
-    const reneredParsedLine = useMemo(() => {
+    const renderedParsedLine = useMemo(() => {
         return parsedLine.spans.map((span, index, array) => (
             <LinePart
                 key={`logs-linePart-${lineNumber}__${index}`}
@@ -75,7 +75,7 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
                     flexWrap: 'wrap',
                 }}
             >
-                {reneredParsedLine}
+                {renderedParsedLine}
             </ListItemText>
         </ListItem>
     );

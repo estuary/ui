@@ -1,0 +1,143 @@
+diff --git a/node_modules/ansicolor/ansicolor.d.ts b/node_modules/ansicolor/ansicolor.d.ts
+index 899eb02..e133c94 100644
+--- a/node_modules/ansicolor/ansicolor.d.ts
++++ b/node_modules/ansicolor/ansicolor.d.ts
+@@ -103,7 +103,7 @@ export declare class ansicolor {
+     static get rgb (): RGBValues;
+     static set rgb (newSchema: RGBValues);
+ 
+-    static parse (text: string): AnsiColored;
++    static parse (text: string, opaqueText?: boolean): AnsiColored;
+     static strip (text: string): string;
+     static isEscaped (x?: any): boolean;
+ 
+diff --git a/node_modules/ansicolor/ansicolor.js b/node_modules/ansicolor/ansicolor.js
+index 6d8a6e2..337fcfc 100644
+--- a/node_modules/ansicolor/ansicolor.js
++++ b/node_modules/ansicolor/ansicolor.js
+@@ -145,7 +145,8 @@ O.assign (Code, {
+     noUnderline:  24,
+     noInverse:    27,
+     noColor:      39,
+-    noBgColor:    49
++    noBgColor:    49,
++    noDim:        59
+ })
+ 
+ /*  ------------------------------------------------------------------------ */
+@@ -340,9 +341,10 @@ function* processChunk(chunk, stateObject) {
+ /**
+  * Parse ansi text
+  * @param {Generator<Span, void, *>} rawSpansIterator raw spans iterator
++ * @param {boolean=} opaqueText preserve text opacity
+  * @return {Generator<Span, void, *>}
+  */
+-function* parseAnsi(rawSpansIterator) {
++function* parseAnsi(rawSpansIterator, opaqueText) {
+     let color = new Color();
+     let bgColor = new Color(true /* background */);
+     let brightness = undefined;
+@@ -368,7 +370,7 @@ function* parseAnsi(rawSpansIterator) {
+             const italic = styles.has("italic") ? "font-style: italic;" : "";
+             const bold = brightness === Code.bright ? "font-weight: bold;" : "";
+ 
+-            const foreColor = color.defaultBrightness(brightness);
++            const foreColor = color.defaultBrightness(opaqueText ? Code.noDim : brightness);
+ 
+             const newSpan = new Span(span.code ? span.code.clone() : undefined, span.text);
+ 
+@@ -439,10 +441,13 @@ class Colors {
+         return this.spans.reduce ((str, p) => str + p.text + p.code.str, '')
+     }
+ 
+-    get parsed () {
++    /**
++     * @param {boolean=} opaqueText preserve text opacity
++     */
++    parsed (opaqueText) {
+         const newColors = new Colors();
+ 
+-        newColors.spans = Array.from(parseAnsi(this.spans));
++        newColors.spans = Array.from(parseAnsi(this.spans, opaqueText));
+ 
+         return newColors;
+     }
+@@ -478,10 +483,11 @@ class Colors {
+ 
+     /**
+      * @desc parses a string containing ANSI escape codes
++     * @param {boolean=} opaqueText preserve text opacity
+      * @return {Colors} parsed representation.
+      */
+-    static parse (s) {
+-        return new Colors (s).parsed
++    static parse (s, opaqueText) {
++        return new Colors (s).parsed(opaqueText)
+     }
+ 
+     /**
+diff --git a/node_modules/ansicolor/build/ansicolor.js b/node_modules/ansicolor/build/ansicolor.js
+index 681ae56..1d4ae54 100644
+--- a/node_modules/ansicolor/build/ansicolor.js
++++ b/node_modules/ansicolor/build/ansicolor.js
+@@ -136,7 +136,8 @@ O.assign(Code, {
+     noUnderline: 24,
+     noInverse: 27,
+     noColor: 39,
+-    noBgColor: 49
++    noBgColor: 49,
++    noDim: 59
+ });
+ 
+ /*  ------------------------------------------------------------------------ */
+@@ -303,9 +304,10 @@ function* processChunk(chunk, stateObject) {
+ /**
+  * Parse ansi text
+  * @param {Generator<Span, void, *>} rawSpansIterator raw spans iterator
++ * @param {boolean=} opaqueText preserve text opacity
+  * @return {Generator<Span, void, *>}
+  */
+-function* parseAnsi(rawSpansIterator) {
++function* parseAnsi(rawSpansIterator, opaqueText) {
+     let color = new Color();
+     let bgColor = new Color(true /* background */);
+     let brightness = undefined;
+@@ -329,7 +331,7 @@ function* parseAnsi(rawSpansIterator) {
+             const italic = styles.has("italic") ? "font-style: italic;" : "";
+             const bold = brightness === Code.bright ? "font-weight: bold;" : "";
+ 
+-            const foreColor = color.defaultBrightness(brightness);
++            const foreColor = color.defaultBrightness(opaqueText ? Code.noDim : brightness);
+ 
+             const newSpan = new Span(span.code ? span.code.clone() : undefined, span.text);
+ 
+@@ -399,10 +401,13 @@ class Colors {
+         return this.spans.reduce((str, p) => str + p.text + p.code.str, '');
+     }
+ 
+-    get parsed() {
++    /**
++     * @param {boolean=} opaqueText preserve text opacity
++     */
++    parsed(opaqueText) {
+         const newColors = new Colors();
+ 
+-        newColors.spans = Array.from(parseAnsi(this.spans));
++        newColors.spans = Array.from(parseAnsi(this.spans, opaqueText));
+ 
+         return newColors;
+     }
+@@ -441,10 +446,11 @@ class Colors {
+ 
+     /**
+      * @desc parses a string containing ANSI escape codes
++     * @param {boolean=} opaqueText preserve text opacity
+      * @return {Colors} parsed representation.
+      */
+-    static parse(s) {
+-        return new Colors(s).parsed;
++    static parse(s, opaqueText) {
++        return new Colors(s).parsed(opaqueText);
+     }
+ 
+     /**
