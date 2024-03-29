@@ -221,14 +221,14 @@ export const useBinding_setCurrentBinding = () => {
 export const useBinding_currentCollection = () => {
     return useZustandStore<BindingState, string | null>(
         BindingStoreNames.GENERAL,
-        (state) => state.currentBinding?.collection ?? null
+        useShallow((state) => state.currentBinding?.collection ?? null)
     );
 };
 
 export const useBinding_currentBindingUUID = () => {
     return useZustandStore<BindingState, string | null>(
         BindingStoreNames.GENERAL,
-        (state) => state.currentBinding?.uuid ?? null
+        useShallow((state) => state.currentBinding?.uuid ?? null)
     );
 };
 
