@@ -211,13 +211,6 @@ export const useBinding_bindingErrorsExist = () => {
     );
 };
 
-export const useBinding_currentBinding = () => {
-    return useZustandStore<BindingState, BindingState['currentBinding']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.currentBinding
-    );
-};
-
 export const useBinding_setCurrentBinding = () => {
     return useZustandStore<BindingState, BindingState['setCurrentBinding']>(
         BindingStoreNames.GENERAL,
