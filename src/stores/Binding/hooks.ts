@@ -46,6 +46,13 @@ export const useBinding_hydrateState = () => {
     );
 };
 
+export const useBinding_prefillBindingDependentState = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['prefillBindingDependentState']
+    >(BindingStoreNames.GENERAL, (state) => state.prefillBindingDependentState);
+};
+
 export const useBinding_resetState = () => {
     return useZustandStore<BindingState, BindingState['resetState']>(
         BindingStoreNames.GENERAL,
