@@ -7,7 +7,7 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import Auth from 'pages/Auth';
 import Collections from 'pages/Collections';
 import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
-import Login from 'pages/Login';
+import BasicLogin from 'pages/login/Basic';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import { Suspense } from 'react';
@@ -28,6 +28,7 @@ import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
 import MarketplaceCallback from 'pages/marketplace/Callback';
 import MarketplaceVerification from 'pages/marketplace/Verification';
+import MagicLinkLogin from 'pages/login/MagicLink';
 import MaterializationsTable from './MaterializationsTable';
 import CapturesTable from './CapturesTable';
 import RequireAuth from './RequireAuth';
@@ -71,7 +72,7 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.path}
                 element={
                     <RequireAuth firstLoad>
-                        <Login />
+                        <BasicLogin />
                     </RequireAuth>
                 }
             />
@@ -80,7 +81,16 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.login.path}
                 element={
                     <RequireAuth firstLoad checkForGrant>
-                        <Login />
+                        <BasicLogin />
+                    </RequireAuth>
+                }
+            />
+
+            <Route
+                path={unauthenticatedRoutes.poc.login.fullPath}
+                element={
+                    <RequireAuth firstLoad checkForGrant>
+                        <MagicLinkLogin />
                     </RequireAuth>
                 }
             />
@@ -97,7 +107,7 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.register.callback.fullPath}
                 element={
                     <RequireAuth firstLoad checkForGrant>
-                        <Login />
+                        <BasicLogin />
                     </RequireAuth>
                 }
             />
@@ -110,11 +120,11 @@ const router = createBrowserRouter(
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
             <Route
                 path={unauthenticatedRoutes.logout.path}
-                element={<Login />}
+                element={<BasicLogin />}
             />
             <Route
                 path={unauthenticatedRoutes.register.path}
-                element={<Login showRegistration />}
+                element={<BasicLogin showRegistration />}
             />
 
             {/* This is not in the route below so that it does not include the applayout*/}
