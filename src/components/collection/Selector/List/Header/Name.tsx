@@ -18,7 +18,7 @@ function CollectionSelectorHeaderName({
 }: Props) {
     const intl = useIntl();
 
-    // Need a local copy as as the user types the component does not force the
+    // Need a local copy so as the user types the component does not force the
     //  input focus to the end of the string.
     const [localValue, setLocalValue] = useState(inputValue);
 
