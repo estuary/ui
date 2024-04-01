@@ -8,6 +8,7 @@ import {
 import { StorageMappings } from 'types';
 
 const getStorageMappings = (
+    catalogPrefix: string,
     pagination: Pagination,
     searchQuery: any,
     sorting: SortingProps<any>[]
@@ -24,7 +25,8 @@ const getStorageMappings = (
             // TODO (storage mappins) including count will make pagination work but
             //  it makes this table take around 3.3 SECONDS in production.
             // { count: 'exact' }
-        );
+        )
+        .eq('catalog_prefix', catalogPrefix);
 
     queryBuilder = defaultTableFilter(
         queryBuilder,
@@ -52,4 +54,4 @@ const getStorageMapping = (catalog_prefix: string) => {
     return queryBuilder;
 };
 
-export { getStorageMappings, getStorageMapping };
+export { getStorageMapping, getStorageMappings };

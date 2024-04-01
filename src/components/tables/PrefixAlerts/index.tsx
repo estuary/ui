@@ -2,6 +2,7 @@ import { getNotificationSubscriptionsForTable } from 'api/alerts';
 import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/GenerateButton';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
+import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
@@ -44,14 +45,21 @@ function PrefixAlertTable() {
         setColumnToSort,
     } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
 
+    const { selectedTenant } = useSelectedTenant();
+
     const query = useMemo(() => {
-        return getNotificationSubscriptionsForTable(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+        return getNotificationSubscriptionsForTable(
+            selectedTenant,
+            pagination,
+            searchQuery,
+            [
+                {
+                    col: columnToSort,
+                    direction: sortDirection,
+                },
+            ]
+        );
+    }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
 
     return (
         <TableHydrator

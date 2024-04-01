@@ -1,6 +1,6 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useSelectedTenant, useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -8,10 +8,7 @@ import useGlobalSearchParams, {
 import { noop } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    useBilling_resetState,
-    useBilling_setSelectedTenant,
-} from 'stores/Billing/hooks';
+import { useBilling_resetState } from 'stores/Billing/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useBillingTable_setHydrated,
@@ -27,19 +24,16 @@ function TenantOptions() {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
+    const { selectedTenant, setSelectedTenant } = useSelectedTenant();
 
     // AutoComplete
     const handledDefault = useRef(false);
     const defaultSelectedTenant = useGlobalSearchParams(
         GlobalSearchParams.PREFIX
     );
-    const [autoCompleteValue, setAutoCompleteValue] = useState<string | null>(
-        null
-    );
     const [inputValue, setInputValue] = useState('');
     const [defaultValue, setDefaultValue] = useState<string | null>(null);
 
-    const setSelectedTenant = useBilling_setSelectedTenant();
     const resetBillingState = useBilling_resetState();
 
     const setHydrated = useBillingTable_setHydrated();
@@ -51,10 +45,7 @@ function TenantOptions() {
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
     const tenantNames = useMemo<string[] | null>(
-        () =>
-            tenants && tenants.length > 0
-                ? tenants.map(({ tenant }) => tenant)
-                : null,
+        () => (tenants.length > 0 ? tenants.map(({ tenant }) => tenant) : null),
         [tenants]
     );
 
@@ -63,7 +54,6 @@ function TenantOptions() {
             resetBillingState();
             setSelectedTenant(newValue);
             setInputValue(newValue);
-            setAutoCompleteValue(newValue);
 
             resetBillingSelectTableState();
             setHydrated(false);
@@ -113,7 +103,7 @@ function TenantOptions() {
                 onChange: (_event, newAutoCompleteValue) => {
                     updateStateAndStore(newAutoCompleteValue);
                 },
-                value: autoCompleteValue,
+                value: selectedTenant,
             }}
         />
     ) : (

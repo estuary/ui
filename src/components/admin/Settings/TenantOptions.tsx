@@ -1,6 +1,6 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useSelectedTenant, useTenantDetails } from 'context/fetcher/Tenant';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -13,22 +13,17 @@ function TenantOptions() {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
+    const { selectedTenant, setSelectedTenant } = useSelectedTenant();
 
     const handledDefault = useRef(false);
     const defaultSelectedTenant = useGlobalSearchParams(
         GlobalSearchParams.PREFIX
     );
-    const [autoCompleteValue, setAutoCompleteValue] = useState<string | null>(
-        null
-    );
     const [inputValue, setInputValue] = useState('');
     const [defaultValue, setDefaultValue] = useState<string | null>(null);
 
     const tenantNames = useMemo<string[] | null>(
-        () =>
-            tenants && tenants.length > 0
-                ? tenants.map(({ tenant }) => tenant)
-                : null,
+        () => (tenants.length > 0 ? tenants.map(({ tenant }) => tenant) : null),
         [tenants]
     );
 
@@ -41,22 +36,22 @@ function TenantOptions() {
                     ? defaultSelectedTenant
                     : tenantNames[0];
 
-            setAutoCompleteValue(newVal);
+            setSelectedTenant(newVal);
 
             if (!handledDefault.current) {
-                setDefaultValue(newVal);
+                setDefaultValue(defaultValue);
                 handledDefault.current = true;
             }
         }
-    }, [defaultSelectedTenant, tenantNames]);
+    }, [defaultSelectedTenant, defaultValue, setSelectedTenant, tenantNames]);
 
-    return defaultValue && tenantNames ? (
+    return selectedTenant && tenantNames ? (
         <AutocompletedField
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
             options={tenantNames}
-            defaultValue={defaultValue}
+            defaultValue={defaultValue ?? selectedTenant}
             changeHandler={noop}
             autocompleteSx={{ flexGrow: 1 }}
             AutoCompleteOptions={{
@@ -65,9 +60,9 @@ function TenantOptions() {
                     setInputValue(newInputValue);
                 },
                 onChange: (_event, newAutoCompleteValue) => {
-                    setAutoCompleteValue(newAutoCompleteValue);
+                    setSelectedTenant(newAutoCompleteValue);
                 },
-                value: autoCompleteValue,
+                value: selectedTenant,
             }}
         />
     ) : (
