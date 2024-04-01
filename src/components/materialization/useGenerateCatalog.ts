@@ -21,6 +21,7 @@ import {
     useBinding_bindings,
     useBinding_fullSourceConfigs,
     useBinding_fullSourceErrorsExist,
+    useBinding_prefillBindingDependentState,
     useBinding_resetRediscoverySettings,
     useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
@@ -96,6 +97,8 @@ function useGenerateCatalog() {
     const resetRediscoverySettings = useBinding_resetRediscoverySettings();
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
+    const prefillBindingDependentState =
+        useBinding_prefillBindingDependentState();
 
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
@@ -246,6 +249,17 @@ function useGenerateCatalog() {
                     return Promise.reject(null);
                 }
 
+                // This needs to be called before mutate is called so that the
+                //  useServerUpdateRequireMonitor hook is not called more than
+                //  it needs to be. This is important because once the mutate is called
+                //  that changes the draft spec object and that triggers the hook.
+                prefillBindingDependentState(
+                    ENTITY_TYPE,
+                    [],
+                    draftSpecsResponse.data[0].spec.bindings,
+                    true
+                );
+
                 // Mutate the draft first so that we are not running
                 //  update _after_ the form is showing as "done" wit hthe update
                 await mutateDraftSpecs();
@@ -291,12 +305,13 @@ function useGenerateCatalog() {
             imageConnectorTagId,
             imagePath,
             persistedDraftId,
+            prefillBindingDependentState,
             processedEntityName,
             resetEditorState,
             resetRediscoverySettings,
-            resourceConfigs,
             resourceConfigErrorsExist,
             resourceConfigServerUpdateRequired,
+            resourceConfigs,
             serverEndpointConfigData,
             serverUpdateRequired,
             setCatalogName,

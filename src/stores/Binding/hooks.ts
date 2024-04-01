@@ -46,6 +46,13 @@ export const useBinding_hydrateState = () => {
     );
 };
 
+export const useBinding_prefillBindingDependentState = () => {
+    return useZustandStore<
+        BindingState,
+        BindingState['prefillBindingDependentState']
+    >(BindingStoreNames.GENERAL, (state) => state.prefillBindingDependentState);
+};
+
 export const useBinding_resetState = () => {
     return useZustandStore<BindingState, BindingState['resetState']>(
         BindingStoreNames.GENERAL,
@@ -204,13 +211,6 @@ export const useBinding_bindingErrorsExist = () => {
     );
 };
 
-export const useBinding_currentBinding = () => {
-    return useZustandStore<BindingState, BindingState['currentBinding']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.currentBinding
-    );
-};
-
 export const useBinding_setCurrentBinding = () => {
     return useZustandStore<BindingState, BindingState['setCurrentBinding']>(
         BindingStoreNames.GENERAL,
@@ -221,14 +221,14 @@ export const useBinding_setCurrentBinding = () => {
 export const useBinding_currentCollection = () => {
     return useZustandStore<BindingState, string | null>(
         BindingStoreNames.GENERAL,
-        (state) => state.currentBinding?.collection ?? null
+        useShallow((state) => state.currentBinding?.collection ?? null)
     );
 };
 
 export const useBinding_currentBindingUUID = () => {
     return useZustandStore<BindingState, string | null>(
         BindingStoreNames.GENERAL,
-        (state) => state.currentBinding?.uuid ?? null
+        useShallow((state) => state.currentBinding?.uuid ?? null)
     );
 };
 
