@@ -1,5 +1,6 @@
 import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { MessagePrefixes } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
@@ -99,7 +100,7 @@ const getInitialState = (
     setFormState: (newState) => {
         set(
             produce((state: EntityFormState) => {
-                const { formState } = get();
+                const { formState } = state;
 
                 if (
                     formState.status === FormStatus.INIT &&
@@ -109,7 +110,18 @@ const getInitialState = (
                     // If we are trying to go directly from init to tested/saved then
                     //  we are probably still running an async task that is not needed.
                     // Ex: enter edit materialization, click back quickly, and then  the test finishes
-                    logRocketConsole('FormState:Prevented');
+                    logRocketConsole(CustomEvents.FORM_STATE_PREVENTED);
+                    return;
+                }
+
+                if (
+                    formState.status === FormStatus.SAVING &&
+                    newState.status === FormStatus.TESTED
+                ) {
+                    // If we are here this means a user has started saving while a test was in progress.
+                    //  This almost always means that a user started running a save while the background
+                    //  test for field selection was still running.
+                    logRocketConsole(CustomEvents.FORM_STATE_SKIPPED);
                     return;
                 }
 
