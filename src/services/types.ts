@@ -20,7 +20,6 @@ export enum CustomEvents {
     FIELD_SELECTION_REFRESH_AUTO = 'Field_Selection_Refresh:Auto',
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
     FORM_STATE_PREVENTED = 'FormState:Prevented',
-    FORM_STATE_SKIPPED = 'FormState:Prevented',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
     GATEWAY_TOKEN_FAILED = 'Gateway_Auth_Token:CallFailed',
     GATEWAY_TOKEN_INVALID_PREFIX = 'Gateway_Auth_Token:InvalidPrefix',

@@ -110,7 +110,9 @@ const getInitialState = (
                     // If we are trying to go directly from init to tested/saved then
                     //  we are probably still running an async task that is not needed.
                     // Ex: enter edit materialization, click back quickly, and then  the test finishes
-                    logRocketConsole(CustomEvents.FORM_STATE_PREVENTED);
+                    logRocketConsole(CustomEvents.FORM_STATE_PREVENTED, {
+                        type: 'unknown',
+                    });
                     return;
                 }
 
@@ -121,7 +123,9 @@ const getInitialState = (
                     // If we are here this means a user has started saving while a test was in progress.
                     //  This almost always means that a user started running a save while the background
                     //  test for field selection was still running.
-                    logRocketConsole(CustomEvents.FORM_STATE_SKIPPED);
+                    logRocketConsole(CustomEvents.FORM_STATE_PREVENTED, {
+                        type: 'background',
+                    });
                     return;
                 }
 
