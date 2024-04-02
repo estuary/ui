@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { getStorageMappings } from 'api/storageMappings';
+import StorageMappingsGenerateButton from 'components/admin/Settings/StorageMappings/GenerateButton';
 import EntityTable from 'components/tables/EntityTable';
 import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { ReactNode, useMemo } from 'react';
@@ -68,6 +69,8 @@ function StorageMappingsTable({ header }: Props) {
                     selectableTableStoreName={
                         SelectTableStoreNames.STORAGE_MAPPINGS
                     }
+                    showToolbar
+                    toolbar={<StorageMappingsGenerateButton />}
                 />
             </TableHydrator>
         </Box>

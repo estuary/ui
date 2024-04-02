@@ -33,7 +33,7 @@ function Settings() {
             <PrefixAlerts />
 
             <Stack>
-                <Divider sx={{ mt: 2 }} />
+                <Divider sx={{ mt: 2, mb: 4 }} />
 
                 <StorageMappings />
             </Stack>
