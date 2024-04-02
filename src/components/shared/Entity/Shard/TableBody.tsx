@@ -81,7 +81,9 @@ function InformationTableBody({
                                 ],
                         }}
                     >
-                        <StatusIndicatorAndLabel shard={shard} />
+                        <TableCell width={250}>
+                            <StatusIndicatorAndLabel shard={shard} />
+                        </TableCell>
 
                         <TableCell>
                             <Typography>{shard.id}</Typography>

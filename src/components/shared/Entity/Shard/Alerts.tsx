@@ -67,7 +67,8 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
                         return (
                             <Accordion
                                 key={shardDetails.id}
-                                defaultExpanded // maybe check this to keep page smaller?{listLength === 1}
+                                // We only expand for errors. Otherwise the warnings are JUST for schema updating (Q2 2024)
+                                defaultExpanded={!showWarnings} // TODO (shard errors) :  maybe check this to keep page smaller?{listLength === 1}
                             >
                                 <AccordionSummary
                                     expandIcon={
