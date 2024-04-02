@@ -1046,7 +1046,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
-    'shardStatus.schema': `SCHEMA UPDATING`,
+    'shardStatus.schema': `SCHEMA UPDATING. This will automatically resolve.`,
     'shardStatus.idle': `PENDING`,
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,
