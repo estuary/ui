@@ -42,7 +42,8 @@ export interface BindingState
     prefillBindingDependentState: (
         entityType: Entity,
         liveBindings: Schema[],
-        draftedBindings?: Schema[]
+        draftedBindings?: Schema[],
+        rehydrating?: boolean
     ) => void;
 
     // The analog of resource config store action, `preFillEmptyCollections`.

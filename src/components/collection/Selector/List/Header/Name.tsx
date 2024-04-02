@@ -1,5 +1,6 @@
 import { TextField } from '@mui/material';
 import ClearInput from 'components/shared/Input/Clear';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -17,6 +18,20 @@ function CollectionSelectorHeaderName({
 }: Props) {
     const intl = useIntl();
 
+    // Need a local copy so as the user types the component does not force the
+    //  input focus to the end of the string.
+    const [localValue, setLocalValue] = useState(inputValue);
+
+    // Store off the update function to make sure both the onChange and onClear
+    //  update both the local and parent value
+    const updateParent = useCallback(
+        (newValue: any) => {
+            onChange(newValue);
+            setLocalValue(newValue);
+        },
+        [onChange]
+    );
+
     return (
         <TextField
             disabled={disabled}
@@ -30,18 +45,16 @@ function CollectionSelectorHeaderName({
             )}
             size="small"
             variant="outlined"
-            defaultValue={inputValue}
+            value={localValue}
             InputProps={{
                 endAdornment: (
                     <ClearInput
-                        show={Boolean(!disabled && inputValue)}
-                        onClear={onChange}
+                        show={Boolean(!disabled && localValue)}
+                        onClear={updateParent}
                     />
                 ),
             }}
-            onChange={(event) => {
-                onChange(event.target.value);
-            }}
+            onChange={(event) => updateParent(event.target.value)}
             sx={{
                 'width': '100%',
                 'my': 1,

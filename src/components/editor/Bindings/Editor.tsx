@@ -22,7 +22,10 @@ import { useEntityType } from 'context/EntityContext';
 import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_currentBinding } from 'stores/Binding/hooks';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_currentCollection,
+} from 'stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 
@@ -37,7 +40,8 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const initializeCollectionDraft = useInitializeCollectionDraft();
 
     // Binding Store
-    const currentBinding = useBinding_currentBinding();
+    const currentCollection = useBinding_currentCollection();
+    const currentBindingUUID = useBinding_currentBindingUUID();
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
@@ -60,24 +64,21 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
 
     const [activeTab, setActiveTab] = useState<number>(0);
     useEffect(() => {
-        if (
-            tabProps[activeTab].value === 'schema' &&
-            currentBinding?.collection
-        ) {
+        if (tabProps[activeTab].value === 'schema' && currentCollection) {
             setCurrentCatalog(null);
             setCollectionSpecs(null);
 
-            void initializeCollectionDraft(currentBinding.collection);
+            void initializeCollectionDraft(currentCollection);
         }
     }, [
         initializeCollectionDraft,
         setCollectionSpecs,
         setCurrentCatalog,
         activeTab,
-        currentBinding?.collection,
+        currentCollection,
     ]);
 
-    if (currentBinding) {
+    if (currentCollection && currentBindingUUID) {
         return (
             <Box sx={{ p: 1 }}>
                 <BindingsTabs
@@ -88,8 +89,8 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                 <Box sx={{ p: 1 }}>
                     {tabProps[activeTab].value === 'config' ? (
                         <ResourceConfig
-                            bindingUUID={currentBinding.uuid}
-                            collectionName={currentBinding.collection}
+                            bindingUUID={currentBindingUUID}
+                            collectionName={currentCollection}
                             readOnly={readOnly}
                         />
                     ) : collectionData || collectionData === null ? (
@@ -151,13 +152,11 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                 collectionData.belongsToDraft ? (
                                     <DraftSpecEditorHydrator
                                         entityType="collection"
-                                        entityName={currentBinding.collection}
+                                        entityName={currentCollection}
                                         localScope
                                     >
                                         <CollectionSchemaEditor
-                                            entityName={
-                                                currentBinding.collection
-                                            }
+                                            entityName={currentCollection}
                                             localZustandScope
                                         />
                                     </DraftSpecEditorHydrator>
