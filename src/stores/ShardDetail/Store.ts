@@ -103,13 +103,13 @@ const getEverythingForDictionary = (
             response.warnings = warnings;
 
             if (!hasInferredSchema) {
-                response.messageNoteId = undefined;
                 response.color = errorMain;
                 response.messageId = ShardStatusMessageIds.FAILED;
+                response.messageNoteId = undefined;
             } else {
-                response.messageNoteId = ShardStatusNoteIds.SCHEMA;
                 response.color = warningMain;
                 response.messageId = ShardStatusMessageIds.SCHEMA;
+                response.messageNoteId = ShardStatusNoteIds.SCHEMA;
             }
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             response.color = successMain;
