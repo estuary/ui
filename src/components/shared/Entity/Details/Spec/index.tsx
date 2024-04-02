@@ -3,6 +3,7 @@ import LiveSpecEditor from 'components/editor/LiveSpec';
 import ExternalLink from 'components/shared/ExternalLink';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { useEntityType } from 'context/EntityContext';
+import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { Code, TableRows } from 'iconoir-react';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -64,26 +65,7 @@ function Spec() {
                             <ToggleButtonGroup
                                 size="small"
                                 exclusive
-                                sx={{
-                                    '& .MuiToggleButton-root': {
-                                        '&:not(:first-of-type), &:not(:last-of-type)':
-                                            {
-                                                borderRadius: 0,
-                                            },
-                                        '&:first-of-type': {
-                                            borderTopLeftRadius: 4,
-                                            borderBottomLeftRadius: 4,
-                                            borderTopRightRadius: 0,
-                                            borderBottomRightRadius: 0,
-                                        },
-                                        '&:last-of-type': {
-                                            borderTopLeftRadius: 0,
-                                            borderBottomLeftRadius: 0,
-                                            borderTopRightRadius: 4,
-                                            borderBottomRightRadius: 4,
-                                        },
-                                    },
-                                }}
+                                sx={outlinedToggleButtonGroupStyling}
                             >
                                 <OutlinedToggleButton
                                     size="small"

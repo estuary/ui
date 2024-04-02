@@ -648,6 +648,26 @@ export const outlinedIconButtonStyling: SxProps<Theme> = {
     },
 };
 
+export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
+    '& .MuiToggleButton-root': {
+        '&:not(:first-of-type), &:not(:last-of-type)': {
+            borderRadius: 0,
+        },
+        '&:first-of-type': {
+            borderTopLeftRadius: 4,
+            borderBottomLeftRadius: 4,
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+        },
+        '&:last-of-type': {
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+            borderTopRightRadius: 4,
+            borderBottomRightRadius: 4,
+        },
+    },
+};
+
 // TODO (echarts) need to make a color service or something to
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order
