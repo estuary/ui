@@ -15,6 +15,10 @@ export enum ShardStatusMessageIds {
     NONE = 'shardStatus.none',
 }
 
+export enum ShardStatusNoteIds {
+    SCHEMA = 'shardStatus.schema.note',
+}
+
 export type ShardEntityTypes = Entity | 'derivation';
 
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
@@ -28,6 +32,7 @@ export interface TaskShardDetails {
     messageId: ShardStatusMessageIds;
     color: ShardStatusColor;
     disabled?: boolean;
+    messageNoteId?: ShardStatusNoteIds;
 
     // Newly added
     entityName?: string;
