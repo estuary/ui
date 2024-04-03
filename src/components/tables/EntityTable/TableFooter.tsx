@@ -8,6 +8,7 @@ import {
 import TablePaginationActions from '../PaginationActions';
 
 interface Props {
+    filterLabel: string;
     onPageChange: any;
     onRowsPerPageChange: any;
     page: number;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 function EntityTableFooter({
+    filterLabel,
     hide,
     onPageChange,
     onRowsPerPageChange,
@@ -43,6 +45,13 @@ function EntityTableFooter({
                         page={page}
                         onPageChange={onPageChange}
                         onRowsPerPageChange={onRowsPerPageChange}
+                        SelectProps={{
+                            // TODO (table filtering)
+                            // Same as the other one
+                            inputProps: {
+                                id: `table_pagination__${filterLabel}`,
+                            },
+                        }}
                     />
                 </TableRow>
             </TableFooter>
