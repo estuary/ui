@@ -24,7 +24,7 @@ function RowSelect({ disabled, isSelected, name }: Props) {
                 disabled={disabled}
                 inputProps={{
                     'aria-label': name,
-                    'id': `selected_${name}`,
+                    'id': `row-select__{name}`,
                 }}
             />
         </TableCell>
