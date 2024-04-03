@@ -8,7 +8,8 @@ import {
     useBinding_backfillAllBindings,
     useBinding_backfilledBindings,
     useBinding_collections,
-    useBinding_currentBinding,
+    useBinding_currentCollection,
+    useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
 } from 'stores/Binding/hooks';
 import {
@@ -33,7 +34,8 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     // Binding Store
-    const currentBinding = useBinding_currentBinding();
+    const currentCollection = useBinding_currentCollection();
+    const currentBindingUUID = useBinding_currentBindingUUID();
     const collections = useBinding_collections();
     const allBindingsDisabled = useBinding_allBindingsDisabled();
 
@@ -53,14 +55,14 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             return backfillAllBindings;
         }
 
-        return currentBinding?.uuid
-            ? backfilledBindings.includes(currentBinding.uuid)
+        return currentBindingUUID
+            ? backfilledBindings.includes(currentBindingUUID)
             : false;
     }, [
         backfillAllBindings,
         backfilledBindings,
         bindingIndex,
-        currentBinding?.uuid,
+        currentBindingUUID,
     ]);
 
     const value: BooleanString = useMemo(
@@ -83,10 +85,10 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 );
             }
 
-            if (currentBinding?.uuid) {
+            if (currentBindingUUID) {
                 return increment === 'true'
-                    ? !backfilledBindings.includes(currentBinding.uuid)
-                    : backfilledBindings.includes(currentBinding.uuid);
+                    ? !backfilledBindings.includes(currentBindingUUID)
+                    : backfilledBindings.includes(currentBindingUUID);
             }
 
             return false;
@@ -95,7 +97,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             backfillAllBindings,
             backfilledBindings,
             bindingIndex,
-            currentBinding?.uuid,
+            currentBindingUUID,
         ]
     );
 
@@ -106,10 +108,13 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
             if (draftSpec && serverUpdateRequired) {
                 setFormState({ status: FormStatus.UPDATING, error: null });
 
-                const singleBindingUpdate = bindingIndex > -1 && currentBinding;
+                const singleBindingUpdate =
+                    bindingIndex > -1 &&
+                    currentCollection &&
+                    currentBindingUUID;
 
                 const bindingMetadata: BindingMetadata[] = singleBindingUpdate
-                    ? [{ collection: currentBinding.collection, bindingIndex }]
+                    ? [{ collection: currentCollection, bindingIndex }]
                     : [];
 
                 updateBackfillCounter(
@@ -119,7 +124,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 ).then(
                     () => {
                         const targetBindingUUID = singleBindingUpdate
-                            ? currentBinding.uuid
+                            ? currentBindingUUID
                             : undefined;
 
                         setBackfilledBindings(increment, targetBindingUUID);
@@ -139,7 +144,8 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
         },
         [
             bindingIndex,
-            currentBinding,
+            currentBindingUUID,
+            currentCollection,
             draftSpec,
             evaluateServerDifferences,
             setBackfilledBindings,

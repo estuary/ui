@@ -54,6 +54,7 @@ function AddPaymentMethod({
                 sx={{ padding: 2 }}
                 open={show}
                 onClose={() => setOpen(false)}
+                data-private
             >
                 <DialogTitle>
                     <FormattedMessage id="admin.billing.addPaymentMethods.title" />

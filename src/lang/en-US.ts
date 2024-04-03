@@ -1051,6 +1051,7 @@ const ShardStatus: ResolvedIntlConfig['messages'] = {
     'shardStatus.primary': `PRIMARY`,
     'shardStatus.failed': `FAILED`,
     'shardStatus.schema': `SCHEMA UPDATING`,
+    'shardStatus.schema.note': `This will automatically resolve.`,
     'shardStatus.idle': `PENDING`,
     'shardStatus.standby': `PENDING`,
     'shardStatus.backfill': `PENDING`,

@@ -1,6 +1,6 @@
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Tooltip } from '@mui/material';
+import StatusIndicatorAndLabel from 'components/shared/Entity/Shard/StatusIndicatorAndLabel';
 import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
@@ -55,27 +55,11 @@ function EntityStatus({ name, taskTypes }: Props) {
 
     const tooltipContent = useMemo(() => {
         return shards.map((shard, index) => (
-            <Box
+            <StatusIndicatorAndLabel
+                smallMargin
+                shard={shard}
                 key={`${index}-shard-status-tooltip`}
-                sx={{ display: 'flex', alignItems: 'center' }}
-            >
-                <span
-                    style={{
-                        height: 12,
-                        width: 12,
-                        marginRight: 4,
-                        border: shard.disabled ? `solid 2px ${shard.color}` : 0,
-                        backgroundColor: shard.disabled ? '' : shard.color,
-                        borderRadius: 50,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                    }}
-                />
-
-                <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                    <FormattedMessage id={shard.messageId} />
-                </Typography>
-            </Box>
+            />
         ));
     }, [shards]);
 

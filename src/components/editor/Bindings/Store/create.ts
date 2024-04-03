@@ -157,6 +157,7 @@ const getInitialMiscData = (): Pick<
     | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
+    | 'schemaUpdating'
     | 'editModeEnabled'
     | 'inferSchemaResponse'
     | 'inferSchemaResponseError'
@@ -175,6 +176,7 @@ const getInitialMiscData = (): Pick<
     schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
+    schemaUpdating: false,
     editModeEnabled: false,
     inferSchemaResponse: null,
     inferSchemaResponse_Keys: [],
@@ -363,6 +365,16 @@ const getInitialState = (
         );
     },
 
+    setSchemaUpdating: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.schemaUpdating = value;
+            }),
+            false,
+            'Schema Updating Set'
+        );
+    },
+
     // TODO (optimization): Equip stores with the proper tools to clean up after themselves; this includes managing the promises they create.
     updateSchema: (currentCollection, persistedDraftId) => {
         const {
@@ -370,11 +382,13 @@ const getInitialState = (
             schemaUpdateErrored,
             setSchemaUpdateErrored,
             setSchemaUpdated,
+            setSchemaUpdating,
             setCollectionData,
         } = get();
 
         if (currentCollection && collectionData) {
             setSchemaUpdated(false);
+            setSchemaUpdating(true);
 
             return evaluateCollectionData(
                 persistedDraftId,
@@ -388,10 +402,12 @@ const getInitialState = (
                     setCollectionData(response);
 
                     setSchemaUpdated(true);
+                    setSchemaUpdating(false);
                 },
                 () => {
                     setSchemaUpdateErrored(true);
                     setSchemaUpdated(true);
+                    setSchemaUpdating(false);
                 }
             );
         } else {

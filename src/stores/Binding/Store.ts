@@ -462,11 +462,17 @@ const getInitialState = (
     prefillBindingDependentState: (
         entityType,
         liveBindings,
-        draftedBindings
+        draftedBindings,
+        rehydrating
     ) => {
         set(
             produce((state: BindingState) => {
                 const bindings = draftedBindings ?? liveBindings;
+
+                if (rehydrating) {
+                    state.bindings = {};
+                    state.resourceConfigs = {};
+                }
 
                 bindings.forEach((binding, index) => {
                     const collection = getCollectionName(binding);
@@ -479,7 +485,7 @@ const getInitialState = (
                         initializeFullSourceConfig(state, binding, UUID);
                     }
 
-                    if (draftedBindings) {
+                    if (draftedBindings && !rehydrating) {
                         // Prefill backfilled collections
                         const draftedBackfillCounter =
                             getBackfillCounter(binding);

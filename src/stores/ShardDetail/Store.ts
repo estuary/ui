@@ -14,6 +14,7 @@ import {
     ShardEntityTypes,
     ShardStatusColor,
     ShardStatusMessageIds,
+    ShardStatusNoteIds,
     TaskShardDetails,
 } from './types';
 
@@ -101,10 +102,15 @@ const getEverythingForDictionary = (
             response.errors = errors;
             response.warnings = warnings;
 
-            response.color = hasInferredSchema ? warningMain : errorMain;
-            response.messageId = hasInferredSchema
-                ? ShardStatusMessageIds.SCHEMA
-                : ShardStatusMessageIds.FAILED;
+            if (!hasInferredSchema) {
+                response.color = errorMain;
+                response.messageId = ShardStatusMessageIds.FAILED;
+                response.messageNoteId = undefined;
+            } else {
+                response.color = warningMain;
+                response.messageId = ShardStatusMessageIds.SCHEMA;
+                response.messageNoteId = ShardStatusNoteIds.SCHEMA;
+            }
         } else if (statusCodes.find((code) => code === 'PRIMARY')) {
             response.color = successMain;
             response.messageId = ShardStatusMessageIds.PRIMARY;
