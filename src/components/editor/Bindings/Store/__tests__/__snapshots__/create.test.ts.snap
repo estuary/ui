@@ -22,6 +22,7 @@ exports[`useBindingsEditorStore > store will default itself properly 1`] = `
   "schemaInferenceDisabled": false,
   "schemaUpdateErrored": false,
   "schemaUpdated": true,
+  "schemaUpdating": false,
   "setCollectionData": [Function],
   "setCollectionInitializationAlert": [Function],
   "setDocumentsRead": [Function],
@@ -33,6 +34,7 @@ exports[`useBindingsEditorStore > store will default itself properly 1`] = `
   "setSchemaInferenceDisabled": [Function],
   "setSchemaUpdateErrored": [Function],
   "setSchemaUpdated": [Function],
+  "setSchemaUpdating": [Function],
   "updateSchema": [Function],
 }
 `;

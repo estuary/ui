@@ -73,6 +73,10 @@ export const useBindingsEditorStore_updateSchema = () => {
     return useBindingsEditorStore((state) => state.updateSchema);
 };
 
+export const useBindingsEditorStore_schemaUpdating = () => {
+    return useBindingsEditorStore((state) => state.schemaUpdating);
+};
+
 export const useBindingsEditorStore_schemaUpdated = () => {
     return useBindingsEditorStore((state) => state.schemaUpdated);
 };

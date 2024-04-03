@@ -22,6 +22,9 @@ export interface BindingsEditorState {
         persistedDraftId: string | null
     ) => Promise<void> | null;
 
+    schemaUpdating: boolean;
+    setSchemaUpdating: (value: BindingsEditorState['schemaUpdating']) => void;
+
     schemaUpdated: boolean;
     setSchemaUpdated: (value: BindingsEditorState['schemaUpdated']) => void;
 
