@@ -55,8 +55,8 @@ const useCollectionColumns = (): ColumnProps[] => {
     return useMemo(() => {
         if (hasDetails) {
             const response = [...defaultColumns];
-            response.splice(2, 0, writtenStatsHeader);
             response.splice(2, 0, readStatsHeader);
+            response.splice(2, 0, writtenStatsHeader);
             return response;
         } else {
             return defaultColumns;
