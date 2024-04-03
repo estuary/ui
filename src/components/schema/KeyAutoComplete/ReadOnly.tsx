@@ -3,11 +3,13 @@ import {
     Grid,
     IconButton,
     ListItem,
+    Skeleton,
     Stack,
     Tooltip,
     Typography,
 } from '@mui/material';
 import {
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
@@ -21,39 +23,63 @@ interface Props {
     value: string[] | null;
 }
 
+function Header() {
+    return (
+        <Stack
+            direction="row"
+            sx={{
+                alignItems: 'center',
+                alignContent: 'center',
+            }}
+        >
+            <Typography variant="subtitle1" component="div">
+                <FormattedMessage id="schemaEditor.key.label" />
+            </Typography>
+            <Tooltip
+                leaveDelay={250}
+                title={<FormattedMessage id="schemaEditor.key.helper" />}
+                placement="right"
+            >
+                <IconButton>
+                    <HelpCircle />
+                </IconButton>
+            </Tooltip>
+        </Stack>
+    );
+}
+
 function ReadOnly({ value }: Props) {
     const intl = useIntl();
     const valueEmpty = !value || !hasLength(value);
 
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
+
+    const inferSchemaResponseDoneProcessing =
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+
     const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
 
     // TODO (collection editor) move these helper vars into the store
     const noUsableKeys = !hasLength(keys);
 
+    if (!inferSchemaResponseDoneProcessing) {
+        return (
+            <Grid item xs={12}>
+                <Header />
+
+                <Stack direction="row" spacing={1}>
+                    <Skeleton width={50} />
+                    <Skeleton width={50} />
+                    <Skeleton width={50} />
+                </Stack>
+            </Grid>
+        );
+    }
+
     return (
         <Grid item xs={12}>
-            <Stack
-                direction="row"
-                sx={{
-                    alignItems: 'center',
-                    alignContent: 'center',
-                }}
-            >
-                <Typography variant="subtitle1" component="div">
-                    <FormattedMessage id="schemaEditor.key.label" />
-                </Typography>
-                <Tooltip
-                    leaveDelay={250}
-                    title={<FormattedMessage id="schemaEditor.key.helper" />}
-                    placement="right"
-                >
-                    <IconButton>
-                        <HelpCircle />
-                    </IconButton>
-                </Tooltip>
-            </Stack>
+            <Header />
 
             {valueEmpty ? (
                 <AlertBox

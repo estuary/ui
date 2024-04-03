@@ -4,6 +4,7 @@ import {
     useBindingsEditorStore_resetState,
 } from 'components/editor/Bindings/Store/hooks';
 import LiveSpecEditor from 'components/editor/LiveSpec';
+import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
@@ -50,17 +51,20 @@ function CollectionSpecViews({ presentation }: Props) {
         resetState,
     ]);
 
-    if (inferSchemaResponseDoneProcessing) {
-        return presentation === 'table' ? (
+    if (presentation === 'table') {
+        return (
             <>
                 <ReadOnly value={currentCatalog?.spec.key} />
+
                 <PropertiesViewer disabled />
             </>
-        ) : (
-            <LiveSpecEditor localZustandScope singleSpec />
         );
     } else {
-        return null;
+        return inferSchemaResponseDoneProcessing ? (
+            <LiveSpecEditor localZustandScope singleSpec />
+        ) : (
+            <MonacoEditorSkeleton />
+        );
     }
 }
 
