@@ -1155,6 +1155,9 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.hour': `{interval} {interval, plural, one {Hour} other {Hours}}`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.intervalOptions.day': `{interval} {interval, plural, one {Day} other {Days}}`,
     'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption': `None`,
+
+    'details.spec.cta.formatted': `Table`,
+    'details.spec.cta.raw': `Code`,
 };
 
 const Docs: ResolvedIntlConfig['messages'] = {

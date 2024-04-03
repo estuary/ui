@@ -4,7 +4,6 @@ import ExternalLink from 'components/shared/ExternalLink';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { useEntityType } from 'context/EntityContext';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
-import { Code, TableRows } from 'iconoir-react';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import CollectionSpecViews from './CollectionViews';
@@ -75,7 +74,7 @@ function Spec() {
                                         evaluatePresentation(value, 'code')
                                     }
                                 >
-                                    <TableRows />
+                                    <FormattedMessage id="details.spec.cta.formatted" />
                                 </OutlinedToggleButton>
 
                                 <OutlinedToggleButton
@@ -86,7 +85,7 @@ function Spec() {
                                         evaluatePresentation(value, 'table')
                                     }
                                 >
-                                    <Code />
+                                    <FormattedMessage id="details.spec.cta.raw" />
                                 </OutlinedToggleButton>
                             </ToggleButtonGroup>
                         ) : null}
