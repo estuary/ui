@@ -1,51 +1,17 @@
-import {
-    Chip,
-    Grid,
-    IconButton,
-    ListItem,
-    Skeleton,
-    Stack,
-    Tooltip,
-    Typography,
-} from '@mui/material';
+import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import SchemaKeyHeader from './Header';
 import { keyIsValidOption } from './shared';
 
 interface Props {
     value: string[] | null;
-}
-
-function Header() {
-    return (
-        <Stack
-            direction="row"
-            sx={{
-                alignItems: 'center',
-                alignContent: 'center',
-            }}
-        >
-            <Typography variant="subtitle1" component="div">
-                <FormattedMessage id="schemaEditor.key.label" />
-            </Typography>
-            <Tooltip
-                leaveDelay={250}
-                title={<FormattedMessage id="schemaEditor.key.helper" />}
-                placement="right"
-            >
-                <IconButton>
-                    <HelpCircle />
-                </IconButton>
-            </Tooltip>
-        </Stack>
-    );
 }
 
 function ReadOnly({ value }: Props) {
@@ -66,7 +32,7 @@ function ReadOnly({ value }: Props) {
     if (!inferSchemaResponseDoneProcessing) {
         return (
             <Grid item xs={12}>
-                <Header />
+                <SchemaKeyHeader />
 
                 <Stack direction="row" spacing={1}>
                     <Skeleton width={50} />
@@ -79,7 +45,7 @@ function ReadOnly({ value }: Props) {
 
     return (
         <Grid item xs={12}>
-            <Header />
+            <SchemaKeyHeader />
 
             {valueEmpty ? (
                 <AlertBox
