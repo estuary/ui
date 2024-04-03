@@ -25,10 +25,14 @@ interface Props {
 }
 
 function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
-    const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
-
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const statsFilter = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['statsFilter']
+    >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.get);
+    console.log('statsFilter', statsFilter);
 
     const setStatsFilter = useZustandStore<
         SelectableTableStore,
@@ -49,7 +53,6 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
         },
         setFilter: (option: StatsFilter) => {
             setStatsFilter(option);
-            setCurrentOption(option);
             handlers.closeMenu();
         },
     };
@@ -81,7 +84,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 disabled={disabled}
                 sx={{ ...linkButtonSx }}
             >
-                <FormattedMessage id={`filter.time.${currentOption}`} />
+                <FormattedMessage id={`filter.time.${statsFilter}`} />
             </Button>
 
             <Menu

@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     read?: boolean;
-    val?: number | null;
+    val?: number | null | undefined;
 }
 
 // TODO (stats) we can combine this with the Docs component.

@@ -19,14 +19,28 @@ const defaultColumns: ColumnProps[] = [
     },
 ];
 
-const statsHeader: ColumnProps = {
+const writtenStatsHeader: ColumnProps = {
     field: null,
     cols: 2,
     renderHeader: (index, selectableTableStoreName) => {
         return (
             <StatsHeader
-                key={`collection-statsHeader-${index}`}
+                key={`collection-writtenStatsHeader-${index}`}
                 header="entityTable.stats.written"
+                selectableTableStoreName={selectableTableStoreName}
+            />
+        );
+    },
+};
+
+const readStatsHeader: ColumnProps = {
+    field: null,
+    cols: 2,
+    renderHeader: (index, selectableTableStoreName) => {
+        return (
+            <StatsHeader
+                key={`collection-readStatsHeader-${index}`}
+                header="entityTable.stats.read"
                 selectableTableStoreName={selectableTableStoreName}
             />
         );
@@ -41,7 +55,8 @@ const useCollectionColumns = (): ColumnProps[] => {
     return useMemo(() => {
         if (hasDetails) {
             const response = [...defaultColumns];
-            response.splice(2, 0, statsHeader);
+            response.splice(2, 0, writtenStatsHeader);
+            response.splice(2, 0, readStatsHeader);
             return response;
         } else {
             return defaultColumns;
