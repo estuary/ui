@@ -1,20 +1,13 @@
+import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 import {
-    Chip,
-    Grid,
-    IconButton,
-    ListItem,
-    Stack,
-    Tooltip,
-    Typography,
-} from '@mui/material';
-import {
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
 } from 'components/editor/Bindings/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import SchemaKeyHeader from './Header';
 import { keyIsValidOption } from './shared';
 
 interface Props {
@@ -27,33 +20,32 @@ function ReadOnly({ value }: Props) {
 
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
+
+    const inferSchemaResponseDoneProcessing =
+        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+
     const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
 
     // TODO (collection editor) move these helper vars into the store
     const noUsableKeys = !hasLength(keys);
 
+    if (!inferSchemaResponseDoneProcessing) {
+        return (
+            <Grid item xs={12}>
+                <SchemaKeyHeader />
+
+                <Stack direction="row" spacing={1}>
+                    <Skeleton width={50} />
+                    <Skeleton width={50} />
+                    <Skeleton width={50} />
+                </Stack>
+            </Grid>
+        );
+    }
+
     return (
         <Grid item xs={12}>
-            <Stack
-                direction="row"
-                sx={{
-                    alignItems: 'center',
-                    alignContent: 'center',
-                }}
-            >
-                <Typography variant="subtitle1" component="div">
-                    <FormattedMessage id="schemaEditor.key.label" />
-                </Typography>
-                <Tooltip
-                    leaveDelay={250}
-                    title={<FormattedMessage id="schemaEditor.key.helper" />}
-                    placement="right"
-                >
-                    <IconButton>
-                        <HelpCircle />
-                    </IconButton>
-                </Tooltip>
-            </Stack>
+            <SchemaKeyHeader />
 
             {valueEmpty ? (
                 <AlertBox
