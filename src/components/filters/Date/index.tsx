@@ -4,7 +4,6 @@ import {
     IconButton,
     ListItem,
     Menu,
-    MenuItem,
     Stack,
     Typography,
 } from '@mui/material';
@@ -18,6 +17,7 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import DateFilterOption from './FilterOption';
 
 interface Props {
     header: string;
@@ -57,6 +57,11 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
             setStatsFilter(option);
             handlers.closeMenu();
         },
+    };
+
+    const optionProps = {
+        currentOption: statsFilter,
+        onClick: handlers.setFilter,
     };
 
     return (
@@ -104,42 +109,12 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                     </Typography>
                 </ListItem>
                 <Divider />
-                <MenuItem
-                    onClick={() => handlers.setFilter('today')}
-                    selected={Boolean(statsFilter === 'today')}
-                >
-                    <FormattedMessage id="filter.time.today" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handlers.setFilter('yesterday')}
-                    selected={Boolean(statsFilter === 'yesterday')}
-                >
-                    <FormattedMessage id="filter.time.yesterday" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handlers.setFilter('thisWeek')}
-                    selected={Boolean(statsFilter === 'thisWeek')}
-                >
-                    <FormattedMessage id="filter.time.thisWeek" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handlers.setFilter('lastWeek')}
-                    selected={Boolean(statsFilter === 'lastWeek')}
-                >
-                    <FormattedMessage id="filter.time.lastWeek" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handlers.setFilter('thisMonth')}
-                    selected={Boolean(statsFilter === 'thisMonth')}
-                >
-                    <FormattedMessage id="filter.time.thisMonth" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handlers.setFilter('lastMonth')}
-                    selected={Boolean(statsFilter === 'lastMonth')}
-                >
-                    <FormattedMessage id="filter.time.lastMonth" />
-                </MenuItem>
+                <DateFilterOption {...optionProps} option="today" />
+                <DateFilterOption {...optionProps} option="yesterday" />
+                <DateFilterOption {...optionProps} option="thisWeek" />
+                <DateFilterOption {...optionProps} option="lastWeek" />
+                <DateFilterOption {...optionProps} option="thisMonth" />
+                <DateFilterOption {...optionProps} option="lastMonth" />
             </Menu>
         </Stack>
     );
