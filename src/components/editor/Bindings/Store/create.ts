@@ -439,7 +439,7 @@ const getInitialState = (
                     state.inferSchemaResponseDoneProcessing = true;
                 }),
                 false,
-                'Infere Schema Populated'
+                'Inferred Schema Populated'
             );
         };
 
