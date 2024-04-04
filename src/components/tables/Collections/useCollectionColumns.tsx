@@ -4,7 +4,7 @@ import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
 
-const defaultColumns: ColumnProps[] = [
+const defaultColumnsStart: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: '',
@@ -13,25 +13,25 @@ const defaultColumns: ColumnProps[] = [
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },
+];
+
+const defaultColumnsEnd: ColumnProps[] = [
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
     },
 ];
 
-const writtenStatsHeader: ColumnProps = {
-    field: null,
-    cols: 2,
-    renderHeader: (index, selectableTableStoreName) => {
-        return (
-            <StatsHeader
-                key={`collection-writtenStatsHeader-${index}`}
-                header="entityTable.stats.written"
-                selectableTableStoreName={selectableTableStoreName}
-            />
-        );
+const writtenStatsHeader: ColumnProps[] = [
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.written',
     },
-};
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.written.docs',
+    },
+];
 
 const readStatsHeader: ColumnProps = {
     field: null,
@@ -54,12 +54,14 @@ const useCollectionColumns = (): ColumnProps[] => {
 
     return useMemo(() => {
         if (hasDetails) {
-            const response = [...defaultColumns];
-            response.splice(2, 0, readStatsHeader);
-            response.splice(2, 0, writtenStatsHeader);
-            return response;
+            return [
+                ...defaultColumnsStart,
+                ...writtenStatsHeader,
+                readStatsHeader,
+                ...defaultColumnsEnd,
+            ];
         } else {
-            return defaultColumns;
+            return [...defaultColumnsStart, ...defaultColumnsEnd];
         }
     }, [hasDetails]);
 };
