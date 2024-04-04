@@ -1,4 +1,5 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { TableIntlConfig, TableState } from 'types';
 import {
@@ -7,7 +8,6 @@ import {
     getEmptyTableMessage,
     getTableComponents,
 } from 'utils/table-utils';
-import { useMemo } from 'react';
 import TableLoadingRows from '../Loading';
 import { ColumnProps } from './types';
 
@@ -43,13 +43,13 @@ function EntityTableBody({
 
     return (
         <TableBody component={tbodyComponent}>
-            {rows ? (
-                rows
-            ) : loading ? (
+            {loading ? (
                 <TableLoadingRows
                     columnKeys={columnKeys}
                     enableDivRendering={enableDivRendering}
                 />
+            ) : rows ? (
+                rows
             ) : (
                 <TableRow component={trComponent}>
                     <TableCell
