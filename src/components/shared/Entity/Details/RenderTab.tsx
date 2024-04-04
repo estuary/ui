@@ -1,8 +1,8 @@
 import History from './History';
+import Ops from './Ops';
 import Overview from './Overview';
 import Spec from './Spec';
 import { useDetailsPage } from './context';
-import Ops from './Ops';
 
 function RenderTab() {
     const page = useDetailsPage();
