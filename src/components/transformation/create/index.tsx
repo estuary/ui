@@ -3,12 +3,12 @@ import {
     Stack,
     Step,
     StepConnector,
-    stepConnectorClasses,
     StepLabel,
     Stepper,
-    styled,
     Theme,
     Typography,
+    stepConnectorClasses,
+    styled,
     useMediaQuery,
 } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
@@ -20,7 +20,11 @@ import LegacySingleStep from 'components/transformation/create/legacy/SingleStep
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBinding_collections } from 'stores/Binding/hooks';
+import BindingHydrator from 'stores/Binding/Hydrator';
+import {
+    useBinding_collections,
+    useBinding_hydrated,
+} from 'stores/Binding/hooks';
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
@@ -64,6 +68,8 @@ function TransformationCreate({ postWindowOpen }: Props) {
         [collections]
     );
 
+    const collectionsHydrated = useBinding_hydrated();
+
     return (
         <Box
             sx={{
@@ -99,7 +105,13 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
-                    <BindingSelector height={370} disableSelect />
+                    <BindingHydrator>
+                        <BindingSelector
+                            height={370}
+                            disableSelect
+                            readOnly={!collectionsHydrated}
+                        />
+                    </BindingHydrator>
                 </LegacyStepWrapper>
 
                 <Box

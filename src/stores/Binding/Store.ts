@@ -245,7 +245,7 @@ const getInitialState = (
                         if (!emptyCollections.includes(datum.catalog_name)) {
                             emptyCollections.push(datum.catalog_name);
                         }
-                    } else {
+                    } else if (Object.hasOwn(datum, 'writes_to')) {
                         datum.writes_to.forEach((collection) => {
                             if (!emptyCollections.includes(collection)) {
                                 emptyCollections.push(collection);

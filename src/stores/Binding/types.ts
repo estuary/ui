@@ -1,5 +1,5 @@
 import { BooleanString } from 'components/editor/Bindings/Backfill';
-import { LiveSpecsExt_MaterializeCapture } from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
@@ -48,7 +48,7 @@ export interface BindingState
 
     // The analog of resource config store action, `preFillEmptyCollections`.
     addEmptyBindings: (
-        data: LiveSpecsExt_MaterializeCapture[] | null,
+        data: LiveSpecsExt_MaterializeOrTransform[] | null,
         rehydrating?: boolean
     ) => void;
 
@@ -137,7 +137,7 @@ export interface BindingState
         entityType: Entity,
         connectorTagId: string,
         rehydrating?: boolean
-    ) => Promise<LiveSpecsExt_MaterializeCapture[] | null>;
+    ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;
 
     resetState: (keepCollections?: boolean, resetActive?: boolean) => void;
 }

@@ -13,7 +13,7 @@ export interface LiveSpecsExtQuery {
     last_pub_id: string;
 }
 
-export interface LiveSpecsExt_MaterializeCapture {
+export interface LiveSpecsExt_MaterializeOrTransform {
     catalog_name: string;
     spec_type: LiveSpecsExtQuery['spec_type'];
     writes_to: LiveSpecsExtQuery['writes_to'];
