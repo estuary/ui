@@ -38,7 +38,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     useEffect(() => {
         if (
             (workflow && connectorTagId.length > 0) ||
-            entityType === 'collection'
+            workflow === 'collection_create'
         ) {
             setActive(true);
             hydrateState(
