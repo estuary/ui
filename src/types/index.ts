@@ -226,6 +226,12 @@ export interface UserGrants {
     detail: string | null;
 }
 
+export interface UserGrantsTenantGuard {
+    id: string;
+    // FILTERING TYPES HACK
+    ['user_id']: undefined;
+}
+
 // InferredSchemaFlowDocument {}
 
 export interface InferredSchemas {
