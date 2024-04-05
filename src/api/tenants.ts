@@ -8,7 +8,7 @@ import {
 import { Tenants } from 'types';
 
 const COLUMNS = [
-    'collections_quota',
+    // 'collections_quota',
     'gcm_account_id',
     'payment_provider',
     'tasks_quota',
