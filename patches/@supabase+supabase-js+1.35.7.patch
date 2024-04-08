@@ -1,8 +1,36 @@
 diff --git a/node_modules/@supabase/supabase-js/dist/main/SupabaseClient.js b/node_modules/@supabase/supabase-js/dist/main/SupabaseClient.js
-index 8d78eae..5025637 100644
+index 8d78eae..f189e3c 100644
 --- a/node_modules/@supabase/supabase-js/dist/main/SupabaseClient.js
 +++ b/node_modules/@supabase/supabase-js/dist/main/SupabaseClient.js
 @@ -57,14 +57,15 @@ class SupabaseClient {
+         this.realtimeUrl = `${_supabaseUrl}/realtime/v1`.replace('http', 'ws');
+         this.authUrl = `${_supabaseUrl}/auth/v1`;
+         this.storageUrl = `${_supabaseUrl}/storage/v1`;
+-        const isPlatform = _supabaseUrl.match(/(supabase\.co)|(supabase\.in)/);
+-        if (isPlatform) {
+-            const urlParts = _supabaseUrl.split('.');
+-            this.functionsUrl = `${urlParts[0]}.functions.${urlParts[1]}.${urlParts[2]}`;
+-        }
+-        else {
+-            this.functionsUrl = `${_supabaseUrl}/functions/v1`;
+-        }
++        this.functionsUrl = `${_supabaseUrl}/functions/v1`
++        // const isPlatform = _supabaseUrl.match(/(supabase\.co)|(supabase\.in)/);
++        // if (isPlatform) {
++        //     const urlParts = _supabaseUrl.split('.');
++        //     this.functionsUrl = `${urlParts[0]}.functions.${urlParts[1]}.${urlParts[2]}`;
++        // }
++        // else {
++        //     this.functionsUrl = `${_supabaseUrl}/functions/v1`;
++        // }
+         this.schema = settings.schema;
+         this.multiTab = settings.multiTab;
+         this.fetch = settings.fetch;
+diff --git a/node_modules/@supabase/supabase-js/dist/module/SupabaseClient.js b/node_modules/@supabase/supabase-js/dist/module/SupabaseClient.js
+index 4162487..ebf6562 100644
+--- a/node_modules/@supabase/supabase-js/dist/module/SupabaseClient.js
++++ b/node_modules/@supabase/supabase-js/dist/module/SupabaseClient.js
+@@ -55,14 +55,15 @@ export default class SupabaseClient {
          this.realtimeUrl = `${_supabaseUrl}/realtime/v1`.replace('http', 'ws');
          this.authUrl = `${_supabaseUrl}/auth/v1`;
          this.storageUrl = `${_supabaseUrl}/storage/v1`;
