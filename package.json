@@ -19,6 +19,7 @@
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "maintenance:off": "rm public/maintenance",
         "maintenance:on": "touch public/maintenance",
+        "postinstall": "patch-package",
         "pre_commit": "npm run lint-staged && npm run licenses",
         "prepare": "husky install",
         "preview": "vite preview",
