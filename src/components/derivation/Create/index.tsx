@@ -7,6 +7,7 @@ import TransformationCreate from 'components/transformation/create';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+import BindingHydrator from 'stores/Binding/Hydrator';
 import { useBinding_resetState } from 'stores/Binding/hooks';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 
@@ -62,17 +63,19 @@ function DerivationCreate() {
                     </Collapse>
 
                     <Collapse in={!showConfirmation}>
-                        <TransformationCreate
-                            key={newCollectionKey}
-                            postWindowOpen={(gitPodWindow) => {
-                                // If there is a window object we know the browser at least let us open it up.
-                                //  This does not 100% prove that GitPod loaded correctly
-                                if (gitPodWindow) {
-                                    setShowConfirmation(true);
-                                }
-                            }}
-                            closeDialog={closeDialog}
-                        />
+                        <BindingHydrator>
+                            <TransformationCreate
+                                key={newCollectionKey}
+                                postWindowOpen={(gitPodWindow) => {
+                                    // If there is a window object we know the browser at least let us open it up.
+                                    //  This does not 100% prove that GitPod loaded correctly
+                                    if (gitPodWindow) {
+                                        setShowConfirmation(true);
+                                    }
+                                }}
+                                closeDialog={closeDialog}
+                            />
+                        </BindingHydrator>
                     </Collapse>
                 </AdminCapabilityGuard>
             </DialogContent>

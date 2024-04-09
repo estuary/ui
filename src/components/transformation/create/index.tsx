@@ -20,7 +20,6 @@ import LegacySingleStep from 'components/transformation/create/legacy/SingleStep
 import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import BindingHydrator from 'stores/Binding/Hydrator';
 import {
     useBinding_collections,
     useBinding_hydrated,
@@ -105,13 +104,11 @@ function TransformationCreate({ postWindowOpen }: Props) {
 
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
-                    <BindingHydrator>
-                        <BindingSelector
-                            height={370}
-                            disableSelect
-                            readOnly={!collectionsHydrated}
-                        />
-                    </BindingHydrator>
+                    <BindingSelector
+                        height={370}
+                        disableSelect
+                        readOnly={!collectionsHydrated}
+                    />
                 </LegacyStepWrapper>
 
                 <Box
