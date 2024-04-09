@@ -1,7 +1,7 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 
 interface Props {
@@ -44,12 +44,7 @@ const Docs = ({ read, val }: Props) => {
                                     : null,
                         }}
                     >
-                        <FormattedMessage
-                            id="entityTable.stats.docs"
-                            values={{
-                                docCount: number,
-                            }}
-                        />
+                        {number}
                     </Typography>
                 </Tooltip>
             </Box>
