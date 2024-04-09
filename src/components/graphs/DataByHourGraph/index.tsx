@@ -33,8 +33,10 @@ interface Props {
 // These are keys that are used all over. Not typing them as Echarts typing within
 //  dataset complained when I tried
 const TIME = 'timestamp';
-const DOCS = 'docs';
-const BYTES = 'bytes';
+const DOCS_BY = 'docs_by';
+const DOCS_TO = 'docs_to';
+const BYTES_BY = 'bytes_by';
+const BYTES_TO = 'bytes_to';
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
@@ -106,18 +108,11 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
     // Create a dataset
     const scopedDataSet = useMemo(() => {
         return stats.map((stat) => {
-            // Total up docs. Mainly for collections that are derivations
-            //  eventually we might split this data up into multiple lines
-            const totalDocs = stat.docs_to
-                ? stat.docs_to + stat.docs_by
-                : stat.docs_by;
-            const totalBytes = stat.bytes_to
-                ? stat.bytes_to + stat.bytes_by
-                : stat.bytes_by;
-
             return {
-                [DOCS]: totalDocs,
-                [BYTES]: totalBytes,
+                [DOCS_BY]: stat.docs_by,
+                [DOCS_TO]: stat.docs_to,
+                [BYTES_BY]: stat.bytes_by,
+                [BYTES_TO]: stat.bytes_to,
                 [TIME]: stat.ts,
             };
         });
@@ -127,25 +122,35 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
     useEffect(() => {
         // Function to format that handles both dimensions. This allows the tooltip
         //  formatter to not worry about dimensions and just pass them in here
-        const formatter = (value: any, dimension: 'bytes' | 'docs') => {
+        const formatter = (
+            value: any,
+            dimension: 'bytes' | 'docs',
+            direction?: 'to' | 'from'
+        ) => {
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
                 });
             }
 
-            if (dimension === DOCS) {
-                return readable(value, 2, false);
+            let response = '';
+            if (dimension === 'docs') {
+                response = `${readable(value, 2, false)}`;
+            } else {
+                response = `${defaultDataFormat(value)}`;
             }
 
-            return defaultDataFormat(value);
+            if (direction) {
+                return `${response} ${direction}`;
+            }
+            return response;
         };
 
         const bytesSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: BYTES,
+                y: BYTES_TO,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -154,11 +159,25 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                     color: 'white',
                     padding: 3,
                     position: 'start',
-                    formatter: ({ value }: any) => formatter(value, BYTES),
+                    formatter: ({ value }: any) =>
+                        formatter(value, 'bytes', 'to'),
                 },
                 symbolSize: 0,
             },
             name: intl.formatMessage({ id: 'data.data' }),
+            stack: 'bytes',
+            type: 'bar',
+            yAxisIndex: 0,
+        };
+
+        const bytesSeries2: EChartsOption['series'] = {
+            barMinHeight: 1,
+            encode: {
+                x: TIME,
+                y: BYTES_BY,
+            },
+            name: intl.formatMessage({ id: 'data.data.out' }),
+            stack: 'bytes',
             type: 'bar',
             yAxisIndex: 0,
         };
@@ -167,7 +186,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: DOCS,
+                y: DOCS_TO,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -177,11 +196,25 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                     padding: 3,
 
                     position: 'end',
-                    formatter: ({ value }: any) => formatter(value, DOCS),
+                    formatter: ({ value }: any) =>
+                        formatter(value, 'docs', 'to'),
                 },
                 symbolSize: 0,
             },
             name: intl.formatMessage({ id: 'data.docs' }),
+            stack: 'docs',
+            type: 'bar',
+            yAxisIndex: 1,
+        };
+
+        const docsSeries2: EChartsOption['series'] = {
+            barMinHeight: 1,
+            encode: {
+                x: TIME,
+                y: DOCS_BY,
+            },
+            name: intl.formatMessage({ id: 'data.docs.out' }),
+            stack: 'docs',
             type: 'bar',
             yAxisIndex: 1,
         };
@@ -190,11 +223,11 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
-            series: [bytesSeries, docsSeries],
+            series: [bytesSeries, bytesSeries2, docsSeries, docsSeries2],
             useUTC: true,
             // Setting dataset here because setting in a stand alone set option cause the chart to go blank
             dataset: {
-                dimensions: [TIME, BYTES, DOCS],
+                dimensions: [TIME, BYTES_BY, BYTES_TO, DOCS_BY, DOCS_TO],
                 source: scopedDataSet,
             },
             textStyle: {
