@@ -1,7 +1,8 @@
-import { TableCell } from '@mui/material';
+import { TableCell, Typography } from '@mui/material';
 import DateFilter from 'components/filters/Date';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
+import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
@@ -37,18 +38,28 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
     >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
 
     return (
-        <TableCell colSpan={2}>
-            <DateFilter
-                header={header}
-                disabled={
-                    !hasStats ||
-                    isValidating ||
-                    networkFailed ||
-                    queryCount === 0
-                }
-                selectableTableStoreName={selectableTableStoreName}
-            />
-        </TableCell>
+        <>
+            <TableCell>
+                <Typography
+                    component="span"
+                    sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
+                >
+                    <FormattedMessage id={header} />
+                </Typography>
+            </TableCell>
+            <TableCell>
+                <DateFilter
+                    header={header}
+                    disabled={
+                        !hasStats ||
+                        isValidating ||
+                        networkFailed ||
+                        queryCount === 0
+                    }
+                    selectableTableStoreName={selectableTableStoreName}
+                />
+            </TableCell>
+        </>
     );
 };
 

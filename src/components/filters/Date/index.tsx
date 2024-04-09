@@ -1,22 +1,23 @@
 import {
-    Button,
     CircularProgress,
+    Divider,
+    IconButton,
+    ListItem,
     Menu,
-    MenuItem,
     Stack,
     Typography,
 } from '@mui/material';
 import { StatsFilter } from 'api/stats';
-import { linkButtonSx } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import DateFilterOption from './FilterOption';
 
 interface Props {
     header: string;
@@ -25,10 +26,15 @@ interface Props {
 }
 
 function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
-    const [currentOption, setCurrentOption] = useState<StatsFilter>('today');
+    const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const statsFilter = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['statsFilter']
+    >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.get);
 
     const setStatsFilter = useZustandStore<
         SelectableTableStore,
@@ -49,40 +55,43 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
         },
         setFilter: (option: StatsFilter) => {
             setStatsFilter(option);
-            setCurrentOption(option);
             handlers.closeMenu();
         },
     };
 
+    const optionProps = {
+        currentOption: statsFilter,
+        onClick: handlers.setFilter,
+    };
+
     return (
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', pr: 2 }}>
             <Typography
                 component="span"
                 sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
             >
-                <FormattedMessage id={header} />
+                <FormattedMessage id={`${header}.docs`} />
             </Typography>
 
-            <Button
+            <IconButton
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                variant="text"
-                disableElevation
+                aria-label={intl.formatMessage(
+                    { id: 'entityTable.stats.filter.label' },
+                    { statsFilter }
+                )}
                 onClick={handlers.openMenu}
-                endIcon={
-                    !disabled && stats === null ? (
-                        <CircularProgress size={15} />
-                    ) : (
-                        <Filter style={{ fontSize: 13 }} />
-                    )
-                }
                 disabled={disabled}
-                sx={{ ...linkButtonSx }}
+                color="primary"
             >
-                <FormattedMessage id={`filter.time.${currentOption}`} />
-            </Button>
+                {!disabled && stats === null ? (
+                    <CircularProgress size={15} />
+                ) : (
+                    <Filter style={{ fontSize: 13 }} />
+                )}
+            </IconButton>
 
             <Menu
                 id="stat-filter-selector-menu"
@@ -94,24 +103,18 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => handlers.setFilter('today')}>
-                    <FormattedMessage id="filter.time.today" />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter('yesterday')}>
-                    <FormattedMessage id="filter.time.yesterday" />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter('thisWeek')}>
-                    <FormattedMessage id="filter.time.thisWeek" />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter('lastWeek')}>
-                    <FormattedMessage id="filter.time.lastWeek" />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter('thisMonth')}>
-                    <FormattedMessage id="filter.time.thisMonth" />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter('lastMonth')}>
-                    <FormattedMessage id="filter.time.lastMonth" />
-                </MenuItem>
+                <ListItem>
+                    <Typography sx={{ fontWeight: '500' }}>
+                        <FormattedMessage id="filter.time.label" />
+                    </Typography>
+                </ListItem>
+                <Divider />
+                <DateFilterOption {...optionProps} option="today" />
+                <DateFilterOption {...optionProps} option="yesterday" />
+                <DateFilterOption {...optionProps} option="thisWeek" />
+                <DateFilterOption {...optionProps} option="lastWeek" />
+                <DateFilterOption {...optionProps} option="thisMonth" />
+                <DateFilterOption {...optionProps} option="lastMonth" />
             </Menu>
         </Stack>
     );

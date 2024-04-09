@@ -91,6 +91,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'directives.grant.skipped.message': `The access grant link you submitted was not applied as you already have the requested access.`,
 
     // User in filters for tables
+    'filter.time.label': `Stats Range`,
     'filter.time.today': `Today`,
     'filter.time.yesterday': `Yesterday`,
     'filter.time.lastWeek': `Last Week`,
@@ -408,13 +409,10 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
 
     'entityTable.stats.written': `Data Written`,
     'entityTable.stats.read': `Data Read`,
-    'entityTable.stats.docs': `{docCount} {docCount, plural,
-        one {doc}
-        other {docs}
-    }`,
+    'entityTable.stats.written.docs': `Docs Written`,
+    'entityTable.stats.read.docs': `Docs Read`,
 
     'entityTable.stats.error': `Failed to fetch stats.`,
-    'entityTable.stats.filterMenu': `Stats for`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,
