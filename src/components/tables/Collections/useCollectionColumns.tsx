@@ -4,7 +4,7 @@ import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
 
-const defaultColumnsStart: ColumnProps[] = [
+const defaultColumns_start: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: '',
@@ -15,7 +15,7 @@ const defaultColumnsStart: ColumnProps[] = [
     },
 ];
 
-const defaultColumnsEnd: ColumnProps[] = [
+const defaultColumns_end: ColumnProps[] = [
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
@@ -55,13 +55,13 @@ const useCollectionColumns = (): ColumnProps[] => {
     return useMemo(() => {
         if (hasDetails) {
             return [
-                ...defaultColumnsStart,
+                ...defaultColumns_start,
                 ...writtenStatsHeader,
                 readStatsHeader,
-                ...defaultColumnsEnd,
+                ...defaultColumns_end,
             ];
         } else {
-            return [...defaultColumnsStart, ...defaultColumnsEnd];
+            return [...defaultColumns_start, ...defaultColumns_end];
         }
     }, [hasDetails]);
 };
