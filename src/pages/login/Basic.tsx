@@ -52,7 +52,8 @@ const Login = ({ showRegistration }: Props) => {
                     </Tabs>
                 </Box>
 
-                <Typography align="center" sx={{ my: 4 }}>
+                {/*Using h1 as this is the "most important" text on the page and might help with SEO*/}
+                <Typography component="h1" align="center" sx={{ my: 4 }}>
                     <FormattedMessage
                         id={
                             isRegister
