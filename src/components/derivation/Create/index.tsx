@@ -4,20 +4,40 @@ import AlertBox from 'components/shared/AlertBox';
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import AdminCapabilityGuard from 'components/shared/guards/AdminCapability';
 import TransformationCreate from 'components/transformation/create';
+import { useZustandStore } from 'context/Zustand/provider';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import BindingHydrator from 'stores/Binding/Hydrator';
 import { useBinding_resetState } from 'stores/Binding/hooks';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
+import { SelectTableStoreNames } from 'stores/names';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const collectionsPrefilled = searchParams.has(
+        GlobalSearchParams.PREFILL_LIVE_SPEC_ID
+    );
+
     const navigate = useNavigate();
 
     const resetBindingState = useBinding_resetState();
     const resetTransformationCreateState = useTransformationCreate_resetState();
+
+    const resetTableSelections = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['resetSelected']
+    >(
+        SelectTableStoreNames.COLLECTION,
+        selectableTableStoreSelectors.selected.reset
+    );
 
     // There is _probably_ a better way to do this, but the idea is
     // to reset the state of the NewCollection component every time
@@ -32,6 +52,10 @@ function DerivationCreate() {
         setNewCollectionKey((k) => k + 1);
         resetTransformationCreateState();
         resetBindingState(undefined, true);
+
+        if (collectionsPrefilled) {
+            resetTableSelections();
+        }
     };
 
     return (
