@@ -201,10 +201,10 @@ export interface CatalogStats_Billing extends BaseCatalogStats {
 }
 
 export interface CatalogStats_Details extends BaseCatalogStats {
-    docs_by: number;
-    bytes_by: number;
-    docs_to?: number;
-    bytes_to?: number;
+    bytes_read?: number;
+    docs_read?: number;
+    bytes_written?: number;
+    docs_written?: number;
 }
 
 export interface Directive {

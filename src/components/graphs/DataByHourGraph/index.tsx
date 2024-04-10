@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material';
+import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
@@ -33,10 +34,10 @@ interface Props {
 // These are keys that are used all over. Not typing them as Echarts typing within
 //  dataset complained when I tried
 const TIME = 'timestamp';
-const DOCS_BY = 'docs_by';
-const DOCS_TO = 'docs_to';
-const BYTES_BY = 'bytes_by';
-const BYTES_TO = 'bytes_to';
+const DOCS_READ = 'docs_read';
+const DOCS_WRITTEN = 'docs_written';
+const BYTES_READ = 'bytes_read';
+const BYTES_WRITTEN = 'bytes_written';
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
@@ -55,6 +56,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
     const theme = useTheme();
     const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
+    const entityType = useEntityType();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
@@ -105,18 +107,41 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         );
     }, [intl, stats]);
 
-    // Create a dataset
-    const scopedDataSet = useMemo(() => {
+    // It kind of sucks to be checking the entityType and not just seeing what was returned
+    //  However, this prevents us from having to look through ALL the stats to decide what
+    //      data to display.
+    // Any typing because echarts does not like multiple
+    const scopedDataSet = useMemo<any>(() => {
+        if (entityType === 'collection') {
+            return stats.map((stat) => {
+                return {
+                    [DOCS_READ]: stat.docs_read,
+                    [DOCS_WRITTEN]: stat.docs_written,
+                    [BYTES_READ]: stat.bytes_read,
+                    [BYTES_WRITTEN]: stat.bytes_written,
+                    [TIME]: stat.ts,
+                };
+            });
+        }
+
+        if (entityType === 'capture') {
+            return stats.map((stat) => {
+                return {
+                    [DOCS_WRITTEN]: stat.docs_written,
+                    [BYTES_WRITTEN]: stat.bytes_written,
+                    [TIME]: stat.ts,
+                };
+            });
+        }
+
         return stats.map((stat) => {
             return {
-                [DOCS_BY]: stat.docs_by,
-                [DOCS_TO]: stat.docs_to,
-                [BYTES_BY]: stat.bytes_by,
-                [BYTES_TO]: stat.bytes_to,
+                [DOCS_READ]: stat.docs_read,
+                [BYTES_READ]: stat.bytes_read,
                 [TIME]: stat.ts,
             };
         });
-    }, [stats]);
+    }, [entityType, stats]);
 
     // Set the main bulk of the options for the chart
     useEffect(() => {
@@ -146,11 +171,11 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             return response;
         };
 
-        const bytesSeries: EChartsOption['series'] = {
+        const bytesWrittenSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: BYTES_TO,
+                y: BYTES_WRITTEN,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -164,29 +189,37 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 },
                 symbolSize: 0,
             },
-            name: intl.formatMessage({ id: 'data.data' }),
-            stack: 'bytes',
+            name: intl.formatMessage(
+                { id: 'data.written' },
+                {
+                    type: intl.formatMessage({ id: 'data.data' }),
+                }
+            ),
             type: 'bar',
             yAxisIndex: 0,
         };
 
-        const bytesSeries2: EChartsOption['series'] = {
+        const bytesReadSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: BYTES_BY,
+                y: BYTES_READ,
             },
-            name: intl.formatMessage({ id: 'data.data.out' }),
-            stack: 'bytes',
+            name: intl.formatMessage(
+                { id: 'data.read' },
+                {
+                    type: intl.formatMessage({ id: 'data.data' }),
+                }
+            ),
             type: 'bar',
             yAxisIndex: 0,
         };
 
-        const docsSeries: EChartsOption['series'] = {
+        const docsWrittenSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: DOCS_TO,
+                y: DOCS_WRITTEN,
             },
             markLine: {
                 data: [{ type: 'max', name: 'Max' }],
@@ -201,33 +234,64 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 },
                 symbolSize: 0,
             },
-            name: intl.formatMessage({ id: 'data.docs' }),
-            stack: 'docs',
+            name: intl.formatMessage(
+                { id: 'data.written' },
+                {
+                    type: intl.formatMessage({ id: 'data.docs' }),
+                }
+            ),
             type: 'bar',
             yAxisIndex: 1,
         };
 
-        const docsSeries2: EChartsOption['series'] = {
+        const docsReadSeries: EChartsOption['series'] = {
             barMinHeight: 1,
             encode: {
                 x: TIME,
-                y: DOCS_BY,
+                y: DOCS_READ,
             },
-            name: intl.formatMessage({ id: 'data.docs.out' }),
-            stack: 'docs',
+            name: intl.formatMessage(
+                { id: 'data.read' },
+                {
+                    type: intl.formatMessage({ id: 'data.docs' }),
+                }
+            ),
             type: 'bar',
             yAxisIndex: 1,
         };
+
+        let dimensions, series;
+        if (entityType === 'collection') {
+            dimensions = [
+                TIME,
+                DOCS_READ,
+                DOCS_WRITTEN,
+                BYTES_READ,
+                BYTES_WRITTEN,
+            ];
+            series = [
+                bytesReadSeries,
+                bytesWrittenSeries,
+                docsReadSeries,
+                docsWrittenSeries,
+            ];
+        } else if (entityType === 'capture') {
+            dimensions = [TIME, DOCS_WRITTEN, BYTES_WRITTEN];
+            series = [docsWrittenSeries, bytesWrittenSeries];
+        } else {
+            dimensions = [TIME, DOCS_READ, BYTES_READ];
+            series = [bytesReadSeries, docsReadSeries];
+        }
 
         const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
-            series: [bytesSeries, bytesSeries2, docsSeries, docsSeries2],
+            series,
             useUTC: true,
             // Setting dataset here because setting in a stand alone set option cause the chart to go blank
             dataset: {
-                dimensions: [TIME, BYTES_BY, BYTES_TO, DOCS_BY, DOCS_TO],
+                dimensions,
                 source: scopedDataSet,
             },
             textStyle: {
@@ -356,15 +420,16 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
 
         myChart?.setOption(option);
     }, [
+        entityType,
         intl,
         lastUpdated,
         legendConfig,
         myChart,
-        range,
         scopedDataSet,
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
+        range, // This is required to cause this to re-render when it changes
     ]);
 
     return <div id={id} style={{ height: 350 }} />;
