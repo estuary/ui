@@ -15,7 +15,7 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import prettyBytes from 'pretty-bytes';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
@@ -143,11 +143,10 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         });
     }, [entityType, stats]);
 
-    // Set the main bulk of the options for the chart
-    useEffect(() => {
-        // Function to format that handles both dimensions. This allows the tooltip
-        //  formatter to not worry about dimensions and just pass them in here
-        const formatter = (
+    // Function to format that handles both dimensions. This allows the tooltip
+    //  formatter to not worry about dimensions and just pass them in here
+    const formatter = useCallback(
+        (
             value: any,
             dimension: 'bytes' | 'docs',
             direction?: 'to' | 'from'
@@ -169,98 +168,112 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 return `${response} ${direction}`;
             }
             return response;
-        };
+        },
+        [intl]
+    );
 
-        const bytesWrittenSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: BYTES_WRITTEN,
-            },
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    backgroundColor: eChartsColors[0],
-                    color: 'white',
-                    padding: 3,
-                    position: 'start',
-                    formatter: ({ value }: any) =>
-                        formatter(value, 'bytes', 'to'),
+    // TODO (Typing) EChartsOption['series']
+    const [
+        bytesReadSeries,
+        bytesWrittenSeries,
+        docsReadSeries,
+        docsWrittenSeries,
+    ] = useMemo<any[]>(() => {
+        const barMinHeight = 1;
+        const data = [{ type: 'max', name: 'Max' }];
+        const type = 'bar';
+
+        return [
+            {
+                barMinHeight,
+                encode: {
+                    x: TIME,
+                    y: BYTES_READ,
                 },
-                symbolSize: 0,
+                name: intl.formatMessage(
+                    { id: 'data.read' },
+                    {
+                        type: intl.formatMessage({ id: 'data.data' }),
+                    }
+                ),
+                type,
+                yAxisIndex: 0,
             },
-            name: intl.formatMessage(
-                { id: 'data.written' },
-                {
-                    type: intl.formatMessage({ id: 'data.data' }),
-                }
-            ),
-            type: 'bar',
-            yAxisIndex: 0,
-        };
-
-        const bytesReadSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: BYTES_READ,
-            },
-            name: intl.formatMessage(
-                { id: 'data.read' },
-                {
-                    type: intl.formatMessage({ id: 'data.data' }),
-                }
-            ),
-            type: 'bar',
-            yAxisIndex: 0,
-        };
-
-        const docsWrittenSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: DOCS_WRITTEN,
-            },
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    backgroundColor: eChartsColors[1],
-                    color: 'black',
-                    padding: 3,
-
-                    position: 'end',
-                    formatter: ({ value }: any) =>
-                        formatter(value, 'docs', 'to'),
+            {
+                barMinHeight,
+                encode: {
+                    x: TIME,
+                    y: BYTES_WRITTEN,
                 },
-                symbolSize: 0,
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[0],
+                        color: 'white',
+                        padding: 3,
+                        position: 'start',
+                        formatter: ({ value }: any) =>
+                            formatter(value, 'bytes', 'to'),
+                    },
+                    symbolSize: 0,
+                },
+                name: intl.formatMessage(
+                    { id: 'data.written' },
+                    {
+                        type: intl.formatMessage({ id: 'data.data' }),
+                    }
+                ),
+                type,
+                yAxisIndex: 0,
             },
-            name: intl.formatMessage(
-                { id: 'data.written' },
-                {
-                    type: intl.formatMessage({ id: 'data.docs' }),
-                }
-            ),
-            type: 'bar',
-            yAxisIndex: 1,
-        };
-
-        const docsReadSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: DOCS_READ,
+            {
+                barMinHeight,
+                encode: {
+                    x: TIME,
+                    y: DOCS_READ,
+                },
+                name: intl.formatMessage(
+                    { id: 'data.read' },
+                    {
+                        type: intl.formatMessage({ id: 'data.docs' }),
+                    }
+                ),
+                type,
+                yAxisIndex: 1,
             },
-            name: intl.formatMessage(
-                { id: 'data.read' },
-                {
-                    type: intl.formatMessage({ id: 'data.docs' }),
-                }
-            ),
-            type: 'bar',
-            yAxisIndex: 1,
-        };
+            {
+                barMinHeight,
+                encode: {
+                    x: TIME,
+                    y: DOCS_WRITTEN,
+                },
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[1],
+                        color: 'black',
+                        padding: 3,
+                        position: 'end',
+                        formatter: ({ value }: any) =>
+                            formatter(value, 'docs', 'to'),
+                    },
+                    symbolSize: 0,
+                },
+                name: intl.formatMessage(
+                    { id: 'data.written' },
+                    {
+                        type: intl.formatMessage({ id: 'data.docs' }),
+                    }
+                ),
+                type,
+                yAxisIndex: 1,
+            },
+        ];
+    }, [formatter, intl]);
 
-        let dimensions, series;
+    // Set the main bulk of the options for the chart
+    useEffect(() => {
+        let dimensions, series: any;
         if (entityType === 'collection') {
             dimensions = [
                 TIME,
@@ -420,7 +433,12 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
 
         myChart?.setOption(option);
     }, [
+        bytesReadSeries,
+        bytesWrittenSeries,
+        docsReadSeries,
+        docsWrittenSeries,
         entityType,
+        formatter,
         intl,
         lastUpdated,
         legendConfig,
