@@ -77,12 +77,14 @@ const CAPTURE_QUERY = `
     bytes_written:bytes_written_by_me
 `;
 
+// This is not a mix up. Users think of collections a little different from how
+//  we think about them.
 const COLLECTION_QUERY = `
     ${BASE_QUERY},
-    bytes_read:bytes_read_from_me,
-    docs_read:docs_read_from_me,
-    bytes_written:bytes_written_to_me,
-    docs_written:docs_written_to_me
+    bytes_read:bytes_written_to_me,
+    docs_read:docs_written_to_me,
+    bytes_written:bytes_read_from_me,
+    docs_written:docs_read_from_me
 `;
 
 const MATERIALIZATION_QUERY = `

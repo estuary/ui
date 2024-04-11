@@ -3,7 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { BarChart } from 'echarts/charts';
+import { BarChart, ScatterChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
@@ -34,10 +34,7 @@ interface Props {
 // These are keys that are used all over. Not typing them as Echarts typing within
 //  dataset complained when I tried
 const TIME = 'timestamp';
-const DOCS_READ = 'docs_read';
-const DOCS_WRITTEN = 'docs_written';
-const BYTES_READ = 'bytes_read';
-const BYTES_WRITTEN = 'bytes_written';
+type Dimensions = keyof CatalogStats_Details;
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
@@ -70,6 +67,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 GridComponent,
                 LegendComponent,
                 BarChart,
+                ScatterChart,
                 CanvasRenderer,
                 UniversalTransition,
                 MarkLineComponent,
@@ -115,10 +113,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         if (entityType === 'collection') {
             return stats.map((stat) => {
                 return {
-                    [DOCS_READ]: stat.docs_read,
-                    [DOCS_WRITTEN]: stat.docs_written,
-                    [BYTES_READ]: stat.bytes_read,
-                    [BYTES_WRITTEN]: stat.bytes_written,
+                    ...stat,
                     [TIME]: stat.ts,
                 };
             });
@@ -127,8 +122,8 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         if (entityType === 'capture') {
             return stats.map((stat) => {
                 return {
-                    [DOCS_WRITTEN]: stat.docs_written,
-                    [BYTES_WRITTEN]: stat.bytes_written,
+                    docs_written: stat.docs_written,
+                    bytes_written: stat.bytes_written,
                     [TIME]: stat.ts,
                 };
             });
@@ -136,8 +131,8 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
 
         return stats.map((stat) => {
             return {
-                [DOCS_READ]: stat.docs_read,
-                [BYTES_READ]: stat.bytes_read,
+                docs_read: stat.docs_read,
+                bytes_read: stat.bytes_read,
                 [TIME]: stat.ts,
             };
         });
@@ -146,11 +141,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
     // Function to format that handles both dimensions. This allows the tooltip
     //  formatter to not worry about dimensions and just pass them in here
     const formatter = useCallback(
-        (
-            value: any,
-            dimension: 'bytes' | 'docs',
-            direction?: 'to' | 'from'
-        ) => {
+        (value: any, dimension: Dimensions, direction?: 'to' | 'from') => {
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
@@ -158,7 +149,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             }
 
             let response = '';
-            if (dimension === 'docs') {
+            if (dimension.includes('docs')) {
                 response = `${readable(value, 2, false)}`;
             } else {
                 response = `${defaultDataFormat(value)}`;
@@ -174,49 +165,35 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
 
     // TODO (Typing) EChartsOption['series']
     const [
-        bytesReadSeries,
         bytesWrittenSeries,
-        docsReadSeries,
+        bytesReadSeries,
         docsWrittenSeries,
+        docsReadSeries,
     ] = useMemo<any[]>(() => {
         const barMinHeight = 1;
-        const data = [{ type: 'max', name: 'Max' }];
+        // const data = [{ type: 'max', name: 'Max' }];
         const type = 'bar';
 
         return [
             {
                 barMinHeight,
+                color: eChartsColors[0],
                 encode: {
                     x: TIME,
-                    y: BYTES_READ,
+                    y: 'bytes_written',
                 },
-                name: intl.formatMessage(
-                    { id: 'data.read' },
-                    {
-                        type: intl.formatMessage({ id: 'data.data' }),
-                    }
-                ),
-                type,
-                yAxisIndex: 0,
-            },
-            {
-                barMinHeight,
-                encode: {
-                    x: TIME,
-                    y: BYTES_WRITTEN,
-                },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[0],
-                        color: 'white',
-                        padding: 3,
-                        position: 'start',
-                        formatter: ({ value }: any) =>
-                            formatter(value, 'bytes', 'to'),
-                    },
-                    symbolSize: 0,
-                },
+                // markLine: {
+                //     data,
+                //     label: {
+                //         backgroundColor: eChartsColors[0],
+                //         color: 'white',
+                //         padding: 3,
+                //         position: 'start',
+                //         formatter: ({ value }: any) =>
+                //             formatter(value, 'bytes', 'to'),
+                //     },
+                //     symbolSize: 0,
+                // },
                 name: intl.formatMessage(
                     { id: 'data.written' },
                     {
@@ -228,12 +205,43 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             },
             {
                 barMinHeight,
+                color: eChartsColors[0],
+                opacity: 0.75,
+
                 encode: {
                     x: TIME,
-                    y: DOCS_READ,
+                    y: 'bytes_read',
                 },
                 name: intl.formatMessage(
                     { id: 'data.read' },
+                    {
+                        type: intl.formatMessage({ id: 'data.data' }),
+                    }
+                ),
+                type,
+                yAxisIndex: 0,
+            },
+            {
+                barMinHeight,
+                color: eChartsColors[1],
+                encode: {
+                    x: TIME,
+                    y: 'docs_written',
+                },
+                // markLine: {
+                //     data,
+                //     label: {
+                //         backgroundColor: eChartsColors[1],
+                //         color: 'black',
+                //         padding: 3,
+                //         position: 'end',
+                //         formatter: ({ value }: any) =>
+                //             formatter(value, 'docs', 'to'),
+                //     },
+                //     symbolSize: 0,
+                // },
+                name: intl.formatMessage(
+                    { id: 'data.written' },
                     {
                         type: intl.formatMessage({ id: 'data.docs' }),
                     }
@@ -243,24 +251,14 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             },
             {
                 barMinHeight,
+                color: eChartsColors[1],
+                opacity: 0.75,
                 encode: {
                     x: TIME,
-                    y: DOCS_WRITTEN,
-                },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[1],
-                        color: 'black',
-                        padding: 3,
-                        position: 'end',
-                        formatter: ({ value }: any) =>
-                            formatter(value, 'docs', 'to'),
-                    },
-                    symbolSize: 0,
+                    y: 'docs_read',
                 },
                 name: intl.formatMessage(
-                    { id: 'data.written' },
+                    { id: 'data.read' },
                     {
                         type: intl.formatMessage({ id: 'data.docs' }),
                     }
@@ -269,7 +267,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 yAxisIndex: 1,
             },
         ];
-    }, [formatter, intl]);
+    }, [intl]);
 
     // Set the main bulk of the options for the chart
     useEffect(() => {
@@ -277,22 +275,26 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         if (entityType === 'collection') {
             dimensions = [
                 TIME,
-                DOCS_READ,
-                DOCS_WRITTEN,
-                BYTES_READ,
-                BYTES_WRITTEN,
+                'bytes_read',
+                'bytes_written',
+                'docs_read',
+                'docs_written',
             ];
             series = [
-                bytesReadSeries,
-                bytesWrittenSeries,
-                docsReadSeries,
-                docsWrittenSeries,
+                {
+                    ...bytesWrittenSeries,
+                },
+                {
+                    ...bytesReadSeries,
+                },
+                { ...docsWrittenSeries },
+                { ...docsReadSeries },
             ];
         } else if (entityType === 'capture') {
-            dimensions = [TIME, DOCS_WRITTEN, BYTES_WRITTEN];
-            series = [docsWrittenSeries, bytesWrittenSeries];
+            dimensions = [TIME, 'bytes_written', 'docs_written'];
+            series = [bytesWrittenSeries, docsWrittenSeries];
         } else {
-            dimensions = [TIME, DOCS_READ, BYTES_READ];
+            dimensions = [TIME, 'bytes_read', 'docs_read'];
             series = [bytesReadSeries, docsReadSeries];
         }
 
