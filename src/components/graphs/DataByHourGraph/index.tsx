@@ -20,15 +20,17 @@ import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourRange } from '../types';
+import { DataByHourRange, DataByHourStatTypes } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
+import useDataByHourGraphMessages from './useDataByHourGraphMessages';
 
 interface Props {
     id: string;
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
+    dataType?: DataByHourStatTypes;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
@@ -48,12 +50,15 @@ const defaultDataFormat = (value: any) => {
     });
 };
 
-function DataByHourGraph({ id, range, stats = [] }: Props) {
+function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
+    const messages = useDataByHourGraphMessages();
+
+    console.log('dataType', dataType);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
@@ -194,12 +199,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 //     },
                 //     symbolSize: 0,
                 // },
-                name: intl.formatMessage(
-                    { id: 'data.written' },
-                    {
-                        type: intl.formatMessage({ id: 'data.data' }),
-                    }
-                ),
+                name: messages.dataWritten,
                 type,
                 yAxisIndex: 0,
             },
@@ -212,12 +212,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                     x: TIME,
                     y: 'bytes_read',
                 },
-                name: intl.formatMessage(
-                    { id: 'data.read' },
-                    {
-                        type: intl.formatMessage({ id: 'data.data' }),
-                    }
-                ),
+                name: messages.dataRead,
                 type,
                 yAxisIndex: 0,
             },
@@ -240,12 +235,7 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                 //     },
                 //     symbolSize: 0,
                 // },
-                name: intl.formatMessage(
-                    { id: 'data.written' },
-                    {
-                        type: intl.formatMessage({ id: 'data.docs' }),
-                    }
-                ),
+                name: messages.docsWritten,
                 type,
                 yAxisIndex: 1,
             },
@@ -257,17 +247,17 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                     x: TIME,
                     y: 'docs_read',
                 },
-                name: intl.formatMessage(
-                    { id: 'data.read' },
-                    {
-                        type: intl.formatMessage({ id: 'data.docs' }),
-                    }
-                ),
+                name: messages.docsRead,
                 type,
                 yAxisIndex: 1,
             },
         ];
-    }, [intl]);
+    }, [
+        messages.dataRead,
+        messages.dataWritten,
+        messages.docsRead,
+        messages.docsWritten,
+    ]);
 
     // Set the main bulk of the options for the chart
     useEffect(() => {
