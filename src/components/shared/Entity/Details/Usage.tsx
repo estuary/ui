@@ -56,6 +56,7 @@ function Usage({ catalogName }: Props) {
                 <DataByHourGraph
                     id="data-by-hour_entity-details"
                     stats={stats}
+                    statType={statType}
                     range={range}
                 />
             ) : (

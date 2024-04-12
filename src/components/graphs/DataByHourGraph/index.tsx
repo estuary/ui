@@ -29,8 +29,8 @@ interface Props {
     id: string;
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
+    statType: DataByHourStatType;
     createdAt?: string;
-    dataType?: DataByHourStatType;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
@@ -43,14 +43,14 @@ const formatTimeSettings: FormatDateOptions = {
     minute: '2-digit',
 };
 
-const defaultDataFormat = (value: any) => {
+const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
     return prettyBytes(value, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
     });
 };
 
-function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
+function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -58,10 +58,10 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
 
-    console.log('dataType', dataType);
-
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
+
+    const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
 
     // Wire up the myCharts and pass in components we will use
     useEffect(() => {
@@ -145,7 +145,11 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
     // Function to format that handles both dimensions. This allows the tooltip
     //  formatter to not worry about dimensions and just pass them in here
     const formatter = useCallback(
-        (value: any, dimension: Dimensions, direction?: 'to' | 'from') => {
+        (
+            value: any,
+            dimension: Dimensions | DataByHourStatType,
+            precision?: number
+        ) => {
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
@@ -156,12 +160,9 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
             if (dimension.includes('docs')) {
                 response = `${readable(value, 2, false)}`;
             } else {
-                response = `${defaultDataFormat(value)}`;
+                response = `${defaultDataFormat(value, precision)}`;
             }
 
-            if (direction) {
-                return `${response} ${direction}`;
-            }
             return response;
         },
         [intl]
@@ -175,38 +176,37 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
         docsReadSeries,
     ] = useMemo<any[]>(() => {
         const barMinHeight = 1;
-        // const data = [{ type: 'max', name: 'Max' }];
+        const data = [{ type: 'max', name: 'Max' }];
         const type = 'bar';
+
+        const isCollection = entityType === 'collection';
 
         return [
             {
                 barMinHeight,
-                color: eChartsColors[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_written',
                 },
-                // markLine: {
-                //     data,
-                //     label: {
-                //         backgroundColor: eChartsColors[0],
-                //         color: 'white',
-                //         padding: 3,
-                //         position: 'start',
-                //         formatter: ({ value }: any) =>
-                //             formatter(value, 'bytes', 'to'),
-                //     },
-                //     symbolSize: 0,
-                // },
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[0],
+                        color: 'white',
+                        padding: 3,
+                        position: 'start',
+                        formatter: ({ value }: any) =>
+                            formatter(value, 'bytes'),
+                    },
+                    symbolSize: 0,
+                },
                 name: messages.dataWritten,
                 type,
                 yAxisIndex: 0,
             },
             {
                 barMinHeight,
-                color: eChartsColors[0],
-                opacity: 0.75,
-
+                barGap: isCollection ? '-100%' : undefined,
                 encode: {
                     x: TIME,
                     y: 'bytes_read',
@@ -217,41 +217,39 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
             },
             {
                 barMinHeight,
-                color: eChartsColors[1],
                 encode: {
                     x: TIME,
                     y: 'docs_written',
                 },
-                // markLine: {
-                //     data,
-                //     label: {
-                //         backgroundColor: eChartsColors[1],
-                //         color: 'black',
-                //         padding: 3,
-                //         position: 'end',
-                //         formatter: ({ value }: any) =>
-                //             formatter(value, 'docs', 'to'),
-                //     },
-                //     symbolSize: 0,
-                // },
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[1],
+                        color: 'black',
+                        padding: 3,
+                        position: 'end',
+                        formatter: ({ value }: any) => formatter(value, 'docs'),
+                    },
+                    symbolSize: 0,
+                },
                 name: messages.docsWritten,
                 type,
-                yAxisIndex: 1,
             },
             {
                 barMinHeight,
-                color: eChartsColors[1],
-                opacity: 0.75,
+                barGap: isCollection ? '-100%' : undefined,
+
                 encode: {
                     x: TIME,
                     y: 'docs_read',
                 },
                 name: messages.docsRead,
                 type,
-                yAxisIndex: 1,
             },
         ];
     }, [
+        entityType,
+        formatter,
         messages.dataRead,
         messages.dataWritten,
         messages.docsRead,
@@ -262,29 +260,31 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
     useEffect(() => {
         let dimensions, series: any;
         if (entityType === 'collection') {
-            dimensions = [
-                TIME,
-                'bytes_read',
-                'bytes_written',
-                'docs_read',
-                'docs_written',
-            ];
-            series = [
-                {
-                    ...bytesWrittenSeries,
-                },
-                {
-                    ...bytesReadSeries,
-                },
-                { ...docsWrittenSeries },
-                { ...docsReadSeries },
-            ];
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_read', 'bytes_written'];
+                series = [bytesWrittenSeries, bytesReadSeries];
+            } else {
+                dimensions = [TIME, 'docs_read', 'docs_written'];
+                series = [docsWrittenSeries, docsReadSeries];
+            }
         } else if (entityType === 'capture') {
-            dimensions = [TIME, 'bytes_written', 'docs_written'];
-            series = [bytesWrittenSeries, docsWrittenSeries];
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_written'];
+                series = [bytesWrittenSeries];
+            } else {
+                dimensions = [TIME, 'docs_written'];
+
+                series = [docsWrittenSeries];
+            }
         } else {
-            dimensions = [TIME, 'bytes_read', 'docs_read'];
-            series = [bytesReadSeries, docsReadSeries];
+            // eslint-disable-next-line no-lonely-if
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_read'];
+                series = [bytesReadSeries];
+            } else {
+                dimensions = [TIME, 'docs_read'];
+                series = [docsReadSeries];
+            }
         }
 
         const option: EChartsOption = {
@@ -329,7 +329,8 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
                             // Pass the proper data to the formatter with the dimension to know which formatter to use
                             const displayValue = formatter(
                                 data[dimension],
-                                dimension
+                                dimension,
+                                4
                             );
 
                             content.push(
@@ -434,6 +435,7 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
         lastUpdated,
         legendConfig,
         myChart,
+        renderingBytes,
         scopedDataSet,
         theme.palette.mode,
         theme.palette.text.primary,

@@ -2,7 +2,6 @@ import { ToggleButtonGroup } from '@mui/material';
 import { DataByHourStatType } from 'components/graphs/types';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
-import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
