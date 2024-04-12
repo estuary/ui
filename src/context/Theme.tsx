@@ -672,6 +672,7 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order
 export const eChartsColors = ['#5470C6', '#91CC75'];
+export const eChartsColors_dark = ['#15203f', '#28461a'];
 
 const themeSettings = createTheme({
     breakpoints: {

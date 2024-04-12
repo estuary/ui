@@ -1,6 +1,10 @@
 import { useTheme } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import {
+    defaultOutlineColor,
+    eChartsColors,
+    eChartsColors_dark,
+} from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
@@ -62,6 +66,10 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
     const [lastUpdated, setLastUpdated] = useState<string>('');
 
     const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
+    const currentColor = useMemo(
+        () => eChartsColors[renderingBytes ? 0 : 1],
+        [renderingBytes]
+    );
 
     // Wire up the myCharts and pass in components we will use
     useEffect(() => {
@@ -184,6 +192,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
         return [
             {
                 barMinHeight,
+                color: eChartsColors[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_written',
@@ -207,9 +216,22 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
             {
                 barMinHeight,
                 barGap: isCollection ? '-100%' : undefined,
+                color: eChartsColors_dark[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_read',
+                },
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[0],
+                        color: 'white',
+                        padding: 3,
+                        position: 'start',
+                        formatter: ({ value }: any) =>
+                            formatter(value, 'bytes'),
+                    },
+                    symbolSize: 0,
                 },
                 name: messages.dataRead,
                 type,
@@ -217,6 +239,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
             },
             {
                 barMinHeight,
+                color: eChartsColors[1],
                 encode: {
                     x: TIME,
                     y: 'docs_written',
@@ -227,7 +250,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                         backgroundColor: eChartsColors[1],
                         color: 'black',
                         padding: 3,
-                        position: 'end',
+                        position: 'start',
                         formatter: ({ value }: any) => formatter(value, 'docs'),
                     },
                     symbolSize: 0,
@@ -238,10 +261,21 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
             {
                 barMinHeight,
                 barGap: isCollection ? '-100%' : undefined,
-
+                color: eChartsColors_dark[1],
                 encode: {
                     x: TIME,
                     y: 'docs_read',
+                },
+                markLine: {
+                    data,
+                    label: {
+                        backgroundColor: eChartsColors[1],
+                        color: 'black',
+                        padding: 3,
+                        position: 'start',
+                        formatter: ({ value }: any) => formatter(value, 'docs'),
+                    },
+                    symbolSize: 0,
                 },
                 name: messages.docsRead,
                 type,
@@ -376,35 +410,19 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
             yAxis: [
                 {
                     alignTicks: true,
-                    name: intl.formatMessage({ id: 'data.data' }),
+                    name: intl.formatMessage({
+                        id: renderingBytes ? 'data.data' : 'data.docs',
+                    }),
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        color: eChartsColors[0],
+                        color: currentColor,
                         fontSize: 14,
                         fontWeight: 'bold',
                         formatter: (value: any) => {
-                            return defaultDataFormat(value);
-                        },
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            color: defaultOutlineColor[theme.palette.mode],
-                        },
-                    },
-                },
-                {
-                    alignTicks: true,
-                    minInterval: 1,
-                    name: intl.formatMessage({ id: 'data.docs' }),
-                    position: 'right',
-                    type: 'value',
-                    axisLabel: {
-                        color: eChartsColors[1],
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        formatter: (value: any) => {
-                            return readable(value, 1, true);
+                            return renderingBytes
+                                ? defaultDataFormat(value)
+                                : readable(value, 1, true);
                         },
                     },
                     splitLine: {
@@ -427,6 +445,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
     }, [
         bytesReadSeries,
         bytesWrittenSeries,
+        currentColor,
         docsReadSeries,
         docsWrittenSeries,
         entityType,
