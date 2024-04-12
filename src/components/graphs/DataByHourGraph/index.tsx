@@ -3,7 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { BarChart, ScatterChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
@@ -20,7 +20,7 @@ import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourRange, DataByHourStatTypes } from '../types';
+import { DataByHourRange, DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 import useDataByHourGraphMessages from './useDataByHourGraphMessages';
@@ -30,7 +30,7 @@ interface Props {
     range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
-    dataType?: DataByHourStatTypes;
+    dataType?: DataByHourStatType;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
@@ -72,7 +72,6 @@ function DataByHourGraph({ id, range, dataType, stats = [] }: Props) {
                 GridComponent,
                 LegendComponent,
                 BarChart,
-                ScatterChart,
                 CanvasRenderer,
                 UniversalTransition,
                 MarkLineComponent,

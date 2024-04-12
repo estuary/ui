@@ -1,86 +1,41 @@
-import { Button, Menu, MenuItem, Stack } from '@mui/material';
-import { DataByHourRange } from 'components/graphs/types';
-import { linkButtonSx } from 'context/Theme';
-import { Filter } from 'iconoir-react';
-import React, { useState } from 'react';
+import { ToggleButtonGroup } from '@mui/material';
+import { DataByHourStatType } from 'components/graphs/types';
+import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
+import { outlinedToggleButtonGroupStyling } from 'context/Theme';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-    range: DataByHourRange;
-    setRange: (range: DataByHourRange) => void;
+    statType: DataByHourStatType;
+    setStatType: (range: DataByHourStatType) => void;
 }
 
-function DataTypePicker({ range, setRange }: Props) {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-
-    const handlers = {
-        closeMenu: () => {
-            setAnchorEl(null);
-        },
-        openMenu: (event: React.MouseEvent<HTMLButtonElement>) => {
-            setAnchorEl(event.currentTarget);
-        },
-        setFilter: (newRange: DataByHourRange) => {
-            setRange(newRange);
-            handlers.closeMenu();
-        },
-    };
-
+function StatTypePicker({ statType, setStatType }: Props) {
     return (
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
-
-            <Button
-                id="hourly-usage-filter-selector-button"
-                aria-controls={
-                    open ? 'hourly-usage-filter-selector-menu' : undefined
-                }
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                variant="text"
-                disableElevation
-                endIcon={<Filter style={{ fontSize: 13 }} />}
-                onClick={handlers.openMenu}
-                sx={{ ...linkButtonSx }}
+        <ToggleButtonGroup
+            size="small"
+            exclusive
+            sx={outlinedToggleButtonGroupStyling}
+        >
+            <OutlinedToggleButton
+                size="small"
+                value="docs"
+                selected={statType === 'docs'}
+                onClick={() => setStatType('bytes')}
             >
-                <FormattedMessage
-                    id="detailsPanel.recentUsage.filter.label"
-                    values={{
-                        range,
-                    }}
-                />
-            </Button>
+                <FormattedMessage id="data.docs" />
+            </OutlinedToggleButton>
 
-            <Menu
-                id="hourly-usage-filter-selector-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handlers.closeMenu}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
+            <OutlinedToggleButton
+                size="small"
+                value="bytes"
+                selected={statType === 'bytes'}
+                onClick={() => setStatType('docs')}
             >
-                <MenuItem onClick={() => handlers.setFilter(6)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 6,
-                        }}
-                    />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(12)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 12,
-                        }}
-                    />
-                </MenuItem>
-            </Menu>
-        </Stack>
+                <FormattedMessage id="data.data" />
+            </OutlinedToggleButton>
+        </ToggleButtonGroup>
     );
 }
 
-export default DataTypePicker;
+export default StatTypePicker;

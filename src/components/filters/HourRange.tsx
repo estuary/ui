@@ -1,5 +1,6 @@
 import { Button, Menu, MenuItem, Stack } from '@mui/material';
-import { DataByHourRange } from 'components/graphs/types';
+import StatTypePicker from 'components/graphs/DataByHourGraph/DataTypePicker';
+import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
 import { linkButtonSx } from 'context/Theme';
 import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
@@ -8,9 +9,11 @@ import { FormattedMessage } from 'react-intl';
 interface Props {
     range: DataByHourRange;
     setRange: (range: DataByHourRange) => void;
+    statType: DataByHourStatType;
+    setStatType: (range: DataByHourStatType) => void;
 }
 
-function HourlyRangeFilter({ range, setRange }: Props) {
+function HourlyRangeFilter({ range, setRange, statType, setStatType }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -95,6 +98,8 @@ function HourlyRangeFilter({ range, setRange }: Props) {
                     />
                 </MenuItem>
             </Menu>
+
+            <StatTypePicker statType={statType} setStatType={setStatType} />
         </Stack>
     );
 }

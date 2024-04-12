@@ -3,7 +3,7 @@ import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
-import { DataByHourRange } from 'components/graphs/types';
+import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
 import { useState } from 'react';
@@ -18,6 +18,7 @@ interface Props {
 
 function Usage({ catalogName }: Props) {
     const [range, setRange] = useState<DataByHourRange>(6);
+    const [statType, setStatType] = useState<DataByHourStatType>('bytes');
 
     const { isValidating, stats, error } = useDetailsStats(
         catalogName,
@@ -27,7 +28,14 @@ function Usage({ catalogName }: Props) {
 
     return (
         <CardWrapper
-            message={<HourlyRangeFilter range={range} setRange={setRange} />}
+            message={
+                <HourlyRangeFilter
+                    range={range}
+                    setRange={setRange}
+                    statType={statType}
+                    setStatType={setStatType}
+                />
+            }
         >
             {isValidating && !stats ? (
                 <GraphLoadingState />
