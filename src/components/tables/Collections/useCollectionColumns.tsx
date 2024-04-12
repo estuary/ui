@@ -4,7 +4,7 @@ import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
 
-const defaultColumns: ColumnProps[] = [
+const defaultColumns_start: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: '',
@@ -13,20 +13,34 @@ const defaultColumns: ColumnProps[] = [
         field: 'catalog_name',
         headerIntlKey: 'entityTable.data.entity',
     },
+];
+
+const defaultColumns_end: ColumnProps[] = [
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastPublished',
     },
 ];
 
-const statsHeader: ColumnProps = {
+const writtenStatsHeader: ColumnProps[] = [
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.written',
+    },
+    {
+        field: null,
+        headerIntlKey: 'entityTable.stats.written.docs',
+    },
+];
+
+const readStatsHeader: ColumnProps = {
     field: null,
     cols: 2,
     renderHeader: (index, selectableTableStoreName) => {
         return (
             <StatsHeader
-                key={`collection-statsHeader-${index}`}
-                header="entityTable.stats.written"
+                key={`collection-readStatsHeader-${index}`}
+                header="entityTable.stats.read"
                 selectableTableStoreName={selectableTableStoreName}
             />
         );
@@ -40,11 +54,14 @@ const useCollectionColumns = (): ColumnProps[] => {
 
     return useMemo(() => {
         if (hasDetails) {
-            const response = [...defaultColumns];
-            response.splice(2, 0, statsHeader);
-            return response;
+            return [
+                ...defaultColumns_start,
+                ...writtenStatsHeader,
+                readStatsHeader,
+                ...defaultColumns_end,
+            ];
         } else {
-            return defaultColumns;
+            return [...defaultColumns_start, ...defaultColumns_end];
         }
     }, [hasDetails]);
 };

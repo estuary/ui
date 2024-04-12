@@ -155,7 +155,7 @@ export interface StorageMappings {
 export type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface Tenants {
-    collections_quota: number;
+    // collections_quota: number;
     created_at: string;
     detail: string;
     id: string;
@@ -224,6 +224,12 @@ export interface UserGrants {
     user_id: string;
     id: string;
     detail: string | null;
+}
+
+export interface UserGrantsTenantGuard {
+    id: string;
+    // FILTERING TYPES HACK
+    ['user_id']: undefined;
 }
 
 // InferredSchemaFlowDocument {}

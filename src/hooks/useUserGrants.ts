@@ -3,16 +3,11 @@ import { getUserGrants } from 'api/userGrants';
 import { singleCallSettings } from 'context/SWR';
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
-interface Props {
-    adminOnly?: boolean;
-    singleCall?: boolean;
-}
-
-function useUserGrants({ adminOnly, singleCall }: Props) {
+function useUserGrants(singleCall?: boolean) {
     const { session } = Auth.useUser();
 
     const { data, error, mutate, isValidating } = useSelectNew(
-        session?.user?.id ? getUserGrants(session.user.id, adminOnly) : null,
+        session?.user?.id ? getUserGrants(session.user.id) : null,
         singleCall ? singleCallSettings : undefined
     );
 

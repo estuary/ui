@@ -6,7 +6,6 @@ import { useEntityType } from 'context/EntityContext';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 
 import { StatsResponse } from 'stores/Tables/Store';
@@ -40,28 +39,6 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
         authenticatedRoutes.collections.details.overview.fullPath
     );
 
-    const calculatedBytes = useMemo(() => {
-        if (stats) {
-            return (
-                (stats[row.catalog_name]?.bytes_written_by_me ?? 0) +
-                (stats[row.catalog_name]?.bytes_written_to_me ?? 0)
-            );
-        } else {
-            return 0;
-        }
-    }, [row.catalog_name, stats]);
-
-    const calculatedDocs = useMemo(() => {
-        if (stats) {
-            return (
-                (stats[row.catalog_name]?.docs_written_by_me ?? 0) +
-                (stats[row.catalog_name]?.docs_written_to_me ?? 0)
-            );
-        } else {
-            return 0;
-        }
-    }, [row.catalog_name, stats]);
-
     return (
         <TableRow
             key={`Entity-${row.id}`}
@@ -80,9 +57,41 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             {hasLength(tenantDetails) ? (
                 <>
-                    <Bytes val={stats ? calculatedBytes : null} />
+                    <Bytes
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.bytes_written_to_me
+                                : null
+                        }
+                    />
 
-                    <Docs val={stats ? calculatedDocs : null} />
+                    <Docs
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.docs_written_to_me
+                                : null
+                        }
+                    />
+
+                    <Bytes
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.bytes_read_from_me
+                                : null
+                        }
+                    />
+
+                    <Docs
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.docs_read_from_me
+                                : null
+                        }
+                    />
                 </>
             ) : null}
 

@@ -1,7 +1,7 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { exchangeBearerToken } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
-import { UserClaims } from 'directives/types';
+import { DirectiveStates, UserClaims } from 'directives/types';
 import useAppliedDirectives from 'hooks/useAppliedDirectives';
 import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useState } from 'react';
@@ -17,14 +17,17 @@ const useDirectiveGuard = (
 ) => {
     logRocketConsole('useDirectiveGuard', selectedDirective);
 
+    const { appliedDirective, isValidating, mutate, error } =
+        useAppliedDirectives(selectedDirective, options?.token);
+
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    // const [fetching, setFetching] = useState(false);
+    const [calculatedState, setCalculatedState] =
+        useState<DirectiveStates | null>(null);
+    const [freshDirective, setFreshDirective] =
+        useState<AppliedDirective<UserClaims> | null>(null);
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
-
-    const { appliedDirective, isValidating, mutate, error } =
-        useAppliedDirectives(selectedDirective, options?.token);
 
     const calculateStatus = useMemo(
         () => DIRECTIVES[selectedDirective].calculateStatus,
@@ -55,13 +58,16 @@ const useDirectiveGuard = (
         serverError,
     ]);
 
-    logRocketConsole(
-        `useDirectiveGuard:directiveState:${selectedDirective}`,
-        directiveState
-    );
-
-    const [freshDirective, setFreshDirective] =
-        useState<AppliedDirective<UserClaims> | null>(null);
+    // The memo above was getting called more often than planned and I think it might have
+    //  been part of https://github.com/estuary/ui/issues/999. So the thinking here is that
+    //  we only really care to update if the value actually changed and that might prevent
+    //  extra hook calls that end up getting "confused"
+    useEffect(() => {
+        logRocketEvent(CustomEvents.DIRECTIVE_GUARD_STATE, {
+            state: directiveState,
+        });
+        setCalculatedState(directiveState);
+    }, [directiveState]);
 
     useEffect(() => {
         // Need to exchange for a fresh directive because:
@@ -70,9 +76,9 @@ const useDirectiveGuard = (
         //   unfulfilled : user never exchanged a token before
         //   outdated    : user has exchanged AND submitted something before
         if (
-            (options?.forceNew && directiveState === 'fulfilled') ||
-            directiveState === 'unfulfilled' ||
-            directiveState === 'outdated'
+            (options?.forceNew && calculatedState === 'fulfilled') ||
+            calculatedState === 'unfulfilled' ||
+            calculatedState === 'outdated'
         ) {
             if (options?.token) {
                 DIRECTIVES[selectedDirective].token = options.token;
@@ -104,7 +110,7 @@ const useDirectiveGuard = (
         // Show a message to remind the user why they are seeing the directive page
         if (
             !options?.hideAlert &&
-            (directiveState === 'in progress' || directiveState === 'waiting')
+            (calculatedState === 'in progress' || calculatedState === 'waiting')
         ) {
             enqueueSnackbar(
                 intl.formatMessage({
@@ -115,14 +121,14 @@ const useDirectiveGuard = (
         }
 
         // Show a message to remind the user why they are seeing the directive page
-        if (directiveState === 'errored' && serverError?.message) {
+        if (calculatedState === 'errored' && serverError?.message) {
             enqueueSnackbar(serverError.message, {
                 ...snackbarSettings,
                 variant: 'error',
             });
         }
     }, [
-        directiveState,
+        calculatedState,
         enqueueSnackbar,
         intl,
         options?.forceNew,
@@ -133,7 +139,7 @@ const useDirectiveGuard = (
     ]);
 
     return useMemo(() => {
-        if (directiveState === null) {
+        if (calculatedState === null) {
             return {
                 loading: true,
                 directive: null,
@@ -145,12 +151,18 @@ const useDirectiveGuard = (
             return {
                 loading: false,
                 directive: freshDirective ? freshDirective : appliedDirective,
-                status: directiveState,
+                status: calculatedState,
                 mutate,
                 error: serverError,
             };
         }
-    }, [appliedDirective, directiveState, freshDirective, mutate, serverError]);
+    }, [
+        appliedDirective,
+        calculatedState,
+        freshDirective,
+        mutate,
+        serverError,
+    ]);
 };
 
 export default useDirectiveGuard;

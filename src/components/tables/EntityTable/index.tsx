@@ -290,7 +290,11 @@ function EntityTable({
 
                         <TextField
                             inputRef={searchTextField}
-                            id="capture-search-box"
+                            // TODO (table filtering)
+                            // Should leverage TablePrefixes setting in the search hook here
+                            //  could handle by somehow tying the search to the actual input
+                            // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
+                            id={`capture-search-box__${filterLabel}`}
                             label={intl.formatMessage({
                                 id: filterLabel,
                             })}
@@ -339,6 +343,7 @@ function EntityTable({
 
                         <EntityTableFooter
                             hide={!dataRows || hideHeaderAndFooter}
+                            filterLabel={filterLabel}
                             onPageChange={handlers.changePage}
                             onRowsPerPageChange={handlers.changeRowsPerPage}
                             page={page}
