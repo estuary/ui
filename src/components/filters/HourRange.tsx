@@ -31,74 +31,79 @@ function HourlyRangeFilter({ range, setRange, statType, setStatType }: Props) {
     };
 
     return (
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+        <Stack
+            direction="row"
+            spacing={1}
+            sx={{ justifyContent: 'space-between' }}
+        >
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
 
-            <Button
-                id="hourly-usage-filter-selector-button"
-                aria-controls={
-                    open ? 'hourly-usage-filter-selector-menu' : undefined
-                }
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                variant="text"
-                disableElevation
-                endIcon={<Filter style={{ fontSize: 13 }} />}
-                onClick={handlers.openMenu}
-                sx={{ ...linkButtonSx }}
-            >
-                <FormattedMessage
-                    id="detailsPanel.recentUsage.filter.label"
-                    values={{
-                        range,
+                <Button
+                    id="hourly-usage-filter-selector-button"
+                    aria-controls={
+                        open ? 'hourly-usage-filter-selector-menu' : undefined
+                    }
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    variant="text"
+                    disableElevation
+                    endIcon={<Filter style={{ fontSize: 13 }} />}
+                    onClick={handlers.openMenu}
+                    sx={{ ...linkButtonSx }}
+                >
+                    <FormattedMessage
+                        id="detailsPanel.recentUsage.filter.label"
+                        values={{
+                            range,
+                        }}
+                    />
+                </Button>
+
+                <Menu
+                    id="hourly-usage-filter-selector-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handlers.closeMenu}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
                     }}
-                />
-            </Button>
-
-            <Menu
-                id="hourly-usage-filter-selector-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handlers.closeMenu}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-            >
-                <MenuItem onClick={() => handlers.setFilter(6)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 6,
-                        }}
-                    />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(12)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 12,
-                        }}
-                    />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(24)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 24,
-                        }}
-                    />
-                </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(48)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
-                            range: 48,
-                        }}
-                    />
-                </MenuItem>
-            </Menu>
-
+                >
+                    <MenuItem onClick={() => handlers.setFilter(6)}>
+                        <FormattedMessage
+                            id="detailsPanel.recentUsage.filter.label"
+                            values={{
+                                range: 6,
+                            }}
+                        />
+                    </MenuItem>
+                    <MenuItem onClick={() => handlers.setFilter(12)}>
+                        <FormattedMessage
+                            id="detailsPanel.recentUsage.filter.label"
+                            values={{
+                                range: 12,
+                            }}
+                        />
+                    </MenuItem>
+                    <MenuItem onClick={() => handlers.setFilter(24)}>
+                        <FormattedMessage
+                            id="detailsPanel.recentUsage.filter.label"
+                            values={{
+                                range: 24,
+                            }}
+                        />
+                    </MenuItem>
+                    <MenuItem onClick={() => handlers.setFilter(48)}>
+                        <FormattedMessage
+                            id="detailsPanel.recentUsage.filter.label"
+                            values={{
+                                range: 48,
+                            }}
+                        />
+                    </MenuItem>
+                </Menu>
+            </Stack>
             <StatTypePicker statType={statType} setStatType={setStatType} />
         </Stack>
     );

@@ -1,13 +1,9 @@
 import { useTheme } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
-import {
-    defaultOutlineColor,
-    eChartsColors,
-    eChartsColors_dark,
-} from 'context/Theme';
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { BarChart } from 'echarts/charts';
+import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
@@ -80,6 +76,8 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                 GridComponent,
                 LegendComponent,
                 BarChart,
+                LineChart,
+                PictorialBarChart,
                 CanvasRenderer,
                 UniversalTransition,
                 MarkLineComponent,
@@ -184,10 +182,14 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
         docsReadSeries,
     ] = useMemo<any[]>(() => {
         const barMinHeight = 1;
-        const data = [{ type: 'max', name: 'Max' }];
         const type = 'bar';
 
         const isCollection = entityType === 'collection';
+        const barGap = isCollection ? '-100%' : undefined;
+
+        const itemStyle = {
+            borderRadius: [10, 10, 0, 0],
+        };
 
         return [
             {
@@ -197,45 +199,24 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                     x: TIME,
                     y: 'bytes_written',
                 },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[0],
-                        color: 'white',
-                        padding: 3,
-                        position: 'start',
-                        formatter: ({ value }: any) =>
-                            formatter(value, 'bytes'),
-                    },
-                    symbolSize: 0,
+                itemStyle: {
+                    ...itemStyle,
+                    opacity: 0.75,
                 },
                 name: messages.dataWritten,
                 type,
-                yAxisIndex: 0,
             },
             {
                 barMinHeight,
-                barGap: isCollection ? '-100%' : undefined,
-                color: eChartsColors_dark[0],
+                barGap,
+                color: eChartsColors[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_read',
                 },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[0],
-                        color: 'white',
-                        padding: 3,
-                        position: 'start',
-                        formatter: ({ value }: any) =>
-                            formatter(value, 'bytes'),
-                    },
-                    symbolSize: 0,
-                },
+                itemStyle,
                 name: messages.dataRead,
                 type,
-                yAxisIndex: 0,
             },
             {
                 barMinHeight,
@@ -244,46 +225,28 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                     x: TIME,
                     y: 'docs_written',
                 },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[1],
-                        color: 'black',
-                        padding: 3,
-                        position: 'start',
-                        formatter: ({ value }: any) => formatter(value, 'docs'),
-                    },
-                    symbolSize: 0,
+                itemStyle: {
+                    ...itemStyle,
+                    opacity: 0.75,
                 },
                 name: messages.docsWritten,
                 type,
             },
             {
                 barMinHeight,
-                barGap: isCollection ? '-100%' : undefined,
-                color: eChartsColors_dark[1],
+                barGap,
+                color: eChartsColors[1],
                 encode: {
                     x: TIME,
                     y: 'docs_read',
                 },
-                markLine: {
-                    data,
-                    label: {
-                        backgroundColor: eChartsColors[1],
-                        color: 'black',
-                        padding: 3,
-                        position: 'start',
-                        formatter: ({ value }: any) => formatter(value, 'docs'),
-                    },
-                    symbolSize: 0,
-                },
+                itemStyle,
                 name: messages.docsRead,
                 type,
             },
         ];
     }, [
         entityType,
-        formatter,
         messages.dataRead,
         messages.dataWritten,
         messages.docsRead,
@@ -296,10 +259,10 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
         if (entityType === 'collection') {
             if (renderingBytes) {
                 dimensions = [TIME, 'bytes_read', 'bytes_written'];
-                series = [bytesWrittenSeries, bytesReadSeries];
+                series = [bytesReadSeries, bytesWrittenSeries];
             } else {
                 dimensions = [TIME, 'docs_read', 'docs_written'];
-                series = [docsWrittenSeries, docsReadSeries];
+                series = [docsReadSeries, docsWrittenSeries];
             }
         } else if (entityType === 'capture') {
             if (renderingBytes) {
@@ -364,7 +327,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                             const displayValue = formatter(
                                 data[dimension],
                                 dimension,
-                                4
+                                2
                             );
 
                             content.push(
