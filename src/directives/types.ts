@@ -9,6 +9,7 @@ export interface Directives {
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
     grant: DirectiveSettings<GrantClaim>;
+    storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
 export type DirectiveStates =
@@ -36,11 +37,22 @@ export interface OnboardClaim {
     survey: any;
 }
 
+export interface StorageConfig {
+    provider: string;
+    bucket: string;
+}
+
+export interface StorageMappingsClaim {
+    addStore: StorageConfig;
+    catalogPrefix: string;
+}
+
 export type UserClaims =
     | AcceptDemoTenantClaim
     | ClickToAcceptClaim
     | GrantClaim
-    | OnboardClaim;
+    | OnboardClaim
+    | StorageMappingsClaim;
 
 export interface DirectiveSettings<T> {
     token: string;

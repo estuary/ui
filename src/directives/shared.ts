@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { Directives, UserClaims } from './types';
@@ -198,6 +198,40 @@ export const DIRECTIVES: Directives = {
         generateUserClaim: (args: any[]) => {
             return {
                 requestedPrefix: args[0],
+            };
+        },
+        calculateStatus: (appliedDirective?) => {
+            // If there is no directive to check it is unfulfilled
+            if (!appliedDirective || isEmpty(appliedDirective)) {
+                return 'unfulfilled';
+            }
+
+            // If directive already queued and no claim is there we can just use that directive again
+            if (
+                appliedDirective.job_status.type === 'queued' &&
+                !appliedDirective.user_claims
+            ) {
+                return 'in progress';
+            }
+
+            // If it was success and passed all the other checks we're good
+            if (appliedDirective.job_status.type === 'success') {
+                return 'fulfilled';
+            }
+
+            // Catch all for edge cases like a "invalidClaim" status
+            return 'unfulfilled';
+        },
+    },
+    storageMappings: {
+        token: '2633b312-0f33-47cc-936f-674502cdba28',
+        queryFilter: (queryBuilder) => {
+            return queryBuilder;
+        },
+        generateUserClaim: (args: any[]) => {
+            return {
+                addStore: args[0],
+                catalogPrefix: args[1],
             };
         },
         calculateStatus: (appliedDirective?) => {

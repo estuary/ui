@@ -599,6 +599,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.cta.addStorageMapping': `Configure Storage`,
     'storageMappings.dialog.generate.header': `Configure Storage`,
     'storageMappings.dialog.generate.description': `Choose where you'd like {tenant} data to be stored. This location will be used for all future write operations.`,
+    'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage bucket.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
