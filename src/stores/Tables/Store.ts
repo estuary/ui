@@ -31,6 +31,9 @@ export interface StatsSchema {
 
               bytes_written_to_me?: number;
               docs_written_to_me?: number;
+
+              bytes_read_from_me?: number;
+              docs_read_from_me?: number;
           }
         | undefined;
 }
