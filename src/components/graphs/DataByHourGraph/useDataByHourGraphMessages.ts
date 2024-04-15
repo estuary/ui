@@ -11,10 +11,8 @@ function useDataByHourGraphMessages() {
         const docsMsg = intl.formatMessage({ id: 'data.docs' });
 
         const isCollection = entityType === 'collection';
-        const readMessageKey = isCollection ? 'data.read' : 'data.read';
-        const writtenMessageKey = isCollection
-            ? 'data.written'
-            : 'data.written';
+        const readMessageKey = isCollection ? 'data.out' : 'data.read';
+        const writtenMessageKey = isCollection ? 'data.in' : 'data.written';
 
         const dataWritten = intl.formatMessage(
             { id: writtenMessageKey },

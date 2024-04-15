@@ -44,7 +44,12 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
                     component="span"
                     sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
                 >
-                    <FormattedMessage id={header} />
+                    <FormattedMessage
+                        id="data.written"
+                        values={{
+                            type: <FormattedMessage id={header} />,
+                        }}
+                    />
                 </Typography>
             </TableCell>
             <TableCell>

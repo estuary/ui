@@ -260,10 +260,10 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
         if (entityType === 'collection') {
             if (renderingBytes) {
                 dimensions = [TIME, 'bytes_read', 'bytes_written'];
-                series = [bytesReadSeries, bytesWrittenSeries];
+                series = [bytesWrittenSeries, bytesReadSeries];
             } else {
                 dimensions = [TIME, 'docs_read', 'docs_written'];
-                series = [docsReadSeries, docsWrittenSeries];
+                series = [docsWrittenSeries, docsReadSeries];
             }
         } else if (entityType === 'capture') {
             if (renderingBytes) {
