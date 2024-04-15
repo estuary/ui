@@ -4,14 +4,14 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-interface DetailsUsateState {
+interface DetailsUsageState {
     range: DataByHourRange;
     setRange: (val: DataByHourRange) => void;
     statType: DataByHourStatType;
     setStatType: (val: DataByHourStatType) => void;
 }
 
-const useDetailsUsageStore = create<DetailsUsateState>()(
+const useDetailsUsageStore = create<DetailsUsageState>()(
     devtools((set) => {
         return {
             range: 6,
