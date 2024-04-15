@@ -19,6 +19,7 @@ function RowSelector({
     selectableTableStoreName = SelectTableStoreNames.CAPTURE,
     showMaterialize,
     showSelectedCount,
+    showTransform,
 }: RowSelectorProps) {
     const intl = useIntl();
 
@@ -77,7 +78,7 @@ function RowSelector({
                 />
             ) : null}
 
-            {selectableTableStoreName === SelectTableStoreNames.COLLECTION ? (
+            {showTransform ? (
                 <Transform
                     selectableTableStoreName={selectableTableStoreName}
                 />

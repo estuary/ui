@@ -12,7 +12,11 @@ import {
 import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props {
-    selectableTableStoreName: SelectTableStoreNames.COLLECTION;
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION
+        | SelectTableStoreNames.COLLECTION_SELECTOR
+        | SelectTableStoreNames.MATERIALIZATION;
 }
 
 function Transform({ selectableTableStoreName }: Props) {
