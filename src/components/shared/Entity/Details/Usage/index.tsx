@@ -1,6 +1,8 @@
+import { Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
+import StatTypePicker from 'components/graphs/DataByHourGraph/DataTypePicker';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
@@ -29,12 +31,17 @@ function Usage({ catalogName }: Props) {
     return (
         <CardWrapper
             message={
-                <HourlyRangeFilter
-                    range={range}
-                    setRange={setRange}
-                    statType={statType}
-                    setStatType={setStatType}
-                />
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ justifyContent: 'space-between', width: '100%' }}
+                >
+                    <HourlyRangeFilter range={range} setRange={setRange} />
+                    <StatTypePicker
+                        statType={statType}
+                        setStatType={setStatType}
+                    />
+                </Stack>
             }
         >
             {isValidating && !stats ? (
