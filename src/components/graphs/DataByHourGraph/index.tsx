@@ -253,7 +253,8 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
         messages.docsWritten,
     ]);
 
-    // Set the main bulk of the options for the chart
+    // Populate dimensions and series as needed.
+    //  The order of these arrays impact the graph's z index
     useEffect(() => {
         let dimensions, series: any;
         if (entityType === 'collection') {
@@ -286,6 +287,13 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
 
         const option: EChartsOption = {
             animation: false,
+            // This seems to do nothing
+            aria: {
+                enabled: true,
+                decal: {
+                    show: true,
+                },
+            },
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
             series,
@@ -379,9 +387,7 @@ function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        color: currentColor,
                         fontSize: 14,
-                        fontWeight: 'bold',
                         formatter: (value: any) => {
                             return renderingBytes
                                 ? defaultDataFormat(value)

@@ -18,20 +18,20 @@ function StatTypePicker({ statType, setStatType }: Props) {
         >
             <OutlinedToggleButton
                 size="small"
-                value="docs"
-                selected={statType === 'docs'}
+                value="bytes"
+                selected={statType === 'bytes'}
                 onClick={() => setStatType('bytes')}
             >
-                <FormattedMessage id="data.docs" />
+                <FormattedMessage id="data.data" />
             </OutlinedToggleButton>
 
             <OutlinedToggleButton
                 size="small"
-                value="bytes"
-                selected={statType === 'bytes'}
+                value="docs"
+                selected={statType === 'docs'}
                 onClick={() => setStatType('docs')}
             >
-                <FormattedMessage id="data.data" />
+                <FormattedMessage id="data.docs" />
             </OutlinedToggleButton>
         </ToggleButtonGroup>
     );
