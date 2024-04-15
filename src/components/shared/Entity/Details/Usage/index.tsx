@@ -5,10 +5,8 @@ import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import StatTypePicker from 'components/graphs/DataByHourGraph/DataTypePicker';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
-import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
-import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { hasLength } from 'utils/misc-utils';
@@ -19,13 +17,9 @@ interface Props {
 }
 
 function Usage({ catalogName }: Props) {
-    const [range, setRange] = useState<DataByHourRange>(6);
-    const [statType, setStatType] = useState<DataByHourStatType>('bytes');
-
     const { isValidating, stats, error } = useDetailsStats(
         catalogName,
-        'hourly',
-        { hours: range }
+        'hourly'
     );
 
     return (
@@ -36,11 +30,8 @@ function Usage({ catalogName }: Props) {
                     spacing={1}
                     sx={{ justifyContent: 'space-between', width: '100%' }}
                 >
-                    <HourlyRangeFilter range={range} setRange={setRange} />
-                    <StatTypePicker
-                        statType={statType}
-                        setStatType={setStatType}
-                    />
+                    <HourlyRangeFilter />
+                    <StatTypePicker />
                 </Stack>
             }
         >
@@ -63,8 +54,6 @@ function Usage({ catalogName }: Props) {
                 <DataByHourGraph
                     id="data-by-hour_entity-details"
                     stats={stats}
-                    statType={statType}
-                    range={range}
                 />
             ) : (
                 <EmptyGraphState

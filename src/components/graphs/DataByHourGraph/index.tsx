@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material';
+import useDetailsUsageState from 'components/shared/Entity/Details/Usage/useDetailsUsageState';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
@@ -20,16 +21,14 @@ import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourRange, DataByHourStatType } from '../types';
+import { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 import useDataByHourGraphMessages from './useDataByHourGraphMessages';
 
 interface Props {
     id: string;
-    range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
-    statType: DataByHourStatType;
     createdAt?: string;
 }
 
@@ -50,13 +49,17 @@ const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
     });
 };
 
-function DataByHourGraph({ id, range, statType, stats = [] }: Props) {
+function DataByHourGraph({ id, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
+    const [range, statType] = useDetailsUsageState((store) => [
+        store.range,
+        store.statType,
+    ]);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');

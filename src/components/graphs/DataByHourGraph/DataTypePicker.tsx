@@ -1,15 +1,15 @@
 import { ToggleButtonGroup } from '@mui/material';
-import { DataByHourStatType } from 'components/graphs/types';
+import useDetailsUsageState from 'components/shared/Entity/Details/Usage/useDetailsUsageState';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    statType: DataByHourStatType;
-    setStatType: (range: DataByHourStatType) => void;
-}
+function StatTypePicker() {
+    const [statType, setStatType] = useDetailsUsageState((store) => [
+        store.statType,
+        store.setStatType,
+    ]);
 
-function StatTypePicker({ statType, setStatType }: Props) {
     return (
         <ToggleButtonGroup
             size="small"
