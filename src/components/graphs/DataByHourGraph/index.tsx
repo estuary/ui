@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import useDetailsUsageState from 'components/shared/Entity/Details/Usage/useDetailsUsageState';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
@@ -56,7 +56,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
-    const [range, statType] = useDetailsUsageState((store) => [
+    const [range, statType] = useDetailsUsageStore((store) => [
         store.range,
         store.statType,
     ]);

@@ -1,11 +1,11 @@
 import { ToggleButtonGroup } from '@mui/material';
-import useDetailsUsageState from 'components/shared/Entity/Details/Usage/useDetailsUsageState';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 
 function StatTypePicker() {
-    const [statType, setStatType] = useDetailsUsageState((store) => [
+    const [statType, setStatType] = useDetailsUsageStore((store) => [
         store.statType,
         store.setStatType,
     ]);

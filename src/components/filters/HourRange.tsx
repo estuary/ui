@@ -1,13 +1,13 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { DataByHourRange } from 'components/graphs/types';
-import useDetailsUsageState from 'components/shared/Entity/Details/Usage/useDetailsUsageState';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { linkButtonSx } from 'context/Theme';
 import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 function HourlyRangeFilter() {
-    const [range, setRange] = useDetailsUsageState((store) => [
+    const [range, setRange] = useDetailsUsageStore((store) => [
         store.range,
         store.setRange,
     ]);

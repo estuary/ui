@@ -11,7 +11,7 @@ interface DetailsUsateState {
     setStatType: (val: DataByHourStatType) => void;
 }
 
-const useDetailsUsageState = create<DetailsUsateState>()(
+const useDetailsUsageStore = create<DetailsUsateState>()(
     devtools((set) => {
         return {
             range: 6,
@@ -38,4 +38,4 @@ const useDetailsUsageState = create<DetailsUsateState>()(
     }, devtoolsOptions('DetailsUsageStore'))
 );
 
-export default useDetailsUsageState;
+export default useDetailsUsageStore;
