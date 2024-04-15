@@ -513,4 +513,8 @@ export const selectableTableStoreSelectors = {
         set: (state: SelectableTableStore) => state.setActionSettings,
         reset: (state: SelectableTableStore) => state.resetActionSettings,
     },
+    hydrated: {
+        get: (state: SelectableTableStore) => state.hydrated,
+        set: (state: SelectableTableStore) => state.setHydrated,
+    },
 };
