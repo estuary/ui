@@ -408,6 +408,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
 
+    'entityTable.stats.filter.label': `${
+        CommonMessages[`filter.time.label`]
+    } Menu`,
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
     'entityTable.stats.bytes_written': `Bytes Written`,
