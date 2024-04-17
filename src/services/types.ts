@@ -40,6 +40,7 @@ export enum CustomEvents {
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_TEST_BACKGROUND = 'Materialization_Test_Background',
     NOTIFICATION_NETWORK_WARNING = 'Notification_Network_Warning',
+    OAUTH_SUCCESS_HANDLER = 'Oauth_Success_Handler',
     OAUTH_WINDOW_OPENER = 'Oauth_Window_Opener',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SUPABASE_CALL_FAILED = 'Supabase_Call_Failed',
