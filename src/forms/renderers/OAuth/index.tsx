@@ -119,10 +119,12 @@ const OAuthproviderRenderer = ({
     const successHandler = useCallback(
         (tokenResponse: any) => {
             // Order matters here
+            //  0. Start with the defaults to try to make sure the discriminator is there
             //  1. Get the data we have so far
             //  2. Merge in the injected values as those MUST match what the server is expecting
             //  3. Add in the response from the server for the access token
             const updatedCredentials = {
+                ...defaults,
                 ...(!hasOwnPathProp ? data?.[onChangePath] : data),
                 ...INJECTED_VALUES,
                 ...tokenResponse.data,
@@ -138,6 +140,7 @@ const OAuthproviderRenderer = ({
         },
         [
             data,
+            defaults,
             discriminatorProperty,
             handleChange,
             hasOwnPathProp,
