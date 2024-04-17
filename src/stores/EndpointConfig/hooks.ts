@@ -2,6 +2,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useZustandStore } from 'context/Zustand/provider';
 import { EndpointConfigStoreNames } from 'stores/names';
 import { Entity } from 'types';
+import { useShallow } from 'zustand/react/shallow';
 import { EndpointConfigState } from './types';
 
 const getStoreName = (entityType: Entity): EndpointConfigStoreNames => {
@@ -45,7 +46,10 @@ export const useEndpointConfigStore_changed = () => {
     return useZustandStore<
         EndpointConfigState,
         EndpointConfigState['stateChanged']
-    >(getStoreName(entityType), (state) => state.stateChanged);
+    >(
+        getStoreName(entityType),
+        useShallow((state) => state.stateChanged)
+    );
 };
 
 export const useEndpointConfigStore_endpointSchema = () => {
