@@ -674,8 +674,6 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
 export const eChartsColors_light = ['#acb0e6', '#82d8a3'];
 export const eChartsColors_medium = ['#5353cc', '#208c51'];
 
-export const eChartsColors = ['#82cfff', '#91CC75'];
-
 const themeSettings = createTheme({
     breakpoints: {
         values: {

@@ -3,7 +3,6 @@ import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDeta
 import { useEntityType } from 'context/EntityContext';
 import {
     defaultOutlineColor,
-    eChartsColors,
     eChartsColors_light,
     eChartsColors_medium,
 } from 'context/Theme';
@@ -70,10 +69,6 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const [lastUpdated, setLastUpdated] = useState<string>('');
 
     const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
-    const currentColor = useMemo(
-        () => eChartsColors[renderingBytes ? 0 : 1],
-        [renderingBytes]
-    );
 
     // Wire up the myCharts and pass in components we will use
     useEffect(() => {
@@ -416,7 +411,6 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     }, [
         bytesReadSeries,
         bytesWrittenSeries,
-        currentColor,
         docsReadSeries,
         docsWrittenSeries,
         entityType,
