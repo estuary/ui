@@ -1,7 +1,7 @@
 import { ConnectorTag } from 'hooks/connectors/shared';
 import {
     LiveSpecsExtQuery,
-    LiveSpecsExt_MaterializeCapture,
+    LiveSpecsExt_MaterializeOrTransform,
 } from 'hooks/useLiveSpecsExt';
 import {
     TABLES,
@@ -88,7 +88,7 @@ export const getLiveSpecsById_writesTo = async (
                     typeof liveSpecId === 'string' ? [liveSpecId] : liveSpecId
                 ),
         'getLiveSpecsById_writesTo'
-    ).then(handleSuccess<LiveSpecsExt_MaterializeCapture[]>, handleFailure);
+    ).then(handleSuccess<LiveSpecsExt_MaterializeOrTransform[]>, handleFailure);
 
     return data;
 };

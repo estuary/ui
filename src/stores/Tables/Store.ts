@@ -497,6 +497,7 @@ export const selectableTableStoreSelectors = {
         get: (state: SelectableTableStore) => state.selected,
         set: (state: SelectableTableStore) => state.setSelected,
         setAll: (state: SelectableTableStore) => state.setAllSelected,
+        reset: (state: SelectableTableStore) => state.resetSelected,
     },
     disableMultiSelect: {
         get: (state: SelectableTableStore) => state.disableMultiSelect,
@@ -511,5 +512,9 @@ export const selectableTableStoreSelectors = {
         get: (state: SelectableTableStore) => state.actionSettings,
         set: (state: SelectableTableStore) => state.setActionSettings,
         reset: (state: SelectableTableStore) => state.resetActionSettings,
+    },
+    hydrated: {
+        get: (state: SelectableTableStore) => state.hydrated,
+        set: (state: SelectableTableStore) => state.setHydrated,
     },
 };
