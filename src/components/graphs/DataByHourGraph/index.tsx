@@ -1,7 +1,12 @@
 import { useTheme } from '@mui/material';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useEntityType } from 'context/EntityContext';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import {
+    defaultOutlineColor,
+    eChartsColors,
+    eChartsColors_light,
+    eChartsColors_medium,
+} from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
@@ -191,28 +196,25 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         const barGap = isCollection ? '-100%' : undefined;
 
         const itemStyle = {
-            borderRadius: [10, 10, 0, 0],
+            borderRadius: [4, 4, 0, 0],
         };
 
         return [
             {
                 barMinHeight,
-                color: eChartsColors[0],
+                color: eChartsColors_light[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_written',
                 },
-                itemStyle: {
-                    ...itemStyle,
-                    opacity: 0.75,
-                },
+                itemStyle,
                 name: messages.dataWritten,
                 type,
             },
             {
                 barMinHeight,
                 barGap,
-                color: eChartsColors[0],
+                color: eChartsColors_medium[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_read',
@@ -223,22 +225,19 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             },
             {
                 barMinHeight,
-                color: eChartsColors[1],
+                color: eChartsColors_light[1],
                 encode: {
                     x: TIME,
                     y: 'docs_written',
                 },
-                itemStyle: {
-                    ...itemStyle,
-                    opacity: 0.75,
-                },
+                itemStyle,
                 name: messages.docsWritten,
                 type,
             },
             {
                 barMinHeight,
                 barGap,
-                color: eChartsColors[1],
+                color: eChartsColors_medium[1],
                 encode: {
                     x: TIME,
                     y: 'docs_read',
