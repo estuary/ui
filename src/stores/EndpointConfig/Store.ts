@@ -132,6 +132,10 @@ const getInitialState = (
                     ? createJSONFormDefaults(state.endpointSchema)
                     : encryptedEndpointConfig;
 
+                // TODO (endpoint config)
+                // I have NO clue why this is passing the encryptedConfig that is becing passed in and
+                //  not what is set to the state. Especially since it could end up with setting defaults to
+                //  the state value
                 populateErrors(
                     encryptedEndpointConfig,
                     state.customErrors,
