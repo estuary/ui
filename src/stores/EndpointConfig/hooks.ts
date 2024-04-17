@@ -1,233 +1,98 @@
-import { useEntityType } from 'context/EntityContext';
-import { useZustandStore } from 'context/Zustand/provider';
-import { EndpointConfigStoreNames } from 'stores/names';
-import { Entity } from 'types';
 import { useShallow } from 'zustand/react/shallow';
-import { EndpointConfigState } from './types';
-
-const getStoreName = (entityType: Entity): EndpointConfigStoreNames => {
-    if (entityType === 'capture' || entityType === 'materialization') {
-        return EndpointConfigStoreNames.GENERAL;
-    } else {
-        throw new Error('Invalid EndpointConfig store name');
-    }
-};
+import { useEnpointConfigStore } from './Store';
 
 export const useEndpointConfigStore_errorsExist = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['errorsExist']
-    >(getStoreName(entityType), (state) => state.errorsExist);
+    return useEnpointConfigStore((state) => state.errorsExist);
 };
 
 export const useEndpointConfigStore_endpointConfigErrors = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfigErrors']
-    >(getStoreName(entityType), (state) => state.endpointConfigErrors);
+    return useEnpointConfigStore((state) => state.endpointConfigErrors);
 };
 
 export const useEndpointConfigStore_reset = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['resetState']
-    >(getStoreName(entityType), (state) => state.resetState);
+    return useEnpointConfigStore((state) => state.resetState);
 };
 
 export const useEndpointConfigStore_changed = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['stateChanged']
-    >(
-        getStoreName(entityType),
-        useShallow((state) => state.stateChanged)
-    );
+    return useEnpointConfigStore(useShallow((state) => state.stateChanged));
 };
 
 export const useEndpointConfigStore_endpointSchema = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointSchema']
-    >(getStoreName(entityType), (state) => state.endpointSchema);
+    return useEnpointConfigStore((state) => state.endpointSchema);
 };
 
 export const useEndpointConfigStore_customErrors = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['customErrors']
-    >(getStoreName(entityType), (state) => state.customErrors);
+    return useEnpointConfigStore((state) => state.customErrors);
 };
 
 export const useEndpointConfigStore_setCustomErrors = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setCustomErrors']
-    >(getStoreName(entityType), (state) => state.setCustomErrors);
+    return useEnpointConfigStore((state) => state.setCustomErrors);
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointSchema']
-    >(getStoreName(entityType), (state) => state.setEndpointSchema);
+    return useEnpointConfigStore((state) => state.setEndpointSchema);
 };
 
 export const useEndpointConfigStore_encryptedEndpointConfig_data = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['encryptedEndpointConfig']['data']
-    >(getStoreName(entityType), (state) => state.encryptedEndpointConfig.data);
+    return useEnpointConfigStore((state) => state.encryptedEndpointConfig.data);
 };
 
 export const useEndpointConfigStore_setEncryptedEndpointConfig = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEncryptedEndpointConfig']
-    >(getStoreName(entityType), (state) => state.setEncryptedEndpointConfig);
+    return useEnpointConfigStore((state) => state.setEncryptedEndpointConfig);
 };
 
 export const useEndpointConfigStore_previousEndpointConfig_data = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['previousEndpointConfig']['data']
-    >(getStoreName(entityType), (state) => state.previousEndpointConfig.data);
+    return useEnpointConfigStore((state) => state.previousEndpointConfig.data);
 };
 
 export const useEndpointConfigStore_setPreviousEndpointConfig = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setPreviousEndpointConfig']
-    >(getStoreName(entityType), (state) => state.setPreviousEndpointConfig);
+    return useEnpointConfigStore((state) => state.setPreviousEndpointConfig);
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointConfig']['data']
-    >(getStoreName(entityType), (state) => state.endpointConfig.data);
+    return useEnpointConfigStore((state) => state.endpointConfig.data);
 };
 
 export const useEndpointConfigStore_setEndpointConfig = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointConfig']
-    >(getStoreName(entityType), (state) => state.setEndpointConfig);
+    return useEnpointConfigStore((state) => state.setEndpointConfig);
 };
 
 export const useEndpointConfig_hydrated = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['hydrated']
-    >(getStoreName(entityType), (state) => state.hydrated);
+    return useEnpointConfigStore((state) => state.hydrated);
 };
 
 export const useEndpointConfig_setHydrated = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setHydrated']
-    >(getStoreName(entityType), (state) => state.setHydrated);
+    return useEnpointConfigStore((state) => state.setHydrated);
 };
 
 export const useEndpointConfig_hydrationErrorsExist = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['hydrationErrorsExist']
-    >(getStoreName(entityType), (state) => state.hydrationErrorsExist);
+    return useEnpointConfigStore((state) => state.hydrationErrorsExist);
 };
 
 export const useEndpointConfig_setHydrationErrorsExist = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setHydrationErrorsExist']
-    >(getStoreName(entityType), (state) => state.setHydrationErrorsExist);
+    return useEnpointConfigStore((state) => state.setHydrationErrorsExist);
 };
 
 export const useEndpointConfig_hydrateState = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['hydrateState']
-    >(getStoreName(entityType), (state) => state.hydrateState);
+    return useEnpointConfigStore((state) => state.hydrateState);
 };
 
 export const useEndpointConfig_setActive = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setActive']
-    >(getStoreName(entityType), (state) => state.setActive);
+    return useEnpointConfigStore((state) => state.setActive);
 };
 
 export const useEndpointConfig_serverUpdateRequired = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['serverUpdateRequired']
-    >(getStoreName(entityType), (state) => state.serverUpdateRequired);
+    return useEnpointConfigStore((state) => state.serverUpdateRequired);
 };
 
 export const useEndpointConfig_setServerUpdateRequired = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setServerUpdateRequired']
-    >(getStoreName(entityType), (state) => state.setServerUpdateRequired);
+    return useEnpointConfigStore((state) => state.setServerUpdateRequired);
 };
 
 export const useEndpointConfig_endpointCanBeEmpty = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['endpointCanBeEmpty']
-    >(getStoreName(entityType), (state) => state.endpointCanBeEmpty);
+    return useEnpointConfigStore((state) => state.endpointCanBeEmpty);
 };
 
 export const useEndpointConfig_setEndpointCanBeEmpty = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EndpointConfigState,
-        EndpointConfigState['setEndpointCanBeEmpty']
-    >(getStoreName(entityType), (state) => state.setEndpointCanBeEmpty);
+    return useEnpointConfigStore((state) => state.setEndpointCanBeEmpty);
 };

@@ -15,7 +15,6 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
 import {
     configCanBeEmpty,
@@ -280,8 +279,9 @@ const getInitialState = (
     },
 });
 
-export const createEndpointConfigStore = (key: EndpointConfigStoreNames) => {
-    return create<EndpointConfigState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
-};
+export const useEnpointConfigStore = create<EndpointConfigState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions('general-endpoint-config')
+    )
+);

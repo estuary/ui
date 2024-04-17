@@ -8,7 +8,6 @@ import {
     collectionDetailsForm,
     materializationDetailsForm,
 } from 'stores/DetailsForm/Store';
-import { createEndpointConfigStore } from 'stores/EndpointConfig/Store';
 import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import { createJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
@@ -19,7 +18,6 @@ import {
     BindingStoreNames,
     DetailsFormStoreNames,
     EditorStoreNames,
-    EndpointConfigStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
     GlobalStoreNames,
@@ -64,11 +62,6 @@ const invariableStores = {
     ),
     [EditorStoreNames.MATERIALIZATION]: createEditorStore(
         EditorStoreNames.MATERIALIZATION
-    ),
-
-    // Endpoint Config Store
-    [EndpointConfigStoreNames.GENERAL]: createEndpointConfigStore(
-        EndpointConfigStoreNames.GENERAL
     ),
 
     // Existing Entity Store - used only in create workflows
