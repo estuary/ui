@@ -263,9 +263,9 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.slack': `Estuary Slack`,
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
     'helpMenu.support': `Email Support`,
-    'helpMenu.support.link': `mailto: flow-support@estuary.dev`,
+    'helpMenu.support.link': `${CommonMessages['support.email']}`,
     'helpMenu.contact': `Contact Us`,
-    'helpMenu.contact.link': `https://www.estuary.dev/#get-in-touch`,
+    'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
