@@ -9,6 +9,8 @@ import { useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
@@ -117,6 +119,12 @@ const OAuthproviderRenderer = ({
                 ...tokenResponse.data,
             };
 
+            logRocketEvent(CustomEvents.OAUTH_SUCCESS_HANDLER, {
+                discriminatorProperty,
+                discriminatorExists: Boolean(
+                    updatedCredentials[discriminatorProperty]
+                ),
+            });
             handleChange(onChangePath, updatedCredentials);
         }
     );
