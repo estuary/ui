@@ -2,7 +2,7 @@ import { Stack } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
-import StatTypePicker from 'components/graphs/DataByHourGraph/StatTypePicker';
+import StatTypeSelector from 'components/graphs/DataByHourGraph/StatTypeSelector';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import Error from 'components/shared/Error';
@@ -31,7 +31,7 @@ function Usage({ catalogName }: Props) {
                     sx={{ justifyContent: 'space-between', width: '100%' }}
                 >
                     <HourlyRangeFilter />
-                    <StatTypePicker />
+                    <StatTypeSelector />
                 </Stack>
             }
         >
