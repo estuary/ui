@@ -1,11 +1,7 @@
 import { useTheme } from '@mui/material';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useEntityType } from 'context/EntityContext';
-import {
-    defaultOutlineColor,
-    eChartsColors_light,
-    eChartsColors_medium,
-} from 'context/Theme';
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
@@ -189,6 +185,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
 
         const isCollection = entityType === 'collection';
         const barGap = isCollection ? '-100%' : undefined;
+        const colorVariation = isCollection ? 'light' : 'medium';
 
         const itemStyle = {
             borderRadius: [4, 4, 0, 0],
@@ -197,7 +194,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         return [
             {
                 barMinHeight,
-                color: eChartsColors_light[0],
+                color: eChartsColors[colorVariation][0],
                 encode: {
                     x: TIME,
                     y: 'bytes_written',
@@ -209,7 +206,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             {
                 barMinHeight,
                 barGap,
-                color: eChartsColors_medium[0],
+                color: eChartsColors.medium[0],
                 encode: {
                     x: TIME,
                     y: 'bytes_read',
@@ -220,7 +217,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             },
             {
                 barMinHeight,
-                color: eChartsColors_light[1],
+                color: eChartsColors[colorVariation][1],
                 encode: {
                     x: TIME,
                     y: 'docs_written',
@@ -232,7 +229,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             {
                 barMinHeight,
                 barGap,
-                color: eChartsColors_medium[1],
+                color: eChartsColors.medium[1],
                 encode: {
                     x: TIME,
                     y: 'docs_read',
