@@ -224,7 +224,7 @@ export const DIRECTIVES: Directives = {
         },
     },
     storageMappings: {
-        token: '2633b312-0f33-47cc-936f-674502cdba28',
+        token: '36bf5a6a-a0c6-4c24-bc1b-99783c7ed6af',
         queryFilter: (queryBuilder) => {
             return queryBuilder;
         },

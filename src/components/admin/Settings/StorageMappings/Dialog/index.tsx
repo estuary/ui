@@ -9,14 +9,12 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import { Cancel } from 'iconoir-react';
-import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { JsonFormsData } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import StorageMappingsForm from './Form';
 import SaveButton from './SaveButton';
 
@@ -37,9 +35,9 @@ function ConfigureStorageDialog({
 }: Props) {
     const theme = useTheme();
 
-    const [formData, setFormData] = useState<JsonFormsData>({
-        data: {},
-    });
+    const resetFormValue = useStorageMappingStore(
+        (state) => state.resetFormValue
+    );
 
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
@@ -48,7 +46,7 @@ function ConfigureStorageDialog({
         event.preventDefault();
 
         setOpen(false);
-        setFormData({ data: {} });
+        resetFormValue();
         setSaving(false);
         setServerError(null);
     };
@@ -100,10 +98,7 @@ function ConfigureStorageDialog({
                     </AlertBox>
                 </Box>
 
-                <StorageMappingsForm
-                    formData={formData}
-                    setFormData={setFormData}
-                />
+                <StorageMappingsForm />
             </DialogContent>
 
             <DialogActions>
@@ -112,10 +107,6 @@ function ConfigureStorageDialog({
                 </Button>
 
                 <SaveButton
-                    disabled={
-                        isEmpty(formData.data) || hasLength(formData.errors)
-                    }
-                    formData={formData.data}
                     prefix={selectedTenant}
                     saving={saving}
                     setOpen={setOpen}

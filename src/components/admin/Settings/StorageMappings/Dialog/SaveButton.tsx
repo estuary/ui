@@ -2,10 +2,12 @@ import { LoadingButton } from '@mui/lab';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
+import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { useZustandStore } from 'context/Zustand/provider';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import { StorageConfig } from 'directives/types';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -13,11 +15,9 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import { JsonFormsData } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    disabled: boolean;
-    formData: JsonFormsData['data'];
     prefix: string;
     saving: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
@@ -41,8 +41,6 @@ const submitStorageMapping = async (
 };
 
 function SaveButton({
-    disabled,
-    formData,
     prefix,
     saving,
     setOpen,
@@ -60,6 +58,11 @@ function SaveButton({
     >(
         SelectTableStoreNames.STORAGE_MAPPINGS,
         selectableTableStoreSelectors.query.hydrate
+    );
+
+    const formData = useStorageMappingStore((state) => state.formValue.data);
+    const formErrors = useStorageMappingStore(
+        (state) => state.formValue.errors
     );
 
     const storageConfig: StorageConfig | null = useMemo(
@@ -115,7 +118,9 @@ function SaveButton({
         <LoadingButton
             variant="contained"
             size="small"
-            disabled={disabled || loading || saving}
+            disabled={
+                isEmpty(formData) || hasLength(formErrors) || loading || saving
+            }
             loading={loading || saving}
             onClick={onClick}
         >

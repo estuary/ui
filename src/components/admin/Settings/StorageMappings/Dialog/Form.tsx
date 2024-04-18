@@ -1,15 +1,9 @@
 import { JsonForms } from '@jsonforms/react';
 import { Stack, StyledEngineProvider } from '@mui/material';
+import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { jsonFormsPadding } from 'context/Theme';
-import { Dispatch, SetStateAction } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
-import { JsonFormsData } from 'types';
-
-interface Props {
-    formData: JsonFormsData;
-    setFormData: Dispatch<SetStateAction<JsonFormsData>>;
-}
 
 const schema = {
     title: 'Amazon Simple Storage Service.',
@@ -48,7 +42,12 @@ const schema = {
     },
 };
 
-function StorageMappingsForm({ formData, setFormData }: Props) {
+function StorageMappingsForm() {
+    const formValue = useStorageMappingStore((state) => state.formValue);
+    const updateFormValue = useStorageMappingStore(
+        (state) => state.updateFormValue
+    );
+
     const uiSchema = custom_generateDefaultUISchema(schema);
 
     return (
@@ -58,9 +57,9 @@ function StorageMappingsForm({ formData, setFormData }: Props) {
                     {...jsonFormsDefaults}
                     schema={schema}
                     uischema={uiSchema}
-                    data={formData.data}
+                    data={formValue.data}
                     onChange={(value) => {
-                        setFormData(value);
+                        updateFormValue(value);
                     }}
                 />
             </Stack>
