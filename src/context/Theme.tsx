@@ -288,7 +288,8 @@ export const jsonObjectPreview_value = {
 };
 
 // Styles
-// TODO (styling) - we use this styling on non-cards we should probably rename this eventually
+// TODO (styling) - we use this styling on non-cards we should probably rename this
+//  and use in other places
 export const cardHeaderSx: SxProps<Theme> = {
     fontSize: 16,
     fontWeight: 500,
