@@ -14,37 +14,31 @@ function useDataByHourGraphMessages() {
         const readMessageKey = isCollection ? 'data.out' : 'data.read';
         const writtenMessageKey = isCollection ? 'data.in' : 'data.written';
 
-        const dataWritten = intl.formatMessage(
-            { id: writtenMessageKey },
-            {
-                type: dataMsg,
-            }
-        );
-        const dataRead = intl.formatMessage(
-            { id: readMessageKey },
-            {
-                type: dataMsg,
-            }
-        );
-
-        const docsWritten = intl.formatMessage(
-            { id: writtenMessageKey },
-            {
-                type: docsMsg,
-            }
-        );
-        const docsRead = intl.formatMessage(
-            { id: readMessageKey },
-            {
-                type: docsMsg,
-            }
-        );
-
         return {
-            dataWritten,
-            dataRead,
-            docsWritten,
-            docsRead,
+            dataWritten: intl.formatMessage(
+                { id: writtenMessageKey },
+                {
+                    type: dataMsg,
+                }
+            ),
+            dataRead: intl.formatMessage(
+                { id: readMessageKey },
+                {
+                    type: dataMsg,
+                }
+            ),
+            docsWritten: intl.formatMessage(
+                { id: writtenMessageKey },
+                {
+                    type: docsMsg,
+                }
+            ),
+            docsRead: intl.formatMessage(
+                { id: readMessageKey },
+                {
+                    type: docsMsg,
+                }
+            ),
         };
     }, [entityType, intl]);
 }
