@@ -148,6 +148,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.evolve': `Apply`,
     'cta.support': `contact support`,
     'cta.add': `Add`,
+    'cta.transform': `Transform`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -269,9 +270,9 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.slack': `Estuary Slack`,
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
     'helpMenu.support': `Email Support`,
-    'helpMenu.support.link': `mailto: flow-support@estuary.dev`,
+    'helpMenu.support.link': `${CommonMessages['support.email']}`,
     'helpMenu.contact': `Contact Us`,
-    'helpMenu.contact.link': `https://www.estuary.dev/#get-in-touch`,
+    'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
@@ -408,6 +409,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
 
+    'entityTable.stats.filter.label': `${
+        CommonMessages[`filter.time.label`]
+    } Menu`,
     'entityTable.stats.bytes_read': `Bytes Read`,
     'entityTable.stats.docs_read': `Docs Read`,
     'entityTable.stats.bytes_written': `Bytes Written`,

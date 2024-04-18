@@ -134,6 +134,16 @@ function EntityTable({
         SelectableTableStore['hydrate']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.hydrate);
 
+    const hydrated = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['hydrated']
+    >(selectableTableStoreName, selectableTableStoreSelectors.hydrated.get);
+
+    const setHydrated = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setHydrated']
+    >(selectableTableStoreName, selectableTableStoreSelectors.hydrated.set);
+
     const setRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setRows']
@@ -163,17 +173,19 @@ function EntityTable({
     const [page, setPage] = useState(0);
 
     useEffect(() => {
-        if (selectData && selectData.length > 0) {
-            setTableState({ status: TableStatuses.DATA_FETCHED });
-            toolbar ? setRows(selectData) : null;
-        } else if (isFiltering.current) {
-            setTableState({ status: TableStatuses.UNMATCHED_FILTER });
-        } else if (networkFailed) {
-            setTableState({ status: TableStatuses.NETWORK_FAILED });
-        } else {
-            setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+        if (hydrated) {
+            if (selectData && selectData.length > 0) {
+                setTableState({ status: TableStatuses.DATA_FETCHED });
+                toolbar ? setRows(selectData) : null;
+            } else if (isFiltering.current) {
+                setTableState({ status: TableStatuses.UNMATCHED_FILTER });
+            } else if (networkFailed) {
+                setTableState({ status: TableStatuses.NETWORK_FAILED });
+            } else {
+                setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+            }
         }
-    }, [networkFailed, selectData, setRows, toolbar]);
+    }, [hydrated, networkFailed, selectData, setRows, toolbar]);
 
     useEffect(() => {
         if (successfulTransformations > 0) {
@@ -213,8 +225,10 @@ function EntityTable({
             if (override ?? !keepSelectionOnFilterOrSearch) {
                 resetSelection();
             }
+
+            setHydrated(false);
         },
-        [keepSelectionOnFilterOrSearch, resetSelection]
+        [keepSelectionOnFilterOrSearch, resetSelection, setHydrated]
     );
 
     const handlers = {
@@ -334,7 +348,7 @@ function EntityTable({
                             columns={columns}
                             rows={dataRows}
                             loading={
-                                isValidating ||
+                                (isValidating && !hydrated) ||
                                 tableState.status === TableStatuses.LOADING
                             }
                             noExistingDataContentIds={noExistingDataContentIds}

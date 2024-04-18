@@ -26,9 +26,7 @@ function TenantGuard({ children }: BaseComponentProps) {
         isValidating: checkingGrants,
         mutate,
         error,
-    } = useUserGrants({
-        singleCall: true,
-    });
+    } = useUserGrants(true);
 
     if (error) {
         return (
