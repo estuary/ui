@@ -60,17 +60,16 @@ function SaveButton({
         selectableTableStoreSelectors.query.hydrate
     );
 
+    const provider = useStorageMappingStore((state) => state.provider);
+
     const formData = useStorageMappingStore((state) => state.formValue.data);
     const formErrors = useStorageMappingStore(
         (state) => state.formValue.errors
     );
 
     const storageConfig: StorageConfig | null = useMemo(
-        () =>
-            formData.provider && formData.bucket
-                ? { provider: formData.provider, bucket: formData.bucket }
-                : null,
-        [formData]
+        () => (formData.bucket ? { provider, bucket: formData.bucket } : null),
+        [formData, provider]
     );
 
     const onClick = async (event: React.MouseEvent<HTMLElement>) => {

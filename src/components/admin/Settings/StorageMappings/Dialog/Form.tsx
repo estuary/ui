@@ -10,24 +10,12 @@ const schema = {
     examples: [
         {
             bucket: 'my-bucket',
-            // prefix: null,
             region: null,
         },
     ],
     type: 'object',
-    required: ['bucket', 'provider'],
+    required: ['bucket'],
     properties: {
-        // prefix: {
-        //     description: 'Prefix of keys written to the bucket.',
-        //     default: null,
-        //     examples: ['acmeCo/widgets/'],
-        //     type: 'string',
-        //     pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
-        // },
-        provider: {
-            type: 'string',
-            enum: ['S3'],
-        },
         bucket: {
             description: 'Bucket into which Flow will store data.',
             type: 'string',
@@ -42,7 +30,7 @@ const schema = {
     },
 };
 
-function StorageMappingsForm() {
+function StorageMappingForm() {
     const formValue = useStorageMappingStore((state) => state.formValue);
     const updateFormValue = useStorageMappingStore(
         (state) => state.updateFormValue
@@ -67,4 +55,4 @@ function StorageMappingsForm() {
     );
 }
 
-export default StorageMappingsForm;
+export default StorageMappingForm;

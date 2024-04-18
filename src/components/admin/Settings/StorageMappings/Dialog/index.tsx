@@ -9,13 +9,14 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import StorageMappingsForm from './Form';
+import StorageMappingForm from './Form';
 import SaveButton from './SaveButton';
 
 interface Props {
@@ -98,7 +99,9 @@ function ConfigureStorageDialog({
                     </AlertBox>
                 </Box>
 
-                <StorageMappingsForm />
+                <ProviderSelector />
+
+                <StorageMappingForm />
             </DialogContent>
 
             <DialogActions>

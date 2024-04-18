@@ -4,8 +4,12 @@ import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { StorageMappingState } from './types';
 
-const getInitialStateData = (): Pick<StorageMappingState, 'formValue'> => ({
+const getInitialStateData = (): Pick<
+    StorageMappingState,
+    'formValue' | 'provider'
+> => ({
     formValue: { data: {} },
+    provider: '',
 });
 
 const getInitialState = (
@@ -33,6 +37,16 @@ const getInitialState = (
             }),
             false,
             'Form updated'
+        );
+    },
+
+    updateProvider: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.provider = value;
+            }),
+            false,
+            'Cloud provider updated'
         );
     },
 });
