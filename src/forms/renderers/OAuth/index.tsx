@@ -5,10 +5,12 @@ import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { optionExists } from 'forms/renderers/Overrides/testers/testers';
 import { startCase } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'stores/EndpointConfig/hooks';
 import { generateCustomError } from 'stores/extensions/CustomErrors';
 import { Options } from 'types/jsonforms';
@@ -76,25 +78,36 @@ const OAuthproviderRenderer = ({
         return getDiscriminator(schemaToCheck);
     }, [hasOwnPathProp, path, rootSchema.properties, schema]);
 
+    const defaults = useMemo(
+        () =>
+            getDiscriminatorDefaultValue(
+                // If Oauth is not inside oneOf (ex: slack materialization)
+                //      We get the schema is for the ENTIRE config. So we need to
+                //      fetch just the credential config otherwise we'll end up nesting
+                schema.properties?.[onChangePath]?.properties ??
+                    // If Oauth is inside oneOf (ex: google sheets capture)
+                    //      We get just the schema for the credentials object so JsonForms
+                    //      has already handled the "nesting" for us
+                    schema.properties,
+                discriminatorProperty
+            ),
+        [discriminatorProperty, onChangePath, schema.properties]
+    );
+
     // Reset the configuration either to injected values or
     //  to special default values that we can check for
-    const setConfigToDefault = () => {
-        const defaults = getDiscriminatorDefaultValue(
-            // If Oauth is not inside oneOf (ex: slack materialization)
-            //      We get the schema is for the ENTIRE config. So we need to
-            //      fetch just the credential config otherwise we'll end up nesting
-            schema.properties?.[onChangePath]?.properties ??
-                // If Oauth is inside oneOf (ex: google sheets capture)
-                //      We get just the schema for the credentials object so JsonForms
-                //      has already handled the "nesting" for us
-                schema.properties,
-            discriminatorProperty
-        );
+    const setConfigToDefault = useCallback(() => {
+        logRocketEvent(CustomEvents.OAUTH_DEFAULTING, {
+            discriminatorProperty,
+            discriminatorExists: Boolean(defaults[discriminatorProperty]),
+        });
+        logRocketConsole(`${CustomEvents.OAUTH_DEFAULTING}:defaults`, defaults);
+
         handleChange(onChangePath, {
             ...defaults,
             ...INJECTED_VALUES,
         });
-    };
+    }, [defaults, discriminatorProperty, handleChange, onChangePath]);
 
     const { hasAllRequiredProps, showAuthenticated } = useAllRequiredPropCheck(
         data,
@@ -103,22 +116,42 @@ const OAuthproviderRenderer = ({
         discriminatorProperty
     );
 
-    // OAuth Stuff
-    const { errorMessage, openPopUp, loading } = useOauthHandler(
-        provider,
-        (tokenResponse) => {
+    const successHandler = useCallback(
+        (tokenResponse: any) => {
             // Order matters here
+            //  0. Start with the defaults to try to make sure the discriminator is there
             //  1. Get the data we have so far
             //  2. Merge in the injected values as those MUST match what the server is expecting
             //  3. Add in the response from the server for the access token
             const updatedCredentials = {
+                ...defaults,
                 ...(!hasOwnPathProp ? data?.[onChangePath] : data),
                 ...INJECTED_VALUES,
                 ...tokenResponse.data,
             };
 
+            logRocketEvent(CustomEvents.OAUTH_SUCCESS_HANDLER, {
+                discriminatorProperty,
+                discriminatorExists: Boolean(
+                    updatedCredentials[discriminatorProperty]
+                ),
+            });
             handleChange(onChangePath, updatedCredentials);
-        }
+        },
+        [
+            data,
+            defaults,
+            discriminatorProperty,
+            handleChange,
+            hasOwnPathProp,
+            onChangePath,
+        ]
+    );
+
+    // OAuth Stuff
+    const { errorMessage, openPopUp, loading } = useOauthHandler(
+        provider,
+        successHandler
     );
 
     // When loading we need to handle Create and Edit differently

@@ -15,7 +15,6 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { EndpointConfigStoreNames } from 'stores/names';
 import { JsonFormsData, Schema } from 'types';
 import {
     configCanBeEmpty,
@@ -87,11 +86,9 @@ const getInitialState = (
                 state.customErrors = val;
                 state.customErrorsExist = hasLength(val);
 
-                const { endpointConfig } = get();
-
                 // Setting this so that if there is a custom error then the
                 //  generate button will not proceed
-                populateErrors(endpointConfig, val, state);
+                populateErrors(state.endpointConfig, val, state);
             }),
             false,
             'Endpoint Custom Errors Set'
@@ -109,9 +106,7 @@ const getInitialState = (
                 state.endpointSchema = resolved;
                 state.endpointCanBeEmpty = configCanBeEmpty(resolved);
 
-                const { endpointConfig, customErrors } = get();
-
-                populateErrors(endpointConfig, customErrors, state);
+                populateErrors(state.endpointConfig, state.customErrors, state);
             }),
             false,
             'Endpoint Schema Set'
@@ -121,10 +116,8 @@ const getInitialState = (
     setPublishedEndpointConfig: (encryptedEndpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
-
                 state.publishedEndpointConfig = isEmpty(encryptedEndpointConfig)
-                    ? createJSONFormDefaults(endpointSchema)
+                    ? createJSONFormDefaults(state.endpointSchema)
                     : encryptedEndpointConfig;
             }),
             false,
@@ -135,13 +128,19 @@ const getInitialState = (
     setEncryptedEndpointConfig: (encryptedEndpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema, customErrors } = get();
-
                 state.encryptedEndpointConfig = isEmpty(encryptedEndpointConfig)
-                    ? createJSONFormDefaults(endpointSchema)
+                    ? createJSONFormDefaults(state.endpointSchema)
                     : encryptedEndpointConfig;
 
-                populateErrors(encryptedEndpointConfig, customErrors, state);
+                // TODO (endpoint config)
+                // I have NO clue why this is passing the encryptedConfig that is becing passed in and
+                //  not what is set to the state. Especially since it could end up with setting defaults to
+                //  the state value
+                populateErrors(
+                    encryptedEndpointConfig,
+                    state.customErrors,
+                    state
+                );
             }),
             false,
             'Encrypted Endpoint Config Set'
@@ -151,10 +150,8 @@ const getInitialState = (
     setPreviousEndpointConfig: (endpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema } = get();
-
                 state.previousEndpointConfig = isEmpty(endpointConfig)
-                    ? createJSONFormDefaults(endpointSchema)
+                    ? createJSONFormDefaults(state.endpointSchema)
                     : endpointConfig;
             }),
             false,
@@ -165,13 +162,11 @@ const getInitialState = (
     setEndpointConfig: (endpointConfig) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointSchema, customErrors } = get();
-
                 state.endpointConfig = isEmpty(endpointConfig)
-                    ? createJSONFormDefaults(endpointSchema)
+                    ? createJSONFormDefaults(state.endpointSchema)
                     : endpointConfig;
 
-                populateErrors(state.endpointConfig, customErrors, state);
+                populateErrors(state.endpointConfig, state.customErrors, state);
             }),
             false,
             'Endpoint Config Changed'
@@ -181,11 +176,9 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
-                const { endpointConfig, customErrors } = get();
-
                 state.serverUpdateRequired = updateRequired;
 
-                populateErrors(endpointConfig, customErrors, state);
+                populateErrors(state.endpointConfig, state.customErrors, state);
             }),
             false,
             'Server Update Required Flag Changed'
@@ -290,8 +283,9 @@ const getInitialState = (
     },
 });
 
-export const createEndpointConfigStore = (key: EndpointConfigStoreNames) => {
-    return create<EndpointConfigState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
-};
+export const useEnpointConfigStore = create<EndpointConfigState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions('general-endpoint-config')
+    )
+);

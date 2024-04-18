@@ -1,4 +1,5 @@
-import { Box, Skeleton } from '@mui/material';
+import { Box, Skeleton, Stack } from '@mui/material';
+import { defaultOutline } from 'context/Theme';
 
 export function BindingsEditorConfigSkeleton() {
     return (
@@ -26,5 +27,63 @@ export function BindingsEditorConfigSkeleton() {
                 <Skeleton variant="rectangular" />
             </>
         </Box>
+    );
+}
+
+interface DataGridRowSkeletonProps {
+    opacity: number;
+    contentWidth?: string | number;
+    endButton?: boolean;
+    showBorder?: boolean;
+}
+
+export function DataGridRowSkeleton({
+    opacity,
+    contentWidth,
+    endButton,
+    showBorder,
+}: DataGridRowSkeletonProps) {
+    return (
+        <Stack
+            direction="row"
+            sx={{
+                height: 52,
+                borderBottom: showBorder
+                    ? (theme) => defaultOutline[theme.palette.mode]
+                    : undefined,
+            }}
+        >
+            <Box
+                sx={{
+                    pl: '12px',
+                    pr: 1,
+                    py: '6px',
+                    display: 'flex',
+                    flexGrow: 1,
+                    alignItems: 'center',
+                    opacity,
+                }}
+            >
+                <Skeleton
+                    width={contentWidth ?? '100%'}
+                    variant="rectangular"
+                />
+            </Box>
+
+            {endButton ? (
+                <Box
+                    sx={{
+                        width: 52,
+                        px: '15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity,
+                    }}
+                >
+                    <Skeleton width="100%" variant="rectangular" />
+                </Box>
+            ) : null}
+        </Stack>
     );
 }
