@@ -274,13 +274,6 @@ function DataByHourGraph({ id, stats = [] }: Props) {
 
         const option: EChartsOption = {
             animation: false,
-            // This seems to do nothing
-            aria: {
-                enabled: true,
-                decal: {
-                    show: true,
-                },
-            },
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
             series,
