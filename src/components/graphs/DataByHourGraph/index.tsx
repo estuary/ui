@@ -63,10 +63,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
-    const [range, statType] = useDetailsUsageStore((store) => [
-        store.range,
-        store.statType,
-    ]);
+    const statType = useDetailsUsageStore((store) => store.statType);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
@@ -407,7 +404,6 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
-        range, // This is required to cause this to re-render when it changes
     ]);
 
     return <div id={id} style={{ height: 350 }} />;
