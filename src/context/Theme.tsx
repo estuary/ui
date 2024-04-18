@@ -288,6 +288,11 @@ export const jsonObjectPreview_value = {
 };
 
 // Styles
+// TODO (styling) - we use this styling on non-cards we should probably rename this eventually
+export const cardHeaderSx: SxProps<Theme> = {
+    fontSize: 16,
+    fontWeight: 500,
+};
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {

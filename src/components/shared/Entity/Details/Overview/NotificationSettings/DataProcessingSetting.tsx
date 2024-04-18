@@ -15,7 +15,7 @@ import {
 } from 'api/alerts';
 import useSettingIntervalOptions from 'components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
 import { ErrorDetails } from 'components/shared/Error/types';
-import { defaultOutline } from 'context/Theme';
+import { cardHeaderSx, defaultOutline } from 'context/Theme';
 import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -166,7 +166,7 @@ function DataProcessingSetting({
             ) : (
                 <>
                     <Stack spacing={1}>
-                        <Typography sx={{ fontSize: 16, fontWeight: 500 }}>
+                        <Typography sx={cardHeaderSx}>
                             <FormattedMessage id="details.settings.notifications.dataProcessing.header" />
                         </Typography>
 
