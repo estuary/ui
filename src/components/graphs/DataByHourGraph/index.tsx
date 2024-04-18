@@ -169,13 +169,12 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         [intl]
     );
 
-    // TODO (Typing) EChartsOption['series']
     const [
         bytesWrittenSeries,
         bytesReadSeries,
         docsWrittenSeries,
         docsReadSeries,
-    ] = useMemo<any[]>(() => {
+    ] = useMemo<EChartsOption['series'][]>(() => {
         const barMinHeight = 1;
         const type = 'bar';
 
