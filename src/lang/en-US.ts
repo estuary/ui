@@ -170,8 +170,6 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.reads_from': `Reads From`,
     'data.data': `Data`,
     'data.docs': `Docs`,
-    // We just set the type here because it is easier for coding
-    //  also - we might end up adding in Read/Written back in
     'data.read': `{type} Read`,
     'data.written': `{type} Written`,
     'data.in': `{type} In`,
