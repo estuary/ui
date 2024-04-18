@@ -161,14 +161,10 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                 });
             }
 
-            let response = '';
             if (dimension.includes('docs')) {
-                response = `${readable(value, 2, false)}`;
-            } else {
-                response = `${defaultDataFormat(value, precision)}`;
+                return `${readable(value, 2, false)}`;
             }
-
-            return response;
+            return `${defaultDataFormat(value, precision)}`;
         },
         [intl]
     );
