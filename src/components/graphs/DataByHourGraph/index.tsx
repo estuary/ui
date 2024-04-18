@@ -4,7 +4,7 @@ import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
-import { BarChart, LineChart, PictorialBarChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
     GridComponent,
@@ -36,6 +36,13 @@ interface Props {
 //  dataset complained when I tried
 const TIME = 'timestamp';
 type Dimensions = keyof CatalogStats_Details;
+
+// Graph styling
+const barMinHeight = 1;
+const type = 'bar';
+const itemStyle = {
+    borderRadius: [4, 4, 0, 0],
+};
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
@@ -75,8 +82,6 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                 GridComponent,
                 LegendComponent,
                 BarChart,
-                LineChart,
-                PictorialBarChart,
                 CanvasRenderer,
                 UniversalTransition,
                 MarkLineComponent,
@@ -175,16 +180,9 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         docsWrittenSeries,
         docsReadSeries,
     ] = useMemo<EChartsOption['series'][]>(() => {
-        const barMinHeight = 1;
-        const type = 'bar';
-
         const isCollection = entityType === 'collection';
         const barGap = isCollection ? '-100%' : undefined;
         const colorVariation = isCollection ? 'light' : 'medium';
-
-        const itemStyle = {
-            borderRadius: [4, 4, 0, 0],
-        };
 
         return [
             {
