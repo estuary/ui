@@ -29,23 +29,18 @@ export const useEntitiesStore_capabilities_adminable = () => {
 };
 
 export const useEntitiesStore_capabilities_readable = () => {
-    return useEntitiesStore(
-        useShallow((state) => ({
-            ...state.capabilities.admin,
-            ...state.capabilities.write,
-            ...state.capabilities.read,
-        }))
-    );
+    return useEntitiesStore((state) => ({
+        ...state.capabilities.admin,
+        ...state.capabilities.write,
+        ...state.capabilities.read,
+    }));
 };
 
 export const useEntitiesStore_capabilities_hasDemoTenantAccess = () => {
+    const readable = useEntitiesStore_capabilities_readable();
     return useEntitiesStore(
-        useShallow((state) => {
-            return Object.keys({
-                ...state.capabilities.admin,
-                ...state.capabilities.write,
-                ...state.capabilities.read,
-            }).includes('demo/');
+        useShallow(() => {
+            return Object.keys(readable).includes('demo/');
         })
     );
 };
