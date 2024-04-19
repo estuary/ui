@@ -67,13 +67,13 @@ export const useSidePanelDocsStore_resetState = () => {
     return useEntitiesStore((state) => state.resetState);
 };
 
-// We hardcode the key here as we only call once
 export const useHydrateState = () => {
     const [hydrateState, setActive] = useEntitiesStore((state) => [
         state.hydrateState,
         state.setActive,
     ]);
 
+    // We hardcode the key here as we only call once
     const response = useSWR(
         'entities_hydrator',
         () => {
