@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
-import {
-    useTopBarStore_setHeader,
-    useTopBarStore_setHeaderLink,
-} from 'stores/TopBar/hooks';
+
+import { useTopBarStore } from 'stores/TopBar/Store';
 import useBrowserTitle from './useBrowserTitle';
 
 interface PageTitleProps {
@@ -11,8 +9,10 @@ interface PageTitleProps {
 }
 
 function usePageTitle({ header, headerLink }: PageTitleProps) {
-    const setHeader = useTopBarStore_setHeader();
-    const setHeaderLink = useTopBarStore_setHeaderLink();
+    const [setHeader, setHeaderLink] = useTopBarStore((state) => [
+        state.setHeader,
+        state.setHeaderLink,
+    ]);
 
     useEffect(() => {
         // This sets for the title in the TopBar
