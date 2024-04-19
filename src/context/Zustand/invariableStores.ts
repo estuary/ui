@@ -10,7 +10,6 @@ import {
 } from 'stores/DetailsForm/Store';
 import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
-import { createJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import {
     AdminStoreNames,
     BillingStoreNames,
@@ -21,7 +20,6 @@ import {
     ExistingEntityStoreNames,
     FormStateStoreNames,
     GlobalStoreNames,
-    JournalDataStoreNames,
     MiscStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
@@ -157,11 +155,6 @@ const invariableStores = {
         createTransformationCreateStore(
             TransformCreateStoreNames.TRANSFORM_CREATE
         ),
-
-    // Journal Data Stores
-    [JournalDataStoreNames.LOGS]: createJournalDataLogsStore(
-        JournalDataStoreNames.LOGS
-    ),
 
     // Global App Stores
     [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),

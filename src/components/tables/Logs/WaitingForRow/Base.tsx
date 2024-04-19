@@ -11,11 +11,8 @@ import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
-import {
-    useJournalDataLogsStore_fetchingMore,
-    useJournalDataLogsStore_fetchMoreLogs,
-    useJournalDataLogsStore_lastFetchFailed,
-} from 'stores/JournalData/Logs/hooks';
+
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
@@ -45,13 +42,15 @@ function WaitingForRowBase({
 
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
 
-    const lastFetchFailed = useJournalDataLogsStore_lastFetchFailed();
-    const fetchMoreLogs = useJournalDataLogsStore_fetchMoreLogs();
+    const [lastFetchFailed, fetchMoreLogs, fetchingMore] =
+        useJournalDataLogsStore((state) => [
+            state.lastFetchFailed,
+            state.fetchMoreLogs,
+            state.fetchingMore,
+        ]);
 
     // Kinda hacky - but checking this flag here keeps the effect trigger
     //  as it is flipped back and forth
-    const fetchingMore = useJournalDataLogsStore_fetchingMore();
-
     const fetchMore = useCallback(() => {
         setAllowFetch(false);
         fetchMoreLogs(fetchOption);
