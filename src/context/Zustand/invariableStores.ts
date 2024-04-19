@@ -8,7 +8,6 @@ import {
     collectionDetailsForm,
     materializationDetailsForm,
 } from 'stores/DetailsForm/Store';
-import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import { createJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import {
@@ -164,7 +163,6 @@ const invariableStores = {
     ),
 
     // Global App Stores
-    [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
     ),
