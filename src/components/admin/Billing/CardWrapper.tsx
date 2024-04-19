@@ -7,7 +7,11 @@ import {
     useTheme,
 } from '@mui/material';
 import { eChartsTooltipSX } from 'components/graphs/tooltips';
-import { defaultBoxShadow, semiTransparentBackground } from 'context/Theme';
+import {
+    cardHeaderSx,
+    defaultBoxShadow,
+    semiTransparentBackground,
+} from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
@@ -41,9 +45,8 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
                 {message ? (
                     <Typography
                         sx={{
+                            ...cardHeaderSx,
                             mb: 2,
-                            fontSize: 16,
-                            fontWeight: 300,
                             width: '100%',
                         }}
                         component="div"

@@ -292,7 +292,7 @@ export const jsonObjectPreview_value = {
 //  and use in other places
 export const cardHeaderSx: SxProps<Theme> = {
     fontSize: 16,
-    fontWeight: 500,
+    fontWeight: 300,
 };
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
