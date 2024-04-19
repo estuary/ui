@@ -50,9 +50,20 @@ export const useEntitiesStore_hasDemoTenantAccess = () => {
 };
 
 export const useHydrateState = () => {
-    const [hydrateState, setActive] = useEntitiesStore((state) => [
+    const [
+        hydrateState,
+        setActive,
+        setCapabilities,
+        setHydrated,
+        setHydrationErrors,
+        setMutate,
+    ] = useEntitiesStore((state) => [
         state.hydrateState,
         state.setActive,
+        state.setCapabilities,
+        state.setHydrated,
+        state.setHydrationErrors,
+        state.setMutate,
     ]);
 
     // We hardcode the key here as we only call once
@@ -64,15 +75,6 @@ export const useHydrateState = () => {
         },
         singleCallSettings
     );
-
-    // The rest of the stuff we need to handle hydration
-    const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
-        useEntitiesStore((state) => [
-            state.setCapabilities,
-            state.setHydrated,
-            state.setHydrationErrors,
-            state.setMutate,
-        ]);
 
     // Once we are done validating update all the settings
     useEffect(() => {
