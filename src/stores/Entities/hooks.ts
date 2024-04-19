@@ -6,10 +6,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { useEntitiesStore } from './Store';
 import { EntitiesState } from './types';
 
-export const useEntitiesStore_setCapabilities = () => {
-    return useEntitiesStore((state) => state.setCapabilities);
-};
-
 export const useEntitiesStore_capabilities = (
     kind: keyof EntitiesState['capabilities']
 ) => {
@@ -54,14 +50,8 @@ export const useEntitiesStore_capabilities_writable = () => {
     });
 };
 
-export const useEntitiesStore_hydrateState = () => {
-    return useEntitiesStore((state) => state.hydrateState);
-};
 export const useEntitiesStore_hydrated = () => {
     return useEntitiesStore((state) => state.hydrated);
-};
-export const useEntitiesStore_setHydrated = () => {
-    return useEntitiesStore((state) => state.setHydrated);
 };
 export const useEntitiesStore_setActive = () => {
     return useEntitiesStore((state) => state.setActive);
@@ -69,14 +59,8 @@ export const useEntitiesStore_setActive = () => {
 export const useEntitiesStore_hydrationErrors = () => {
     return useEntitiesStore((state) => state.hydrationErrors);
 };
-export const useEntitiesStore_setHydrationErrors = () => {
-    return useEntitiesStore((state) => state.setHydrationErrors);
-};
 export const useEntitiesStore_mutate = () => {
     return useEntitiesStore((state) => state.mutate);
-};
-const useEntitiesStore_setMutate = () => {
-    return useEntitiesStore((state) => state.setMutate);
 };
 
 export const useSidePanelDocsStore_resetState = () => {
@@ -85,8 +69,10 @@ export const useSidePanelDocsStore_resetState = () => {
 
 // We hardcode the key here as we only call once
 export const useHydrateState = () => {
-    const hydrateState = useEntitiesStore_hydrateState();
-    const setActive = useEntitiesStore_setActive();
+    const [hydrateState, setActive] = useEntitiesStore((state) => [
+        state.hydrateState,
+        state.setActive,
+    ]);
 
     const response = useSWR(
         'entities_hydrator',
@@ -98,10 +84,13 @@ export const useHydrateState = () => {
     );
 
     // The rest of the stuff we need to handle hydration
-    const setHydrationErrors = useEntitiesStore_setHydrationErrors();
-    const setCapabilities = useEntitiesStore_setCapabilities();
-    const setHydrated = useEntitiesStore_setHydrated();
-    const setMutate = useEntitiesStore_setMutate();
+    const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
+        useEntitiesStore((state) => [
+            state.setCapabilities,
+            state.setHydrated,
+            state.setHydrationErrors,
+            state.setMutate,
+        ]);
 
     // Once we are done validating update all the settings
     useEffect(() => {
