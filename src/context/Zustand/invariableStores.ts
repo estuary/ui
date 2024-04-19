@@ -30,7 +30,6 @@ import {
 } from 'stores/names';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
-import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
@@ -165,9 +164,6 @@ const invariableStores = {
 
     // Global App Stores
     [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),
-    [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
-        GlobalStoreNames.SIDE_PANEL_DOCS
-    ),
     [GlobalStoreNames.TOP_BAR]: createTopBarStore(GlobalStoreNames.TOP_BAR),
 };
 

@@ -4,11 +4,8 @@ import AlertBox from 'components/shared/AlertBox';
 import { useColorMode } from 'context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    useSidePanelDocsStore_disabled,
-    useSidePanelDocsStore_setAnimateOpening,
-    useSidePanelDocsStore_url,
-} from 'stores/SidePanelDocs/hooks';
+
+import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { getDocsSettings } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 
@@ -31,9 +28,9 @@ interface Props {
 
 function SidePanelIframe({ show }: Props) {
     const intl = useIntl();
-    const docsURL = useSidePanelDocsStore_url();
-    const disabled = useSidePanelDocsStore_disabled();
-    const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
+    const [disabled, setAnimateOpening, docsURL] = useSidePanelDocsStore(
+        (state) => [state.disabled, state.setAnimateOpening, state.url]
+    );
 
     const colorMode = useColorMode();
     const [loading, setLoading] = useState(true);

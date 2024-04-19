@@ -26,10 +26,7 @@ import {
     useEndpointConfig_setEndpointCanBeEmpty,
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
-import {
-    useSidePanelDocsStore_resetState,
-    useSidePanelDocsStore_setUrl,
-} from 'stores/SidePanelDocs/hooks';
+import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 
 interface Props {
     connectorImage: string;
@@ -197,8 +194,10 @@ function EndpointConfig({
     }, [setServerUpdateRequired, endpointConfigUpdated]);
 
     // Populating/handling the side panel docs url
-    const setDocsURL = useSidePanelDocsStore_setUrl();
-    const sidePanelResetState = useSidePanelDocsStore_resetState();
+    const [setDocsURL, sidePanelResetState] = useSidePanelDocsStore((state) => [
+        state.setUrl,
+        state.resetState,
+    ]);
     useUnmount(() => {
         sidePanelResetState();
     });
