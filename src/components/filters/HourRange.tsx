@@ -1,16 +1,17 @@
-import { Button, Menu, MenuItem, Stack } from '@mui/material';
+import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { DataByHourRange } from 'components/graphs/types';
-import { linkButtonSx } from 'context/Theme';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
+import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Filter } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    range: DataByHourRange;
-    setRange: (range: DataByHourRange) => void;
-}
+function HourlyRangeFilter() {
+    const [range, setRange] = useDetailsUsageStore((store) => [
+        store.range,
+        store.setRange,
+    ]);
 
-function HourlyRangeFilter({ range, setRange }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -29,7 +30,9 @@ function HourlyRangeFilter({ range, setRange }: Props) {
 
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+            <Typography id="hourly-filter-selector__label" sx={cardHeaderSx}>
+                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+            </Typography>
 
             <Button
                 id="hourly-usage-filter-selector-button"
@@ -38,6 +41,7 @@ function HourlyRangeFilter({ range, setRange }: Props) {
                 }
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
+                aria-labelledby="hourly-filter-selector__label"
                 variant="text"
                 disableElevation
                 endIcon={<Filter style={{ fontSize: 13 }} />}

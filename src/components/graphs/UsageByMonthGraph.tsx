@@ -28,6 +28,8 @@ import useTooltipConfig from './useTooltipConfig';
 
 const chartContainerId = 'data-by-month';
 
+const itemStyle = { borderRadius: [4, 4, 0, 0] };
+
 function UsageByMonthGraph() {
     const theme = useTheme();
     const intl = useIntl();
@@ -145,7 +147,7 @@ function UsageByMonthGraph() {
                         formatter: intl.messages[
                             'admin.billing.graph.usageByMonth.dataFormatter'
                         ] as string,
-                        color: eChartsColors[0],
+                        color: eChartsColors.medium[0],
                         fontSize: 14,
                         fontWeight: 'bold',
                     },
@@ -160,7 +162,7 @@ function UsageByMonthGraph() {
                         formatter: intl.messages[
                             'admin.billing.graph.usageByMonth.hoursFormatter'
                         ] as string,
-                        color: eChartsColors[1],
+                        color: eChartsColors.medium[1],
                         fontSize: 14,
                         fontWeight: 'bold',
                     },
@@ -172,10 +174,12 @@ function UsageByMonthGraph() {
                     name: 'Data',
                     type: 'bar',
                     barMinHeight: 3,
+                    color: eChartsColors.medium[0],
                     data: seriesConfigs.data.map(({ month, data }) => [
                         month,
                         data.toFixed(3),
                     ]),
+                    itemStyle,
                     tooltip: {
                         valueFormatter: (value) => {
                             return intl.formatMessage(
@@ -193,10 +197,12 @@ function UsageByMonthGraph() {
                     name: 'Hours',
                     type: 'bar',
                     barMinHeight: 3,
+                    color: eChartsColors.medium[1],
                     data: seriesConfigs.hours.map(({ month, data }) => [
                         month,
                         data.toFixed(3),
                     ]),
+                    itemStyle,
                     tooltip: {
                         valueFormatter: (value) => {
                             return intl.formatMessage(
