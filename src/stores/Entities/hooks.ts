@@ -1,32 +1,23 @@
 import { singleCallSettings } from 'context/SWR';
-import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
-import { GlobalStoreNames } from 'stores/names';
 import useSWR from 'swr';
-import { Schema } from 'types';
 import { ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
+import { useEntitiesStore } from './Store';
 import { EntitiesState } from './types';
 
 export const useEntitiesStore_setCapabilities = () => {
-    return useZustandStore<EntitiesState, EntitiesState['setCapabilities']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.setCapabilities
-    );
+    return useEntitiesStore((state) => state.setCapabilities);
 };
 
 export const useEntitiesStore_capabilities = (
     kind: keyof EntitiesState['capabilities']
 ) => {
-    return useZustandStore<EntitiesState, Schema>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.capabilities[kind]
-    );
+    return useEntitiesStore((state) => state.capabilities[kind]);
 };
 
 export const useEntitiesStore_hasSupportRole = () => {
-    return useZustandStore<EntitiesState, boolean>(
-        GlobalStoreNames.ENTITIES,
+    return useEntitiesStore(
         useShallow((state) =>
             Boolean(state.capabilities.admin[ESTUARY_SUPPORT_ROLE])
         )
@@ -34,91 +25,67 @@ export const useEntitiesStore_hasSupportRole = () => {
 };
 
 export const useEntitiesStore_capabilities_adminable = () => {
-    return useZustandStore<EntitiesState, Schema>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.capabilities.admin
-    );
+    return useEntitiesStore((state) => state.capabilities.admin);
 };
 
 export const useEntitiesStore_capabilities_readable = () => {
-    return useZustandStore<EntitiesState, Schema>(
-        GlobalStoreNames.ENTITIES,
-        (state) => {
-            return {
+    return useEntitiesStore(
+        useShallow((state) => ({
+            ...state.capabilities.admin,
+            ...state.capabilities.write,
+            ...state.capabilities.read,
+        }))
+    );
+};
+
+export const useEntitiesStore_capabilities_hasDemoTenantAccess = () => {
+    return useEntitiesStore(
+        useShallow((state) => {
+            return Object.keys({
                 ...state.capabilities.admin,
                 ...state.capabilities.write,
                 ...state.capabilities.read,
-            };
-        }
+            }).includes('demo/');
+        })
     );
 };
 
 export const useEntitiesStore_capabilities_writable = () => {
-    return useZustandStore<EntitiesState, Schema>(
-        GlobalStoreNames.ENTITIES,
-        (state) => {
-            return {
-                ...state.capabilities.admin,
-                ...state.capabilities.write,
-            };
-        }
-    );
+    return useEntitiesStore((state) => {
+        return {
+            ...state.capabilities.admin,
+            ...state.capabilities.write,
+        };
+    });
 };
 
 export const useEntitiesStore_hydrateState = () => {
-    return useZustandStore<EntitiesState, EntitiesState['hydrateState']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.hydrateState
-    );
+    return useEntitiesStore((state) => state.hydrateState);
 };
 export const useEntitiesStore_hydrated = () => {
-    return useZustandStore<EntitiesState, EntitiesState['hydrated']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.hydrated
-    );
+    return useEntitiesStore((state) => state.hydrated);
 };
 export const useEntitiesStore_setHydrated = () => {
-    return useZustandStore<EntitiesState, EntitiesState['setHydrated']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.setHydrated
-    );
+    return useEntitiesStore((state) => state.setHydrated);
 };
 export const useEntitiesStore_setActive = () => {
-    return useZustandStore<EntitiesState, EntitiesState['setActive']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.setActive
-    );
+    return useEntitiesStore((state) => state.setActive);
 };
 export const useEntitiesStore_hydrationErrors = () => {
-    return useZustandStore<EntitiesState, EntitiesState['hydrationErrors']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.hydrationErrors
-    );
+    return useEntitiesStore((state) => state.hydrationErrors);
 };
 export const useEntitiesStore_setHydrationErrors = () => {
-    return useZustandStore<EntitiesState, EntitiesState['setHydrationErrors']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.setHydrationErrors
-    );
+    return useEntitiesStore((state) => state.setHydrationErrors);
 };
 export const useEntitiesStore_mutate = () => {
-    return useZustandStore<EntitiesState, EntitiesState['mutate']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.mutate
-    );
+    return useEntitiesStore((state) => state.mutate);
 };
 const useEntitiesStore_setMutate = () => {
-    return useZustandStore<EntitiesState, EntitiesState['setMutate']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.setMutate
-    );
+    return useEntitiesStore((state) => state.setMutate);
 };
 
 export const useSidePanelDocsStore_resetState = () => {
-    return useZustandStore<EntitiesState, EntitiesState['resetState']>(
-        GlobalStoreNames.ENTITIES,
-        (state) => state.resetState
-    );
+    return useEntitiesStore((state) => state.resetState);
 };
 
 // We hardcode the key here as we only call once

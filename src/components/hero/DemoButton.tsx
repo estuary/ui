@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import {
     useEntitiesStore_capabilities_adminable,
-    useEntitiesStore_capabilities_readable,
+    useEntitiesStore_capabilities_hasDemoTenantAccess,
 } from 'stores/Entities/hooks';
 import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
@@ -38,8 +38,8 @@ function DemoButton({ step, type }: Props) {
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
 
-    const readCapabilities = useEntitiesStore_capabilities_readable();
-    const demoAccessExists = Object.keys(readCapabilities).includes('demo/');
+    const demoAccessExists =
+        useEntitiesStore_capabilities_hasDemoTenantAccess();
 
     const [open, setOpen] = useState(false);
 
