@@ -5,6 +5,12 @@ import { ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useEntitiesStore } from './Store';
 
+// TODO (Entities Store)
+// We should move away from hardcoded hooks and just pass in the capability
+//  we are looking for. So a single hook takes in `read`, `write`, `admin` (maybe even an array of these?)
+//  and returns the needed entities.
+//  I think there is a chance we could use some kind of permissions library to help with this.
+
 export const useEntitiesStore_capabilities_readable = () => {
     return useEntitiesStore((state) => ({
         ...state.capabilities.admin,
