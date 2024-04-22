@@ -1,8 +1,11 @@
+import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import {
     defaultTableFilter,
     Pagination,
+    RPCS,
     SortingProps,
     supabaseClient,
+    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import { StorageMappings } from 'types';
@@ -54,4 +57,14 @@ const getStorageMapping = (catalog_prefix: string) => {
     return queryBuilder;
 };
 
-export { getStorageMapping, getStorageMappings };
+const republishPrefix = async (prefix: string) => {
+    return supabaseRetry<PostgrestSingleResponse<string>>(
+        () =>
+            supabaseClient.rpc(RPCS.REPUBLISH_PREFIX, {
+                prefix,
+            }),
+        'republishPrefix'
+    );
+};
+
+export { getStorageMapping, getStorageMappings, republishPrefix };

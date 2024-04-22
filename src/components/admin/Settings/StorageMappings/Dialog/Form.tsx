@@ -40,6 +40,11 @@ const providerSchemas = {
                     'Storage accounts in Azure are the equivalent to a "bucket" in S3',
                 type: 'string',
             },
+            prefix: {
+                description: 'Optional prefix of keys written to the bucket.',
+                type: 'string',
+                pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
+            },
         },
     },
     [CloudProviderCodes.CUSTOM]: {
@@ -67,6 +72,11 @@ const providerSchemas = {
                 pattern:
                     '^^(http://|https://)?[a-z0-9]+[a-z0-9\\.:-]*[a-z0-9]+$',
             },
+            prefix: {
+                description: 'Optional prefix of keys written to the bucket.',
+                type: 'string',
+                pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
+            },
         },
     },
     [CloudProviderCodes.GCS]: {
@@ -83,6 +93,11 @@ const providerSchemas = {
                 description: 'Bucket into which Flow will store data.',
                 type: 'string',
                 pattern: '(^[a-z0-9][a-z0-9\\-_\\.]{1,60}[a-z0-9]$)',
+            },
+            prefix: {
+                description: 'Optional prefix of keys written to the bucket.',
+                type: 'string',
+                pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
             },
         },
     },
@@ -107,6 +122,11 @@ const providerSchemas = {
                 description:
                     'AWS region of the S3 bucket. Uses the default value from the AWS credentials of the Gazette broker if unset.',
                 type: 'string',
+            },
+            prefix: {
+                description: 'Optional prefix of keys written to the bucket.',
+                type: 'string',
+                pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
             },
         },
     },

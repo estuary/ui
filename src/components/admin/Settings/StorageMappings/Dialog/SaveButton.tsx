@@ -1,6 +1,7 @@
 import { LoadingButton } from '@mui/lab';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import { republishPrefix } from 'api/storageMappings';
 import useDirectiveGuard from 'app/guards/hooks';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -19,7 +20,6 @@ import { hasLength } from 'utils/misc-utils';
 interface Props {
     prefix: string;
     saving: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
     setSaving: Dispatch<SetStateAction<boolean>>;
     setServerError: Dispatch<SetStateAction<string | null>>;
 }
@@ -39,13 +39,7 @@ const submitStorageMapping = async (
     );
 };
 
-function SaveButton({
-    prefix,
-    saving,
-    setOpen,
-    setSaving,
-    setServerError,
-}: Props) {
+function SaveButton({ prefix, saving, setSaving, setServerError }: Props) {
     const { jobStatusPoller } = useJobStatusPoller();
     const { directive, loading } = useDirectiveGuard(SELECTED_DIRECTIVE, {
         hideAlert: true,
@@ -59,12 +53,13 @@ function SaveButton({
         selectableTableStoreSelectors.query.hydrate
     );
 
-    const provider = useStorageMappingStore((state) => state.provider);
-
     const formData = useStorageMappingStore((state) => state.formValue.data);
     const formErrors = useStorageMappingStore(
         (state) => state.formValue.errors
     );
+
+    const setPubId = useStorageMappingStore((state) => state.setPubId);
+    const provider = useStorageMappingStore((state) => state.provider);
 
     const storageConfig: object | null = useMemo(
         () => (isEmpty(formData) ? null : { provider, ...formData }),
@@ -98,7 +93,26 @@ function SaveButton({
                 jobStatusQuery(data),
                 async () => {
                     hydrate();
-                    setOpen(false);
+
+                    republishPrefix(prefix).then(
+                        (payload) => {
+                            if (payload.error) {
+                                setSaving(false);
+                                setServerError(payload.error.message);
+                            }
+
+                            if (payload.data) {
+                                setPubId(payload.data);
+                            } else {
+                                setSaving(false);
+                                setServerError('Publication ID not found');
+                            }
+                        },
+                        (error) => {
+                            console.log('ERROR : Republish logs', error);
+                            setSaving(false);
+                        }
+                    );
                 },
                 async (payload: any) => {
                     if (directive) {

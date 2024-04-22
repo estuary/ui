@@ -5,6 +5,15 @@ export interface StorageMappingState {
     updateProvider: (value: string) => void;
 
     formValue: JsonFormsData;
-    resetFormValue: () => void;
     updateFormValue: (value: JsonFormsData) => void;
+
+    resetForm: () => void;
+
+    pubId: string;
+    setPubId: (value: string) => void;
+
+    logToken: string;
+    setLogToken: (value: string) => void;
+
+    resetPublication: () => void;
 }

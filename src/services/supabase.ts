@@ -98,6 +98,7 @@ export enum RPCS {
     CREATE_REFRESH_TOKEN = 'create_refresh_token',
     BILLING_REPORT = 'billing_report_202308',
     AUTH_ROLES = 'auth_roles',
+    REPUBLISH_PREFIX = 'republish_prefix',
 }
 
 export enum FUNCTIONS {

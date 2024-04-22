@@ -4,7 +4,7 @@ import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { StorageMappingState } from './types';
 
-const getInitialStateData = (): Pick<
+const getInitialConfigurationData = (): Pick<
     StorageMappingState,
     'formValue' | 'provider'
 > => ({
@@ -12,21 +12,66 @@ const getInitialStateData = (): Pick<
     provider: '',
 });
 
+const getInitialPublicationData = (): Pick<
+    StorageMappingState,
+    'logToken' | 'pubId'
+> => ({
+    logToken: '',
+    pubId: '',
+});
+
+const getInitialStateData = () => ({
+    ...getInitialConfigurationData(),
+    ...getInitialPublicationData(),
+});
+
 const getInitialState = (
     set: NamedSet<StorageMappingState>,
-    get: StoreApi<StorageMappingState>['getState']
+    _get: StoreApi<StorageMappingState>['getState']
 ): StorageMappingState => ({
     ...getInitialStateData(),
 
-    resetFormValue: () => {
+    resetForm: () => {
         set(
             produce((state: StorageMappingState) => {
-                const { formValue } = getInitialStateData();
+                const initState = getInitialConfigurationData();
 
-                state.formValue = formValue;
+                return { ...state, ...initState };
             }),
             false,
             'Form reset'
+        );
+    },
+
+    resetPublication: () => {
+        set(
+            produce((state: StorageMappingState) => {
+                const initState = getInitialPublicationData();
+
+                return { ...state, ...initState };
+            }),
+            false,
+            'Publication-related state reset'
+        );
+    },
+
+    setLogToken: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.logToken = value;
+            }),
+            false,
+            'Publication log token set'
+        );
+    },
+
+    setPubId: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.pubId = value;
+            }),
+            false,
+            'Publication ID set'
         );
     },
 
@@ -41,10 +86,9 @@ const getInitialState = (
     },
 
     updateProvider: (value) => {
-        get().resetFormValue();
-
         set(
             produce((state: StorageMappingState) => {
+                state.formValue = { data: {} };
                 state.provider = value;
             }),
             false,

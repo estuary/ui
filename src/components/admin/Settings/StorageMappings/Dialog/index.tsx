@@ -9,14 +9,18 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { getPublicationById } from 'api/publications';
 import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Cancel } from 'iconoir-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
+import { hasLength } from 'utils/misc-utils';
 import StorageMappingForm from './Form';
+import RepublicationLogs from './Logs';
 import SaveButton from './SaveButton';
 
 interface Props {
@@ -35,19 +39,59 @@ function ConfigureStorageDialog({
     setOpen,
 }: Props) {
     const theme = useTheme();
+    const { jobStatusPoller } = useJobStatusPoller();
 
-    const resetFormValue = useStorageMappingStore(
-        (state) => state.resetFormValue
+    const pubId = useStorageMappingStore((state) => state.pubId);
+    const logToken = useStorageMappingStore((state) => state.logToken);
+    const setLogToken = useStorageMappingStore((state) => state.setLogToken);
+    const resetPublication = useStorageMappingStore(
+        (state) => state.resetPublication
     );
+    const resetForm = useStorageMappingStore((state) => state.resetForm);
 
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (pubId && !logToken) {
+            getPublicationById(pubId).then(
+                (response) => {
+                    if (response.error || !response.data) {
+                        console.log('ERROR : Fetch log token', response);
+                    } else {
+                        setLogToken(response.data[0].logs_token);
+
+                        jobStatusPoller(
+                            supabaseClient
+                                .from(TABLES.PUBLICATIONS)
+                                .select(JOB_STATUS_COLUMNS)
+                                .eq('id', pubId),
+                            async () => {
+                                setSaving(false);
+                                setServerError(null);
+                            },
+                            async (payload: any) => {
+                                console.log(
+                                    'ERROR : Polling publication',
+                                    payload
+                                );
+                            }
+                        );
+                    }
+                },
+                (error) => {
+                    console.log('ERROR : Fetch log token', error);
+                }
+            );
+        }
+    }, [jobStatusPoller, logToken, pubId, setLogToken]);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         setOpen(false);
-        resetFormValue();
+        resetForm();
+        resetPublication();
         setSaving(false);
         setServerError(null);
     };
@@ -66,7 +110,7 @@ function ConfigureStorageDialog({
                     <FormattedMessage id={headerId} />
                 </Typography>
 
-                <IconButton onClick={closeDialog}>
+                <IconButton disabled={saving} onClick={closeDialog}>
                     <Cancel
                         style={{
                             fontSize: '1rem',
@@ -90,29 +134,43 @@ function ConfigureStorageDialog({
                     />
                 </Typography>
 
-                <Box sx={{ pt: 1, mb: 2 }}>
+                {/* <Box sx={{ pt: 1, mb: 2 }}>
                     <AlertBox severity="info" short>
                         <FormattedMessage
                             id="storageMappings.dialog.generate.alert.keyPrefix"
                             values={{ tenant: <b>{selectedTenant}</b> }}
                         />
                     </AlertBox>
-                </Box>
+                </Box> */}
 
-                <ProviderSelector />
+                {logToken ? (
+                    <RepublicationLogs
+                        errored={hasLength(serverError)}
+                        saving={saving}
+                        token={logToken}
+                    />
+                ) : (
+                    <>
+                        <ProviderSelector />
 
-                <StorageMappingForm />
+                        <StorageMappingForm />
+                    </>
+                )}
             </DialogContent>
 
             <DialogActions>
-                <Button variant="outlined" size="small" onClick={closeDialog}>
+                <Button
+                    disabled={saving}
+                    variant="outlined"
+                    size="small"
+                    onClick={closeDialog}
+                >
                     <FormattedMessage id="cta.cancel" />
                 </Button>
 
                 <SaveButton
                     prefix={selectedTenant}
                     saving={saving}
-                    setOpen={setOpen}
                     setSaving={setSaving}
                     setServerError={setServerError}
                 />
