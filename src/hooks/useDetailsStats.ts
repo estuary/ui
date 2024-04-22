@@ -3,18 +3,17 @@ import { useEntityType } from 'context/EntityContext';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { hasLength } from 'utils/misc-utils';
 import { CatalogStats_Details } from 'types';
-import { Duration } from 'date-fns';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 
-function useDetailsStats(
-    catalogName: string,
-    grain: string,
-    duration: Duration
-) {
+function useDetailsStats(catalogName: string, grain: string) {
     const entityType = useEntityType();
+    const range = useDetailsUsageStore((store) => store.range);
 
     const { data, error, isValidating } = useSelectNew<CatalogStats_Details>(
         hasLength(catalogName)
-            ? getStatsForDetails(catalogName, entityType, grain, duration)
+            ? getStatsForDetails(catalogName, entityType, grain, {
+                  hours: range,
+              })
             : null,
         {
             refreshInterval: 15000,

@@ -66,20 +66,20 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                         }
                     />
 
-                    <Docs
-                        read
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.docs_written_to_me
-                                : null
-                        }
-                    />
-
                     <Bytes
                         read
                         val={
                             stats
                                 ? stats[row.catalog_name]?.bytes_read_from_me
+                                : null
+                        }
+                    />
+
+                    <Docs
+                        read
+                        val={
+                            stats
+                                ? stats[row.catalog_name]?.docs_written_to_me
                                 : null
                         }
                     />

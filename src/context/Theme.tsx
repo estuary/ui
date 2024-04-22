@@ -288,6 +288,12 @@ export const jsonObjectPreview_value = {
 };
 
 // Styles
+// TODO (styling) - we use this styling on non-cards we should probably rename this
+//  and use in other places
+export const cardHeaderSx: SxProps<Theme> = {
+    fontSize: 16,
+    fontWeight: 300,
+};
 
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {
@@ -671,7 +677,10 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
 // TODO (echarts) need to make a color service or something to
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order
-export const eChartsColors = ['#5470C6', '#91CC75'];
+export const eChartsColors = {
+    light: ['#acb0e6', '#82d8a3'],
+    medium: ['#5353cc', '#208c51'],
+};
 
 const themeSettings = createTheme({
     breakpoints: {

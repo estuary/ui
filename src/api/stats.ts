@@ -73,22 +73,22 @@ const DEFAULT_QUERY = `
 // Queries just for details panel
 const CAPTURE_QUERY = `
     ${BASE_QUERY},
-    docs_by:docs_written_by_me,
-    bytes_by:bytes_written_by_me
+    docs_written:docs_written_by_me,
+    bytes_written:bytes_written_by_me
 `;
 
 const COLLECTION_QUERY = `
     ${BASE_QUERY},
-    bytes_by:bytes_written_by_me,
-    docs_by:docs_written_by_me,
-    bytes_to:bytes_written_to_me,
-    docs_to:docs_written_to_me
+    bytes_read:bytes_read_from_me,
+    docs_read:docs_read_from_me,
+    bytes_written:bytes_written_to_me,
+    docs_written:docs_written_to_me
 `;
 
 const MATERIALIZATION_QUERY = `
     ${BASE_QUERY},
-    docs_by:docs_read_by_me,
-    bytes_by:bytes_read_by_me
+    docs_read:docs_read_by_me,
+    bytes_read:bytes_read_by_me
 `;
 
 const hourlyGrain = 'hourly';

@@ -34,32 +34,26 @@ function TotalsSection({ entityName }: Props) {
         if (!isValidating && data?.data[0]) {
             const scope = data.data[0];
 
+            const totalBytes =
+                (scope.bytes_read ?? 0) + (scope.bytes_written ?? 0);
+            const totalDocs =
+                (scope.docs_read ?? 0) + (scope.docs_written ?? 0);
+
             return [
                 {
                     title: intl.formatMessage({
                         id: 'data.data',
                     }),
-                    val: prettyBytes(
-                        scope.bytes_to
-                            ? scope.bytes_to + scope.bytes_by
-                            : scope.bytes_by,
-                        {
-                            minimumFractionDigits: 3,
-                            maximumFractionDigits: 3,
-                        }
-                    ),
+                    val: prettyBytes(totalBytes, {
+                        minimumFractionDigits: 3,
+                        maximumFractionDigits: 3,
+                    }),
                 },
                 {
                     title: intl.formatMessage({
                         id: 'data.docs',
                     }),
-                    val: readable(
-                        scope.docs_to
-                            ? scope.docs_to + scope.docs_by
-                            : scope.docs_by,
-                        3,
-                        false
-                    ),
+                    val: readable(totalDocs, 3, false),
                 },
             ];
         }

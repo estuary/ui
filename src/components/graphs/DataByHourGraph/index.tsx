@@ -1,4 +1,6 @@
 import { useTheme } from '@mui/material';
+import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
+import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
@@ -14,18 +16,18 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import prettyBytes from 'pretty-bytes';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourRange } from '../types';
+import { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
+import useDataByHourGraphMessages from './useDataByHourGraphMessages';
 
 interface Props {
     id: string;
-    range: DataByHourRange;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
 }
@@ -33,29 +35,40 @@ interface Props {
 // These are keys that are used all over. Not typing them as Echarts typing within
 //  dataset complained when I tried
 const TIME = 'timestamp';
-const DOCS = 'docs';
-const BYTES = 'bytes';
+type Dimensions = keyof CatalogStats_Details;
+
+// Graph styling
+const barMinHeight = 1;
+const type = 'bar';
+const itemStyle = {
+    borderRadius: [4, 4, 0, 0],
+};
 
 const formatTimeSettings: FormatDateOptions = {
     hour: '2-digit',
     minute: '2-digit',
 };
 
-const defaultDataFormat = (value: any) => {
+const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
     return prettyBytes(value, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
     });
 };
 
-function DataByHourGraph({ id, range, stats = [] }: Props) {
+function DataByHourGraph({ id, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
+    const entityType = useEntityType();
+    const messages = useDataByHourGraphMessages();
+    const statType = useDetailsUsageStore((store) => store.statType);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
+
+    const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
 
     // Wire up the myCharts and pass in components we will use
     useEffect(() => {
@@ -103,98 +116,168 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
         );
     }, [intl, stats]);
 
-    // Create a dataset
-    const scopedDataSet = useMemo(() => {
-        return stats.map((stat) => {
-            // Total up docs. Mainly for collections that are derivations
-            //  eventually we might split this data up into multiple lines
-            const totalDocs = stat.docs_to
-                ? stat.docs_to + stat.docs_by
-                : stat.docs_by;
-            const totalBytes = stat.bytes_to
-                ? stat.bytes_to + stat.bytes_by
-                : stat.bytes_by;
+    // It kind of sucks to be checking the entityType and not just seeing what was returned
+    //  However, this prevents us from having to look through ALL the stats to decide what
+    //      data to display.
+    // Any typing because echarts does not like multiple
+    const scopedDataSet = useMemo<any>(() => {
+        if (entityType === 'collection') {
+            return stats.map((stat) => {
+                return {
+                    ...stat,
+                    [TIME]: stat.ts,
+                };
+            });
+        }
 
+        if (entityType === 'capture') {
+            return stats.map((stat) => {
+                return {
+                    docs_written: stat.docs_written,
+                    bytes_written: stat.bytes_written,
+                    [TIME]: stat.ts,
+                };
+            });
+        }
+
+        return stats.map((stat) => {
             return {
-                [DOCS]: totalDocs,
-                [BYTES]: totalBytes,
+                docs_read: stat.docs_read,
+                bytes_read: stat.bytes_read,
                 [TIME]: stat.ts,
             };
         });
-    }, [stats]);
+    }, [entityType, stats]);
 
-    // Set the main bulk of the options for the chart
-    useEffect(() => {
-        // Function to format that handles both dimensions. This allows the tooltip
-        //  formatter to not worry about dimensions and just pass them in here
-        const formatter = (value: any, dimension: 'bytes' | 'docs') => {
+    // Function to format that handles both dimensions. This allows the tooltip
+    //  formatter to not worry about dimensions and just pass them in here
+    const formatter = useCallback(
+        (
+            value: any,
+            dimension: Dimensions | DataByHourStatType,
+            precision?: number
+        ) => {
             if (!Number.isInteger(value)) {
                 return intl.formatMessage({
                     id: 'common.missing',
                 });
             }
 
-            if (dimension === DOCS) {
-                return readable(value, 2, false);
+            if (dimension.includes('docs')) {
+                return `${readable(value, 2, false)}`;
             }
+            return `${defaultDataFormat(value, precision)}`;
+        },
+        [intl]
+    );
 
-            return defaultDataFormat(value);
-        };
+    const [
+        bytesWrittenSeries,
+        bytesReadSeries,
+        docsWrittenSeries,
+        docsReadSeries,
+    ] = useMemo<EChartsOption['series'][]>(() => {
+        const isCollection = entityType === 'collection';
+        const barGap = isCollection ? '-100%' : undefined;
+        const colorVariation = isCollection ? 'light' : 'medium';
 
-        const bytesSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: BYTES,
-            },
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    backgroundColor: eChartsColors[0],
-                    color: 'white',
-                    padding: 3,
-                    position: 'start',
-                    formatter: ({ value }: any) => formatter(value, BYTES),
+        return [
+            {
+                barMinHeight,
+                color: eChartsColors[colorVariation][0],
+                encode: {
+                    x: TIME,
+                    y: 'bytes_written',
                 },
-                symbolSize: 0,
+                itemStyle,
+                name: messages.dataWritten,
+                type,
             },
-            name: intl.formatMessage({ id: 'data.data' }),
-            type: 'bar',
-            yAxisIndex: 0,
-        };
-
-        const docsSeries: EChartsOption['series'] = {
-            barMinHeight: 1,
-            encode: {
-                x: TIME,
-                y: DOCS,
-            },
-            markLine: {
-                data: [{ type: 'max', name: 'Max' }],
-                label: {
-                    backgroundColor: eChartsColors[1],
-                    color: 'black',
-                    padding: 3,
-
-                    position: 'end',
-                    formatter: ({ value }: any) => formatter(value, DOCS),
+            {
+                barMinHeight,
+                barGap,
+                color: eChartsColors.medium[0],
+                encode: {
+                    x: TIME,
+                    y: 'bytes_read',
                 },
-                symbolSize: 0,
+                itemStyle,
+                name: messages.dataRead,
+                type,
             },
-            name: intl.formatMessage({ id: 'data.docs' }),
-            type: 'bar',
-            yAxisIndex: 1,
-        };
+            {
+                barMinHeight,
+                color: eChartsColors[colorVariation][1],
+                encode: {
+                    x: TIME,
+                    y: 'docs_written',
+                },
+                itemStyle,
+                name: messages.docsWritten,
+                type,
+            },
+            {
+                barMinHeight,
+                barGap,
+                color: eChartsColors.medium[1],
+                encode: {
+                    x: TIME,
+                    y: 'docs_read',
+                },
+                itemStyle,
+                name: messages.docsRead,
+                type,
+            },
+        ];
+    }, [
+        entityType,
+        messages.dataRead,
+        messages.dataWritten,
+        messages.docsRead,
+        messages.docsWritten,
+    ]);
+
+    // Populate dimensions and series as needed.
+    //  The order of these arrays impact the graph's z index
+    useEffect(() => {
+        let dimensions, series: any;
+        if (entityType === 'collection') {
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_read', 'bytes_written'];
+                series = [bytesWrittenSeries, bytesReadSeries];
+            } else {
+                dimensions = [TIME, 'docs_read', 'docs_written'];
+                series = [docsWrittenSeries, docsReadSeries];
+            }
+        } else if (entityType === 'capture') {
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_written'];
+                series = [bytesWrittenSeries];
+            } else {
+                dimensions = [TIME, 'docs_written'];
+
+                series = [docsWrittenSeries];
+            }
+        } else {
+            // eslint-disable-next-line no-lonely-if
+            if (renderingBytes) {
+                dimensions = [TIME, 'bytes_read'];
+                series = [bytesReadSeries];
+            } else {
+                dimensions = [TIME, 'docs_read'];
+                series = [docsReadSeries];
+            }
+        }
 
         const option: EChartsOption = {
             animation: false,
             darkMode: theme.palette.mode === 'dark',
             legend: legendConfig,
-            series: [bytesSeries, docsSeries],
+            series,
             useUTC: true,
             // Setting dataset here because setting in a stand alone set option cause the chart to go blank
             dataset: {
-                dimensions: [TIME, BYTES, DOCS],
+                dimensions,
                 source: scopedDataSet,
             },
             textStyle: {
@@ -228,7 +311,8 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
                             // Pass the proper data to the formatter with the dimension to know which formatter to use
                             const displayValue = formatter(
                                 data[dimension],
-                                dimension
+                                dimension,
+                                2
                             );
 
                             content.push(
@@ -274,35 +358,17 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
             yAxis: [
                 {
                     alignTicks: true,
-                    name: intl.formatMessage({ id: 'data.data' }),
+                    name: intl.formatMessage({
+                        id: renderingBytes ? 'data.data' : 'data.docs',
+                    }),
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        color: eChartsColors[0],
                         fontSize: 14,
-                        fontWeight: 'bold',
                         formatter: (value: any) => {
-                            return defaultDataFormat(value);
-                        },
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            color: defaultOutlineColor[theme.palette.mode],
-                        },
-                    },
-                },
-                {
-                    alignTicks: true,
-                    minInterval: 1,
-                    name: intl.formatMessage({ id: 'data.docs' }),
-                    position: 'right',
-                    type: 'value',
-                    axisLabel: {
-                        color: eChartsColors[1],
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        formatter: (value: any) => {
-                            return readable(value, 1, true);
+                            return renderingBytes
+                                ? defaultDataFormat(value)
+                                : readable(value, 1, true);
                         },
                     },
                     splitLine: {
@@ -323,11 +389,17 @@ function DataByHourGraph({ id, range, stats = [] }: Props) {
 
         myChart?.setOption(option);
     }, [
+        bytesReadSeries,
+        bytesWrittenSeries,
+        docsReadSeries,
+        docsWrittenSeries,
+        entityType,
+        formatter,
         intl,
         lastUpdated,
         legendConfig,
         myChart,
-        range,
+        renderingBytes,
         scopedDataSet,
         theme.palette.mode,
         theme.palette.text.primary,
