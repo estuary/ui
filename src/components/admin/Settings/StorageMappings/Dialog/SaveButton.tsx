@@ -5,7 +5,6 @@ import useDirectiveGuard from 'app/guards/hooks';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { useZustandStore } from 'context/Zustand/provider';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
-import { StorageConfig } from 'directives/types';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
@@ -29,7 +28,7 @@ const SELECTED_DIRECTIVE = 'storageMappings';
 
 const submitStorageMapping = async (
     directive: any,
-    storageConfig: StorageConfig,
+    storageConfig: object,
     prefix: string
 ) => {
     return submitDirective(
@@ -67,8 +66,8 @@ function SaveButton({
         (state) => state.formValue.errors
     );
 
-    const storageConfig: StorageConfig | null = useMemo(
-        () => (formData.bucket ? { provider, bucket: formData.bucket } : null),
+    const storageConfig: object | null = useMemo(
+        () => (isEmpty(formData) ? null : { provider, ...formData }),
         [formData, provider]
     );
 

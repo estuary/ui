@@ -602,7 +602,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.dialog.generate.description': `Choose where you'd like {tenant} data to be stored. This location will be used for all future write operations.`,
     'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage bucket.`,
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
-    'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible endpoint`,
+    'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,
     'storageMappings.dialog.generate.providerOption.GCS': `Google Cloud Storage`,
     'storageMappings.dialog.generate.providerOption.S3': `Amazon Simple Storage Service`,
 };

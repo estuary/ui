@@ -14,7 +14,7 @@ const getInitialStateData = (): Pick<
 
 const getInitialState = (
     set: NamedSet<StorageMappingState>,
-    _get: StoreApi<StorageMappingState>['getState']
+    get: StoreApi<StorageMappingState>['getState']
 ): StorageMappingState => ({
     ...getInitialStateData(),
 
@@ -41,6 +41,8 @@ const getInitialState = (
     },
 
     updateProvider: (value) => {
+        get().resetFormValue();
+
         set(
             produce((state: StorageMappingState) => {
                 state.provider = value;

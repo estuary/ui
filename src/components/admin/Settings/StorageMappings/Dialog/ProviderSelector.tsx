@@ -5,7 +5,12 @@ import { hasLength } from 'utils/misc-utils';
 
 const INPUT_ID = 'cloud-provider-input';
 
-const cloudProviderCodes = ['AZURE', 'GCS', 'S3', 'CUSTOM'];
+export enum CloudProviderCodes {
+    AZURE = 'AZURE',
+    GCS = 'GCS',
+    S3 = 'S3',
+    CUSTOM = 'CUSTOM',
+}
 
 function ProviderSelector() {
     const intl = useIntl();
@@ -35,7 +40,7 @@ function ProviderSelector() {
                 value={provider}
                 sx={{ borderRadius: 3 }}
             >
-                {cloudProviderCodes.map((code) => (
+                {Object.keys(CloudProviderCodes).map((code) => (
                     <MenuItem key={code} value={code}>
                         <FormattedMessage
                             id={`storageMappings.dialog.generate.providerOption.${code}`}

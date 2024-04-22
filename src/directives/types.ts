@@ -37,13 +37,8 @@ export interface OnboardClaim {
     survey: any;
 }
 
-export interface StorageConfig {
-    provider: string;
-    bucket: string;
-}
-
 export interface StorageMappingsClaim {
-    addStore: StorageConfig;
+    addStore: object;
     catalogPrefix: string;
 }
 
