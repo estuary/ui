@@ -1,22 +1,22 @@
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { Box, Stack, Typography } from '@mui/material';
 import {
-    getPaymentMethodsForTenants,
     MultiplePaymentMethods,
+    getPaymentMethodsForTenants,
 } from 'api/billing';
+import { authenticatedRoutes } from 'app/routes';
+import { useTenantDetails } from 'context/fetcher/Tenant';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { DateTime } from 'luxon';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getPathWithParams, basicSort_string } from 'utils/misc-utils';
+import { FormattedMessage } from 'react-intl';
+import { NavLink, useLocation } from 'react-router-dom';
+import { logRocketConsole } from 'services/shared';
+import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { Box, Stack, Typography } from '@mui/material';
-import { logRocketConsole } from 'services/shared';
-import { DateTime } from 'luxon';
-import { FormattedMessage } from 'react-intl';
 import { Schema } from 'types';
-import { NavLink, useLocation } from 'react-router-dom';
-import { authenticatedRoutes } from 'app/routes';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
+import { basicSort_string, getPathWithParams } from 'utils/misc-utils';
 
 const TRIAL_LENGTH = 30;
 
@@ -50,7 +50,7 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!hasSupportRole && tenantDetails) {
+            if (!hasSupportRole && tenantDetails.length > 0) {
                 setPaymentMethods(
                     await getPaymentMethodsForTenants(tenantDetails)
                 );
@@ -63,7 +63,7 @@ function useTenantMissingPaymentMethodWarning() {
     useEffect(() => {
         if (
             showedNotificationOnce.current ||
-            !tenantDetails ||
+            !(tenantDetails.length > 0) ||
             !paymentMethods
         ) {
             return;
