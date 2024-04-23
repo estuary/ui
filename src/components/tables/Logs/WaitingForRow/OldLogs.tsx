@@ -1,9 +1,11 @@
-import { useJournalDataLogsStore_olderFinished } from 'stores/JournalData/Logs/hooks';
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 
 function WaitingForOldLogsRow(props: WaitingForRowProps) {
-    const olderFinished = useJournalDataLogsStore_olderFinished();
+    const olderFinished = useJournalDataLogsStore(
+        (state) => state.olderFinished
+    );
 
     return (
         <WaitingForRowBase

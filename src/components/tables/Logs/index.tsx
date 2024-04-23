@@ -1,13 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Box, Table, TableContainer } from '@mui/material';
-import {
-    useJournalDataLogsStore_hydrated,
-    useJournalDataLogsStore_scrollToWhenDone,
-    useJournalDataLogsStore_setAllowFetchingMore,
-} from 'stores/JournalData/Logs/hooks';
 import { VariableSizeList } from 'react-window';
 import { defaultOutlineColor } from 'context/Theme';
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import useLogColumns from './useLogColumns';
 import LogsTableBody from './Body';
@@ -18,10 +14,12 @@ function LogsTable() {
     const intl = useIntl();
     const columns = useLogColumns();
 
-    const hydrated = useJournalDataLogsStore_hydrated();
-    const setAllowFetchingMore = useJournalDataLogsStore_setAllowFetchingMore();
-    const [scrollToIndex, scrollToPosition] =
-        useJournalDataLogsStore_scrollToWhenDone();
+    const [hydrated, setAllowFetchingMore, [scrollToIndex, scrollToPosition]] =
+        useJournalDataLogsStore((state) => [
+            state.hydrated,
+            state.setAllowFetchingMore,
+            state.scrollToWhenDone,
+        ]);
 
     const tableScroller = useRef<any>(null);
     const outerRef = useRef<any>(null);

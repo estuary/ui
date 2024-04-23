@@ -10,14 +10,10 @@ import {
     useRef,
 } from 'react';
 import { isEmpty } from 'lodash';
-import {
-    useJournalDataLogsStore_documents,
-    useJournalDataLogsStore_hydrated,
-    useJournalDataLogsStore_networkFailed,
-    useJournalDataLogsStore_noData,
-} from 'stores/JournalData/Logs/hooks';
+
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
@@ -42,10 +38,13 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
-    const hydrated = useJournalDataLogsStore_hydrated();
-    const documents = useJournalDataLogsStore_documents();
-    const networkFailed = useJournalDataLogsStore_networkFailed();
-    const noData = useJournalDataLogsStore_noData();
+    const [hydrated, documents, networkFailed, noData] =
+        useJournalDataLogsStore((state) => [
+            state.hydrate,
+            state.documents,
+            state.networkFailed,
+            state.noData,
+        ]);
 
     // Keeping this outside the store so we don't have to filter them out everytime
     //  we need to add new docs to the list
