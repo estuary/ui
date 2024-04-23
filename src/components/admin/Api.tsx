@@ -1,8 +1,8 @@
 import { Box, SxProps, Theme, Typography } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import SingleLineCode from 'components/content/SingleLineCode';
+import { useUser } from 'context/UserContext';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -18,7 +18,7 @@ function AdminApi() {
             'https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli',
     });
 
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     return (
         <>

@@ -1,6 +1,6 @@
-import { Auth as SupabaseAuth } from '@supabase/ui';
 import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { useUser } from 'context/UserContext';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
@@ -29,7 +29,7 @@ const Auth = () => {
     const { enqueueSnackbar } = useSnackbar();
     // We can fetch user here and not session because we are
     //  potentially creating the session here down below.
-    const { user } = SupabaseAuth.useUser();
+    const { user } = useUser();
 
     useEffect(() => {
         const failed = async (error: string) => {

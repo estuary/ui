@@ -1,5 +1,5 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import {
     AlertSubscriptionQuery,
     DataProcessingAlertQuery,
@@ -13,7 +13,7 @@ import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function useInitializeTaskNotification(catalogName: string) {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);

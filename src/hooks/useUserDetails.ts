@@ -1,10 +1,10 @@
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
 
 function useUserDetails() {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const [avatar, setAvatar] = useState<string | null>(null);
     const [email, setEmail] = useState<string | undefined>(undefined);
