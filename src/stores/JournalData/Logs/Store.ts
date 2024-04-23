@@ -309,8 +309,9 @@ const getInitialState = (
     },
 });
 
-export const createJournalDataLogsStore = (key: JournalDataStoreNames) => {
-    return create<JournalDataLogsState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
-};
+export const useJournalDataLogsStore = create<JournalDataLogsState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions(JournalDataStoreNames.LOGS)
+    )
+);

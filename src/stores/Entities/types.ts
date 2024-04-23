@@ -3,7 +3,7 @@ import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
 import { AuthRoles, Schema } from 'types';
 
-interface ObjectRoleMetadata {
+export interface ObjectRoleMetadata {
     [key: string]: {
         token?: string;
     };

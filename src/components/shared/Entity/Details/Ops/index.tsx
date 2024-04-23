@@ -5,11 +5,11 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import LogsTable from 'components/tables/Logs';
 import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
-import { useJournalDataLogsStore_hydrationError } from 'stores/JournalData/Logs/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import Message from 'components/shared/Error/Message';
 import { BASE_ERROR } from 'services/supabase';
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 
@@ -21,7 +21,9 @@ function Ops() {
         taskTypes
     );
 
-    const hydrationError = useJournalDataLogsStore_hydrationError();
+    const hydrationError = useJournalDataLogsStore(
+        (state) => state.hydrationError
+    );
 
     const shouldShowLogs = useEntityShouldShowLogs();
 
