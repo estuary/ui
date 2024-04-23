@@ -4,26 +4,15 @@ import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { StorageMappingState } from './types';
 
-const getInitialConfigurationData = (): Pick<
+const getInitialStateData = (): Pick<
     StorageMappingState,
-    'formValue' | 'provider' | 'serverError'
+    'formValue' | 'logToken' | 'provider' | 'pubId' | 'serverError'
 > => ({
-    serverError: null,
     formValue: { data: {} },
-    provider: '',
-});
-
-const getInitialPublicationData = (): Pick<
-    StorageMappingState,
-    'logToken' | 'pubId'
-> => ({
     logToken: '',
+    provider: '',
     pubId: '',
-});
-
-const getInitialStateData = () => ({
-    ...getInitialConfigurationData(),
-    ...getInitialPublicationData(),
+    serverError: null,
 });
 
 const getInitialState = (
@@ -32,28 +21,8 @@ const getInitialState = (
 ): StorageMappingState => ({
     ...getInitialStateData(),
 
-    resetForm: () => {
-        set(
-            produce((state: StorageMappingState) => {
-                const initState = getInitialConfigurationData();
-
-                return { ...state, ...initState };
-            }),
-            false,
-            'Form reset'
-        );
-    },
-
-    resetPublication: () => {
-        set(
-            produce((state: StorageMappingState) => {
-                const initState = getInitialPublicationData();
-
-                return { ...state, ...initState };
-            }),
-            false,
-            'Publication-related state reset'
-        );
+    resetState: () => {
+        set(getInitialStateData(), false, 'State reset');
     },
 
     setServerError: (value) => {

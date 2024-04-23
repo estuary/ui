@@ -43,10 +43,7 @@ function ConfigureStorageDialog({
     const pubId = useStorageMappingStore((state) => state.pubId);
     const logToken = useStorageMappingStore((state) => state.logToken);
     const setLogToken = useStorageMappingStore((state) => state.setLogToken);
-    const resetPublication = useStorageMappingStore(
-        (state) => state.resetPublication
-    );
-    const resetForm = useStorageMappingStore((state) => state.resetForm);
+    const resetState = useStorageMappingStore((state) => state.resetState);
     const serverError = useStorageMappingStore((state) => state.serverError);
     const setServerError = useStorageMappingStore(
         (state) => state.setServerError
@@ -92,10 +89,8 @@ function ConfigureStorageDialog({
         event.preventDefault();
 
         setOpen(false);
-        resetForm();
-        resetPublication();
+        resetState();
         setSaving(false);
-        setServerError(null);
     };
 
     return (

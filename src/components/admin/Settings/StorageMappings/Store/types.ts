@@ -8,16 +8,14 @@ export interface StorageMappingState {
     formValue: JsonFormsData;
     updateFormValue: (value: JsonFormsData) => void;
 
-    resetForm: () => void;
-
     pubId: string;
     setPubId: (value: string) => void;
 
     logToken: string;
     setLogToken: (value: string) => void;
 
-    resetPublication: () => void;
-
     serverError: PostgrestError | { message: string } | null;
     setServerError: (value: PostgrestError | string | null) => void;
+
+    resetState: () => void;
 }
