@@ -1,26 +1,24 @@
 import { LoadingButton } from '@mui/lab';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
-import { republishPrefix } from 'api/storageMappings';
 import useDirectiveGuard from 'app/guards/hooks';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { useZustandStore } from 'context/Zustand/provider';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { isEmpty } from 'lodash';
-import { Dispatch, SetStateAction, useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
+import useRepublishPrefix from './useRepublishPrefix';
 
 interface Props {
     prefix: string;
-    saving: boolean;
-    setSaving: Dispatch<SetStateAction<boolean>>;
 }
 
 const SELECTED_DIRECTIVE = 'storageMappings';
@@ -38,8 +36,8 @@ const submitStorageMapping = async (
     );
 };
 
-function SaveButton({ prefix, saving, setSaving }: Props) {
-    const intl = useIntl();
+function SaveButton({ prefix }: Props) {
+    const republishPrefix = useRepublishPrefix();
 
     const { jobStatusPoller } = useJobStatusPoller();
     const { directive, loading } = useDirectiveGuard(SELECTED_DIRECTIVE, {
@@ -59,7 +57,9 @@ function SaveButton({ prefix, saving, setSaving }: Props) {
         (state) => state.formValue.errors
     );
 
-    const setPubId = useStorageMappingStore((state) => state.setPubId);
+    const saving = useStorageMappingStore((state) => state.saving);
+    const setSaving = useStorageMappingStore((state) => state.setSaving);
+
     const setServerError = useStorageMappingStore(
         (state) => state.setServerError
     );
@@ -98,38 +98,7 @@ function SaveButton({ prefix, saving, setSaving }: Props) {
                 async () => {
                     hydrate();
 
-                    republishPrefix(prefix).then(
-                        (payload) => {
-                            if (payload.error) {
-                                setSaving(false);
-                                setServerError(payload.error.message);
-                            }
-
-                            if (payload.data) {
-                                setPubId(payload.data);
-                            } else {
-                                console.log('ERROR : Publication ID not found');
-
-                                setSaving(false);
-                                setServerError(
-                                    intl.formatMessage({
-                                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                                    })
-                                );
-                            }
-                        },
-                        (error) => {
-                            console.log('ERROR : Republish logs', error);
-
-                            setSaving(false);
-                            setServerError(
-                                error ??
-                                    intl.formatMessage({
-                                        id: 'storageMappings.dialog.generate.error.republicationFailed',
-                                    })
-                            );
-                        }
-                    );
+                    await republishPrefix(prefix);
                 },
                 async (payload: any) => {
                     if (directive) {

@@ -6,12 +6,13 @@ import { StorageMappingState } from './types';
 
 const getInitialStateData = (): Pick<
     StorageMappingState,
-    'formValue' | 'logToken' | 'provider' | 'pubId' | 'serverError'
+    'formValue' | 'logToken' | 'provider' | 'pubId' | 'saving' | 'serverError'
 > => ({
     formValue: { data: {} },
     logToken: '',
     provider: '',
     pubId: '',
+    saving: false,
     serverError: null,
 });
 
@@ -23,6 +24,16 @@ const getInitialState = (
 
     resetState: () => {
         set(getInitialStateData(), false, 'State reset');
+    },
+
+    setSaving: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.saving = value;
+            }),
+            false,
+            'Saving set'
+        );
     },
 
     setServerError: (value) => {

@@ -9,18 +9,15 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { getPublicationById } from 'api/publications';
 import StorageMappingForm from 'components/admin/Settings/StorageMappings/Dialog/Form';
 import RepublicationLogs from 'components/admin/Settings/StorageMappings/Dialog/Logs';
 import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
 import SaveButton from 'components/admin/Settings/StorageMappings/Dialog/SaveButton';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Error from 'components/shared/Error';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Cancel } from 'iconoir-react';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
+import { Dispatch, SetStateAction } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     headerId: string;
@@ -37,77 +34,15 @@ function ConfigureStorageDialog({
     selectedTenant,
     setOpen,
 }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
-    const { jobStatusPoller } = useJobStatusPoller();
 
-    const pubId = useStorageMappingStore((state) => state.pubId);
     const setPubId = useStorageMappingStore((state) => state.setPubId);
-
     const logToken = useStorageMappingStore((state) => state.logToken);
     const setLogToken = useStorageMappingStore((state) => state.setLogToken);
     const resetState = useStorageMappingStore((state) => state.resetState);
     const serverError = useStorageMappingStore((state) => state.serverError);
-    const setServerError = useStorageMappingStore(
-        (state) => state.setServerError
-    );
-
-    const [saving, setSaving] = useState(false);
-
-    useEffect(() => {
-        if (pubId && !logToken) {
-            getPublicationById(pubId).then(
-                (response) => {
-                    if (response.error || !response.data) {
-                        console.log('ERROR : Fetch log token', response);
-
-                        setSaving(false);
-                        setServerError(
-                            intl.formatMessage({
-                                id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                            })
-                        );
-                    } else {
-                        setLogToken(response.data[0].logs_token);
-
-                        jobStatusPoller(
-                            supabaseClient
-                                .from(TABLES.PUBLICATIONS)
-                                .select(JOB_STATUS_COLUMNS)
-                                .eq('id', pubId),
-                            async () => {
-                                setSaving(false);
-                                setServerError(null);
-                            },
-                            async (payload: any) => {
-                                console.log(
-                                    'ERROR : Polling publication',
-                                    payload
-                                );
-
-                                setSaving(false);
-                                setServerError(
-                                    intl.formatMessage({
-                                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                                    })
-                                );
-                            }
-                        );
-                    }
-                },
-                (error) => {
-                    console.log('ERROR : Fetch log token', error);
-
-                    setSaving(false);
-                    setServerError(
-                        intl.formatMessage({
-                            id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                        })
-                    );
-                }
-            );
-        }
-    }, [intl, jobStatusPoller, logToken, pubId, setLogToken, setServerError]);
+    const saving = useStorageMappingStore((state) => state.saving);
+    const setSaving = useStorageMappingStore((state) => state.setSaving);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -217,11 +152,7 @@ function ConfigureStorageDialog({
                             <FormattedMessage id="cta.cancel" />
                         </Button>
 
-                        <SaveButton
-                            prefix={selectedTenant}
-                            saving={saving}
-                            setSaving={setSaving}
-                        />
+                        <SaveButton prefix={selectedTenant} />
                     </>
                 )}
             </DialogActions>

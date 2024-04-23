@@ -14,6 +14,9 @@ export interface StorageMappingState {
     logToken: string;
     setLogToken: (value: string) => void;
 
+    saving: boolean;
+    setSaving: (value: boolean) => void;
+
     serverError: PostgrestError | { message: string } | null;
     setServerError: (value: PostgrestError | string | null) => void;
 
