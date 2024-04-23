@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { JsonFormsData } from 'types';
 
 export interface StorageMappingState {
@@ -16,4 +17,7 @@ export interface StorageMappingState {
     setLogToken: (value: string) => void;
 
     resetPublication: () => void;
+
+    serverError: PostgrestError | { message: string } | null;
+    setServerError: (value: PostgrestError | string | null) => void;
 }

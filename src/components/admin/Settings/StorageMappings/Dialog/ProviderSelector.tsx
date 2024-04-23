@@ -19,6 +19,9 @@ function ProviderSelector() {
     const updateProvider = useStorageMappingStore(
         (state) => state.updateProvider
     );
+    const setServerError = useStorageMappingStore(
+        (state) => state.setServerError
+    );
 
     return (
         <FormControl fullWidth sx={{ mb: 2 }}>
@@ -34,6 +37,7 @@ function ProviderSelector() {
                 error={!hasLength(provider)}
                 onChange={(event) => {
                     updateProvider(event.target.value);
+                    setServerError(null);
                 }}
                 required
                 size="small"

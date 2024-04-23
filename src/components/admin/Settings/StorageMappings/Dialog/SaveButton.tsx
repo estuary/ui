@@ -21,7 +21,6 @@ interface Props {
     prefix: string;
     saving: boolean;
     setSaving: Dispatch<SetStateAction<boolean>>;
-    setServerError: Dispatch<SetStateAction<string | null>>;
 }
 
 const SELECTED_DIRECTIVE = 'storageMappings';
@@ -39,7 +38,7 @@ const submitStorageMapping = async (
     );
 };
 
-function SaveButton({ prefix, saving, setSaving, setServerError }: Props) {
+function SaveButton({ prefix, saving, setSaving }: Props) {
     const { jobStatusPoller } = useJobStatusPoller();
     const { directive, loading } = useDirectiveGuard(SELECTED_DIRECTIVE, {
         hideAlert: true,
@@ -59,6 +58,9 @@ function SaveButton({ prefix, saving, setSaving, setServerError }: Props) {
     );
 
     const setPubId = useStorageMappingStore((state) => state.setPubId);
+    const setServerError = useStorageMappingStore(
+        (state) => state.setServerError
+    );
     const provider = useStorageMappingStore((state) => state.provider);
 
     const storageConfig: object | null = useMemo(

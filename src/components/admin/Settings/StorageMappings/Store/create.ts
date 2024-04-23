@@ -6,8 +6,9 @@ import { StorageMappingState } from './types';
 
 const getInitialConfigurationData = (): Pick<
     StorageMappingState,
-    'formValue' | 'provider'
+    'formValue' | 'provider' | 'serverError'
 > => ({
+    serverError: null,
     formValue: { data: {} },
     provider: '',
 });
@@ -52,6 +53,17 @@ const getInitialState = (
             }),
             false,
             'Publication-related state reset'
+        );
+    },
+
+    setServerError: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.serverError =
+                    typeof value === 'string' ? { message: value } : value;
+            }),
+            false,
+            'Server error set'
         );
     },
 

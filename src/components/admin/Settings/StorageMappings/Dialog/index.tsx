@@ -18,7 +18,6 @@ import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
 import StorageMappingForm from './Form';
 import RepublicationLogs from './Logs';
 import SaveButton from './SaveButton';
@@ -48,9 +47,12 @@ function ConfigureStorageDialog({
         (state) => state.resetPublication
     );
     const resetForm = useStorageMappingStore((state) => state.resetForm);
+    const serverError = useStorageMappingStore((state) => state.serverError);
+    const setServerError = useStorageMappingStore(
+        (state) => state.setServerError
+    );
 
     const [saving, setSaving] = useState(false);
-    const [serverError, setServerError] = useState<string | null>(null);
 
     useEffect(() => {
         if (pubId && !logToken) {
@@ -84,7 +86,7 @@ function ConfigureStorageDialog({
                 }
             );
         }
-    }, [jobStatusPoller, logToken, pubId, setLogToken]);
+    }, [jobStatusPoller, logToken, pubId, setLogToken, setServerError]);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -145,7 +147,7 @@ function ConfigureStorageDialog({
 
                 {logToken ? (
                     <RepublicationLogs
-                        errored={hasLength(serverError)}
+                        errored={serverError !== null}
                         saving={saving}
                         token={logToken}
                     />
@@ -172,7 +174,6 @@ function ConfigureStorageDialog({
                     prefix={selectedTenant}
                     saving={saving}
                     setSaving={setSaving}
-                    setServerError={setServerError}
                 />
             </DialogActions>
         </Dialog>
