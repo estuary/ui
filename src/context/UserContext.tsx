@@ -5,6 +5,7 @@ import { useEffect, useState, createContext, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useClient } from 'hooks/supabase-swr';
 import { BaseComponentProps } from 'types';
+import { logRocketConsole } from 'services/shared';
 
 export interface AuthSession {
     user: User | null;
@@ -16,21 +17,44 @@ const UserContext = createContext<AuthSession | undefined>({
     session: null,
 });
 
-const UserContextProvider = (props: BaseComponentProps) => {
+const UserContextProvider = ({ children }: BaseComponentProps) => {
     const supabaseClient = useClient();
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(session?.user ?? null);
 
     useEffect(() => {
         void (async () => {
-            // const { data } = await supabaseClient.auth.getSession();
             const authSession = supabaseClient.auth.session();
+
+            // If there is no session set to null and logout
+            if (!authSession) {
+                setSession(null);
+                setUser(null);
+                await supabaseClient.auth.signOut();
+                return;
+            }
+
+            // Set the latest session into state
             setSession(authSession);
-            setUser(authSession?.user ?? null);
+
+            // Fetch the user info from the server to ensure we know who the user truly is
+            const { data } = await supabaseClient.auth.api.getUser(
+                authSession.access_token
+            );
+
+            if (!data) {
+                setSession(null);
+                setUser(null);
+                await supabaseClient.auth.signOut();
+                return;
+            }
+            setUser(data);
         })();
 
+        // This listens for all events including sign in and sign out
         const { data: authListener } = supabaseClient.auth.onAuthStateChange(
-            async (_event, change_session) => {
+            async (event, change_session) => {
+                logRocketConsole('Auth:Event:', event);
                 setSession(change_session);
                 setUser(change_session?.user ?? null);
             }
@@ -39,14 +63,20 @@ const UserContextProvider = (props: BaseComponentProps) => {
         return () => {
             authListener?.unsubscribe();
         };
+        // Since this binds listeneds we do not want to keep callign this as things change
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const value = {
-        session,
-        user,
-    };
-    return <UserContext.Provider value={value} {...props} />;
+    return (
+        <UserContext.Provider
+            value={{
+                session,
+                user,
+            }}
+        >
+            {children}
+        </UserContext.Provider>
+    );
 };
 
 const useUser = () => {
