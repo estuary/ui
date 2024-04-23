@@ -1,9 +1,7 @@
 import { Checkbox, FormControl, FormControlLabel } from '@mui/material';
 import { useIntl } from 'react-intl';
-import {
-    useJournalDataLogsStore_setTailNewLogs,
-    useJournalDataLogsStore_tailNewLogs,
-} from 'stores/JournalData/Logs/hooks';
+
+import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 
 const intlKey = 'ops.logsTable.tailNewLogs';
 
@@ -12,8 +10,10 @@ const intlKey = 'ops.logsTable.tailNewLogs';
 function TailNewLogs() {
     const intl = useIntl();
 
-    const tailNewLogs = useJournalDataLogsStore_tailNewLogs();
-    const setTailNewLogs = useJournalDataLogsStore_setTailNewLogs();
+    const [tailNewLogs, setTailNewLogs] = useJournalDataLogsStore((state) => [
+        state.tailNewLogs,
+        state.setTailNewLogs,
+    ]);
 
     return (
         <FormControl sx={{ mx: 0 }}>

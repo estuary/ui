@@ -2,11 +2,8 @@ import useOpsLogs from 'hooks/journals/useOpsLogs';
 
 import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
-import {
-    useJournalDataLogsStore_hydrate,
-    useJournalDataLogsStore_resetState,
-    useJournalDataLogsStore_setActive,
-} from './hooks';
+
+import { useJournalDataLogsStore } from './Store';
 
 interface Props extends BaseComponentProps {
     name: string;
@@ -18,9 +15,9 @@ export const JournalDataLogsHydrator = ({
     collectionName,
     children,
 }: Props) => {
-    const resetState = useJournalDataLogsStore_resetState();
-    const setActive = useJournalDataLogsStore_setActive();
-    const hydrate = useJournalDataLogsStore_hydrate();
+    const [resetState, setActive, hydrate] = useJournalDataLogsStore(
+        (state) => [state.resetState, state.setActive, state.hydrate]
+    );
 
     const { docs, error, loading, refresh } = useOpsLogs(name, collectionName);
 
