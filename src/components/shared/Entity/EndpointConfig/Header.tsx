@@ -3,14 +3,14 @@ import ExternalLink from 'components/shared/ExternalLink';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig/hooks';
-import { useSidePanelDocsStore_url } from 'stores/SidePanelDocs/hooks';
+import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 
 function EndpointConfigHeader() {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
-    const docsUrl = useSidePanelDocsStore_url();
+    const docsURL = useSidePanelDocsStore((state) => state.url);
 
     return (
         <>
@@ -28,11 +28,11 @@ function EndpointConfigHeader() {
                 <FormattedMessage id="entityCreate.endpointConfig.heading" />
             </Typography>
 
-            {belowMd && docsUrl && docsUrl.length > 0 ? (
+            {belowMd && docsURL && docsURL.length > 0 ? (
                 <>
                     <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
 
-                    <ExternalLink link={docsUrl}>
+                    <ExternalLink link={docsURL}>
                         <FormattedMessage id="entityCreate.cta.docs" />
                     </ExternalLink>
                 </>

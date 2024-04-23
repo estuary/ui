@@ -36,10 +36,8 @@ const getInitialState = (
     setUrl: (val) => {
         set(
             produce((state: SidePanelDocsState) => {
-                const urlIsFromEstuary = val.includes(iframeStringInclude);
-
                 state.url = val;
-                state.disabled = !urlIsFromEstuary;
+                state.disabled = !val.includes(iframeStringInclude);
             }),
             false,
             'Side Panel Docs URL Updated'
@@ -51,8 +49,9 @@ const getInitialState = (
     },
 });
 
-export const createSidePanelDocsStore = (key: GlobalStoreNames) => {
-    return create<SidePanelDocsState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
-    );
-};
+export const useSidePanelDocsStore = create<SidePanelDocsState>()(
+    devtools(
+        (set, _get) => getInitialState(set),
+        devtoolsOptions(GlobalStoreNames.SIDE_PANEL_DOCS)
+    )
+);

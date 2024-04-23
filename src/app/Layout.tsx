@@ -8,14 +8,10 @@ import { NavWidths } from 'context/Theme';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
-import {
-    useSidePanelDocsStore_animateOpening,
-    useSidePanelDocsStore_setAnimateOpening,
-    useSidePanelDocsStore_url,
-} from 'stores/SidePanelDocs/hooks';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEffect, useState } from 'react';
 import { hasLength } from 'utils/misc-utils';
+import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 
 function AppLayout() {
     const theme = useTheme();
@@ -39,8 +35,11 @@ function AppLayout() {
     const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
 
+    const [animateOpening, setAnimateOpening, docsURL] = useSidePanelDocsStore(
+        (state) => [state.animateOpening, state.setAnimateOpening, state.url]
+    );
+
     const { showDocs } = useShowSidePanelDocs();
-    const docsURL = useSidePanelDocsStore_url();
 
     const displaySidePanel = Boolean(
         showDocs && !belowMd && hasLength(docsURL)
@@ -56,8 +55,6 @@ function AppLayout() {
 
     // So the transition does not mess with a user resizing the elements
     //  and during initial load of the app
-    const animateOpening = useSidePanelDocsStore_animateOpening();
-    const setAnimateOpening = useSidePanelDocsStore_setAnimateOpening();
     const resizeHandlers = {
         start: () => {
             setAnimateOpening(false);

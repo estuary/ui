@@ -18,7 +18,6 @@ import {
     EditorStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
-    GlobalStoreNames,
     MiscStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
@@ -27,7 +26,6 @@ import {
 } from 'stores/names';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
-import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
@@ -153,11 +151,6 @@ const invariableStores = {
         createTransformationCreateStore(
             TransformCreateStoreNames.TRANSFORM_CREATE
         ),
-
-    // Global App Stores
-    [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
-        GlobalStoreNames.SIDE_PANEL_DOCS
-    ),
 };
 
 export default invariableStores;
