@@ -71,6 +71,7 @@ function StorageMappingsTable({ header }: Props) {
                     }
                     showToolbar
                     toolbar={<StorageMappingsGenerateButton />}
+                    hideFilter
                 />
             </TableHydrator>
         </Box>

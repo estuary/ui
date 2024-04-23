@@ -65,6 +65,7 @@ interface Props {
     setSearchQuery: (data: any) => void;
     setSortDirection: (data: any) => void;
     sortDirection: SortDirection;
+    hideFilter?: boolean;
     hideHeaderAndFooter?: boolean;
     keepSelectionOnFilterOrSearch?: boolean;
     keepSelectionOnPagination?: boolean;
@@ -94,6 +95,7 @@ function EntityTable({
     filterLabel,
     showEntityStatus = false,
     selectableTableStoreName,
+    hideFilter,
     hideHeaderAndFooter,
     rowsPerPage,
     rowsPerPageOptions = [10, 25, 50],
@@ -302,25 +304,27 @@ function EntityTable({
                     >
                         {showToolbar ? toolbar : <Title header={header} />}
 
-                        <TextField
-                            inputRef={searchTextField}
-                            // TODO (table filtering)
-                            // Should leverage TablePrefixes setting in the search hook here
-                            //  could handle by somehow tying the search to the actual input
-                            // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
-                            id={`capture-search-box__${filterLabel}`}
-                            label={intl.formatMessage({
-                                id: filterLabel,
-                            })}
-                            variant="outlined"
-                            size="small"
-                            defaultValue={searchQuery}
-                            onChange={handlers.filterTable}
-                            sx={{
-                                'width': belowMd ? 'auto' : 350,
-                                '& .MuiInputBase-root': { borderRadius: 3 },
-                            }}
-                        />
+                        {hideFilter ? null : (
+                            <TextField
+                                inputRef={searchTextField}
+                                // TODO (table filtering)
+                                // Should leverage TablePrefixes setting in the search hook here
+                                //  could handle by somehow tying the search to the actual input
+                                // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
+                                id={`capture-search-box__${filterLabel}`}
+                                label={intl.formatMessage({
+                                    id: filterLabel,
+                                })}
+                                variant="outlined"
+                                size="small"
+                                defaultValue={searchQuery}
+                                onChange={handlers.filterTable}
+                                sx={{
+                                    'width': belowMd ? 'auto' : 350,
+                                    '& .MuiInputBase-root': { borderRadius: 3 },
+                                }}
+                            />
+                        )}
                     </Toolbar>
                 </Box>
             )}
