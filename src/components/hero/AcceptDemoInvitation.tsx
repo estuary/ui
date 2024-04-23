@@ -7,7 +7,7 @@ import Error from 'components/shared/Error';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useEntitiesStore_mutate } from 'stores/Entities/hooks';
+import { useEntitiesStore } from 'stores/Entities/Store';
 
 interface Props {
     tenant: string;
@@ -32,7 +32,7 @@ function AcceptDemoInvitation({
 
     const { jobStatusPoller } = useJobStatusPoller();
 
-    const mutateAuthRoles = useEntitiesStore_mutate();
+    const mutateAuthRoles = useEntitiesStore((state) => state.mutate);
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
