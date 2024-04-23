@@ -33,7 +33,6 @@ import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
-import { createTopBarStore } from 'stores/TopBar/Store';
 import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
 import { MessagePrefixes } from 'types';
 
@@ -159,7 +158,6 @@ const invariableStores = {
     [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
         GlobalStoreNames.SIDE_PANEL_DOCS
     ),
-    [GlobalStoreNames.TOP_BAR]: createTopBarStore(GlobalStoreNames.TOP_BAR),
 };
 
 export default invariableStores;
