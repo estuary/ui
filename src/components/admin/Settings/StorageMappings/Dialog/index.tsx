@@ -10,17 +10,17 @@ import {
     useTheme,
 } from '@mui/material';
 import { getPublicationById } from 'api/publications';
+import StorageMappingForm from 'components/admin/Settings/StorageMappings/Dialog/Form';
+import RepublicationLogs from 'components/admin/Settings/StorageMappings/Dialog/Logs';
 import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
+import SaveButton from 'components/admin/Settings/StorageMappings/Dialog/SaveButton';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Error from 'components/shared/Error';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
-import StorageMappingForm from './Form';
-import RepublicationLogs from './Logs';
-import SaveButton from './SaveButton';
 
 interface Props {
     headerId: string;
@@ -37,10 +37,13 @@ function ConfigureStorageDialog({
     selectedTenant,
     setOpen,
 }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const pubId = useStorageMappingStore((state) => state.pubId);
+    const setPubId = useStorageMappingStore((state) => state.setPubId);
+
     const logToken = useStorageMappingStore((state) => state.logToken);
     const setLogToken = useStorageMappingStore((state) => state.setLogToken);
     const resetState = useStorageMappingStore((state) => state.resetState);
@@ -57,6 +60,13 @@ function ConfigureStorageDialog({
                 (response) => {
                     if (response.error || !response.data) {
                         console.log('ERROR : Fetch log token', response);
+
+                        setSaving(false);
+                        setServerError(
+                            intl.formatMessage({
+                                id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
+                            })
+                        );
                     } else {
                         setLogToken(response.data[0].logs_token);
 
@@ -74,16 +84,30 @@ function ConfigureStorageDialog({
                                     'ERROR : Polling publication',
                                     payload
                                 );
+
+                                setSaving(false);
+                                setServerError(
+                                    intl.formatMessage({
+                                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
+                                    })
+                                );
                             }
                         );
                     }
                 },
                 (error) => {
                     console.log('ERROR : Fetch log token', error);
+
+                    setSaving(false);
+                    setServerError(
+                        intl.formatMessage({
+                            id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
+                        })
+                    );
                 }
             );
         }
-    }, [jobStatusPoller, logToken, pubId, setLogToken, setServerError]);
+    }, [intl, jobStatusPoller, logToken, pubId, setLogToken, setServerError]);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -91,6 +115,13 @@ function ConfigureStorageDialog({
         setOpen(false);
         resetState();
         setSaving(false);
+    };
+
+    const resetPublicationState = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        setPubId('');
+        setLogToken('');
     };
 
     return (
@@ -124,7 +155,7 @@ function ConfigureStorageDialog({
                     </Box>
                 ) : null}
 
-                <Typography sx={{ mb: 2 }}>
+                <Typography sx={{ mb: 3 }}>
                     <FormattedMessage
                         id="storageMappings.dialog.generate.description"
                         values={{ tenant: <b>{selectedTenant}</b> }}
@@ -156,20 +187,43 @@ function ConfigureStorageDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    disabled={saving}
-                    variant="outlined"
-                    size="small"
-                    onClick={closeDialog}
-                >
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
+                {logToken ? (
+                    <>
+                        <Button
+                            disabled={saving}
+                            variant="outlined"
+                            size="small"
+                            onClick={resetPublicationState}
+                        >
+                            <FormattedMessage id="cta.back" />
+                        </Button>
 
-                <SaveButton
-                    prefix={selectedTenant}
-                    saving={saving}
-                    setSaving={setSaving}
-                />
+                        <Button
+                            disabled={saving}
+                            size="small"
+                            onClick={closeDialog}
+                        >
+                            <FormattedMessage id="cta.close" />
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button
+                            disabled={saving}
+                            variant="outlined"
+                            size="small"
+                            onClick={closeDialog}
+                        >
+                            <FormattedMessage id="cta.cancel" />
+                        </Button>
+
+                        <SaveButton
+                            prefix={selectedTenant}
+                            saving={saving}
+                            setSaving={setSaving}
+                        />
+                    </>
+                )}
             </DialogActions>
         </Dialog>
     );

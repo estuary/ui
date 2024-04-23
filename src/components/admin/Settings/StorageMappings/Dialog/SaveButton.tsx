@@ -9,7 +9,7 @@ import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { isEmpty } from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -39,6 +39,8 @@ const submitStorageMapping = async (
 };
 
 function SaveButton({ prefix, saving, setSaving }: Props) {
+    const intl = useIntl();
+
     const { jobStatusPoller } = useJobStatusPoller();
     const { directive, loading } = useDirectiveGuard(SELECTED_DIRECTIVE, {
         hideAlert: true,
@@ -106,13 +108,26 @@ function SaveButton({ prefix, saving, setSaving }: Props) {
                             if (payload.data) {
                                 setPubId(payload.data);
                             } else {
+                                console.log('ERROR : Publication ID not found');
+
                                 setSaving(false);
-                                setServerError('Publication ID not found');
+                                setServerError(
+                                    intl.formatMessage({
+                                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
+                                    })
+                                );
                             }
                         },
                         (error) => {
                             console.log('ERROR : Republish logs', error);
+
                             setSaving(false);
+                            setServerError(
+                                error ??
+                                    intl.formatMessage({
+                                        id: 'storageMappings.dialog.generate.error.republicationFailed',
+                                    })
+                            );
                         }
                     );
                 },

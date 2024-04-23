@@ -1,7 +1,8 @@
-import { AlertColor } from '@mui/material';
+import { AlertColor, Typography } from '@mui/material';
 import Logs from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     errored: boolean;
@@ -30,21 +31,27 @@ function RepublicationLogs({ errored, saving, token }: Props) {
     );
 
     return (
-        <ErrorBoundryWrapper>
-            <Logs
-                token={token}
-                height={350}
-                loadingLineSeverity={severity}
-                spinnerMessages={
-                    saving
-                        ? {
-                              stoppedKey: messageId,
-                              runningKey: messageId,
-                          }
-                        : undefined
-                }
-            />
-        </ErrorBoundryWrapper>
+        <>
+            <Typography sx={{ fontSize: 16, fontWeight: 500 }}>
+                <FormattedMessage id="storageMappings.dialog.generate.logsHeader" />
+            </Typography>
+
+            <ErrorBoundryWrapper>
+                <Logs
+                    token={token}
+                    height={350}
+                    loadingLineSeverity={severity}
+                    spinnerMessages={
+                        saving
+                            ? {
+                                  stoppedKey: messageId,
+                                  runningKey: messageId,
+                              }
+                            : undefined
+                    }
+                />
+            </ErrorBoundryWrapper>
+        </>
     );
 }
 
