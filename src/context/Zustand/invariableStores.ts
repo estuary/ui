@@ -8,9 +8,7 @@ import {
     collectionDetailsForm,
     materializationDetailsForm,
 } from 'stores/DetailsForm/Store';
-import { createEntitiesStore } from 'stores/Entities/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
-import { createJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import {
     AdminStoreNames,
     BillingStoreNames,
@@ -20,8 +18,6 @@ import {
     EditorStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
-    GlobalStoreNames,
-    JournalDataStoreNames,
     MiscStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
@@ -30,13 +26,11 @@ import {
 } from 'stores/names';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
-import { createSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
-import { createTopBarStore } from 'stores/TopBar/Store';
 import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
 import { MessagePrefixes } from 'types';
 
@@ -157,18 +151,6 @@ const invariableStores = {
         createTransformationCreateStore(
             TransformCreateStoreNames.TRANSFORM_CREATE
         ),
-
-    // Journal Data Stores
-    [JournalDataStoreNames.LOGS]: createJournalDataLogsStore(
-        JournalDataStoreNames.LOGS
-    ),
-
-    // Global App Stores
-    [GlobalStoreNames.ENTITIES]: createEntitiesStore(GlobalStoreNames.ENTITIES),
-    [GlobalStoreNames.SIDE_PANEL_DOCS]: createSidePanelDocsStore(
-        GlobalStoreNames.SIDE_PANEL_DOCS
-    ),
-    [GlobalStoreNames.TOP_BAR]: createTopBarStore(GlobalStoreNames.TOP_BAR),
 };
 
 export default invariableStores;

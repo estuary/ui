@@ -1,14 +1,14 @@
 import { Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
-import {
-    useTopBarStore_header,
-    useTopBarStore_headerLink,
-} from 'stores/TopBar/hooks';
+
+import { useTopBarStore } from 'stores/TopBar/Store';
 
 function PageTitle() {
-    const header = useTopBarStore_header();
-    const headerLink = useTopBarStore_headerLink();
+    const [header, headerLink] = useTopBarStore((state) => [
+        state.header,
+        state.headerLink,
+    ]);
 
     // If there isn't a header don't show anything. You cannot display JUST the doc links
     if (!header) {

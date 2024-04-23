@@ -10,7 +10,7 @@ import {
 import { useShowSidePanelDocs } from 'context/SidePanelDocs';
 import { SidebarCollapse } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { useSidePanelDocsStore_url } from 'stores/SidePanelDocs/hooks';
+import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 import { hasLength } from 'utils/misc-utils';
 
 function SidePanelDocsOpenButton() {
@@ -19,7 +19,7 @@ function SidePanelDocsOpenButton() {
 
     const { showDocs, setShowDocs } = useShowSidePanelDocs();
 
-    const docsURL = useSidePanelDocsStore_url();
+    const docsURL = useSidePanelDocsStore((state) => state.url);
     const showButton = !showDocs && !belowMd && hasLength(docsURL);
 
     return (

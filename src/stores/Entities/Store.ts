@@ -104,8 +104,9 @@ const getInitialState = (
     },
 });
 
-export const createEntitiesStore = (key: GlobalStoreNames) => {
-    return create<EntitiesState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
-    );
-};
+export const useEntitiesStore = create<EntitiesState>()(
+    devtools(
+        (set, _get) => getInitialState(set),
+        devtoolsOptions(GlobalStoreNames.ENTITIES)
+    )
+);

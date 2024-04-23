@@ -41,8 +41,9 @@ const getInitialState = (
     },
 });
 
-export const createTopBarStore = (key: GlobalStoreNames) => {
-    return create<TopBarState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
-    );
-};
+export const useTopBarStore = create<TopBarState>()(
+    devtools(
+        (set, _get) => getInitialState(set),
+        devtoolsOptions(GlobalStoreNames.TOP_BAR)
+    )
+);

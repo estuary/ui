@@ -38,6 +38,7 @@ export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
     jwtInvalid: 'invalid JWT',
     jwsInvalid: 'JWSError JWSInvalidSignature',
+    refreshInvalid: 'Refresh Token Not Found',
 };
 
 export const tokenHasIssues = (errorMessage?: string) => {
@@ -45,7 +46,8 @@ export const tokenHasIssues = (errorMessage?: string) => {
         errorMessage &&
         (errorMessage === ERROR_MESSAGES.jwtExpired ||
             errorMessage.includes(ERROR_MESSAGES.jwsInvalid) ||
-            errorMessage.includes(ERROR_MESSAGES.jwtInvalid))
+            errorMessage.includes(ERROR_MESSAGES.jwtInvalid) ||
+            errorMessage.includes(ERROR_MESSAGES.refreshInvalid))
     );
 };
 
