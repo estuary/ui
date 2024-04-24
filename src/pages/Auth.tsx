@@ -4,7 +4,7 @@ import { useUser } from 'context/UserContext';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
 import { CommonStatuses, CustomEvents } from 'services/types';
@@ -23,15 +23,27 @@ const trackEvent = (status: CommonStatuses) => {
 const Auth = () => {
     useBrowserTitle('routeTitle.loginLoading');
 
+    // Storing if we are in the process of saving the user
+    // That way we do not keep spamming the Supabase Client
+    const savingUser = useRef(false);
+
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
+
     // We can fetch user here and not session because we are
     //  potentially creating the session here down below.
     const { user } = useUser();
 
     useEffect(() => {
+        // If we have already processed we do not need to try getting
+        //  the session from the URL again
+        if (savingUser.current) {
+            trackEvent('skipped');
+            return;
+        }
+
         const failed = async (error: string) => {
             enqueueSnackbar(error, {
                 anchorOrigin: {
@@ -42,6 +54,7 @@ const Auth = () => {
                 variant: 'error',
             });
 
+            savingUser.current = false;
             await supabaseClient.auth.signOut();
         };
 
@@ -54,20 +67,19 @@ const Auth = () => {
         };
 
         if (!user) {
+            savingUser.current = true;
             supabaseClient.auth
                 .getSessionFromUrl({
                     storeSession: true,
                 })
                 .then(async (response) => {
                     if (response.error) {
-                        const error = response.error.message;
-
                         trackEvent('failed');
-                        await failed(error);
+                        await failed(response.error.message);
+                    } else {
+                        trackEvent('success');
+                        success();
                     }
-
-                    trackEvent('success');
-                    success();
                 })
                 .catch(() => {
                     trackEvent('exception');
