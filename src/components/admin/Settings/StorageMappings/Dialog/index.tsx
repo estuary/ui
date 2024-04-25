@@ -88,15 +88,6 @@ function ConfigureStorageDialog({
                     />
                 </Typography>
 
-                {/* <Box sx={{ pt: 1, mb: 2 }}>
-                    <AlertBox severity="info" short>
-                        <FormattedMessage
-                            id="storageMappings.dialog.generate.alert.keyPrefix"
-                            values={{ tenant: <b>{selectedTenant}</b> }}
-                        />
-                    </AlertBox>
-                </Box> */}
-
                 {logToken ? (
                     <RepublicationLogs
                         errored={serverError !== null}

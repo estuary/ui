@@ -5,12 +5,16 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { noop } from 'lodash';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
-function TenantOptions() {
+interface Props {
+    updateStoreState?: (value?: string) => void;
+}
+
+function TenantSelector({ updateStoreState }: Props) {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
@@ -34,6 +38,18 @@ function TenantOptions() {
         [tenants]
     );
 
+    const updateState = useCallback(
+        (value: string) => {
+            if (updateStoreState) {
+                updateStoreState(value);
+            }
+
+            setSelectedTenant(value);
+            setInputValue(value);
+        },
+        [setInputValue, setSelectedTenant, updateStoreState]
+    );
+
     useEffect(() => {
         if (tenantNames) {
             // Try using the value from the URL first so if the param gets updated the dropdown changes
@@ -43,14 +59,14 @@ function TenantOptions() {
                     ? defaultSelectedTenant
                     : tenantNames[0];
 
-            setSelectedTenant(newVal);
+            updateState(newVal);
 
             if (!handledDefault.current) {
                 setDefaultValue(defaultValue);
                 handledDefault.current = true;
             }
         }
-    }, [defaultSelectedTenant, defaultValue, setSelectedTenant, tenantNames]);
+    }, [defaultSelectedTenant, defaultValue, tenantNames, updateState]);
 
     return selectedTenant && tenantNames ? (
         <AutocompletedField
@@ -77,4 +93,4 @@ function TenantOptions() {
     );
 }
 
-export default TenantOptions;
+export default TenantSelector;

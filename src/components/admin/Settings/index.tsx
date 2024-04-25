@@ -1,8 +1,8 @@
 import { Divider, Grid, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import PrefixAlerts from 'components/admin/Settings/PrefixAlerts';
-import TenantOptions from 'components/admin/Settings/TenantOptions';
 import AdminTabs from 'components/admin/Tabs';
+import TenantSelector from 'components/shared/TenantSelector';
 import usePageTitle from 'hooks/usePageTitle';
 import StorageMappings from './StorageMappings';
 
@@ -26,7 +26,7 @@ function Settings() {
                     md={3}
                     sx={{ mt: 2.5, display: 'flex', alignItems: 'end' }}
                 >
-                    <TenantOptions />
+                    <TenantSelector />
                 </Grid>
             </Grid>
 
