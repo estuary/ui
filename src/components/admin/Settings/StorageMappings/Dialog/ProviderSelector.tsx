@@ -2,13 +2,9 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import { CloudProviderCodes } from './useConfigurationSchema';
 
 const INPUT_ID = 'cloud-provider-input';
-
-export enum CloudProviderCodes {
-    GCS = 'GCS',
-    S3 = 'S3',
-}
 
 function ProviderSelector() {
     const intl = useIntl();
