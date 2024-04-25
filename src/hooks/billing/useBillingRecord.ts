@@ -1,15 +1,15 @@
 import { Invoice, getInvoicesBetween } from 'api/billing';
 import { extendedPollSettings } from 'context/SWR';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { add } from 'date-fns';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
 const defaultResponse: Invoice[] = [];
 
 // TODO (typing): Correct the return type of useSelectNew. In this instance, data is an object and not an array.
 function useInvoice(currentMonth: Date) {
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const { data, error, mutate, isValidating } = useSelectNew<Invoice>(
         hasLength(selectedTenant)

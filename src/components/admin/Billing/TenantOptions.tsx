@@ -1,6 +1,6 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useSelectedTenant, useTenantDetails } from 'context/fetcher/Tenant';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -18,13 +18,17 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
 function TenantOptions() {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
-    const { selectedTenant, setSelectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const setSelectedTenant = useTenantStore(
+        (state) => state.updateSelectedTenant
+    );
 
     // AutoComplete
     const handledDefault = useRef(false);
@@ -45,7 +49,10 @@ function TenantOptions() {
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
     const tenantNames = useMemo<string[] | null>(
-        () => (tenants.length > 0 ? tenants.map(({ tenant }) => tenant) : null),
+        () =>
+            tenants && tenants.length > 0
+                ? tenants.map(({ tenant }) => tenant)
+                : null,
         [tenants]
     );
 

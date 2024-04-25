@@ -1,16 +1,16 @@
 import { getStatsForBilling } from 'api/stats';
 import { extendedPollSettings } from 'context/SWR';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import {
     useBilling_invoices,
     useBilling_invoicesInitialized,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 function useBillingCatalogStats() {
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const historyInitialized = useBilling_invoicesInitialized();
     const invoices = useBilling_invoices();

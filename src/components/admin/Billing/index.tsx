@@ -13,7 +13,6 @@ import GraphStateWrapper from 'components/graphs/states/Wrapper';
 import AlertBox from 'components/shared/AlertBox';
 import BillingLineItemsTable from 'components/tables/BillLineItems';
 import BillingHistoryTable from 'components/tables/Billing';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import useInvoice from 'hooks/billing/useBillingRecord';
@@ -39,6 +38,7 @@ import {
     useBilling_setNetworkFailed,
     useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
 import { AdminBillingProps } from './types';
@@ -50,7 +50,7 @@ const routeTitle = authenticatedRoutes.admin.billing.title;
 const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Billing Store
     const hydrated = useBilling_hydrated();

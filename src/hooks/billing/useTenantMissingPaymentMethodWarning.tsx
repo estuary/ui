@@ -50,7 +50,7 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!hasSupportRole && tenantDetails.length > 0) {
+            if (!hasSupportRole && tenantDetails) {
                 setPaymentMethods(
                     await getPaymentMethodsForTenants(tenantDetails)
                 );
@@ -63,7 +63,7 @@ function useTenantMissingPaymentMethodWarning() {
     useEffect(() => {
         if (
             showedNotificationOnce.current ||
-            !(tenantDetails.length > 0) ||
+            !tenantDetails ||
             !paymentMethods
         ) {
             return;

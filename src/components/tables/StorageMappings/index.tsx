@@ -2,10 +2,10 @@ import { Box } from '@mui/material';
 import { getStorageMappings } from 'api/storageMappings';
 import StorageMappingsGenerateButton from 'components/admin/Settings/StorageMappings/GenerateButton';
 import EntityTable from 'components/tables/EntityTable';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { ReactNode, useMemo } from 'react';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useTableState } from 'stores/Tables/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import Rows, { tableColumns } from './Rows';
 
@@ -27,15 +27,17 @@ function StorageMappingsTable({ header }: Props) {
         setColumnToSort,
     } = useTableState('sm', 'catalog_prefix');
 
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const query = useMemo(() => {
-        return getStorageMappings(selectedTenant, pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
+        return selectedTenant
+            ? getStorageMappings(selectedTenant, pagination, searchQuery, [
+                  {
+                      col: columnToSort,
+                      direction: sortDirection,
+                  },
+              ])
+            : null;
     }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
 
     return (

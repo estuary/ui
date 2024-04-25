@@ -5,7 +5,6 @@ import TotalLines from 'components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -14,6 +13,7 @@ import {
     useBilling_invoices,
     useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns, TableStatuses } from 'types';
 
 export const columns: TableColumns[] = [
@@ -42,7 +42,7 @@ export const columns: TableColumns[] = [
 function BillingLineItemsTable() {
     const intl = useIntl();
 
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const selectedInvoice = useBilling_selectedInvoice();
 

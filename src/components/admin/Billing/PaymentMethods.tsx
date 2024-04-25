@@ -20,12 +20,12 @@ import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
 import AlertBox from 'components/shared/AlertBox';
 import TableLoadingRows from 'components/tables/Loading';
 
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBilling_setPaymentMethodExists } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns } from 'types';
 import { getColumnKeyList } from 'utils/table-utils';
 import AddPaymentMethod from './AddPaymentMethod';
@@ -66,7 +66,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
         []
     );
 
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const setPaymentMethodExists = useBilling_setPaymentMethodExists();
 

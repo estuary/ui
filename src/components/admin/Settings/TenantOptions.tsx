@@ -1,19 +1,23 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useSelectedTenant, useTenantDetails } from 'context/fetcher/Tenant';
+import { useTenantDetails } from 'context/fetcher/Tenant';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { noop } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
 function TenantOptions() {
     const intl = useIntl();
 
     const tenants = useTenantDetails();
-    const { selectedTenant, setSelectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const setSelectedTenant = useTenantStore(
+        (state) => state.updateSelectedTenant
+    );
 
     const handledDefault = useRef(false);
     const defaultSelectedTenant = useGlobalSearchParams(
@@ -23,7 +27,10 @@ function TenantOptions() {
     const [defaultValue, setDefaultValue] = useState<string | null>(null);
 
     const tenantNames = useMemo<string[] | null>(
-        () => (tenants.length > 0 ? tenants.map(({ tenant }) => tenant) : null),
+        () =>
+            tenants && tenants.length > 0
+                ? tenants.map(({ tenant }) => tenant)
+                : null,
         [tenants]
     );
 

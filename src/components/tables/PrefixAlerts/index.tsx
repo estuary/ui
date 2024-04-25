@@ -2,11 +2,11 @@ import { getNotificationSubscriptionsForTable } from 'api/alerts';
 import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/GenerateButton';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/PrefixAlerts/Rows';
-import { useSelectedTenant } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns } from 'types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
@@ -45,20 +45,22 @@ function PrefixAlertTable() {
         setColumnToSort,
     } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
 
-    const { selectedTenant } = useSelectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const query = useMemo(() => {
-        return getNotificationSubscriptionsForTable(
-            selectedTenant,
-            pagination,
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ]
-        );
+        return selectedTenant
+            ? getNotificationSubscriptionsForTable(
+                  selectedTenant,
+                  pagination,
+                  searchQuery,
+                  [
+                      {
+                          col: columnToSort,
+                          direction: sortDirection,
+                      },
+                  ]
+              )
+            : null;
     }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
 
     return (
