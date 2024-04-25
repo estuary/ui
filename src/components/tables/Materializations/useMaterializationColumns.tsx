@@ -40,7 +40,6 @@ const statsHeader: ColumnProps = {
         return (
             <StatsHeader
                 key={`materializations-statsHeader-${index}`}
-                header="entityTable.stats.read"
                 selectableTableStoreName={selectableTableStoreName}
             />
         );

@@ -11,8 +11,8 @@ import {
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
-    header: string;
     selectableTableStoreName: SelectTableStoreNames;
+    header?: string;
 }
 
 const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
@@ -47,14 +47,16 @@ const StatsHeader = ({ header, selectableTableStoreName }: Props) => {
                     <FormattedMessage
                         id="data.written"
                         values={{
-                            type: <FormattedMessage id={header} />,
+                            type: (
+                                <FormattedMessage id={header ?? 'data.data'} />
+                            ),
                         }}
                     />
                 </Typography>
             </TableCell>
             <TableCell>
                 <DateFilter
-                    header={header}
+                    header={header ?? 'data.docs'}
                     disabled={
                         !hasStats ||
                         isValidating ||

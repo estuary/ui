@@ -40,7 +40,6 @@ const statsHeader: ColumnProps = {
         return (
             <StatsHeader
                 key={`captures-statsHeader-${index}`}
-                header="entityTable.stats.written"
                 selectableTableStoreName={selectableTableStoreName}
             />
         );
