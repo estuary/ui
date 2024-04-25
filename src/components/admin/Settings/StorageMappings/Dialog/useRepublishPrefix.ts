@@ -3,7 +3,9 @@ import { republishPrefix } from 'api/storageMappings';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { hasLength } from 'utils/misc-utils';
 import { useStorageMappingStore } from '../Store/create';
 
@@ -26,18 +28,24 @@ function useRepublishPrefix() {
                 setSaving(false);
                 setServerError(republicationResponse.error);
 
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
+                    response: republicationResponse,
+                });
+
                 return;
             }
 
             if (!hasLength(republicationResponse.data)) {
-                console.log('ERROR : Publication ID not found');
-
                 setSaving(false);
                 setServerError(
                     intl.formatMessage({
                         id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
                     })
                 );
+
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
+                    context: 'A publication ID was not found in the response.',
+                });
 
                 return;
             }
@@ -50,14 +58,16 @@ function useRepublishPrefix() {
             );
 
             if (publicationResponse.error || !publicationResponse.data) {
-                console.log('ERROR : Fetch log token', publicationResponse);
-
                 setSaving(false);
                 setServerError(
                     intl.formatMessage({
                         id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
                     })
                 );
+
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
+                    context: 'An error was encountered fetching the log token.',
+                });
 
                 return;
             }
@@ -74,14 +84,18 @@ function useRepublishPrefix() {
                     setServerError(null);
                 },
                 async (payload: any) => {
-                    console.log('ERROR : Polling publication', payload);
-
                     setSaving(false);
                     setServerError(
                         intl.formatMessage({
                             id: 'storageMappings.dialog.generate.error.republicationFailed',
                         })
                     );
+
+                    logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
+                        response: payload,
+                        context:
+                            'An error was encountered polling for the publication job status.',
+                    });
                 }
             );
         },
