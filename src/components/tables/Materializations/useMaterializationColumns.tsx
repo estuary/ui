@@ -40,6 +40,7 @@ const statsHeader: ColumnProps = {
         return (
             <StatsHeader
                 key={`materializations-statsHeader-${index}`}
+                headerSuffix="data.read"
                 selectableTableStoreName={selectableTableStoreName}
             />
         );
