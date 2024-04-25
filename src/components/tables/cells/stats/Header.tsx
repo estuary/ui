@@ -3,7 +3,7 @@ import DateFilter from 'components/filters/Date';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
@@ -46,8 +46,18 @@ const StatsHeader = ({
         SelectableTableStore['query']['count']
     >(selectableTableStoreName, selectableTableStoreSelectors.query.count);
 
-    const secondColHeader = useMemo(
-        () =>
+    const [firstColHeader, secondColHeader] = useMemo(() => {
+        return [
+            intl.formatMessage(
+                {
+                    id: headerSuffix ? headerSuffix : 'data.written',
+                },
+                {
+                    type: intl.formatMessage({
+                        id: header ?? 'data.data',
+                    }),
+                }
+            ),
             intl.formatMessage(
                 {
                     id: headerSuffix ? headerSuffix : 'data.read',
@@ -58,10 +68,8 @@ const StatsHeader = ({
                     }),
                 }
             ),
-        [header, headerSuffix, intl]
-    );
-
-    console.log('secondColHeader', secondColHeader);
+        ];
+    }, [header, headerSuffix, intl]);
 
     return (
         <>
@@ -70,14 +78,7 @@ const StatsHeader = ({
                     component="span"
                     sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
                 >
-                    <FormattedMessage
-                        id={headerSuffix ? headerSuffix : 'data.written'}
-                        values={{
-                            type: (
-                                <FormattedMessage id={header ?? 'data.data'} />
-                            ),
-                        }}
-                    />
+                    {firstColHeader}
                 </Typography>
             </TableCell>
             <TableCell>
