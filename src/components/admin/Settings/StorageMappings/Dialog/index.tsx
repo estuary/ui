@@ -36,9 +36,7 @@ function ConfigureStorageDialog({
 }: Props) {
     const theme = useTheme();
 
-    const setPubId = useStorageMappingStore((state) => state.setPubId);
     const logToken = useStorageMappingStore((state) => state.logToken);
-    const setLogToken = useStorageMappingStore((state) => state.setLogToken);
     const resetState = useStorageMappingStore((state) => state.resetState);
     const serverError = useStorageMappingStore((state) => state.serverError);
     const saving = useStorageMappingStore((state) => state.saving);
@@ -50,13 +48,6 @@ function ConfigureStorageDialog({
         setOpen(false);
         resetState();
         setSaving(false);
-    };
-
-    const resetPublicationState = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
-        setPubId('');
-        setLogToken('');
     };
 
     return (
@@ -123,24 +114,13 @@ function ConfigureStorageDialog({
 
             <DialogActions>
                 {logToken ? (
-                    <>
-                        <Button
-                            disabled={saving}
-                            variant="outlined"
-                            size="small"
-                            onClick={resetPublicationState}
-                        >
-                            <FormattedMessage id="cta.back" />
-                        </Button>
-
-                        <Button
-                            disabled={saving}
-                            size="small"
-                            onClick={closeDialog}
-                        >
-                            <FormattedMessage id="cta.close" />
-                        </Button>
-                    </>
+                    <Button
+                        disabled={saving}
+                        size="small"
+                        onClick={closeDialog}
+                    >
+                        <FormattedMessage id="cta.close" />
+                    </Button>
                 ) : (
                     <>
                         <Button

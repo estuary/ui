@@ -6,10 +6,8 @@ import { hasLength } from 'utils/misc-utils';
 const INPUT_ID = 'cloud-provider-input';
 
 export enum CloudProviderCodes {
-    AZURE = 'AZURE',
     GCS = 'GCS',
     S3 = 'S3',
-    CUSTOM = 'CUSTOM',
 }
 
 function ProviderSelector() {
