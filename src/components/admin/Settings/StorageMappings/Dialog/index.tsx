@@ -6,6 +6,7 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
+    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -15,6 +16,7 @@ import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/P
 import SaveButton from 'components/admin/Settings/StorageMappings/Dialog/SaveButton';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Error from 'components/shared/Error';
+import ExternalLink from 'components/shared/ExternalLink';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -27,6 +29,9 @@ interface Props {
 }
 
 const TITLE_ID = 'configure-storage-dialog-title';
+
+const docsUrl =
+    'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
 
 function ConfigureStorageDialog({
     headerId,
@@ -60,9 +65,15 @@ function ConfigureStorageDialog({
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">
-                    <FormattedMessage id={headerId} />
-                </Typography>
+                <Stack direction="row" spacing={1}>
+                    <Typography variant="h6">
+                        <FormattedMessage id={headerId} />
+                    </Typography>
+
+                    <ExternalLink link={docsUrl}>
+                        <FormattedMessage id="terms.documentation" />
+                    </ExternalLink>
+                </Stack>
 
                 <IconButton disabled={saving} onClick={closeDialog}>
                     <Cancel
