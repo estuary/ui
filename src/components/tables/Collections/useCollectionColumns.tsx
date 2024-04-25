@@ -63,7 +63,7 @@ const useCollectionColumns = (): ColumnProps[] => {
                 defaultColumns_end,
             ];
         } else {
-            return [...defaultColumns_start, ...defaultColumns_end];
+            return [...defaultColumns_start, defaultColumns_end];
         }
     }, [hasDetails]);
 };
