@@ -70,12 +70,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 component="span"
                 sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
             >
-                <FormattedMessage
-                    id="data.read"
-                    values={{
-                        type: <FormattedMessage id={header} />,
-                    }}
-                />
+                {header}
             </Typography>
 
             <IconButton
