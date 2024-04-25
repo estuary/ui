@@ -15,12 +15,10 @@ const defaultColumns_start: ColumnProps[] = [
     },
 ];
 
-const defaultColumns_end: ColumnProps[] = [
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-];
+const defaultColumns_end: ColumnProps = {
+    field: 'updated_at',
+    headerIntlKey: 'entityTable.data.lastPublished',
+};
 
 const dataStatsHeader: ColumnProps = {
     field: null,
@@ -62,7 +60,7 @@ const useCollectionColumns = (): ColumnProps[] => {
                 ...defaultColumns_start,
                 dataStatsHeader,
                 docsStatsHeader,
-                ...defaultColumns_end,
+                defaultColumns_end,
             ];
         } else {
             return [...defaultColumns_start, ...defaultColumns_end];
