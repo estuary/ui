@@ -74,7 +74,6 @@ function TenantSelector({ updateStoreState }: Props) {
                 id: 'common.tenant',
             })}
             options={tenantNames}
-            defaultValue={defaultValue ?? selectedTenant}
             changeHandler={noop}
             autocompleteSx={{ flexGrow: 1 }}
             AutoCompleteOptions={{
