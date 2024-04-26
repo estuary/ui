@@ -2,7 +2,7 @@ import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
-import { createPublication } from 'api/publications';
+import { createPublication, getPublicationById } from 'api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_mutate,
@@ -10,12 +10,11 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
-import { DEFAULT_FILTER, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
+import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
@@ -50,7 +49,6 @@ function useSave(
     forceLogsClosed?: boolean
 ) {
     const intl = useIntl();
-    const supabaseClient = useClient();
     const { closeLogs } = useEntityWorkflowHelpers();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -85,10 +83,7 @@ function useSave(
             setIncompatibleCollections([]);
 
             jobStatusPoller(
-                supabaseClient
-                    .from(TABLES.PUBLICATIONS)
-                    .select(JOB_STATUS_COLUMNS)
-                    .eq('id', publicationId),
+                getPublicationById(publicationId),
                 async (payload: any) => {
                     const formStatus = dryRun
                         ? FormStatus.TESTED
@@ -170,7 +165,6 @@ function useSave(
             setPubId,
             showNotification,
             status,
-            supabaseClient,
             updateFormStatus,
         ]
     );
