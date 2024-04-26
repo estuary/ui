@@ -6,7 +6,7 @@ import { republishPrefix } from 'api/storageMappings';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { handleFailure, handleSuccess, supabaseRetry } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { hasLength } from 'utils/misc-utils';
@@ -31,9 +31,7 @@ function useRepublishPrefix() {
                 setSaving(false);
                 setServerError(republicationResponse.error);
 
-                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
-                    response: republicationResponse,
-                });
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
 
                 return;
             }
@@ -46,9 +44,10 @@ function useRepublishPrefix() {
                     })
                 );
 
-                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
-                    context: 'A publication ID was not found in the response.',
-                });
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
+                logRocketConsole(
+                    `${CustomEvents.REPUBLISH_PREFIX_FAILED}: A publication ID was not found in the response.`
+                );
 
                 return;
             }
@@ -69,9 +68,10 @@ function useRepublishPrefix() {
                     })
                 );
 
-                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
-                    context: 'An error was encountered fetching the log token.',
-                });
+                logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
+                logRocketConsole(
+                    `${CustomEvents.REPUBLISH_PREFIX_FAILED}: An error was encountered fetching the log token.`
+                );
 
                 return;
             }
@@ -84,7 +84,7 @@ function useRepublishPrefix() {
                     setSaving(false);
                     setServerError(null);
                 },
-                async (payload: any) => {
+                async () => {
                     setSaving(false);
                     setServerError(
                         intl.formatMessage({
@@ -92,11 +92,10 @@ function useRepublishPrefix() {
                         })
                     );
 
-                    logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED, {
-                        response: payload,
-                        context:
-                            'An error was encountered polling for the publication job status.',
-                    });
+                    logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
+                    logRocketConsole(
+                        `${CustomEvents.REPUBLISH_PREFIX_FAILED}: An error was encountered polling for the publication job status.`
+                    );
                 }
             );
         },
