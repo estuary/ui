@@ -13,13 +13,10 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import useRepublishPrefix from './useRepublishPrefix';
-
-interface Props {
-    prefix: string;
-}
 
 const SELECTED_DIRECTIVE = 'storageMappings';
 
@@ -36,7 +33,7 @@ const submitStorageMapping = async (
     );
 };
 
-function SaveButton({ prefix }: Props) {
+function SaveButton() {
     const republishPrefix = useRepublishPrefix();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -51,6 +48,8 @@ function SaveButton({ prefix }: Props) {
         SelectTableStoreNames.STORAGE_MAPPINGS,
         selectableTableStoreSelectors.query.hydrate
     );
+
+    const prefix = useTenantStore((state) => state.selectedTenant);
 
     const formData = useStorageMappingStore((state) => state.formValue.data);
     const formErrors = useStorageMappingStore(

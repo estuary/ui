@@ -22,12 +22,7 @@ function StorageMappingsGenerateButton() {
                 <FormattedMessage id="storageMappings.configureStorage.label" />
             </Button>
 
-            <ConfigureStorageDialog
-                headerId="storageMappings.configureStorage.label"
-                open={open}
-                selectedTenant={selectedTenant}
-                setOpen={setOpen}
-            />
+            <ConfigureStorageDialog open={open} setOpen={setOpen} />
         </>
     );
 }

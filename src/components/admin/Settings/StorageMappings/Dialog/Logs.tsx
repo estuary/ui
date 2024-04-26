@@ -1,4 +1,5 @@
 import { AlertColor, Typography } from '@mui/material';
+import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Logs from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useMemo } from 'react';
@@ -6,7 +7,6 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     errored: boolean;
-    saving: boolean;
     token: string;
 }
 
@@ -24,7 +24,9 @@ const getMessageIdAndSeverity = (
     return [severity, messageId];
 };
 
-function RepublicationLogs({ errored, saving, token }: Props) {
+function RepublicationLogs({ errored, token }: Props) {
+    const saving = useStorageMappingStore((state) => state.saving);
+
     const [severity, messageId] = useMemo(
         () => getMessageIdAndSeverity(errored, saving),
         [errored, saving]
