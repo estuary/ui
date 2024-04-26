@@ -2,7 +2,7 @@ import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
 } from 'api/draftSpecs';
-import { createPublication, getPublicationById } from 'api/publications';
+import { createPublication, getPublicationByIdQuery } from 'api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_mutate,
@@ -83,7 +83,7 @@ function useSave(
             setIncompatibleCollections([]);
 
             jobStatusPoller(
-                getPublicationById(publicationId),
+                getPublicationByIdQuery(publicationId),
                 async (payload: any) => {
                     const formStatus = dryRun
                         ? FormStatus.TESTED

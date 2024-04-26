@@ -1,4 +1,7 @@
-import { PublicationJobStatus, getPublicationById } from 'api/publications';
+import {
+    PublicationJobStatus,
+    getPublicationByIdQuery,
+} from 'api/publications';
 import { republishPrefix } from 'api/storageMappings';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
@@ -54,7 +57,7 @@ function useRepublishPrefix() {
             setPubId(evaluatedPubId);
 
             const publicationResponse = await supabaseRetry(
-                () => getPublicationById(evaluatedPubId),
+                () => getPublicationByIdQuery(evaluatedPubId),
                 'getPublicationById'
             ).then(handleSuccess<PublicationJobStatus[]>, handleFailure);
 
@@ -76,7 +79,7 @@ function useRepublishPrefix() {
             setLogToken(publicationResponse.data[0].logs_token);
 
             jobStatusPoller(
-                getPublicationById(evaluatedPubId),
+                getPublicationByIdQuery(evaluatedPubId),
                 async () => {
                     setSaving(false);
                     setServerError(null);

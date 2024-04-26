@@ -24,7 +24,7 @@ export interface PublicationJobStatus {
     id: string;
 }
 
-export const getPublicationById = (pubId: string) => {
+export const getPublicationByIdQuery = (pubId: string) => {
     return supabaseClient
         .from(TABLES.PUBLICATIONS)
         .select(JOB_STATUS_COLUMNS)
