@@ -602,8 +602,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.lastUpdated.label': `Last Updated`,
     'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please ${CTAs['cta.support']}.`,
 
-    'storageMappings.cta.addStorageMapping': `Configure Storage`,
-    'storageMappings.dialog.generate.header': `Configure Storage`,
+    'storageMappings.configureStorage.label': `Configure Storage`,
     'storageMappings.dialog.generate.description': `Choose where you'd like {tenant} data to be stored. This location will be used for all future write operations.`,
     'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,

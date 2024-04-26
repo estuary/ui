@@ -19,11 +19,11 @@ function StorageMappingsGenerateButton() {
                     setOpen(true);
                 }}
             >
-                <FormattedMessage id="storageMappings.cta.addStorageMapping" />
+                <FormattedMessage id="storageMappings.configureStorage.label" />
             </Button>
 
             <ConfigureStorageDialog
-                headerId="storageMappings.dialog.generate.header"
+                headerId="storageMappings.configureStorage.label"
                 open={open}
                 selectedTenant={selectedTenant}
                 setOpen={setOpen}
