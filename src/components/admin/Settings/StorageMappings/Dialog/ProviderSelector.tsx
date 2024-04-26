@@ -30,12 +30,12 @@ function ProviderSelector() {
                 labelId={INPUT_ID}
                 error={!hasLength(provider)}
                 onChange={(event) => {
-                    updateProvider(event.target.value);
+                    updateProvider(event.target.value as CloudProviderCodes);
                     setServerError(null);
                 }}
                 required
                 size="small"
-                value={provider}
+                value={provider ?? ''}
                 sx={{ borderRadius: 3 }}
             >
                 {Object.keys(CloudProviderCodes).map((code) => (

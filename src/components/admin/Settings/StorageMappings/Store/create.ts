@@ -10,7 +10,7 @@ const getInitialStateData = (): Pick<
 > => ({
     formValue: { data: {} },
     logToken: '',
-    provider: '',
+    provider: null,
     pubId: '',
     saving: false,
     serverError: null,

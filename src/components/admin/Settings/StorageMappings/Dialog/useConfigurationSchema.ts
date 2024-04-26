@@ -88,7 +88,7 @@ function useConfigurationSchema() {
 
     const schemas: JsonFormsSchemas = useMemo(
         () =>
-            Object.hasOwn(providerSchemas, provider)
+            provider && Object.hasOwn(providerSchemas, provider)
                 ? providerSchemas[provider]
                 : {},
         [provider]
