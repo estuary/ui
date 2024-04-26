@@ -55,7 +55,6 @@ function useRepublishPrefix() {
             const evaluatedPubId = republicationResponse.data;
             setPubId(evaluatedPubId);
 
-            // TODO (storageMappings): Double check that this call is actually retried.
             const publicationResponse = await supabaseRetry(
                 () => getPublicationByIdQuery(evaluatedPubId),
                 'getPublicationById'
