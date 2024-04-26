@@ -82,7 +82,7 @@ function SaveButton() {
                 prefix
             );
 
-            if (response.error) {
+            if (response.error || isEmpty(response.data)) {
                 setSaving(false);
 
                 return setServerError(
