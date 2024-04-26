@@ -16,6 +16,7 @@ import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/P
 import SaveButton from 'components/admin/Settings/StorageMappings/Dialog/SaveButton';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Error from 'components/shared/Error';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
 import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
@@ -41,6 +42,7 @@ function ConfigureStorageDialog({
 }: Props) {
     const theme = useTheme();
 
+    const provider = useStorageMappingStore((state) => state.provider);
     const logToken = useStorageMappingStore((state) => state.logToken);
     const resetState = useStorageMappingStore((state) => state.resetState);
     const serverError = useStorageMappingStore((state) => state.serverError);
@@ -109,7 +111,11 @@ function ConfigureStorageDialog({
                     <>
                         <ProviderSelector />
 
-                        <StorageMappingForm />
+                        {provider ? (
+                            <ErrorBoundryWrapper>
+                                <StorageMappingForm />
+                            </ErrorBoundryWrapper>
+                        ) : null}
                     </>
                 )}
             </DialogContent>

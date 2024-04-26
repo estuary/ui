@@ -1,5 +1,6 @@
 import { JsonFormsProps } from '@jsonforms/core';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
+import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { EnumDictionary } from 'types/utils';
@@ -85,13 +86,21 @@ const providerSchemas: EnumDictionary<CloudProviderCodes, JsonFormsSchemas> = {
 function useConfigurationSchema() {
     const provider = useStorageMappingStore((state) => state.provider);
 
-    return useMemo(
-        (): JsonFormsSchemas =>
+    const schemas: JsonFormsSchemas = useMemo(
+        () =>
             Object.hasOwn(providerSchemas, provider)
                 ? providerSchemas[provider]
                 : {},
         [provider]
     );
+
+    if (isEmpty(schemas)) {
+        throw new Error(
+            'No schema is defined for the selected cloud provider.'
+        );
+    }
+
+    return schemas;
 }
 
 export default useConfigurationSchema;

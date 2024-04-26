@@ -3,7 +3,6 @@ import { Stack, StyledEngineProvider } from '@mui/material';
 import useConfigurationSchema from 'components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import { jsonFormsPadding } from 'context/Theme';
-import { isEmpty } from 'lodash';
 import { jsonFormsDefaults } from 'services/jsonforms/defaults';
 
 function StorageMappingForm() {
@@ -14,7 +13,7 @@ function StorageMappingForm() {
 
     const { schema, uischema } = useConfigurationSchema();
 
-    return Boolean(!isEmpty(schema) && !isEmpty(uischema)) ? (
+    return (
         <StyledEngineProvider injectFirst>
             <Stack sx={{ ...jsonFormsPadding }}>
                 <JsonForms
@@ -28,7 +27,7 @@ function StorageMappingForm() {
                 />
             </Stack>
         </StyledEngineProvider>
-    ) : null;
+    );
 }
 
 export default StorageMappingForm;
