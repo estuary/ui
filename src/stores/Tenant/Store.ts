@@ -14,7 +14,7 @@ const getInitialState = (
 ): TenantState => ({
     ...getInitialStateData(),
 
-    updateSelectedTenant: (value) => {
+    setSelectedTenant: (value) => {
         set(
             produce((state: TenantState) => {
                 state.selectedTenant = value;

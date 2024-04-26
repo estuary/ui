@@ -20,7 +20,7 @@ function TenantSelector({ updateStoreState }: Props) {
     const tenants = useTenantDetails();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
-        (state) => state.updateSelectedTenant
+        (state) => state.setSelectedTenant
     );
 
     const handledDefault = useRef(false);

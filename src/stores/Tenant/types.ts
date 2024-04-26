@@ -1,4 +1,4 @@
 export interface TenantState {
     selectedTenant: string;
-    updateSelectedTenant: (value: string) => void;
+    setSelectedTenant: (value: string) => void;
 }
