@@ -15,23 +15,25 @@ const defaultColumns_start: ColumnProps[] = [
     },
 ];
 
-const defaultColumns_end: ColumnProps[] = [
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
-];
+const defaultColumns_end: ColumnProps = {
+    field: 'updated_at',
+    headerIntlKey: 'entityTable.data.lastPublished',
+};
 
-const dataStatsHeader: ColumnProps[] = [
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.written',
+const dataStatsHeader: ColumnProps = {
+    field: null,
+    cols: 2,
+    renderHeader: (index, selectableTableStoreName) => {
+        return (
+            <StatsHeader
+                hideFilter
+                key={`collection-docsStatsHeader-${index}`}
+                header="data.data"
+                selectableTableStoreName={selectableTableStoreName}
+            />
+        );
     },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.stats.read',
-    },
-];
+};
 
 const docsStatsHeader: ColumnProps = {
     field: null,
@@ -56,12 +58,12 @@ const useCollectionColumns = (): ColumnProps[] => {
         if (hasDetails) {
             return [
                 ...defaultColumns_start,
-                ...dataStatsHeader,
+                dataStatsHeader,
                 docsStatsHeader,
-                ...defaultColumns_end,
+                defaultColumns_end,
             ];
         } else {
-            return [...defaultColumns_start, ...defaultColumns_end];
+            return [...defaultColumns_start, defaultColumns_end];
         }
     }, [hasDetails]);
 };
