@@ -240,11 +240,8 @@ export const DIRECTIVES: Directives = {
                 return 'unfulfilled';
             }
 
-            // If directive already queued and no claim is there we can just use that directive again
-            if (
-                appliedDirective.job_status.type === 'queued' &&
-                !appliedDirective.user_claims
-            ) {
+            // If the directive already queued, we can just use that directive again
+            if (appliedDirective.job_status.type === 'queued') {
                 return 'in progress';
             }
 
