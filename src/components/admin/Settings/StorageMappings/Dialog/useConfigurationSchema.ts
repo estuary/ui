@@ -3,6 +3,7 @@ import { useStorageMappingStore } from 'components/admin/Settings/StorageMapping
 import { useMemo } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { EnumDictionary } from 'types/utils';
+import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
 
 export enum CloudProviderCodes {
     GCS = 'GCS',
@@ -14,6 +15,8 @@ type JsonFormsSchemas = Pick<JsonFormsProps, 'schema' | 'uischema'>;
 
 // The Azure and custom cloud provider options are not supported at this time. All provider schemas originate from:
 //    https://github.com/estuary/flow/blob/94f3077dbc5e9a34e51e9738acf934a5bd4ff788/crates/models/src/snapshots/models__journals__test__storage-json-schema.snap
+
+const prefixPattern = `^(${PREFIX_NAME_PATTERN}/)*$`;
 
 const gcsProviderSchema = {
     title: 'Google Cloud Storage.',
@@ -33,7 +36,7 @@ const gcsProviderSchema = {
         prefix: {
             description: 'Optional prefix of keys written to the bucket.',
             type: 'string',
-            pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
+            pattern: prefixPattern,
         },
     },
 };
@@ -63,7 +66,7 @@ const s3ProviderSchema = {
         prefix: {
             description: 'Optional prefix of keys written to the bucket.',
             type: 'string',
-            pattern: '^([\\p{Letter}\\p{Number}\\-_\\.]+/)*$',
+            pattern: prefixPattern,
         },
     },
 };
