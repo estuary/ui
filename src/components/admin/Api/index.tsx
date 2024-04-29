@@ -1,8 +1,9 @@
-import { Box, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import SingleLineCode from 'components/content/SingleLineCode';
+import RefreshTokenTable from 'components/tables/RefreshTokens';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -24,18 +25,36 @@ function AdminApi() {
         <>
             <AdminTabs />
 
+            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+                <Grid item xs={12} md={9}>
+                    <Typography variant="h6" sx={{ mb: 0.5 }}>
+                        <FormattedMessage id="admin.cli_api.header" />
+                    </Typography>
+
+                    <Typography>
+                        <FormattedMessage id="admin.cli_api.message" />
+                    </Typography>
+                </Grid>
+            </Grid>
+
             <Box sx={boxStyling}>
                 <Typography variant="h6" sx={{ mb: 0.5 }}>
-                    <FormattedMessage id="admin.accessToken" />
+                    <FormattedMessage id="admin.cli_api.accessToken" />
                 </Typography>
 
                 <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="admin.accessToken.message" />
+                    <FormattedMessage id="admin.cli_api.accessToken.message" />
                 </Typography>
 
                 {/* TODO (defect): Display an error in the event the access token does not exist. */}
                 <SingleLineCode value={session?.access_token ?? ''} />
             </Box>
+
+            <Typography variant="h6" sx={{ m: 2 }}>
+                <FormattedMessage id="admin.cli_api.refreshToken" />
+            </Typography>
+
+            <RefreshTokenTable />
         </>
     );
 }

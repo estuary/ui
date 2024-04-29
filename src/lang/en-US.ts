@@ -149,6 +149,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.support': `contact support`,
     'cta.add': `Add`,
     'cta.transform': `Transform`,
+    'cta.revoke': `Revoke`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -406,6 +407,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.storagePrefix': `Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
+    'entityTable.data.created': `Created`,
+    'entityTable.data.description': `Description`,
+    'entityTable.data.user': `User`,
 
     'entityTable.stats.filter.label': `${
         CommonMessages[`filter.time.label`]
@@ -456,8 +460,17 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
-    'admin.accessToken': `Access Token`,
-    'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+
+    'admin.cli_api.header': `Connecting to Flow`,
+    'admin.cli_api.message': `Here is a placeholder for a message.`,
+    'admin.cli_api.accessToken': `Access Token`,
+    'admin.cli_api.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+    'admin.cli_api.refreshToken': `Refresh Token`,
+    'admin.cli_api.refreshToken.cta.generate': `Generate Refresh Token`,
+    'admin.cli_api.refreshToken.table.noContent.header': `No refresh tokens found.`,
+    'admin.cli_api.refreshToken.table.noContent.message': `To create a refresh token, click "Generate Refresh Token" above.`,
+    'admin.cli_api.refreshToken.table.filterLabel': `Filter by Description`,
+    'admin.cli_api.refreshToken.table.label.uses': `Used {count} {count, plural, one {time} other {times}}`,
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,

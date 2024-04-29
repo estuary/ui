@@ -63,6 +63,7 @@ export enum SelectTableStoreNames {
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
+    REFRESH_TOKENS = 'Refresh-Tokens-Table',
     STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 

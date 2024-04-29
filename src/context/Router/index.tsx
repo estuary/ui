@@ -1,15 +1,25 @@
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+import AccessGrants from 'components/admin/AccessGrants';
+import AdminApi from 'components/admin/Api';
+import AdminBilling from 'components/admin/Billing';
+import AdminConnectors from 'components/admin/Connectors';
+import AdminSettings from 'components/admin/Settings';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Collections from 'pages/Collections';
 import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
-import BasicLogin from 'pages/login/Basic';
+import HomePage from 'pages/Home';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
+import BasicLogin from 'pages/login/Basic';
+import MagicLinkLogin from 'pages/login/MagicLink';
+import MarketplaceCallback from 'pages/marketplace/Callback';
+import MarketplaceVerification from 'pages/marketplace/Verification';
 import { Suspense } from 'react';
 import {
     Route,
@@ -18,22 +28,12 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
 } from 'react-router-dom';
-import Admin from 'pages/Admin';
-import AccessGrants from 'components/admin/AccessGrants';
-import AdminApi from 'components/admin/Api';
-import AdminConnectors from 'components/admin/Connectors';
-import AdminBilling from 'components/admin/Billing';
-import AdminSettings from 'components/admin/Settings';
-import HomePage from 'pages/Home';
 import { handledLazy } from 'services/react';
-import MarketplaceCallback from 'pages/marketplace/Callback';
-import MarketplaceVerification from 'pages/marketplace/Verification';
-import MagicLinkLogin from 'pages/login/MagicLink';
-import MaterializationsTable from './MaterializationsTable';
-import CapturesTable from './CapturesTable';
-import RequireAuth from './RequireAuth';
 import Authenticated from './Authenticated';
 import AuthenticatedLayout from './AuthenticatedLayout';
+import CapturesTable from './CapturesTable';
+import MaterializationsTable from './MaterializationsTable';
+import RequireAuth from './RequireAuth';
 
 // Capture
 const CaptureCreateRoute = handledLazy(() => import('./CaptureCreate'));
