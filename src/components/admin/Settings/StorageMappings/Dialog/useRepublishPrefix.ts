@@ -5,15 +5,16 @@ import {
 import { republishPrefix } from 'api/storageMappings';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { handleFailure, handleSuccess, supabaseRetry } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { hasLength } from 'utils/misc-utils';
 import { useStorageMappingStore } from '../Store/create';
 
+export const REPUBLICATION_FAILURE_MESSAGE_ID =
+    'storageMappings.dialog.generate.error.republicationFailed';
+
 function useRepublishPrefix() {
-    const intl = useIntl();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const setPubId = useStorageMappingStore((state) => state.setPubId);
@@ -39,9 +40,7 @@ function useRepublishPrefix() {
             if (!hasLength(republicationResponse.data)) {
                 setSaving(false);
                 setServerError(
-                    intl.formatMessage({
-                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                    })
+                    'storageMappings.dialog.generate.error.unableToFetchLogs'
                 );
 
                 logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
@@ -63,9 +62,7 @@ function useRepublishPrefix() {
             if (publicationResponse.error || !publicationResponse.data) {
                 setSaving(false);
                 setServerError(
-                    intl.formatMessage({
-                        id: 'storageMappings.dialog.generate.error.unableToFetchLogs',
-                    })
+                    'storageMappings.dialog.generate.error.unableToFetchLogs'
                 );
 
                 logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
@@ -86,11 +83,7 @@ function useRepublishPrefix() {
                 },
                 async () => {
                     setSaving(false);
-                    setServerError(
-                        intl.formatMessage({
-                            id: 'storageMappings.dialog.generate.error.republicationFailed',
-                        })
-                    );
+                    setServerError(REPUBLICATION_FAILURE_MESSAGE_ID);
 
                     logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
                     logRocketConsole(
@@ -99,14 +92,7 @@ function useRepublishPrefix() {
                 }
             );
         },
-        [
-            intl,
-            jobStatusPoller,
-            setLogToken,
-            setPubId,
-            setSaving,
-            setServerError,
-        ]
+        [jobStatusPoller, setLogToken, setPubId, setSaving, setServerError]
     );
 }
 

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { BASE_ERROR } from 'services/supabase';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
@@ -40,7 +41,9 @@ const getInitialState = (
         set(
             produce((state: StorageMappingState) => {
                 state.serverError =
-                    typeof value === 'string' ? { message: value } : value;
+                    typeof value === 'string'
+                        ? { ...BASE_ERROR, message: value }
+                        : value;
             }),
             false,
             'Server error set'

@@ -113,13 +113,13 @@ function SaveButton() {
 
     return (
         <LoadingButton
-            variant="contained"
-            size="small"
             disabled={
                 isEmpty(formData) || hasLength(formErrors) || loading || saving
             }
             loading={loading || saving}
             onClick={onClick}
+            size="small"
+            variant="contained"
         >
             <FormattedMessage id="cta.save" />
         </LoadingButton>

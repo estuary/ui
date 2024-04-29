@@ -7,6 +7,8 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
 import { useTenantStore } from 'stores/Tenant/Store';
+import RepublicationError from './Error';
+import { REPUBLICATION_FAILURE_MESSAGE_ID } from './useRepublishPrefix';
 
 function StorageMappingContent() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -17,11 +19,13 @@ function StorageMappingContent() {
 
     return (
         <DialogContent sx={{ mt: 1 }}>
-            {serverError ? (
-                <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2 }}>
+                {serverError?.message === REPUBLICATION_FAILURE_MESSAGE_ID ? (
+                    <RepublicationError error={serverError} />
+                ) : serverError ? (
                     <Error severity="error" error={serverError} condensed />
-                </Box>
-            ) : null}
+                ) : null}
+            </Box>
 
             <Typography sx={{ mb: 3 }}>
                 <FormattedMessage
