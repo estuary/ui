@@ -20,13 +20,16 @@ function useTenants() {
 }
 
 export function useTenantHidesDataPreview(entityName: string) {
+    // If end end up with an entity name that cannot be used
+    //  we just sit and "wait" forever. This is fine as this should not
+    //  happen unless someone messes with the URL. Later - we might
+    //  want to add some cool error handling here.
     const query = useMemo(() => {
         if (!hasLength(entityName)) {
             return null;
         }
 
         const tenantName = stripPathing(entityName, true);
-
         if (!hasLength(tenantName)) {
             return null;
         }
