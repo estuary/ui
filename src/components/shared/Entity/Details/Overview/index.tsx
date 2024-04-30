@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
+import DataPreviewGuard from 'components/collection/DataPreview/Guard';
 import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
@@ -74,7 +75,9 @@ function Overview({ name }: Props) {
 
             {isCollection && entityName ? (
                 <Grid item xs={12}>
-                    <DataPreview collectionName={entityName} />
+                    <DataPreviewGuard collectionName={entityName}>
+                        <DataPreview collectionName={entityName} />
+                    </DataPreviewGuard>
                 </Grid>
             ) : null}
         </Grid>

@@ -41,20 +41,16 @@ export const journalStatusIsError = (status: string | undefined) => {
 //  go/flowctl-go/cmd-discover.go
 export const MAX_DISCOVER_TIME = 30000;
 
-// TODO (optimization): Combine the stripPathing and truncateCatalogName utility functions.
-export const stripPathing = (stringVal: string) => {
+export const stripPathing = (stringVal: string, getTenant?: boolean) => {
     if (!stringVal) return stringVal;
 
+    if (getTenant) {
+        return stringVal.substring(0, stringVal.indexOf('/') + 1);
+    }
     return stringVal.substring(
         stringVal.lastIndexOf('/') + 1,
         stringVal.length
     );
-};
-
-export const stripName = (stringVal: string) => {
-    if (!stringVal) return stringVal;
-
-    return stringVal.substring(0, stringVal.lastIndexOf('/') + 1);
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
