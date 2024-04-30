@@ -11,7 +11,7 @@ import { BaseComponentProps } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<any>;
+    query: PostgrestFilterBuilder<any> | null;
     selectableTableStoreName: SelectTableStoreNames;
     disableMultiSelect?: boolean;
 }
@@ -50,8 +50,10 @@ export const TableHydrator = ({
     }, [disableMultiSelect, setDisableMultiSelect]);
 
     useEffect(() => {
-        setQuery(query);
-        hydrate();
+        if (query) {
+            setQuery(query);
+            hydrate();
+        }
     }, [hydrate, query, setQuery]);
 
     // Reset state when leaving until we work out how we want to cache table stuff
