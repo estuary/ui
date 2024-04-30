@@ -3,6 +3,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
 import JournalAlerts from 'components/journals/Alerts';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import {
     useJournalData,
@@ -135,6 +136,10 @@ export function DataPreview({ collectionName }: Props) {
 
                 {readError ? (
                     <Error error={readError} condensed />
+                ) : hide ? (
+                    <AlertBox short severity="info">
+                        <FormattedMessage id="detailsPanel.dataPreview.hidden" />
+                    </AlertBox>
                 ) : isLoading ? (
                     <ListViewSkeleton />
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
