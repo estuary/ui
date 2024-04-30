@@ -1,6 +1,9 @@
-import { LinearProgress } from '@mui/material';
+import { Typography } from '@mui/material';
+import CardWrapper from 'components/admin/Billing/CardWrapper';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import { useTenantsHideDetails } from 'hooks/useTenants';
+import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -16,20 +19,26 @@ function DataPreviewGuard({ collectionName, children }: Props) {
     }
 
     if (hide === true) {
-        // return (
-        //     <AlertBox severity="info" short>
-        //         <FormattedMessage id="detailsPanel.dataPreview.hidden" />
-        //     </AlertBox>
-        // );
-
-        return null;
+        return (
+            <CardWrapper
+                message={
+                    <Typography component="span">
+                        <FormattedMessage id="detailsPanel.dataPreview.header" />
+                    </Typography>
+                }
+            >
+                <AlertBox severity="info" short>
+                    <FormattedMessage id="detailsPanel.dataPreview.hidden" />
+                </AlertBox>
+            </CardWrapper>
+        );
     }
 
     if (error) {
         return <Error severity="error" error={error} condensed />;
     }
 
-    return <LinearProgress />;
+    return null;
 }
 
 export default DataPreviewGuard;
