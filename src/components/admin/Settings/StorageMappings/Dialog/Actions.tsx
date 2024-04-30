@@ -22,7 +22,9 @@ function StorageMappingActions({ closeDialog }: Props) {
                     size="small"
                     variant="contained"
                 >
-                    <FormattedMessage id="cta.close" />
+                    <span>
+                        <FormattedMessage id="cta.close" />
+                    </span>
                 </LoadingButton>
             ) : (
                 <>

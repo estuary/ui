@@ -121,7 +121,9 @@ function SaveButton() {
             size="small"
             variant="contained"
         >
-            <FormattedMessage id="cta.save" />
+            <span>
+                <FormattedMessage id="cta.save" />
+            </span>
         </LoadingButton>
     );
 }
