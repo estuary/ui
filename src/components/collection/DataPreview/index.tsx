@@ -9,6 +9,7 @@ import {
     useJournalsForCollection,
 } from 'hooks/journals/useJournalData';
 import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { useTenantHidesDataPreview } from 'hooks/useTenants';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -34,9 +35,13 @@ export function DataPreview({ collectionName }: Props) {
     //     setPreviewMode(newValue);
     // };
 
+    const { error: tenantHidesError, hide } =
+        useTenantHidesDataPreview(collectionName);
+
     const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
         `datapreview-${collectionName}`,
-        [collectionName]
+        // Only fetch data when we know for sure that we should not be hiding it
+        hide === false ? [collectionName] : []
     );
     const spec = useMemo(
         () => publicationSpecs[0] as LiveSpecsQuery_spec | undefined,
@@ -57,7 +62,10 @@ export function DataPreview({ collectionName }: Props) {
     const journalData = useJournalData(journal?.name, collectionName, {
         desiredCount: 20,
     });
-    const readError = journalData.error
+
+    const readError = tenantHidesError
+        ? { ...BASE_ERROR, message: tenantHidesError.message }
+        : journalData.error
         ? {
               ...BASE_ERROR,
               message: journalData.error.message,

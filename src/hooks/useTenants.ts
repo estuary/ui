@@ -1,5 +1,4 @@
 import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
-import { extendedPollSettings } from 'context/SWR';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 import { TenantHidesDataPreview, Tenants } from 'types';
@@ -20,7 +19,7 @@ function useTenants() {
     };
 }
 
-export function useTenantsHideDetails(entityName: string) {
+export function useTenantHidesDataPreview(entityName: string) {
     const query = useMemo(() => {
         if (!hasLength(entityName)) {
             return null;
@@ -35,10 +34,12 @@ export function useTenantsHideDetails(entityName: string) {
         return getTenantHidesPreview(tenantName);
     }, [entityName]);
 
-    const { data, error } = useSelectSingleNew<TenantHidesDataPreview>(
-        query,
-        extendedPollSettings
-    );
+    const { data, error, isValidating } =
+        useSelectSingleNew<TenantHidesDataPreview>(query, {
+            revalidateOnFocus: true,
+            revalidateOnMount: true,
+            refreshInterval: 15000,
+        });
 
     const response = useMemo(
         () => (data ? Boolean(data.data.hide_preview) : null),
@@ -49,8 +50,9 @@ export function useTenantsHideDetails(entityName: string) {
         () => ({
             hide: response,
             error,
+            isValidating,
         }),
-        [error, response]
+        [error, isValidating, response]
     );
 }
 
