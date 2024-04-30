@@ -4,13 +4,14 @@ import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import {
     useBilling_invoices,
     useBilling_invoicesInitialized,
-    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 function useBillingCatalogStats() {
-    const selectedTenant = useBilling_selectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const historyInitialized = useBilling_invoicesInitialized();
     const invoices = useBilling_invoices();
 

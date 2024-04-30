@@ -149,6 +149,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.support': `contact support`,
     'cta.add': `Add`,
     'cta.transform': `Transform`,
+    'cta.back': `Back`,
     'cta.revoke': `Revoke`,
 };
 
@@ -607,7 +608,18 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.bucket.label': `Bucket`,
     'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
     'storageMappings.lastUpdated.label': `Last Updated`,
-    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored. You currently cannot edit these in the UI. If you need an update please ${CTAs['cta.support']}.`,
+    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored.`,
+
+    'storageMappings.configureStorage.label': `Configure Storage`,
+    'storageMappings.dialog.generate.description': `Choose where you'd like {tenant} data to be stored. This location will be used for all future write operations.`,
+    'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
+    'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
+    'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,
+    'storageMappings.dialog.generate.providerOption.GCS': `Google Cloud Storage`,
+    'storageMappings.dialog.generate.providerOption.S3': `Amazon Simple Storage Service`,
+    'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
+    'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
+    'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 };
 
 const ConnectorsPage: ResolvedIntlConfig['messages'] = {
@@ -704,8 +716,8 @@ const Ops: ResolvedIntlConfig['messages'] = {
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // These keys get generated inside the WaitingForRowBase
-    'ops.logsTable.waitingForLogs.old.failed': `A network error occured. Please reload.`,
-    'ops.logsTable.waitingForLogs.new.failed': `A network error occured. Please reload.`,
+    'ops.logsTable.waitingForLogs.old.failed': `A network error occurred. Please reload.`,
+    'ops.logsTable.waitingForLogs.new.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,

@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns } from 'types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
@@ -44,14 +45,23 @@ function PrefixAlertTable() {
         setColumnToSort,
     } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
 
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const query = useMemo(() => {
-        return getNotificationSubscriptionsForTable(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+        return selectedTenant
+            ? getNotificationSubscriptionsForTable(
+                  selectedTenant,
+                  pagination,
+                  searchQuery,
+                  [
+                      {
+                          col: columnToSort,
+                          direction: sortDirection,
+                      },
+                  ]
+              )
+            : null;
+    }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
 
     return (
         <TableHydrator

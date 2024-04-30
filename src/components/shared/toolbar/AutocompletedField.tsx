@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 interface Props {
-    defaultValue: string;
     label: string;
     options: string[];
     changeHandler: (
@@ -20,6 +19,7 @@ interface Props {
         details?: AutocompleteChangeDetails<string> | undefined
     ) => void;
     autocompleteSx?: SxProps<Theme>;
+    defaultValue?: string;
     id?: string;
     required?: boolean;
     AutoCompleteOptions?: Partial<

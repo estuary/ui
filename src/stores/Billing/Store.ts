@@ -22,7 +22,6 @@ const getInitialStateData = (): Pick<
     | 'invoicesInitialized'
     | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
-    | 'selectedTenant'
     | 'selectedInvoiceId'
 > => {
     return {
@@ -31,7 +30,6 @@ const getInitialStateData = (): Pick<
         invoicesInitialized: false,
         dataByTaskGraphDetails: [],
         paymentMethodExists: null,
-        selectedTenant: '',
     };
 };
 
@@ -42,22 +40,6 @@ export const getInitialState = (
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
-
-        setSelectedTenant: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    state.selectedTenant = value;
-                    state.selectedInvoiceId = null;
-                    state.invoices = [];
-                    state.dataByTaskGraphDetails = [];
-
-                    state.hydrated = false;
-                    state.hydrationErrorsExist = false;
-                }),
-                false,
-                'Selected Tenant Set'
-            );
-        },
 
         setSelectedInvoice: (value) => {
             set(
@@ -93,13 +75,13 @@ export const getInitialState = (
             );
         },
 
-        updateInvoices: (value) => {
+        updateInvoices: (value, selectedTenant) => {
             set(
                 produce((state: BillingState) => {
                     // This action is used to update the record of the active billing cycle at a regular interval.
                     // Since the selected tenant is subject to vary, the billed prefix of the record input must be
                     // validated against the selected tenant before altering the billing history.
-                    if (value[0].billed_prefix === state.selectedTenant) {
+                    if (value[0].billed_prefix === selectedTenant) {
                         const { invoices } = get();
 
                         const evaluatedBillingHistory = invoices.filter(

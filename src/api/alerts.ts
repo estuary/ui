@@ -143,6 +143,7 @@ const getNotificationSubscriptionForUser = async (
 };
 
 const getNotificationSubscriptionsForTable = (
+    catalogPrefix: string,
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
@@ -157,7 +158,8 @@ const getNotificationSubscriptionsForTable = (
                 email
             `,
             { count: 'exact' }
-        );
+        )
+        .eq('catalog_prefix', catalogPrefix);
 
     queryBuilder = defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         queryBuilder,

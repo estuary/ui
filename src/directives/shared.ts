@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { JOB_STATUS_COLUMNS, supabaseClient, TABLES } from 'services/supabase';
 import { AppliedDirective } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { Directives, UserClaims } from './types';
@@ -211,6 +211,37 @@ export const DIRECTIVES: Directives = {
                 appliedDirective.job_status.type === 'queued' &&
                 !appliedDirective.user_claims
             ) {
+                return 'in progress';
+            }
+
+            // If it was success and passed all the other checks we're good
+            if (appliedDirective.job_status.type === 'success') {
+                return 'fulfilled';
+            }
+
+            // Catch all for edge cases like a "invalidClaim" status
+            return 'unfulfilled';
+        },
+    },
+    storageMappings: {
+        token: 'dd1319b2-e72b-421c-ad2b-082352569bb1',
+        queryFilter: (queryBuilder) => {
+            return queryBuilder;
+        },
+        generateUserClaim: (args: any[]) => {
+            return {
+                addStore: args[0],
+                catalogPrefix: args[1],
+            };
+        },
+        calculateStatus: (appliedDirective?) => {
+            // If there is no directive to check it is unfulfilled
+            if (!appliedDirective || isEmpty(appliedDirective)) {
+                return 'unfulfilled';
+            }
+
+            // If the directive already queued, we can just use that directive again
+            if (appliedDirective.job_status.type === 'queued') {
                 return 'in progress';
             }
 

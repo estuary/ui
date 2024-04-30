@@ -29,7 +29,6 @@ import {
     useBilling_invoicesInitialized,
     useBilling_resetState,
     useBilling_selectedInvoice,
-    useBilling_selectedTenant,
     useBilling_setActive,
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
@@ -39,6 +38,7 @@ import {
     useBilling_setNetworkFailed,
     useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
 import { AdminBillingProps } from './types';
@@ -50,6 +50,8 @@ const routeTitle = authenticatedRoutes.admin.billing.title;
 const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     // Billing Store
     const hydrated = useBilling_hydrated();
     const setHydrated = useBilling_setHydrated();
@@ -62,7 +64,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setActive = useBilling_setActive();
     const setNetworkFailed = useBilling_setNetworkFailed();
 
-    const selectedTenant = useBilling_selectedTenant();
     const selectedInvoice = useBilling_selectedInvoice();
     const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
 
@@ -164,7 +165,8 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             updateBillingHistory(
                 isArray(currentMonthInvoices)
                     ? currentMonthInvoices
-                    : [currentMonthInvoices]
+                    : [currentMonthInvoices],
+                selectedTenant
             );
         }
     }, [
@@ -172,6 +174,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         currentMonthInvoices,
         historyInitialized,
         isValidatingRecord,
+        selectedTenant,
     ]);
 
     useUnmount(() => resetBillingState());
