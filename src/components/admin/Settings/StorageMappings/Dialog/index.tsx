@@ -14,14 +14,12 @@ const TITLE_ID = 'configure-storage-dialog-title';
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
     const resetState = useStorageMappingStore((state) => state.resetState);
-    const setSaving = useStorageMappingStore((state) => state.setSaving);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
         setOpen(false);
         resetState();
-        setSaving(false);
     };
 
     return (

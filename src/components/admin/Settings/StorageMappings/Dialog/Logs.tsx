@@ -43,14 +43,10 @@ function RepublicationLogs({ errored, token }: Props) {
                     token={token}
                     height={350}
                     loadingLineSeverity={severity}
-                    spinnerMessages={
-                        saving
-                            ? {
-                                  stoppedKey: messageId,
-                                  runningKey: messageId,
-                              }
-                            : undefined
-                    }
+                    spinnerMessages={{
+                        stoppedKey: messageId,
+                        runningKey: messageId,
+                    }}
                 />
             </ErrorBoundryWrapper>
         </>
