@@ -36,8 +36,6 @@ export function useTenantHidesDataPreview(entityName: string) {
 
     const { data, error, isValidating } =
         useSelectSingleNew<TenantHidesDataPreview>(query, {
-            revalidateOnFocus: true,
-            revalidateOnMount: true,
             refreshInterval: 15000,
         });
 
