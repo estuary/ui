@@ -12,8 +12,8 @@ import {
     useBilling_hydrated,
     useBilling_invoices,
     useBilling_selectedInvoice,
-    useBilling_selectedTenant,
 } from 'stores/Billing/hooks';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns, TableStatuses } from 'types';
 
 export const columns: TableColumns[] = [
@@ -42,7 +42,8 @@ export const columns: TableColumns[] = [
 function BillingLineItemsTable() {
     const intl = useIntl();
 
-    const selectedTenant = useBilling_selectedTenant();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBilling_hydrated();

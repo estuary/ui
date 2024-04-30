@@ -1,4 +1,10 @@
-import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    insertSupabase,
+    JOB_STATUS_COLUMNS,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
 
 export const createPublication = (
     draftId: string | null,
@@ -10,4 +16,17 @@ export const createPublication = (
         dry_run: dryRun,
         detail: entityDescription ?? null,
     });
+};
+
+export interface PublicationJobStatus {
+    job_status: { type: string };
+    logs_token: string;
+    id: string;
+}
+
+export const getPublicationByIdQuery = (pubId: string) => {
+    return supabaseClient
+        .from(TABLES.PUBLICATIONS)
+        .select(JOB_STATUS_COLUMNS)
+        .eq('id', pubId);
 };

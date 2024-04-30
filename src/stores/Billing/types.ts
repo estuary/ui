@@ -15,9 +15,6 @@ export interface DataVolumeByTaskGraphDetails {
 }
 
 export interface BillingState extends StoreWithHydration {
-    selectedTenant: string;
-    setSelectedTenant: (value: string) => void;
-
     selectedInvoiceId: InvoiceId | null;
     setSelectedInvoice: (value: InvoiceId) => void;
 
@@ -29,7 +26,7 @@ export interface BillingState extends StoreWithHydration {
 
     invoices: Invoice[];
     setInvoices: (value: Invoice[]) => void;
-    updateInvoices: (value: Invoice[]) => void;
+    updateInvoices: (value: Invoice[], selectedTenant: string) => void;
 
     paymentMethodExists: boolean | null;
     setPaymentMethodExists: (value: any[] | undefined) => void;

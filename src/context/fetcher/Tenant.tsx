@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps, Tenants } from 'types';
 
 const TenantContext = createContext<Tenants[] | null>(null);
+
 const TenantContextProvider = ({ children }: BaseComponentProps) => {
     const { tenants, error, isValidating } = useTenants();
 
@@ -30,6 +31,9 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
     );
 };
 
+// TODO (optimization): Consider defining a hook that returns an array of mapped tenant names.
+//   The majority of the components that call useTenantDetails do so to extract a memoized
+//   array of tenant names.
 const useTenantDetails = () => {
     return useContext(TenantContext);
 };
