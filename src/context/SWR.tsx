@@ -83,6 +83,9 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                             Boolean(supabaseClient.auth.user());
 
                         if (localUserInvalid || tokenHasIssues(error.message)) {
+                            logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
+                                trigger: 'swr',
+                            });
                             await supabaseClient.auth
                                 .signOut()
                                 .then(() => {

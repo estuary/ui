@@ -5,7 +5,8 @@ import { useEffect, useState, createContext, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useClient } from 'hooks/supabase-swr';
 import { BaseComponentProps } from 'types';
-import { logRocketConsole } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 export interface AuthSession {
     user: User | null;
@@ -30,6 +31,9 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
             if (!authSession) {
                 setSession(null);
                 setUser(null);
+                logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
+                    trigger: 'UserContext:session',
+                });
                 await supabaseClient.auth.signOut();
                 return;
             }
@@ -45,6 +49,9 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
             if (!data) {
                 setSession(null);
                 setUser(null);
+                logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
+                    trigger: 'UserContext:user',
+                });
                 await supabaseClient.auth.signOut();
                 return;
             }
