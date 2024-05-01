@@ -11,7 +11,11 @@ import {
     updateSupabase,
 } from 'services/supabase';
 
-const createRefreshToken = async (multi_use: boolean, valid_for: string) => {
+const createRefreshToken = async (
+    multi_use: boolean,
+    valid_for: string,
+    detail?: string
+) => {
     return supabaseRetry<
         PostgrestSingleResponse<{ id: string; secret: string }>
     >(
@@ -20,6 +24,7 @@ const createRefreshToken = async (multi_use: boolean, valid_for: string) => {
                 .rpc(RPCS.CREATE_REFRESH_TOKEN, {
                     multi_use,
                     valid_for,
+                    detail,
                 })
                 .single(),
         'createRefreshToken'
@@ -31,7 +36,6 @@ export interface RefreshTokenQuery {
     detail: string;
     id: string;
     multi_use: boolean;
-    user_id: string;
     uses: number;
     valid_for: string;
 }
@@ -43,7 +47,7 @@ const getRefreshTokensForTable = (
 ) => {
     let queryBuilder = supabaseClient
         .from<RefreshTokenQuery>(TABLES.REFRESH_TOKENS)
-        .select('created_at,detail,id,multi_use,user_id,uses,valid_for', {
+        .select('created_at,detail,id,multi_use,uses,valid_for', {
             count: 'exact',
         });
 
@@ -55,15 +59,20 @@ const getRefreshTokensForTable = (
         pagination
     )
         .eq('multi_use', true)
-        .neq('valid_for', '0 days');
+        .neq('valid_for', '0 seconds');
 
     return queryBuilder;
 };
 
-const updateRefreshTokenValidity = (id: string, interval: string) => {
+const updateRefreshTokenValidity = (
+    id: string,
+    interval: string,
+    detail?: string,
+    multi_use?: boolean
+) => {
     return updateSupabase(
         TABLES.REFRESH_TOKENS,
-        { valid_for: interval },
+        { valid_for: interval, detail, multi_use },
         { id }
     );
 };

@@ -2,6 +2,8 @@ import { Button, TableCell } from '@mui/material';
 import { updateRefreshTokenValidity } from 'api/tokens';
 import { FormattedMessage } from 'react-intl';
 
+const TOKEN_VALIDITY = '0 days';
+
 interface Props {
     id: string;
 }
@@ -10,7 +12,7 @@ function RevokeTokenButton({ id }: Props) {
     const revokeToken = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        const response = await updateRefreshTokenValidity(id, '0 days');
+        const response = await updateRefreshTokenValidity(id, TOKEN_VALIDITY);
 
         console.log('revoked token', response);
 

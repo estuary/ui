@@ -20,8 +20,6 @@ function Row({ row }: RowProps) {
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TimeStamp time={row.created_at} enableRelative />
 
-            <TableCell>{row.user_id}</TableCell>
-
             <TableCell>{row.detail}</TableCell>
 
             <TableCell>

@@ -1,5 +1,5 @@
 import { getRefreshTokensForTable } from 'api/tokens';
-import RefreshTokenGenerateButton from 'components/admin/Api/GenerateButton';
+import ConfigureRefreshTokenButton from 'components/admin/Api/ConfigureTokenButton';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/RefreshTokens/Rows';
 import { useMemo } from 'react';
@@ -12,10 +12,6 @@ const columns: TableColumns[] = [
     {
         field: 'created_at',
         headerIntlKey: 'entityTable.data.created',
-    },
-    {
-        field: 'user_id',
-        headerIntlKey: 'entityTable.data.user',
     },
     {
         field: 'detail',
@@ -84,7 +80,7 @@ function RefreshTokenTable() {
                 filterLabel="admin.cli_api.refreshToken.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
-                toolbar={<RefreshTokenGenerateButton />}
+                toolbar={<ConfigureRefreshTokenButton />}
             />
         </TableHydrator>
     );
