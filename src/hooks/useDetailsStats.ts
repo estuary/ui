@@ -23,6 +23,11 @@ function useDetailsStats(catalogName: string, grain: string) {
         }
     );
 
+    // TODO (graphs)
+    // This approach is kinda bad because the benefit of using dataset/dimensions is we didn't have to loop over data.
+    //  However, to get this feature in quick this is the quickest way to do that. We should look at the graph
+    //  and potentially get it off of dataset/dimensions since we are already having to loop over all the intervals
+    //  and generating the proper data.
     const stats = useMemo(() => {
         if (!data?.data || data.data.length === 0) {
             return;
