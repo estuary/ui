@@ -24,44 +24,38 @@ function useDetailsStats(catalogName: string, grain: string) {
     );
 
     const stats = useMemo(() => {
-        if (data?.data && data.data.length > 0) {
-            const max = DateTime.utc().startOf('hour');
+        if (!data?.data) {
+            return;
+        }
 
-            // Subtracting 1 here because the interval is inclusive of the minimum
-            const min = max.minus({ hours: range - 1 });
+        // Server is in UTC so start with that
+        const max = DateTime.utc().startOf('hour');
 
-            // Go through the entire interval and populate the response if we have data
-            //  otherwise default to an "empty" response
-            const timeRange: CatalogStats_Details[] = Interval.fromDateTimes(
-                min,
-                max.plus({ hours: 1 })
-            )
-                .splitBy({ hours: 1 })
-                .map((timeInterval) => {
-                    const ts = timeInterval.start?.toFormat(
-                        `yyyy-MM-dd'T'HH:mm:ssZZ`
-                    );
-                    const currentStat = find(data.data, { ts });
+        // Subtracting 1 here because the interval is inclusive of the minimum
+        const min = max.minus({ hours: range - 1 });
 
-                    if (currentStat) {
-                        return currentStat;
-                    }
+        // Go through the entire interval and populate the response if we have data
+        //  otherwise default to an "empty" response
+        return Interval.fromDateTimes(min, max.plus({ hours: 1 }))
+            .splitBy({ hours: 1 })
+            .map((timeInterval) => {
+                const ts =
+                    timeInterval.start?.toFormat(`yyyy-MM-dd'T'HH:mm:ssZZ`) ??
+                    '';
 
-                    return {
+                return (
+                    find(data.data, { ts }) ??
+                    ({
                         ts,
                         catalog_name: '',
                         grain: 'hourly',
-                        bytes_read: 0,
-                        docs_read: 0,
-                        bytes_written: 0,
-                        docs_written: 0,
-                    } as CatalogStats_Details;
-                });
-
-            return timeRange;
-        }
-
-        return undefined;
+                        bytes_read: NaN,
+                        docs_read: NaN,
+                        bytes_written: NaN,
+                        docs_written: NaN,
+                    } as CatalogStats_Details)
+                );
+            });
     }, [data?.data, range]);
 
     // Not always returning an array so we know when the empty array is a response
