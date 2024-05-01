@@ -762,6 +762,34 @@ const themeSettings = createTheme({
         MuiChip: {
             defaultProps: {
                 deleteIcon: <DeleteCircle style={{ fontSize: 14 }} />,
+                sx: {
+                    '&.MuiChip-outlined': {
+                        '&.MuiChip-colorPrimary': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(58, 86, 202, 0.12)',
+                        },
+                        '&.MuiChip-colorSecondary': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(25, 42, 136, 0.12)',
+                        },
+                        '&.MuiChip-colorSuccess': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(42, 121, 66, 0.12)',
+                        },
+                        '&.MuiChip-colorError': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(202, 59, 85, 0.12)',
+                        },
+                        '&.MuiChip-colorInfo': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(79, 214, 255, 0.12)',
+                        },
+                        '&.MuiChip-colorWarning': {
+                            color: (theme) => theme.palette.text.primary,
+                            backgroundColor: 'rgba(237, 108, 2, 0.12)',
+                        },
+                    },
+                },
             },
         },
         MuiFormControl: {
