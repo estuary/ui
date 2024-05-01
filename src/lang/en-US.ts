@@ -177,6 +177,7 @@ const Data: ResolvedIntlConfig['messages'] = {
     'data.connectorImage': `Connector Image`,
     'data.details': `Details`,
     'data.actions': `Actions`,
+    'data.active': `Active`,
 };
 
 const Error: ResolvedIntlConfig['messages'] = {
