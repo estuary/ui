@@ -17,7 +17,7 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import prettyBytes from 'pretty-bytes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FormatDateOptions, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
@@ -42,11 +42,6 @@ const barMinHeight = 1;
 const type = 'bar';
 const itemStyle = {
     borderRadius: [4, 4, 0, 0],
-};
-
-const formatTimeSettings: FormatDateOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
 };
 
 const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
@@ -103,10 +98,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     // Update the "last updated" string shown as an xAxis label
     useEffect(() => {
         // Want to format with seconds to show more of a "ticking clock" to users
-        const currentTime = intl.formatTime(new Date(), {
-            ...formatTimeSettings,
-            second: '2-digit',
-        });
+        const currentTime = format(new Date(), `pp`);
 
         // Made a string instead of passing value into message to make life easier
         setLastUpdated(
@@ -330,7 +322,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                         align: 'center',
                         formatter: (value: any) => {
                             if (value) {
-                                return format(parseISO(value), `hh:mm aa`);
+                                return format(parseISO(value), `p`);
                             }
                             return '';
                         },
