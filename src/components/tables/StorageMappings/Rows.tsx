@@ -57,42 +57,27 @@ function DataCells({ store }: DataCellProps) {
 
 function Row({ row }: RowProps) {
     const key = `StorageMappings-${row.id}`;
-    const multipleStores = row.spec.stores.length > 1;
-
-    if (multipleStores) {
-        return (
-            <>
-                {row.spec.stores.map((store, index) =>
-                    index === 0 ? (
-                        <TableRow key={`${key}_stores_${index}`}>
-                            <TableCell>{row.catalog_prefix}</TableCell>
-                            <ChipStatus
-                                color="success"
-                                messageId="data.active"
-                            />
-                            <DataCells store={store} />
-                            <TimeStamp time={row.updated_at} enableRelative />
-                        </TableRow>
-                    ) : (
-                        <TableRow key={`${key}_stores_${index}`}>
-                            <TableCell />
-                            <TableCell />
-                            <DataCells store={store} />
-                            <TableCell />
-                        </TableRow>
-                    )
-                )}
-            </>
-        );
-    }
 
     return (
-        <TableRow key={key}>
-            <TableCell>{row.catalog_prefix}</TableCell>
-            <ChipStatus color="success" messageId="data.active" />
-            <DataCells store={row.spec.stores[0]} />
-            <TimeStamp time={row.updated_at} enableRelative />
-        </TableRow>
+        <>
+            {row.spec.stores.map((store, index) =>
+                index === 0 ? (
+                    <TableRow key={`${key}_stores_${index}`}>
+                        <TableCell>{row.catalog_prefix}</TableCell>
+                        <ChipStatus color="success" messageId="data.active" />
+                        <DataCells store={store} />
+                        <TimeStamp time={row.updated_at} enableRelative />
+                    </TableRow>
+                ) : (
+                    <TableRow key={`${key}_stores_${index}`}>
+                        <TableCell />
+                        <TableCell />
+                        <DataCells store={store} />
+                        <TableCell />
+                    </TableRow>
+                )
+            )}
+        </>
     );
 }
 
