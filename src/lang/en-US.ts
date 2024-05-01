@@ -58,7 +58,6 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.capture': `Capture`,
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
-    'terms.storageMapping': `Storage Mappings`,
     'terms.entity': `Entity`,
 
     // Common fields
@@ -595,7 +594,7 @@ const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.bucket.label': `Bucket`,
     'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
     'storageMappings.lastUpdated.label': `Last Updated`,
-    'storageMappings.message': `Below are all the ${CommonMessages['terms.storageMapping']} that you have read or admin access to. These are the locations that your data is stored.`,
+    'storageMappings.message': `Create a Storage Mapping to govern where your data is stored. The first storage mapping is the one and only location that data is saved.`,
 
     'storageMappings.configureStorage.label': `Configure Storage`,
     'storageMappings.dialog.generate.description': `Choose where you'd like {tenant} data to be stored. This location will be used for all future write operations.`,
