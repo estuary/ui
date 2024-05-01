@@ -54,10 +54,10 @@ function useDetailsStats(catalogName: string, grain: string) {
                         ts,
                         catalog_name: '',
                         grain: 'hourly',
-                        bytes_read: NaN,
-                        docs_read: NaN,
-                        bytes_written: NaN,
-                        docs_written: NaN,
+                        bytes_read: 0,
+                        docs_read: 0,
+                        bytes_written: 0,
+                        docs_written: 0,
                     } as CatalogStats_Details)
                 );
             });
