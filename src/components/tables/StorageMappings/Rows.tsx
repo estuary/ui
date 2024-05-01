@@ -89,6 +89,7 @@ function Row({ row }: RowProps) {
     return (
         <TableRow key={key}>
             <TableCell>{row.catalog_prefix}</TableCell>
+            <ChipStatus color="success" messageId="data.active" />
             <DataCells store={row.spec.stores[0]} />
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>
