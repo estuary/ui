@@ -1,16 +1,10 @@
-import { AlertColor, Chip, TableCell, Theme } from '@mui/material';
-import { outlinedColoredChipBackground } from 'context/Theme';
+import { Chip, ChipProps, TableCell } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 interface Props {
     messageId: string;
-    color: AlertColor;
+    color: ChipProps['color'];
 }
-
-const getOutlineColor = (theme: Theme, color: AlertColor) =>
-    theme.palette.mode === 'dark'
-        ? theme.palette[color].main
-        : theme.palette[color].dark;
 
 function ChipStatus({ messageId, color }: Props) {
     const intl = useIntl();
@@ -19,13 +13,10 @@ function ChipStatus({ messageId, color }: Props) {
         <TableCell>
             <Chip
                 component="span"
+                color={color}
                 label={intl.formatMessage({ id: messageId })}
                 size="small"
                 variant="outlined"
-                sx={{
-                    borderColor: (theme) => getOutlineColor(theme, color),
-                    backgroundColor: outlinedColoredChipBackground[color],
-                }}
             />
         </TableCell>
     );
