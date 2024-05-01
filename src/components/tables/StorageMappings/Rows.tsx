@@ -1,6 +1,6 @@
 import { TableCell, TableRow } from '@mui/material';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import { StorageMappings, StorageMappingStore } from 'types';
+import { StorageMappingStore, StorageMappings } from 'types';
 
 interface RowProps {
     row: StorageMappings;
@@ -57,17 +57,21 @@ function Row({ row }: RowProps) {
     if (multipleStores) {
         return (
             <>
-                <TableRow key={key}>
-                    <TableCell colSpan={4}>{row.catalog_prefix}</TableCell>
-                    <TimeStamp time={row.updated_at} enableRelative />
-                </TableRow>
-                {row.spec.stores.map((store, index) => (
-                    <TableRow key={`${key}_stores_${index}`}>
-                        <TableCell />
-                        <DataCells store={store} />
-                        <TableCell />
-                    </TableRow>
-                ))}
+                {row.spec.stores.map((store, index) =>
+                    index === 0 ? (
+                        <TableRow key={`${key}_stores_${index}`}>
+                            <TableCell>{row.catalog_prefix}</TableCell>
+                            <DataCells store={store} />
+                            <TimeStamp time={row.updated_at} enableRelative />
+                        </TableRow>
+                    ) : (
+                        <TableRow key={`${key}_stores_${index}`}>
+                            <TableCell />
+                            <DataCells store={store} />
+                            <TableCell />
+                        </TableRow>
+                    )
+                )}
             </>
         );
     }
