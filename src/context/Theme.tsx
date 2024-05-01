@@ -308,6 +308,13 @@ export const typographyTruncation: TypographyProps = {
     },
 };
 
+export const outlinedColoredChipBackground: { [key: string]: string } = {
+    success: 'rgba(42, 121, 66, 0.12)',
+    error: 'rgba(202, 59, 85, 0.12)',
+    warning: 'rgba(237, 108, 2, 0.12)',
+    info: 'rgba(79, 214, 255, 0.12)',
+};
+
 export const draggableChipIconSx: SxProps<Theme> = {
     '& .MuiChip-icon': {
         borderTopRightRadius: 0,
