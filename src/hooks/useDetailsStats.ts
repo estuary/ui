@@ -24,7 +24,7 @@ function useDetailsStats(catalogName: string, grain: string) {
     );
 
     const stats = useMemo(() => {
-        if (!data?.data) {
+        if (!data?.data || data.data.length === 0) {
             return;
         }
 
