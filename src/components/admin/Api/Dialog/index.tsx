@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -16,6 +15,8 @@ import { Cancel } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import SingleLineCode from 'components/content/SingleLineCode';
+import AlertBox from 'components/shared/AlertBox';
 import { useRefreshTokenStore } from '../Store/create';
 import GenerateButton from './GenerateButton';
 
@@ -29,6 +30,8 @@ const TITLE_ID = 'create-refresh-tokens-title';
 function CreateRefreshTokenDialog({ open, setOpen }: Props) {
     const theme = useTheme();
     const intl = useIntl();
+
+    const token = useRefreshTokenStore((state) => state.token);
 
     const description = useRefreshTokenStore((state) => state.description);
     const updateDescription = useRefreshTokenStore(
@@ -58,7 +61,7 @@ function CreateRefreshTokenDialog({ open, setOpen }: Props) {
                 }}
             >
                 <Typography variant="h6">
-                    <FormattedMessage id="storageMappings.configureStorage.label" />
+                    <FormattedMessage id="admin.cli_api.refreshToken.dialog.header" />
                 </Typography>
 
                 <IconButton disabled={saving} onClick={closeDialog}>
@@ -72,22 +75,34 @@ function CreateRefreshTokenDialog({ open, setOpen }: Props) {
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
-                {serverError ? (
-                    <Box sx={{ mb: 2 }}>
-                        <Error severity="error" error={serverError} condensed />
-                    </Box>
-                ) : null}
-
-                <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="storageMappings.dialog.generate.description" />
-                </Typography>
-
                 <Grid
                     container
-                    spacing={2}
-                    sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
+                    spacing={3}
+                    sx={{ mb: 5, alignItems: 'flex-start' }}
                 >
-                    <Grid item xs={9} sx={{ display: 'flex' }}>
+                    {serverError ? (
+                        <Grid item xs={12}>
+                            <Error
+                                severity="error"
+                                error={serverError}
+                                condensed
+                            />
+                        </Grid>
+                    ) : null}
+
+                    {token ? (
+                        <Grid item xs={12}>
+                            <AlertBox severity="info" short>
+                                <Typography sx={{ mb: 1 }}>
+                                    <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />
+                                </Typography>
+
+                                <SingleLineCode value={token} />
+                            </AlertBox>
+                        </Grid>
+                    ) : null}
+
+                    <Grid item xs={9} sx={{ mt: 1, display: 'flex' }}>
                         <TextField
                             InputProps={{
                                 sx: { borderRadius: 3 },
@@ -107,7 +122,7 @@ function CreateRefreshTokenDialog({ open, setOpen }: Props) {
                         />
                     </Grid>
 
-                    <Grid item xs={3} sx={{ display: 'flex' }}>
+                    <Grid item xs={3} sx={{ mt: 1, display: 'flex' }}>
                         <GenerateButton />
                     </Grid>
                 </Grid>
@@ -120,7 +135,7 @@ function CreateRefreshTokenDialog({ open, setOpen }: Props) {
                     size="small"
                     onClick={closeDialog}
                 >
-                    <FormattedMessage id="cta.cancel" />
+                    <FormattedMessage id="cta.close" />
                 </Button>
             </DialogActions>
         </Dialog>

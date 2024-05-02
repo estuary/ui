@@ -36,7 +36,11 @@ function GenerateButton() {
         setServerError(null);
         setSaving(true);
 
-        const response = await createRefreshToken(true, TOKEN_VALIDITY);
+        const response = await createRefreshToken(
+            true,
+            TOKEN_VALIDITY,
+            description
+        );
 
         setSaving(false);
 
@@ -59,7 +63,7 @@ function GenerateButton() {
             variant="contained"
         >
             <span>
-                <FormattedMessage id="admin.cli_api.refreshToken.dialog.cta.generate" />
+                <FormattedMessage id="admin.cli_api.refreshToken.cta.generate" />
             </span>
         </LoadingButton>
     );
