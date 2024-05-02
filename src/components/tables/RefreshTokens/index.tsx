@@ -1,5 +1,5 @@
 import { getRefreshTokensForTable } from 'api/tokens';
-import ConfigureRefreshTokenButton from 'components/admin/Api/ConfigureTokenButton';
+import ConfigureRefreshTokenButton from 'components/admin/Api/RefreshToken/ConfigureTokenButton';
 import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/RefreshTokens/Rows';
 import { useMemo } from 'react';
