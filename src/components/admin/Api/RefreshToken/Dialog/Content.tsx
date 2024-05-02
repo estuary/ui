@@ -49,6 +49,9 @@ function RefreshTokenContent() {
                             sx: { borderRadius: 3 },
                         }}
                         // error={inputErrorExists}
+                        helperText={intl.formatMessage({
+                            id: 'admin.cli_api.refreshToken.dialog.label',
+                        })}
                         label={intl.formatMessage({
                             id: 'data.description',
                         })}

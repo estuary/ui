@@ -1,13 +1,27 @@
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import RefreshTokenTable from 'components/tables/RefreshTokens';
 import { FormattedMessage } from 'react-intl';
 
 function RefreshToken() {
     return (
         <>
-            <Typography variant="h6" sx={{ m: 2 }}>
-                <FormattedMessage id="admin.cli_api.refreshToken" />
-            </Typography>
+            <Stack sx={{ mx: 2, mb: 1 }}>
+                <Typography
+                    component="span"
+                    sx={{
+                        mb: 0.5,
+                        alignItems: 'center',
+                        fontSize: 18,
+                        fontWeight: '400',
+                    }}
+                >
+                    <FormattedMessage id="admin.cli_api.refreshToken" />
+                </Typography>
+
+                <Typography>
+                    <FormattedMessage id="admin.cli_api.refreshToken.message" />
+                </Typography>
+            </Stack>
 
             <RefreshTokenTable />
         </>

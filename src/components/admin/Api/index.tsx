@@ -1,4 +1,4 @@
-import { Box, Grid, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Divider, Grid, SxProps, Theme, Typography } from '@mui/material';
 import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import RefreshToken from './RefreshToken';
 
 const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
+    marginBottom: 5,
     padding: 2,
 };
 
@@ -37,8 +37,18 @@ function AdminApi() {
                 </Grid>
             </Grid>
 
+            <Divider sx={{ mt: 1 }} />
+
             <Box sx={boxStyling}>
-                <Typography variant="h6" sx={{ mb: 0.5 }}>
+                <Typography
+                    component="span"
+                    sx={{
+                        mb: 0.5,
+                        alignItems: 'center',
+                        fontSize: 18,
+                        fontWeight: '400',
+                    }}
+                >
                     <FormattedMessage id="admin.cli_api.accessToken" />
                 </Typography>
 

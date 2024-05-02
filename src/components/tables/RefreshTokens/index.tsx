@@ -23,8 +23,7 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
-        width: 100,
+        width: 125,
     },
 ];
 
