@@ -1,7 +1,5 @@
 import {
-    Button,
     Dialog,
-    DialogActions,
     DialogContent,
     DialogTitle,
     Grid,
@@ -127,17 +125,6 @@ function CreateRefreshTokenDialog({ open, setOpen }: Props) {
                     </Grid>
                 </Grid>
             </DialogContent>
-
-            <DialogActions>
-                <Button
-                    disabled={saving}
-                    variant="outlined"
-                    size="small"
-                    onClick={closeDialog}
-                >
-                    <FormattedMessage id="cta.close" />
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 }
