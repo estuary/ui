@@ -6,9 +6,10 @@ import {
     SortingProps,
     TABLES,
     defaultTableFilter,
+    handleFailure,
+    handleSuccess,
     supabaseClient,
     supabaseRetry,
-    updateSupabase,
 } from 'services/supabase';
 
 const createRefreshToken = async (
@@ -64,17 +65,15 @@ const getRefreshTokensForTable = (
     return queryBuilder;
 };
 
-const updateRefreshTokenValidity = (
-    id: string,
-    interval: string,
-    detail?: string,
-    multi_use?: boolean
-) => {
-    return updateSupabase(
-        TABLES.REFRESH_TOKENS,
-        { valid_for: interval, detail, multi_use },
-        { id }
-    );
+const updateRefreshTokenValidity = (id: string, interval: string) => {
+    return supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.REFRESH_TOKENS)
+                .update({ valid_for: interval }, { returning: 'minimal' })
+                .match({ id }),
+        'updateRefreshTokenValidity'
+    ).then(handleSuccess, handleFailure);
 };
 
 export {
