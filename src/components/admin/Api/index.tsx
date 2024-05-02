@@ -3,9 +3,9 @@ import { Auth } from '@supabase/ui';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
 import SingleLineCode from 'components/content/SingleLineCode';
-import RefreshTokenTable from 'components/tables/RefreshTokens';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
+import RefreshToken from './RefreshToken';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
@@ -50,11 +50,7 @@ function AdminApi() {
                 <SingleLineCode value={session?.access_token ?? ''} />
             </Box>
 
-            <Typography variant="h6" sx={{ m: 2 }}>
-                <FormattedMessage id="admin.cli_api.refreshToken" />
-            </Typography>
-
-            <RefreshTokenTable />
+            <RefreshToken />
         </>
     );
 }
