@@ -1,7 +1,10 @@
-import { Button } from '@mui/material';
+import { Button, Dialog } from '@mui/material';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import CreateRefreshTokenDialog from './Dialog';
+import RefreshTokenContent from './Dialog/Content';
+import RefreshTokenTitle from './Dialog/Title';
+
+const TITLE_ID = 'create-refresh-tokens-title';
 
 function ConfigureRefreshTokenButton() {
     const [open, setOpen] = useState(false);
@@ -17,7 +20,16 @@ function ConfigureRefreshTokenButton() {
                 <FormattedMessage id="admin.cli_api.refreshToken.cta.generate" />
             </Button>
 
-            <CreateRefreshTokenDialog open={open} setOpen={setOpen} />
+            <Dialog
+                open={open}
+                maxWidth="md"
+                fullWidth
+                aria-labelledby={TITLE_ID}
+            >
+                <RefreshTokenTitle setOpen={setOpen} />
+
+                <RefreshTokenContent />
+            </Dialog>
         </>
     );
 }
