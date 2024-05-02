@@ -1,6 +1,7 @@
 import { TableCell, TableRow } from '@mui/material';
 import TimeStamp from 'components/tables/cells/TimeStamp';
-import { StorageMappings, StorageMappingStore } from 'types';
+import { StorageMappingStore, StorageMappings } from 'types';
+import ChipStatus from '../cells/ChipStatus';
 
 interface RowProps {
     row: StorageMappings;
@@ -18,6 +19,10 @@ export const tableColumns = [
     {
         field: 'catalog_prefix',
         headerIntlKey: 'entityTable.data.catalogPrefix',
+    },
+    {
+        field: null,
+        headerIntlKey: 'data.status',
     },
     {
         field: null,
@@ -52,32 +57,27 @@ function DataCells({ store }: DataCellProps) {
 
 function Row({ row }: RowProps) {
     const key = `StorageMappings-${row.id}`;
-    const multipleStores = row.spec.stores.length > 1;
 
-    if (multipleStores) {
-        return (
-            <>
-                <TableRow key={key}>
-                    <TableCell colSpan={4}>{row.catalog_prefix}</TableCell>
-                    <TimeStamp time={row.updated_at} enableRelative />
-                </TableRow>
-                {row.spec.stores.map((store, index) => (
+    return (
+        <>
+            {row.spec.stores.map((store, index) =>
+                index === 0 ? (
                     <TableRow key={`${key}_stores_${index}`}>
+                        <TableCell>{row.catalog_prefix}</TableCell>
+                        <ChipStatus color="success" messageId="data.active" />
+                        <DataCells store={store} />
+                        <TimeStamp time={row.updated_at} enableRelative />
+                    </TableRow>
+                ) : (
+                    <TableRow key={`${key}_stores_${index}`}>
+                        <TableCell />
                         <TableCell />
                         <DataCells store={store} />
                         <TableCell />
                     </TableRow>
-                ))}
-            </>
-        );
-    }
-
-    return (
-        <TableRow key={key}>
-            <TableCell>{row.catalog_prefix}</TableCell>
-            <DataCells store={row.spec.stores[0]} />
-            <TimeStamp time={row.updated_at} enableRelative />
-        </TableRow>
+                )
+            )}
+        </>
     );
 }
 
