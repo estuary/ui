@@ -7,10 +7,8 @@ function RefreshToken() {
         <>
             <Stack sx={{ mx: 2, mb: 1 }}>
                 <Typography
-                    component="span"
                     sx={{
                         mb: 0.5,
-                        alignItems: 'center',
                         fontSize: 18,
                         fontWeight: '400',
                     }}

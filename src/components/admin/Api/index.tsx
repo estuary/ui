@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import RefreshToken from './RefreshToken';
 
 const boxStyling: SxProps<Theme> = {
-    marginBottom: 5,
+    marginBottom: 6,
     padding: 2,
 };
 
@@ -41,10 +41,8 @@ function AdminApi() {
 
             <Box sx={boxStyling}>
                 <Typography
-                    component="span"
                     sx={{
                         mb: 0.5,
-                        alignItems: 'center',
                         fontSize: 18,
                         fontWeight: '400',
                     }}
@@ -52,7 +50,7 @@ function AdminApi() {
                     <FormattedMessage id="admin.cli_api.accessToken" />
                 </Typography>
 
-                <Typography sx={{ mb: 2 }}>
+                <Typography sx={{ mb: 3 }}>
                     <FormattedMessage id="admin.cli_api.accessToken.message" />
                 </Typography>
 
