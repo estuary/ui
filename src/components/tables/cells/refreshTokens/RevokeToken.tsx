@@ -1,5 +1,5 @@
 import { Button, TableCell } from '@mui/material';
-import { updateRefreshTokenValidity } from 'api/tokens';
+import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
 import { useZustandStore } from 'context/Zustand/provider';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -7,8 +7,6 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-
-const TOKEN_VALIDITY = '0 days';
 
 interface Props {
     id: string;
@@ -26,7 +24,10 @@ function RevokeTokenButton({ id }: Props) {
     const revokeToken = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        const response = await updateRefreshTokenValidity(id, TOKEN_VALIDITY);
+        const response = await updateRefreshTokenValidity(
+            id,
+            INVALID_TOKEN_INTERVAL
+        );
 
         console.log('revoked token', response);
 

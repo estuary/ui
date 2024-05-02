@@ -32,6 +32,8 @@ const createRefreshToken = async (
     );
 };
 
+export const INVALID_TOKEN_INTERVAL = '0 seconds';
+
 export interface RefreshTokenQuery {
     created_at: string;
     detail: string;
@@ -60,7 +62,7 @@ const getRefreshTokensForTable = (
         pagination
     )
         .eq('multi_use', true)
-        .neq('valid_for', '0 seconds');
+        .neq('valid_for', INVALID_TOKEN_INTERVAL);
 
     return queryBuilder;
 };
