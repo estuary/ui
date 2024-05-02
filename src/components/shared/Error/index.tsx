@@ -1,4 +1,4 @@
-import { AlertColor, AlertTitle, Box } from '@mui/material';
+import { AlertColor, AlertTitle, Box, SxProps } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import AlertBox from '../AlertBox';
 import Message from './Message';
@@ -9,6 +9,7 @@ export interface ErrorProps {
     error?: ErrorDetails;
     hideIcon?: boolean;
     hideTitle?: boolean;
+    linkSx?: SxProps;
     noAlertBox?: boolean;
     severity?: AlertColor;
 }
@@ -18,6 +19,7 @@ function Error({
     error,
     hideIcon,
     hideTitle,
+    linkSx,
     noAlertBox,
     severity,
 }: ErrorProps) {
@@ -28,7 +30,7 @@ function Error({
     if (noAlertBox) {
         return (
             <Box sx={{ p: 1, width: '100%' }}>
-                <Message error={error} />
+                <Message error={error} linkSx={linkSx} />
             </Box>
         );
     }
@@ -47,7 +49,7 @@ function Error({
                     ) : null
                 }
             >
-                <Message error={error} />
+                <Message error={error} linkSx={linkSx} />
             </AlertBox>
         </Box>
     );

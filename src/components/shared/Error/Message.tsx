@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, SxProps, Typography } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     logRocketConsole,
@@ -11,11 +11,12 @@ import { ErrorDetails } from './types';
 
 interface Props {
     error?: ErrorDetails;
+    linkSx?: SxProps;
 }
 
 const FALLBACK = 'error.fallBack';
 
-function Message({ error }: Props) {
+function Message({ error, linkSx }: Props) {
     // We fire an event AND log so we can find these but LR
     //  does not allow unbounded data to be passed into an event
     //  so the logging allows us to see what error was passed in
@@ -57,7 +58,7 @@ function Message({ error }: Props) {
 
     return (
         <Stack spacing={2}>
-            <Instructions message={message} />
+            <Instructions message={message} linkSx={linkSx} />
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>
                     <FormattedMessage id="error.messageLabel" />

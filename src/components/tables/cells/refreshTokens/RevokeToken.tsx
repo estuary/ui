@@ -3,6 +3,7 @@ import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
 import Error from 'components/shared/Error';
+import { sample_blue } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { InfoEmpty } from 'iconoir-react';
 import { useState } from 'react';
@@ -70,10 +71,11 @@ function RevokeTokenButton({ id }: Props) {
                         placement="bottom-end"
                         title={
                             <Error
-                                severity="error"
-                                error={error}
                                 condensed
+                                error={error}
+                                linkSx={{ color: sample_blue[200] }}
                                 noAlertBox
+                                severity="error"
                             />
                         }
                     >
