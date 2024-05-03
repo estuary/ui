@@ -48,7 +48,6 @@ function RefreshTokenContent() {
                         InputProps={{
                             sx: { borderRadius: 3 },
                         }}
-                        // error={inputErrorExists}
                         helperText={intl.formatMessage({
                             id: 'admin.cli_api.refreshToken.dialog.label',
                         })}
