@@ -8,7 +8,6 @@ import { FormattedMessage } from 'react-intl';
 import RefreshToken from './RefreshToken';
 
 const boxStyling: SxProps<Theme> = {
-    marginBottom: 6,
     padding: 2,
 };
 
@@ -37,7 +36,9 @@ function AdminApi() {
                 </Grid>
             </Grid>
 
-            <Divider sx={{ mt: 1 }} />
+            <Divider sx={{ mt: 1, mb: 2 }} />
+
+            <RefreshToken />
 
             <Box sx={boxStyling}>
                 <Typography
@@ -57,8 +58,6 @@ function AdminApi() {
                 {/* TODO (defect): Display an error in the event the access token does not exist. */}
                 <SingleLineCode value={session?.access_token ?? ''} />
             </Box>
-
-            <RefreshToken />
         </>
     );
 }

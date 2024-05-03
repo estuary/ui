@@ -5,7 +5,7 @@ import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
 import Error from 'components/shared/Error';
 import { sample_blue } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
-import { InfoEmpty } from 'iconoir-react';
+import { WarningCircle } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -79,7 +79,7 @@ function RevokeTokenButton({ id }: Props) {
                             />
                         }
                     >
-                        <InfoEmpty
+                        <WarningCircle
                             style={{ color: theme.palette.error.main }}
                         />
                     </Tooltip>

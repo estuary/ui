@@ -1,10 +1,10 @@
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import RefreshTokenTable from 'components/tables/RefreshTokens';
 import { FormattedMessage } from 'react-intl';
 
 function RefreshToken() {
     return (
-        <>
+        <Box sx={{ mb: 5 }}>
             <Stack sx={{ mx: 2, mb: 1 }}>
                 <Typography
                     sx={{
@@ -22,7 +22,7 @@ function RefreshToken() {
             </Stack>
 
             <RefreshTokenTable />
-        </>
+        </Box>
     );
 }
 
