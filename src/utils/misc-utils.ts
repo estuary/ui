@@ -41,10 +41,10 @@ export const journalStatusIsError = (status: string | undefined) => {
 //  go/flowctl-go/cmd-discover.go
 export const MAX_DISCOVER_TIME = 30000;
 
-export const stripPathing = (stringVal: string, getTenant?: boolean) => {
+export const stripPathing = (stringVal: string, tenantOnly?: boolean) => {
     if (!stringVal) return stringVal;
 
-    if (getTenant) {
+    if (tenantOnly) {
         return stringVal.substring(0, stringVal.indexOf('/') + 1);
     }
     return stringVal.substring(
