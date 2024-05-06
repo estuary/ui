@@ -8,7 +8,6 @@ import {
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import RowSelect from '../cells/RowSelect';
-import { selectKeyValueName } from '../shared';
 
 interface RowProps {
     row: any;
@@ -48,9 +47,7 @@ function Row({ row, selected, setSelected }: RowProps) {
     return (
         <TableRow
             key={`Entity-${row.id}`}
-            onClick={() =>
-                setSelected(row.id, row[selectKeyValueName], !selected)
-            }
+            onClick={() => setSelected(row.id, row, !selected)}
             selected={selected}
         >
             <RowSelect

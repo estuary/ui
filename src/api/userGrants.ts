@@ -1,9 +1,17 @@
-import { supabaseClient, TABLES } from 'services/supabase';
+import { deleteSupabase, supabaseClient, TABLES } from 'services/supabase';
 import { UserGrantsTenantGuard } from 'types';
 
-export const getUserGrants = (userId: string) => {
+const getUserGrants = (userId: string) => {
     return supabaseClient
         .from<UserGrantsTenantGuard>(TABLES.USER_GRANTS)
         .select(`id`)
         .eq('user_id', userId);
 };
+
+const deleteUserGrant = (id: string) => {
+    return deleteSupabase(TABLES.USER_GRANTS, {
+        id,
+    });
+};
+
+export { deleteUserGrant, getUserGrants };
