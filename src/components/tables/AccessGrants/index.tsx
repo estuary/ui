@@ -11,7 +11,7 @@ import UserRows, {
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import { useTableState, TablePrefix } from 'stores/Tables/hooks';
+import { TablePrefix, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 
 interface Props {
@@ -77,7 +77,12 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                     columns={showUser ? userTableColumns : prefixTableColumns}
                     renderTableRows={(data) =>
                         showUser ? (
-                            <UserRows data={data} />
+                            <UserRows
+                                data={data}
+                                selectTableStoreName={
+                                    SelectTableStoreNames.ACCESS_GRANTS_USERS
+                                }
+                            />
                         ) : (
                             <PrefixRows data={data} />
                         )
