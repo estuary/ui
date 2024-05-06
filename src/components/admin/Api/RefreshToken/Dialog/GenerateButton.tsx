@@ -51,7 +51,11 @@ function GenerateButton() {
         }
 
         hydrate();
-        setToken(response.data.secret);
+
+        // The refresh token ID and secret are needed by Flow, therefore it was decided
+        // to base64 encode the data returned in the response and present that as the
+        // one-time secret presented to the user.
+        setToken(Buffer.from(JSON.stringify(response.data)).toString('base64'));
     };
 
     return (
