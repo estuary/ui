@@ -5,7 +5,7 @@ import {
     supabaseClient,
     TABLES,
 } from 'services/supabase';
-import { Tenants } from 'types';
+import { TenantHidesDataPreview, Tenants } from 'types';
 
 const COLUMNS = [
     'gcm_account_id',
@@ -13,6 +13,7 @@ const COLUMNS = [
     'tasks_quota',
     'tenant',
     'trial_start',
+    'hide_preview',
 ];
 
 const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
@@ -29,4 +30,12 @@ const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
     return parsePagedFetchAllResponse<Tenants>(responses);
 };
 
-export { getTenantDetails };
+const getTenantHidesPreview = (tenant: string) => {
+    return supabaseClient
+        .from<TenantHidesDataPreview>(TABLES.TENANTS)
+        .select('hide_preview')
+        .eq('tenant', tenant)
+        .single();
+};
+
+export { getTenantDetails, getTenantHidesPreview };
