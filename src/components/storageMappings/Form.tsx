@@ -5,10 +5,8 @@ import { jsonFormsPadding } from 'context/Theme';
 import { useEffect, useState } from 'react';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
-import {
-    useStorageMappingsStore_loading,
-    useStorageMappingsStore_spec,
-} from 'stores/StorageMappings/hooks';
+import { useStorageMappingsStore } from 'stores/StorageMappings/Store';
+import { useStorageMappingsStore_loading } from 'stores/StorageMappings/hooks';
 import ProviderSelector from './ProviderSelector';
 import useFormSchema from './useFormSchema';
 
@@ -16,7 +14,7 @@ import useFormSchema from './useFormSchema';
 //  storage mapping editing.
 function Form() {
     const loading = useStorageMappingsStore_loading();
-    const storageMappingSpecs = useStorageMappingsStore_spec();
+    const storageMappingSpecs = useStorageMappingsStore((state) => state.spec);
     const { schema, uiSchema } = useFormSchema();
 
     const [formData, setFormData] = useState({});
