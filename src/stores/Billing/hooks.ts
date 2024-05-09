@@ -17,13 +17,6 @@ export const useBilling_selectedInvoice = () => {
     );
 };
 
-export const useBilling_paymentMethodExists = () => {
-    return useZustandStore<BillingState, BillingState['paymentMethodExists']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.paymentMethodExists
-    );
-};
-
 export const useBilling_setPaymentMethodExists = () => {
     return useZustandStore<
         BillingState,
