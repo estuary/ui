@@ -8,9 +8,9 @@ import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBillingStore } from 'stores/Billing/Store';
 import {
     useBilling_hydrated,
-    useBilling_invoices,
     useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
@@ -47,7 +47,7 @@ function BillingLineItemsTable() {
     const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBilling_hydrated();
-    const invoices = useBilling_invoices();
+    const invoices = useBillingStore((state) => state.invoices);
 
     const dataRows = useMemo(
         () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,

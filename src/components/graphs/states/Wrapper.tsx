@@ -2,10 +2,10 @@ import { Box } from '@mui/material';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { FormattedMessage } from 'react-intl';
+import { useBillingStore } from 'stores/Billing/Store';
 import {
     useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
-    useBilling_invoices,
     useBilling_networkFailed,
 } from 'stores/Billing/hooks';
 import { BaseComponentProps } from 'types';
@@ -15,7 +15,7 @@ import { eChartsTooltipSX } from '../tooltips';
 function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreHydrated = useBilling_hydrated();
     const networkFailed = useBilling_networkFailed();
-    const billingHistory = useBilling_invoices();
+    const billingHistory = useBillingStore((state) => state.invoices);
     const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
 
     if (networkFailed) {

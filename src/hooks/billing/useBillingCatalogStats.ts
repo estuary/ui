@@ -2,7 +2,6 @@ import { getStatsForBilling } from 'api/stats';
 import { extendedPollSettings } from 'context/SWR';
 import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_invoices } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -13,7 +12,7 @@ function useBillingCatalogStats() {
     const historyInitialized = useBillingStore(
         (state) => state.invoicesInitialized
     );
-    const invoices = useBilling_invoices();
+    const invoices = useBillingStore((state) => state.invoices);
 
     const { data, error, mutate, isValidating } = useSelectNew(
         hasLength(selectedTenant) && hasLength(invoices)

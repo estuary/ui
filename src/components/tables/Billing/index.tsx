@@ -5,9 +5,9 @@ import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useBillingStore } from 'stores/Billing/Store';
 import {
     useBilling_hydrated,
-    useBilling_invoices,
     useBilling_networkFailed,
     useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
@@ -47,7 +47,7 @@ function BillingHistoryTable() {
 
     const hydrated = useBilling_hydrated();
     const networkFailed = useBilling_networkFailed();
-    const billingHistory = useBilling_invoices();
+    const billingHistory = useBillingStore((state) => state.invoices);
 
     const dataRows = useMemo(
         () =>
