@@ -167,6 +167,12 @@ export interface Tenants {
     gcm_account_id?: string | null;
 }
 
+export interface TenantHidesDataPreview {
+    hide_preview: boolean;
+    // Just for queries
+    tenant: string | undefined;
+}
+
 export type Capability = 'admin' | 'read' | 'write';
 export interface AuthRoles {
     capability: Capability;
