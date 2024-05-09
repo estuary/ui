@@ -10,6 +10,8 @@ import RowSelect from '../cells/RowSelect';
 
 interface RowProps {
     row: any;
+    selected: boolean;
+    setSelected: SelectableTableStore['setSelected'];
 }
 
 interface RowsProps {
@@ -41,27 +43,15 @@ export const prefixTableColumns = [
     },
 ];
 
-function Row({ row }: RowProps) {
-    const setSelected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['setSelected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
-
-    const selected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
-
-    const isSelected = selected.has(row.id);
-
+function Row({ row, selected, setSelected }: RowProps) {
     return (
         <TableRow
             key={`Entity-${row.id}`}
             onClick={() => setSelected(row.id, row, !selected)}
-            selected={isSelected}
+            selected={selected}
         >
             <RowSelect
-                isSelected={isSelected}
+                isSelected={selected}
                 name={row.user_full_name ?? row.subject_role}
             />
 
@@ -81,10 +71,27 @@ function Row({ row }: RowProps) {
 }
 
 function PrefixRows({ data }: RowsProps) {
+    const setSelected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
+
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
+
     return (
         <>
             {data.map((row) => {
-                return <Row key={row.id} row={row} />;
+                return (
+                    <Row
+                        key={row.id}
+                        row={row}
+                        selected={selected.has(row.id)}
+                        setSelected={setSelected}
+                    />
+                );
             })}
         </>
     );
