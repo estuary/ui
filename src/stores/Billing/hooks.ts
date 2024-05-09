@@ -5,13 +5,6 @@ import { BillingStoreNames } from 'stores/names';
 import { invoiceId } from 'utils/billing-utils';
 
 // Selector Hooks
-export const useBilling_setNetworkFailed = () => {
-    return useZustandStore<BillingState, BillingState['setNetworkFailed']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.setNetworkFailed
-    );
-};
-
 export const useBilling_setHydrationErrorsExist = () => {
     return useZustandStore<
         BillingState,

@@ -29,7 +29,6 @@ import {
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_setHydrationErrorsExist,
-    useBilling_setNetworkFailed,
 } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
@@ -61,7 +60,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         (state) => state.updateInvoices
     );
     const setActive = useBillingStore((state) => state.setActive);
-    const setNetworkFailed = useBilling_setNetworkFailed();
+    const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
 
     const selectedInvoice = useBilling_selectedInvoice();
     const setDataByTaskGraphDetails = useBillingStore(
