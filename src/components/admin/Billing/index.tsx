@@ -25,10 +25,7 @@ import { useUnmount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBillingStore } from 'stores/Billing/Store';
-import {
-    useBilling_resetState,
-    useBilling_selectedInvoice,
-} from 'stores/Billing/hooks';
+import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
@@ -68,7 +65,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         (state) => state.setDataByTaskGraphDetails
     );
 
-    const resetBillingState = useBilling_resetState();
+    const resetBillingState = useBillingStore((state) => state.resetState);
 
     const currentMonth = useConstant(() => {
         const today = new Date();

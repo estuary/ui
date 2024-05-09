@@ -16,10 +16,3 @@ export const useBilling_selectedInvoice = () => {
                 : null
     );
 };
-
-export const useBilling_resetState = () => {
-    return useZustandStore<BillingState, BillingState['resetState']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.resetState
-    );
-};
