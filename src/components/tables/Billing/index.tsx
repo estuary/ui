@@ -6,10 +6,7 @@ import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import {
-    useBilling_networkFailed,
-    useBilling_selectedInvoice,
-} from 'stores/Billing/hooks';
+import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
 import { TableColumns, TableStatuses } from 'types';
 import { invoiceId } from 'utils/billing-utils';
 
@@ -45,7 +42,7 @@ function BillingHistoryTable() {
     const selectedInvoice = useBilling_selectedInvoice();
 
     const hydrated = useBillingStore((state) => state.hydrated);
-    const networkFailed = useBilling_networkFailed();
+    const networkFailed = useBillingStore((state) => state.networkFailed);
     const billingHistory = useBillingStore((state) => state.invoices);
 
     const dataRows = useMemo(

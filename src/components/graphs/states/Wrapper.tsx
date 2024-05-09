@@ -3,14 +3,13 @@ import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { FormattedMessage } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_networkFailed } from 'stores/Billing/hooks';
 import { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { eChartsTooltipSX } from '../tooltips';
 
 function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const networkFailed = useBilling_networkFailed();
+    const networkFailed = useBillingStore((state) => state.networkFailed);
     const billingHistory = useBillingStore((state) => state.invoices);
     const dataByTaskGraphDetails = useBillingStore(
         (state) => state.dataByTaskGraphDetails
