@@ -1,18 +1,13 @@
-import { Invoice } from 'api/billing';
-import { useZustandStore } from 'context/Zustand/provider';
-import { BillingState } from 'stores/Billing/types';
-import { BillingStoreNames } from 'stores/names';
 import { invoiceId } from 'utils/billing-utils';
+import { useBillingStore } from './Store';
 
 // Selector Hooks
 export const useBilling_selectedInvoice = () => {
-    return useZustandStore<BillingState, Invoice | null>(
-        BillingStoreNames.GENERAL,
-        (state) =>
-            state.selectedInvoiceId
-                ? state.invoices.find(
-                      (inv) => invoiceId(inv) === state.selectedInvoiceId
-                  ) ?? null
-                : null
+    return useBillingStore((state) =>
+        state.selectedInvoiceId
+            ? state.invoices.find(
+                  (inv) => invoiceId(inv) === state.selectedInvoiceId
+              ) ?? null
+            : null
     );
 };
