@@ -6,14 +6,13 @@ import { useEffect, useState } from 'react';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
 import { useStorageMappingsStore } from 'stores/StorageMappings/Store';
-import { useStorageMappingsStore_loading } from 'stores/StorageMappings/hooks';
 import ProviderSelector from './ProviderSelector';
 import useFormSchema from './useFormSchema';
 
 // TODO (storage mapping edit) - this is not used right now but will be when we add
 //  storage mapping editing.
 function Form() {
-    const loading = useStorageMappingsStore_loading();
+    const loading = useStorageMappingsStore((state) => state.loading);
     const storageMappingSpecs = useStorageMappingsStore((state) => state.spec);
     const { schema, uiSchema } = useFormSchema();
 
