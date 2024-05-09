@@ -5,13 +5,6 @@ import { BillingStoreNames } from 'stores/names';
 import { invoiceId } from 'utils/billing-utils';
 
 // Selector Hooks
-export const useBilling_invoicesInitialized = () => {
-    return useZustandStore<BillingState, BillingState['invoicesInitialized']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.invoicesInitialized
-    );
-};
-
 export const useBilling_setInvoicesInitialized = () => {
     return useZustandStore<
         BillingState,
