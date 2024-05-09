@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { BaseComponentProps } from 'types';
-import { useStorageMappingsStore_hydrate } from './hooks';
+import { useStorageMappingsStore } from './Store';
 
 export const StorageMappingsHydrator = ({ children }: BaseComponentProps) => {
-    const hydrate = useStorageMappingsStore_hydrate();
+    const hydrate = useStorageMappingsStore((state) => state.hydrate);
 
     useEffect(() => {
         hydrate();
