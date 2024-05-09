@@ -11,14 +11,13 @@ import RowSelect from '../cells/RowSelect';
 
 interface RowProps {
     row: any;
-    selected: boolean;
-    setSelected: SelectableTableStore['setSelected'];
 }
 
 interface RowsProps {
     data: any[];
-    selectTableStoreName: SelectTableStoreNames;
 }
+
+const selectTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_USERS;
 
 export const userTableColumns = [
     {
@@ -43,15 +42,27 @@ export const userTableColumns = [
     },
 ];
 
-function Row({ row, selected, setSelected }: RowProps) {
+function Row({ row }: RowProps) {
+    const setSelected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setSelected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
+
+    const selected = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['selected']
+    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
+
+    const isSelected = selected.has(row.id);
+
     return (
         <TableRow
             key={`Entity-${row.id}`}
             onClick={() => setSelected(row.id, row, !selected)}
-            selected={selected}
+            selected={isSelected}
         >
             <RowSelect
-                isSelected={selected}
+                isSelected={isSelected}
                 name={row.user_full_name ?? row.subject_role}
             />
 
@@ -78,30 +89,13 @@ function Row({ row, selected, setSelected }: RowProps) {
     );
 }
 
-function UserRows({ data, selectTableStoreName }: RowsProps) {
-    const selected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['selected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.get);
-
-    const setSelected = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['setSelected']
-    >(selectTableStoreName, selectableTableStoreSelectors.selected.set);
-
+function UserRows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => {
                 const isUser = row.user_full_name || row.user_email;
 
-                return isUser ? (
-                    <Row
-                        key={row.id}
-                        row={row}
-                        selected={selected.has(row.id)}
-                        setSelected={setSelected}
-                    />
-                ) : null;
+                return isUser ? <Row key={row.id} row={row} /> : null;
             })}
         </>
     );

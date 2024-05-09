@@ -78,12 +78,7 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                     columns={showUser ? userTableColumns : prefixTableColumns}
                     renderTableRows={(data) =>
                         showUser ? (
-                            <UserRows
-                                data={data}
-                                selectTableStoreName={
-                                    SelectTableStoreNames.ACCESS_GRANTS_USERS
-                                }
-                            />
+                            <UserRows data={data} />
                         ) : (
                             <PrefixRows data={data} />
                         )
