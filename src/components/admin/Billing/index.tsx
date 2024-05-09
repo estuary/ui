@@ -30,7 +30,6 @@ import {
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_setActive,
-    useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
     useBilling_setNetworkFailed,
@@ -68,7 +67,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setNetworkFailed = useBilling_setNetworkFailed();
 
     const selectedInvoice = useBilling_selectedInvoice();
-    const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
+    const setDataByTaskGraphDetails = useBillingStore(
+        (state) => state.setDataByTaskGraphDetails
+    );
 
     const resetBillingState = useBilling_resetState();
 
