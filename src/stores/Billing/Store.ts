@@ -5,7 +5,6 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { BillingStoreNames } from 'stores/names';
 import {
     evaluateSpecType,
     invoiceId,
@@ -175,6 +174,6 @@ export const getInitialState = (
 export const useBillingStore = create<BillingState>()(
     devtools(
         (set, get) => getInitialState(set, get),
-        devtoolsOptions(BillingStoreNames.GENERAL)
+        devtoolsOptions('billing')
     )
 );
