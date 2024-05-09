@@ -20,7 +20,6 @@ import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_hydrated } from 'stores/Billing/hooks';
 import { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import {
@@ -68,7 +67,7 @@ function DataByTaskGraph() {
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
 
-    const billingStoreHydrated = useBilling_hydrated();
+    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const dataByTaskGraphDetails = useBillingStore(
         (state) => state.dataByTaskGraphDetails
     );

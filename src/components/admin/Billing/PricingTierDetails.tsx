@@ -1,13 +1,11 @@
 import { Skeleton, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    useBilling_hydrated,
-    useBilling_paymentMethodExists,
-} from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
+import { useBilling_paymentMethodExists } from 'stores/Billing/hooks';
 
 function PricingTierDetails() {
-    const billingStoreHydrated = useBilling_hydrated();
+    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const paymentMethodExists = useBilling_paymentMethodExists();
 
     const messageId = useMemo(

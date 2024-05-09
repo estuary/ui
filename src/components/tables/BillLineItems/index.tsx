@@ -9,10 +9,7 @@ import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import {
-    useBilling_hydrated,
-    useBilling_selectedInvoice,
-} from 'stores/Billing/hooks';
+import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns, TableStatuses } from 'types';
 
@@ -46,7 +43,7 @@ function BillingLineItemsTable() {
 
     const selectedInvoice = useBilling_selectedInvoice();
 
-    const hydrated = useBilling_hydrated();
+    const hydrated = useBillingStore((state) => state.hydrated);
     const invoices = useBillingStore((state) => state.invoices);
 
     const dataRows = useMemo(

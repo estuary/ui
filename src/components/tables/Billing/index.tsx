@@ -7,7 +7,6 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import {
-    useBilling_hydrated,
     useBilling_networkFailed,
     useBilling_selectedInvoice,
 } from 'stores/Billing/hooks';
@@ -45,7 +44,7 @@ function BillingHistoryTable() {
 
     const selectedInvoice = useBilling_selectedInvoice();
 
-    const hydrated = useBilling_hydrated();
+    const hydrated = useBillingStore((state) => state.hydrated);
     const networkFailed = useBilling_networkFailed();
     const billingHistory = useBillingStore((state) => state.invoices);
 

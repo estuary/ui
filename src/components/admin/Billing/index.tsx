@@ -26,7 +26,6 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBillingStore } from 'stores/Billing/Store';
 import {
-    useBilling_hydrated,
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_setActive,
@@ -49,7 +48,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Billing Store
-    const hydrated = useBilling_hydrated();
+    const hydrated = useBillingStore((state) => state.hydrated);
     const setHydrated = useBilling_setHydrated();
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 

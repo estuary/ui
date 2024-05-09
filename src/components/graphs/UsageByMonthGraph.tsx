@@ -22,7 +22,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_hydrated } from 'stores/Billing/hooks';
 import useConstant from 'use-constant';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
 import useTooltipConfig from './useTooltipConfig';
@@ -37,7 +36,7 @@ function UsageByMonthGraph() {
     const tooltipConfig = useTooltipConfig();
     const legendConfig = useLegendConfig([{ name: 'Data' }, { name: 'Hours' }]);
 
-    const billingStoreHydrated = useBilling_hydrated();
+    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const invoices = useBillingStore((state) => state.invoices);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
