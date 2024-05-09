@@ -5,13 +5,6 @@ import { BillingStoreNames } from 'stores/names';
 import { invoiceId } from 'utils/billing-utils';
 
 // Selector Hooks
-export const useBilling_dataByTaskGraphDetails = () => {
-    return useZustandStore<
-        BillingState,
-        BillingState['dataByTaskGraphDetails']
-    >(BillingStoreNames.GENERAL, (state) => state.dataByTaskGraphDetails);
-};
-
 export const useBilling_setDataByTaskGraphDetails = () => {
     return useZustandStore<
         BillingState,

@@ -4,7 +4,6 @@ import GraphLoadingState from 'components/graphs/states/Loading';
 import { FormattedMessage } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import {
-    useBilling_dataByTaskGraphDetails,
     useBilling_hydrated,
     useBilling_networkFailed,
 } from 'stores/Billing/hooks';
@@ -16,7 +15,9 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreHydrated = useBilling_hydrated();
     const networkFailed = useBilling_networkFailed();
     const billingHistory = useBillingStore((state) => state.invoices);
-    const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
+    const dataByTaskGraphDetails = useBillingStore(
+        (state) => state.dataByTaskGraphDetails
+    );
 
     if (networkFailed) {
         return (
