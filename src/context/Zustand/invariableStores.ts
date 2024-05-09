@@ -1,7 +1,6 @@
 import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
-import { billingStore } from 'stores/Billing/Store';
 import { bindingStore } from 'stores/Binding/Store';
 import {
     captureDetailsForm,
@@ -11,7 +10,6 @@ import {
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     AdminStoreNames,
-    BillingStoreNames,
     BindingsEditorStoreNames,
     BindingStoreNames,
     DetailsFormStoreNames,
@@ -35,9 +33,6 @@ import { createTransformationCreateStore } from 'stores/TransformationCreate/Sto
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
-    // Billing Store
-    [BillingStoreNames.GENERAL]: billingStore,
-
     // Binding Store
     [BindingStoreNames.GENERAL]: bindingStore,
 
