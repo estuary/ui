@@ -3,7 +3,6 @@ import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-import { AdminStoreNames } from '../names';
 import { StorageMappingForm, StorageMappingsState } from './types';
 
 const getInitialStateData = (): Pick<
@@ -63,8 +62,9 @@ const getInitialState = (
     },
 });
 
-export const createStorageMappingsStore = (key: AdminStoreNames) => {
-    return create<StorageMappingsState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
-    );
-};
+export const useStorageMappingsStore = create<StorageMappingsState>()(
+    devtools(
+        (set, _get) => getInitialState(set),
+        devtoolsOptions('storage-mappings')
+    )
+);

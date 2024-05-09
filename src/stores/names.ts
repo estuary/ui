@@ -72,10 +72,6 @@ export enum ShardDetailStoreNames {
     COLLECTION = 'Collection-Shard-Detail',
 }
 
-export enum AdminStoreNames {
-    STORAGE_MAPPINGS = 'Storage-Mappings',
-}
-
 export enum GlobalStoreNames {
     ENTITIES = 'Entities',
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
@@ -92,7 +88,6 @@ export enum TransformCreateStoreNames {
 }
 
 export type StoreName =
-    | AdminStoreNames
     | BillingStoreNames
     | BindingStoreNames
     | BindingsEditorStoreNames
