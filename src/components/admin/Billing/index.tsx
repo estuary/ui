@@ -28,7 +28,6 @@ import { useBillingStore } from 'stores/Billing/Store';
 import {
     useBilling_resetState,
     useBilling_selectedInvoice,
-    useBilling_setHydrationErrorsExist,
 } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
@@ -47,7 +46,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // Billing Store
     const hydrated = useBillingStore((state) => state.hydrated);
     const setHydrated = useBillingStore((state) => state.setHydrated);
-    const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
+    const setHydrationErrorsExist = useBillingStore(
+        (state) => state.setHydrationErrorsExist
+    );
 
     const historyInitialized = useBillingStore(
         (state) => state.invoicesInitialized
