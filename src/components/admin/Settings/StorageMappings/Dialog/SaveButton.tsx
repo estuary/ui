@@ -38,6 +38,7 @@ function SaveButton() {
 
     const { jobStatusPoller } = useJobStatusPoller();
     const { directive, loading } = useDirectiveGuard(SELECTED_DIRECTIVE, {
+        forceNew: true,
         hideAlert: true,
     });
 
