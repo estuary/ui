@@ -29,7 +29,6 @@ import {
     useBilling_resetState,
     useBilling_selectedInvoice,
     useBilling_setActive,
-    useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
     useBilling_setNetworkFailed,
 } from 'stores/Billing/hooks';
@@ -49,7 +48,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
     // Billing Store
     const hydrated = useBillingStore((state) => state.hydrated);
-    const setHydrated = useBilling_setHydrated();
+    const setHydrated = useBillingStore((state) => state.setHydrated);
     const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
 
     const historyInitialized = useBillingStore(

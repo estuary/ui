@@ -5,13 +5,6 @@ import { BillingStoreNames } from 'stores/names';
 import { invoiceId } from 'utils/billing-utils';
 
 // Selector Hooks
-export const useBilling_setHydrated = () => {
-    return useZustandStore<BillingState, BillingState['setHydrated']>(
-        BillingStoreNames.GENERAL,
-        (state) => state.setHydrated
-    );
-};
-
 export const useBilling_setActive = () => {
     return useZustandStore<BillingState, BillingState['setActive']>(
         BillingStoreNames.GENERAL,
