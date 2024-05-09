@@ -33,7 +33,6 @@ import {
     useBilling_setDataByTaskGraphDetails,
     useBilling_setHydrated,
     useBilling_setHydrationErrorsExist,
-    useBilling_setInvoices,
     useBilling_setNetworkFailed,
     useBilling_updateInvoices,
 } from 'stores/Billing/hooks';
@@ -62,7 +61,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setHistoryInitialized = useBillingStore(
         (state) => state.setInvoicesInitialized
     );
-    const setInvoices = useBilling_setInvoices();
+    const setInvoices = useBillingStore((state) => state.setInvoices);
     const updateBillingHistory = useBilling_updateInvoices();
     const setActive = useBilling_setActive();
     const setNetworkFailed = useBilling_setNetworkFailed();
