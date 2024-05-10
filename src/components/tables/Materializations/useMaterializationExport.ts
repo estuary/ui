@@ -1,4 +1,4 @@
-import { CaptureQueryWithStats } from 'api/liveSpecsExt';
+import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -6,11 +6,11 @@ import { formatBytes, formatDocs } from '../cells/stats/shared';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 import { catalogName, connectorType, lastPublished, writesTo } from '../shared';
 
-function useCaptureExport(data: CaptureQueryWithStats[]) {
+function useMaterializationExport(data: MaterializationQueryWithStats[]) {
     const intl = useIntl();
 
     const { stats } = useRowsWithStatsState(
-        SelectTableStoreNames.CAPTURE,
+        SelectTableStoreNames.MATERIALIZATION,
         data
     );
 
@@ -32,13 +32,13 @@ function useCaptureExport(data: CaptureQueryWithStats[]) {
             }),
             datawritten: intl.formatMessage(
                 {
-                    id: 'data.written',
+                    id: 'data.read',
                 },
                 { type: bytes }
             ),
             docsWritten: intl.formatMessage(
                 {
-                    id: 'data.written',
+                    id: 'data.read',
                 },
                 { type: docs }
             ),
@@ -58,14 +58,14 @@ function useCaptureExport(data: CaptureQueryWithStats[]) {
                     [headers.name]: datum.catalog_name,
                     [headers.connector]: `${datum.connector_image_name}${datum.connector_image_tag}`,
                     [headers.datawritten]: formatBytes(
-                        stats?.[datum.catalog_name]?.bytes_written_by_me ?? 0
+                        stats?.[datum.catalog_name]?.bytes_read_by_me ?? 0
                     ),
                     [headers.docsWritten]: formatDocs(
                         stats
-                            ? stats[datum.catalog_name]?.docs_written_by_me
+                            ? stats[datum.catalog_name]?.docs_read_by_me
                             : null
                     ),
-                    [headers.writesTo]: datum.writes_to,
+                    [headers.writesTo]: datum.reads_from,
                     [headers.lastPublished]: datum.updated_at,
                 };
             }) as any[]
@@ -73,4 +73,4 @@ function useCaptureExport(data: CaptureQueryWithStats[]) {
     }, [data, headers, stats]);
 }
 
-export default useCaptureExport;
+export default useMaterializationExport;

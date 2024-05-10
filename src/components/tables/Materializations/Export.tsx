@@ -1,16 +1,16 @@
 import { Button } from '@mui/material';
-import { CaptureQueryWithStats } from 'api/liveSpecsExt';
+import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import CsvDownload from 'react-csv-downloader';
 import { hasLength } from 'utils/misc-utils';
 import { getFileName, tableExportSeparator } from '../shared';
-import useCaptureExport from './useCaptureExport';
+import useMaterializationExport from './useMaterializationExport';
 
 interface Props {
-    data: CaptureQueryWithStats[];
+    data: MaterializationQueryWithStats[];
 }
 
-function CaptureExportButton({ data }: Props) {
-    const generateExport = useCaptureExport(data);
+function MaterializationExportButton({ data }: Props) {
+    const generateExport = useMaterializationExport(data);
     const noData = !hasLength(data);
 
     return (
@@ -18,7 +18,7 @@ function CaptureExportButton({ data }: Props) {
             datas={generateExport}
             disabled={noData}
             separator={tableExportSeparator}
-            filename={getFileName('capture')}
+            filename={getFileName('materialization')}
         >
             <Button disabled={noData} variant="outlined">
                 Download
@@ -27,4 +27,4 @@ function CaptureExportButton({ data }: Props) {
     );
 }
 
-export default CaptureExportButton;
+export default MaterializationExportButton;

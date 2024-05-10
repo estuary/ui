@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
-import { catalogName, connectorType, lastPublished, writesTo } from './shared';
+import { catalogName, connectorType, lastPublished, writesTo } from '../shared';
 
 const defaultColumns: ColumnProps[] = [
     {
