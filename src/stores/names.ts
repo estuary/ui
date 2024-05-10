@@ -1,7 +1,3 @@
-export enum BillingStoreNames {
-    GENERAL = 'general_billing',
-}
-
 export enum BindingStoreNames {
     GENERAL = 'binding',
 }
@@ -88,7 +84,6 @@ export enum TransformCreateStoreNames {
 }
 
 export type StoreName =
-    | BillingStoreNames
     | BindingStoreNames
     | BindingsEditorStoreNames
     | DetailsFormStoreNames
