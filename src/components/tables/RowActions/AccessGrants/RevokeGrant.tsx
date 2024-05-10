@@ -3,6 +3,7 @@ import { deleteUserGrant } from 'api/userGrants';
 import { ProgressStates } from 'components/tables/RowActions/Shared/Progress';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useMount } from 'react-use';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -64,7 +65,7 @@ function RevokeGrant({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
-    useEffect(() => {
+    useMount(() => {
         void revokeGrant(
             grant.id,
             onFinish,
@@ -72,7 +73,7 @@ function RevokeGrant({
             setError,
             setProgress
         );
-    }, [grant.id, onFinish, selectTableStoreName, setProgress]);
+    });
 
     useEffect(() => {
         if (progress === ProgressStates.SUCCESS) {
