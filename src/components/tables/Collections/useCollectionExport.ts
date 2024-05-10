@@ -69,10 +69,10 @@ function useCollectionExport(data: CollectionQueryWithStats[]) {
                     [headers.datawritten]: formatBytes(
                         stats?.[datum.catalog_name]?.bytes_written_to_me
                     ),
-                    [headers.dataRead]: formatDocs(
+                    [headers.dataRead]: formatBytes(
                         stats?.[datum.catalog_name]?.bytes_read_from_me
                     ),
-                    [headers.docsWritten]: formatBytes(
+                    [headers.docsWritten]: formatDocs(
                         stats?.[datum.catalog_name]?.docs_written_to_me ?? 0
                     ),
                     [headers.docsRead]: formatDocs(
