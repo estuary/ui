@@ -20,8 +20,14 @@ function RowSelector({
     showMaterialize,
     showSelectedCount,
     showTransform,
+    ExportComponent,
 }: RowSelectorProps) {
     const intl = useIntl();
+
+    const selectData = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['query']['response']
+    >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
 
     const selectedRows = useZustandStore<
         SelectableTableStore,
@@ -82,6 +88,10 @@ function RowSelector({
                 <Transform
                     selectableTableStoreName={selectableTableStoreName}
                 />
+            ) : null}
+
+            {ExportComponent ? (
+                <ExportComponent data={selectData ?? []} />
             ) : null}
         </Stack>
     );
