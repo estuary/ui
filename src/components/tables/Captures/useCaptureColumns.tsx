@@ -1,31 +1,19 @@
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo } from 'react';
-import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
+import { catalogName, connectorType, lastPublished, writesTo } from './shared';
 
 const defaultColumns: ColumnProps[] = [
     {
         field: null,
         headerIntlKey: '',
     },
-    {
-        field: 'catalog_name',
-        headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: QUERY_PARAM_CONNECTOR_TITLE,
-        headerIntlKey: 'entityTable.data.connectorType',
-    },
-    {
-        field: 'writes_to',
-        headerIntlKey: 'entityTable.data.writesTo',
-    },
-    {
-        field: 'updated_at',
-        headerIntlKey: 'entityTable.data.lastPublished',
-    },
+    catalogName,
+    connectorType,
+    writesTo,
+    lastPublished,
     {
         field: null,
         headerIntlKey: null,

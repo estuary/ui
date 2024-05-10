@@ -55,7 +55,11 @@ interface Props {
     header: string | ReactNode | null;
     noExistingDataContentIds: TableIntlConfig;
     pagination: Pagination;
-    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    renderTableRows: (
+        data: any,
+        showEntityStatus: boolean,
+        enableExport?: boolean
+    ) => ReactNode;
     rowsPerPage: number;
     searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
@@ -65,6 +69,7 @@ interface Props {
     setSearchQuery: (data: any) => void;
     setSortDirection: (data: any) => void;
     sortDirection: SortDirection;
+    enableExport?: boolean;
     hideFilter?: boolean;
     hideHeaderAndFooter?: boolean;
     keepSelectionOnFilterOrSearch?: boolean;
@@ -74,6 +79,7 @@ interface Props {
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
+    ExportComponent?: any;
 }
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -104,6 +110,7 @@ function EntityTable({
     toolbar,
     keepSelectionOnFilterOrSearch,
     keepSelectionOnPagination,
+    ExportComponent,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -330,6 +337,10 @@ function EntityTable({
             )}
 
             <Box sx={hideHeaderAndFooter ? {} : { mb: 2, mx: 2 }}>
+                {ExportComponent ? (
+                    <ExportComponent data={selectData ?? []} />
+                ) : null}
+
                 <TableContainer component={Box}>
                     <Table
                         size="small"
