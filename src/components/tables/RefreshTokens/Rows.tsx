@@ -1,4 +1,4 @@
-import { TableCell, TableRow, useTheme } from '@mui/material';
+import { TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import { RefreshTokenQuery } from 'api/tokens';
 import { getEntityTableRowSx } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
@@ -20,7 +20,9 @@ function Row({ row }: RowProps) {
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TimeStamp time={row.created_at} enableRelative />
 
-            <TableCell>{row.detail}</TableCell>
+            <TableCell>
+                <Typography sx={{ textWrap: 'wrap' }}>{row.detail}</Typography>
+            </TableCell>
 
             <TableCell>
                 <FormattedMessage
