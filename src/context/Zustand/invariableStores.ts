@@ -1,7 +1,6 @@
 import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
-import { billingStore } from 'stores/Billing/Store';
 import { bindingStore } from 'stores/Binding/Store';
 import {
     captureDetailsForm,
@@ -10,8 +9,6 @@ import {
 } from 'stores/DetailsForm/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
-    AdminStoreNames,
-    BillingStoreNames,
     BindingsEditorStoreNames,
     BindingStoreNames,
     DetailsFormStoreNames,
@@ -27,7 +24,6 @@ import {
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
@@ -35,9 +31,6 @@ import { createTransformationCreateStore } from 'stores/TransformationCreate/Sto
 import { MessagePrefixes } from 'types';
 
 const invariableStores = {
-    // Billing Store
-    [BillingStoreNames.GENERAL]: billingStore,
-
     // Binding Store
     [BindingStoreNames.GENERAL]: bindingStore,
 
@@ -142,11 +135,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
         SelectTableStoreNames.STORAGE_MAPPINGS
-    ),
-
-    // Admin Storage Mappings
-    [AdminStoreNames.STORAGE_MAPPINGS]: createStorageMappingsStore(
-        AdminStoreNames.STORAGE_MAPPINGS
     ),
 
     // Transformation Create
