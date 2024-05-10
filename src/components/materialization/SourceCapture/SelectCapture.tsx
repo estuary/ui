@@ -3,7 +3,7 @@ import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store
 import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isString } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
@@ -14,6 +14,8 @@ const DIALOG_ID = 'add-source-capture-search-dialog';
 function SelectCapture() {
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
+
+    const prefilledOnce = useRef(false);
 
     const [sourceCapture, setSourceCapture, prefilledCapture] =
         useSourceCaptureStore((state) => [
@@ -57,9 +59,10 @@ function SelectCapture() {
             if (sourceCapture !== sourceCaptureSetting) {
                 setSourceCapture(sourceCaptureSetting);
             }
-        } else if (prefilledExists) {
+        } else if (!prefilledOnce.current && prefilledExists) {
             if (sourceCapture !== prefilledCapture) {
                 setSourceCapture(prefilledCapture);
+                prefilledOnce.current = true;
             }
         }
     }, [
