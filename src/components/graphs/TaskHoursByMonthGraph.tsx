@@ -17,7 +17,7 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBilling_hydrated, useBilling_invoices } from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
@@ -34,8 +34,8 @@ function TaskHoursByMonthGraph() {
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
 
-    const billingStoreHydrated = useBilling_hydrated();
-    const invoices = useBilling_invoices();
+    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
+    const invoices = useBillingStore((state) => state.invoices);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
