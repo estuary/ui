@@ -89,7 +89,6 @@ export type StoreName =
     | FormStateStoreNames
     | GlobalStoreNames
     | JournalDataStoreNames
-    | MiscStoreNames
     | OnboardingStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
