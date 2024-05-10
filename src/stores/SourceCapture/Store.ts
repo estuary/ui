@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { MiscStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
@@ -69,8 +68,9 @@ const getInitialState = (
     },
 });
 
-export const createSourceCaptureStore = (key: MiscStoreNames) => {
-    return create<SourceCaptureState>()(
-        devtools((set, _get) => getInitialState(set), devtoolsOptions(key))
-    );
-};
+export const useSourceCaptureStore = create<SourceCaptureState>()(
+    devtools(
+        (set, _get) => getInitialState(set),
+        devtoolsOptions('source-capture')
+    )
+);

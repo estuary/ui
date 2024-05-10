@@ -5,6 +5,7 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 
 import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
 
@@ -16,12 +17,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const [sourceCapture, setSourceCapture] = useStore(
-        invariableStores['source-capture'],
-        (state) => {
-            return [state.sourceCapture, state.setSourceCapture];
-        }
-    );
+    const [sourceCapture, setSourceCapture] = useSourceCaptureStore((state) => [
+        state.sourceCapture,
+        state.setSourceCapture,
+    ]);
 
     const updateDraft = useSourceCapture();
 

@@ -2,12 +2,11 @@ import { Button } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import invariableStores from 'context/Zustand/invariableStores';
 import { isString } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useStore } from 'zustand';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
@@ -16,14 +15,12 @@ function SelectCapture() {
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
 
-    const [sourceCapture, setSourceCapture, prefilledCapture] = useStore(
-        invariableStores['source-capture'],
-        (state) => [
+    const [sourceCapture, setSourceCapture, prefilledCapture] =
+        useSourceCaptureStore((state) => [
             state.sourceCapture,
             state.setSourceCapture,
             state.prefilledCapture,
-        ]
-    );
+        ]);
 
     const [open, setOpen] = useState<boolean>(false);
 

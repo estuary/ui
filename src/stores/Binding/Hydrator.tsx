@@ -1,10 +1,9 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
-import invariableStores from 'context/Zustand/invariableStores';
 import { useEffect, useRef } from 'react';
 import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { BaseComponentProps } from 'types';
-import { useStore } from 'zustand';
 import {
     useBinding_hydrateState,
     useBinding_setActive,
@@ -28,11 +27,8 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const setActive = useBinding_setActive();
     const hydrateState = useBinding_hydrateState();
 
-    const setPrefilledCapture = useStore(
-        invariableStores['source-capture'],
-        (state) => {
-            return state.setPrefilledCapture;
-        }
+    const setPrefilledCapture = useSourceCaptureStore(
+        (state) => state.setPrefilledCapture
     );
 
     useEffect(() => {
