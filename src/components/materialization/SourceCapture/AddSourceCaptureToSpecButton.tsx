@@ -33,9 +33,18 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             ? selectedRow.catalog_name
             : null;
 
-        // Only fire updates if a change happened. Since single select table can allow the user
-        //   to deselect a row and then select it again
-        if (sourceCapture !== updatedSourceCapture) {
+        // Only update when the udpatedSourceCapture is null if there was a previous sourceCapture
+        // otherwise if a user opens the dialog, has something preselected, and then clicks continue the
+        //  option that was preselected will be removed. Because the preselection does not count as
+        //  a "selectedRow"
+        if (!updatedSourceCapture && sourceCapture) {
+            setSourceCapture(updatedSourceCapture);
+        } else if (
+            updatedSourceCapture &&
+            sourceCapture !== updatedSourceCapture
+        ) {
+            // Only fire updates if a change happened. Since single select table can allow the user
+            //   to deselect a row and then select it again
             setSourceCapture(updatedSourceCapture);
 
             if (selectedRow?.writes_to) {
