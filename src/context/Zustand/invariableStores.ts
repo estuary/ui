@@ -9,7 +9,6 @@ import {
 } from 'stores/DetailsForm/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
-    AdminStoreNames,
     BindingsEditorStoreNames,
     BindingStoreNames,
     DetailsFormStoreNames,
@@ -25,7 +24,6 @@ import {
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
 import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { createStorageMappingsStore } from 'stores/StorageMappings/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
@@ -134,11 +132,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
         SelectTableStoreNames.STORAGE_MAPPINGS
-    ),
-
-    // Admin Storage Mappings
-    [AdminStoreNames.STORAGE_MAPPINGS]: createStorageMappingsStore(
-        AdminStoreNames.STORAGE_MAPPINGS
     ),
 
     // Transformation Create
