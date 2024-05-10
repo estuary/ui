@@ -4,7 +4,7 @@ import MonetaryValue from 'components/tables/cells/MonetaryValue';
 import DataVolume from 'components/tables/cells/billing/DataVolume';
 import TimeStamp from 'components/tables/cells/billing/TimeStamp';
 import { FormattedMessage } from 'react-intl';
-import { useBilling_setSelectedInvoice } from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
 import { InvoiceId, invoiceId } from 'utils/billing-utils';
 
 interface RowProps {
@@ -18,7 +18,10 @@ interface RowsProps {
 }
 
 function Row({ row, isSelected }: RowProps) {
-    const setSelectedInvoice = useBilling_setSelectedInvoice();
+    const setSelectedInvoice = useBillingStore(
+        (state) => state.setSelectedInvoice
+    );
+
     return (
         <TableRow
             hover

@@ -24,7 +24,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { useBilling_setPaymentMethodExists } from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { TableColumns } from 'types';
 import { getColumnKeyList } from 'utils/table-utils';
@@ -68,7 +68,9 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const setPaymentMethodExists = useBilling_setPaymentMethodExists();
+    const setPaymentMethodExists = useBillingStore(
+        (state) => state.setPaymentMethodExists
+    );
 
     const [refreshCounter, setRefreshCounter] = useState(0);
 

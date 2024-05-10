@@ -1,7 +1,7 @@
 import TenantSelector from 'components/shared/TenantSelector';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useCallback } from 'react';
-import { useBilling_resetState } from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     useBillingTable_setHydrated,
@@ -13,7 +13,7 @@ import {
 } from 'stores/Tables/Store';
 
 function TenantOptions() {
-    const resetBillingState = useBilling_resetState();
+    const resetBillingState = useBillingStore((state) => state.resetState);
 
     const setHydrated = useBillingTable_setHydrated();
     const setHydrationErrorsExist = useBillingTable_setHydrationErrorsExist();
