@@ -32,6 +32,8 @@ const createRefreshToken = async (
     );
 };
 
+// Nullifying the interval for which a refresh token is valid is a means
+// to invalidate the token while preserving the row in the database table.
 export const INVALID_TOKEN_INTERVAL = '0 seconds';
 
 export interface RefreshTokenQuery {
