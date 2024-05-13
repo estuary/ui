@@ -94,6 +94,8 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             createRoleGrant(processedSubject, processedObject, capability).then(
                 (response) => {
                     if (response.error) {
+                        console.log(response.error);
+
                         setServerError(response.error);
                     } else if (hasLength(response.data)) {
                         if (serverError) {

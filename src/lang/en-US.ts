@@ -536,6 +536,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
+    'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
     'admin.alerts.cta.addAlertMethod': `Configure Notifications`,
