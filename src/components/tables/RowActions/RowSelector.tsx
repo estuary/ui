@@ -1,4 +1,4 @@
-import { ButtonGroup, Stack } from '@mui/material';
+import { ButtonGroup, Collapse, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
@@ -54,45 +54,57 @@ function RowSelector({
                 />
             )}
 
-            {hideActions ? null : (
-                <ButtonGroup
-                    aria-label={intl.formatMessage({
-                        id: 'capturesTable.ctaGroup.aria',
-                    })}
-                    disableElevation
-                    disabled={!hasSelections}
-                >
-                    <DisableEnableButton
-                        selectableTableStoreName={selectableTableStoreName}
-                        enabling={true}
-                    />
+            <Collapse in={hasSelections} orientation="horizontal">
+                <Stack direction="row" spacing={2}>
+                    {hideActions ? null : (
+                        <ButtonGroup
+                            aria-label={intl.formatMessage({
+                                id: 'capturesTable.ctaGroup.aria',
+                            })}
+                            disableElevation
+                            disabled={!hasSelections}
+                        >
+                            <DisableEnableButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                enabling={true}
+                            />
 
-                    <DisableEnableButton
-                        selectableTableStoreName={selectableTableStoreName}
-                        enabling={false}
-                    />
+                            <DisableEnableButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                enabling={false}
+                            />
 
-                    <DeleteButton
-                        selectableTableStoreName={selectableTableStoreName}
-                    />
-                </ButtonGroup>
-            )}
+                            <DeleteButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                            />
+                        </ButtonGroup>
+                    )}
 
-            {showMaterialize ? (
-                <Materialize
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            ) : null}
+                    {showMaterialize ? (
+                        <Materialize
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
+                    ) : null}
 
-            {showTransform ? (
-                <Transform
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            ) : null}
+                    {showTransform ? (
+                        <Transform
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
+                    ) : null}
+                </Stack>
+            </Collapse>
 
-            {ExportComponent ? (
-                <ExportComponent data={selectData ?? []} />
-            ) : null}
+            <Collapse in={!hasSelections} orientation="horizontal">
+                {ExportComponent ? (
+                    <ExportComponent data={selectData ?? []} />
+                ) : null}
+            </Collapse>
         </Stack>
     );
 }
