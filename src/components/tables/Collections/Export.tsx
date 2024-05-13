@@ -3,8 +3,7 @@ import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import CsvDownload from 'react-csv-downloader';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
-import { getFileName, tableExportSeparator } from '../shared';
-import useExportColumns from '../useExportColumns';
+import { generateFileName, tableExportSeparator } from '../shared';
 import useCollectionExport from './useCollectionExport';
 
 interface Props {
@@ -12,17 +11,16 @@ interface Props {
 }
 
 function CollectionExportButton({ data }: Props) {
-    const columns = useExportColumns();
-    const generateExportData = useCollectionExport(data);
+    const { columns, generateExport } = useCollectionExport(data);
     const noData = !hasLength(data);
 
     return (
         <CsvDownload
             columns={columns}
-            datas={generateExportData}
+            datas={generateExport}
             disabled={noData}
             separator={tableExportSeparator}
-            filename={getFileName('collection')}
+            filename={generateFileName('collections_table')}
         >
             <Button
                 disabled={noData}

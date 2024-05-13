@@ -3,8 +3,7 @@ import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import CsvDownload from 'react-csv-downloader';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
-import { getFileName, tableExportSeparator } from '../shared';
-import useExportColumns from '../useExportColumns';
+import { generateFileName, tableExportSeparator } from '../shared';
 import useMaterializationExport from './useMaterializationExport';
 
 interface Props {
@@ -12,8 +11,7 @@ interface Props {
 }
 
 function MaterializationExportButton({ data }: Props) {
-    const columns = useExportColumns();
-    const generateExport = useMaterializationExport(data);
+    const { columns, generateExport } = useMaterializationExport(data);
     const noData = !hasLength(data);
 
     return (
@@ -22,7 +20,7 @@ function MaterializationExportButton({ data }: Props) {
             datas={generateExport}
             disabled={noData}
             separator={tableExportSeparator}
-            filename={getFileName('materialization')}
+            filename={generateFileName('materializations_table')}
         >
             <Button
                 disabled={noData}

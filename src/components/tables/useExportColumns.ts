@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
-import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { useIntl } from 'react-intl';
-import { catalogName } from './shared';
+import { catalogName, ColumnNames } from './shared';
 
 function useExportColumns() {
     const intl = useIntl();
 
-    return useMemo<Columns>(() => {
+    return useMemo(() => {
         const docs = intl.formatMessage({
             id: 'data.docs',
         });
@@ -15,50 +14,54 @@ function useExportColumns() {
             id: 'data.data',
         });
 
-        return [
-            {
-                id: 'dataRead',
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.read',
-                    },
-                    { type: bytes }
-                ),
-            },
-            {
-                id: 'datawritten',
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.written',
-                    },
-                    { type: bytes }
-                ),
-            },
-            {
-                id: 'docsWritten',
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.written',
-                    },
-                    { type: docs }
-                ),
-            },
-            {
-                id: 'docsRead',
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.read',
-                    },
-                    { type: docs }
-                ),
-            },
-            {
-                id: 'name',
+        return {
+            [ColumnNames.CatalogName]: {
+                id: ColumnNames.CatalogName,
                 displayName: intl.formatMessage({
                     id: catalogName.headerIntlKey ?? '',
                 }),
             },
-        ];
+
+            [ColumnNames.DataRead]: {
+                id: ColumnNames.DataRead,
+                displayName: intl.formatMessage(
+                    {
+                        id: 'data.read',
+                    },
+                    { type: bytes }
+                ),
+            },
+
+            [ColumnNames.DataWritten]: {
+                id: ColumnNames.DataWritten,
+                displayName: intl.formatMessage(
+                    {
+                        id: 'data.written',
+                    },
+                    { type: bytes }
+                ),
+            },
+
+            [ColumnNames.DocsRead]: {
+                id: ColumnNames.DocsRead,
+                displayName: intl.formatMessage(
+                    {
+                        id: 'data.read',
+                    },
+                    { type: docs }
+                ),
+            },
+
+            [ColumnNames.DocsWritten]: {
+                id: ColumnNames.DocsWritten,
+                displayName: intl.formatMessage(
+                    {
+                        id: 'data.written',
+                    },
+                    { type: docs }
+                ),
+            },
+        };
     }, [intl]);
 }
 

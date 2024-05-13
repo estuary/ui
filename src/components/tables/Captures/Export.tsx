@@ -3,8 +3,7 @@ import { CaptureQueryWithStats } from 'api/liveSpecsExt';
 import CsvDownload from 'react-csv-downloader';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
-import { getFileName, tableExportSeparator } from '../shared';
-import useExportColumns from '../useExportColumns';
+import { generateFileName, tableExportSeparator } from '../shared';
 import useCaptureExport from './useCaptureExport';
 
 interface Props {
@@ -12,8 +11,7 @@ interface Props {
 }
 
 function CaptureExportButton({ data }: Props) {
-    const columns = useExportColumns();
-    const generateExport = useCaptureExport(data);
+    const { columns, generateExport } = useCaptureExport(data);
     const noData = !hasLength(data);
 
     return (
@@ -22,7 +20,7 @@ function CaptureExportButton({ data }: Props) {
             datas={generateExport}
             disabled={noData}
             separator={tableExportSeparator}
-            filename={getFileName('capture')}
+            filename={generateFileName('captures_table')}
         >
             <Button
                 disabled={noData}

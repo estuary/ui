@@ -33,8 +33,14 @@ export const lastPublished: ColumnProps = {
 
 // Export stuff
 export const tableExportSeparator = ',';
-export const getFileName = (key: string) => {
-    return `estuary_${key}_table_${DateTime.now().toFormat(
-        'yyyy-MM-dd_HH:mm:ss'
-    )}`;
+export const generateFileName = (key: string) => {
+    return `estuary_${key}_${DateTime.now().toFormat('yyyy-MM-dd_HH:mm:ss')}`;
 };
+
+export enum ColumnNames {
+    CatalogName = 'catalogName',
+    DataRead = 'dataRead',
+    DataWritten = 'dataWritten',
+    DocsRead = 'docsRead',
+    DocsWritten = 'docsWritten',
+}
