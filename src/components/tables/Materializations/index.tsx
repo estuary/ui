@@ -47,6 +47,7 @@ function MaterializationsTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={MaterializationExportButton}
                         noExistingDataContentIds={{
                             header: 'materializations.message1',
                             message: 'materializations.message2',
@@ -78,7 +79,6 @@ function MaterializationsTable() {
                                 selectableTableStoreName={
                                     selectableTableStoreName
                                 }
-                                ExportComponent={MaterializationExportButton}
                             />
                         }
                     />

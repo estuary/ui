@@ -48,6 +48,7 @@ function CapturesTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={CaptureExportButton}
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',
@@ -81,7 +82,6 @@ function CapturesTable() {
                                 }
                                 selectKeyValueName={selectKeyValueName}
                                 showMaterialize={true}
-                                ExportComponent={CaptureExportButton}
                             />
                         }
                     />

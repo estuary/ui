@@ -1,10 +1,12 @@
 import {
     Box,
-    Grid,
+    Stack,
     Table,
     TableContainer,
     TextField,
     Toolbar,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -53,11 +55,7 @@ interface Props {
     header: string | ReactNode | null;
     noExistingDataContentIds: TableIntlConfig;
     pagination: Pagination;
-    renderTableRows: (
-        data: any,
-        showEntityStatus: boolean,
-        enableExport?: boolean
-    ) => ReactNode;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
     rowsPerPage: number;
     searchQuery: string | null;
     selectableTableStoreName: SelectTableStoreNames;
@@ -67,7 +65,6 @@ interface Props {
     setSearchQuery: (data: any) => void;
     setSortDirection: (data: any) => void;
     sortDirection: SortDirection;
-    enableExport?: boolean;
     hideFilter?: boolean;
     hideHeaderAndFooter?: boolean;
     keepSelectionOnFilterOrSearch?: boolean;
@@ -77,6 +74,7 @@ interface Props {
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
+    ExportComponent?: any;
 }
 
 // TODO (tables) I think we should switch this to React Table soon
@@ -107,11 +105,15 @@ function EntityTable({
     toolbar,
     keepSelectionOnFilterOrSearch,
     keepSelectionOnPagination,
+    ExportComponent,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
 
     const intl = useIntl();
+
+    const theme = useTheme();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const isValidating = useZustandStore<
         SelectableTableStore,
@@ -288,52 +290,53 @@ function EntityTable({
         <Box data-public>
             {hideHeaderAndFooter ? null : (
                 <Box sx={{ mx: 2 }}>
-                    {showToolbar ? (
-                        <Title header={header} marginBottom={2} />
-                    ) : null}
+                    <Stack direction="row" spacing={1}>
+                        {showToolbar ? (
+                            <Title header={header} marginBottom={2} />
+                        ) : null}
+                    </Stack>
 
-                    <Toolbar disableGutters>
-                        <Grid
-                            container
-                            alignItems="center"
-                            justifyContent="space-between"
-                            spacing={1}
-                            sx={{ mb: 1 }}
+                    <Toolbar
+                        disableGutters
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {showToolbar ? toolbar : <Title header={header} />}
+
+                        <Stack
+                            direction={belowMd ? 'column-reverse' : 'row'}
+                            spacing={2}
                         >
-                            <Grid item xs={12} md={9}>
-                                {showToolbar ? (
-                                    toolbar
-                                ) : (
-                                    <Title header={header} />
-                                )}
-                            </Grid>
-
+                            {ExportComponent ? (
+                                <ExportComponent data={selectData ?? []} />
+                            ) : null}
                             {hideFilter ? null : (
-                                <Grid item xs={12} md={3}>
-                                    <TextField
-                                        inputRef={searchTextField}
-                                        // TODO (table filtering)
-                                        // Should leverage TablePrefixes setting in the search hook here
-                                        //  could handle by somehow tying the search to the actual input
-                                        // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
-                                        id={`capture-search-box__${filterLabel}`}
-                                        label={intl.formatMessage({
-                                            id: filterLabel,
-                                        })}
-                                        variant="outlined"
-                                        size="small"
-                                        defaultValue={searchQuery}
-                                        onChange={handlers.filterTable}
-                                        sx={{
-                                            'width': '100%',
-                                            '& .MuiInputBase-root': {
-                                                borderRadius: 3,
-                                            },
-                                        }}
-                                    />
-                                </Grid>
+                                <TextField
+                                    inputRef={searchTextField}
+                                    // TODO (table filtering)
+                                    // Should leverage TablePrefixes setting in the search hook here
+                                    //  could handle by somehow tying the search to the actual input
+                                    // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
+                                    id={`entityTable-search__${filterLabel}`}
+                                    label={intl.formatMessage({
+                                        id: filterLabel,
+                                    })}
+                                    variant="outlined"
+                                    size="small"
+                                    defaultValue={searchQuery}
+                                    onChange={handlers.filterTable}
+                                    sx={{
+                                        'width': '100%',
+                                        '& .MuiInputBase-root': {
+                                            borderRadius: 3,
+                                        },
+                                    }}
+                                />
                             )}
-                        </Grid>
+                        </Stack>
                     </Toolbar>
                 </Box>
             )}

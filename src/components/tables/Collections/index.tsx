@@ -48,6 +48,7 @@ function CollectionsTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={CollectionExportButton}
                         noExistingDataContentIds={{
                             header: 'collections.message1',
                             message: 'collections.message2',
@@ -82,7 +83,6 @@ function CollectionsTable() {
                                 selectKeyValueName={selectKeyValueName}
                                 showMaterialize={true}
                                 showTransform
-                                ExportComponent={CollectionExportButton}
                             />
                         }
                     />

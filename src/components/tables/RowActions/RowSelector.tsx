@@ -1,4 +1,4 @@
-import { Box, ButtonGroup, Collapse, Stack, Tooltip } from '@mui/material';
+import { ButtonGroup, Grid, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
@@ -9,7 +9,6 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
 import RowSelectorCheckBox from './RowSelectorCheckBox';
 import Transform from './Transform';
 import { RowSelectorProps } from './types';
@@ -21,14 +20,8 @@ function RowSelector({
     showMaterialize,
     showSelectedCount,
     showTransform,
-    ExportComponent,
 }: RowSelectorProps) {
     const intl = useIntl();
-
-    const selectData = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['query']['response']
-    >(selectableTableStoreName, selectableTableStoreSelectors.query.response);
 
     const selectedRows = useZustandStore<
         SelectableTableStore,
@@ -55,9 +48,9 @@ function RowSelector({
                 />
             )}
 
-            <Collapse in={hasSelections} orientation="horizontal">
-                <Stack direction="row" spacing={2}>
-                    {hideActions ? null : (
+            <Grid container alignItems="center" gap={1}>
+                {hideActions ? null : (
+                    <Grid item>
                         <ButtonGroup
                             aria-label={intl.formatMessage({
                                 id: 'capturesTable.ctaGroup.aria',
@@ -85,37 +78,25 @@ function RowSelector({
                                 }
                             />
                         </ButtonGroup>
-                    )}
+                    </Grid>
+                )}
 
-                    {showMaterialize ? (
+                {showMaterialize ? (
+                    <Grid item>
                         <Materialize
                             selectableTableStoreName={selectableTableStoreName}
                         />
-                    ) : null}
+                    </Grid>
+                ) : null}
 
-                    {showTransform ? (
+                {showTransform ? (
+                    <Grid item>
                         <Transform
                             selectableTableStoreName={selectableTableStoreName}
                         />
-                    ) : null}
-                </Stack>
-            </Collapse>
-
-            <Collapse in={!hasSelections} orientation="horizontal">
-                {ExportComponent ? (
-                    <Tooltip
-                        title={intl.formatMessage({
-                            id: hasLength(selectData)
-                                ? 'entityTable.download.cta.title'
-                                : 'entityTable.download.cta.title.disabled',
-                        })}
-                    >
-                        <Box>
-                            <ExportComponent data={selectData ?? []} />
-                        </Box>
-                    </Tooltip>
+                    </Grid>
                 ) : null}
-            </Collapse>
+            </Grid>
         </Stack>
     );
 }

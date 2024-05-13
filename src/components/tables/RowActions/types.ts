@@ -11,5 +11,4 @@ export interface RowSelectorProps {
     showMaterialize?: boolean;
     showSelectedCount?: boolean;
     showTransform?: boolean;
-    ExportComponent?: any;
 }
