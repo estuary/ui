@@ -1,8 +1,11 @@
-import { Button, Dialog } from '@mui/material';
+import { Button, Dialog, DialogContent, Grid } from '@mui/material';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import RefreshTokenContent from './Dialog/Content';
+import RefreshTokenDescription from './Dialog/Description';
+import RefreshTokenError from './Dialog/Error';
+import GenerateButton from './Dialog/GenerateButton';
 import RefreshTokenTitle from './Dialog/Title';
+import CopyRefreshToken from './Dialog/Token';
 
 const TITLE_ID = 'create-refresh-tokens-title';
 
@@ -28,7 +31,25 @@ function ConfigureRefreshTokenButton() {
             >
                 <RefreshTokenTitle setOpen={setOpen} />
 
-                <RefreshTokenContent />
+                <DialogContent>
+                    <Grid
+                        container
+                        spacing={3}
+                        sx={{ mb: 1, alignItems: 'flex-start' }}
+                    >
+                        <RefreshTokenError />
+
+                        <CopyRefreshToken />
+
+                        <Grid item xs={9} sx={{ mt: 1, display: 'flex' }}>
+                            <RefreshTokenDescription />
+                        </Grid>
+
+                        <Grid item xs={3} sx={{ mt: 1, display: 'flex' }}>
+                            <GenerateButton />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
             </Dialog>
         </>
     );
