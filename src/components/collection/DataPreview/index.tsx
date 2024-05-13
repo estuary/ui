@@ -64,9 +64,7 @@ export function DataPreview({ collectionName }: Props) {
         desiredCount: 20,
     });
 
-    const readError = tenantHidesError
-        ? { ...BASE_ERROR, message: tenantHidesError.message }
-        : journalData.error
+    const readError = journalData.error
         ? {
               ...BASE_ERROR,
               message: journalData.error.message,
@@ -134,12 +132,12 @@ export function DataPreview({ collectionName }: Props) {
                     notFoundTitleMessage="collectionsPreview.notFound.message"
                 />
 
-                {readError ? (
-                    <Error error={readError} condensed />
-                ) : hide ? (
+                {tenantHidesError || hide ? (
                     <AlertBox short severity="info">
                         <FormattedMessage id="detailsPanel.dataPreview.hidden" />
                     </AlertBox>
+                ) : readError ? (
+                    <Error error={readError} condensed />
                 ) : isLoading ? (
                     <ListViewSkeleton />
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (

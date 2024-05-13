@@ -19,10 +19,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    useBilling_dataByTaskGraphDetails,
-    useBilling_hydrated,
-} from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
 import { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
 import {
@@ -70,8 +67,10 @@ function DataByTaskGraph() {
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
 
-    const billingStoreHydrated = useBilling_hydrated();
-    const dataByTaskGraphDetails = useBilling_dataByTaskGraphDetails();
+    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
+    const dataByTaskGraphDetails = useBillingStore(
+        (state) => state.dataByTaskGraphDetails
+    );
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 

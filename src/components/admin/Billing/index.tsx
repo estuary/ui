@@ -24,20 +24,8 @@ import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import {
-    useBilling_hydrated,
-    useBilling_invoicesInitialized,
-    useBilling_resetState,
-    useBilling_selectedInvoice,
-    useBilling_setActive,
-    useBilling_setDataByTaskGraphDetails,
-    useBilling_setHydrated,
-    useBilling_setHydrationErrorsExist,
-    useBilling_setInvoices,
-    useBilling_setInvoicesInitialized,
-    useBilling_setNetworkFailed,
-    useBilling_updateInvoices,
-} from 'stores/Billing/hooks';
+import { useBillingStore } from 'stores/Billing/Store';
+import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
@@ -53,21 +41,31 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Billing Store
-    const hydrated = useBilling_hydrated();
-    const setHydrated = useBilling_setHydrated();
-    const setHydrationErrorsExist = useBilling_setHydrationErrorsExist();
+    const hydrated = useBillingStore((state) => state.hydrated);
+    const setHydrated = useBillingStore((state) => state.setHydrated);
+    const setHydrationErrorsExist = useBillingStore(
+        (state) => state.setHydrationErrorsExist
+    );
 
-    const historyInitialized = useBilling_invoicesInitialized();
-    const setHistoryInitialized = useBilling_setInvoicesInitialized();
-    const setInvoices = useBilling_setInvoices();
-    const updateBillingHistory = useBilling_updateInvoices();
-    const setActive = useBilling_setActive();
-    const setNetworkFailed = useBilling_setNetworkFailed();
+    const historyInitialized = useBillingStore(
+        (state) => state.invoicesInitialized
+    );
+    const setHistoryInitialized = useBillingStore(
+        (state) => state.setInvoicesInitialized
+    );
+    const setInvoices = useBillingStore((state) => state.setInvoices);
+    const updateBillingHistory = useBillingStore(
+        (state) => state.updateInvoices
+    );
+    const setActive = useBillingStore((state) => state.setActive);
+    const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
 
     const selectedInvoice = useBilling_selectedInvoice();
-    const setDataByTaskGraphDetails = useBilling_setDataByTaskGraphDetails();
+    const setDataByTaskGraphDetails = useBillingStore(
+        (state) => state.setDataByTaskGraphDetails
+    );
 
-    const resetBillingState = useBilling_resetState();
+    const resetBillingState = useBillingStore((state) => state.resetState);
 
     const currentMonth = useConstant(() => {
         const today = new Date();
