@@ -133,8 +133,6 @@ export const convertToUTC = (
 //  2 - 4 columns. However, not a huge deal perf wise because the other cols
 //  are all 0.
 const getStatsByName = async (names: string[], filter?: StatsFilter) => {
-    // In case we get an absolutely massive amount of catalogs to delete,
-    // we don't want to spam supabase
     const limiter = pLimit(3);
     const promises: Array<Promise<PostgrestResponse<CatalogStats>>> = [];
     let index = 0;
