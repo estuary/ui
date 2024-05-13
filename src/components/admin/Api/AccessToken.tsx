@@ -19,9 +19,7 @@ function AccessToken() {
                     <FormattedMessage id="admin.cli_api.accessToken" />
                 </Typography>
 
-                <ExternalLink
-                    link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli"
-                >
+                <ExternalLink link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli">
                     <FormattedMessage id="terms.documentation" />
                 </ExternalLink>
             </Stack>
