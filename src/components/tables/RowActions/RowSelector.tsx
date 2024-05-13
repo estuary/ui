@@ -1,4 +1,4 @@
-import { ButtonGroup, Collapse, Stack } from '@mui/material';
+import { Box, ButtonGroup, Collapse, Stack, Tooltip } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
@@ -9,6 +9,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import RowSelectorCheckBox from './RowSelectorCheckBox';
 import Transform from './Transform';
 import { RowSelectorProps } from './types';
@@ -102,7 +103,17 @@ function RowSelector({
 
             <Collapse in={!hasSelections} orientation="horizontal">
                 {ExportComponent ? (
-                    <ExportComponent data={selectData ?? []} />
+                    <Tooltip
+                        title={intl.formatMessage({
+                            id: hasLength(selectData)
+                                ? 'entityTable.download.cta.title'
+                                : 'entityTable.download.cta.title.disabled',
+                        })}
+                    >
+                        <Box>
+                            <ExportComponent data={selectData ?? []} />
+                        </Box>
+                    </Tooltip>
                 ) : null}
             </Collapse>
         </Stack>

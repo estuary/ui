@@ -442,6 +442,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.selectColumn.menu.header': `Select Columns`,
     'entityTable.selectColumn.button.ariaLabel': `Open Table Column Customization Menu`,
     'entityTable.selectColumn.button.tooltip': `Select Columns`,
+
+    'entityTable.download.cta.title': `Download a CSV of the table contents`,
+    'entityTable.download.cta.title.disabled': `Cannot download CSV of empty table`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
