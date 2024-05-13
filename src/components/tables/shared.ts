@@ -32,7 +32,7 @@ export const lastPublished: ColumnProps = {
 };
 
 // Export stuff
-export const tableExportSeparator = ';';
+export const tableExportSeparator = ',';
 export const getFileName = (key: string) => {
     return `estuary_${key}_table_${DateTime.now().toFormat(
         'yyyy-MM-dd_HH:mm:ss'

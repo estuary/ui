@@ -99,7 +99,7 @@ function EntityTable({
     hideFilter,
     hideHeaderAndFooter,
     rowsPerPage,
-    rowsPerPageOptions = [10, 25, 50],
+    rowsPerPageOptions = [10, 25, 50, 100],
     minWidth = 350,
     showToolbar,
     toolbar,

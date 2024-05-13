@@ -4,6 +4,7 @@ import CsvDownload from 'react-csv-downloader';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import { getFileName, tableExportSeparator } from '../shared';
+import useExportColumns from '../useExportColumns';
 import useCaptureExport from './useCaptureExport';
 
 interface Props {
@@ -11,11 +12,13 @@ interface Props {
 }
 
 function CaptureExportButton({ data }: Props) {
+    const columns = useExportColumns();
     const generateExport = useCaptureExport(data);
     const noData = !hasLength(data);
 
     return (
         <CsvDownload
+            columns={columns}
             datas={generateExport}
             disabled={noData}
             separator={tableExportSeparator}
