@@ -35,7 +35,7 @@ function useCaptureExport(data: CollectionQueryWithStats[]) {
                     [ColumnNames.DocsWritten]:
                         stats?.[datum.catalog_name]?.docs_written_by_me ?? 0,
                 };
-            }) as any[]
+            })
         );
     }, [data, stats]);
 

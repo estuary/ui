@@ -42,7 +42,7 @@ function useCollectionExport(data: CollectionQueryWithStats[]) {
                     [ColumnNames.DocsRead]:
                         stats?.[datum.catalog_name]?.docs_read_from_me ?? 0,
                 };
-            }) as any[]
+            })
         );
     }, [data, stats]);
 

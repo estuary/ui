@@ -34,7 +34,7 @@ function useMaterializationExport(data: MaterializationQueryWithStats[]) {
                     [ColumnNames.DocsRead]:
                         stats?.[datum.catalog_name]?.docs_read_by_me ?? 0,
                 };
-            }) as any[]
+            })
         );
     }, [data, stats]);
 
