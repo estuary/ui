@@ -219,8 +219,16 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
+const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
+    const subjectRoleFilters = tenants
+        .map(
+            (tenant) =>
+                `catalog_name.ilike.${escapeReservedCharacters(tenant)}%`
+        )
+        .join(',');
+
     const today = new Date();
+
     return supabaseClient
         .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
         .select(
@@ -236,7 +244,7 @@ const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
         .eq('grain', monthlyGrain)
         .gte('ts', convertToUTC(startDate, monthlyGrain))
         .lte('ts', convertToUTC(today, monthlyGrain))
-        .ilike('catalog_name', tenant)
+        .or(subjectRoleFilters)
         .order('ts', { ascending: false });
 };
 
