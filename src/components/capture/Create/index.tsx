@@ -18,11 +18,9 @@ import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CustomEvents } from 'services/types';
 import BindingHydrator from 'stores/Binding/Hydrator';
-import {
-    useDetailsForm_connectorImage,
-    useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_entityNameChanged } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
@@ -38,7 +36,9 @@ function CaptureCreate() {
     const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
-    const imageTag = useDetailsForm_connectorImage();
+    const imageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage
+    );
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store

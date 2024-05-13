@@ -17,8 +17,8 @@ import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
 import BindingHydrator from 'stores/Binding/Hydrator';
-import { useDetailsForm_connectorImage } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 
 function MaterializationCreate() {
@@ -34,7 +34,9 @@ function MaterializationCreate() {
     const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
-    const imageTag = useDetailsForm_connectorImage();
+    const imageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage
+    );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
