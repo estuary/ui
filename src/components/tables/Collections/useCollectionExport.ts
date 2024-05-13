@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import { formatBytes, formatDocs } from '../cells/stats/shared';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { catalogName, connectorType, lastPublished } from '../shared';
+import { catalogName, lastPublished } from '../shared';
 
 function useCollectionExport(data: CollectionQueryWithStats[]) {
     const intl = useIntl();
@@ -26,9 +26,6 @@ function useCollectionExport(data: CollectionQueryWithStats[]) {
         return {
             name: intl.formatMessage({
                 id: catalogName.headerIntlKey ?? '',
-            }),
-            connector: intl.formatMessage({
-                id: connectorType.headerIntlKey ?? '',
             }),
             datawritten: intl.formatMessage(
                 {
@@ -63,9 +60,9 @@ function useCollectionExport(data: CollectionQueryWithStats[]) {
     return useCallback(() => {
         return Promise.resolve(
             data.map((datum) => {
+                console.log('stats', stats);
                 return {
                     [headers.name]: datum.catalog_name,
-                    [headers.connector]: `${datum.connector_image_name}${datum.connector_image_tag}`,
                     [headers.datawritten]: formatBytes(
                         stats?.[datum.catalog_name]?.bytes_written_to_me
                     ),
