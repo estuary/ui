@@ -1,24 +1,15 @@
-import { Box, Divider, Grid, SxProps, Theme, Typography } from '@mui/material';
-import { Auth } from '@supabase/ui';
+import { Divider, Grid, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import SingleLineCode from 'components/content/SingleLineCode';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
+import AccessToken from './AccessToken';
 import RefreshToken from './RefreshToken';
-
-const boxStyling: SxProps<Theme> = {
-    padding: 2,
-};
 
 function AdminApi() {
     usePageTitle({
         header: authenticatedRoutes.admin.api.title,
-        headerLink:
-            'https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli',
     });
-
-    const { session } = Auth.useUser();
 
     return (
         <>
@@ -40,24 +31,7 @@ function AdminApi() {
 
             <RefreshToken />
 
-            <Box sx={boxStyling}>
-                <Typography
-                    sx={{
-                        mb: 0.5,
-                        fontSize: 18,
-                        fontWeight: '400',
-                    }}
-                >
-                    <FormattedMessage id="admin.cli_api.accessToken" />
-                </Typography>
-
-                <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.cli_api.accessToken.message" />
-                </Typography>
-
-                {/* TODO (defect): Display an error in the event the access token does not exist. */}
-                <SingleLineCode value={session?.access_token ?? ''} />
-            </Box>
+            <AccessToken />
         </>
     );
 }
