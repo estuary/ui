@@ -18,7 +18,7 @@ function Row({ row }: RowProps) {
 
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
-            <TimeStamp time={row.created_at} enableRelative />
+            <TimeStamp time={row.created_at} enableExact />
 
             <TableCell>
                 <Typography sx={{ textWrap: 'wrap' }}>{row.detail}</Typography>

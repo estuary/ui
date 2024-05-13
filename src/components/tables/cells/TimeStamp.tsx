@@ -4,10 +4,11 @@ import { FormattedDate } from 'react-intl';
 
 interface Props {
     time: string | Date;
+    enableExact?: boolean;
     enableRelative?: boolean;
 }
 
-function TimeStamp({ enableRelative, time }: Props) {
+function TimeStamp({ enableExact, enableRelative, time }: Props) {
     return (
         <TableCell>
             <Tooltip
@@ -26,11 +27,24 @@ function TimeStamp({ enableRelative, time }: Props) {
                 placement="bottom-start"
             >
                 <Box>
-                    {!enableRelative
-                        ? formatDistanceToNow(new Date(time), {
-                              addSuffix: true,
-                          })
-                        : formatRelative(new Date(time), new Date())}
+                    {enableExact ? (
+                        <FormattedDate
+                            day="2-digit"
+                            month="2-digit"
+                            year="numeric"
+                            hour="numeric"
+                            minute="numeric"
+                            second="numeric"
+                            timeZoneName="short"
+                            value={time}
+                        />
+                    ) : enableRelative ? (
+                        formatRelative(new Date(time), new Date())
+                    ) : (
+                        formatDistanceToNow(new Date(time), {
+                            addSuffix: true,
+                        })
+                    )}
                 </Box>
             </Tooltip>
         </TableCell>
