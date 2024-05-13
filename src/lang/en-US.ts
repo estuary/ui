@@ -43,6 +43,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.failedFetch': `Unable to reach server`,
     'common.missingError': `Something went wrong`,
     'common.exampleName': `marketing_data`,
+    'common.revoking': `Revoking...`,
+    'common.revoked': `Revoked`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -149,6 +151,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.add': `Add`,
     'cta.transform': `Transform`,
     'cta.back': `Back`,
+    'cta.revoke': `Revoke`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -519,12 +522,15 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.addPaymentMethods.title': `Add a payment method`,
     'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Error['error.tryAgain']}`,
 
+    'admin.grants.confirmation.alert': `Access to all items will be revoked and this action cannot be undone. Please review the list to continue.`,
+
     'admin.users.cta.prefixInvitation': `Manage Invitations`,
     'admin.users.prefixInvitation.header': `Manage Invitations`,
     'admin.users.prefixInvitation.message': `This is a placeholder for a description.`,
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Generate Invitation`,
+    'admin.users.confirmation.listItem': `{identifier} with {capability} access.`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
@@ -536,6 +542,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
+    'admin.prefix.confirmation.listItem': `{subjectRole} having {capability} over {objectRole}.`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
