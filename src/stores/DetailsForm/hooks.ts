@@ -22,14 +22,6 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 };
 
 // Selector hooks
-export const useDetailsForm_unsupportedConnectorVersion = () => {
-    const entityType = useEntityType();
-    return useZustandStore<
-        DetailsFormState,
-        DetailsFormState['unsupportedConnectorVersion']
-    >(getStoreName(entityType), (state) => state.unsupportedConnectorVersion);
-};
-
 export const useDetailsForm_connectorImage_connectorId = () => {
     const entityType = useEntityType();
     return useZustandStore<
