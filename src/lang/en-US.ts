@@ -410,6 +410,9 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.data.storagePrefix': `Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
+    'entityTable.data.created': `Created`,
+    'entityTable.data.description': `Description`,
+    'entityTable.data.user': `User`,
 
     'entityTable.stats.filter.label': `${
         CommonMessages[`filter.time.label`]
@@ -460,8 +463,22 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
-    'admin.accessToken': `Access Token`,
-    'admin.accessToken.message': `Copy the access token below to authenticate the CLI client.`,
+
+    'admin.cli_api.header': `Programmatic Access to Flow`,
+    'admin.cli_api.message': `Use Refresh and Access tokens to connect to Flow programmatically.`,
+    'admin.cli_api.accessToken': `Access Token`,
+    'admin.cli_api.accessToken.message': `Access tokens enable authentication using flowctl.`,
+    'admin.cli_api.refreshToken': `Refresh Token`,
+    'admin.cli_api.refreshToken.message': `Refresh tokens enable programmatic access to most services including the Kafka compatible API “dekaf”.`,
+    'admin.cli_api.refreshToken.cta.generate': `Generate Token`,
+    'admin.cli_api.refreshToken.table.noContent.header': `No refresh tokens found.`,
+    'admin.cli_api.refreshToken.table.noContent.message': `To create a refresh token, click "Generate Token" above.`,
+    'admin.cli_api.refreshToken.table.filterLabel': `Filter by Description`,
+    'admin.cli_api.refreshToken.table.label.uses': `Used {count} {count, plural, one {time} other {times}}`,
+    'admin.cli_api.refreshToken.dialog.header': `Generate Refresh Token`,
+    'admin.cli_api.refreshToken.dialog.label': `What’s this token for?`,
+    'admin.cli_api.refreshToken.dialog.alert.copyToken': `Make sure to copy your refresh token now. You won't be able to see it again!`,
+    'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
