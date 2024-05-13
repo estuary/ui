@@ -11,7 +11,7 @@ function useCaptureExport(data: CollectionQueryWithStats[]) {
     const exportColumns = useExportColumns();
 
     const { stats } = useRowsWithStatsState(
-        SelectTableStoreNames.COLLECTION,
+        SelectTableStoreNames.CAPTURE,
         data
     );
 
