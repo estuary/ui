@@ -1,12 +1,10 @@
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
 import {
-    useDetailsForm_connectorImage_connectorId,
-    useDetailsForm_connectorImage_id,
-} from 'stores/DetailsForm/hooks';
-import {
-    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_endpointSchema,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import { Schema } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
@@ -14,7 +12,9 @@ import { encryptEndpointConfig } from 'utils/sops-utils';
 function useDiscoverConfigEncrypt() {
     const { callFailed } = useEntityWorkflowHelpers();
 
-    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
+    const imageConnectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
+    );
     const imageConnectorTagId = useDetailsForm_connectorImage_id();
 
     const endpointSchema = useEndpointConfigStore_endpointSchema();

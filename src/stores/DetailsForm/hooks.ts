@@ -22,17 +22,6 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 };
 
 // Selector hooks
-export const useDetailsForm_connectorImage_connectorId = () => {
-    const entityType = useEntityType();
-    return useZustandStore<
-        DetailsFormState,
-        DetailsFormState['details']['data']['connectorImage']['connectorId']
-    >(
-        getStoreName(entityType),
-        (state) => state.details.data.connectorImage.connectorId
-    );
-};
-
 export const useDetailsForm_connectorImage_id = () => {
     const entityType = useEntityType();
     return useZustandStore<

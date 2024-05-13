@@ -4,8 +4,8 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_rediscoveryRequired } from 'stores/Binding/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
-    useDetailsForm_connectorImage_connectorId,
     useDetailsForm_entityNameChanged,
     useDetailsForm_previousConnectorImage_connectorId,
 } from 'stores/DetailsForm/hooks';
@@ -45,7 +45,9 @@ function CaptureGenerateButton({
     );
 
     // Details Form Store
-    const selectedConnectorId = useDetailsForm_connectorImage_connectorId();
+    const selectedConnectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
+    );
     const previousConnectorId =
         useDetailsForm_previousConnectorImage_connectorId();
     const entityNameChanged = useDetailsForm_entityNameChanged();
