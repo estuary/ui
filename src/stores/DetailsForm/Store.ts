@@ -342,18 +342,8 @@ export const getInitialState = (
     },
 });
 
-const createDetailsFormStore = (key: DetailsFormStoreNames) => {
+export const useDetailsFormStore = (key: DetailsFormStoreNames) => {
     return createStore<DetailsFormState>()(
         devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
     );
 };
-
-export const captureDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.CAPTURE
-);
-export const collectionDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.COLLECTION
-);
-export const materializationDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.MATERIALIZATION
-);
