@@ -3,14 +3,17 @@ import { linkButtonSx } from 'context/Theme';
 import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
 
-interface Props {
-    children: ReactNode;
-    link: string;
-    variant?: ButtonTypeMap['props']['variant'];
+export interface ExternalLinkOptions {
+    color?: ButtonTypeMap['props']['color'];
     hideIcon?: boolean;
     padding?: number;
     sx?: SxProps;
-    color?: ButtonTypeMap['props']['color'];
+    variant?: ButtonTypeMap['props']['variant'];
+}
+
+interface Props extends ExternalLinkOptions {
+    children: ReactNode;
+    link: string;
 }
 
 const ExternalLink = ({
