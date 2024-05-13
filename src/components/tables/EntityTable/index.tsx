@@ -1,12 +1,10 @@
 import {
     Box,
-    Stack,
+    Grid,
     Table,
     TableContainer,
     TextField,
     Toolbar,
-    useMediaQuery,
-    useTheme,
 } from '@mui/material';
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
@@ -114,9 +112,6 @@ function EntityTable({
     const searchTextField = useRef<HTMLInputElement>(null);
 
     const intl = useIntl();
-
-    const theme = useTheme();
-    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const isValidating = useZustandStore<
         SelectableTableStore,
@@ -293,43 +288,52 @@ function EntityTable({
         <Box data-public>
             {hideHeaderAndFooter ? null : (
                 <Box sx={{ mx: 2 }}>
-                    <Stack direction="row" spacing={1}>
-                        {showToolbar ? (
-                            <Title header={header} marginBottom={2} />
-                        ) : null}
-                    </Stack>
+                    {showToolbar ? (
+                        <Title header={header} marginBottom={2} />
+                    ) : null}
 
-                    <Toolbar
-                        disableGutters
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        {showToolbar ? toolbar : <Title header={header} />}
+                    <Toolbar disableGutters>
+                        <Grid
+                            container
+                            alignItems="center"
+                            justifyContent="space-between"
+                            spacing={1}
+                            sx={{ mb: 1 }}
+                        >
+                            <Grid item xs={12} md={9}>
+                                {showToolbar ? (
+                                    toolbar
+                                ) : (
+                                    <Title header={header} />
+                                )}
+                            </Grid>
 
-                        {hideFilter ? null : (
-                            <TextField
-                                inputRef={searchTextField}
-                                // TODO (table filtering)
-                                // Should leverage TablePrefixes setting in the search hook here
-                                //  could handle by somehow tying the search to the actual input
-                                // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
-                                id={`capture-search-box__${filterLabel}`}
-                                label={intl.formatMessage({
-                                    id: filterLabel,
-                                })}
-                                variant="outlined"
-                                size="small"
-                                defaultValue={searchQuery}
-                                onChange={handlers.filterTable}
-                                sx={{
-                                    'width': belowMd ? 'auto' : 350,
-                                    '& .MuiInputBase-root': { borderRadius: 3 },
-                                }}
-                            />
-                        )}
+                            {hideFilter ? null : (
+                                <Grid item xs={12} md={3}>
+                                    <TextField
+                                        inputRef={searchTextField}
+                                        // TODO (table filtering)
+                                        // Should leverage TablePrefixes setting in the search hook here
+                                        //  could handle by somehow tying the search to the actual input
+                                        // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
+                                        id={`capture-search-box__${filterLabel}`}
+                                        label={intl.formatMessage({
+                                            id: filterLabel,
+                                        })}
+                                        variant="outlined"
+                                        size="small"
+                                        defaultValue={searchQuery}
+                                        onChange={handlers.filterTable}
+                                        sx={{
+                                            'width': '100%',
+                                            '& .MuiInputBase-root': {
+                                                borderRadius: 3,
+                                            },
+                                        }}
+                                    />
+                                </Grid>
+                            )}
+                        </Grid>
                     </Toolbar>
                 </Box>
             )}
