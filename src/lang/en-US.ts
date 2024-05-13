@@ -476,6 +476,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.cli_api.refreshToken.dialog.header': `Generate Refresh Token`,
     'admin.cli_api.refreshToken.dialog.label': `What’s this token for?`,
     'admin.cli_api.refreshToken.dialog.alert.copyToken': `Make sure to copy your refresh token now. You won't be able to see it again!`,
+    'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,

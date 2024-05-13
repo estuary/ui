@@ -2,7 +2,7 @@ import { LoadingButton } from '@mui/lab';
 import { createRefreshToken } from 'api/tokens';
 import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -14,6 +14,8 @@ import { useRefreshTokenStore } from '../Store/create';
 const TOKEN_VALIDITY = '1 year';
 
 function GenerateButton() {
+    const intl = useIntl();
+
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -55,7 +57,21 @@ function GenerateButton() {
         // The refresh token ID and secret are needed by Flow, therefore it was decided
         // to base64 encode the data returned in the response and present that as the
         // one-time secret presented to the user.
-        setToken(Buffer.from(JSON.stringify(response.data)).toString('base64'));
+        const token = Buffer.from(JSON.stringify(response.data)).toString(
+            'base64'
+        );
+
+        if (!hasLength(token)) {
+            setServerError(
+                intl.formatMessage({
+                    id: 'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed',
+                })
+            );
+
+            return;
+        }
+
+        setToken(token);
     };
 
     return (
