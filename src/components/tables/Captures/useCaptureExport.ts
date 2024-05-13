@@ -2,7 +2,7 @@ import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { useCallback, useMemo } from 'react';
 import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { SelectTableStoreNames } from 'stores/names';
-import { formatBytes, formatDocs } from '../cells/stats/shared';
+import { formatBytes } from '../cells/stats/shared';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 import { ColumnNames } from '../shared';
 import useExportColumns from '../useExportColumns';
@@ -32,9 +32,8 @@ function useCaptureExport(data: CollectionQueryWithStats[]) {
                     [ColumnNames.DataWritten]: formatBytes(
                         stats?.[datum.catalog_name]?.bytes_written_by_me
                     ),
-                    [ColumnNames.DocsWritten]: formatDocs(
-                        stats?.[datum.catalog_name]?.docs_written_by_me
-                    ),
+                    [ColumnNames.DocsWritten]:
+                        stats?.[datum.catalog_name]?.docs_written_by_me ?? 0,
                 };
             }) as any[]
         );
