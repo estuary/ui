@@ -73,7 +73,9 @@ function RevokeTokenButton({ id }: Props) {
                             <Error
                                 condensed
                                 error={error}
-                                linkSx={{ color: sample_blue[200] }}
+                                linkOptions={{
+                                    sx: { color: sample_blue[200] },
+                                }}
                                 noAlertBox
                                 severity="error"
                             />

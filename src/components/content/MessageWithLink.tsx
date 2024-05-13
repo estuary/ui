@@ -1,14 +1,16 @@
-import { Box, SxProps } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
+import { Box } from '@mui/material';
+import ExternalLink, {
+    ExternalLinkOptions,
+} from 'components/shared/ExternalLink';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     messageID: string;
     link?: string;
-    linkSx?: SxProps;
+    linkOptions?: ExternalLinkOptions;
 }
 
-function MessageWithLink({ link, linkSx, messageID }: Props) {
+function MessageWithLink({ link, linkOptions, messageID }: Props) {
     const intl = useIntl();
     return (
         <FormattedMessage
@@ -17,13 +19,13 @@ function MessageWithLink({ link, linkSx, messageID }: Props) {
             values={{
                 docLink: (
                     <ExternalLink
+                        {...linkOptions}
                         link={
                             link ??
                             intl.formatMessage({
                                 id: `${messageID}.docPath`,
                             })
                         }
-                        sx={linkSx}
                     >
                         <FormattedMessage id={`${messageID}.docLink`} />
                     </ExternalLink>
