@@ -1,9 +1,6 @@
-import { Button } from '@mui/material';
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
-import CsvDownload from 'react-csv-downloader';
-import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
-import { generateFileName, tableExportSeparator } from '../shared';
+import ExportButton from '../shared/ExportButton';
 import useCollectionExport from './useCollectionExport';
 
 interface Props {
@@ -15,21 +12,12 @@ function CollectionExportButton({ data }: Props) {
     const noData = !hasLength(data);
 
     return (
-        <CsvDownload
+        <ExportButton
             columns={columns}
-            datas={generateExport}
             disabled={noData}
-            separator={tableExportSeparator}
-            filename={generateFileName('collections_table')}
-        >
-            <Button
-                disabled={noData}
-                variant="outlined"
-                sx={{ whiteSpace: 'nowrap' }}
-            >
-                <FormattedMessage id="entityTable.download.cta" />
-            </Button>
-        </CsvDownload>
+            generateExport={generateExport}
+            fileName="collections_table"
+        />
     );
 }
 
