@@ -1,5 +1,4 @@
 import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
-import { hasLength } from 'utils/misc-utils';
 import ExportButton from '../shared/ExportButton';
 import useMaterializationExport from './useMaterializationExport';
 
@@ -8,8 +7,7 @@ interface Props {
 }
 
 function MaterializationExportButton({ data }: Props) {
-    const { columns, generateExport } = useMaterializationExport(data);
-    const noData = !hasLength(data);
+    const { columns, generateExport, noData } = useMaterializationExport(data);
 
     return (
         <ExportButton

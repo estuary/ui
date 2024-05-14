@@ -2,6 +2,7 @@ import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { useCallback, useMemo } from 'react';
 import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { SelectTableStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { formatBytes } from '../cells/stats/shared';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 import { ColumnNames } from '../shared';
@@ -14,6 +15,8 @@ function useCaptureExport(data: CollectionQueryWithStats[]) {
         SelectTableStoreNames.CAPTURE,
         data
     );
+
+    const noData = useMemo(() => !hasLength(data), [data]);
 
     const columns = useMemo<Columns>(
         () => [
@@ -42,6 +45,7 @@ function useCaptureExport(data: CollectionQueryWithStats[]) {
     return {
         columns,
         generateExport,
+        noData,
     };
 }
 

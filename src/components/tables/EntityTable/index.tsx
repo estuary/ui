@@ -77,8 +77,7 @@ interface Props {
     ExportComponent?: any;
 }
 
-// TODO (tables) I think we should switch this to React Table soon
-//   Also - you MUST include a count with your query or else pagination breaks
+// WARNING - You MUST include a count with your query or else pagination breaks
 function EntityTable({
     columns,
     noExistingDataContentIds,

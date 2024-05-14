@@ -2,6 +2,7 @@ import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { useCallback, useMemo } from 'react';
 import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { SelectTableStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { formatBytes } from '../cells/stats/shared';
 import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 import { ColumnNames } from '../shared';
@@ -13,6 +14,8 @@ function useMaterializationExport(data: MaterializationQueryWithStats[]) {
         SelectTableStoreNames.MATERIALIZATION,
         data
     );
+
+    const noData = useMemo(() => !hasLength(data), [data]);
 
     const columns = useMemo<Columns>(
         () => [
@@ -41,6 +44,7 @@ function useMaterializationExport(data: MaterializationQueryWithStats[]) {
     return {
         columns,
         generateExport,
+        noData,
     };
 }
 

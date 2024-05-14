@@ -1,5 +1,4 @@
 import { CollectionQueryWithStats } from 'api/liveSpecsExt';
-import { hasLength } from 'utils/misc-utils';
 import ExportButton from '../shared/ExportButton';
 import useCollectionExport from './useCollectionExport';
 
@@ -8,8 +7,7 @@ interface Props {
 }
 
 function CollectionExportButton({ data }: Props) {
-    const { columns, generateExport } = useCollectionExport(data);
-    const noData = !hasLength(data);
+    const { columns, generateExport, noData } = useCollectionExport(data);
 
     return (
         <ExportButton
