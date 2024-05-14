@@ -8,6 +8,7 @@ import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
+import MaterializationExportButton from './Export';
 import useMaterializationColumns from './useMaterializationColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.MATERIALIZATION;
@@ -46,6 +47,7 @@ function MaterializationsTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={MaterializationExportButton}
                         noExistingDataContentIds={{
                             header: 'materializations.message1',
                             message: 'materializations.message2',

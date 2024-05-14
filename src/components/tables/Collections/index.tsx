@@ -10,6 +10,7 @@ import { SelectTableStoreNames } from 'stores/names';
 import RowSelector from '../RowActions/RowSelector';
 import { selectKeyValueName } from '../shared';
 import useCollectionColumns from './useCollectionColumns';
+import CollectionExportButton from './Export';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
 
@@ -47,6 +48,7 @@ function CollectionsTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={CollectionExportButton}
                         noExistingDataContentIds={{
                             header: 'collections.message1',
                             message: 'collections.message2',

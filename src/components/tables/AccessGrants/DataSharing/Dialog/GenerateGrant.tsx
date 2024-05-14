@@ -37,11 +37,7 @@ const namePattern = new RegExp(
     `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}/?$`
 );
 
-// The write capability should be obscured to the user. It is more challenging
-// for a user to understand the nuances of this grant and likely will not be used
-// outside of advanced cases.
-
-const capabilityOptions: Capability[] = ['read', 'admin'];
+const capabilityOptions: Capability[] = ['read', 'admin', 'write'];
 
 function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
     const intl = useIntl();

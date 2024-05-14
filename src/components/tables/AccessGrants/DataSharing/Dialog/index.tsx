@@ -77,6 +77,12 @@ function ShareDataDialog({ open, setOpen }: Props) {
                                     <FormattedMessage id="admin.prefix.issueGrant.error.invalidPrefix" />
                                 </Typography>
                             </AlertBox>
+                        ) : serverError.code === '23505' ? (
+                            <AlertBox severity="error" short>
+                                <Typography>
+                                    <FormattedMessage id="admin.prefix.issueGrant.error.duplicatePrefix" />
+                                </Typography>
+                            </AlertBox>
                         ) : (
                             <Error
                                 error={serverError}

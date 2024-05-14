@@ -112,6 +112,9 @@ const invariableStores = {
     [SelectTableStoreNames.PREFIX_ALERTS]: createPrefixAlertTableStore(
         SelectTableStoreNames.PREFIX_ALERTS
     ),
+    [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
+        SelectTableStoreNames.REFRESH_TOKENS
+    ),
 
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
