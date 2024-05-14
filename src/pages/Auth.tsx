@@ -1,4 +1,8 @@
-import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
+import {
+    authenticatedRoutes,
+    REDIRECT_TO_PARAM_NAME,
+    unauthenticatedRoutes,
+} from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useUser } from 'context/UserContext';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
@@ -56,6 +60,7 @@ const Auth = () => {
 
             savingUser.current = false;
             await supabaseClient.auth.signOut();
+            navigate(unauthenticatedRoutes.login.path);
         };
 
         const success = () => {
