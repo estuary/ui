@@ -1,4 +1,4 @@
-import { ButtonGroup, Stack } from '@mui/material';
+import { ButtonGroup, Grid, Stack } from '@mui/material';
 import DeleteButton from 'components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'components/tables/RowActions/Materialize';
@@ -48,41 +48,55 @@ function RowSelector({
                 />
             )}
 
-            {hideActions ? null : (
-                <ButtonGroup
-                    aria-label={intl.formatMessage({
-                        id: 'capturesTable.ctaGroup.aria',
-                    })}
-                    disableElevation
-                    disabled={!hasSelections}
-                >
-                    <DisableEnableButton
-                        selectableTableStoreName={selectableTableStoreName}
-                        enabling={true}
-                    />
+            <Grid container alignItems="center" gap={1}>
+                {hideActions ? null : (
+                    <Grid item>
+                        <ButtonGroup
+                            aria-label={intl.formatMessage({
+                                id: 'capturesTable.ctaGroup.aria',
+                            })}
+                            disableElevation
+                            disabled={!hasSelections}
+                        >
+                            <DisableEnableButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                enabling={true}
+                            />
 
-                    <DisableEnableButton
-                        selectableTableStoreName={selectableTableStoreName}
-                        enabling={false}
-                    />
+                            <DisableEnableButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                                enabling={false}
+                            />
 
-                    <DeleteButton
-                        selectableTableStoreName={selectableTableStoreName}
-                    />
-                </ButtonGroup>
-            )}
+                            <DeleteButton
+                                selectableTableStoreName={
+                                    selectableTableStoreName
+                                }
+                            />
+                        </ButtonGroup>
+                    </Grid>
+                )}
 
-            {showMaterialize ? (
-                <Materialize
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            ) : null}
+                {showMaterialize ? (
+                    <Grid item>
+                        <Materialize
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
+                    </Grid>
+                ) : null}
 
-            {showTransform ? (
-                <Transform
-                    selectableTableStoreName={selectableTableStoreName}
-                />
-            ) : null}
+                {showTransform ? (
+                    <Grid item>
+                        <Transform
+                            selectableTableStoreName={selectableTableStoreName}
+                        />
+                    </Grid>
+                ) : null}
+            </Grid>
         </Stack>
     );
 }

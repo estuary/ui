@@ -293,6 +293,8 @@ export const getInitialState = (
 
                 if (error) {
                     setHydrationErrorsExist(true);
+                    // data is not always returned
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 } else if (data) {
                     if (data.length > 0) {
                         const statsData: StatsSchema = {};

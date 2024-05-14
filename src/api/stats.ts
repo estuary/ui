@@ -1,4 +1,7 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    PostgrestFilterBuilder,
+    PostgrestResponse,
+} from '@supabase/postgrest-js';
 import {
     Duration,
     isSaturday,
@@ -16,11 +19,8 @@ import { UTCDate } from '@date-fns/utc';
 import {
     defaultTableFilter,
     escapeReservedCharacters,
-    handleFailure,
-    handleSuccess,
     SortingProps,
     supabaseClient,
-    supabaseRetry,
     TABLES,
 } from 'services/supabase';
 import {
@@ -29,6 +29,8 @@ import {
     CatalogStats_Details,
     Entity,
 } from 'types';
+import pLimit from 'p-limit';
+import { CHUNK_SIZE } from 'utils/misc-utils';
 
 export type StatsFilter =
     | 'today'
@@ -130,70 +132,89 @@ export const convertToUTC = (
 //  Right now all tables run the same query even though they only need
 //  2 - 4 columns. However, not a huge deal perf wise because the other cols
 //  are all 0.
-const getStatsByName = (names: string[], filter?: StatsFilter) => {
-    let queryBuilder = supabaseClient
-        .from<CatalogStats>(TABLES.CATALOG_STATS)
-        .select(DEFAULT_QUERY)
-        .in('catalog_name', names)
-        .order('catalog_name');
+const getStatsByName = async (names: string[], filter?: StatsFilter) => {
+    const limiter = pLimit(3);
+    const promises: Array<Promise<PostgrestResponse<CatalogStats>>> = [];
+    let index = 0;
 
-    const today = new Date();
+    // TODO (retry) promise generator
+    const promiseGenerator = (idx: number) => {
+        let queryBuilder = supabaseClient
+            .from<CatalogStats>(TABLES.CATALOG_STATS)
+            .select(DEFAULT_QUERY)
+            .in('catalog_name', names.slice(idx, idx + CHUNK_SIZE))
+            .order('catalog_name');
 
-    // TODO (locale) allow users to have proper locale settings used for start and end of weeks
-    // startOf/endOf functions can give some odd results so just forcing exactly
-    //  what days we want to say are the start and end of a week based on the
-    //  current day.
-    const weekStart = isSunday(today) ? today : previousSunday(today);
-    const weekEnd = isSaturday(today) ? today : nextSaturday(today);
+        const today = new Date();
 
-    switch (filter) {
-        // Day Range
-        case 'today':
-            queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(today, dailyGrain))
-                .eq('grain', dailyGrain);
-            break;
-        case 'yesterday':
-            queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(subDays(today, 1), dailyGrain))
-                .eq('grain', dailyGrain);
-            break;
+        // TODO (locale) allow users to have proper locale settings used for start and end of weeks
+        // startOf/endOf functions can give some odd results so just forcing exactly
+        //  what days we want to say are the start and end of a week based on the
+        //  current day.
+        const weekStart = isSunday(today) ? today : previousSunday(today);
+        const weekEnd = isSaturday(today) ? today : nextSaturday(today);
 
-        // Week Range
-        case 'thisWeek':
-            queryBuilder = queryBuilder
-                .gte('ts', convertToUTC(weekStart, dailyGrain))
-                .lte('ts', convertToUTC(weekEnd, dailyGrain))
-                .eq('grain', dailyGrain);
-            break;
-        case 'lastWeek':
-            queryBuilder = queryBuilder
-                .gte('ts', convertToUTC(subWeeks(weekStart, 1), dailyGrain))
-                .lte('ts', convertToUTC(subWeeks(weekEnd, 1), dailyGrain))
-                .eq('grain', dailyGrain);
-            break;
+        switch (filter) {
+            // Day Range
+            case 'today':
+                queryBuilder = queryBuilder
+                    .eq('ts', convertToUTC(today, dailyGrain))
+                    .eq('grain', dailyGrain);
+                break;
+            case 'yesterday':
+                queryBuilder = queryBuilder
+                    .eq('ts', convertToUTC(subDays(today, 1), dailyGrain))
+                    .eq('grain', dailyGrain);
+                break;
 
-        // Month Range
-        case 'thisMonth':
-            queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(today, monthlyGrain))
-                .eq('grain', monthlyGrain);
+            // Week Range
+            case 'thisWeek':
+                queryBuilder = queryBuilder
+                    .gte('ts', convertToUTC(weekStart, dailyGrain))
+                    .lte('ts', convertToUTC(weekEnd, dailyGrain))
+                    .eq('grain', dailyGrain);
+                break;
+            case 'lastWeek':
+                queryBuilder = queryBuilder
+                    .gte('ts', convertToUTC(subWeeks(weekStart, 1), dailyGrain))
+                    .lte('ts', convertToUTC(subWeeks(weekEnd, 1), dailyGrain))
+                    .eq('grain', dailyGrain);
+                break;
 
-            break;
-        case 'lastMonth':
-            queryBuilder = queryBuilder
-                .eq('ts', convertToUTC(subMonths(today, 1), monthlyGrain))
-                .eq('grain', monthlyGrain);
-            break;
+            // Month Range
+            case 'thisMonth':
+                queryBuilder = queryBuilder
+                    .eq('ts', convertToUTC(today, monthlyGrain))
+                    .eq('grain', monthlyGrain);
 
-        default:
-            throw new Error('Unsupported filter used in Stats Query');
+                break;
+            case 'lastMonth':
+                queryBuilder = queryBuilder
+                    .eq('ts', convertToUTC(subMonths(today, 1), monthlyGrain))
+                    .eq('grain', monthlyGrain);
+                break;
+
+            default:
+                throw new Error('Unsupported filter used in Stats Query');
+        }
+
+        return queryBuilder;
+    };
+
+    // This could probably be written in a fancy functional-programming way with
+    // clever calls to concat and map and slice and stuff,
+    // but I want it to be dead obvious what's happening here.
+    while (index < names.length) {
+        // Have to do this to capture `index` correctly
+        const prom = promiseGenerator(index);
+        promises.push(limiter(() => prom));
+
+        index = index + CHUNK_SIZE;
     }
 
-    return supabaseRetry(() => queryBuilder, '').then(
-        handleSuccess<CatalogStats[]>,
-        handleFailure
-    );
+    const response = await Promise.all(promises);
+    const errors = response.filter((r) => r.error);
+    return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
 const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {

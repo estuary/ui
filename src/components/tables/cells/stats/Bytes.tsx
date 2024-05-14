@@ -1,8 +1,8 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
-import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { formatBytes } from './shared';
 
 interface Props {
     read?: boolean;
@@ -14,14 +14,7 @@ const Bytes = ({ read, val }: Props) => {
     const intl = useIntl();
     const statsLoading = val === null;
     const defaultedVal = val ?? 0;
-    const number = useMemo(
-        () =>
-            prettyBytes(defaultedVal, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-            }),
-        [defaultedVal]
-    );
+    const number = useMemo(() => formatBytes(defaultedVal), [defaultedVal]);
 
     return (
         <TableCell

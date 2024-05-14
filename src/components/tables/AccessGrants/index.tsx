@@ -10,9 +10,10 @@ import UserRows, {
 } from 'components/tables/AccessGrants/UserRows';
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
-import { useTableState, TablePrefix } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { TablePrefix, useTableState } from 'stores/Tables/hooks';
+import { SelectTableStoreNames } from 'stores/names';
+import RowSelector from '../RowActions/AccessGrants/RowSelector';
 
 interface Props {
     tablePrefix: TablePrefix;
@@ -101,7 +102,20 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                     }
                     showToolbar
                     toolbar={
-                        showUser ? <AccessLinksButton /> : <DataShareButton />
+                        <RowSelector
+                            additionalCTA={
+                                showUser ? (
+                                    <AccessLinksButton />
+                                ) : (
+                                    <DataShareButton />
+                                )
+                            }
+                            selectTableStoreName={
+                                showUser
+                                    ? SelectTableStoreNames.ACCESS_GRANTS_USERS
+                                    : SelectTableStoreNames.ACCESS_GRANTS_PREFIXES
+                            }
+                        />
                     }
                 />
             </TableHydrator>

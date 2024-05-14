@@ -84,6 +84,7 @@ export enum TABLES {
     PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',
+    REFRESH_TOKENS = 'refresh_tokens',
     ROLE_GRANTS = 'role_grants',
     STORAGE_MAPPINGS = 'storage_mappings',
     TASKS_BY_DAY = 'task_stats_by_day',

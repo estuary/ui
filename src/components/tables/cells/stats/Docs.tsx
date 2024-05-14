@@ -2,7 +2,7 @@ import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import readable from 'readable-numbers';
+import { formatDocs } from './shared';
 
 interface Props {
     read?: boolean;
@@ -13,10 +13,7 @@ const Docs = ({ read, val }: Props) => {
     const intl = useIntl();
     const statsLoading = val === null;
     const defaultedVal = val ?? 0;
-    const number = useMemo(
-        () => readable(defaultedVal, 2, false),
-        [defaultedVal]
-    );
+    const number = useMemo(() => formatDocs(defaultedVal), [defaultedVal]);
 
     return (
         <TableCell
