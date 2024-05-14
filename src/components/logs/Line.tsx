@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import Ansi, { AnsiColored } from 'ansicolor';
+import ansi from 'ansicolor';
 import { defaultOutline } from 'context/Theme';
 import { useMemo } from 'react';
 import { ViewLogs_Line } from 'types';
@@ -20,13 +20,12 @@ export const lineNumberColor = '#666';
 // };
 
 function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
-    let parsedLine: AnsiColored;
-
-    if (line instanceof Object) {
-        parsedLine = Ansi.parse(line.log_line);
-    } else {
-        parsedLine = Ansi.parse(line);
-    }
+    const parsedLine = useMemo(() => {
+        if (line instanceof Object) {
+            return ansi.parse(line.log_line);
+        }
+        return ansi.parse(line);
+    }, [line]);
 
     const reneredParsedLine = useMemo(() => {
         return parsedLine.spans.map((span, index, array) => (
