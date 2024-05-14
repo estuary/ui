@@ -74,10 +74,10 @@ interface Props {
     showEntityStatus?: boolean;
     showToolbar?: boolean;
     toolbar?: ReactNode;
+    ExportComponent?: any;
 }
 
-// TODO (tables) I think we should switch this to React Table soon
-//   Also - you MUST include a count with your query or else pagination breaks
+// WARNING - You MUST include a count with your query or else pagination breaks
 function EntityTable({
     columns,
     noExistingDataContentIds,
@@ -98,12 +98,13 @@ function EntityTable({
     hideFilter,
     hideHeaderAndFooter,
     rowsPerPage,
-    rowsPerPageOptions = [10, 25, 50],
+    rowsPerPageOptions = [10, 25, 50, 100],
     minWidth = 350,
     showToolbar,
     toolbar,
     keepSelectionOnFilterOrSearch,
     keepSelectionOnPagination,
+    ExportComponent,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -304,27 +305,37 @@ function EntityTable({
                     >
                         {showToolbar ? toolbar : <Title header={header} />}
 
-                        {hideFilter ? null : (
-                            <TextField
-                                inputRef={searchTextField}
-                                // TODO (table filtering)
-                                // Should leverage TablePrefixes setting in the search hook here
-                                //  could handle by somehow tying the search to the actual input
-                                // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
-                                id={`capture-search-box__${filterLabel}`}
-                                label={intl.formatMessage({
-                                    id: filterLabel,
-                                })}
-                                variant="outlined"
-                                size="small"
-                                defaultValue={searchQuery}
-                                onChange={handlers.filterTable}
-                                sx={{
-                                    'width': belowMd ? 'auto' : 350,
-                                    '& .MuiInputBase-root': { borderRadius: 3 },
-                                }}
-                            />
-                        )}
+                        <Stack
+                            direction={belowMd ? 'column-reverse' : 'row'}
+                            spacing={2}
+                        >
+                            {ExportComponent ? (
+                                <ExportComponent data={selectData ?? []} />
+                            ) : null}
+                            {hideFilter ? null : (
+                                <TextField
+                                    inputRef={searchTextField}
+                                    // TODO (table filtering)
+                                    // Should leverage TablePrefixes setting in the search hook here
+                                    //  could handle by somehow tying the search to the actual input
+                                    // This is pretty hacky but prevents duplicate IDs a bit better (but not perfect)
+                                    id={`entityTable-search__${filterLabel}`}
+                                    label={intl.formatMessage({
+                                        id: filterLabel,
+                                    })}
+                                    variant="outlined"
+                                    size="small"
+                                    defaultValue={searchQuery}
+                                    onChange={handlers.filterTable}
+                                    sx={{
+                                        'width': '100%',
+                                        '& .MuiInputBase-root': {
+                                            borderRadius: 3,
+                                        },
+                                    }}
+                                />
+                            )}
+                        </Stack>
                     </Toolbar>
                 </Box>
             )}

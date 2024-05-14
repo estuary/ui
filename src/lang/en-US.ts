@@ -448,6 +448,8 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.selectColumn.menu.header': `Select Columns`,
     'entityTable.selectColumn.button.ariaLabel': `Open Table Column Customization Menu`,
     'entityTable.selectColumn.button.tooltip': `Select Columns`,
+
+    'entityTable.download.cta': `Download CSV`,
 };
 
 const LogsDialog: ResolvedIntlConfig['messages'] = {
