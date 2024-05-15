@@ -2,7 +2,7 @@ import { IconButton } from '@mui/material';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { useEntityWorkflow } from 'context/Workflow';
 import { Cancel } from 'iconoir-react';
-import React from 'react';
+import React, { useState } from 'react';
 import {
     useBinding_discoveredCollections,
     useBinding_removeBinding,
@@ -20,6 +20,8 @@ interface Props {
 }
 
 function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
+    const [removing, setRemoving] = useState(false);
+
     const workflow = useEntityWorkflow();
 
     const removeBinding = useBinding_removeBinding();
@@ -31,10 +33,25 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     const removeFullSourceConfig = useBinding_removeFullSourceConfig();
 
     const handlers = {
-        removeBinding: (event: React.MouseEvent<HTMLElement>) => {
+        removeBinding: async (event: React.MouseEvent<HTMLElement>) => {
+            setRemoving(true);
             event.preventDefault();
+            event.stopPropagation();
 
             const { collection, uuid } = binding;
+
+            if (draftId && !discoveredCollections.includes(collection)) {
+                const deleteResponse = await deleteDraftSpecsByCatalogName(
+                    draftId,
+                    'collection',
+                    [collection]
+                );
+
+                if (deleteResponse.error) {
+                    setRemoving(false);
+                    return;
+                }
+            }
 
             removeBinding(binding);
             removeFullSourceConfig(uuid);
@@ -55,17 +72,13 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
                 setRestrictedDiscoveredCollections(collection);
             }
 
-            if (draftId && !discoveredCollections.includes(collection)) {
-                void deleteDraftSpecsByCatalogName(draftId, 'collection', [
-                    collection,
-                ]);
-            }
+            setRemoving(false);
         },
     };
 
     return (
         <IconButton
-            disabled={disabled}
+            disabled={removing || disabled}
             size="small"
             onClick={handlers.removeBinding}
             sx={{ color: (theme) => theme.palette.text.primary }}
