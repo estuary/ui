@@ -16,7 +16,7 @@ import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { logRocketEvent } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBinding_resetState } from 'stores/Binding/hooks';
 import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
@@ -135,6 +135,7 @@ function useEntityWorkflowHelpers() {
 
     const exit = useCallback(
         (customRoute?: string) => {
+            logRocketConsole('EntityWorkflow:exit');
             resetState();
 
             let route: string;
@@ -144,6 +145,7 @@ function useEntityWorkflowHelpers() {
                 route = customRoute;
             }
 
+            logRocketConsole('EntityWorkflow:exit:navigate');
             navigate(route, { replace: true });
         },
         [catalogName, generatePath, navigate, resetState]
@@ -151,11 +153,13 @@ function useEntityWorkflowHelpers() {
 
     // Form Event Handlers
     const closeLogs = useCallback(() => {
+        logRocketConsole('EntityWorkflow:closeLogs');
         setFormState({
             showLogs: false,
         });
 
         if (exitWhenLogsClose) {
+            logRocketConsole('EntityWorkflow:closeLogs:exit');
             exit();
         }
     }, [exit, setFormState, exitWhenLogsClose]);
