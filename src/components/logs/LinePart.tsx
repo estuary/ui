@@ -7,15 +7,18 @@ interface Props {
     lastPart?: boolean;
 }
 
+const BaseLogLinePart = styled('span')({
+    wordWrap: 'break-word',
+    wordbreak: 'break-all',
+});
+
 function LinePart({ parsedLine, lastPart }: Props) {
-    const StyledLogLinePart = styled('span')(parsedLine.css);
+    const StyledLogLinePart = styled(BaseLogLinePart)(parsedLine.css);
 
     const splitTextLines = parsedLine.text.split('\\n');
 
     return (
-        <StyledLogLinePart
-            sx={{ wordWrap: 'break-word', wordbreak: 'break-all' }}
-        >
+        <StyledLogLinePart>
             {splitTextLines.map((lineText) => {
                 const formattedLine = unescapeString(
                     lastPart ? lineText.trimEnd() : lineText
