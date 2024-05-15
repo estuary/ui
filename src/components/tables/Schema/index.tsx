@@ -13,6 +13,11 @@ import Rows from './Rows';
 
 export const columns: TableColumns[] = [
     {
+        field: 'exists',
+        headerIntlKey: 'data.exists',
+        collapseHeader: true,
+    },
+    {
         field: 'name',
         headerIntlKey: 'data.field',
     },
@@ -25,8 +30,8 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.type',
     },
     {
-        field: 'exists',
-        headerIntlKey: 'data.exists',
+        field: null,
+        headerIntlKey: 'data.details',
     },
 ];
 

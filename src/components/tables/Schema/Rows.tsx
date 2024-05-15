@@ -1,4 +1,4 @@
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { Box, Stack, TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { basicSort_string } from 'utils/misc-utils';
@@ -18,6 +18,10 @@ function Row({ row }: RowProps) {
     return (
         <TableRow hover>
             <TableCell>
+                <Typography>{row.exists}</Typography>
+            </TableCell>
+
+            <TableCell>
                 <Typography>{row.name}</Typography>
             </TableCell>
 
@@ -28,7 +32,10 @@ function Row({ row }: RowProps) {
             <ChipListCell values={row.types} stripPath={false} />
 
             <TableCell>
-                <Typography>{row.exists}</Typography>
+                <Stack component="span" spacing={1}>
+                    {row.title ? <Box>{row.title}</Box> : null}
+                    {row.description ? <Box>{row.description}</Box> : null}
+                </Stack>
             </TableCell>
         </TableRow>
     );
