@@ -115,6 +115,17 @@ function useDiscoverDraftUpdate(options?: {
                     return false;
                 }
 
+                if (draftSpecsResponse.data.length === 0) {
+                    callFailed({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                        },
+                    });
+
+                    return false;
+                }
+
+                // this breaks when you have published something, stay on the page, and then edit agin
                 setEncryptedEndpointConfig({
                     data: draftSpecsResponse.data[0].spec.endpoint.connector
                         .config,
