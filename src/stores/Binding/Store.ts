@@ -20,6 +20,8 @@ import {
     union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -1043,13 +1045,30 @@ const getInitialState = (
                     ? state.resourceConfigs[targetBindingUUID]
                     : null;
 
+                console.log('targetBindingUUID', targetBindingUUID);
+                console.log('state.resourceConfigs', state.resourceConfigs);
+
+                const targettedResourceConfig =
+                    state.resourceConfigs[targetBindingUUID];
+
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                if (!targettedResourceConfig) {
+                    logRocketEvent(
+                        CustomEvents.BINDINGS_RESOURCE_CONFIG_MISSING,
+                        {
+                            targetBindingUUID,
+                            targetCollection,
+                        }
+                    );
+
+                    return;
+                }
+
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
                         collectionName: targetCollection,
-                        bindingIndex:
-                            state.resourceConfigs[targetBindingUUID].meta
-                                .bindingIndex,
+                        bindingIndex: targettedResourceConfig.meta.bindingIndex,
                     },
                 };
 
