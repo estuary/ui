@@ -44,7 +44,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     <FormattedMessage id="schemaEditor.fields.label" />
                 </Typography>
 
-                <Box style={{ width: 250 }}>
+                <Box style={{ width: 150 }}>
                     <ExistFilter setFieldFilter={setFieldFilter} />
                 </Box>
             </Stack>
@@ -52,6 +52,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             <Collapse
                 in={inferSchemaResponseEmpty}
                 sx={{
+                    mt: 2,
                     mb: inferSchemaResponseEmpty ? 2 : undefined,
                 }}
             >
