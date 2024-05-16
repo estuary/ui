@@ -77,7 +77,7 @@ function SchemaPropertiesTable({ filter }: Props) {
     }, [inferSchemaDoneProcessing, inferSchemaResponse]);
 
     const data = useMemo(() => {
-        if (!inferSchemaResponse) {
+        if (inferSchemaResponseEmpty || !inferSchemaResponse) {
             return [];
         }
 
@@ -86,7 +86,7 @@ function SchemaPropertiesTable({ filter }: Props) {
         }
 
         return inferSchemaResponse.filter((datum) => datum.exists === filter);
-    }, [filter, inferSchemaResponse]);
+    }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
     return (
         <Box>
