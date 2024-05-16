@@ -15,15 +15,18 @@ interface RowsProps {
 }
 
 function Row({ row }: RowProps) {
-    const mustExist = row.exists === 'must';
-    const styling: React.CSSProperties | undefined = mustExist
-        ? { fontWeight: 700 }
-        : { fontStyle: 'italic' };
-
     return (
         <TableRow hover>
             <TableCell>
-                <Stack direction="row" spacing={1} style={styling}>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    style={
+                        row.exists === 'must'
+                            ? { fontWeight: 700 }
+                            : { fontStyle: 'italic' }
+                    }
+                >
                     <Box>{row.name}</Box>
                 </Stack>
             </TableCell>
