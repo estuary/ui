@@ -44,9 +44,15 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     <FormattedMessage id="schemaEditor.fields.label" />
                 </Typography>
 
-                <Box style={{ width: 150 }}>
-                    <ExistFilter setFieldFilter={setFieldFilter} />
-                </Box>
+                {disabled ? (
+                    <Box style={{ width: 150 }}>
+                        <ExistFilter
+                            fieldFilter={fieldFilter}
+                            setFieldFilter={setFieldFilter}
+                            disabled={inferSchemaResponseEmpty}
+                        />
+                    </Box>
+                ) : null}
             </Stack>
 
             <Collapse
