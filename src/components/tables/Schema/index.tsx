@@ -8,6 +8,7 @@ import { FieldFilter } from 'components/schema/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';
@@ -109,13 +110,15 @@ function SchemaPropertiesTable({ filter }: Props) {
                         columns={columns}
                         noExistingDataContentIds={{
                             header: 'schemaEditor.table.empty.header',
-                            message: 'schemaEditor.table.empty.message',
+                            message: inferSchemaResponseEmpty
+                                ? 'schemaEditor.table.empty.message'
+                                : 'schemaEditor.table.empty.filtered.message',
                             disableDoclink: true,
                         }}
                         tableState={tableState}
                         loading={!inferSchemaDoneProcessing}
                         rows={
-                            !inferSchemaResponseEmpty ? (
+                            hasLength(data) ? (
                                 <Rows
                                     data={data}
                                     sortDirection={sortDirection}
