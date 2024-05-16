@@ -1,4 +1,4 @@
-import { Box, Collapse, Grid, Typography } from '@mui/material';
+import { Box, Collapse, Grid, Stack, Typography } from '@mui/material';
 import {
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponseError,
@@ -8,7 +8,10 @@ import MonacoEditor, {
 } from 'components/editor/MonacoEditor';
 import AlertBox from 'components/shared/AlertBox';
 import SchemaPropertiesTable from 'components/tables/Schema';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import ExistFilter from './ExistFilter';
+import { FieldFilter } from './types';
 
 interface Props {
     disabled: boolean;
@@ -22,6 +25,8 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
 
+    const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
+
     return (
         <Grid
             item
@@ -30,9 +35,19 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 mt: 2,
             }}
         >
-            <Typography variant="subtitle1" component="span">
-                <FormattedMessage id="schemaEditor.fields.label" />
-            </Typography>
+            <Stack
+                style={{ justifyContent: 'space-between' }}
+                spacing={2}
+                direction="row"
+            >
+                <Typography variant="subtitle1" component="span">
+                    <FormattedMessage id="schemaEditor.fields.label" />
+                </Typography>
+
+                <Box style={{ width: 250 }}>
+                    <ExistFilter setFieldFilter={setFieldFilter} />
+                </Box>
+            </Stack>
 
             <Collapse
                 in={inferSchemaResponseEmpty}
@@ -50,8 +65,8 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             </Collapse>
 
             {disabled ? (
-                <Box sx={{ width: '100%' }}>
-                    <SchemaPropertiesTable />
+                <Box style={{ width: '100%' }}>
+                    <SchemaPropertiesTable filter={fieldFilter} />
                 </Box>
             ) : (
                 <MonacoEditor

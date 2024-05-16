@@ -1,4 +1,4 @@
-import { Box, Stack, TableCell, TableRow, Typography } from '@mui/material';
+import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { basicSort_string } from 'utils/misc-utils';
@@ -15,18 +15,21 @@ interface RowsProps {
 }
 
 function Row({ row }: RowProps) {
+    const mustExist = row.exists === 'must';
+    const styling: React.CSSProperties | undefined = mustExist
+        ? { fontWeight: 700 }
+        : { fontStyle: 'italic' };
+
     return (
         <TableRow hover>
             <TableCell>
-                <Typography>{row.exists}</Typography>
+                <Stack direction="row" spacing={1} style={styling}>
+                    <Box>{row.name}</Box>
+                </Stack>
             </TableCell>
 
             <TableCell>
-                <Typography>{row.name}</Typography>
-            </TableCell>
-
-            <TableCell>
-                <Typography>{row.pointer}</Typography>
+                <Box>{row.pointer}</Box>
             </TableCell>
 
             <ChipListCell values={row.types} stripPath={false} />
@@ -54,6 +57,10 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
         return (
             <>
                 {data
+                    .filter(
+                        (datum: InferSchemaResponseProperty) =>
+                            datum.exists === 'may' || datum.exists === 'must'
+                    )
                     .sort(
                         (
                             first: InferSchemaResponseProperty,

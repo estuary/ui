@@ -4,7 +4,8 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEffect, useState } from 'react';
+import { FieldFilter } from 'components/schema/types';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 import EntityTableBody from '../EntityTable/TableBody';
@@ -12,11 +13,6 @@ import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [
-    {
-        field: 'exists',
-        headerIntlKey: 'data.exists',
-        collapseHeader: true,
-    },
     {
         field: 'name',
         headerIntlKey: 'data.field',
@@ -35,7 +31,11 @@ export const columns: TableColumns[] = [
     },
 ];
 
-function SchemaPropertiesTable() {
+interface Props {
+    filter: FieldFilter;
+}
+
+function SchemaPropertiesTable({ filter }: Props) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
@@ -75,6 +75,18 @@ function SchemaPropertiesTable() {
         }
     }, [inferSchemaDoneProcessing, inferSchemaResponse]);
 
+    const data = useMemo(() => {
+        if (!inferSchemaResponse) {
+            return [];
+        }
+
+        if (filter === 'all') {
+            return inferSchemaResponse;
+        }
+
+        return inferSchemaResponse.filter((datum) => datum.exists === filter);
+    }, [filter, inferSchemaResponse]);
+
     return (
         <Box>
             <TableContainer component={Box}>
@@ -105,7 +117,7 @@ function SchemaPropertiesTable() {
                         rows={
                             !inferSchemaResponseEmpty ? (
                                 <Rows
-                                    data={inferSchemaResponse}
+                                    data={data}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}
                                 />
