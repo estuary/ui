@@ -1,5 +1,6 @@
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
+import { useMemo } from 'react';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { basicSort_string } from 'utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
@@ -14,21 +15,55 @@ interface RowsProps {
     columnToSort: string;
 }
 
+const rowTypeString = 'string';
+
 function Row({ row }: RowProps) {
+    const formattedTypes = useMemo(() => {
+        if (row.string_format) {
+            const stringIndex = row.types.findIndex(
+                (rowType) => rowType === rowTypeString
+            );
+            if (stringIndex > -1) {
+                row.types[
+                    stringIndex
+                ] = `${rowTypeString}: ${row.string_format}`;
+            }
+        }
+
+        return row.types;
+    }, [row]);
+
     return (
         <TableRow hover>
             <TableCell>
-                <Typography>{row.name}</Typography>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    style={
+                        row.exists === 'must'
+                            ? { fontWeight: 700 }
+                            : { fontStyle: 'italic' }
+                    }
+                >
+                    <Box>{row.name}</Box>
+                </Stack>
             </TableCell>
 
             <TableCell>
-                <Typography>{row.pointer}</Typography>
+                <Box>{row.pointer}</Box>
             </TableCell>
 
-            <ChipListCell values={row.types} stripPath={false} />
+            <ChipListCell
+                values={formattedTypes}
+                stripPath={false}
+                maxChips={2}
+            />
 
             <TableCell>
-                <Typography>{row.exists}</Typography>
+                <Stack component="span" spacing={1}>
+                    {row.title ? <Box>{row.title}</Box> : null}
+                    {row.description ? <Box>{row.description}</Box> : null}
+                </Stack>
             </TableCell>
         </TableRow>
     );
@@ -47,6 +82,10 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
         return (
             <>
                 {data
+                    .filter(
+                        (datum: InferSchemaResponseProperty) =>
+                            datum.exists === 'may' || datum.exists === 'must'
+                    )
                     .sort(
                         (
                             first: InferSchemaResponseProperty,
