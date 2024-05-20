@@ -11,15 +11,15 @@ import {
 
 interface Props {
     label: string;
-    options: string[];
+    options: any[];
     changeHandler: (
         event: React.SyntheticEvent<Element, Event>,
-        value: string,
+        value: any,
         reason: AutocompleteChangeReason,
         details?: AutocompleteChangeDetails<string> | undefined
     ) => void;
     autocompleteSx?: SxProps<Theme>;
-    defaultValue?: string;
+    defaultValue?: any;
     id?: string;
     required?: boolean;
     AutoCompleteOptions?: Partial<
