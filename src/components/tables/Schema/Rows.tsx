@@ -48,7 +48,11 @@ function Row({ row }: RowProps) {
                 <Box>{row.pointer}</Box>
             </TableCell>
 
-            <ChipListCell values={formattedTypes} stripPath={false} />
+            <ChipListCell
+                values={formattedTypes}
+                stripPath={false}
+                maxChips={2}
+            />
 
             <TableCell>
                 <Stack component="span" spacing={1}>
