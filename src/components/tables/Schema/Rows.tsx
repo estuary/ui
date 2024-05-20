@@ -20,9 +20,14 @@ const rowTypeString = 'string';
 function Row({ row }: RowProps) {
     const formattedTypes = useMemo(() => {
         if (row.string_format) {
-            row.types[
-                row.types.findIndex((rowType) => rowType === rowTypeString)
-            ] = `${rowTypeString}: ${row.string_format}`;
+            const stringIndex = row.types.findIndex(
+                (rowType) => rowType === rowTypeString
+            );
+            if (stringIndex > -1) {
+                row.types[
+                    stringIndex
+                ] = `${rowTypeString}: ${row.string_format}`;
+            }
         }
 
         return row.types;
