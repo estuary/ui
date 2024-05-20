@@ -20,11 +20,10 @@ function useTenants() {
 }
 
 export function useTenantHidesDataPreview(entityName: string) {
-    const tenantName = useMemo(
-        () => stripPathing(entityName, true),
-        [entityName]
-    );
-    const isDemo = useMemo(() => tenantName === DEMO_TENANT, [tenantName]);
+    const [tenantName, isDemo] = useMemo(() => {
+        const name = stripPathing(entityName, true);
+        return [name, tenantName === DEMO_TENANT];
+    }, [entityName]);
 
     // If we end up with an entity name that cannot be used
     //  we just sit and "wait" forever. This is fine as this should not
