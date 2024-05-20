@@ -44,7 +44,7 @@ export function useTenantHidesDataPreview(entityName: string) {
         });
 
     const response = useMemo(
-        () => (isDemo ? true : data ? Boolean(data.data.hide_preview) : null),
+        () => (isDemo ? false : data ? Boolean(data.data.hide_preview) : null),
         [data, isDemo]
     );
 
