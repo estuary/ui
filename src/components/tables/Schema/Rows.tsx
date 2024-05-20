@@ -1,5 +1,6 @@
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
+import { useMemo } from 'react';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { basicSort_string } from 'utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
@@ -14,7 +15,19 @@ interface RowsProps {
     columnToSort: string;
 }
 
+const rowTypeString = 'string';
+
 function Row({ row }: RowProps) {
+    const formattedTypes = useMemo(() => {
+        if (row.string_format) {
+            row.types[
+                row.types.findIndex((rowType) => rowType === rowTypeString)
+            ] = `${rowTypeString}: ${row.string_format}`;
+        }
+
+        return row.types;
+    }, [row]);
+
     return (
         <TableRow hover>
             <TableCell>
@@ -35,7 +48,7 @@ function Row({ row }: RowProps) {
                 <Box>{row.pointer}</Box>
             </TableCell>
 
-            <ChipListCell values={row.types} stripPath={false} />
+            <ChipListCell values={formattedTypes} stripPath={false} />
 
             <TableCell>
                 <Stack component="span" spacing={1}>
