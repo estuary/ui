@@ -4,9 +4,11 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
-import { useEffect, useState } from 'react';
+import { FieldFilter } from 'components/schema/types';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';
@@ -25,12 +27,16 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.type',
     },
     {
-        field: 'exists',
-        headerIntlKey: 'data.exists',
+        field: null,
+        headerIntlKey: 'data.details',
     },
 ];
 
-function SchemaPropertiesTable() {
+interface Props {
+    filter: FieldFilter;
+}
+
+function SchemaPropertiesTable({ filter }: Props) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
@@ -70,6 +76,18 @@ function SchemaPropertiesTable() {
         }
     }, [inferSchemaDoneProcessing, inferSchemaResponse]);
 
+    const data = useMemo(() => {
+        if (inferSchemaResponseEmpty || !inferSchemaResponse) {
+            return [];
+        }
+
+        if (filter === 'all') {
+            return inferSchemaResponse;
+        }
+
+        return inferSchemaResponse.filter((datum) => datum.exists === filter);
+    }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
+
     return (
         <Box>
             <TableContainer component={Box}>
@@ -92,15 +110,17 @@ function SchemaPropertiesTable() {
                         columns={columns}
                         noExistingDataContentIds={{
                             header: 'schemaEditor.table.empty.header',
-                            message: 'schemaEditor.table.empty.message',
+                            message: inferSchemaResponseEmpty
+                                ? 'schemaEditor.table.empty.message'
+                                : 'schemaEditor.table.empty.filtered.message',
                             disableDoclink: true,
                         }}
                         tableState={tableState}
                         loading={!inferSchemaDoneProcessing}
                         rows={
-                            !inferSchemaResponseEmpty ? (
+                            hasLength(data) ? (
                                 <Rows
-                                    data={inferSchemaResponse}
+                                    data={data}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}
                                 />
