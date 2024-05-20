@@ -1,8 +1,7 @@
 import { Chip } from '@mui/material';
-import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useStore } from 'zustand';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
 
 function SourceCaptureChip() {
@@ -10,16 +9,12 @@ function SourceCaptureChip() {
 
     const updateDraft = useSourceCapture();
 
-    const [sourceCapture, setSourceCapture] = useStore(
-        invariableStores['source-capture'],
-        (state) => {
-            return [state.sourceCapture, state.setSourceCapture];
-        }
-    );
+    const [sourceCapture, setSourceCapture] = useSourceCaptureStore((state) => [
+        state.sourceCapture,
+        state.setSourceCapture,
+    ]);
 
-    const saving = useStore(invariableStores['source-capture'], (state) => {
-        return state.saving;
-    });
+    const saving = useSourceCaptureStore((state) => state.saving);
 
     const disabled = saving || formActive;
 
