@@ -2,7 +2,7 @@ import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 import { TenantHidesDataPreview, Tenants } from 'types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { DEMO_TENANT, hasLength, stripPathing } from 'utils/misc-utils';
 import { useSelectSingleNew } from './supabase-swr/hooks/useSelectSingle';
 
 const defaultResponse: Tenants[] = [];
@@ -20,22 +20,22 @@ function useTenants() {
 }
 
 export function useTenantHidesDataPreview(entityName: string) {
+    const [tenantName, isDemo] = useMemo<[string, boolean]>(() => {
+        const name = stripPathing(entityName, true);
+        return [name, tenantName === DEMO_TENANT];
+    }, [entityName]);
+
     // If we end up with an entity name that cannot be used
     //  we just sit and "wait" forever. This is fine as this should not
     //  happen unless someone messes with the URL. Later - we might
     //  want to add some cool error handling here.
     const query = useMemo(() => {
-        if (!hasLength(entityName)) {
-            return null;
-        }
-
-        const tenantName = stripPathing(entityName, true);
-        if (!hasLength(tenantName)) {
+        if (isDemo || !hasLength(tenantName)) {
             return null;
         }
 
         return getTenantHidesPreview(tenantName);
-    }, [entityName]);
+    }, [isDemo, tenantName]);
 
     const { data, error, isValidating } =
         useSelectSingleNew<TenantHidesDataPreview>(query, {
@@ -43,8 +43,8 @@ export function useTenantHidesDataPreview(entityName: string) {
         });
 
     const response = useMemo(
-        () => (data ? Boolean(data.data.hide_preview) : null),
-        [data]
+        () => (isDemo ? false : data ? Boolean(data.data.hide_preview) : null),
+        [data, isDemo]
     );
 
     return useMemo(

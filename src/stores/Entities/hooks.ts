@@ -1,7 +1,7 @@
 import { singleCallSettings } from 'context/SWR';
 import { useEffect } from 'react';
 import useSWR from 'swr';
-import { ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
+import { DEMO_TENANT, ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useEntitiesStore } from './Store';
 
@@ -44,7 +44,7 @@ export const useEntitiesStore_hasDemoTenantAccess = () => {
     const readable = useEntitiesStore_capabilities_readable();
     return useEntitiesStore(
         useShallow(() => {
-            return Object.keys(readable).includes('demo/');
+            return Object.keys(readable).includes(DEMO_TENANT);
         })
     );
 };

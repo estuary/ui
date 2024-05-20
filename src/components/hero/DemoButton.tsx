@@ -10,20 +10,17 @@ import {
     useEntitiesStore_hasDemoTenantAccess,
 } from 'stores/Entities/hooks';
 import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
-import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import { DEMO_TENANT, getPathWithParams, hasLength } from 'utils/misc-utils';
 
 export const FILTER_TABLE_PROPS = {
     captures: {
-        [`${TablePrefixes.captures}-${TableFilterKeys.searchQuery}`]:
-            'demo/wikipedia/recent-changes',
+        [`${TablePrefixes.captures}-${TableFilterKeys.searchQuery}`]: `${DEMO_TENANT}wikipedia/recent-changes`,
     },
     collections: {
-        [`${TablePrefixes.collections}-${TableFilterKeys.searchQuery}`]:
-            'demo/wikipedia/lines-and-bots',
+        [`${TablePrefixes.collections}-${TableFilterKeys.searchQuery}`]: `${DEMO_TENANT}wikipedia/lines-and-bots`,
     },
     materializations: {
-        [`${TablePrefixes.materializations}-${TableFilterKeys.searchQuery}`]:
-            'demo/wikipedia/lines-by-usertype',
+        [`${TablePrefixes.materializations}-${TableFilterKeys.searchQuery}`]: `${DEMO_TENANT}wikipedia/lines-by-usertype`,
     },
 };
 
