@@ -36,8 +36,7 @@ export function DataPreview({ collectionName }: Props) {
     //     setPreviewMode(newValue);
     // };
 
-    const { error: tenantHidesError, hide } =
-        useTenantHidesDataPreview(collectionName);
+    const { error: tenantHidesError, hide } = useTenantHidesDataPreview('');
 
     const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
         `datapreview-${collectionName}`,

@@ -6,6 +6,7 @@ import {
     TABLES,
 } from 'services/supabase';
 import { TenantHidesDataPreview, Tenants } from 'types';
+import { DEMO_TENANT } from 'utils/misc-utils';
 
 const COLUMNS = [
     'gcm_account_id',
@@ -31,10 +32,12 @@ const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
 };
 
 const getTenantHidesPreview = (tenant: string) => {
-    if (tenant === 'demo/') {
-        return Promise.resolve({
-            hide_preview: false,
-        });
+    if (tenant === DEMO_TENANT || tenant === 'world/') {
+        return () => {
+            return Promise.resolve({
+                hide_preview: false,
+            });
+        };
     }
 
     return supabaseClient
