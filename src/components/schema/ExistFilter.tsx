@@ -12,8 +12,6 @@ interface Props {
 function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
     const intl = useIntl();
 
-    const [localValue, setLocalValue] = useState(fieldFilter);
-
     const fieldOptions: AutoCompleteOption[] = [
         {
             id: 'all',
@@ -35,6 +33,10 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
         },
     ];
 
+    const [localValue, setLocalValue] = useState(
+        fieldOptions.find((datum) => datum.id === fieldFilter)
+    );
+
     return (
         <AutocompletedField
             autocompleteSx={{ flexGrow: 1 }}
@@ -42,16 +44,13 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
                 setFieldFilter(value.id);
                 setLocalValue(value.id);
             }}
-            defaultValue={fieldOptions.find(
-                (datum) => datum.id === fieldFilter
-            )}
+            defaultValue={localValue}
             label={intl.formatMessage({
                 id: 'schemaEditor.table.filter.label',
             })}
             options={fieldOptions}
             AutoCompleteOptions={{
-                isOptionEqualToValue: (option, value) =>
-                    option.id === (value.id ?? value),
+                isOptionEqualToValue: (option, value) => option.id === value.id,
                 disabled,
                 value: localValue,
             }}
