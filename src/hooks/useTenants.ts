@@ -22,7 +22,7 @@ function useTenants() {
 export function useTenantHidesDataPreview(entityName: string) {
     const [tenantName, isDemo] = useMemo<[string, boolean]>(() => {
         const name = stripPathing(entityName, true);
-        return [name, tenantName === DEMO_TENANT];
+        return [name, name === DEMO_TENANT];
     }, [entityName]);
 
     // If we end up with an entity name that cannot be used
