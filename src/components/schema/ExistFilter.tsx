@@ -1,4 +1,5 @@
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AutoCompleteOption, FieldFilter } from './types';
 
@@ -10,6 +11,8 @@ interface Props {
 
 function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
     const intl = useIntl();
+
+    const [localValue, setLocalValue] = useState(fieldFilter);
 
     const fieldOptions: AutoCompleteOption[] = [
         {
@@ -34,20 +37,23 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
 
     return (
         <AutocompletedField
+            autocompleteSx={{ flexGrow: 1 }}
+            changeHandler={(_, value) => {
+                setFieldFilter(value.id);
+                setLocalValue(value.id);
+            }}
+            defaultValue={fieldOptions.find(
+                (datum) => datum.id === fieldFilter
+            )}
             label={intl.formatMessage({
                 id: 'schemaEditor.table.filter.label',
             })}
             options={fieldOptions}
-            defaultValue={fieldOptions.find(
-                (datum) => datum.id === fieldFilter
-            )}
-            changeHandler={(_, value) => {
-                setFieldFilter(value.id);
-            }}
-            autocompleteSx={{ flexGrow: 1 }}
             AutoCompleteOptions={{
-                isOptionEqualToValue: (option, value) => option.id === value.id,
+                isOptionEqualToValue: (option, value) =>
+                    option.id === (value.id ?? value),
                 disabled,
+                value: localValue,
             }}
         />
     );
