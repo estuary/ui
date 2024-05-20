@@ -32,7 +32,7 @@ const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
 };
 
 const getTenantHidesPreview = (tenant: string) => {
-    if (tenant === DEMO_TENANT || tenant === 'world/') {
+    if (tenant === DEMO_TENANT) {
         return () => {
             return Promise.resolve({
                 hide_preview: false,
