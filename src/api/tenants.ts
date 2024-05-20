@@ -31,6 +31,12 @@ const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
 };
 
 const getTenantHidesPreview = (tenant: string) => {
+    if (tenant === 'demo/') {
+        return Promise.resolve({
+            hide_preview: false,
+        });
+    }
+
     return supabaseClient
         .from<TenantHidesDataPreview>(TABLES.TENANTS)
         .select('hide_preview')

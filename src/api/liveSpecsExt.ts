@@ -20,7 +20,7 @@ import {
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
 } from 'types';
-import { CHUNK_SIZE } from 'utils/misc-utils';
+import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
 
 const baseColumns = [
     'catalog_name',
@@ -195,7 +195,7 @@ const getLiveSpecs_existingTasks = (
         })
         .eq('connector_id', connectorId)
         .not('catalog_name', 'ilike', 'ops/%')
-        .not('catalog_name', 'ilike', 'demo/%');
+        .not('catalog_name', 'ilike', `${DEMO_TENANT  }%`);
 
     queryBuilder = distributedTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
