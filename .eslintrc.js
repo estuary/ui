@@ -59,6 +59,10 @@ module.exports = {
                 importNames: ['LoadingButton'],
                 message: 'Please use SafeLoadingButton instead.',
             },
+            {
+                name: '@emotion/react',
+                message: 'Do not access emotion directly. Load through MUI',
+            },
         ],
     },
 };
