@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
@@ -6,6 +5,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -163,15 +163,13 @@ function InitializeDraftButton({
     ]);
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             variant="contained"
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
-            <span>
-                <FormattedMessage id="cta.next" />
-            </span>
-        </LoadingButton>
+            <FormattedMessage id="cta.next" />
+        </SafeLoadingButton>
     );
 }
 

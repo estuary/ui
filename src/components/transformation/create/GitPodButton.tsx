@@ -1,8 +1,9 @@
-import { LoadingButton, LoadingButtonProps } from '@mui/lab';
+import { LoadingButtonProps } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -205,7 +206,7 @@ function GitPodButton({
     );
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             variant={buttonVariant ?? 'contained'}
             loading={urlLoading}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
@@ -228,13 +229,12 @@ function GitPodButton({
                 }
             }}
         >
-            <span>
-                {submitButtonError ??
-                    intl.formatMessage({
-                        id: 'newTransform.button.cta',
-                    })}
-            </span>
-        </LoadingButton>
+            {submitButtonError
+                ? submitButtonError
+                : intl.formatMessage({
+                      id: 'newTransform.button.cta',
+                  })}
+        </SafeLoadingButton>
     );
 }
 
