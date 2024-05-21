@@ -48,5 +48,15 @@ module.exports = {
 
         // We should never have these unless commented and explained
         'react-hooks/exhaustive-deps': 'error',
+
+        // Original LoadingButton can cause issues with Google Translate
+        'no-restricted-imports': [
+            'error',
+            {
+                name: '@mui/lab',
+                importNames: ['LoadingButton'],
+                message: 'Please use SafeLoadingButton instead.',
+            },
+        ],
     },
 };
