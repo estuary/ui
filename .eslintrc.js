@@ -50,6 +50,8 @@ module.exports = {
         'react-hooks/exhaustive-deps': 'error',
 
         // Original LoadingButton can cause issues with Google Translate
+        //  https://github.com/mui/material-ui/issues/27853
+        //  https://github.com/facebook/react/issues/11538
         'no-restricted-imports': [
             'error',
             {
