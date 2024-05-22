@@ -9,7 +9,6 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -45,11 +44,9 @@ const trackEvent = (logEvent: any, payload: any) => {
 function useSave(
     logEvent: CustomEvents,
     onFailure: Function,
-    dryRun?: boolean,
-    forceLogsClosed?: boolean
+    dryRun?: boolean
 ) {
     const intl = useIntl();
-    const { closeLogs } = useEntityWorkflowHelpers();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -109,12 +106,6 @@ function useSave(
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
                         }
-
-                        // A log dialog associated with a dry run that is used to populate the materialization field
-                        // selection table should automatically close when the publication terminates.
-                        if (forceLogsClosed) {
-                            closeLogs();
-                        }
                     }
 
                     if (!hideNotification) {
@@ -151,9 +142,7 @@ function useSave(
             );
         },
         [
-            closeLogs,
             dryRun,
-            forceLogsClosed,
             intl,
             jobStatusPoller,
             logEvent,

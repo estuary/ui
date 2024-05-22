@@ -17,18 +17,16 @@ interface Props {
     onFailure: Function;
     buttonLabelId?: string;
     dryRun?: boolean;
-    forceLogsClosed?: boolean;
 }
 
 function EntityCreateSave({
     buttonLabelId,
     disabled,
     dryRun,
-    forceLogsClosed,
     logEvent,
     onFailure,
 }: Props) {
-    const save = useSave(logEvent, onFailure, dryRun, forceLogsClosed);
+    const save = useSave(logEvent, onFailure, dryRun);
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
