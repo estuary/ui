@@ -17,7 +17,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
-import { useDetailsForm_connectorImage_imagePath } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_setEncryptedEndpointConfig,
@@ -38,7 +38,9 @@ function useDiscoverDraftUpdate(options?: {
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
 
-    const imagePath = useDetailsForm_connectorImage_imagePath();
+    const imagePath = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imagePath
+    );
 
     const setEncryptedEndpointConfig =
         useEndpointConfigStore_setEncryptedEndpointConfig();

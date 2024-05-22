@@ -8,17 +8,17 @@ import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCre
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useDetailsForm_changed_connectorId,
-    useDetailsForm_connectorImage_imagePath,
     useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
@@ -63,7 +63,9 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const formData = useDetailsForm_details();
     const { connectorImage: originalConnectorImage } = formData;
 
-    const connectorImagePath = useDetailsForm_connectorImage_imagePath();
+    const connectorImagePath = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imagePath
+    );
     const connectorIdChanged = useDetailsForm_changed_connectorId();
 
     const setDetails = useDetailsForm_setDetails();
