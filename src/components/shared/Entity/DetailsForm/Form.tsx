@@ -19,7 +19,6 @@ import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useDetailsForm_changed_connectorId,
-    useDetailsForm_setDetails_connector,
     useDetailsForm_setDraftedEntityName,
     useDetailsForm_setEntityNameChanged,
 } from 'stores/DetailsForm/hooks';
@@ -67,7 +66,9 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const connectorIdChanged = useDetailsForm_changed_connectorId();
 
     const setDetails = useDetailsFormStore((state) => state.setDetails);
-    const setDetails_connector = useDetailsForm_setDetails_connector();
+    const setDetails_connector = useDetailsFormStore(
+        (state) => state.setDetails_connector
+    );
     const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
     const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
 
