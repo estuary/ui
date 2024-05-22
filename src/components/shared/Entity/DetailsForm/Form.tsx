@@ -17,10 +17,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import {
-    useDetailsForm_changed_connectorId,
-    useDetailsForm_setEntityNameChanged,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
@@ -68,7 +65,9 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const setDetails_connector = useDetailsFormStore(
         (state) => state.setDetails_connector
     );
-    const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
+    const setEntityNameChanged = useDetailsFormStore(
+        (state) => state.setEntityNameChanged
+    );
     const setDraftedEntityName = useDetailsFormStore(
         (state) => state.setDraftedEntityName
     );
