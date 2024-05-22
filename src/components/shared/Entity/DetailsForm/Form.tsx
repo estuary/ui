@@ -19,7 +19,6 @@ import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useDetailsForm_changed_connectorId,
-    useDetailsForm_details,
     useDetailsForm_setDetails,
     useDetailsForm_setDetails_connector,
     useDetailsForm_setDraftedEntityName,
@@ -60,7 +59,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details Form Store
-    const formData = useDetailsForm_details();
+    const formData = useDetailsFormStore((state) => state.details.data);
     const { connectorImage: originalConnectorImage } = formData;
 
     const connectorImagePath = useDetailsFormStore(
