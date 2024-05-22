@@ -22,14 +22,6 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 };
 
 // Selector hooks
-export const useDetailsForm_changed = () => {
-    const entityType = useEntityType();
-    return useZustandStore<DetailsFormState, DetailsFormState['stateChanged']>(
-        getStoreName(entityType),
-        (state) => state.stateChanged
-    );
-};
-
 export const useDetailsForm_changed_connectorId = () => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
     const entityType = useEntityType();
