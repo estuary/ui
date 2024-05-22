@@ -1,7 +1,6 @@
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
@@ -15,7 +14,9 @@ function useDiscoverConfigEncrypt() {
     const imageConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
 
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();

@@ -27,7 +27,6 @@ import {
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
 import {
-    useDetailsForm_connectorImage_id,
     useDetailsForm_connectorImage_imagePath,
     useDetailsForm_entityNameChanged,
     useDetailsForm_errorsExist,
@@ -60,7 +59,9 @@ function useGenerateCatalog() {
 
     // Details Form Store
     const detailsFormsErrorsExist = useDetailsForm_errorsExist();
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
     const imageConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
