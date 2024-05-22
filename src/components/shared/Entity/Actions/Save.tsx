@@ -8,7 +8,12 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/types';
 
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
+import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
 import useSave from './useSave';
 
 interface Props {
@@ -26,23 +31,32 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: Props) {
+    const { closeLogs } = useEntityWorkflowHelpers();
     const save = useSave(logEvent, onFailure, dryRun);
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
+    const formStatus = useFormStateStore_status();
+    const entitySaved = formStatus === FormStatus.SAVED;
 
     return (
         <Button
             onClick={async (event) => {
                 event.preventDefault();
-                await save(draftId);
+                if (entitySaved) {
+                    closeLogs();
+                } else {
+                    await save(draftId);
+                }
             }}
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
         >
             <FormattedMessage
                 id={
-                    buttonLabelId
+                    entitySaved
+                        ? 'cta.goToDetails'
+                        : buttonLabelId
                         ? buttonLabelId
                         : dryRun === true
                         ? 'cta.testConfig'

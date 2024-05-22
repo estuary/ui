@@ -54,12 +54,14 @@ function EntityTestButton({ disabled, logEvent }: Props) {
                     />
                 }
             />
-            <EntityCreateSave
-                dryRun
-                disabled={Boolean(disabled || !draftId) || !formsHydrated}
-                onFailure={callFailed}
-                logEvent={logEvent}
-            />
+            {formStatus === FormStatus.SAVED ? null : (
+                <EntityCreateSave
+                    dryRun
+                    disabled={Boolean(disabled || !draftId) || !formsHydrated}
+                    onFailure={callFailed}
+                    logEvent={logEvent}
+                />
+            )}
         </>
     );
 }

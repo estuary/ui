@@ -152,6 +152,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.transform': `Transform`,
     'cta.back': `Back`,
     'cta.revoke': `Revoke`,
+    'cta.goToDetails': `See Details`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
