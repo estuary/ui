@@ -8,7 +8,6 @@ import {
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import invariableStores from 'context/Zustand/invariableStores';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
@@ -28,10 +27,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 import { snackbarSettings } from 'utils/notification-utils';
-import { useStore } from 'zustand';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
@@ -66,8 +65,7 @@ function useEntityWorkflowHelpers() {
     const resetSchemaEvolutionState = useSchemaEvolution_resetState();
 
     // Source Capture Store
-    const resetSourceCapture = useStore(
-        invariableStores['source-capture'],
+    const resetSourceCapture = useSourceCaptureStore(
         (state) => state.resetState
     );
 

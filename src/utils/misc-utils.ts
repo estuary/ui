@@ -4,6 +4,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
+export const DEMO_TENANT = 'demo/';
 
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql

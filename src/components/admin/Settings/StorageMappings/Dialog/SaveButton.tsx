@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
@@ -16,6 +15,7 @@ import {
 import { useTenantStore } from 'stores/Tenant/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import useRepublishPrefix from './useRepublishPrefix';
 
 const SELECTED_DIRECTIVE = 'storageMappings';
@@ -113,7 +113,7 @@ function SaveButton() {
     };
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             disabled={
                 isEmpty(formData) || hasLength(formErrors) || loading || saving
             }
@@ -122,10 +122,8 @@ function SaveButton() {
             size="small"
             variant="contained"
         >
-            <span>
-                <FormattedMessage id="cta.save" />
-            </span>
-        </LoadingButton>
+            <FormattedMessage id="cta.save" />
+        </SafeLoadingButton>
     );
 }
 

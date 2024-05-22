@@ -5,7 +5,6 @@ import { authenticatedRoutes } from 'app/routes';
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
-import { LoadingButton } from '@mui/lab';
 import PrefixedName from 'components/inputs/PrefixedName';
 import Error from 'components/shared/Error';
 import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
@@ -15,6 +14,7 @@ import { CustomEvents } from 'services/types';
 import FullPageWrapper from 'app/FullPageWrapper';
 import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
 import useConstant from 'use-constant';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 
 function MarketplaceVerification() {
     const intl = useIntl();
@@ -108,17 +108,15 @@ function MarketplaceVerification() {
                         justifyContent: 'center',
                     }}
                 >
-                    <LoadingButton
+                    <SafeLoadingButton
                         variant="contained"
                         loading={loading}
                         disabled={Boolean(prefixHasErrors || loading)}
                         onClick={() => startVerification(prefix)}
                         sx={{ mt: 2 }}
                     >
-                        <span>
-                            <FormattedMessage id="cta.continue" />
-                        </span>
-                    </LoadingButton>
+                        <FormattedMessage id="cta.continue" />
+                    </SafeLoadingButton>
                 </Box>
             </Stack>
         </FullPageWrapper>

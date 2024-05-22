@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
@@ -13,6 +12,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 
 interface Props {
     id: string;
@@ -57,14 +57,14 @@ function RevokeTokenButton({ id }: Props) {
     return (
         <TableCell>
             <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                <LoadingButton
+                <SafeLoadingButton
                     color={error ? 'error' : 'primary'}
                     loading={saving}
                     onClick={revokeToken}
                     variant="text"
                 >
                     <FormattedMessage id="cta.revoke" />
-                </LoadingButton>
+                </SafeLoadingButton>
 
                 {error ? (
                     <Tooltip

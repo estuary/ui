@@ -8,6 +8,7 @@ import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useEntitiesStore } from 'stores/Entities/Store';
+import { DEMO_TENANT } from 'utils/misc-utils';
 
 interface Props {
     tenant: string;
@@ -95,7 +96,7 @@ function AcceptDemoInvitation({
             <MessageWithButton
                 messageId="home.hero.demo.demoTenant"
                 messageValues={{
-                    sharableTenant: <b>demo/</b>,
+                    sharableTenant: <b>{DEMO_TENANT}</b>,
                     userTenant: <b>{tenant}</b>,
                 }}
                 clickHandler={applyDirective}

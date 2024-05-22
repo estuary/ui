@@ -4,14 +4,13 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import invariableStores from 'context/Zustand/invariableStores';
 import { useCallback } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 import { Schema } from 'types';
 import { addOrRemoveSourceCapture } from 'utils/workflow-utils';
-import { useStore } from 'zustand';
 
 function useSourceCapture() {
     const setFormState = useFormStateStore_setFormState();
@@ -21,12 +20,7 @@ function useSourceCapture() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const [setSaving] = useStore(
-        invariableStores['source-capture'],
-        (state) => {
-            return [state.setSaving];
-        }
-    );
+    const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
     const update = useCallback(
         async (sourceCapture: string | null) => {

@@ -1,6 +1,6 @@
-import { LoadingButton } from '@mui/lab';
 import { Button, ButtonProps, DialogActions } from '@mui/material';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { FormattedMessage } from 'react-intl';
 import SaveButton from './SaveButton';
 
@@ -15,17 +15,15 @@ function StorageMappingActions({ closeDialog }: Props) {
     return (
         <DialogActions>
             {logToken ? (
-                <LoadingButton
+                <SafeLoadingButton
                     disabled={saving}
                     loading={saving}
                     onClick={closeDialog}
                     size="small"
                     variant="contained"
                 >
-                    <span>
-                        <FormattedMessage id="cta.close" />
-                    </span>
-                </LoadingButton>
+                    <FormattedMessage id="cta.close" />
+                </SafeLoadingButton>
             ) : (
                 <>
                     <Button
