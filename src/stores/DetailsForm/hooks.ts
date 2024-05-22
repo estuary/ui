@@ -22,15 +22,6 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 };
 
 // Selector hooks
-export const useDetailsForm_draftedEntityName = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        DetailsFormState,
-        DetailsFormState['draftedEntityName']
-    >(getStoreName(entityType), (state) => state.draftedEntityName);
-};
-
 export const useDetailsForm_setDetails = () => {
     const entityType = useEntityType();
     return useZustandStore<DetailsFormState, DetailsFormState['setDetails']>(

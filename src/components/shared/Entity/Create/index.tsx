@@ -23,10 +23,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import {
-    useDetailsForm_draftedEntityName,
-    useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_entityNameChanged } from 'stores/DetailsForm/hooks';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
@@ -76,7 +73,7 @@ function EntityCreate({
     const imageTag = useDetailsFormStore(
         (state) => state.details.data.connectorImage
     );
-    const entityName = useDetailsForm_draftedEntityName();
+    const entityName = useDetailsFormStore((state) => state.draftedEntityName);
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
