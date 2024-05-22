@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { createRefreshToken } from 'api/tokens';
 import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
@@ -9,6 +8,7 @@ import {
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { useRefreshTokenStore } from '../Store/create';
 
 const TOKEN_VALIDITY = '1 year';
@@ -75,17 +75,15 @@ function GenerateButton() {
     };
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             disabled={!hasLength(description) || saving}
             loading={saving}
             onClick={onClick}
             sx={{ flexGrow: 1 }}
             variant="contained"
         >
-            <span>
-                <FormattedMessage id="admin.cli_api.refreshToken.cta.generate" />
-            </span>
-        </LoadingButton>
+            <FormattedMessage id="admin.cli_api.refreshToken.cta.generate" />
+        </SafeLoadingButton>
     );
 }
 

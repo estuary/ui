@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import {
     createNotificationSubscription,
     deleteNotificationSubscription,
@@ -13,6 +12,7 @@ import {
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 
 interface Props {
     disabled: boolean;
@@ -103,7 +103,7 @@ function SaveButton({
     };
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             variant="contained"
             size="small"
             disabled={disabled || !hasLength(prefix)}
@@ -111,7 +111,7 @@ function SaveButton({
             onClick={onClick}
         >
             <FormattedMessage id="cta.save" />
-        </LoadingButton>
+        </SafeLoadingButton>
     );
 }
 

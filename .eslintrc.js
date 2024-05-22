@@ -48,5 +48,21 @@ module.exports = {
 
         // We should never have these unless commented and explained
         'react-hooks/exhaustive-deps': 'error',
+
+        // Original LoadingButton can cause issues with Google Translate
+        //  https://github.com/mui/material-ui/issues/27853
+        //  https://github.com/facebook/react/issues/11538
+        'no-restricted-imports': [
+            'error',
+            {
+                name: '@mui/lab',
+                importNames: ['LoadingButton'],
+                message: 'Please use SafeLoadingButton instead.',
+            },
+            {
+                name: '@emotion/react',
+                message: 'Do not access emotion directly. Load through MUI',
+            },
+        ],
     },
 };

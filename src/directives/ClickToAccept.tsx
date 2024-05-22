@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import {
     Checkbox,
     FormControl,
@@ -8,6 +7,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
@@ -188,16 +188,14 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     />
                 </FormControl>
 
-                <LoadingButton
+                <SafeLoadingButton
                     type="submit"
                     variant="contained"
                     loading={saving}
                     disabled={saving}
                 >
-                    <span>
-                        <FormattedMessage id="cta.continue" />
-                    </span>
-                </LoadingButton>
+                    <FormattedMessage id="cta.continue" />
+                </SafeLoadingButton>
             </form>
         </>
     );

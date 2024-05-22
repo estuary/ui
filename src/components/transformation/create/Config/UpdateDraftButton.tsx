@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import {
@@ -30,6 +29,7 @@ import {
 import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 
 function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     const selected = useZustandStore<
@@ -148,16 +148,14 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     ]);
 
     return (
-        <LoadingButton
+        <SafeLoadingButton
             variant="contained"
             loading={catalogUpdating}
             disabled={selected.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
-            <span>
-                <FormattedMessage id="cta.continue" />
-            </span>
-        </LoadingButton>
+            <FormattedMessage id="cta.continue" />
+        </SafeLoadingButton>
     );
 }
 
