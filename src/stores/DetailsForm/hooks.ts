@@ -22,15 +22,6 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 };
 
 // Selector hooks
-export const useDetailsForm_setHydrationErrorsExist = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        DetailsFormState,
-        DetailsFormState['setHydrationErrorsExist']
-    >(getStoreName(entityType), (state) => state.setHydrationErrorsExist);
-};
-
 export const useDetailsForm_hydrateState = () => {
     const entityType = useEntityType();
 
