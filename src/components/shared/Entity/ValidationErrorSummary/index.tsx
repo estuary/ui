@@ -15,7 +15,7 @@ import {
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'stores/Binding/hooks';
-import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
@@ -45,7 +45,9 @@ function ValidationErrorSummary({
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Details form
-    const detailsFormErrorsExist = useDetailsForm_errorsExist();
+    const detailsFormErrorsExist = useDetailsFormStore(
+        (state) => state.errorsExist
+    );
 
     // Endpoint Config Store
     const endpointConfigHydrationErrorsExist =

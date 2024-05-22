@@ -8,7 +8,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback, useMemo } from 'react';
 import { useBinding_resourceConfigErrorsExist } from 'stores/Binding/hooks';
-import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
@@ -55,7 +55,9 @@ function useDiscoverCapture(
     const updateFormStatus = useFormStateStore_updateStatus();
 
     // Details Form Store
-    const detailsFormsHasErrors = useDetailsForm_errorsExist();
+    const detailsFormsHasErrors = useDetailsFormStore(
+        (state) => state.errorsExist
+    );
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();

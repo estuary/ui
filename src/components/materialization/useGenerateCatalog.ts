@@ -28,7 +28,6 @@ import {
 } from 'stores/Binding/hooks';
 import {
     useDetailsForm_entityNameChanged,
-    useDetailsForm_errorsExist,
     useDetailsForm_setDraftedEntityName,
 } from 'stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -57,7 +56,9 @@ function useGenerateCatalog() {
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Details Form Store
-    const detailsFormsErrorsExist = useDetailsForm_errorsExist();
+    const detailsFormsErrorsExist = useDetailsFormStore(
+        (state) => state.errorsExist
+    );
     const imageConnectorTagId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.id
     );
