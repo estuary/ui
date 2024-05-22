@@ -7,6 +7,7 @@ import SafeLoadingButton from 'components/SafeLoadingButton';
 import { Plus } from 'iconoir-react';
 
 import { FormattedMessage } from 'react-intl';
+import { fireGtmEvent } from 'services/gtm';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 
 interface Props {
@@ -73,6 +74,10 @@ function AddPaymentMethod({
                                             tenant,
                                             id
                                         );
+
+                                        fireGtmEvent('Payment_Entered', {
+                                            tenant,
+                                        });
                                     }
                                     setOpen(false);
                                     onSuccess();

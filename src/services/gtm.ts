@@ -4,7 +4,7 @@ import { getGoogleTageManagerSettings, isProduction } from 'utils/env-utils';
 
 const googleTagManagerSettings = getGoogleTageManagerSettings();
 
-type EVENTS = 'Register';
+type EVENTS = 'Register' | 'Payment_Entered';
 
 export const initGoogleTagManager = () => {
     if (
