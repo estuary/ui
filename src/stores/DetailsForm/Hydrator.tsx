@@ -3,19 +3,19 @@ import { useEntityWorkflow } from 'context/Workflow';
 import { useEffectOnce } from 'react-use';
 import { logRocketConsole } from 'services/shared';
 import {
-    useDetailsForm_hydrated,
     useDetailsForm_hydrateState,
     useDetailsForm_setActive,
     useDetailsForm_setHydrated,
     useDetailsForm_setHydrationErrorsExist,
 } from 'stores/DetailsForm/hooks';
 import { BaseComponentProps } from 'types';
+import { useDetailsFormStore } from './Store';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
-    const hydrated = useDetailsForm_hydrated();
+    const hydrated = useDetailsFormStore((state) => state.hydrated);
     const setHydrated = useDetailsForm_setHydrated();
     const setActive = useDetailsForm_setActive();
     const setHydrationErrorsExist = useDetailsForm_setHydrationErrorsExist();
