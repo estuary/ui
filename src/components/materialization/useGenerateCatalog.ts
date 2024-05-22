@@ -26,10 +26,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
-import {
-    useDetailsForm_entityNameChanged,
-    useDetailsForm_setDraftedEntityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsForm_entityNameChanged } from 'stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -68,7 +65,9 @@ function useGenerateCatalog() {
     const imagePath = useDetailsFormStore(
         (state) => state.details.data.connectorImage.imagePath
     );
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const setDraftedEntityName = useDetailsFormStore(
+        (state) => state.setDraftedEntityName
+    );
     const entityNameChanged = useDetailsForm_entityNameChanged();
 
     // Draft Editor Store
