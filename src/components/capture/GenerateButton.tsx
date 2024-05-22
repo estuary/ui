@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_rediscoveryRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useDetailsForm_previousConnectorImage_connectorId } from 'stores/DetailsForm/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
@@ -45,8 +44,9 @@ function CaptureGenerateButton({
     const selectedConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
-    const previousConnectorId =
-        useDetailsForm_previousConnectorImage_connectorId();
+    const previousConnectorId = useDetailsFormStore(
+        (state) => state.previousDetails.data.connectorImage.connectorId
+    );
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
     );
