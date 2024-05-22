@@ -24,6 +24,7 @@ import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { getDereffedSchema } from 'utils/misc-utils';
 
 const TestJsonForms = () => {
