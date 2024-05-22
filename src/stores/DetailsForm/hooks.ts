@@ -6,6 +6,7 @@ import useGlobalSearchParams, {
 import { DetailsFormState } from 'stores/DetailsForm/types';
 import { DetailsFormStoreNames } from 'stores/names';
 import { Entity } from 'types';
+import { useDetailsFormStore } from './Store';
 
 export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
     switch (entityType) {
@@ -24,10 +25,8 @@ export const getStoreName = (entityType: Entity): DetailsFormStoreNames => {
 // Selector hooks
 export const useDetailsForm_changed_connectorId = () => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-    const entityType = useEntityType();
 
-    return useZustandStore<DetailsFormState, boolean>(
-        getStoreName(entityType),
+    return useDetailsFormStore(
         (state) =>
             state.details.data.connectorImage.connectorId !==
                 state.previousDetails.data.connectorImage.connectorId ||
