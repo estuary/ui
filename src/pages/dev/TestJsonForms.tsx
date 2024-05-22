@@ -14,8 +14,8 @@ import PageContainer from 'components/shared/PageContainer';
 import { jsonFormsPadding } from 'context/Theme';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useConnectors from 'hooks/connectors/useConnectors';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -23,7 +23,6 @@ import { setDefaultsValidator } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
-import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
 import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { getDereffedSchema } from 'utils/misc-utils';
 
@@ -36,7 +35,7 @@ const TestJsonForms = () => {
     const [uiSchema, setUiSchema] = useState<any | null>(null);
     const [formData, setFormData] = useState({});
 
-    const resetDetailsForm = useDetailsForm_resetState();
+    const resetDetailsForm = useDetailsFormStore((state) => state.resetState);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];

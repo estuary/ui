@@ -1,9 +1,6 @@
-import { useEntityType } from 'context/EntityContext';
-import { useZustandStore } from 'context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { DetailsFormState } from 'stores/DetailsForm/types';
 import { DetailsFormStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { useDetailsFormStore } from './Store';
@@ -35,13 +32,5 @@ export const useDetailsForm_changed_connectorId = () => {
                     connectorId !==
                         state.details.data.connectorImage.connectorId
             )
-    );
-};
-
-export const useDetailsForm_resetState = () => {
-    const entityType = useEntityType();
-    return useZustandStore<DetailsFormState, DetailsFormState['resetState']>(
-        getStoreName(entityType),
-        (state) => state.resetState
     );
 };
