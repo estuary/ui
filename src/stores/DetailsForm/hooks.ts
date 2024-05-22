@@ -38,15 +38,6 @@ export const useDetailsForm_changed_connectorId = () => {
     );
 };
 
-export const useDetailsForm_customErrors = () => {
-    const entityType = useEntityType();
-
-    return useZustandStore<DetailsFormState, DetailsFormState['customErrors']>(
-        getStoreName(entityType),
-        (state) => state.customErrors
-    );
-};
-
 export const useDetailsForm_resetState = () => {
     const entityType = useEntityType();
     return useZustandStore<DetailsFormState, DetailsFormState['resetState']>(

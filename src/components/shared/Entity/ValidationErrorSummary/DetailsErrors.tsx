@@ -1,13 +1,12 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useDetailsForm_customErrors } from 'stores/DetailsForm/hooks';
 import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {
     const intl = useIntl();
 
-    const customErrors = useDetailsForm_customErrors();
+    const customErrors = useDetailsFormStore((state) => state.customErrors);
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
     );
