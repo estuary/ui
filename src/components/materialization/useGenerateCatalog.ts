@@ -14,7 +14,6 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import invariableStores from 'context/Zustand/invariableStores';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import {
@@ -49,9 +48,9 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
-import { useStore } from 'zustand';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -106,10 +105,7 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const sourceCapture = useStore(
-        invariableStores['source-capture'],
-        (state) => state.sourceCapture
-    );
+    const sourceCapture = useSourceCaptureStore((state) => state.sourceCapture);
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)

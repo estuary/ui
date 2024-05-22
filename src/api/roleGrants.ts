@@ -1,4 +1,9 @@
-import { insertSupabase, supabaseClient, TABLES } from 'services/supabase';
+import {
+    deleteSupabase,
+    insertSupabase,
+    supabaseClient,
+    TABLES,
+} from 'services/supabase';
 import { BaseGrant, Capability } from 'types';
 
 const createRoleGrant = (
@@ -13,6 +18,12 @@ const createRoleGrant = (
     });
 };
 
+const deleteRoleGrant = (id: string) => {
+    return deleteSupabase(TABLES.ROLE_GRANTS, {
+        id,
+    });
+};
+
 const getPrefixAdministrators = (
     objectRole: string,
     capability: Capability
@@ -24,4 +35,4 @@ const getPrefixAdministrators = (
         .eq('object_role', objectRole);
 };
 
-export { createRoleGrant, getPrefixAdministrators };
+export { createRoleGrant, deleteRoleGrant, getPrefixAdministrators };

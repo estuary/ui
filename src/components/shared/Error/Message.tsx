@@ -6,16 +6,18 @@ import {
     retryAfterFailure,
 } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { ExternalLinkOptions } from '../ExternalLink';
 import Instructions from './Instructions';
 import { ErrorDetails } from './types';
 
 interface Props {
     error?: ErrorDetails;
+    linkOptions?: ExternalLinkOptions;
 }
 
 const FALLBACK = 'error.fallBack';
 
-function Message({ error }: Props) {
+function Message({ error, linkOptions }: Props) {
     // We fire an event AND log so we can find these but LR
     //  does not allow unbounded data to be passed into an event
     //  so the logging allows us to see what error was passed in
@@ -57,7 +59,7 @@ function Message({ error }: Props) {
 
     return (
         <Stack spacing={2}>
-            <Instructions message={message} />
+            <Instructions message={message} linkOptions={linkOptions} />
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>
                     <FormattedMessage id="error.messageLabel" />

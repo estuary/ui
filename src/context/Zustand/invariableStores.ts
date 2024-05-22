@@ -9,7 +9,6 @@ import {
     EditorStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
-    MiscStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
     ShardDetailStoreNames,
@@ -17,7 +16,6 @@ import {
 } from 'stores/names';
 import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'stores/ShardDetail/Store';
-import { createSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { createBillingTableStore } from 'stores/Tables/Billing/Store';
 import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'stores/Tables/Store';
@@ -72,11 +70,6 @@ const invariableStores = {
         SchemaEvolutionStoreNames.GENERAL
     ),
 
-    // Schema Evolution Store
-    [MiscStoreNames.SOURCE_CAPTURE]: createSourceCaptureStore(
-        MiscStoreNames.SOURCE_CAPTURE
-    ),
-
     // Select Table Store
     [SelectTableStoreNames.ACCESS_GRANTS_LINKS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_LINKS
@@ -107,6 +100,9 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.PREFIX_ALERTS]: createPrefixAlertTableStore(
         SelectTableStoreNames.PREFIX_ALERTS
+    ),
+    [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
+        SelectTableStoreNames.REFRESH_TOKENS
     ),
 
     // Shard Detail Store

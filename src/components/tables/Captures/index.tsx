@@ -9,6 +9,7 @@ import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
 import { selectKeyValueName } from '../shared';
+import CaptureExportButton from './Export';
 import useCaptureColumns from './useCaptureColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.CAPTURE;
@@ -47,6 +48,7 @@ function CapturesTable() {
                     selectableTableStoreName={selectableTableStoreName}
                 >
                     <EntityTable
+                        ExportComponent={CaptureExportButton}
                         noExistingDataContentIds={{
                             header: 'captures.message1',
                             message: 'captures.message2',

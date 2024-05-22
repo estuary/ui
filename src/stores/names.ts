@@ -44,10 +44,6 @@ export enum SchemaEvolutionStoreNames {
     GENERAL = 'general-schema-evolution',
 }
 
-export enum MiscStoreNames {
-    SOURCE_CAPTURE = 'source-capture',
-}
-
 export enum SelectTableStoreNames {
     ACCESS_GRANTS_LINKS = 'AccessGrants-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Users',
@@ -59,6 +55,7 @@ export enum SelectTableStoreNames {
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
+    REFRESH_TOKENS = 'Refresh-Tokens-Table',
     STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 
@@ -93,7 +90,6 @@ export type StoreName =
     | FormStateStoreNames
     | GlobalStoreNames
     | JournalDataStoreNames
-    | MiscStoreNames
     | OnboardingStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
