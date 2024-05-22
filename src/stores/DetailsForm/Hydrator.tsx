@@ -2,7 +2,6 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useEffectOnce } from 'react-use';
 import { logRocketConsole } from 'services/shared';
-import { useDetailsForm_hydrateState } from 'stores/DetailsForm/hooks';
 import { BaseComponentProps } from 'types';
 import { useDetailsFormStore } from './Store';
 
@@ -17,7 +16,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
         (state) => state.setHydrationErrorsExist
     );
 
-    const hydrateState = useDetailsForm_hydrateState();
+    const hydrateState = useDetailsFormStore((state) => state.hydrateState);
 
     useEffectOnce(() => {
         if (
