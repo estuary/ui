@@ -28,7 +28,10 @@ function ConfigHeader({ entityNameError }: Props) {
     );
 
     const selectedCollections = useMemo(
-        () => Array.from(selected).map((collection) => collection[0]),
+        () =>
+            Array.from(selected).map(
+                (collection) => collection[1].catalog_name
+            ),
         [selected]
     );
 
