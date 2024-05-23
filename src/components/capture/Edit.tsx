@@ -25,14 +25,13 @@ import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
+const entityType = 'capture';
 function CaptureEdit() {
     usePageTitle({
         header: authenticatedRoutes.captures.edit.title,
     });
 
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-
-    const entityType = 'capture';
 
     // Supabase
     const hasConnectors = useValidConnectorsExist(entityType);
