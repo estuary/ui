@@ -7,6 +7,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import ViewDetails from './Actions/ViewDetails';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -52,11 +53,15 @@ function EntityToolbar({
                     }}
                 >
                     {draftId ? (
-                        <>
-                            {TestButton}
+                        formStatus === FormStatus.SAVED ? (
+                            <ViewDetails />
+                        ) : (
+                            <>
+                                {TestButton}
 
-                            {SaveButton}
-                        </>
+                                {SaveButton}
+                            </>
+                        )
                     ) : (
                         GenerateButton
                     )}
