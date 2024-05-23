@@ -660,15 +660,19 @@ const getInitialState = (
                                 undefined,
                             ];
 
-                    state.currentBinding = Boolean(
-                        evaluatedBindingUUID && evaluatedResourceConfig
-                    )
-                        ? {
-                              uuid: evaluatedBindingUUID,
-                              collection:
-                                  evaluatedResourceConfig.meta.collectionName,
-                          }
-                        : null;
+                    // Only update the current binding if we have removed the one that is currently selected
+                    if (state.currentBinding?.uuid === uuid) {
+                        state.currentBinding = Boolean(
+                            evaluatedBindingUUID && evaluatedResourceConfig
+                        )
+                            ? {
+                                  uuid: evaluatedBindingUUID,
+                                  collection:
+                                      evaluatedResourceConfig.meta
+                                          .collectionName,
+                              }
+                            : null;
+                    }
 
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;

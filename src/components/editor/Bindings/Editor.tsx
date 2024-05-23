@@ -198,14 +198,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
             </Box>
         );
     } else {
-        return (
-            <Box sx={{ p: 1 }}>
-                <AlertBox short severity="info">
-                    To view details of a collection use the collection list on
-                    the left. Start by clicking on one of the collection names.
-                </AlertBox>
-            </Box>
-        );
+        return null;
     }
 }
 
