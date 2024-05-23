@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import {
     Box,
     Stack,
@@ -9,6 +8,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import CustomerQuote from 'directives/Onboard/CustomerQuote';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
@@ -186,16 +186,14 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                     : 'flex-start',
                             }}
                         >
-                            <LoadingButton
+                            <SafeLoadingButton
                                 type="submit"
                                 variant="contained"
                                 loading={saving}
                                 disabled={saving}
                             >
-                                <span>
-                                    <FormattedMessage id="cta.continue" />
-                                </span>
-                            </LoadingButton>
+                                <FormattedMessage id="cta.continue" />
+                            </SafeLoadingButton>
                         </Toolbar>
                     </Stack>
                 </form>
