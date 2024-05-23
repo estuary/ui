@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { useEntityWorkflow } from 'context/Workflow';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import React, { useState } from 'react';
 import {
     useBinding_discoveredCollections,
@@ -83,7 +83,7 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
             onClick={handlers.removeBinding}
             sx={{ color: (theme) => theme.palette.text.primary }}
         >
-            <Cancel />
+            <Xmark />
         </IconButton>
     );
 }

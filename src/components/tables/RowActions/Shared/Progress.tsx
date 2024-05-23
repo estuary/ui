@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
-import { CheckCircle, InfoEmpty, WarningCircle } from 'iconoir-react';
+import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -65,7 +65,7 @@ function SharedProgress({
                         style={{ color: theme.palette.success.main }}
                     />
                 ) : state === ProgressStates.SKIPPED ? (
-                    <InfoEmpty style={{ color: theme.palette.info.main }} />
+                    <InfoCircle style={{ color: theme.palette.info.main }} />
                 ) : (
                     <CircularProgress color="info" size={18} />
                 )}

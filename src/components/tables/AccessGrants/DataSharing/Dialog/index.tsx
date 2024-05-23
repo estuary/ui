@@ -11,7 +11,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -55,7 +55,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
-                    <Cancel
+                    <Xmark
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

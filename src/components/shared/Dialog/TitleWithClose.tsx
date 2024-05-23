@@ -1,5 +1,5 @@
 import { DialogTitle, IconButton } from '@mui/material';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
@@ -28,7 +28,7 @@ function DialogTitleWithClose({
                     top: 8,
                 }}
             >
-                <Cancel />
+                <Xmark />
             </IconButton>
         </DialogTitle>
     );

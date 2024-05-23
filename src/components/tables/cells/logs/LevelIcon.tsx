@@ -3,10 +3,10 @@ import { LogLevels } from 'components/tables/Logs/types';
 import {
     CheckCircle,
     Circle,
-    DeleteCircle,
-    InfoEmpty,
+    InfoCircle,
     MinusCircle,
     WarningCircle,
+    XmarkCircle,
 } from 'iconoir-react';
 import { BaseTypographySx } from './shared';
 
@@ -21,7 +21,7 @@ function LevelIcon({ level }: Props) {
 
     const IconComponent =
         level === 'error'
-            ? DeleteCircle
+            ? XmarkCircle
             : level === 'warn'
             ? WarningCircle
             : level === 'done'
@@ -30,7 +30,7 @@ function LevelIcon({ level }: Props) {
             ? MinusCircle
             : level === 'trace'
             ? Circle
-            : InfoEmpty;
+            : InfoCircle;
 
     const iconColor =
         level === 'error'
