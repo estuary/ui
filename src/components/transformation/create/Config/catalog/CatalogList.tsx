@@ -20,16 +20,16 @@ export interface CatalogListContent {
 interface Props {
     addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
     content: ReactNode;
-    header: ReactNode;
     extendList?: boolean;
+    header?: ReactNode;
     height?: number;
 }
 
 function CatalogList({
-    content,
     addButtonClickHandler,
-    header,
+    content,
     extendList = true,
+    header,
     height,
 }: Props) {
     const theme = useTheme();
@@ -38,38 +38,42 @@ function CatalogList({
         <List
             disablePadding
             subheader={
-                <Stack
-                    direction="row"
-                    sx={{
-                        justifyContent: 'space-between',
-                        borderBottom: defaultOutline[theme.palette.mode],
-                    }}
-                >
-                    <Typography
-                        component="div"
+                header ? (
+                    <Stack
+                        direction="row"
                         sx={{
-                            p: 1,
-                            fontWeight: 500,
-                            textTransform: 'uppercase',
+                            justifyContent: 'space-between',
+                            borderBottom: defaultOutline[theme.palette.mode],
                         }}
                     >
-                        {header}
-                    </Typography>
-
-                    <IconButton
-                        disabled={!extendList}
-                        onClick={addButtonClickHandler}
-                        sx={{ borderRadius: 0 }}
-                    >
-                        <Plus
-                            style={{
-                                color: extendList
-                                    ? theme.palette.primary.main
-                                    : disabledButtonText[theme.palette.mode],
+                        <Typography
+                            component="div"
+                            sx={{
+                                p: 1,
+                                fontWeight: 500,
+                                textTransform: 'uppercase',
                             }}
-                        />
-                    </IconButton>
-                </Stack>
+                        >
+                            {header}
+                        </Typography>
+
+                        <IconButton
+                            disabled={!extendList}
+                            onClick={addButtonClickHandler}
+                            sx={{ borderRadius: 0 }}
+                        >
+                            <Plus
+                                style={{
+                                    color: extendList
+                                        ? theme.palette.primary.main
+                                        : disabledButtonText[
+                                              theme.palette.mode
+                                          ],
+                                }}
+                            />
+                        </IconButton>
+                    </Stack>
+                ) : undefined
             }
         >
             <Box sx={{ height, overflowY: 'auto' }}>{content}</Box>
