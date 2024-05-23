@@ -1,14 +1,7 @@
-import {
-    Box,
-    IconButton,
-    List,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import { defaultOutline, disabledButtonText } from 'context/Theme';
-import { Plus } from 'iconoir-react';
+import { Box, Button, List, Stack, Typography, useTheme } from '@mui/material';
+import { defaultOutline } from 'context/Theme';
 import { MouseEventHandler, ReactNode } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 export interface CatalogListContent {
     attributeId: string;
@@ -57,21 +50,14 @@ function CatalogList({
                             {header}
                         </Typography>
 
-                        <IconButton
+                        <Button
                             disabled={!extendList}
                             onClick={addButtonClickHandler}
-                            sx={{ borderRadius: 0 }}
+                            style={{ borderRadius: 0 }}
+                            variant="text"
                         >
-                            <Plus
-                                style={{
-                                    color: extendList
-                                        ? theme.palette.primary.main
-                                        : disabledButtonText[
-                                              theme.palette.mode
-                                          ],
-                                }}
-                            />
-                        </IconButton>
+                            <FormattedMessage id="cta.add" />
+                        </Button>
                     </Stack>
                 ) : undefined
             }
