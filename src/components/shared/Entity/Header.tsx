@@ -8,6 +8,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import EntityViewDetails from './Actions/ViewDetails';
+import HeaderLogs from './HeaderLogs';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -86,6 +87,8 @@ function EntityToolbar({
                     </Box>
                 </Fade>
             </Box>
+
+            <HeaderLogs />
         </Stack>
     );
 }
