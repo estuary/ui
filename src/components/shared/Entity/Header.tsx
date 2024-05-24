@@ -7,7 +7,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import ViewDetails from './Actions/ViewDetails';
+import EntityViewDetails from './Actions/ViewDetails';
 
 interface Props {
     GenerateButton: ReactNode;
@@ -35,6 +35,7 @@ function EntityToolbar({
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
     const discovering = !draftId && formStatus === FormStatus.GENERATING;
+    const saved = formStatus === FormStatus.SAVED;
 
     return (
         <Stack spacing={2} sx={{ mb: 1 }}>
@@ -53,8 +54,8 @@ function EntityToolbar({
                     }}
                 >
                     {draftId ? (
-                        formStatus === FormStatus.SAVED ? (
-                            <ViewDetails />
+                        saved ? (
+                            <EntityViewDetails />
                         ) : (
                             <>
                                 {TestButton}
@@ -73,7 +74,11 @@ function EntityToolbar({
                     height: 2,
                 }}
             >
-                <Fade in={formActive} mountOnEnter unmountOnExit>
+                <Fade
+                    in={Boolean(formActive && !saved)}
+                    mountOnEnter
+                    unmountOnExit
+                >
                     <Box>
                         <LinearProgressTimed
                             wait={discovering ? generateWaitTime : undefined}
