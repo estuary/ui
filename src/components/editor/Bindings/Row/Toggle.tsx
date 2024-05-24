@@ -38,6 +38,7 @@ function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
                 size="small"
                 checked={!disabled}
                 color="success"
+                id={`binding-toggle__${bindingUUID}`}
             />
         </Button>
     );
