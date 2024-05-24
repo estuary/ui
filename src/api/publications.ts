@@ -24,9 +24,15 @@ export interface PublicationJobStatus {
     id: string;
 }
 
-export const getPublicationByIdQuery = (pubId: string) => {
-    return supabaseClient
+export const getPublicationByIdQuery = (pubId: string, draftId?: string) => {
+    let query = supabaseClient
         .from(TABLES.PUBLICATIONS)
         .select(JOB_STATUS_COLUMNS)
         .eq('id', pubId);
+
+    if (draftId) {
+        query = query.eq('draft_id', draftId);
+    }
+
+    return query;
 };
