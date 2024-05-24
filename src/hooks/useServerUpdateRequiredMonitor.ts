@@ -38,21 +38,15 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
 
                                 // We might end up returning `true` here but adding this logging
                                 //  to get more information before making that change.
-                                if (
-                                    binding === null ||
-                                    binding === undefined ||
-                                    !binding.resource ||
-                                    !binding.disable
-                                ) {
+                                if (!binding) {
                                     logRocketEvent(
                                         CustomEvents.BINDINGS_EXPECTED_MISSING,
                                         {
+                                            collection,
                                             expectedBindingIndex,
                                         }
                                     );
                                 }
-
-                                const { resource, disable } = binding;
 
                                 // Ensure the associated collection matches before comparing binding properties.
                                 if (collection !== getCollectionName(binding)) {
@@ -63,7 +57,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                 if (
                                     resourceConfigs[bindingUUID].meta
                                         .disable !==
-                                    getDisableProps(disable).disable
+                                    getDisableProps(binding?.disable).disable
                                 ) {
                                     return true;
                                 }
@@ -71,7 +65,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                 // Since we checked disabled up above we can not just check if the data changed
                                 return !isEqual(
                                     resourceConfigs[bindingUUID].data,
-                                    resource
+                                    binding?.resource
                                 );
                             }
 
