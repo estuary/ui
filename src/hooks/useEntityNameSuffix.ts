@@ -1,18 +1,20 @@
 import { useMemo } from 'react';
-import {
-    useDetailsForm_connectorImage_imageName,
-    useDetailsForm_details_entityName,
-    useDetailsForm_draftedEntityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 
 // Used to add the image name to the end of an entity name
 //  We pass in the boolean as different entities need to control
 //  when this happens at different times.
 function useEntityNameSuffix(when: boolean | undefined) {
-    const entityName = useDetailsForm_details_entityName();
-    const imageName = useDetailsForm_connectorImage_imageName();
-    const draftedEntityName = useDetailsForm_draftedEntityName();
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
+    const imageName = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageName
+    );
+    const draftedEntityName = useDetailsFormStore(
+        (state) => state.draftedEntityName
+    );
     const strippedImageName = stripPathing(imageName);
     const nameEndsInImage = entityName.endsWith(strippedImageName);
 

@@ -8,10 +8,10 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
-import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
 import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { Entity } from 'types';
 import useDiscoverStartSubscription from './useDiscoverStartSubscription';
 
@@ -26,7 +26,9 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
+    const imageConnectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
 

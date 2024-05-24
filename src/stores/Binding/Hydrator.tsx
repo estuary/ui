@@ -1,7 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import { useEffect, useRef } from 'react';
-import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { BaseComponentProps } from 'types';
 import {
@@ -20,7 +20,9 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
 
-    const connectorTagId = useDetailsForm_connectorImage_id();
+    const connectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
 
     const setHydrated = useBinding_setHydrated();
     const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
