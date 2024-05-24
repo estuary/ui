@@ -18,10 +18,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const editing = useEntityWorkflow_Editing();
 
     const resourceConfigUpdated = useMemo(() => {
-        console.log('resourceConfigUpdated', {
-            bindings: Object.keys(bindings).length,
-            specs: draftSpecs.length,
-        });
         if (draftSpecs.length > 0) {
             if (
                 draftSpecs[0].spec.bindings.length ===
@@ -39,13 +35,6 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                     draftSpecs[0].spec.bindings[
                                         expectedBindingIndex
                                     ];
-
-                                console.log('binding', binding);
-                                console.log('draftSpecs', draftSpecs);
-                                console.log(
-                                    'expectedBindingIndex',
-                                    expectedBindingIndex
-                                );
 
                                 // We might end up returning `true` here but adding this logging
                                 //  to get more information before making that change.

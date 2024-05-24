@@ -1049,9 +1049,6 @@ const getInitialState = (
                     ? state.resourceConfigs[targetBindingUUID]
                     : null;
 
-                console.log('targetBindingUUID', targetBindingUUID);
-                console.log('state.resourceConfigs', state.resourceConfigs);
-
                 const targettedResourceConfig =
                     state.resourceConfigs[targetBindingUUID];
 
