@@ -153,6 +153,9 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.back': `Back`,
     'cta.revoke': `Revoke`,
     'cta.goToDetails': `See Details`,
+    // These are dynamically created in the Save button
+    'cta.saveEntity.active': `Saving and Publishing...`,
+    'cta.testConfig.active': `Testing...`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {

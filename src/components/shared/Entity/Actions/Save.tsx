@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -13,6 +12,7 @@ import useSave from './useSave';
 
 interface Props {
     disabled: boolean;
+    loading: boolean;
     logEvent: CustomEvents;
     onFailure: Function;
     buttonLabelId?: string;
@@ -23,6 +23,7 @@ function EntityCreateSave({
     buttonLabelId,
     disabled,
     dryRun,
+    loading,
     logEvent,
     onFailure,
 }: Props) {
@@ -30,6 +31,12 @@ function EntityCreateSave({
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
+
+    const labelId = buttonLabelId
+        ? buttonLabelId
+        : dryRun === true
+        ? `cta.testConfig${loading ? '.active' : ''}`
+        : `cta.saveEntity${loading ? '.active' : ''}`;
 
     return (
         <Button
@@ -39,16 +46,9 @@ function EntityCreateSave({
             }}
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
+            startIcon={null}
         >
-            <FormattedMessage
-                id={
-                    buttonLabelId
-                        ? buttonLabelId
-                        : dryRun === true
-                        ? 'cta.testConfig'
-                        : 'cta.saveEntity'
-                }
-            />
+            <FormattedMessage id={labelId} />
         </Button>
     );
 }

@@ -32,6 +32,8 @@ function EntityTestButton({ disabled, logEvent }: Props) {
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
 
+    const isTesting = formStatus === FormStatus.TESTING;
+
     return (
         <>
             <LogDialog
@@ -54,14 +56,13 @@ function EntityTestButton({ disabled, logEvent }: Props) {
                     />
                 }
             />
-            {formStatus === FormStatus.SAVED ? null : (
-                <EntityCreateSave
-                    dryRun
-                    disabled={Boolean(disabled || !draftId) || !formsHydrated}
-                    onFailure={callFailed}
-                    logEvent={logEvent}
-                />
-            )}
+            <EntityCreateSave
+                dryRun
+                disabled={Boolean(disabled || !draftId) || !formsHydrated}
+                onFailure={callFailed}
+                loading={isTesting}
+                logEvent={logEvent}
+            />
         </>
     );
 }
