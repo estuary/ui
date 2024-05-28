@@ -17,14 +17,13 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { DetailsFormStoreNames } from 'stores/names';
 import { CATALOG_NAME_PATTERN } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
 } from 'utils/workflow-utils';
-import { StoreApi, createStore } from 'zustand';
+import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
@@ -342,18 +341,9 @@ export const getInitialState = (
     },
 });
 
-const createDetailsFormStore = (key: DetailsFormStoreNames) => {
-    return createStore<DetailsFormState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
-    );
-};
-
-export const captureDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.CAPTURE
-);
-export const collectionDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.COLLECTION
-);
-export const materializationDetailsForm = createDetailsFormStore(
-    DetailsFormStoreNames.MATERIALIZATION
+export const useDetailsFormStore = create<DetailsFormState>()(
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions('details-form-store')
+    )
 );

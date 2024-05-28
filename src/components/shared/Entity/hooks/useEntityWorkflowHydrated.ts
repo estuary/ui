@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useBinding_hydrated } from 'stores/Binding/hooks';
-import { useDetailsForm_hydrated } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
 
 // TODO (forms)
@@ -13,7 +13,7 @@ import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
 //  than not checking any of this stuff.
 function useEntityWorkflowHydrated() {
     const bindingsHydrated = useBinding_hydrated();
-    const detailsHydrated = useDetailsForm_hydrated();
+    const detailsHydrated = useDetailsFormStore((state) => state.hydrated);
     const endpointHydrated = useEndpointConfig_hydrated();
 
     return useMemo(

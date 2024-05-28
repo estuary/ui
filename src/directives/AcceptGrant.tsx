@@ -1,7 +1,7 @@
-import { LoadingButton } from '@mui/lab';
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import { defaultOutline } from 'context/Theme';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
@@ -121,17 +121,15 @@ function AcceptGrant({
                     justifyContent: 'center',
                 }}
             >
-                <LoadingButton
+                <SafeLoadingButton
                     variant="contained"
                     loading={saving}
                     disabled={saving}
                     onClick={applyDirective}
                     sx={{ mt: 2 }}
                 >
-                    <span>
-                        <FormattedMessage id="cta.continue" />
-                    </span>
-                </LoadingButton>
+                    <FormattedMessage id="cta.continue" />
+                </SafeLoadingButton>
             </Box>
         </Stack>
     );

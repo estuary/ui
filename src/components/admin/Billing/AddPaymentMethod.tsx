@@ -1,12 +1,13 @@
-import { LoadingButton } from '@mui/lab';
 import { Box, Dialog, DialogTitle } from '@mui/material';
 import { Elements } from '@stripe/react-stripe-js';
 import { Stripe } from '@stripe/stripe-js';
 import { setTenantPrimaryPaymentMethod } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { Plus } from 'iconoir-react';
 
 import { FormattedMessage } from 'react-intl';
+import { fireGtmEvent } from 'services/gtm';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 
 interface Props {
@@ -33,7 +34,7 @@ function AddPaymentMethod({
     return (
         <>
             <Box>
-                <LoadingButton
+                <SafeLoadingButton
                     loadingPosition="start"
                     disabled={!enable}
                     loading={setupIntentSecret === INTENT_SECRET_LOADING}
@@ -42,10 +43,8 @@ function AddPaymentMethod({
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
                 >
-                    <span>
-                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
-                    </span>
-                </LoadingButton>
+                    <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                </SafeLoadingButton>
             </Box>
 
             <Dialog
@@ -75,6 +74,10 @@ function AddPaymentMethod({
                                             tenant,
                                             id
                                         );
+
+                                        fireGtmEvent('Payment_Entered', {
+                                            tenant,
+                                        });
                                     }
                                     setOpen(false);
                                     onSuccess();

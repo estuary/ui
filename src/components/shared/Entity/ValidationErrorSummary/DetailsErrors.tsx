@@ -1,18 +1,18 @@
 import KeyValueList from 'components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
-import {
-    useDetailsForm_connectorImage_id,
-    useDetailsForm_customErrors,
-    useDetailsForm_details_entityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { hasLength } from 'utils/misc-utils';
 
 function DetailsErrors() {
     const intl = useIntl();
 
-    const customErrors = useDetailsForm_customErrors();
-    const entityName = useDetailsForm_details_entityName();
-    const imageId = useDetailsForm_connectorImage_id();
+    const customErrors = useDetailsFormStore((state) => state.customErrors);
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
+    const imageId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
 
     const filteredErrorsList: any[] = [];
 

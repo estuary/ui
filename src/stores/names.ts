@@ -6,12 +6,6 @@ export enum BindingsEditorStoreNames {
     GENERAL = 'general_bindings_editor',
 }
 
-export enum DetailsFormStoreNames {
-    CAPTURE = 'capture-details-form',
-    COLLECTION = 'collection-details-form',
-    MATERIALIZATION = 'materialization-details-form',
-}
-
 export enum EditorStoreNames {
     BINDINGS = 'bindings_editor_store',
     CAPTURE = 'capture_editor_store',
@@ -83,7 +77,6 @@ export enum TransformCreateStoreNames {
 export type StoreName =
     | BindingStoreNames
     | BindingsEditorStoreNames
-    | DetailsFormStoreNames
     | EditorStoreNames
     | EndpointConfigStoreNames
     | ExistingEntityStoreNames

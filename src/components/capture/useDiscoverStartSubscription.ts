@@ -2,20 +2,21 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
+import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useClient from 'hooks/supabase-swr/hooks/useClient';
+import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
 import {
+    DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
-    DEFAULT_FILTER,
 } from 'services/supabase';
-import { useDetailsForm_setDraftedEntityName } from 'stores/DetailsForm/hooks';
+import { CustomEvents } from 'services/types';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
@@ -23,7 +24,6 @@ import {
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
@@ -50,7 +50,9 @@ function useDiscoverStartSubscription(entityType: Entity) {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const setDraftedEntityName = useDetailsFormStore(
+        (state) => state.setDraftedEntityName
+    );
 
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
     const setPreviousEndpointConfig =

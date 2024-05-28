@@ -13,7 +13,7 @@ import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
-import { useDetailsForm_unsupportedConnectorVersion } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
@@ -66,8 +66,9 @@ function EndpointConfig({
         useEndpointConfigStore_setEncryptedEndpointConfig();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
-    const unsupportedConnectorVersion =
-        useDetailsForm_unsupportedConnectorVersion();
+    const unsupportedConnectorVersion = useDetailsFormStore(
+        (state) => state.unsupportedConnectorVersion
+    );
 
     // Workflow related props
     const workflow = useEntityWorkflow();
