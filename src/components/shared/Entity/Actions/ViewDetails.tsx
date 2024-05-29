@@ -12,7 +12,7 @@ function EntityViewDetails() {
         <Button
             onClick={async (event) => {
                 event.preventDefault();
-                closeLogs();
+                closeLogs(true);
             }}
             sx={buttonSx}
         >
