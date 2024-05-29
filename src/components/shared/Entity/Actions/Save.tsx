@@ -46,7 +46,6 @@ function EntityCreateSave({
             }}
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
-            startIcon={null}
         >
             <FormattedMessage id={labelId} />
         </Button>

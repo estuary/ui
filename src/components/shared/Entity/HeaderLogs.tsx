@@ -10,6 +10,9 @@ import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
 import LogDialog from './LogDialog';
 import LogDialogActions from './LogDialogActions';
 
+// TODO (break logs from buttons) - this is starting to display the dialog as a stand alone
+//  component broken out of the Test/Save buttons. One last thing that is requied is called
+//  out below where we needed to pass in an array of taskName
 function HeaderLogs() {
     const { closeLogs } = useEntityWorkflowHelpers();
 
