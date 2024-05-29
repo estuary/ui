@@ -9,11 +9,9 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -50,7 +48,6 @@ function useSave(
 ) {
     const intl = useIntl();
 
-    const [searchParams, setSearchParams] = useSearchParams();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
@@ -89,15 +86,18 @@ function useSave(
                         ? FormStatus.TESTED
                         : FormStatus.SAVED;
 
-                    if (!dryRun) {
-                        setSearchParams(
-                            {
-                                ...Object.fromEntries(searchParams),
-                                [GlobalSearchParams.LAST_PUB_ID]: payload.id,
-                            },
-                            { replace: true }
-                        );
-                    }
+                    // TODO This allows the URL to stay in sync after saving
+                    //  helpful if in the future we want to allow a user to pick up
+                    //  where they left off.
+                    // if (!dryRun) {
+                    //     setSearchParams(
+                    //         {
+                    //             ...Object.fromEntries(searchParams),
+                    //             [GlobalSearchParams.LAST_PUB_ID]: payload.id,
+                    //         },
+                    //         { replace: true }
+                    //     );
+                    // }
                     setPubId(payload.id);
                     setFormState({
                         status: formStatus,
@@ -161,11 +161,9 @@ function useSave(
             messagePrefix,
             mutateDraftSpecs,
             onFailure,
-            searchParams,
             setFormState,
             setIncompatibleCollections,
             setPubId,
-            setSearchParams,
             showNotification,
             status,
             updateFormStatus,
