@@ -36,16 +36,13 @@ function EntitySaveButton({ logEvent, disabled, taskNames }: Props) {
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
 
-    const isSaving = formStatus === FormStatus.SAVING;
+    const saving = formStatus === FormStatus.SAVING;
 
     return (
         <>
             <LogDialog
                 open={
-                    formStatus === FormStatus.SAVING ||
-                    formStatus === FormStatus.SAVED
-                        ? showLogs
-                        : false
+                    saving || formStatus === FormStatus.SAVED ? showLogs : false
                 }
                 token={logToken}
                 title={
@@ -61,7 +58,7 @@ function EntitySaveButton({ logEvent, disabled, taskNames }: Props) {
             <EntityCreateSave
                 disabled={Boolean(disabled ?? !draftId) || !formsHydrated}
                 onFailure={callFailed}
-                loading={isSaving}
+                loading={saving}
                 logEvent={logEvent}
             />
         </>

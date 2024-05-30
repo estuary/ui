@@ -32,14 +32,13 @@ function EntityTestButton({ disabled, logEvent }: Props) {
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
 
-    const isTesting = formStatus === FormStatus.TESTING;
+    const testing = formStatus === FormStatus.TESTING;
 
     return (
         <>
             <LogDialog
                 open={
-                    formStatus === FormStatus.TESTING ||
-                    formStatus === FormStatus.TESTED
+                    testing || formStatus === FormStatus.TESTED
                         ? showLogs
                         : false
                 }
@@ -60,7 +59,7 @@ function EntityTestButton({ disabled, logEvent }: Props) {
                 dryRun
                 disabled={Boolean(disabled || !draftId) || !formsHydrated}
                 onFailure={callFailed}
-                loading={isTesting}
+                loading={testing}
                 logEvent={logEvent}
             />
         </>
