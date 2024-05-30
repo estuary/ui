@@ -2,6 +2,9 @@ import { DataGrid } from '@mui/x-data-grid';
 import { dataGridListStyling } from 'context/Theme';
 import { JournalRecord } from 'hooks/journals/types';
 import { JsonPointer } from 'json-ptr';
+import { random } from 'lodash';
+import { useEffect } from 'react';
+import { useTimeout } from 'react-use';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',
@@ -213,27 +216,46 @@ const rowsByKey = Object.assign(
 ) as Record<string, JournalRecord<Record<string, any>>>;
 
 function DataPreview() {
+    const delay = random(5000);
+
+    const [isReady, cancel] = useTimeout(delay);
+
+    useEffect(() => {
+        return () => {
+            cancel();
+        };
+    }, [cancel]);
+
     return (
         <DataGrid
-            columns={[
-                { field: 'id', headerName: 'ID', flex: 1 },
-                {
-                    field: 'flavor_profile',
-                    headerName: 'Flavor Profile',
-                    flex: 1,
-                },
-                { field: 'type', headerName: 'Type', flex: 1 },
-            ]}
-            rows={Object.entries(rowsByKey).map(([key, value]) => ({
-                id: key,
-                flavor_profile: value.flavor_profile,
-                type: value.type,
-            }))}
-            hideFooter
-            disableColumnSelector
-            density="compact"
             columnHeaderHeight={40}
+            columns={
+                isReady()
+                    ? [
+                          { field: 'id', headerName: 'ID', flex: 1 },
+                          {
+                              field: 'flavor_profile',
+                              headerName: 'Flavor Profile',
+                              flex: 1,
+                          },
+                          { field: 'type', headerName: 'Type', flex: 1 },
+                      ]
+                    : []
+            }
+            density="compact"
+            disableColumnSelector
+            hideFooter
+            loading={!Boolean(isReady())}
             rowCount={sampleJournalData.data.documents.length}
+            rows={
+                isReady()
+                    ? Object.entries(rowsByKey).map(([key, value]) => ({
+                          id: key,
+                          flavor_profile: value.flavor_profile,
+                          type: value.type,
+                      }))
+                    : []
+            }
             sx={dataGridListStyling}
         />
     );
