@@ -1049,11 +1049,11 @@ const getInitialState = (
                     ? state.resourceConfigs[targetBindingUUID]
                     : null;
 
-                const targettedResourceConfig =
+                const targetResourceConfig =
                     state.resourceConfigs[targetBindingUUID];
 
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                if (!targettedResourceConfig) {
+                if (!targetResourceConfig) {
                     logRocketEvent(
                         CustomEvents.BINDINGS_RESOURCE_CONFIG_MISSING,
                         {
@@ -1069,7 +1069,7 @@ const getInitialState = (
                     ...value,
                     meta: {
                         collectionName: targetCollection,
-                        bindingIndex: targettedResourceConfig.meta.bindingIndex,
+                        bindingIndex: targetResourceConfig.meta.bindingIndex,
                     },
                 };
 
