@@ -16,7 +16,7 @@ const formActive = (status: FormStatus) => {
         status === FormStatus.SCHEMA_EVOLVING ||
         status === FormStatus.UPDATING ||
         // TODO (workflow stores) need to manage form state better
-        // This is crappy - worry. But if we have saved we want to disable everything and this is quickest way
+        //  This is crappy - sorry. But if we have saved we want to disable everything and this is quickest way
         status === FormStatus.SAVED
     );
 };
