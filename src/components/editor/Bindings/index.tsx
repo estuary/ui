@@ -18,7 +18,7 @@ import {
     useBinding_discoveredCollections,
     useBinding_removeDiscoveredBindings,
 } from 'stores/Binding/hooks';
-import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
 import Backfill from './Backfill';
@@ -55,7 +55,9 @@ function BindingsMultiEditor({
     const removeDiscoveredBindings = useBinding_removeDiscoveredBindings();
 
     // Details Form Store
-    const catalogName = useDetailsForm_details_entityName();
+    const catalogName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();

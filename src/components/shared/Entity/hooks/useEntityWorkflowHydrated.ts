@@ -1,7 +1,7 @@
 import { useEntityWorkflow } from 'context/Workflow';
 import { useMemo } from 'react';
 import { useBinding_hydrated } from 'stores/Binding/hooks';
-import { useDetailsForm_hydrated } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
 
 // TODO (forms)
@@ -16,7 +16,7 @@ function useEntityWorkflowHydrated() {
     const workflow = useEntityWorkflow();
 
     const bindingsHydrated = useBinding_hydrated();
-    const detailsHydrated = useDetailsForm_hydrated();
+    const detailsHydrated = useDetailsFormStore((state) => state.hydrated);
     const endpointHydrated = useEndpointConfig_hydrated();
 
     // The page-based derivation create workflow does not involve any stores

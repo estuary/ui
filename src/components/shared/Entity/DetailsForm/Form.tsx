@@ -8,23 +8,16 @@ import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCre
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
-import {
-    useDetailsForm_changed_connectorId,
-    useDetailsForm_connectorImage_imagePath,
-    useDetailsForm_details,
-    useDetailsForm_setDetails,
-    useDetailsForm_setDetails_connector,
-    useDetailsForm_setDraftedEntityName,
-    useDetailsForm_setEntityNameChanged,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
@@ -60,16 +53,24 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details Form Store
-    const formData = useDetailsForm_details();
+    const formData = useDetailsFormStore((state) => state.details.data);
     const { connectorImage: originalConnectorImage } = formData;
 
-    const connectorImagePath = useDetailsForm_connectorImage_imagePath();
+    const connectorImagePath = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imagePath
+    );
     const connectorIdChanged = useDetailsForm_changed_connectorId();
 
-    const setDetails = useDetailsForm_setDetails();
-    const setDetails_connector = useDetailsForm_setDetails_connector();
-    const setEntityNameChanged = useDetailsForm_setEntityNameChanged();
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
+    const setDetails = useDetailsFormStore((state) => state.setDetails);
+    const setDetails_connector = useDetailsFormStore(
+        (state) => state.setDetails_connector
+    );
+    const setEntityNameChanged = useDetailsFormStore(
+        (state) => state.setEntityNameChanged
+    );
+    const setDraftedEntityName = useDetailsFormStore(
+        (state) => state.setDraftedEntityName
+    );
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();

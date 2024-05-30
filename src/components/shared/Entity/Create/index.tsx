@@ -14,19 +14,15 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
-import {
-    useDetailsForm_connectorImage,
-    useDetailsForm_draftedEntityName,
-    useDetailsForm_entityNameChanged,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
@@ -73,9 +69,13 @@ function EntityCreate({
     const bindingServerUpdateRequired = useBinding_serverUpdateRequired();
 
     // Details Form Store
-    const imageTag = useDetailsForm_connectorImage();
-    const entityName = useDetailsForm_draftedEntityName();
-    const entityNameChanged = useDetailsForm_entityNameChanged();
+    const imageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage
+    );
+    const entityName = useDetailsFormStore((state) => state.draftedEntityName);
+    const entityNameChanged = useDetailsFormStore(
+        (state) => state.entityNameChanged
+    );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

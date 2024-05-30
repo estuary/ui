@@ -9,7 +9,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback } from 'react';
 import { useBinding_evaluateDiscoveredBindings } from 'stores/Binding/hooks';
-import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
 import { Entity } from 'types';
 import {
@@ -32,7 +32,9 @@ function useStoreDiscoveredCaptures() {
     const setDraftId = useEditorStore_setId();
 
     // Details Form Store
-    const entityName = useDetailsForm_details_entityName();
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
 
     // Endpoint Config Store
     const setEncryptedEndpointConfig =

@@ -26,14 +26,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
-import {
-    useDetailsForm_connectorImage_connectorId,
-    useDetailsForm_connectorImage_id,
-    useDetailsForm_connectorImage_imagePath,
-    useDetailsForm_entityNameChanged,
-    useDetailsForm_errorsExist,
-    useDetailsForm_setDraftedEntityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
@@ -59,12 +52,24 @@ function useGenerateCatalog() {
     const { callFailed } = useEntityWorkflowHelpers();
 
     // Details Form Store
-    const detailsFormsErrorsExist = useDetailsForm_errorsExist();
-    const imageConnectorTagId = useDetailsForm_connectorImage_id();
-    const imageConnectorId = useDetailsForm_connectorImage_connectorId();
-    const imagePath = useDetailsForm_connectorImage_imagePath();
-    const setDraftedEntityName = useDetailsForm_setDraftedEntityName();
-    const entityNameChanged = useDetailsForm_entityNameChanged();
+    const detailsFormsErrorsExist = useDetailsFormStore(
+        (state) => state.errorsExist
+    );
+    const imageConnectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
+    const imageConnectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
+    );
+    const imagePath = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imagePath
+    );
+    const setDraftedEntityName = useDetailsFormStore(
+        (state) => state.setDraftedEntityName
+    );
+    const entityNameChanged = useDetailsFormStore(
+        (state) => state.entityNameChanged
+    );
 
     // Draft Editor Store
     const resetEditorState = useEditorStore_resetState();

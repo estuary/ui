@@ -1,7 +1,7 @@
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useMemo } from 'react';
 import { useBinding_hydrated } from 'stores/Binding/hooks';
-import { useDetailsForm_hydrated } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
 
 export const useFormHydrationChecker = () => {
@@ -9,7 +9,9 @@ export const useFormHydrationChecker = () => {
     // For create we do not care otherwise this will return false when changing connectors
     const includeResourceConfig = useEntityWorkflow_Editing();
 
-    const detailsFormStoreHydrated = useDetailsForm_hydrated();
+    const detailsFormStoreHydrated = useDetailsFormStore(
+        (state) => state.hydrated
+    );
     const endpointConfigStoreHydrated = useEndpointConfig_hydrated();
     const bindingsHydrated = useBinding_hydrated();
 

@@ -15,16 +15,13 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
+import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
-import {
-    useDetailsForm_connectorImage,
-    useDetailsForm_draftedEntityName,
-} from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
@@ -82,8 +79,10 @@ function EntityEdit({
         useBinding_serverUpdateRequired();
 
     // Details Form Store
-    const imageTag = useDetailsForm_connectorImage();
-    const entityName = useDetailsForm_draftedEntityName();
+    const imageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage
+    );
+    const entityName = useDetailsFormStore((state) => state.draftedEntityName);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

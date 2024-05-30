@@ -2,16 +2,10 @@ import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create'
 import { createEditorStore } from 'components/editor/Store/create';
 import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { bindingStore } from 'stores/Binding/Store';
-import {
-    captureDetailsForm,
-    collectionDetailsForm,
-    materializationDetailsForm,
-} from 'stores/DetailsForm/Store';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     BindingsEditorStoreNames,
     BindingStoreNames,
-    DetailsFormStoreNames,
     EditorStoreNames,
     ExistingEntityStoreNames,
     FormStateStoreNames,
@@ -34,11 +28,6 @@ const invariableStores = {
 
     // Bindings Editor Store
     [BindingsEditorStoreNames.GENERAL]: useBindingsEditorStore,
-
-    // Details Form Store
-    [DetailsFormStoreNames.CAPTURE]: captureDetailsForm,
-    [DetailsFormStoreNames.COLLECTION]: collectionDetailsForm,
-    [DetailsFormStoreNames.MATERIALIZATION]: materializationDetailsForm,
 
     // Specification Editor Store
     [EditorStoreNames.CAPTURE]: createEditorStore(EditorStoreNames.CAPTURE),
