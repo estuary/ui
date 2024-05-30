@@ -150,23 +150,17 @@ function useEntityWorkflowHelpers() {
     );
 
     // Form Event Handlers
-    const closeLogs = useCallback(
-        (navigateOnly?: boolean) => {
-            logRocketConsole('EntityWorkflow:closeLogs', { navigateOnly });
+    const closeLogs = useCallback(() => {
+        logRocketConsole('EntityWorkflow:closeLogs');
+        setFormState({
+            showLogs: false,
+        });
 
-            if (!navigateOnly) {
-                setFormState({
-                    showLogs: false,
-                });
-            }
-
-            if (exitWhenLogsClose || navigateOnly) {
-                logRocketConsole('EntityWorkflow:closeLogs:exit');
-                exit();
-            }
-        },
-        [exit, setFormState, exitWhenLogsClose]
-    );
+        if (exitWhenLogsClose) {
+            logRocketConsole('EntityWorkflow:closeLogs:exit');
+            exit();
+        }
+    }, [exit, setFormState, exitWhenLogsClose]);
 
     const materializeCollections = useCallback(async () => {
         // Go fetch the live spec that we want to materialize

@@ -6,13 +6,13 @@ import { FormattedMessage } from 'react-intl';
 import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
 
 function EntityViewDetails() {
-    const { closeLogs } = useEntityWorkflowHelpers();
+    const { exit } = useEntityWorkflowHelpers();
 
     return (
         <Button
             onClick={async (event) => {
                 event.preventDefault();
-                closeLogs(true);
+                exit();
             }}
             sx={buttonSx}
         >
