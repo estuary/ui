@@ -31,7 +31,6 @@ function DetailsSection({ latestLiveSpec }: Props) {
     const entityType = useEntityType();
 
     const data = useMemo(() => {
-        console.log('latestLiveSpec', latestLiveSpec);
         const response = [];
 
         // If there is nothing to show then display the loading status
