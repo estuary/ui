@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { useDetailsForm_connectorImage_connectorId } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
 import { CREDENTIALS, INJECTED_VALUES } from './shared';
 
@@ -18,7 +18,9 @@ export const useOauthHandler = (
     const intl = useIntl();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const connectorId = useDetailsForm_connectorImage_connectorId();
+    const connectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
+    );
 
     // handler for the useOauth stuff
     const onError = useCallback(

@@ -17,7 +17,7 @@ import {
     useBinding_setCurrentBinding,
     useBinding_toggleDisable,
 } from 'stores/Binding/hooks';
-import { useDetailsForm_details_entityName } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 import BindingsSelectorName from './Row/Name';
@@ -46,7 +46,7 @@ function BindingSelector({
     const isCollection = entityType === 'collection';
 
     // Details Form Store
-    const task = useDetailsForm_details_entityName();
+    const task = useDetailsFormStore((state) => state.details.data.entityName);
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();

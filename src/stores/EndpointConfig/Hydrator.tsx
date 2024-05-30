@@ -2,10 +2,10 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useEffect, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
-import { useDetailsForm_connectorImage_id } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
-    useEndpointConfig_hydrated,
     useEndpointConfig_hydrateState,
+    useEndpointConfig_hydrated,
     useEndpointConfig_setActive,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
@@ -18,7 +18,9 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const [runHydration, setRunHydration] = useState(true);
 
-    const connectorTagId = useDetailsForm_connectorImage_id();
+    const connectorTagId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.id
+    );
 
     const hydrated = useEndpointConfig_hydrated();
     const setHydrated = useEndpointConfig_setHydrated();

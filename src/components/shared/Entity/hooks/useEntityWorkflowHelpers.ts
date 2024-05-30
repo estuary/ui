@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBinding_resetState } from 'stores/Binding/hooks';
-import { useDetailsForm_resetState } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_exitWhenLogsClose,
@@ -46,8 +46,9 @@ function useEntityWorkflowHelpers() {
     const resetBindingsEditorStore = useBindingsEditorStore_resetState();
 
     // Details Form Store
-    const resetDetailsFormState = useDetailsForm_resetState();
-
+    const resetDetailsFormState = useDetailsFormStore(
+        (state) => state.resetState
+    );
     // Draft Editor Store
     const pubId = useEditorStore_pubId();
     const resetEditorStore = useEditorStore_resetState();

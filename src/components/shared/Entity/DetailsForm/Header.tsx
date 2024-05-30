@@ -1,7 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { useDetailsForm_errorsExist } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 
 interface Props {
     messagePrefix: string;
@@ -10,7 +10,9 @@ interface Props {
 function DetailsFormHeader({ messagePrefix }: Props) {
     const theme = useTheme();
 
-    const detailsFormHasErrors = useDetailsForm_errorsExist();
+    const detailsFormHasErrors = useDetailsFormStore(
+        (state) => state.errorsExist
+    );
 
     return (
         <>

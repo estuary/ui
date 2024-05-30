@@ -19,7 +19,7 @@ import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
-import { useDetailsForm_details_description } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
@@ -58,7 +58,9 @@ function useSave(
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const entityDescription = useDetailsForm_details_description();
+    const entityDescription = useDetailsFormStore(
+        (state) => state.details.data.description
+    );
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
