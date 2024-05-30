@@ -78,7 +78,7 @@ export enum TABLES {
     EVOLUTIONS = 'evolutions',
     INFERRED_SCHEMAS = 'inferred_schemas',
     INVOICES = 'invoices_ext',
-    LIVE_SPEC_FLOW = 'live_spec_flow',
+    LIVE_SPEC_FLOW = 'live_spec_flows',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
     PUBLICATION_SPECS = 'publication_specs',

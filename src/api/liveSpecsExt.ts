@@ -378,7 +378,28 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     return data;
 };
 
+const getParentCaptureName = async (collectionLiveSpecId: string) => {
+    const data = await supabaseRetry(async () => {
+        const flowResponse = await supabaseClient
+            .from(TABLES.LIVE_SPEC_FLOW)
+            .select('source_id, target_id')
+            .eq('target_id', collectionLiveSpecId);
+
+        if (!flowResponse.data) {
+            return Promise.reject(flowResponse);
+        }
+
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS)
+            .select('catalog_name')
+            .eq('id', flowResponse.data[0].source_id);
+    }, 'getParentCaptureName').then(handleSuccess<any[]>, handleFailure);
+
+    return data;
+};
+
 export {
+    getParentCaptureName,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_collectionsSelector,

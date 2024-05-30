@@ -1,9 +1,12 @@
+import { getParentCaptureName } from 'api/liveSpecsExt';
 import { TABLES } from 'services/supabase';
+import useSWR from 'swr';
 import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useQuery, useSelect } from './supabase-swr/';
 
 export interface LiveSpecsQuery extends Schema {
+    id: string;
     catalog_name: string;
     spec_type: string;
     // Filtering only
@@ -62,6 +65,7 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
         TABLES.LIVE_SPECS_EXT,
         {
             columns: `
+                id,
                 updated_at,
                 created_at,
                 connectorName:connector_title->>en-US::text,
@@ -128,4 +132,17 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
     };
 }
 
-export { useLiveSpecs, useLiveSpecs_details };
+function useLiveSpecs_parentCapture(id: string | null) {
+    const { data, error, isValidating } = useSWR(
+        `useLiveSpecs_parentCapture__${id}`,
+        id ? () => getParentCaptureName(id) : null
+    );
+
+    return {
+        parentSpecName: data?.data?.[0]?.catalog_name ?? null,
+        error,
+        isValidating,
+    };
+}
+
+export { useLiveSpecs, useLiveSpecs_details, useLiveSpecs_parentCapture };

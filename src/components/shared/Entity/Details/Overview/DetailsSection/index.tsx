@@ -3,10 +3,12 @@ import CardWrapper from 'components/admin/Billing/CardWrapper';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
+import { useEntityType } from 'context/EntityContext';
 import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import ParentCapture from '../../ParentCapture';
 
 interface Props {
     entityName: string;
@@ -26,8 +28,10 @@ const TIME_SETTINGS: FormatDateOptions = {
 
 function DetailsSection({ latestLiveSpec }: Props) {
     const intl = useIntl();
+    const entityType = useEntityType();
 
     const data = useMemo(() => {
+        console.log('latestLiveSpec', latestLiveSpec);
         const response = [];
 
         // If there is nothing to show then display the loading status
@@ -120,8 +124,17 @@ function DetailsSection({ latestLiveSpec }: Props) {
             });
         }
 
+        if (entityType === 'collection') {
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.parent',
+                }),
+                val: <ParentCapture collectionId={latestLiveSpec.id} />,
+            });
+        }
+
         return response;
-    }, [intl, latestLiveSpec]);
+    }, [intl, latestLiveSpec, entityType]);
 
     return (
         <CardWrapper
