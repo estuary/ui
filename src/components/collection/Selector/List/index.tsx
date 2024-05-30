@@ -102,8 +102,9 @@ function CollectionSelectorList({
     const formStatus = useFormStateStore_status();
 
     const selectionEnabled =
-        // currentBindingUUID &&
-        setCurrentBinding && formStatus !== FormStatus.UPDATING;
+        currentBindingUUID &&
+        setCurrentBinding &&
+        formStatus !== FormStatus.UPDATING;
 
     const [filterModel, setFilterModel] =
         useState<GridFilterModel>(defaultFilterModel);
