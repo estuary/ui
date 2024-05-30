@@ -5,12 +5,19 @@ import ChipWrapper, { ChipDisplay } from './Wrapper';
 
 export interface ChipListProps {
     values: string[] | ChipDisplay[];
+    onePerLine?: boolean;
     disabled?: boolean;
     maxChips?: number;
     stripPath?: boolean;
 }
 
-function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
+function ChipList({
+    values,
+    onePerLine,
+    disabled,
+    maxChips,
+    stripPath,
+}: ChipListProps) {
     const intl = useIntl();
 
     // Format data coming in so we can still pass in a list of strings
@@ -47,13 +54,14 @@ function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
         <Box
             sx={{
                 display: 'flex',
-                flexWrap: 'wrap',
+                flexWrap: onePerLine ? 'nowrap' : 'wrap',
+                flexDirection: onePerLine ? 'column' : 'row',
                 listStyle: 'none',
                 p: 0,
                 m: 0,
                 minWidth: 100,
                 overflow: 'auto',
-                maxHeight: 100,
+                maxHeight: 115,
             }}
             component="ul"
         >

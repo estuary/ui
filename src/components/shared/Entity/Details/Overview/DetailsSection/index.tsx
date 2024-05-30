@@ -117,6 +117,7 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 }),
                 val: (
                     <RelatedCollections
+                        onePerLine
                         collections={latestLiveSpec.reads_from}
                     />
                 ),

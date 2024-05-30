@@ -5,9 +5,10 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     collections: string[];
+    onePerLine?: boolean;
 }
 
-function RelatedCollections({ collections }: Props) {
+function RelatedCollections({ collections, onePerLine }: Props) {
     const intl = useIntl();
 
     const { generatePath } = useDetailsNavigator(
@@ -31,7 +32,13 @@ function RelatedCollections({ collections }: Props) {
         };
     });
 
-    return <ChipList values={collectionList} maxChips={5} />;
+    return (
+        <ChipList
+            values={collectionList}
+            maxChips={5}
+            onePerLine={onePerLine}
+        />
+    );
 }
 
 export default RelatedCollections;
