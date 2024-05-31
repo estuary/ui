@@ -8,7 +8,7 @@ interface Props {
     title: ReactNode;
 }
 
-function HeaderToggleMenuItem({ desc, scope, title }: Props) {
+function ScopeMenuItem({ desc, scope, title }: Props) {
     return (
         <FormControlLabel
             value={scope}
@@ -41,4 +41,4 @@ function HeaderToggleMenuItem({ desc, scope, title }: Props) {
     );
 }
 
-export default HeaderToggleMenuItem;
+export default ScopeMenuItem;
