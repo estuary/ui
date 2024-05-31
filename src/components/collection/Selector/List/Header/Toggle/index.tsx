@@ -101,8 +101,7 @@ function CollectionSelectorHeaderToggle({
                     size="small"
                     variant="text"
                     sx={{
-                        width: 'inherit',
-                        height: 'inherit',
+                        ...dataGridEntireCellButtonStyling,
                         py: 0,
                         px: 0.5,
                         textTransform: 'none',
