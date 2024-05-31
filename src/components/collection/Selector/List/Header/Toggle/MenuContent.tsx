@@ -1,4 +1,4 @@
-import { Button, Divider, RadioGroup, Stack } from '@mui/material';
+import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -11,6 +11,7 @@ interface MenuOption {
 }
 
 interface Props {
+    closeMenu: () => void;
     initialScope: Scopes;
     itemType: string;
     menuOptions: MenuOption[];
@@ -18,6 +19,7 @@ interface Props {
 }
 
 function ScopeMenuContent({
+    closeMenu,
     initialScope,
     itemType,
     menuOptions,
@@ -59,12 +61,27 @@ function ScopeMenuContent({
 
             <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
-            <Stack style={{ paddingBottom: 4 }}>
+            <Stack
+                direction="row"
+                spacing={1}
+                style={{ paddingBottom: 4, justifyContent: 'flex-end' }}
+            >
                 <Button
-                    variant="outlined"
+                    component={Box}
+                    onClick={() => {
+                        closeMenu();
+                    }}
+                    variant="text"
+                >
+                    <FormattedMessage id="cta.cancel" />
+                </Button>
+
+                <Button
+                    component={Box}
                     onClick={() => {
                         updateScope(scope);
                     }}
+                    variant="outlined"
                 >
                     <FormattedMessage id="cta.evolve" />
                 </Button>

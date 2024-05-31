@@ -151,6 +151,7 @@ function CollectionSelectorHeaderToggle({
                     sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
                 >
                     <ScopeMenuContent
+                        closeMenu={closeMenu}
                         initialScope={scope}
                         itemType={itemType}
                         menuOptions={menuOptions}
