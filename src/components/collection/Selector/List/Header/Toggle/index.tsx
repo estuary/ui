@@ -1,5 +1,5 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
-import { Box, Button, Menu, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Menu, RadioGroup, Stack, Tooltip } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { dataGridEntireCellButtonStyling } from 'context/Theme';
 import { useMemo, useState } from 'react';
@@ -143,31 +143,46 @@ function CollectionSelectorHeaderToggle({
                 >
                     <KeyboardArrowDown />
                 </Button>
-                <Menu open={showMenu} anchorEl={anchorEl} onClose={closeMenu}>
-                    <HeaderToggleMenuItem
-                        desc={
-                            <FormattedMessage
-                                id={menuOptions[0].desc}
-                                values={{ itemType, entityType }}
-                            />
+
+                <Menu
+                    anchorEl={anchorEl}
+                    onClose={closeMenu}
+                    open={showMenu}
+                    sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
+                >
+                    <RadioGroup
+                        onChange={(event) =>
+                            selectScope(event.target.value as Scopes)
                         }
-                        onClick={() => selectScope('all')}
-                        scope="all"
-                        scopeState={scope}
-                        title={<FormattedMessage id={menuOptions[0].title} />}
-                    />
-                    <HeaderToggleMenuItem
-                        desc={
-                            <FormattedMessage
-                                id={menuOptions[1].desc}
-                                values={{ itemType, entityType }}
-                            />
-                        }
-                        onClick={() => selectScope('page')}
-                        scope="page"
-                        scopeState={scope}
-                        title={<FormattedMessage id={menuOptions[1].title} />}
-                    />
+                        value={scope}
+                        style={{ maxWidth: 320, textWrap: 'wrap' }}
+                    >
+                        <HeaderToggleMenuItem
+                            desc={
+                                <FormattedMessage
+                                    id={menuOptions[0].desc}
+                                    values={{ itemType, entityType }}
+                                />
+                            }
+                            scope="all"
+                            title={
+                                <FormattedMessage id={menuOptions[0].title} />
+                            }
+                        />
+
+                        <HeaderToggleMenuItem
+                            desc={
+                                <FormattedMessage
+                                    id={menuOptions[1].desc}
+                                    values={{ itemType, entityType }}
+                                />
+                            }
+                            scope="page"
+                            title={
+                                <FormattedMessage id={menuOptions[1].title} />
+                            }
+                        />
+                    </RadioGroup>
                 </Menu>
             </Stack>
         </Box>
