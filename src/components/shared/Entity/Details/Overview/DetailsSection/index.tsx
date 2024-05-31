@@ -104,6 +104,7 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 }),
                 val: (
                     <RelatedCollections
+                        onePerLine
                         collections={latestLiveSpec.writes_to}
                     />
                 ),
