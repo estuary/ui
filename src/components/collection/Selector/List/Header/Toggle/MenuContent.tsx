@@ -1,6 +1,6 @@
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ScopeMenuItem from './MenuItem';
 import { Scopes } from './types';
@@ -15,7 +15,7 @@ interface Props {
     initialScope: Scopes;
     itemType: string;
     menuOptions: MenuOption[];
-    updateScope: (newScope: Scopes) => void;
+    updateScope: (event: SyntheticEvent, newScope: Scopes) => void;
 }
 
 function ScopeMenuContent({
@@ -78,8 +78,8 @@ function ScopeMenuContent({
 
                 <Button
                     component={Box}
-                    onClick={() => {
-                        updateScope(scope);
+                    onClick={(event: SyntheticEvent) => {
+                        updateScope(event, scope);
                     }}
                     variant="outlined"
                 >
