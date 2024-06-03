@@ -10,10 +10,11 @@ import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
 import LogDialog from './LogDialog';
 import LogDialogActions from './LogDialogActions';
 
-// TODO (break logs from buttons) - this is starting to display the dialog as a stand alone
-//  component broken out of the Test/Save buttons. One last thing that is requied is called
-//  out below where we needed to pass in an array of taskName
-function HeaderLogs() {
+interface Props {
+    taskNames?: string[];
+}
+
+function HeaderLogs({ taskNames }: Props) {
     const { closeLogs } = useEntityWorkflowHelpers();
 
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -21,21 +22,25 @@ function HeaderLogs() {
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
 
+    const testAction =
+        formStatus === FormStatus.TESTED || formStatus === FormStatus.TESTING;
+
+    const saveAction =
+        formStatus === FormStatus.SAVED || formStatus === FormStatus.SAVING;
+
     return (
         <LogDialog
-            open={
-                formStatus === FormStatus.SAVED ||
-                formStatus === FormStatus.SAVING
-                    ? showLogs
-                    : false
-            }
+            open={testAction || saveAction ? showLogs : false}
             token={logToken}
             title={
-                <FormattedMessage id={`${messagePrefix}.save.waitMessage`} />
+                <FormattedMessage
+                    id={`${messagePrefix}.${
+                        testAction ? 'test' : 'save'
+                    }.waitMessage`}
+                />
             }
             actionComponent={
-                // TODO - need to pass real task names here!
-                <LogDialogActions close={closeLogs} taskNames={[]} />
+                <LogDialogActions close={closeLogs} taskNames={taskNames} />
             }
         />
     );
