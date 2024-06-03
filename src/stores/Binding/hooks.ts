@@ -204,6 +204,17 @@ export const useBinding_allBindingsDisabled = () => {
     );
 };
 
+export const useBinding_someBindingsDisabled = () => {
+    return useZustandStore<BindingState, boolean>(
+        BindingStoreNames.GENERAL,
+        useShallow((state) =>
+            Object.values(state.resourceConfigs).some(
+                (config) => config.meta.disable
+            )
+        )
+    );
+};
+
 export const useBinding_bindingErrorsExist = () => {
     return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
         BindingStoreNames.GENERAL,

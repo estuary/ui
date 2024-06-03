@@ -2,8 +2,9 @@ import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box, Button, Menu, Tooltip } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { dataGridEntireCellButtonStyling } from 'context/Theme';
-import { SyntheticEvent, useMemo, useState } from 'react';
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBinding_someBindingsDisabled } from 'stores/Binding/hooks';
 import ScopeMenuContent from './MenuContent';
 import { Scopes } from './types';
 
@@ -21,7 +22,10 @@ function CollectionSelectorHeaderToggle({
     const entityType = useEntityType();
 
     const intl = useIntl();
-    const [enabled, setEnabled] = useState(false);
+
+    const someBindingsDisabled = useBinding_someBindingsDisabled();
+
+    const [enabled, setEnabled] = useState(someBindingsDisabled);
     const [scope, setScope] = useState<Scopes>('page');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -37,6 +41,10 @@ function CollectionSelectorHeaderToggle({
 
         closeMenu();
     };
+
+    useEffect(() => {
+        setEnabled(someBindingsDisabled);
+    }, [setEnabled, someBindingsDisabled]);
 
     const tooltipTitle = useMemo(() => {
         if (scope === 'page') {
