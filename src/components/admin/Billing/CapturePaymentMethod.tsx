@@ -11,8 +11,8 @@ import {
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import { Auth } from '@supabase/ui';
 import AlertBox from 'components/shared/AlertBox';
+import { useUser } from 'context/UserContext';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
@@ -30,7 +30,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { session } = Auth.useUser();
+    const { session } = useUser();
     const { email } = getUserDetails(session?.user);
 
     const setupEvents = useRef(false);

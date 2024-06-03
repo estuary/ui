@@ -1,10 +1,10 @@
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import { getUserGrants } from 'api/userGrants';
 import { singleCallSettings } from 'context/SWR';
 import { useSelectNew } from './supabase-swr/hooks/useSelect';
 
 function useUserGrants(singleCall?: boolean) {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const { data, error, mutate, isValidating } = useSelectNew(
         session?.user?.id ? getUserGrants(session.user.id) : null,

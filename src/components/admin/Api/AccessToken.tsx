@@ -1,11 +1,11 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { Auth } from '@supabase/ui';
 import SingleLineCode from 'components/content/SingleLineCode';
 import ExternalLink from 'components/shared/ExternalLink';
+import { useUser } from 'context/UserContext';
 import { FormattedMessage } from 'react-intl';
 
 function AccessToken() {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     return (
         <Box sx={{ p: 2 }}>

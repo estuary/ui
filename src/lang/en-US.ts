@@ -349,6 +349,8 @@ const Registration: ResolvedIntlConfig['messages'] = {
 const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
+    'login.userNotFound.onRefresh':
+        'Unable to find user. Please sign in again.',
 
     'login.tabs.login': `Sign In`,
     'login.tabs.register': `Register`,

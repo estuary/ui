@@ -1,5 +1,4 @@
 import { Session } from '@supabase/supabase-js';
-import { Auth } from '@supabase/ui';
 import { useCallback } from 'react';
 import { client } from 'services/client';
 import { MarketPlaceVerifyResponse } from 'types';
@@ -8,6 +7,7 @@ import retry from 'retry';
 import { logRocketEvent, retryAfterFailure } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { handleFailure, handleSuccess } from 'services/supabase';
+import { useUser } from 'context/UserContext';
 
 const { verifyURL } = getMarketplaceSettings();
 
@@ -28,7 +28,7 @@ interface MarketplaceVerifyResponse {
 }
 
 const useMarketplaceVerify = () => {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     return useCallback(
         (tenant: string) => {

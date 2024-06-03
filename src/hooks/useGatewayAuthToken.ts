@@ -1,4 +1,4 @@
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
@@ -44,7 +44,7 @@ export const gatewayFetcher = (
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { onError } = useSWRConfig();
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const readable = useEntitiesStore_capabilities_readable();
     const grants = Object.keys(readable);
