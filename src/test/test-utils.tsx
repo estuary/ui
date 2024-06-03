@@ -1,5 +1,4 @@
 import { AuthSession, Session, User } from '@supabase/supabase-js';
-import { Auth } from '@supabase/ui';
 import { RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AppProviders from 'context';
@@ -127,14 +126,11 @@ const MockProviders = ({ children, username }: any) => {
     if (username) {
         mockAuthSession.user = mockDeep<User>();
         mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
-        Auth.useUser = () => mockAuthSession as any;
     }
 
     return (
         <SwrSupabaseContext.Provider value={supabaseClient}>
-            <Auth.UserContextProvider supabaseClient={supabaseClient}>
-                {children}
-            </Auth.UserContextProvider>
+            {children}
         </SwrSupabaseContext.Provider>
     );
 };
