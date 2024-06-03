@@ -1,4 +1,4 @@
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
 import { useMemo } from 'react';
@@ -13,7 +13,7 @@ import {
 const INTERVAL = 30000;
 
 const useShardsList = (catalogNames: string[]) => {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const { data: gatewayConfig, refresh: refreshAccess } =
         useGatewayAuthToken(catalogNames);

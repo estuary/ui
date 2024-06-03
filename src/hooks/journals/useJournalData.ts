@@ -1,4 +1,4 @@
-import { Auth } from '@supabase/ui';
+import { useUser } from 'context/UserContext';
 import { singleCallSettings } from 'context/SWR';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
@@ -16,7 +16,7 @@ import { LoadDocumentsOffsets } from './types';
 const errorRetryCount = 2;
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
 
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);

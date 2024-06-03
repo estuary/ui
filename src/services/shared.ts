@@ -29,11 +29,13 @@ export const logRocketEvent = (
 
 export const FAILED_TO_FETCH = 'FAILED TO FETCH';
 export const RESPONSE_JSON_NOT_FN = 'RESPONSE.JSON IS NOT A FUNCTION';
+export const REQUEST_FAILED = 'REQUEST FAILED';
 export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
 export const FETCH_DEFAULT_ERROR = 'Server Error';
 
 export const RETRY_REASONS = [
     FAILED_TO_FETCH,
+    REQUEST_FAILED,
     STATEMENT_TIMEOUT,
     FETCH_DEFAULT_ERROR,
 ];
