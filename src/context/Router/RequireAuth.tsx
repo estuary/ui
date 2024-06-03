@@ -1,5 +1,5 @@
-import { Auth } from '@supabase/ui';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
+import { useUser } from 'context/UserContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -15,7 +15,7 @@ interface Props extends BaseComponentProps {
 }
 
 function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
-    const { session } = Auth.useUser();
+    const { session } = useUser();
     const location = useLocation();
     const redirectTo = useLoginRedirectPath();
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);

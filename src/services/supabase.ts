@@ -322,6 +322,9 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
                     CustomEvents.SUPABASE_CALL_UNAUTHENTICATED,
                     error?.message ?? 'no error'
                 );
+                logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
+                    trigger: 'SupabaseRetry',
+                });
                 await supabaseClient.auth.signOut();
                 return;
             }

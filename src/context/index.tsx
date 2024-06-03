@@ -5,10 +5,10 @@ import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
 import ClientProvider from 'context/Client';
 import ThemeProvider from 'context/Theme';
-import { UserProvider } from 'context/User';
 import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { TableSettingsProvider } from 'context/TableSettings';
+import { UserContextProvider } from './UserContext';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
@@ -19,13 +19,13 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                         <ClientProvider>
                             <NotificationProvider>
                                 <SwrConfigProvider>
-                                    <UserProvider>
+                                    <UserContextProvider>
                                         <SidePanelDocsProvider>
                                             <TableSettingsProvider>
                                                 {children}
                                             </TableSettingsProvider>
                                         </SidePanelDocsProvider>
-                                    </UserProvider>
+                                    </UserContextProvider>
                                 </SwrConfigProvider>
                             </NotificationProvider>
                         </ClientProvider>
