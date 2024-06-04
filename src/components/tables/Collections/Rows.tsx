@@ -58,7 +58,6 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             {hasLength(tenantDetails) ? (
                 <>
                     <Bytes
-                        read
                         val={
                             stats
                                 ? stats[row.catalog_name]?.bytes_written_to_me
@@ -76,7 +75,6 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                     />
 
                     <Docs
-                        read
                         val={
                             stats
                                 ? stats[row.catalog_name]?.docs_written_to_me
