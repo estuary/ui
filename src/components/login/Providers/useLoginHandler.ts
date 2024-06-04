@@ -51,21 +51,20 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                 : redirectTo;
 
             try {
-                const { error } = await supabaseClient.auth.signIn(
-                    {
-                        provider,
-                    },
-                    {
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider,
+                    options: {
                         redirectTo: grantToken
                             ? getPathWithParams(redirectBaseURL, {
                                   [GlobalSearchParams.GRANT_TOKEN]: grantToken,
                               })
                             : redirectBaseURL,
-                        shouldCreateUser: isRegister,
                         scopes,
                         queryParams,
-                    }
-                );
+                        // TODO (SBv2) this is not here anymore - need to figure out if it is important
+                        // shouldCreateUser: isRegister,
+                    },
+                });
                 if (error) loginFailed(provider);
             } catch (error: unknown) {
                 loginFailed(provider);

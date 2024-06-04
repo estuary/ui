@@ -87,31 +87,27 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
 
     const magicLinkOnSubmitWithToken = useCallback(
         (formData: { email: string; token: string }) => {
-            return supabaseClient.auth.verifyOTP(
-                {
-                    email: formData.email,
-                    token: formData.token,
-                    type: 'magiclink',
-                },
-                {
+            return supabaseClient.auth.verifyOtp({
+                email: formData.email,
+                token: formData.token,
+                type: 'magiclink',
+                options: {
                     redirectTo: redirectPath,
-                }
-            );
+                },
+            });
         },
         [redirectPath, supabaseClient.auth]
     );
 
     const magicLinkOnSubmitWithoutToken = useCallback(
         (formData: { email: string }) => {
-            return supabaseClient.auth.signIn(
-                {
-                    email: formData.email,
-                },
-                {
-                    redirectTo: redirectPath,
+            return supabaseClient.auth.signInWithOtp({
+                email: formData.email,
+                options: {
+                    emailRedirectTo: redirectPath,
                     shouldCreateUser: loginSettings.enableEmailRegister,
-                }
-            );
+                },
+            });
         },
         [redirectPath, supabaseClient.auth]
     );
