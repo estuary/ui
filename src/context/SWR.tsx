@@ -31,7 +31,13 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { onErrorRetry } = useSWRConfig();
 
     return (
-        <SWRConfig>
+        <SWRConfig
+            value={{
+                // https://supabase-cache-helpers.vercel.app/configuration
+                revalidateIfStale: false,
+                revalidateOnFocus: false,
+            }}
+        >
             <SWRConfig
                 value={{
                     onErrorRetry: (
