@@ -1,14 +1,7 @@
-import {
-    Box,
-    IconButton,
-    List,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import { defaultOutline, disabledButtonText } from 'context/Theme';
-import { Plus } from 'iconoir-react';
+import { Box, Button, List, Stack, Typography, useTheme } from '@mui/material';
+import { defaultOutline } from 'context/Theme';
 import { MouseEventHandler, ReactNode } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 export interface CatalogListContent {
     attributeId: string;
@@ -20,16 +13,16 @@ export interface CatalogListContent {
 interface Props {
     addButtonClickHandler: MouseEventHandler<HTMLButtonElement>;
     content: ReactNode;
-    header: ReactNode;
     extendList?: boolean;
+    header?: ReactNode;
     height?: number;
 }
 
 function CatalogList({
-    content,
     addButtonClickHandler,
-    header,
+    content,
     extendList = true,
+    header,
     height,
 }: Props) {
     const theme = useTheme();
@@ -38,38 +31,35 @@ function CatalogList({
         <List
             disablePadding
             subheader={
-                <Stack
-                    direction="row"
-                    sx={{
-                        justifyContent: 'space-between',
-                        borderBottom: defaultOutline[theme.palette.mode],
-                    }}
-                >
-                    <Typography
-                        component="div"
+                header ? (
+                    <Stack
+                        direction="row"
                         sx={{
-                            p: 1,
-                            fontWeight: 500,
-                            textTransform: 'uppercase',
+                            justifyContent: 'space-between',
+                            borderBottom: defaultOutline[theme.palette.mode],
                         }}
                     >
-                        {header}
-                    </Typography>
-
-                    <IconButton
-                        disabled={!extendList}
-                        onClick={addButtonClickHandler}
-                        sx={{ borderRadius: 0 }}
-                    >
-                        <Plus
-                            style={{
-                                color: extendList
-                                    ? theme.palette.primary.main
-                                    : disabledButtonText[theme.palette.mode],
+                        <Typography
+                            component="div"
+                            sx={{
+                                p: 1,
+                                fontWeight: 500,
+                                textTransform: 'uppercase',
                             }}
-                        />
-                    </IconButton>
-                </Stack>
+                        >
+                            {header}
+                        </Typography>
+
+                        <Button
+                            disabled={!extendList}
+                            onClick={addButtonClickHandler}
+                            style={{ borderRadius: 0 }}
+                            variant="text"
+                        >
+                            <FormattedMessage id="cta.add" />
+                        </Button>
+                    </Stack>
+                ) : undefined
             }
         >
             <Box sx={{ height, overflowY: 'auto' }}>{content}</Box>

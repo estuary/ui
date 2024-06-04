@@ -10,11 +10,10 @@ import { useIntl } from 'react-intl';
 
 interface Props extends AddCollectionDialogCTAProps {
     content: CatalogListContent[];
-    header: ReactNode;
     primaryCTA: ReactNode;
 }
 
-function EntityList({ content, header, primaryCTA, toggle }: Props) {
+function EntityList({ content, primaryCTA, toggle }: Props) {
     const intl = useIntl();
 
     return (
@@ -38,7 +37,6 @@ function EntityList({ content, header, primaryCTA, toggle }: Props) {
                     toggle(true);
                 }}
                 height={532}
-                header={header}
             />
         </Box>
     );

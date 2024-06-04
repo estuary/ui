@@ -1,5 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -7,10 +7,10 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
+import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
@@ -26,10 +26,10 @@ import {
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
 } from 'stores/TransformationCreate/hooks';
+import { SelectTableStoreNames } from 'stores/names';
 import { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
-import SafeLoadingButton from 'components/SafeLoadingButton';
 
 function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     const selected = useZustandStore<
@@ -67,7 +67,7 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
 
         if (draftId && catalogName && currentCatalog) {
             const newCollections = Array.from(selected).map(
-                (collection) => collection[0]
+                (collection) => collection[1].catalog_name
             );
 
             const evaluatedTransformConfigs = evaluateTransformConfigs(
