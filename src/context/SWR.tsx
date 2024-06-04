@@ -1,7 +1,5 @@
 import useClient from 'hooks/supabase-swr/hooks/useClient';
-import { LRUCache } from 'lru-cache';
 import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { AUTH_ERROR } from 'services/client';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
@@ -32,18 +30,8 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
 
-    const cache = useCallback(() => {
-        return new LRUCache({
-            max: 500,
-        });
-    }, []);
-
     return (
-        <SWRConfig
-            value={{
-                provider: cache,
-            }}
-        >
+        <SWRConfig>
             <SWRConfig
                 value={{
                     onErrorRetry: (
