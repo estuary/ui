@@ -22,6 +22,9 @@ function useSettingIntervalOptions() {
     // while a postgresql interval in day increments has the following format: '# day(s)'.
     const options: IntervalOptions = useMemo(
         () => ({
+            '3 days': intl.formatMessage(intervalOptionIds.day, {
+                interval: 3,
+            }),
             '2 days': intl.formatMessage(intervalOptionIds.day, {
                 interval: 2,
             }),
@@ -39,6 +42,9 @@ function useSettingIntervalOptions() {
             }),
             '02:00:00': intl.formatMessage(intervalOptionIds.hour, {
                 interval: 2,
+            }),
+            '01:00:00': intl.formatMessage(intervalOptionIds.hour, {
+                interval: 1,
             }),
             'none': intl.formatMessage({
                 id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.unsetOption',
