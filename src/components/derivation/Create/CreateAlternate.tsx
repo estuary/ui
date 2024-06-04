@@ -6,7 +6,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
 } from 'components/editor/Store/hooks';
-import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import EntityError from 'components/shared/Entity/Error';
 import EntityToolbar from 'components/shared/Entity/Header';
@@ -64,23 +63,23 @@ function DerivationCreateAlternate() {
         >
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
-                    GenerateButton={<PatchDraftButton />}
-                    TestButton={<GitPodButton buttonVariant="outlined" />}
-                    SaveButton={
-                        <EntitySaveButton
-                            disabled={
-                                emptySQLExists ||
-                                schemaUnedited ||
-                                invalidEditors.length > 0
-                            }
-                            taskNames={
-                                typeof catalogName === 'string'
-                                    ? [catalogName]
-                                    : undefined
-                            }
-                            logEvent={CustomEvents.COLLECTION_CREATE}
-                        />
+                    taskNames={
+                        typeof catalogName === 'string'
+                            ? [catalogName]
+                            : undefined
                     }
+                    GenerateButton={<PatchDraftButton />}
+                    SecondaryButtonComponent={GitPodButton}
+                    primaryButtonProps={{
+                        disabled:
+                            emptySQLExists ||
+                            schemaUnedited ||
+                            invalidEditors.length > 0,
+                        logEvent: CustomEvents.COLLECTION_CREATE,
+                    }}
+                    secondaryButtonProps={{
+                        buttonVariant: 'outlined',
+                    }}
                 />
             </Box>
 

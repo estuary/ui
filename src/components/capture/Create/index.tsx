@@ -7,8 +7,6 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
-import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
-import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
@@ -75,7 +73,7 @@ function CaptureCreate() {
         }
     }, [entityNameChanged]);
 
-    const tasks = useMemo(
+    const taskNames = useMemo(
         () =>
             draftSpecsMetadata.draftSpecs
                 .filter((spec) => spec.spec_type === 'capture')
@@ -93,8 +91,17 @@ function CaptureCreate() {
                             draftSpecMetadata={draftSpecsMetadata}
                             toolbar={
                                 <EntityToolbar
+                                    taskNames={taskNames}
                                     waitTimes={{
                                         generate: MAX_DISCOVER_TIME,
+                                    }}
+                                    primaryButtonProps={{
+                                        disabled: !draftId,
+                                        logEvent: CustomEvents.CAPTURE_CREATE,
+                                    }}
+                                    secondaryButtonProps={{
+                                        disabled: !hasConnectors,
+                                        logEvent: CustomEvents.CAPTURE_TEST,
                                     }}
                                     GenerateButton={
                                         <CaptureGenerateButton
@@ -104,21 +111,6 @@ function CaptureCreate() {
                                                 initiateDiscovery,
                                                 setInitiateDiscovery,
                                             }}
-                                        />
-                                    }
-                                    TestButton={
-                                        <EntityTestButton
-                                            disabled={!hasConnectors}
-                                            logEvent={CustomEvents.CAPTURE_TEST}
-                                        />
-                                    }
-                                    SaveButton={
-                                        <EntitySaveButton
-                                            disabled={!draftId}
-                                            taskNames={tasks}
-                                            logEvent={
-                                                CustomEvents.CAPTURE_CREATE
-                                            }
                                         />
                                     }
                                 />

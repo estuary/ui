@@ -1,5 +1,5 @@
 import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useRefreshTokenStore } from '../Store/create';
@@ -35,7 +35,7 @@ function RefreshTokenTitle({ setOpen }: Props) {
             </Typography>
 
             <IconButton disabled={saving} onClick={closeDialog}>
-                <Cancel
+                <Xmark
                     style={{
                         fontSize: '1rem',
                         color: theme.palette.text.primary,

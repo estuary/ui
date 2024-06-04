@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import ExternalLink from 'components/shared/ExternalLink';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -43,7 +43,7 @@ function StorageMappingTitle({ closeDialog }: Props) {
             </Stack>
 
             <IconButton disabled={saving} onClick={closeDialog}>
-                <Cancel
+                <Xmark
                     style={{
                         fontSize: '1rem',
                         color: theme.palette.text.primary,

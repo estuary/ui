@@ -1,6 +1,6 @@
 import { IconButton, ListItemText } from '@mui/material';
 import { typographyTruncation } from 'context/Theme';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 
 interface Props {
     collection: string;
@@ -33,7 +33,7 @@ function CollectionSelectorRow({
                 onClick={handlers.removeCollection}
                 sx={{ color: (theme) => theme.palette.text.primary }}
             >
-                <Cancel />
+                <Xmark />
             </IconButton>
         </>
     );

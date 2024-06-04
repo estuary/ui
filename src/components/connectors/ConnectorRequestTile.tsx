@@ -1,7 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
 import ConnectorCard from 'components/connectors/card';
 
-import { AddSquare } from 'iconoir-react';
+import { PlusSquare } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import ConnectorCardTitle from './card/Title';
@@ -14,7 +14,7 @@ function ConnectorRequestTile() {
         <ConnectorCard
             key="connector-request-tile"
             logo={
-                <AddSquare
+                <PlusSquare
                     style={{
                         fontSize: '3rem',
                         color: theme.palette.text.primary,

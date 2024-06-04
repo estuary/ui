@@ -8,9 +8,9 @@ import {
 import { alertBackground, alertTextPrimary } from 'context/Theme';
 import {
     CheckCircle,
-    DeleteCircle,
-    InfoEmpty,
+    InfoCircle,
     WarningCircle,
+    XmarkCircle,
 } from 'iconoir-react';
 import { forwardRef, ReactNode, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -81,9 +81,9 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
             severity={severity}
             variant="outlined"
             iconMapping={{
-                error: <DeleteCircle style={iconComponentStyling} />,
+                error: <XmarkCircle style={iconComponentStyling} />,
                 warning: <WarningCircle style={iconComponentStyling} />,
-                info: <InfoEmpty style={iconComponentStyling} />,
+                info: <InfoCircle style={iconComponentStyling} />,
                 success: <CheckCircle style={iconComponentStyling} />,
             }}
             onClose={onClose}

@@ -20,6 +20,8 @@ import {
     union,
 } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -658,15 +660,19 @@ const getInitialState = (
                                 undefined,
                             ];
 
-                    state.currentBinding = Boolean(
-                        evaluatedBindingUUID && evaluatedResourceConfig
-                    )
-                        ? {
-                              uuid: evaluatedBindingUUID,
-                              collection:
-                                  evaluatedResourceConfig.meta.collectionName,
-                          }
-                        : null;
+                    // Only update the current binding if we have removed the one that is currently selected
+                    if (state.currentBinding?.uuid === uuid) {
+                        state.currentBinding = Boolean(
+                            evaluatedBindingUUID && evaluatedResourceConfig
+                        )
+                            ? {
+                                  uuid: evaluatedBindingUUID,
+                                  collection:
+                                      evaluatedResourceConfig.meta
+                                          .collectionName,
+                              }
+                            : null;
+                    }
 
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
@@ -1043,13 +1049,27 @@ const getInitialState = (
                     ? state.resourceConfigs[targetBindingUUID]
                     : null;
 
+                const targetResourceConfig =
+                    state.resourceConfigs[targetBindingUUID];
+
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                if (!targetResourceConfig) {
+                    logRocketEvent(
+                        CustomEvents.BINDINGS_RESOURCE_CONFIG_MISSING,
+                        {
+                            targetBindingUUID,
+                            targetCollection,
+                        }
+                    );
+
+                    return;
+                }
+
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
                         collectionName: targetCollection,
-                        bindingIndex:
-                            state.resourceConfigs[targetBindingUUID].meta
-                                .bindingIndex,
+                        bindingIndex: targetResourceConfig.meta.bindingIndex,
                     },
                 };
 

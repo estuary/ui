@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { snackbarSettings } from 'utils/notification-utils';
 import useTimeTravel from './useTimeTravel';
 
@@ -24,6 +25,8 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
     );
 
     const [localCopy, setLocalCopy] = useState(fullSource ?? {});
+
+    const formActive = useFormStateStore_isActive();
 
     const skipServer = useRef(true);
 
@@ -71,7 +74,7 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
     return (
         <StyledEngineProvider injectFirst>
             <JsonForms
-                readonly={false}
+                readonly={formActive}
                 schema={schema}
                 uischema={uiSchema}
                 data={localCopy}

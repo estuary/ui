@@ -1,5 +1,5 @@
 import { Button, Typography, useTheme } from '@mui/material';
-import { DbError } from 'iconoir-react';
+import { DatabaseXmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -16,7 +16,7 @@ function ServerDiff({ iconSize, onMerge }: Props) {
                 <FormattedMessage id="monacoEditor.serverDiff" />
             </Typography>
 
-            <DbError
+            <DatabaseXmark
                 style={{ fontSize: iconSize, color: theme.palette.error.main }}
             />
 
