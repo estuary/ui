@@ -1,6 +1,6 @@
 import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 import { useShowSidePanelDocs } from 'context/SidePanelDocs';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import SidePanelIframe from './Iframe';
 
@@ -46,7 +46,7 @@ function DocsSidePanel({ show }: Props) {
                     }}
                     sx={{ color: (theme) => theme.palette.text.primary }}
                 >
-                    <Cancel />
+                    <Xmark />
                 </IconButton>
             </Toolbar>
 

@@ -7,11 +7,20 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import EntitySaveButton from './Actions/SaveButton';
+import EntityTestButton from './Actions/TestButton';
+import { EntitySaveButtonProps, EntityTestButtonProps } from './Actions/types';
+import EntityViewDetails from './Actions/ViewDetails';
+import HeaderLogs from './HeaderLogs';
 
 interface Props {
     GenerateButton: ReactNode;
-    TestButton: ReactNode;
-    SaveButton: ReactNode;
+    primaryButtonProps: EntitySaveButtonProps | any;
+    secondaryButtonProps: EntityTestButtonProps | any;
+    PrimaryButtonComponent?: any;
+    SecondaryButtonComponent?: any;
+    hideLogs?: boolean;
+    taskNames?: string[];
     waitTimes?: {
         generate?: number;
     };
@@ -21,8 +30,12 @@ export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 function EntityToolbar({
     GenerateButton,
-    TestButton,
-    SaveButton,
+    PrimaryButtonComponent,
+    SecondaryButtonComponent,
+    primaryButtonProps,
+    secondaryButtonProps,
+    hideLogs,
+    taskNames,
     waitTimes,
 }: Props) {
     const generateWaitTime = waitTimes?.generate;
@@ -34,6 +47,10 @@ function EntityToolbar({
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
     const discovering = !draftId && formStatus === FormStatus.GENERATING;
+    const saved = formStatus === FormStatus.SAVED;
+
+    const PrimaryButton = PrimaryButtonComponent ?? EntitySaveButton;
+    const SecondaryButton = SecondaryButtonComponent ?? EntityTestButton;
 
     return (
         <Stack spacing={2} sx={{ mb: 1 }}>
@@ -52,11 +69,15 @@ function EntityToolbar({
                     }}
                 >
                     {draftId ? (
-                        <>
-                            {TestButton}
+                        saved ? (
+                            <EntityViewDetails />
+                        ) : (
+                            <>
+                                <SecondaryButton {...secondaryButtonProps} />
 
-                            {SaveButton}
-                        </>
+                                <PrimaryButton {...primaryButtonProps} />
+                            </>
+                        )
                     ) : (
                         GenerateButton
                     )}
@@ -68,7 +89,11 @@ function EntityToolbar({
                     height: 2,
                 }}
             >
-                <Fade in={formActive} mountOnEnter unmountOnExit>
+                <Fade
+                    in={Boolean(formActive && !saved)}
+                    mountOnEnter
+                    unmountOnExit
+                >
                     <Box>
                         <LinearProgressTimed
                             wait={discovering ? generateWaitTime : undefined}
@@ -76,6 +101,7 @@ function EntityToolbar({
                     </Box>
                 </Fade>
             </Box>
+            {!hideLogs ? <HeaderLogs taskNames={taskNames} /> : null}
         </Stack>
     );
 }

@@ -9,7 +9,6 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -45,11 +44,9 @@ const trackEvent = (logEvent: any, payload: any) => {
 function useSave(
     logEvent: CustomEvents,
     onFailure: Function,
-    dryRun?: boolean,
-    forceLogsClosed?: boolean
+    dryRun?: boolean
 ) {
     const intl = useIntl();
-    const { closeLogs } = useEntityWorkflowHelpers();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -91,6 +88,18 @@ function useSave(
                         ? FormStatus.TESTED
                         : FormStatus.SAVED;
 
+                    // TODO This allows the URL to stay in sync after saving
+                    //  helpful if in the future we want to allow a user to pick up
+                    //  where they left off.
+                    // if (!dryRun) {
+                    //     setSearchParams(
+                    //         {
+                    //             ...Object.fromEntries(searchParams),
+                    //             [GlobalSearchParams.LAST_PUB_ID]: payload.id,
+                    //         },
+                    //         { replace: true }
+                    //     );
+                    // }
                     setPubId(payload.id);
                     setFormState({
                         status: formStatus,
@@ -110,12 +119,6 @@ function useSave(
                         // generated on each successful publication.
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
-                        }
-
-                        // A log dialog associated with a dry run that is used to populate the materialization field
-                        // selection table should automatically close when the publication terminates.
-                        if (forceLogsClosed) {
-                            closeLogs();
                         }
                     }
 
@@ -153,9 +156,7 @@ function useSave(
             );
         },
         [
-            closeLogs,
             dryRun,
-            forceLogsClosed,
             intl,
             jobStatusPoller,
             logEvent,

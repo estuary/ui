@@ -14,7 +14,7 @@ import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton
 import EmailSelector from 'components/admin/Settings/PrefixAlerts/EmailSelector';
 import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import PrefixedName from 'components/inputs/PrefixedName';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { PrefixSubscriptionDictionary } from 'utils/notification-utils';
@@ -98,7 +98,7 @@ function AlertSubscriptionDialog({
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
-                    <Cancel
+                    <Xmark
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

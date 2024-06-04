@@ -11,7 +11,7 @@ import { PostgrestError } from '@supabase/postgrest-js';
 import Error from 'components/shared/Error';
 import AccessLinksTable from 'components/tables/AccessGrants/AccessLinks';
 import GenerateInvitation from 'components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
-import { Cancel } from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -55,7 +55,7 @@ function PrefixInvitationDialog({ open, setOpen }: Props) {
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
-                    <Cancel
+                    <Xmark
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

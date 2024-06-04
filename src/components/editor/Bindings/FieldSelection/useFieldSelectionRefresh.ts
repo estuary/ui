@@ -16,7 +16,6 @@ function useFieldSelectionRefresh() {
     const saveCatalog = useSave(
         CustomEvents.MATERIALIZATION_TEST,
         callFailed,
-        true,
         true
     );
 

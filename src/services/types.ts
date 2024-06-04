@@ -1,6 +1,7 @@
 export enum CustomEvents {
     AUTH_SIGNOUT = 'Auth_Signout',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
+    BINDINGS_RESOURCE_CONFIG_MISSING = 'Bindings_Resource_Config_Missing',
     CAPTURE_CREATE = 'Capture_Create',
     CAPTURE_CREATE_CONFIG_CREATE = 'Capture_Create_Config_Create',
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
