@@ -6,8 +6,6 @@ import {
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
-import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
-import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityCreate from 'components/shared/Entity/Create';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
@@ -77,28 +75,22 @@ function MaterializationCreate() {
                             draftSpecMetadata={draftSpecsMetadata}
                             toolbar={
                                 <EntityToolbar
+                                    taskNames={taskNames}
                                     GenerateButton={
                                         <MaterializeGenerateButton
                                             disabled={!hasConnectors}
                                         />
                                     }
-                                    TestButton={
-                                        <EntityTestButton
-                                            disabled={!hasConnectors}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_TEST
-                                            }
-                                        />
-                                    }
-                                    SaveButton={
-                                        <EntitySaveButton
-                                            disabled={!draftId}
-                                            taskNames={taskNames}
-                                            logEvent={
-                                                CustomEvents.MATERIALIZATION_CREATE
-                                            }
-                                        />
-                                    }
+                                    primaryButtonProps={{
+                                        disabled: !draftId,
+                                        logEvent:
+                                            CustomEvents.MATERIALIZATION_CREATE,
+                                    }}
+                                    secondaryButtonProps={{
+                                        disabled: !hasConnectors,
+                                        logEvent:
+                                            CustomEvents.MATERIALIZATION_TEST,
+                                    }}
                                 />
                             }
                         />

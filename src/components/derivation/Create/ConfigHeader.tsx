@@ -1,4 +1,3 @@
-import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
 import EntityToolbar from 'components/shared/Entity/Header';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
@@ -28,12 +27,19 @@ function ConfigHeader({ entityNameError }: Props) {
     );
 
     const selectedCollections = useMemo(
-        () => Array.from(selected).map((collection) => collection[0]),
+        () =>
+            Array.from(selected).map(
+                (collection) => collection[1].catalog_name
+            ),
         [selected]
     );
 
     return (
         <EntityToolbar
+            hideLogs
+            taskNames={
+                typeof catalogName === 'string' ? [catalogName] : undefined
+            }
             GenerateButton={
                 language === 'sql' ? (
                     <InitializeDraftButton
@@ -47,17 +53,13 @@ function ConfigHeader({ entityNameError }: Props) {
                     />
                 )
             }
-            TestButton={<GitPodButton buttonVariant="outlined" />}
-            SaveButton={
-                <EntitySaveButton
-                    taskNames={
-                        typeof catalogName === 'string'
-                            ? [catalogName]
-                            : undefined
-                    }
-                    logEvent={CustomEvents.COLLECTION_CREATE}
-                />
-            }
+            primaryButtonProps={{
+                logEvent: CustomEvents.COLLECTION_CREATE,
+            }}
+            SecondaryButtonComponent={GitPodButton}
+            secondaryButtonProps={{
+                buttonVariant: 'outlined',
+            }}
         />
     );
 }

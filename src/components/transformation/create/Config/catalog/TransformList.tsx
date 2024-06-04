@@ -3,7 +3,6 @@ import EntityList from 'components/shared/Entity/List';
 import { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
 import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { useStore } from 'zustand';
@@ -44,9 +43,6 @@ function TransformList() {
         <EntityList
             content={content}
             entity="collection"
-            header={
-                <FormattedMessage id="newTransform.config.transform.header" />
-            }
             primaryCTA={UpdateDraftButton}
             toggle={toggleDialog}
         />

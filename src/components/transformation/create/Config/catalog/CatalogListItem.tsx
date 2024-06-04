@@ -13,7 +13,7 @@ import {
 } from 'components/editor/Store/hooks';
 import { defaultOutline } from 'context/Theme';
 import {
-    Cancel,
+    Xmark,
     NavArrowDown,
     NavArrowRight,
     WarningCircle,
@@ -199,7 +199,7 @@ function CatalogListItem({
                         onClick={handlers.removeListItem}
                         sx={{ zIndex: 40 }}
                     >
-                        <Cancel />
+                        <Xmark />
                     </IconButton>
                 </ListItemButton>
             </Stack>

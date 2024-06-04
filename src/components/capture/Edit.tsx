@@ -6,8 +6,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import EntitySaveButton from 'components/shared/Entity/Actions/SaveButton';
-import EntityTestButton from 'components/shared/Entity/Actions/TestButton';
 import EntityEdit from 'components/shared/Entity/Edit';
 import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
@@ -25,14 +23,13 @@ import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 
+const entityType = 'capture';
 function CaptureEdit() {
     usePageTitle({
         header: authenticatedRoutes.captures.edit.title,
     });
 
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-
-    const entityType = 'capture';
 
     // Supabase
     const hasConnectors = useValidConnectorsExist(entityType);
@@ -76,30 +73,22 @@ function CaptureEdit() {
                                 draftSpecMetadata={draftSpecsMetadata}
                                 toolbar={
                                     <EntityToolbar
+                                        taskNames={taskNames}
                                         waitTimes={{
                                             generate: MAX_DISCOVER_TIME,
+                                        }}
+                                        primaryButtonProps={{
+                                            disabled: !draftId,
+                                            logEvent: CustomEvents.CAPTURE_EDIT,
+                                        }}
+                                        secondaryButtonProps={{
+                                            disabled: !hasConnectors,
+                                            logEvent: CustomEvents.CAPTURE_TEST,
                                         }}
                                         GenerateButton={
                                             <CaptureGenerateButton
                                                 entityType={entityType}
                                                 disabled={!hasConnectors}
-                                            />
-                                        }
-                                        TestButton={
-                                            <EntityTestButton
-                                                disabled={!hasConnectors}
-                                                logEvent={
-                                                    CustomEvents.CAPTURE_TEST
-                                                }
-                                            />
-                                        }
-                                        SaveButton={
-                                            <EntitySaveButton
-                                                disabled={!draftId}
-                                                taskNames={taskNames}
-                                                logEvent={
-                                                    CustomEvents.CAPTURE_EDIT
-                                                }
                                             />
                                         }
                                     />

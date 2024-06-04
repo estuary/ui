@@ -2,6 +2,7 @@ import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
 import {
+    useEditorStore_setCatalogName,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
@@ -40,6 +41,7 @@ function InitializeDraftButton({
     // Draft Editor Store
     const setDraftId = useEditorStore_setId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
+    const setCatalogName = useEditorStore_setCatalogName();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
@@ -87,6 +89,7 @@ function InitializeDraftButton({
                 const collections = Array.from(selectedCollections);
 
                 setSourceCollections(collections);
+                setCatalogName(catalogName);
 
                 const latestTransformVersions: { [tableName: string]: number } =
                     {};
@@ -150,16 +153,17 @@ function InitializeDraftButton({
         }
     }, [
         addTransformConfigs,
-        setDraftId,
-        setFormState,
-        setPersistedDraftId,
-        setSelectedAttribute,
-        setSourceCollections,
         catalogName,
         entityName,
         language,
         navigate,
         selectedCollections,
+        setCatalogName,
+        setDraftId,
+        setFormState,
+        setPersistedDraftId,
+        setSelectedAttribute,
+        setSourceCollections,
     ]);
 
     return (
