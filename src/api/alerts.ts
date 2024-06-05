@@ -132,10 +132,11 @@ const getNotificationSubscriptionForUser = async (
     const data = await supabaseRetry(
         () =>
             supabaseClient
-                .from<AlertSubscriptionQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+                .from(TABLES.ALERT_SUBSCRIPTIONS)
                 .select(`id, catalog_prefix, email`)
                 .eq('catalog_prefix', prefix)
-                .eq('email', email),
+                .eq('email', email)
+                .returns<AlertSubscriptionQuery[]>(),
         'getNotificationSubscriptionForUser'
     ).then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
 
@@ -149,7 +150,7 @@ const getNotificationSubscriptionsForTable = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+        .from(TABLES.ALERT_SUBSCRIPTIONS)
         .select(
             `    
                 id,
@@ -169,27 +170,25 @@ const getNotificationSubscriptionsForTable = (
         pagination
     );
 
-    return queryBuilder;
+    return queryBuilder.returns<AlertSubscriptionsExtendedQuery>();
 };
 
 const getNotificationSubscriptions = async (prefix?: string) => {
-    let queryBuilder = supabaseClient
-        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
-        .select(
-            `    
+    let queryBuilder = supabaseClient.from(TABLES.ALERT_SUBSCRIPTIONS).select(
+        `    
             id,
             updated_at,
             catalog_prefix,
             email
         `
-        );
+    );
 
     if (prefix) {
         queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
     }
 
     const data = await supabaseRetry(
-        () => queryBuilder,
+        () => queryBuilder.returns<AlertSubscriptionsExtendedQuery[]>(),
         'getNotificationSubscriptions'
     ).then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
 
@@ -200,9 +199,10 @@ const getTaskNotification = async (catalogName: string) => {
     const data = await supabaseRetry(
         () =>
             supabaseClient
-                .from<DataProcessingAlertQuery>(TABLES.ALERT_DATA_PROCESSING)
+                .from(TABLES.ALERT_DATA_PROCESSING)
                 .select(`catalog_name, evaluation_interval`)
-                .eq('catalog_name', catalogName),
+                .eq('catalog_name', catalogName)
+                .returns<DataProcessingAlertQuery[]>(),
         'getTaskNotification'
     ).then(handleSuccess<DataProcessingAlertQuery[]>, handleFailure);
 

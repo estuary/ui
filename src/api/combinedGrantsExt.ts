@@ -87,10 +87,11 @@ export async function getAuthRoles(
         'getAuthRoles',
         (start) =>
             supabaseClient
-                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                .rpc(RPCS.AUTH_ROLES, {
                     min_capability: capability,
                 })
                 .range(start, start + pageSize - 1)
+                .returns<AuthRoles[]>()
     );
 
     return parsePagedFetchAllResponse<AuthRoles>(responses);
@@ -107,7 +108,7 @@ const getUserInformationByPrefix = (
         objectRoles.length > 5 ? objectRoles.slice(0, 4) : objectRoles;
 
     return supabaseClient
-        .from<Grant_UserExt>(TABLES.COMBINED_GRANTS_EXT)
+        .from(TABLES.COMBINED_GRANTS_EXT)
         .select(
             `
                     capability,
@@ -122,7 +123,8 @@ const getUserInformationByPrefix = (
         .eq('capability', capability)
         .in('object_role', evaluatedObjectRoles)
         .is('subject_role', null)
-        .filter('user_email', 'not.is', null);
+        .filter('user_email', 'not.is', null)
+        .returns<Grant_UserExt[]>();
 };
 
 export { getGrants, getGrants_Users, getUserInformationByPrefix };

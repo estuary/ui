@@ -1,4 +1,3 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
 import pLimit from 'p-limit';
 import {
     FUNCTIONS,
@@ -107,7 +106,7 @@ export const getInvoicesBetween = (
     billed_prefix: string,
     date_start: Date,
     date_end: Date
-): PromiseLike<PostgrestResponse<Invoice>> => {
+) => {
     const formattedStart = formatDateForApi(date_start);
     const formattedEnd = formatDateForApi(date_end);
 

@@ -7,7 +7,6 @@ import { hasLength } from 'utils/misc-utils';
 
 const defaultResponse: Invoice[] = [];
 
-// TODO (typing): Correct the return type of useSelectNew. In this instance, data is an object and not an array.
 function useInvoice(currentMonth: Date) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
