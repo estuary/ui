@@ -4,7 +4,6 @@ import {
     PostgrestResponse,
 } from '@supabase/postgrest-js';
 import { User, createClient } from '@supabase/supabase-js';
-import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
@@ -165,7 +164,7 @@ export const DEFAULT_POLLING_INTERVAL = 750;
 export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 export const defaultTableFilter = <Data>(
-    query: PostgrestFilterBuilder<Data>,
+    query: PostgrestFilterBuilder<any, any, Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Data>[],
@@ -208,7 +207,7 @@ export const defaultTableFilter = <Data>(
 };
 
 export const distributedTableFilter = <Data>(
-    query: ToPostgrestFilterBuilder<Data>,
+    query: PostgrestFilterBuilder<any, any, Data>,
     searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Data>[],

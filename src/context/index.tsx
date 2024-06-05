@@ -3,7 +3,6 @@ import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
-import ClientProvider from 'context/Client';
 import ThemeProvider from 'context/Theme';
 import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';
@@ -16,19 +15,17 @@ const AppProviders = ({ children }: BaseComponentProps) => {
             <ThemeProvider>
                 <IconoirProvider>
                     <ErrorBoundryWrapper>
-                        <ClientProvider>
-                            <NotificationProvider>
-                                <SwrConfigProvider>
-                                    <UserContextProvider>
-                                        <SidePanelDocsProvider>
-                                            <TableSettingsProvider>
-                                                {children}
-                                            </TableSettingsProvider>
-                                        </SidePanelDocsProvider>
-                                    </UserContextProvider>
-                                </SwrConfigProvider>
-                            </NotificationProvider>
-                        </ClientProvider>
+                        <NotificationProvider>
+                            <SwrConfigProvider>
+                                <UserContextProvider>
+                                    <SidePanelDocsProvider>
+                                        <TableSettingsProvider>
+                                            {children}
+                                        </TableSettingsProvider>
+                                    </SidePanelDocsProvider>
+                                </UserContextProvider>
+                            </SwrConfigProvider>
+                        </NotificationProvider>
                     </ErrorBoundryWrapper>
                 </IconoirProvider>
             </ThemeProvider>

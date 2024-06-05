@@ -36,8 +36,7 @@ const getTenantHidesPreview = (tenant: string) => {
         .from(TABLES.TENANTS)
         .select('hide_preview')
         .eq('tenant', tenant)
-        .returns<TenantHidesDataPreview>()
-        .single();
+        .single<TenantHidesDataPreview>();
 };
 
 export { getTenantDetails, getTenantHidesPreview };
