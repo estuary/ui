@@ -76,7 +76,7 @@ const getLiveSpecs_captures = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<CaptureQuery>(TABLES.LIVE_SPECS_EXT)
+        .from(TABLES.LIVE_SPECS_EXT)
         .select(captureColumns, {
             count: 'exact',
         });
@@ -89,7 +89,7 @@ const getLiveSpecs_captures = (
         pagination
     ).eq('spec_type', 'capture');
 
-    return queryBuilder;
+    return queryBuilder.returns<CaptureQuery>();
 };
 
 const getLiveSpecs_materializations = (
@@ -98,7 +98,7 @@ const getLiveSpecs_materializations = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<MaterializationQuery>(TABLES.LIVE_SPECS_EXT)
+        .from(TABLES.LIVE_SPECS_EXT)
         .select(materializationsColumns, {
             count: 'exact',
         });
@@ -111,7 +111,7 @@ const getLiveSpecs_materializations = (
         pagination
     ).eq('spec_type', 'materialization');
 
-    return queryBuilder;
+    return queryBuilder.returns<MaterializationQuery>();
 };
 
 const getLiveSpecs_collections = (
@@ -120,7 +120,7 @@ const getLiveSpecs_collections = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
+        .from(TABLES.LIVE_SPECS_EXT)
         .select(collectionColumns, {
             count: 'exact',
         });
@@ -133,7 +133,7 @@ const getLiveSpecs_collections = (
         pagination
     ).eq('spec_type', 'collection');
 
-    return queryBuilder;
+    return queryBuilder.returns<CollectionQuery>();
 };
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
@@ -154,7 +154,7 @@ const getLiveSpecs_collectionsSelector = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
+        .from(TABLES.LIVE_SPECS_EXT)
         .select(
             specType === 'capture'
                 ? collectionsSelectorColumns_capture
@@ -172,7 +172,7 @@ const getLiveSpecs_collectionsSelector = (
         pagination
     ).eq('spec_type', specType);
 
-    return queryBuilder;
+    return queryBuilder.returns<CollectionSelectorQuery>();
 };
 
 const getLiveSpecs_existingTasks = (
@@ -204,7 +204,9 @@ const getLiveSpecs_existingTasks = (
         specType
     );
 
-    return queryBuilder;
+    return queryBuilder.returns<
+        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
+    >();
 };
 
 // Hydration-specific queries

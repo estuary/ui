@@ -20,7 +20,7 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
         data: grants,
         isValidating,
         error,
-    } = useQuery<CombinedGrantsExtQuery>(
+    } = useQuery(
         supabaseClient
             .from(TABLES.COMBINED_GRANTS_EXT)
             .select(`id, object_role`)

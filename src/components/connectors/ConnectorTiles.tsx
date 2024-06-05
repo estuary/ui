@@ -63,16 +63,9 @@ function ConnectorTiles({
         return getConnectors(searchQuery, 'asc', protocol);
     }, [searchQuery, protocol]);
 
-    const {
-        data: useSelectResponse,
-        isValidating,
-        error,
-    } = useQuery<ConnectorWithTagDetailQuery>(query);
+    const { data: selectResponse, isValidating, error } = useQuery(query);
 
-    const selectData = useMemo(
-        () => useSelectResponse ?? [],
-        [useSelectResponse]
-    );
+    const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(

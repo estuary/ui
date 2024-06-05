@@ -1,36 +1,25 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { useCallback } from 'react';
-import { TABLES } from 'services/supabase';
+import { supabaseClient, TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import { useQuery, useSelectSingle } from '../supabase-swr/';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { ConnectorTag, CONNECTOR_TAG_QUERY } from './shared';
 
 function useConnectorTag(connectorImage: string | null) {
-    const filter = useCallback(
-        (query: PostgrestFilterBuilder<ConnectorTag>) => {
-            return requiredConnectorColumnsExist<ConnectorTag>(query).or(
-                `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
-            );
-        },
-        [connectorImage]
-    );
-
-    const connectorTagsQuery = useQuery<ConnectorTag>(
-        TABLES.CONNECTOR_TAGS,
-        {
-            columns: CONNECTOR_TAG_QUERY,
-            filter,
-        },
-        [connectorImage]
-    );
-
-    const { data, error } = useSelectSingle(
-        hasLength(connectorImage) ? connectorTagsQuery : null
+    const { data, error } = useQuery(
+        hasLength(connectorImage)
+            ? requiredConnectorColumnsExist(
+                  supabaseClient
+                      .from(TABLES.CONNECTOR_TAGS)
+                      .select(CONNECTOR_TAG_QUERY)
+                      .or(
+                          `id.eq.${connectorImage},connector_id.eq.${connectorImage}`
+                      )
+              ).returns<ConnectorTag>()
+            : null
     );
 
     return {
-        connectorTag: data ? data.data : null,
+        connectorTag: data ?? null,
         error,
     };
 }
