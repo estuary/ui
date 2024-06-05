@@ -1,8 +1,9 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
+import { useMemo } from 'react';
+import { supabaseClient, TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity, Schema } from 'types';
-import { SuccessResponse, useQuery, useSelect } from './supabase-swr/';
 
 export interface DraftSpecQuery {
     catalog_name: string;
@@ -19,7 +20,7 @@ export type DraftSpec = DraftSpecQuery | null;
 export interface DraftSpecSwrMetadata {
     draftSpecs: DraftSpecQuery[];
     error: PostgrestError | undefined;
-    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>>;
+    mutate: KeyedMutator<PostgrestResponse<DraftSpecQuery>>;
     isValidating: boolean;
 }
 
@@ -31,7 +32,7 @@ const DRAFT_SPEC_COLS = [
     'expect_pub_id',
     'built_spec',
     'validated',
-];
+].join(',');
 const defaultResponse: DraftSpecQuery[] = [];
 
 function useDraftSpecs(
@@ -42,47 +43,38 @@ function useDraftSpecs(
         catalogName?: string;
     }
 ): DraftSpecSwrMetadata {
-    const draftSpecQuery = useQuery<DraftSpecQuery>(
-        TABLES.DRAFT_SPECS,
-        {
-            columns: DRAFT_SPEC_COLS,
-            filter: (query) => {
-                let queryBuilder = query;
+    const draftSpecQuery = useMemo(() => {
+        if (!draftId) {
+            return null;
+        }
 
-                if (options) {
-                    const { lastPubId, specType, catalogName } = options;
+        let queryBuilder = supabaseClient
+            .from(TABLES.DRAFT_SPECS)
+            .select(DRAFT_SPEC_COLS);
 
-                    if (lastPubId) {
-                        queryBuilder = queryBuilder.eq(
-                            'expect_pub_id',
-                            lastPubId
-                        );
-                    }
+        if (options) {
+            const { lastPubId, specType, catalogName } = options;
 
-                    if (specType) {
-                        queryBuilder = queryBuilder.eq('spec_type', specType);
-                    }
+            if (lastPubId) {
+                queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
+            }
 
-                    if (catalogName) {
-                        queryBuilder = queryBuilder.eq(
-                            'catalog_name',
-                            catalogName
-                        );
-                    }
-                }
+            if (specType) {
+                queryBuilder = queryBuilder.eq('spec_type', specType);
+            }
 
-                return queryBuilder.eq('draft_id', draftId as string);
-            },
-        },
-        [draftId]
-    );
+            if (catalogName) {
+                queryBuilder = queryBuilder.eq('catalog_name', catalogName);
+            }
+        }
 
-    const { data, error, mutate, isValidating } = useSelect(
-        draftId ? draftSpecQuery : null
-    );
+        return queryBuilder.eq('draft_id', draftId).returns<DraftSpecQuery[]>();
+    }, [draftId, options]);
+
+    const { data, error, mutate, isValidating } = useQuery(draftSpecQuery);
 
     return {
-        draftSpecs: data ? data.data : defaultResponse,
+        draftSpecs: data ?? defaultResponse,
         error,
         mutate,
         isValidating,

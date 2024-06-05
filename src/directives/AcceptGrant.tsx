@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
+import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
@@ -8,13 +8,12 @@ import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { SuccessResponse } from 'services/types';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;
-    mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>> | null;
+    mutate: KeyedMutator<PostgrestResponse<JoinedAppliedDirective>> | null;
     grantedPrefix: string;
     grantedCapability: string;
 }

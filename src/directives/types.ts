@@ -1,4 +1,4 @@
-import { SuccessResponse } from 'services/types';
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
@@ -62,5 +62,5 @@ export interface DirectiveSettings<T> {
 export interface DirectiveProps {
     directive: any;
     status: DirectiveStates;
-    mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>>;
+    mutate: KeyedMutator<PostgrestResponse<JoinedAppliedDirective>>;
 }
