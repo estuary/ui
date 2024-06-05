@@ -112,7 +112,7 @@ export const getInvoicesBetween = (
     const formattedEnd = formatDateForApi(date_end);
 
     return supabaseClient
-        .from<Invoice>(TABLES.INVOICES)
+        .from(TABLES.INVOICES)
         .select(invoicesQuery)
         .filter('billed_prefix', 'eq', billed_prefix)
         .or(
@@ -124,7 +124,8 @@ export const getInvoicesBetween = (
             ].join(',')})`
         )
         .order('date_start', { ascending: false })
-        .throwOnError();
+        .throwOnError()
+        .returns<Invoice[]>();
 };
 
 export interface MultiplePaymentMethods {
