@@ -51,7 +51,7 @@ const getRefreshTokensForTable = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<RefreshTokenQuery>(TABLES.REFRESH_TOKENS)
+        .from(TABLES.REFRESH_TOKENS)
         .select('created_at,detail,id,multi_use,uses,valid_for', {
             count: 'exact',
         });
@@ -66,7 +66,7 @@ const getRefreshTokensForTable = (
         .eq('multi_use', true)
         .neq('valid_for', INVALID_TOKEN_INTERVAL);
 
-    return queryBuilder;
+    return queryBuilder.returns<RefreshTokenQuery>();
 };
 
 const updateRefreshTokenValidity = (id: string, interval: string) => {

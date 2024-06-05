@@ -17,7 +17,7 @@ const getStorageMappings = (
     sorting: SortingProps<any>[]
 ) => {
     let queryBuilder = supabaseClient
-        .from<StorageMappings>(TABLES.STORAGE_MAPPINGS)
+        .from(TABLES.STORAGE_MAPPINGS)
         .select(
             `
             id,
@@ -39,12 +39,12 @@ const getStorageMappings = (
         pagination
     );
 
-    return queryBuilder;
+    return queryBuilder.returns<StorageMappings[]>();
 };
 
 const getStorageMapping = (catalog_prefix: string) => {
     const queryBuilder = supabaseClient
-        .from<StorageMappings>(TABLES.STORAGE_MAPPINGS)
+        .from(TABLES.STORAGE_MAPPINGS)
         .select(
             `    
             spec,
@@ -54,7 +54,7 @@ const getStorageMapping = (catalog_prefix: string) => {
         )
         .eq('catalog_prefix', catalog_prefix);
 
-    return queryBuilder;
+    return queryBuilder.returns<StorageMappings[]>();
 };
 
 const republishPrefix = async (prefix: string) => {
