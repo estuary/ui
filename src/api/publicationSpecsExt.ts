@@ -19,14 +19,13 @@ export interface PublicationSpecsExt_PublicationHistory {
 
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     return supabaseClient
-        .from<PublicationSpecsExt_PublicationHistory>(
-            TABLES.PUBLICATION_SPECS_EXT
-        )
+        .from(TABLES.PUBLICATION_SPECS_EXT)
         .select(`*`)
         .eq('catalog_name', catalogName)
         .order('published_at', {
             ascending: false,
-        });
+        })
+        .returns<PublicationSpecsExt_PublicationHistory[]>();
 };
 
 export const getLiveSpecIdByPublication = (
@@ -38,12 +37,11 @@ export const getLiveSpecIdByPublication = (
     >(
         () =>
             supabaseClient
-                .from<PublicationSpecsExt_PublicationHistory>(
-                    TABLES.PUBLICATION_SPECS_EXT
-                )
+                .from(TABLES.PUBLICATION_SPECS_EXT)
                 .select(`live_spec_id`)
                 .eq('pub_id', pubId)
-                .eq('catalog_name', catalogName),
+                .eq('catalog_name', catalogName)
+                .returns<PublicationSpecsExt_PublicationHistory[]>(),
         'getLiveSpecIdByPublication'
     );
 };

@@ -3,9 +3,10 @@ import { UserGrantsTenantGuard } from 'types';
 
 const getUserGrants = (userId: string) => {
     return supabaseClient
-        .from<UserGrantsTenantGuard>(TABLES.USER_GRANTS)
+        .from(TABLES.USER_GRANTS)
         .select(`id`)
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .returns<UserGrantsTenantGuard[]>();
 };
 
 const deleteUserGrant = (id: string) => {

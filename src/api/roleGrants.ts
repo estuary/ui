@@ -29,10 +29,11 @@ const getPrefixAdministrators = (
     capability: Capability
 ) => {
     return supabaseClient
-        .from<BaseGrant>(TABLES.ROLE_GRANTS)
+        .from(TABLES.ROLE_GRANTS)
         .select(`capability, object_role, subject_role`)
         .eq('capability', capability)
-        .eq('object_role', objectRole);
+        .eq('object_role', objectRole)
+        .returns<BaseGrant[]>();
 };
 
 export { createRoleGrant, deleteRoleGrant, getPrefixAdministrators };

@@ -1,18 +1,18 @@
 import { useUser } from 'context/UserContext';
 import { getUserGrants } from 'api/userGrants';
 import { singleCallSettings } from 'context/SWR';
-import { useSelectNew } from './supabase-swr/hooks/useSelect';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 function useUserGrants(singleCall?: boolean) {
     const { session } = useUser();
 
-    const { data, error, mutate, isValidating } = useSelectNew(
-        session?.user?.id ? getUserGrants(session.user.id) : null,
+    const { data, error, mutate, isValidating } = useQuery(
+        session?.user.id ? getUserGrants(session.user.id) : null,
         singleCall ? singleCallSettings : undefined
     );
 
     return {
-        userGrants: data ? data.data : [],
+        userGrants: data ?? [],
         error,
         mutate,
         isValidating,
