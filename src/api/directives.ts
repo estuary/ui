@@ -106,9 +106,7 @@ const getAppliedDirectives = (
     type: keyof typeof DIRECTIVES,
     token?: string
 ) => {
-    let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
-        TABLES.APPLIED_DIRECTIVES
-    ).select(`
+    let queryBuilder = supabaseClient.from(TABLES.APPLIED_DIRECTIVES).select(`
             id,
             directive_id,
             job_status,
@@ -126,7 +124,7 @@ const getAppliedDirectives = (
     }
 
     return DIRECTIVES[type]
-        .queryFilter(queryBuilder)
+        .queryFilter(queryBuilder.returns<JoinedAppliedDirective>())
         .order('updated_at', { ascending: false })
         .limit(1);
 };

@@ -1,18 +1,18 @@
 import { getStatsForDetails } from 'api/stats';
 import { useEntityType } from 'context/EntityContext';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { hasLength } from 'utils/misc-utils';
 import { CatalogStats_Details } from 'types';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useMemo } from 'react';
 import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 function useDetailsStats(catalogName: string, grain: string) {
     const entityType = useEntityType();
     const range = useDetailsUsageStore((store) => store.range);
 
-    const { data, error, isValidating } = useSelectNew<CatalogStats_Details>(
+    const { data, error, isValidating } = useQuery(
         hasLength(catalogName)
             ? getStatsForDetails(catalogName, entityType, grain, {
                   hours: range,
@@ -29,7 +29,7 @@ function useDetailsStats(catalogName: string, grain: string) {
     //  and potentially get it off of dataset/dimensions since we are already having to loop over all the intervals
     //  and generating the proper data.
     const stats = useMemo(() => {
-        if (!data?.data || data.data.length === 0) {
+        if (!data || data.length === 0) {
             return;
         }
 
@@ -49,7 +49,7 @@ function useDetailsStats(catalogName: string, grain: string) {
                     '';
 
                 return (
-                    find(data.data, { ts }) ??
+                    find(data, { ts }) ??
                     ({
                         ts,
                         catalog_name: '',
@@ -61,7 +61,7 @@ function useDetailsStats(catalogName: string, grain: string) {
                     } as CatalogStats_Details)
                 );
             });
-    }, [data?.data, range]);
+    }, [data, range]);
 
     // Not always returning an array so we know when the empty array is a response
     //  vs a default. That way we can keep showing old data while new data is geing fetched
