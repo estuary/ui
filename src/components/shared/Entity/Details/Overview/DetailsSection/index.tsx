@@ -126,6 +126,7 @@ function DetailsSection({ latestLiveSpec }: Props) {
     return (
         <CardWrapper
             message={<FormattedMessage id="detailsPanel.details.title" />}
+            height="100%"
         >
             {!hasLength(data) ? (
                 <CircularProgress />

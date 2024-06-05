@@ -62,6 +62,7 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
         TABLES.LIVE_SPECS_EXT,
         {
             columns: `
+                id,
                 updated_at,
                 created_at,
                 connectorName:connector_title->>en-US::text,

@@ -102,6 +102,7 @@ export enum RPCS {
     BILLING_REPORT = 'billing_report_202308',
     AUTH_ROLES = 'auth_roles',
     REPUBLISH_PREFIX = 'republish_prefix',
+    GET_CONNECTED_ENTITIES = 'get_connected_entities',
 }
 
 export enum FUNCTIONS {
