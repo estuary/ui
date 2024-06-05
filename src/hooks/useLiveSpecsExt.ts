@@ -1,7 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { TABLES } from 'services/supabase';
+import { useMemo } from 'react';
+import { supabaseClient, TABLES } from 'services/supabase';
 import { Entity } from 'types';
-import { useQuery, useSelect } from './supabase-swr/';
 
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
@@ -47,6 +48,8 @@ const queryColumnsWithSpec = queryColumns.concat([
     'catalog_name',
     'detail',
 ]);
+const queryColumnsQuery = queryColumns.join(',');
+const queryColumnsWithSpecQuery = queryColumnsWithSpec.join(',');
 
 type EntityID = string[] | string | null;
 
@@ -69,32 +72,23 @@ function useLiveSpecsExt(
     specType: Entity,
     includeSpec?: boolean
 ): Response<LiveSpecsExtQuery> | Response<LiveSpecsExtQueryWithSpec> {
-    const draftSpecQuery = useQuery<
-        LiveSpecsExtQueryWithSpec | LiveSpecsExtQuery
-    >(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: includeSpec ? queryColumnsWithSpec : queryColumns,
-            filter: draftId
-                ? (query) => {
-                      const draftArray =
-                          typeof draftId === 'string' ? [draftId] : draftId;
+    const draftSpecQuery = useMemo(() => {
+        if (!draftId) {
+            return null;
+        }
 
-                      return query
-                          .eq('spec_type', specType)
-                          .or(`id.in.(${draftArray})`);
-                  }
-                : undefined,
-        },
-        [draftId]
-    );
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(includeSpec ? queryColumnsWithSpecQuery : queryColumnsQuery)
+            .eq('spec_type', specType)
+            .or(`id.in.(${typeof draftId === 'string' ? [draftId] : draftId})`)
+            .returns<LiveSpecsExtQueryWithSpec[] | LiveSpecsExtQuery[]>();
+    }, [draftId, includeSpec, specType]);
 
-    const { data, error, mutate, isValidating } = useSelect(
-        draftId ? draftSpecQuery : null
-    );
+    const { data, error, mutate, isValidating } = useQuery(draftSpecQuery);
 
     return {
-        liveSpecs: data ? data.data : defaultResponse,
+        liveSpecs: data ?? defaultResponse,
         error,
         mutate,
         isValidating,
