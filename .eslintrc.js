@@ -63,6 +63,11 @@ module.exports = {
                 name: '@emotion/react',
                 message: 'Do not access emotion directly. Load through MUI',
             },
+            {
+                name: '@supabase/supabase-js',
+                importNames: ['PostgrestResponse'],
+                message: 'Please use @supabase/postgrest-js',
+            },
         ],
     },
 };
