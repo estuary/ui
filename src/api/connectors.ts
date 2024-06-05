@@ -23,7 +23,7 @@ const getConnectors = (
     protocol: string | null
 ) => {
     let queryBuilder = supabaseClient
-        .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
+        .from(TABLES.CONNECTORS)
         .select(CONNECTOR_WITH_TAG_QUERY);
 
     queryBuilder = defaultTableFilter<ConnectorWithTagDetailQuery>(
@@ -49,7 +49,7 @@ const getConnectors = (
         'connector_tags'
     );
 
-    return queryBuilder;
+    return queryBuilder.returns<ConnectorWithTagDetailQuery[]>();
 };
 
 // Hydration-specific queries

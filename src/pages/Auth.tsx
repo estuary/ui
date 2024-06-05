@@ -5,12 +5,12 @@ import {
 } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useUser } from 'context/UserContext';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
+import { supabaseClient } from 'services/supabase';
 import { CommonStatuses, CustomEvents } from 'services/types';
 
 const trackEvent = (status: CommonStatuses) => {
@@ -33,7 +33,6 @@ const Auth = () => {
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
 
     // We can fetch user here and not session because we are

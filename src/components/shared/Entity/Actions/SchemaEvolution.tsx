@@ -12,7 +12,6 @@ import {
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
@@ -22,6 +21,7 @@ import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
+    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import {
@@ -36,7 +36,6 @@ interface Props {
 }
 
 function SchemaEvolution({ onFailure }: Props) {
-    const supabaseClient = useClient();
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const { jobStatusPoller } = useJobStatusPoller();

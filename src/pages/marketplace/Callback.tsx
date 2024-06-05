@@ -1,4 +1,3 @@
-import { useClient } from 'hooks/supabase-swr';
 import { useIntl } from 'react-intl';
 import { useSnackbar } from 'notistack';
 import { logRocketConsole } from 'services/shared';
@@ -8,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
 import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
+import { supabaseClient } from 'services/supabase';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this
@@ -19,7 +19,6 @@ import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
 // }
 
 function MarketplaceCallback() {
-    const supabaseClient = useClient();
     const navigate = useNavigate();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -61,13 +60,7 @@ function MarketplaceCallback() {
                     }
                 );
             });
-    }, [
-        enqueueSnackbar,
-        intl,
-        navigate,
-        setMarketplaceVerify,
-        supabaseClient.auth,
-    ]);
+    }, [enqueueSnackbar, intl, navigate, setMarketplaceVerify]);
 
     return <FullPageSpinner />;
 }

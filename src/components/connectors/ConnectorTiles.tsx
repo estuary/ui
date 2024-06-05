@@ -5,12 +5,12 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getConnectors } from 'api/connectors';
 import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'context/Theme';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -67,10 +67,10 @@ function ConnectorTiles({
         data: useSelectResponse,
         isValidating,
         error,
-    } = useSelectNew<ConnectorWithTagDetailQuery>(query);
+    } = useQuery<ConnectorWithTagDetailQuery>(query);
 
     const selectData = useMemo(
-        () => (useSelectResponse ? useSelectResponse.data : []),
+        () => useSelectResponse ?? [],
         [useSelectResponse]
     );
 

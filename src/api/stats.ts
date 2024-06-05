@@ -1,7 +1,4 @@
-import {
-    PostgrestFilterBuilder,
-    PostgrestResponse,
-} from '@supabase/postgrest-js';
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import {
     Duration,
     isSaturday,
@@ -140,7 +137,7 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     // TODO (retry) promise generator
     const promiseGenerator = (idx: number) => {
         let queryBuilder = supabaseClient
-            .from<CatalogStats>(TABLES.CATALOG_STATS)
+            .from(TABLES.CATALOG_STATS)
             .select(DEFAULT_QUERY)
             .in('catalog_name', names.slice(idx, idx + CHUNK_SIZE))
             .order('catalog_name');
@@ -198,7 +195,7 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
                 throw new Error('Unsupported filter used in Stats Query');
         }
 
-        return queryBuilder;
+        return queryBuilder.returns<CatalogStats[]>();
     };
 
     // This could probably be written in a fancy functional-programming way with
@@ -228,7 +225,7 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
     const today = new Date();
 
     return supabaseClient
-        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .from(TABLES.CATALOG_STATS)
         .select(
             `    
             catalog_name,
@@ -243,7 +240,8 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
         .gte('ts', convertToUTC(startDate, monthlyGrain))
         .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters)
-        .order('ts', { ascending: false });
+        .order('ts', { ascending: false })
+        .returns<CatalogStats_Billing[]>();
 };
 
 const getStatsForDetails = (
@@ -274,24 +272,26 @@ const getStatsForDetails = (
     }
 
     return supabaseClient
-        .from<CatalogStats_Details>(TABLES.CATALOG_STATS)
+        .from(TABLES.CATALOG_STATS)
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', grain)
         .gt('ts', gt)
         .lte('ts', lte)
-        .order('ts', { ascending: true });
+        .order('ts', { ascending: true })
+        .returns<CatalogStats_Details[]>();
 };
 
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
 //   This function is temporarily unused since the billing history table component is using filtered data
 //   returned by the billing_report RPC to populate the contents of its rows.
+// PostgrestFilterBuilder<CatalogStats_Billing>
 const getStatsForBillingHistoryTable = (
     tenants: string[],
     // pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
-): PostgrestFilterBuilder<CatalogStats_Billing> => {
+) => {
     const subjectRoleFilters = tenants
         .map(
             (tenant) =>
@@ -304,7 +304,7 @@ const getStatsForBillingHistoryTable = (
     const startMonth = subMonths(currentMonth, 5);
 
     let queryBuilder = supabaseClient
-        .from<CatalogStats_Billing>(TABLES.CATALOG_STATS)
+        .from(TABLES.CATALOG_STATS)
         .select(
             `    
             catalog_name,
@@ -329,7 +329,7 @@ const getStatsForBillingHistoryTable = (
         // pagination
     );
 
-    return queryBuilder;
+    return queryBuilder.returns<CatalogStats_Billing[]>();
 };
 
 export {

@@ -1,8 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import FullPageError from 'components/fullPage/Error';
-import { useQuery, useSelect } from 'hooks/supabase-swr';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { TABLES } from 'services/supabase';
+import { supabaseClient, TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
 
 // TODO: Determine an approach that results in a single combined grants query of in the Authenticated app component.
@@ -16,17 +16,15 @@ const GrantDetailsContext = createContext<CombinedGrantsExtQuery[] | null>(
 );
 
 const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
-    const combinedGrantsQuery = useQuery<CombinedGrantsExtQuery>(
-        TABLES.COMBINED_GRANTS_EXT,
-        { columns: `id, object_role` },
-        []
-    );
-
     const {
         data: grants,
         isValidating,
         error,
-    } = useSelect(combinedGrantsQuery);
+    } = useQuery<CombinedGrantsExtQuery>(
+        supabaseClient
+            .from(TABLES.COMBINED_GRANTS_EXT)
+            .select(`id, object_role`)
+    );
 
     if (error) {
         return (
@@ -37,14 +35,12 @@ const GrantDetailsContextProvider = ({ children }: BaseComponentProps) => {
         );
     }
 
-    const value = grants?.data ? grants.data : null;
-
-    if (isValidating || value === null) {
+    if (isValidating || !grants) {
         return null;
     }
 
     return (
-        <GrantDetailsContext.Provider value={value}>
+        <GrantDetailsContext.Provider value={grants}>
             {children}
         </GrantDetailsContext.Provider>
     );

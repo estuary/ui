@@ -3,10 +3,10 @@
 
 import { useEffect, useState, createContext, useContext, useRef } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { useClient } from 'hooks/supabase-swr';
 import { BaseComponentProps } from 'types';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { supabaseClient } from 'services/supabase';
 
 export interface AuthSession {
     user: User | null;
@@ -19,7 +19,6 @@ const UserContext = createContext<AuthSession | undefined>({
 });
 
 const UserContextProvider = ({ children }: BaseComponentProps) => {
-    const supabaseClient = useClient();
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(session?.user ?? null);
     const accessToken = useRef<string | null>(null);
@@ -91,7 +90,7 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
         );
 
         return () => {
-            authListener?.unsubscribe();
+            authListener.subscription.unsubscribe();
         };
         // Since this binds listeneds we do not want to keep callign this as things change
         // eslint-disable-next-line react-hooks/exhaustive-deps

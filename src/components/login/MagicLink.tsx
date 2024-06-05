@@ -2,10 +2,10 @@ import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
+import { supabaseClient } from 'services/supabase';
 import useConstant from 'use-constant';
 import { getLoginSettings } from 'utils/env-utils';
 
@@ -24,7 +24,6 @@ const loginSettings = getLoginSettings();
 const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
-    const supabaseClient = useClient();
     const intl = useIntl();
     const redirectTo = useLoginRedirectPath(redirectToBase);
 
@@ -96,7 +95,7 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
                 },
             });
         },
-        [redirectPath, supabaseClient.auth]
+        [redirectPath]
     );
 
     const magicLinkOnSubmitWithoutToken = useCallback(
@@ -109,7 +108,7 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
                 },
             });
         },
-        [redirectPath, supabaseClient.auth]
+        [redirectPath]
     );
 
     return (

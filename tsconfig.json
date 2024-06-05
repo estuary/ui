@@ -6,7 +6,7 @@
         "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2022.Object"],
         "sourceMap": true,
         "importHelpers": true,
-        "declaration": true,
+        "declaration": false,
         "rootDir": "src",
         "strict": true,
         "noUnusedLocals": true,

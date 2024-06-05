@@ -1,9 +1,8 @@
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { AUTH_ERROR } from 'services/client';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { tokenHasIssues } from 'services/supabase';
+import { supabaseClient, tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
@@ -25,7 +24,6 @@ export const extendedPollSettings = {
     revalidateOnFocus: false,
 };
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
-    const supabaseClient = useClient();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();

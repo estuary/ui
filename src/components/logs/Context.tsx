@@ -1,4 +1,3 @@
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import {
     createContext,
     useCallback,
@@ -7,7 +6,11 @@ import {
     useRef,
     useState,
 } from 'react';
-import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
+import {
+    DEFAULT_POLLING_INTERVAL,
+    RPCS,
+    supabaseClient,
+} from 'services/supabase';
 import { BaseComponentProps, ViewLogs_Line } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
@@ -37,8 +40,6 @@ const LogsContextProvider = ({
     disableIntervalFetching,
     fetchAll,
 }: Props) => {
-    const supabaseClient = useClient();
-
     // Privates
     const allLogs = useRef<ViewLogs_Line[]>([]);
     const offset = useRef(0);
@@ -60,13 +61,15 @@ const LogsContextProvider = ({
         };
         if (fetchAll) {
             return supabaseClient
-                .rpc<ViewLogs_Line>(RPCS.VIEW_LOGS, queryParams)
-                .throwOnError();
+                .rpc(RPCS.VIEW_LOGS, queryParams)
+                .throwOnError()
+                .returns<ViewLogs_Line[]>();
         } else {
             return supabaseClient
-                .rpc<ViewLogs_Line>(RPCS.VIEW_LOGS, queryParams)
+                .rpc(RPCS.VIEW_LOGS, queryParams)
                 .throwOnError()
-                .range(offsetVal, offsetVal + 10);
+                .range(offsetVal, offsetVal + 10)
+                .returns<ViewLogs_Line[]>();
         }
     };
 

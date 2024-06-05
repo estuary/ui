@@ -4,7 +4,6 @@ import {
 } from 'components/editor/Store/hooks';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
@@ -13,6 +12,7 @@ import {
     DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
+    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -37,8 +37,6 @@ const trackEvent = (payload: any) => {
 
 function useDiscoverStartSubscription(entityType: Entity) {
     const postGenerateMutate = useMutateDraftSpec();
-
-    const supabaseClient = useClient();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -146,7 +144,6 @@ function useDiscoverStartSubscription(entityType: Entity) {
             setPreviousEndpointConfig,
             setServerUpdateRequired,
             storeDiscoveredCollections,
-            supabaseClient,
         ]
     );
 }
