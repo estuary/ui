@@ -29,10 +29,13 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
 
     useEffect(() => {
         void (async () => {
-            const authSession = supabaseClient.auth.session();
+            const {
+                data: { session: authSession },
+                error,
+            } = await supabaseClient.auth.getSession();
 
             // If there is no session set to null and logout
-            if (!authSession) {
+            if (!authSession || error) {
                 setSession(null);
                 setUser(null);
                 accessToken.current = null;

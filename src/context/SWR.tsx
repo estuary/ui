@@ -6,6 +6,7 @@ import { supabaseClient, tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
+import { useUser } from './UserContext';
 
 const DEFAULT_RETRY_COUNT = 3;
 export const DEFAULT_POLLING = 2500;
@@ -27,6 +28,8 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
+
+    const { session } = useUser();
 
     return (
         <SWRConfig
@@ -72,7 +75,7 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                         //      the UI thinks the User is still valid. So we need to log them out.
                         const localUserInvalid =
                             error.message === AUTH_ERROR &&
-                            Boolean(supabaseClient.auth.user());
+                            Boolean(session?.user);
 
                         if (localUserInvalid || tokenHasIssues(error.message)) {
                             logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
