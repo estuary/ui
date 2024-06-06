@@ -4,7 +4,6 @@ import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
     defaultTableFilter,
-    distributedTableFilter,
     escapeReservedCharacters,
     handleFailure,
     handleSuccess,
@@ -153,26 +152,23 @@ const getLiveSpecs_collectionsSelector = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(
-            specType === 'capture'
-                ? collectionsSelectorColumns_capture
-                : collectionsSelectorColumns,
-            {
-                count: 'exact',
-            }
-        );
-
-    queryBuilder = defaultTableFilter<CollectionSelectorQuery>(
-        queryBuilder,
+    return defaultTableFilter<CollectionSelectorQuery>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(
+                specType === 'capture'
+                    ? collectionsSelectorColumns_capture
+                    : collectionsSelectorColumns,
+                {
+                    count: 'exact',
+                }
+            )
+            .eq('spec_type', specType),
         ['catalog_name'],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', specType);
-
-    return queryBuilder.returns<CollectionSelectorQuery>();
+    );
 };
 
 const getLiveSpecs_existingTasks = (
@@ -188,25 +184,22 @@ const getLiveSpecs_existingTasks = (
 
     const columns = taskColumns.concat(',connector_id');
 
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(columns, {
-            count: 'exact',
-        })
-        .eq('connector_id', connectorId)
-        .not('catalog_name', 'ilike', 'ops/%')
-        .not('catalog_name', 'ilike', `${DEMO_TENANT}%`);
-
-    queryBuilder = distributedTableFilter<
+    return defaultTableFilter<
         CaptureQueryWithSpec | MaterializationQueryWithSpec
-    >(queryBuilder, ['catalog_name'], searchQuery, sorting).eq(
-        'spec_type',
-        specType
+    >(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(columns, {
+                count: 'exact',
+            })
+            .eq('connector_id', connectorId)
+            .not('catalog_name', 'ilike', 'ops/%')
+            .not('catalog_name', 'ilike', `${DEMO_TENANT}%`)
+            .eq('spec_type', specType),
+        ['catalog_name'],
+        searchQuery,
+        sorting
     );
-
-    return queryBuilder.returns<
-        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
-    >();
 };
 
 // Hydration-specific queries

@@ -149,28 +149,16 @@ const getNotificationSubscriptionsForTable = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.ALERT_SUBSCRIPTIONS)
-        .select(
-            `    
-                id,
-                updated_at,
-                catalog_prefix,
-                email
-            `,
-            { count: 'exact' }
-        )
-        .eq('catalog_prefix', catalogPrefix);
-
-    queryBuilder = defaultTableFilter<AlertSubscriptionsExtendedQuery>(
-        queryBuilder,
+    return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
+        supabaseClient
+            .from(TABLES.ALERT_SUBSCRIPTIONS)
+            .select(`id, updated_at, catalog_prefix, email`, { count: 'exact' })
+            .eq('catalog_prefix', catalogPrefix),
         ['catalog_prefix', 'email'],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder.returns<AlertSubscriptionsExtendedQuery>();
 };
 
 const getNotificationSubscriptions = async (prefix?: string) => {

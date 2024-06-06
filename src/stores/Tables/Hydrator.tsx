@@ -1,4 +1,7 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import {
+    PostgrestFilterBuilder,
+    PostgrestTransformBuilder,
+} from '@supabase/postgrest-js';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
@@ -11,7 +14,10 @@ import { BaseComponentProps } from 'types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<any> | null;
+    query:
+        | PostgrestFilterBuilder<any, any, any, any, any>
+        | PostgrestTransformBuilder<any, any, any, any, any>
+        | null;
     selectableTableStoreName: SelectTableStoreNames;
     disableMultiSelect?: boolean;
 }

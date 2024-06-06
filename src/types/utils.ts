@@ -9,3 +9,10 @@ export type WithRequiredNonNullProperty<T, K extends keyof T> = T & {
 export type EnumDictionary<E extends string | symbol | number, T> = {
     [K in E]: T;
 };
+
+export type GetFirstArg<T> = T extends (
+    first: infer FirstArgument,
+    ...args: any[]
+) => any
+    ? FirstArgument
+    : never;

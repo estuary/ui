@@ -163,14 +163,14 @@ export interface SortingProps<Data> {
 export const DEFAULT_POLLING_INTERVAL = 750;
 export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
-export const defaultTableFilter = <Data>(
-    query: PostgrestFilterBuilder<any, any, Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
+export const defaultTableFilter = <Response>(
+    query: PostgrestFilterBuilder<any, any, Response>,
+    searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
-    sorting: SortingProps<Data>[],
+    sorting: SortingProps<Response>[],
     pagination?: Pagination,
-    protocol?: Protocol<Data>
-) => {
+    protocol?: Protocol<Response>
+): PostgrestFilterBuilder<any, any, Response> => {
     let queryBuilder = query;
 
     if (searchQuery) {
@@ -186,7 +186,7 @@ export const defaultTableFilter = <Data>(
     }
 
     forEach(sorting, (sort) => {
-        queryBuilder = queryBuilder.order(sort.col, {
+        queryBuilder = queryBuilder.order(sort.col as string, {
             ascending: sort.direction === 'asc',
         });
     });
@@ -197,50 +197,7 @@ export const defaultTableFilter = <Data>(
 
     if (protocol?.value) {
         queryBuilder = queryBuilder.filter(
-            protocol.column,
-            'eq',
-            protocol.value
-        );
-    }
-
-    return queryBuilder;
-};
-
-export const distributedTableFilter = <Data>(
-    query: PostgrestFilterBuilder<any, any, Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
-    searchQuery: string | null,
-    sorting: SortingProps<Data>[],
-    pagination?: Pagination,
-    protocol?: Protocol<Data>
-) => {
-    let queryBuilder = query;
-
-    if (searchQuery) {
-        queryBuilder = queryBuilder.or(
-            searchParam
-                .map((param) => {
-                    return `${param}.ilike.*${escapeReservedCharacters(
-                        searchQuery
-                    )}*`;
-                })
-                .join(',')
-        );
-    }
-
-    forEach(sorting, (sort) => {
-        queryBuilder = queryBuilder.order(sort.col, {
-            ascending: sort.direction === 'asc',
-        });
-    });
-
-    if (pagination) {
-        queryBuilder = queryBuilder.range(pagination.from, pagination.to);
-    }
-
-    if (protocol?.value) {
-        queryBuilder = queryBuilder.filter(
-            protocol.column,
+            protocol.column as string,
             'eq',
             protocol.value
         );
