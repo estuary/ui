@@ -14,14 +14,6 @@ export interface LiveSpecsQuery extends Schema {
 const queryColumns = ['catalog_name', 'spec_type'];
 const defaultResponse: LiveSpecsQuery[] = [];
 
-const withKey =
-    (key: string) =>
-    (useSWRNext: any) =>
-    (params: any, fetcher: any, config: any) => {
-        // Pass the serialized key, and unserialize it in fetcher.
-        return useSWRNext(key, () => fetcher(...params), config);
-    };
-
 function useLiveSpecs(specType?: Entity, matchName?: string) {
     const draftSpecQuery = useMemo(() => {
         if (!specType) {
@@ -105,9 +97,7 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
             .returns<LiveSpecsQuery_spec[]>();
     }, [collectionNames]);
 
-    const { data, error, isValidating } = useQuery(liveSpecQuery, {
-        use: [withKey(id)],
-    });
+    const { data, error, isValidating } = useQuery(liveSpecQuery);
 
     return {
         liveSpecs: data ?? (defaultResponse as LiveSpecsQuery_spec[]),
