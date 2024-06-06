@@ -15,14 +15,13 @@ import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
 function useValidConnectorsExist(protocol: string | null) {
     const { data } = useQuery(
         protocol
-            ? requiredConnectorColumnsExist(
+            ? requiredConnectorColumnsExist<ConnectorsExist[]>(
                   supabaseClient
                       .from(TABLES.CONNECTORS)
-                      .select(CONNECTORS_EXIST_QUERY),
+                      .select(CONNECTORS_EXIST_QUERY)
+                      .eq('connector_tags.protocol', protocol),
                   'connector_tags'
               )
-                  .eq('connector_tags.protocol', protocol)
-                  .returns<ConnectorsExist[]>()
             : null
     );
 

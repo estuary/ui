@@ -1,4 +1,7 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import {
+    PostgrestFilterBuilder,
+    PostgrestResponse,
+} from '@supabase/postgrest-js';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
@@ -51,8 +54,8 @@ export type UserClaims =
 export interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
-        queryBuilder: any //PostgrestFilterBuilder<JoinedAppliedDirective>
-    ) => any; // PostgrestFilterBuilder<JoinedAppliedDirective>;
+        queryBuilder: PostgrestFilterBuilder<any, any, JoinedAppliedDirective>
+    ) => PostgrestFilterBuilder<any, any, JoinedAppliedDirective>;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null

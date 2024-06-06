@@ -16,22 +16,24 @@ const getGrants = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter(
-        supabaseClient
-            .from(TABLES.COMBINED_GRANTS_EXT)
-            .select(
-                `
+    const query = supabaseClient
+        .from(TABLES.COMBINED_GRANTS_EXT)
+        .select(
+            `
             id, 
             subject_role, 
             object_role, 
             capability,
             updated_at
         `,
-                {
-                    count: 'exact',
-                }
-            )
-            .neq('subject_role', null),
+            {
+                count: 'exact',
+            }
+        )
+        .neq('subject_role', null);
+
+    return defaultTableFilter<typeof query>(
+        query,
         ['subject_role', 'object_role'],
         searchQuery,
         sorting,
@@ -85,7 +87,6 @@ export async function getAuthRoles(
                     min_capability: capability,
                 })
                 .range(start, start + pageSize - 1)
-                .returns<AuthRoles[]>()
     );
 
     return parsePagedFetchAllResponse<AuthRoles>(responses);

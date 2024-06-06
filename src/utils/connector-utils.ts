@@ -5,12 +5,10 @@
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
-// PostgrestFilterBuilder<any, any, T, any, any>
-// PostgrestFilterBuilder<any, any, T, any, any>
-export const requiredConnectorColumnsExist = (
-    query: any,
+export const requiredConnectorColumnsExist = <Response>(
+    query: PostgrestFilterBuilder<any, any, Response>,
     columnPrefix?: string
-): PostgrestFilterBuilder<any, any, any, any, any> => {
+): PostgrestFilterBuilder<any, any, Response> => {
     return query
         .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
         .not(

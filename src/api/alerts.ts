@@ -162,23 +162,27 @@ const getNotificationSubscriptionsForTable = (
 };
 
 const getNotificationSubscriptions = async (prefix?: string) => {
-    let queryBuilder = supabaseClient.from(TABLES.ALERT_SUBSCRIPTIONS).select(
-        `    
+    const data = await supabaseRetry(() => {
+        let queryBuilder = supabaseClient
+            .from(TABLES.ALERT_SUBSCRIPTIONS)
+            .select(
+                `    
             id,
             updated_at,
             catalog_prefix,
             email
         `
+            );
+
+        if (prefix) {
+            queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
+        }
+
+        return queryBuilder.returns<AlertSubscriptionsExtendedQuery[]>();
+    }, 'getNotificationSubscriptions').then(
+        handleSuccess<AlertSubscriptionsExtendedQuery[]>,
+        handleFailure
     );
-
-    if (prefix) {
-        queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
-    }
-
-    const data = await supabaseRetry(
-        () => queryBuilder.returns<AlertSubscriptionsExtendedQuery[]>(),
-        'getNotificationSubscriptions'
-    ).then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
 
     return data;
 };

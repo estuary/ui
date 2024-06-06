@@ -303,7 +303,7 @@ const getStatsForBillingHistoryTable = (
     const currentMonth = startOfMonth(today);
     const startMonth = subMonths(currentMonth, 5);
 
-    let queryBuilder = supabaseClient
+    const query = supabaseClient
         .from(TABLES.CATALOG_STATS)
         .select(
             `    
@@ -321,15 +321,14 @@ const getStatsForBillingHistoryTable = (
         .lte('ts', convertToUTC(today, monthlyGrain))
         .or(subjectRoleFilters);
 
-    queryBuilder = defaultTableFilter<CatalogStats_Billing>(
-        queryBuilder,
+    return defaultTableFilter<typeof query>(
+        query,
         ['ts'],
         searchQuery,
         sorting
-        // pagination
     );
 
-    return queryBuilder.returns<CatalogStats_Billing[]>();
+    // return queryBuilder.returns<CatalogStats_Billing[]>();
 };
 
 export {
