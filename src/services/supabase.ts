@@ -320,7 +320,8 @@ export const insertSupabase = (
         () =>
             supabaseClient
                 .from(table)
-                .insert(Array.isArray(data) ? data : [data]),
+                .insert(Array.isArray(data) ? data : [data])
+                .select('*'),
         'insert'
     ).then(handleSuccess, handleFailure);
 };
@@ -332,7 +333,12 @@ export const updateSupabase = (
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () => supabaseClient.from(table).update(data).match(matchData),
+        () =>
+            supabaseClient
+                .from(table)
+                .update(data)
+                .match(matchData)
+                .select('*'),
         'update'
     ).then(handleSuccess, handleFailure);
 };
