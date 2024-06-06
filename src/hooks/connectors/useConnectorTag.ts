@@ -16,6 +16,7 @@ function useConnectorTag(connectorImage: string | null) {
                 .from(TABLES.CONNECTOR_TAGS)
                 .select(CONNECTOR_TAG_QUERY)
                 .or(`id.eq.${connectorImage},connector_id.eq.${connectorImage}`)
+                .single()
         );
     }, [connectorImage]);
 
