@@ -20,11 +20,12 @@ import {
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-export const gatewayFetcher = (
-    endpoint: string,
-    prefixes: string[],
-    sessionKey: string | undefined
-): Promise<GatewayAuthTokenResponse[]> => {
+type GatewayFetcherArgs = [string, string[], string | undefined];
+export const gatewayFetcher = ({
+    0: endpoint,
+    1: prefixes,
+    2: sessionKey,
+}: GatewayFetcherArgs): Promise<GatewayAuthTokenResponse[]> => {
     const headers: HeadersInit = {};
 
     // Use the supabase key because we're calling a Supabase function to fetch
