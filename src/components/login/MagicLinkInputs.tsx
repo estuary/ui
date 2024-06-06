@@ -2,7 +2,7 @@ import { JsonSchema } from '@jsonforms/core';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Button, Typography } from '@mui/material';
-import { ApiError } from '@supabase/supabase-js';
+import { AuthApiError } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
@@ -33,7 +33,7 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [submitError, setSubmitError] = useState<ApiError | null>(null);
+    const [submitError, setSubmitError] = useState<AuthApiError | null>(null);
     const [formData, setFormData] = useState<{
         email: string | undefined;
         token?: string | undefined;

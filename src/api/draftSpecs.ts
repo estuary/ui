@@ -1,7 +1,4 @@
-import {
-    PostgrestResponse,
-    PostgrestSingleResponse,
-} from '@supabase/postgrest-js';
+import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import pLimit from 'p-limit';
 import {
@@ -169,7 +166,7 @@ export const deleteDraftSpecsByCatalogName = async (
         // In case we get an absolutely massive amount of catalogs to delete,
         // we don't want to spam supabase
         const limiter = pLimit(3);
-        const promises: Array<Promise<PostgrestResponse<any>>> = [];
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
         let index = 0;
 
         // TODO (retry) promise generator

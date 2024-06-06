@@ -51,11 +51,12 @@ export type UserClaims =
     | OnboardClaim
     | StorageMappingsClaim;
 
+// TODO (V2 typing) - the query filter should handle filter better
 export interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
-        queryBuilder: PostgrestFilterBuilder<any, any, JoinedAppliedDirective>
-    ) => PostgrestFilterBuilder<any, any, JoinedAppliedDirective>;
+        queryBuilder: any //PostgrestFilterBuilder<any, any, any>
+    ) => PostgrestFilterBuilder<any, any, any>;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null

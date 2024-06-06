@@ -16,34 +16,30 @@ const getStorageMappings = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.STORAGE_MAPPINGS)
-        .select(
-            `
+    // TODO (storage mappings) including count will make pagination work but
+    //  it makes this table take around 3.3 SECONDS in production.
+    // { count: 'exact' }
+    return defaultTableFilter<StorageMappings[]>(
+        supabaseClient
+            .from(TABLES.STORAGE_MAPPINGS)
+            .select(
+                `
             id,
             spec,
             catalog_prefix,
             updated_at
         `
-            // TODO (storage mappings) including count will make pagination work but
-            //  it makes this table take around 3.3 SECONDS in production.
-            // { count: 'exact' }
-        )
-        .eq('catalog_prefix', catalogPrefix);
-
-    queryBuilder = defaultTableFilter(
-        queryBuilder,
+            )
+            .eq('catalog_prefix', catalogPrefix),
         [],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder.returns<StorageMappings[]>();
 };
 
 const getStorageMapping = (catalog_prefix: string) => {
-    const queryBuilder = supabaseClient
+    return supabaseClient
         .from(TABLES.STORAGE_MAPPINGS)
         .select(
             `    
@@ -52,9 +48,8 @@ const getStorageMapping = (catalog_prefix: string) => {
             updated_at
         `
         )
-        .eq('catalog_prefix', catalog_prefix);
-
-    return queryBuilder.returns<StorageMappings[]>();
+        .eq('catalog_prefix', catalog_prefix)
+        .returns<StorageMappings[]>();
 };
 
 const republishPrefix = async (prefix: string) => {

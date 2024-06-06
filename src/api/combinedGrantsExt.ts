@@ -16,24 +16,22 @@ const getGrants = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    const query = supabaseClient
-        .from(TABLES.COMBINED_GRANTS_EXT)
-        .select(
-            `
+    return defaultTableFilter(
+        supabaseClient
+            .from(TABLES.COMBINED_GRANTS_EXT)
+            .select(
+                `
             id, 
             subject_role, 
             object_role, 
             capability,
             updated_at
         `,
-            {
-                count: 'exact',
-            }
-        )
-        .neq('subject_role', null);
-
-    return defaultTableFilter<typeof query>(
-        query,
+                {
+                    count: 'exact',
+                }
+            )
+            .neq('subject_role', null),
         ['subject_role', 'object_role'],
         searchQuery,
         sorting,

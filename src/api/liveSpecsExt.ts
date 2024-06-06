@@ -74,21 +74,18 @@ const getLiveSpecs_captures = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(captureColumns, {
-            count: 'exact',
-        });
-
-    queryBuilder = defaultTableFilter<CaptureQuery>(
-        queryBuilder,
+    return defaultTableFilter<CaptureQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(captureColumns, {
+                count: 'exact',
+            })
+            .eq('spec_type', 'capture'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'capture');
-
-    return queryBuilder.returns<CaptureQuery>();
+    );
 };
 
 const getLiveSpecs_materializations = (
@@ -96,21 +93,18 @@ const getLiveSpecs_materializations = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(materializationsColumns, {
-            count: 'exact',
-        });
-
-    queryBuilder = defaultTableFilter<MaterializationQuery>(
-        queryBuilder,
+    return defaultTableFilter<MaterializationQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(materializationsColumns, {
+                count: 'exact',
+            })
+            .eq('spec_type', 'materialization'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'materialization');
-
-    return queryBuilder.returns<MaterializationQuery>();
+    );
 };
 
 const getLiveSpecs_collections = (
@@ -118,21 +112,18 @@ const getLiveSpecs_collections = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(collectionColumns, {
-            count: 'exact',
-        });
-
-    queryBuilder = defaultTableFilter<CollectionQuery>(
-        queryBuilder,
+    return defaultTableFilter<CollectionQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(collectionColumns, {
+                count: 'exact',
+            })
+            .eq('spec_type', 'collection'),
         ['catalog_name'],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'collection');
-
-    return queryBuilder.returns<CollectionQuery>();
+    );
 };
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
@@ -152,7 +143,7 @@ const getLiveSpecs_collectionsSelector = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<CollectionSelectorQuery>(
+    return defaultTableFilter<CollectionSelectorQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(
