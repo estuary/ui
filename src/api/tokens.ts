@@ -70,7 +70,7 @@ const updateRefreshTokenValidity = (id: string, interval: string) => {
         () =>
             supabaseClient
                 .from(TABLES.REFRESH_TOKENS)
-                .update({ valid_for: interval }, { returning: 'minimal' })
+                .update({ valid_for: interval })
                 .match({ id }),
         'updateRefreshTokenValidity'
     ).then(handleSuccess, handleFailure);

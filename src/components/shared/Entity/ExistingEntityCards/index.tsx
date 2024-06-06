@@ -65,21 +65,14 @@ function ExistingEntityCards() {
         status: TableStatuses.LOADING,
     });
 
-    const liveSpecQuery = useMemo(() => {
-        return getLiveSpecs_existingTasks(
-            entityType,
-            connectorId,
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ]
-        );
-    }, [connectorId, entityType, searchQuery, sortDirection]);
-
-    const { data: selectResponse, isValidating } = useQuery(liveSpecQuery);
+    const { data: selectResponse, isValidating } = useQuery(
+        getLiveSpecs_existingTasks(entityType, connectorId, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ])
+    );
 
     const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 

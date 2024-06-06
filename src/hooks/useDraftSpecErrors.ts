@@ -27,6 +27,8 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
         }
     );
 
+    console.log('data', data);
+
     return {
         draftSpecErrors: data ?? defaultResponse,
         count: data ? data.count : null,

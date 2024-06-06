@@ -1,5 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
+import {
+    PostgrestError,
+    PostgrestSingleResponse,
+} from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
@@ -13,7 +16,9 @@ import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;
-    mutate: KeyedMutator<PostgrestResponse<JoinedAppliedDirective>> | null;
+    mutate: KeyedMutator<
+        PostgrestSingleResponse<JoinedAppliedDirective>
+    > | null;
     grantedPrefix: string;
     grantedCapability: string;
 }

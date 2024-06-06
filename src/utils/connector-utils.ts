@@ -5,8 +5,9 @@
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
+// TODO (V2 typing) - query should take in filter builder better
 export const requiredConnectorColumnsExist = <Response>(
-    query: PostgrestFilterBuilder<any, any, Response>,
+    query: any,
     columnPrefix?: string
 ): PostgrestFilterBuilder<any, any, Response> => {
     return query

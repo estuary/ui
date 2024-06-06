@@ -164,7 +164,7 @@ export const DEFAULT_POLLING_INTERVAL = 750;
 export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 
-// TODO (V2 typing) -
+// TODO (V2 typing) - query should take in filter builder better
 export const defaultTableFilter = <Response>(
     query: any,
     searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170

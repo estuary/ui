@@ -176,7 +176,7 @@ const getLiveSpecs_existingTasks = (
     const columns = taskColumns.concat(',connector_id');
 
     return defaultTableFilter<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
+        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
     >(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
