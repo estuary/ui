@@ -13,7 +13,7 @@ const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'].join(',');
 const defaultResponse: DraftErrorsQuery[] = [];
 
 function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
-    const { data, error, mutate, isValidating } = useQuery(
+    const { data, count, error, mutate, isValidating } = useQuery(
         draftId
             ? supabaseClient
                   .from(TABLES.DRAFT_ERRORS)
@@ -31,7 +31,7 @@ function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
 
     return {
         draftSpecErrors: data ?? defaultResponse,
-        count: data ? data.count : null,
+        count: count ?? null,
         error,
         mutate,
         isValidating,

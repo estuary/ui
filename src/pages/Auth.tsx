@@ -73,9 +73,7 @@ const Auth = () => {
         if (!user) {
             savingUser.current = true;
             supabaseClient.auth
-                .getSessionFromUrl({
-                    storeSession: true,
-                })
+                .initialize()
                 .then(async (response) => {
                     if (response.error) {
                         trackEvent('failed');
