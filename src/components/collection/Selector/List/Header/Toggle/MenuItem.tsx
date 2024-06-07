@@ -1,44 +1,44 @@
-import { Box, MenuItem, Stack, Typography } from '@mui/material';
-import { Check } from 'iconoir-react';
+import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 import { ReactNode } from 'react';
 import { Scopes } from './types';
 
 interface Props {
     desc: ReactNode;
     scope: Scopes;
-    scopeState: Scopes;
-    onClick: () => void;
     title: ReactNode;
 }
 
-function HeaderToggleMenuItem({
-    desc,
-    onClick,
-    scope,
-    scopeState,
-    title,
-}: Props) {
+function ScopeMenuItem({ desc, scope, title }: Props) {
     return (
-        <MenuItem onClick={onClick} selected={scopeState === scope}>
-            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                <Box sx={{ minWidth: 15, maxWidth: 15 }}>
-                    <Typography>
-                        {scopeState === scope ? <Check /> : null}
-                    </Typography>
-                </Box>
-                <Box>
-                    <Typography sx={{ fontWeight: 'bold' }}>{title}</Typography>
+        <FormControlLabel
+            value={scope}
+            control={<Radio size="small" />}
+            label={
+                <Box style={{ padding: '8px 0px' }}>
                     <Typography
                         sx={{
-                            textTransform: 'lowercase',
+                            mb: '4px',
+                            fontWeight: 500,
+                        }}
+                    >
+                        {title}
+                    </Typography>
+
+                    <Typography
+                        sx={{
+                            'textTransform': 'lowercase',
+                            '&.MuiTypography-root:first-letter': {
+                                textTransform: 'uppercase',
+                            },
                         }}
                     >
                         {desc}
                     </Typography>
                 </Box>
-            </Stack>
-        </MenuItem>
+            }
+            style={{ alignItems: 'flex-start' }}
+        />
     );
 }
 
-export default HeaderToggleMenuItem;
+export default ScopeMenuItem;
