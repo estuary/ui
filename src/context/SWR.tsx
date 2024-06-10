@@ -2,11 +2,11 @@ import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { AUTH_ERROR } from 'services/client';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { supabaseClient, tokenHasIssues } from 'services/supabase';
+import { tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
-import { useUser } from './UserContext';
+import { supabaseClient } from './Supabase';
 
 const DEFAULT_RETRY_COUNT = 3;
 export const DEFAULT_POLLING = 2500;
@@ -28,8 +28,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
-
-    const { session } = useUser();
 
     return (
         <SWRConfig
@@ -73,11 +71,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                     onError: async (error, _key, _config) => {
                         // This happens when a call to the server has returned a 401 but
                         //      the UI thinks the User is still valid. So we need to log them out.
-                        const localUserInvalid =
-                            error.message === AUTH_ERROR &&
-                            Boolean(session?.user);
-
-                        if (localUserInvalid || tokenHasIssues(error.message)) {
+                        if (
+                            error.message === AUTH_ERROR ||
+                            tokenHasIssues(error.message)
+                        ) {
                             logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
                                 trigger: 'swr',
                             });
