@@ -19,7 +19,7 @@ function usePublications(lastPubId: string | null, enablePolling?: boolean) {
                   .from(TABLES.PUBLICATIONS)
                   .select(PUBLICATION_COLS)
                   .eq('id', lastPubId)
-                  .returns<Publications>()
+                  .single<Publications>()
             : null,
         {
             refreshInterval: enablePolling ? DEFAULT_POLLING : undefined,
