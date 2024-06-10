@@ -1,7 +1,8 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import { useMemo } from 'react';
-import { supabaseClient, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { Entity } from 'types';
 
 // TODO: Consider consolidating query interface instances.

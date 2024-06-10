@@ -1,10 +1,10 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import {
     defaultTableFilter,
     Pagination,
     RPCS,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';

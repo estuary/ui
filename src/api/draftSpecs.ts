@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import pLimit from 'p-limit';
 import {
@@ -8,7 +9,6 @@ import {
     handleFailure,
     handleSuccess,
     insertSupabase,
-    supabaseClient,
     supabaseRetry,
     updateSupabase,
 } from 'services/supabase';

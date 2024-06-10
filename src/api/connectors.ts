@@ -1,3 +1,4 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
@@ -9,7 +10,6 @@ import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
     CONNECTOR_DETAILS,
 } from 'services/supabase';

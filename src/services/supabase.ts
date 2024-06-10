@@ -1,28 +1,15 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { User, createClient } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
 import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
-
-if (
-    !import.meta.env.VITE_SUPABASE_URL ||
-    !import.meta.env.VITE_SUPABASE_ANON_KEY
-) {
-    throw new Error(
-        'You must set the Supabase url and anon key in the env settings.'
-    );
-}
-
-const supabaseSettings = {
-    url: import.meta.env.VITE_SUPABASE_URL,
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-};
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
@@ -43,7 +30,8 @@ export const ERROR_MESSAGES = {
 export const tokenHasIssues = (errorMessage?: string) => {
     return (
         errorMessage &&
-        (errorMessage === ERROR_MESSAGES.jwtExpired ||
+        (errorMessage.startsWith('JWSError ') ||
+            errorMessage === ERROR_MESSAGES.jwtExpired ||
             errorMessage.includes(ERROR_MESSAGES.jwsInvalid) ||
             errorMessage.includes(ERROR_MESSAGES.jwtInvalid) ||
             errorMessage.includes(ERROR_MESSAGES.refreshInvalid))
@@ -113,11 +101,6 @@ export const OAUTH_OPERATIONS = {
     ACCESS_TOKEN: 'access-token',
     ENCRYPT_CONFIG: 'encrypt-config',
 };
-
-export const supabaseClient = createClient(
-    supabaseSettings.url,
-    supabaseSettings.anonKey
-);
 
 // https://github.com/orgs/supabase/discussions/19651
 const reservedWrapper = `%22`;

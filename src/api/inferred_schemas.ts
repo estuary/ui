@@ -1,7 +1,7 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';

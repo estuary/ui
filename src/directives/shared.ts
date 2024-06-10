@@ -1,6 +1,7 @@
+import { supabaseClient } from 'context/Supabase';
 import { isEmpty } from 'lodash';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { JOB_STATUS_COLUMNS, TABLES, supabaseClient } from 'services/supabase';
+import { JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { AppliedDirective } from 'types';
 import { hasLength } from 'utils/misc-utils';

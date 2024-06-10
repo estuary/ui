@@ -1,4 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
 import {
     CONNECTOR_IMAGE,
@@ -9,7 +10,6 @@ import {
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';

@@ -12,7 +12,6 @@ import {
     DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
-    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -24,6 +23,7 @@ import {
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
+import { supabaseClient } from 'context/Supabase';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {

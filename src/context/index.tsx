@@ -8,6 +8,7 @@ import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { TableSettingsProvider } from 'context/TableSettings';
 import { UserContextProvider } from './UserContext';
+import SupabaseProvider from './Supabase';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
@@ -18,11 +19,13 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                         <NotificationProvider>
                             <SwrConfigProvider>
                                 <UserContextProvider>
-                                    <SidePanelDocsProvider>
-                                        <TableSettingsProvider>
-                                            {children}
-                                        </TableSettingsProvider>
-                                    </SidePanelDocsProvider>
+                                    <SupabaseProvider>
+                                        <SidePanelDocsProvider>
+                                            <TableSettingsProvider>
+                                                {children}
+                                            </TableSettingsProvider>
+                                        </SidePanelDocsProvider>
+                                    </SupabaseProvider>
                                 </UserContextProvider>
                             </SwrConfigProvider>
                         </NotificationProvider>

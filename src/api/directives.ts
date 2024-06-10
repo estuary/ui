@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import { logRocketConsole } from 'services/shared';
@@ -10,7 +11,6 @@ import {
     insertSupabase,
     RPCS,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
     updateSupabase,

@@ -1,5 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient, TABLES } from 'services/supabase';
+import { supabaseClient } from 'context/Supabase';
+import { TABLES } from 'services/supabase';
 import { Entity, Shard } from 'types';
 
 export interface Out {

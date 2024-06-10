@@ -6,14 +6,16 @@ import { Session, User } from '@supabase/supabase-js';
 import { BaseComponentProps } from 'types';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { supabaseClient } from 'services/supabase';
+import { supabaseClient } from './Supabase';
 
 export interface AuthSession {
+    initialized: boolean;
     user: User | null;
     session: Session | null;
 }
 
 const UserContext = createContext<AuthSession | undefined>({
+    initialized: false,
     user: null,
     session: null,
 });
@@ -21,36 +23,11 @@ const UserContext = createContext<AuthSession | undefined>({
 const UserContextProvider = ({ children }: BaseComponentProps) => {
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(session?.user ?? null);
-    const accessToken = useRef<string | null>(null);
-
-    // TODO (auth) - detailed below
-    // const intl = useIntl();
-    // const { enqueueSnackbar } = useSnackbar();
+    const [initialized, setInitialized] = useState(false);
+    const accessToken = useRef<string | undefined>(undefined);
 
     useEffect(() => {
         void (async () => {
-            const {
-                data: { session: authSession },
-                error,
-            } = await supabaseClient.auth.getSession();
-
-            // If there is no session set to null and logout
-            if (!authSession || error) {
-                setSession(null);
-                setUser(null);
-                accessToken.current = null;
-                logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
-                    trigger: 'UserContext:session',
-                });
-                await supabaseClient.auth.signOut();
-                return;
-            }
-
-            // Set the latest session into state
-            setSession(authSession);
-            setUser(authSession.user);
-            accessToken.current = authSession.access_token;
-
             // TODO (auth) we need to look into if we want to fetch the user from supabase
             //  to be a bit safer. Not doing that now because this might cause weird issues
             //  for people with slow/poor networks.
@@ -59,7 +36,6 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
             //     () => supabaseClient.auth.api.getUser(authSession.access_token),
             //     'supabase.getUser'
             // ).then(handleSuccess<User>, handleFailure);
-
             // if (!data) {
             //     setSession(null);
             //     setUser(null);
@@ -87,21 +63,45 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
         const { data: authListener } = supabaseClient.auth.onAuthStateChange(
             async (event, change_session) => {
                 logRocketConsole('Auth:Event:', event);
+
+                console.log('change_session', change_session);
+
+                if (event === 'INITIAL_SESSION') {
+                    setInitialized(true);
+                } else if (
+                    event === 'SIGNED_IN' &&
+                    accessToken.current === change_session?.access_token
+                ) {
+                    return;
+                }
+
+                if (!change_session) {
+                    setSession(null);
+                    setUser(null);
+                    accessToken.current = undefined;
+                    logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
+                        trigger: 'UserContext:session',
+                    });
+                    return;
+                }
+
                 setSession(change_session);
-                setUser(change_session?.user ?? null);
+                setUser(change_session.user);
+                accessToken.current = change_session.access_token;
             }
         );
 
         return () => {
             authListener.subscription.unsubscribe();
         };
-        // Since this binds listeneds we do not want to keep callign this as things change
+        // No deps so this function is not wired up a second time
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <UserContext.Provider
             value={{
+                initialized,
                 session,
                 user,
             }}

@@ -15,7 +15,7 @@ interface Props extends BaseComponentProps {
 }
 
 function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
-    const { session } = useUser();
+    const { session, user } = useUser();
     const location = useLocation();
     const redirectTo = useLoginRedirectPath();
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
@@ -37,7 +37,7 @@ function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
         return <Navigate to={to} replace />;
     }
 
-    if ((!session || !session.user) && !firstLoad) {
+    if ((!session || !user) && !firstLoad) {
         // When not first load and no user, go to login with the location where the user wants to go
         logRocketConsole('RequireAuth : Navigate : login', {
             to: unauthenticatedRoutes.login.path,

@@ -1,3 +1,4 @@
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
 import { stringifyJSON } from 'services/stringify';
 import {
@@ -7,7 +8,6 @@ import {
     handleSuccess,
     insertSupabase,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
     updateSupabase,

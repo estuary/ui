@@ -1,5 +1,6 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient, supabaseRetry, TABLES } from 'services/supabase';
+import { supabaseClient } from 'context/Supabase';
+import { supabaseRetry, TABLES } from 'services/supabase';
 import { Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {

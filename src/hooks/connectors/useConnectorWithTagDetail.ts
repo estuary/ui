@@ -1,9 +1,9 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
 import { useMemo } from 'react';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
-    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';

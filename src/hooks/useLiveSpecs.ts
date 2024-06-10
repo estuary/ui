@@ -1,6 +1,7 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
 import { useMemo } from 'react';
-import { supabaseClient, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -54,7 +55,7 @@ const LiveSpecsDetailsQuery = `
                 spec
             `;
 function useLiveSpecs_details(specType: Entity, catalogName: string) {
-    const { data, error, isValidating } = useQuery(
+    const { data, error, isValidating } = useQuery<LiveSpecsQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(LiveSpecsDetailsQuery)
@@ -97,7 +98,8 @@ export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
             .returns<LiveSpecsQuery_spec[]>();
     }, [collectionNames]);
 
-    const { data, error, isValidating } = useQuery(liveSpecQuery);
+    const { data, error, isValidating } =
+        useQuery<LiveSpecsQuery_spec[]>(liveSpecQuery);
 
     return {
         liveSpecs: data ?? (defaultResponse as LiveSpecsQuery_spec[]),

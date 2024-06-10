@@ -1,10 +1,10 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     defaultTableFilter,
     parsePagedFetchAllResponse,
     pagedFetchAll,
     RPCS,
     SortingProps,
-    supabaseClient,
     TABLES,
     DEFAULT_PAGING_SIZE,
 } from 'services/supabase';

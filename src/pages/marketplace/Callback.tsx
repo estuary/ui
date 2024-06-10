@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect } from 'react';
 import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
-import { supabaseClient } from 'services/supabase';
+import { supabaseClient } from 'context/Supabase';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this

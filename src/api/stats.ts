@@ -17,7 +17,6 @@ import {
     defaultTableFilter,
     escapeReservedCharacters,
     SortingProps,
-    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import {
@@ -28,6 +27,7 @@ import {
 } from 'types';
 import pLimit from 'p-limit';
 import { CHUNK_SIZE } from 'utils/misc-utils';
+import { supabaseClient } from 'context/Supabase';
 
 export type StatsFilter =
     | 'today'

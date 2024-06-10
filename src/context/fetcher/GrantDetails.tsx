@@ -1,8 +1,9 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import FullPageError from 'components/fullPage/Error';
+import { supabaseClient } from 'context/Supabase';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { supabaseClient, TABLES } from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { BaseComponentProps } from 'types';
 
 // TODO: Determine an approach that results in a single combined grants query of in the Authenticated app component.

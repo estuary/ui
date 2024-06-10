@@ -1,10 +1,6 @@
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
-import {
-    FUNCTIONS,
-    TABLES,
-    invokeSupabase,
-    supabaseClient,
-} from 'services/supabase';
+import { FUNCTIONS, TABLES, invokeSupabase } from 'services/supabase';
 import { Tenants } from 'types';
 import { formatDateForApi } from 'utils/billing-utils';
 

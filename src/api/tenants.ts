@@ -1,8 +1,8 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     DEFAULT_PAGING_SIZE,
     pagedFetchAll,
     parsePagedFetchAllResponse,
-    supabaseClient,
     TABLES,
 } from 'services/supabase';
 import { TenantHidesDataPreview, Tenants } from 'types';

@@ -1,9 +1,5 @@
-import {
-    deleteSupabase,
-    insertSupabase,
-    supabaseClient,
-    TABLES,
-} from 'services/supabase';
+import { supabaseClient } from 'context/Supabase';
+import { deleteSupabase, insertSupabase, TABLES } from 'services/supabase';
 import { BaseGrant, Capability } from 'types';
 
 const createRoleGrant = (

@@ -4,10 +4,10 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import UserAvatar from 'components/shared/UserAvatar';
+import { supabaseClient } from 'context/Supabase';
 import useUserDetails from 'hooks/useUserDetails';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { supabaseClient } from 'services/supabase';
 import IconMenu from './IconMenu';
 
 interface Props {
