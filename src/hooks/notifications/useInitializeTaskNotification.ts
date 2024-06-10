@@ -34,7 +34,7 @@ function useInitializeTaskNotification(catalogName: string) {
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!session?.user?.email || !prefix) {
+        if (!session?.user.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -50,13 +50,13 @@ function useInitializeTaskNotification(catalogName: string) {
         ]);
 
         return response;
-    }, [prefix, session?.user?.email]);
+    }, [prefix, session?.user.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!session?.user?.email || !prefix) {
+        if (!session?.user.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -76,7 +76,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         return { data: existingSubscription };
-    }, [prefix, session?.user?.email]);
+    }, [prefix, session?.user.email]);
 
     const getNotifications = useCallback(async (): Promise<{
         data: DataProcessingAlertQuery | null;
