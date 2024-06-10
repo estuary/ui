@@ -4,13 +4,13 @@ import {
     unauthenticatedRoutes,
 } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
+import { supabaseClient } from 'context/Supabase';
 import { useUser } from 'context/UserContext';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
-import { supabaseClient } from 'services/supabase';
 import { CommonStatuses, CustomEvents } from 'services/types';
 
 const trackEvent = (status: CommonStatuses) => {
@@ -59,7 +59,7 @@ const Auth = () => {
 
             savingUser.current = false;
             await supabaseClient.auth.signOut();
-            navigate(unauthenticatedRoutes.login.path);
+            navigate(unauthenticatedRoutes.login.path, { replace: true });
         };
 
         const success = () => {
@@ -83,8 +83,9 @@ const Auth = () => {
                         success();
                     }
                 })
-                .catch(() => {
+                .catch(async (error) => {
                     trackEvent('exception');
+                    await failed(error.message);
                 });
         } else {
             trackEvent('skipped');
