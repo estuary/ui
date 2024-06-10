@@ -66,5 +66,5 @@ export interface DirectiveSettings<T> {
 export interface DirectiveProps {
     directive: any;
     status: DirectiveStates;
-    mutate: KeyedMutator<PostgrestSingleResponse<JoinedAppliedDirective>>;
+    mutate: KeyedMutator<PostgrestSingleResponse<JoinedAppliedDirective[]>>;
 }

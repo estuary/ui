@@ -130,7 +130,7 @@ const getAppliedDirectives = (
         .queryFilter(queryBuilder)
         .order('updated_at', { ascending: false })
         .limit(1)
-        .returns<JoinedAppliedDirective>();
+        .returns<JoinedAppliedDirective[]>();
 };
 
 const generateGrantDirective = (

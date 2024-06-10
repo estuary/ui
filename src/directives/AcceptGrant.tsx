@@ -17,7 +17,7 @@ import { AppliedDirective, JoinedAppliedDirective } from 'types';
 interface Props {
     directive: AppliedDirective<any> | null | undefined;
     mutate: KeyedMutator<
-        PostgrestSingleResponse<JoinedAppliedDirective>
+        PostgrestSingleResponse<JoinedAppliedDirective[]>
     > | null;
     grantedPrefix: string;
     grantedCapability: string;

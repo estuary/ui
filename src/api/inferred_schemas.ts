@@ -14,7 +14,7 @@ export const fetchInferredSchema = (collectionName: string) => {
                 .from(TABLES.INFERRED_SCHEMAS)
                 .select(`schema`)
                 .eq('collection_name', collectionName)
-                .returns<InferredSchemas>(),
+                .returns<InferredSchemas[]>(),
         'fetchInferredSchema'
     ).then(handleSuccess<Pick<InferredSchemas, 'schema'>[]>, handleFailure);
 
