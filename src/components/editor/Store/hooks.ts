@@ -587,10 +587,9 @@ export const useHydrateEditorState = (
     // rely on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
     const response = useDraftSpecs(
         draftId ?? persistedDraftId ?? draftIdInURL,
-        {
-            specType,
-            catalogName,
-        }
+        undefined,
+        specType,
+        catalogName
     );
 
     useEffect(() => {

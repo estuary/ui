@@ -38,13 +38,19 @@ const defaultResponse: DraftSpecQuery[] = [];
 
 function useDraftSpecs(
     draftId: string | null,
-    options?: {
-        lastPubId?: string;
-        specType?: Entity;
-        catalogName?: string;
-    }
+    lastPubId?: string,
+    specType?: Entity,
+    catalogName?: string
 ): DraftSpecSwrMetadata {
+    console.log('useDraftSpecs');
+
     const draftSpecQuery = useMemo(() => {
+        console.log('useDraftSpecs memo', {
+            draftId,
+            lastPubId,
+            specType,
+            catalogName,
+        });
         if (!draftId) {
             return null;
         }
@@ -53,24 +59,20 @@ function useDraftSpecs(
             .from(TABLES.DRAFT_SPECS)
             .select(DRAFT_SPEC_COLS);
 
-        if (options) {
-            const { lastPubId, specType, catalogName } = options;
+        if (lastPubId) {
+            queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
+        }
 
-            if (lastPubId) {
-                queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
-            }
+        if (specType) {
+            queryBuilder = queryBuilder.eq('spec_type', specType);
+        }
 
-            if (specType) {
-                queryBuilder = queryBuilder.eq('spec_type', specType);
-            }
-
-            if (catalogName) {
-                queryBuilder = queryBuilder.eq('catalog_name', catalogName);
-            }
+        if (catalogName) {
+            queryBuilder = queryBuilder.eq('catalog_name', catalogName);
         }
 
         return queryBuilder.eq('draft_id', draftId).returns<DraftSpecQuery[]>();
-    }, [draftId, options]);
+    }, [catalogName, draftId, lastPubId, specType]);
 
     const { data, error, mutate, isValidating } = useQuery(draftSpecQuery);
 
