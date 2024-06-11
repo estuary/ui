@@ -4,10 +4,10 @@ import { singleCallSettings } from 'context/SWR';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 function useUserGrants(singleCall?: boolean) {
-    const { session } = useUser();
+    const { user } = useUser();
 
     const { data, error, mutate, isValidating } = useQuery(
-        session?.user.id ? getUserGrants(session.user.id) : null,
+        user?.id ? getUserGrants(user.id) : null,
         singleCall ? singleCallSettings : undefined
     );
 

@@ -14,15 +14,15 @@ const DRAFT_COLS = ['id', 'detail', 'updated_at', 'user_id'].join(',');
 const defaultResponse: DraftQuery[] = [];
 
 function useDraft(catalogName: string | null) {
-    const { session } = useUser();
+    const { user } = useUser();
 
     const { data, error, mutate, isValidating } = useQuery(
-        catalogName && session?.user.id
+        catalogName && user?.id
             ? supabaseClient
                   .from(TABLES.DRAFTS_EXT)
                   .select(DRAFT_COLS)
                   .eq('detail', catalogName)
-                  .eq('user_id', session.user.id)
+                  .eq('user_id', user.id)
                   .order('updated_at', { ascending: false })
                   .returns<DraftQuery[]>()
             : null

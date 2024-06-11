@@ -14,6 +14,8 @@ interface Props extends BaseComponentProps {
     checkForGrant?: boolean;
 }
 
+// TODO (auth) pulling and checking both session and user is probbaly not needed but
+//  wanted to be as precise as possible.
 function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
     const { session, user } = useUser();
     const location = useLocation();
