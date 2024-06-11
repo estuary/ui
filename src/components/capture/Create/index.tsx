@@ -50,6 +50,8 @@ function CaptureCreate() {
 
     const [initiateDiscovery, setInitiateDiscovery] = useState<boolean>(true);
 
+    // TODO (cache helper) - we should switch this over to use the mutate hook if we can
+    //  might also need to find a new way to get all the task names
     const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
         useDraftSpecs(persistedDraftId);
 

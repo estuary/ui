@@ -1,7 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/Supabase';
-import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity, Schema } from 'types';
@@ -36,45 +35,64 @@ const DRAFT_SPEC_COLS = [
 ].join(',');
 const defaultResponse: DraftSpecQuery[] = [];
 
-function useDraftSpecs(
+function useDraftSpecs(draftId: string | null): DraftSpecSwrMetadata {
+    const { data, error, mutate, isValidating } = useQuery(
+        !draftId
+            ? null
+            : supabaseClient
+                  .from(TABLES.DRAFT_SPECS)
+                  .select(DRAFT_SPEC_COLS)
+                  .eq('draft_id', draftId)
+                  .returns<DraftSpecQuery[]>()
+    );
+
+    return {
+        draftSpecs: data ?? defaultResponse,
+        error,
+        mutate,
+        isValidating,
+    };
+}
+
+export function useDraftSpecs_editWorkflow(
     draftId: string | null,
-    lastPubId?: string,
-    specType?: Entity,
-    catalogName?: string
+    lastPubId?: string
 ): DraftSpecSwrMetadata {
-    console.log('useDraftSpecs');
+    const { data, error, mutate, isValidating } = useQuery(
+        !draftId || !lastPubId
+            ? null
+            : supabaseClient
+                  .from(TABLES.DRAFT_SPECS)
+                  .select(DRAFT_SPEC_COLS)
+                  .eq('expect_pub_id', lastPubId)
+                  .eq('draft_id', draftId)
+                  .returns<DraftSpecQuery[]>()
+    );
 
-    const draftSpecQuery = useMemo(() => {
-        console.log('useDraftSpecs memo', {
-            draftId,
-            lastPubId,
-            specType,
-            catalogName,
-        });
-        if (!draftId) {
-            return null;
-        }
+    return {
+        draftSpecs: data ?? defaultResponse,
+        error,
+        mutate,
+        isValidating,
+    };
+}
 
-        let queryBuilder = supabaseClient
-            .from(TABLES.DRAFT_SPECS)
-            .select(DRAFT_SPEC_COLS);
-
-        if (lastPubId) {
-            queryBuilder = queryBuilder.eq('expect_pub_id', lastPubId);
-        }
-
-        if (specType) {
-            queryBuilder = queryBuilder.eq('spec_type', specType);
-        }
-
-        if (catalogName) {
-            queryBuilder = queryBuilder.eq('catalog_name', catalogName);
-        }
-
-        return queryBuilder.eq('draft_id', draftId).returns<DraftSpecQuery[]>();
-    }, [catalogName, draftId, lastPubId, specType]);
-
-    const { data, error, mutate, isValidating } = useQuery(draftSpecQuery);
+export function useDraftSpecs_forEditor(
+    draftId: string | null,
+    specType: Entity,
+    catalogName: string | undefined
+): DraftSpecSwrMetadata {
+    const { data, error, mutate, isValidating } = useQuery(
+        !draftId || !catalogName
+            ? null
+            : supabaseClient
+                  .from(TABLES.DRAFT_SPECS)
+                  .select(DRAFT_SPEC_COLS)
+                  .eq('spec_type', specType)
+                  .eq('catalog_name', catalogName)
+                  .eq('draft_id', draftId)
+                  .returns<DraftSpecQuery[]>()
+    );
 
     return {
         draftSpecs: data ?? defaultResponse,
