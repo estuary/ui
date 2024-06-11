@@ -1,4 +1,6 @@
+import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
 import { useSnackbar } from 'notistack';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { AUTH_ERROR } from 'services/client';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
@@ -29,10 +31,15 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
 
+    const provider = useCallback(() => {
+        return new LRUMapWithDelete<string, any>(500);
+    }, []);
+
     return (
         <SWRConfig
             value={{
                 // https://supabase-cache-helpers.vercel.app/configuration
+                provider,
                 revalidateIfStale: false,
                 revalidateOnFocus: false,
             }}
