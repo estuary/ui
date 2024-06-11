@@ -304,7 +304,7 @@ export const insertSupabase = (
             supabaseClient
                 .from(table)
                 .insert(Array.isArray(data) ? data : [data])
-                .select('*'),
+                .select(),
         'insert'
     ).then(handleSuccess, handleFailure);
 };
@@ -316,12 +316,7 @@ export const updateSupabase = (
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () =>
-            supabaseClient
-                .from(table)
-                .update(data)
-                .match(matchData)
-                .select('*'),
+        () => supabaseClient.from(table).update(data).match(matchData).select(),
         'update'
     ).then(handleSuccess, handleFailure);
 };
@@ -331,7 +326,7 @@ export const deleteSupabase = (
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () => supabaseClient.from(table).delete().match(matchData),
+        () => supabaseClient.from(table).delete().match(matchData).select(),
         'delete'
     ).then(handleSuccess, handleFailure);
 };
