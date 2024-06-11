@@ -3,18 +3,21 @@
 
 import { useEffect, useState, createContext, useContext, useRef } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps, UserDetails } from 'types';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { getUserDetails } from 'services/supabase';
 import { supabaseClient } from './Supabase';
 
 export interface AuthSession {
+    userDetails: UserDetails | null;
     initialized: boolean;
     user: User | null;
     session: Session | null;
 }
 
 const UserContext = createContext<AuthSession | undefined>({
+    userDetails: null,
     initialized: false,
     user: null,
     session: null,
@@ -23,42 +26,11 @@ const UserContext = createContext<AuthSession | undefined>({
 const UserContextProvider = ({ children }: BaseComponentProps) => {
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(session?.user ?? null);
+    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
     const [initialized, setInitialized] = useState(false);
     const accessToken = useRef<string | undefined>(undefined);
 
     useEffect(() => {
-        void (async () => {
-            // TODO (auth) we need to look into if we want to fetch the user from supabase
-            //  to be a bit safer. Not doing that now because this might cause weird issues
-            //  for people with slow/poor networks.
-            // Fetch the user info from the server to ensure we know who the user truly is
-            // const { data } = await supabaseRetry(
-            //     () => supabaseClient.auth.api.getUser(authSession.access_token),
-            //     'supabase.getUser'
-            // ).then(handleSuccess<User>, handleFailure);
-            // if (!data) {
-            //     setSession(null);
-            //     setUser(null);
-            //     logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
-            //         trigger: 'UserContext:user',
-            //     });
-            //     enqueueSnackbar(
-            //         intl.formatMessage({ id: 'login.userNotFound.onRefresh' }),
-            //         {
-            //             anchorOrigin: {
-            //                 vertical: 'top',
-            //                 horizontal: 'center',
-            //             },
-            //             preventDuplicate: true,
-            //             variant: 'error',
-            //         }
-            //     );
-            //     await supabaseClient.auth.signOut();
-            //     return;
-            // }
-            // setUser(data);
-        })();
-
         // This listens for all events including sign in and sign out
         const { data: authListener } = supabaseClient.auth.onAuthStateChange(
             async (event, change_session) => {
@@ -87,6 +59,7 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
 
                 setSession(change_session);
                 setUser(change_session.user);
+                setUserDetails(getUserDetails(change_session.user));
                 accessToken.current = change_session.access_token;
             }
         );
@@ -101,6 +74,7 @@ const UserContextProvider = ({ children }: BaseComponentProps) => {
     return (
         <UserContext.Provider
             value={{
+                userDetails,
                 initialized,
                 session,
                 user,

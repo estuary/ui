@@ -7,7 +7,12 @@ import {
 import { User } from '@supabase/supabase-js';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
+import {
+    JobStatus,
+    SortDirection,
+    SupabaseInvokeResponse,
+    UserDetails,
+} from 'types';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 
@@ -191,26 +196,28 @@ export const defaultTableFilter = <Response>(
     return queryBuilder;
 };
 
-export const getUserDetails = (user: User | null | undefined) => {
-    let userName, email, emailVerified, avatar, id;
+export const getUserDetails = (
+    user: User | null | undefined
+): UserDetails | null => {
+    if (!user) {
+        return null;
+    }
 
-    if (user) {
-        if (!isEmpty(user.user_metadata)) {
-            email = user.user_metadata.email;
-            emailVerified = user.user_metadata.email_verified;
-            avatar = user.user_metadata.avatar_url;
-            userName = user.user_metadata.full_name ?? email;
-        } else {
-            userName = user.email;
-            email = user.email;
-            emailVerified = false;
-        }
+    let userName, email, emailVerified, avatar;
 
-        id = user.id;
+    if (!isEmpty(user.user_metadata)) {
+        email = user.user_metadata.email;
+        emailVerified = user.user_metadata.email_verified;
+        avatar = user.user_metadata.avatar_url;
+        userName = user.user_metadata.full_name ?? email;
+    } else {
+        userName = user.email;
+        email = user.email;
+        emailVerified = false;
     }
 
     return {
-        id,
+        id: user.id,
         userName,
         email,
         emailVerified,

@@ -16,7 +16,6 @@ import { useUser } from 'context/UserContext';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
-import { getUserDetails } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 
 export interface PaymentFormProps {
@@ -30,8 +29,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { user } = useUser();
-    const { email } = getUserDetails(user);
+    const { user, userDetails } = useUser();
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');
@@ -95,7 +93,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                 confirmParams: {
                     payment_method_data: {
                         billing_details: {
-                            email,
+                            email: userDetails?.email,
                         },
                     },
                     return_url: `${window.location.protocol}//${window.location.host}${window.location.pathname}`,
@@ -125,7 +123,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         } finally {
             setLoading(false);
         }
-    }, [elements, email, intl, onError, onSuccess, stripe]);
+    }, [elements, intl, onError, onSuccess, stripe, userDetails?.email]);
 
     return (
         <>

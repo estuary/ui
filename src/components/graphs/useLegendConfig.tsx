@@ -5,6 +5,7 @@ import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import { useMemo } from 'react';
+import { DEFAULT_FILTER } from 'services/supabase';
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,
@@ -45,7 +46,7 @@ function useLegendConfig(seriesConfig?: any): EChartsOption['legend'] {
                     ? config.seriesName
                     : config.name
                     ? config.name
-                    : '_unknown_';
+                    : DEFAULT_FILTER;
 
                 return {
                     name,

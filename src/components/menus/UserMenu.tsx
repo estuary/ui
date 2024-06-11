@@ -5,7 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import UserAvatar from 'components/shared/UserAvatar';
 import { supabaseClient } from 'context/Supabase';
-import useUserDetails from 'hooks/useUserDetails';
+import { useUser } from 'context/UserContext';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import IconMenu from './IconMenu';
@@ -22,7 +22,7 @@ const nonInteractiveMenuStyling: SxProps = {
 
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
-    const { userName, email, emailVerified, avatar } = useUserDetails();
+    const { userDetails } = useUser();
 
     const handlers = {
         logout: async () => {
@@ -30,15 +30,15 @@ const UserMenu = ({ iconColor }: Props) => {
         },
     };
 
-    if (userName && email) {
+    if (userDetails) {
         return (
             <IconMenu
                 ariaLabel={intl.formatMessage({ id: 'accountMenu.ariaLabel' })}
                 icon={
                     <UserAvatar
-                        userEmail={email}
-                        userName={userName}
-                        avatarUrl={avatar}
+                        userEmail={userDetails.email}
+                        userName={userDetails.userName}
+                        avatarUrl={userDetails.avatar}
                     />
                 }
                 identifier="account-menu"
@@ -48,7 +48,7 @@ const UserMenu = ({ iconColor }: Props) => {
                     <ListItemIcon>
                         <ProfileCircle style={{ color: iconColor }} />
                     </ListItemIcon>
-                    {userName}
+                    {userDetails.userName}
                 </MenuItem>
 
                 <MenuItem sx={nonInteractiveMenuStyling}>
@@ -57,9 +57,9 @@ const UserMenu = ({ iconColor }: Props) => {
                     </ListItemIcon>
 
                     <Stack spacing={0}>
-                        <Typography>{email}</Typography>
+                        <Typography>{userDetails.email}</Typography>
 
-                        {emailVerified ? (
+                        {userDetails.emailVerified ? (
                             <Typography variant="caption">
                                 <FormattedMessage id="accountMenu.emailVerified" />
                             </Typography>
