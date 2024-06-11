@@ -1,15 +1,16 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
-import { Box, Button, Menu, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Menu, Tooltip } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { dataGridEntireCellButtonStyling } from 'context/Theme';
-import { useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import HeaderToggleMenuItem from './MenuItem';
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { useBinding_someBindingsDisabled } from 'stores/Binding/hooks';
+import ScopeMenuContent from './MenuContent';
 import { Scopes } from './types';
 
 interface Props {
     itemType: string;
-    onClick: (event: any, value: boolean, scope: Scopes) => void;
+    onClick: (event: SyntheticEvent, value: boolean, scope: Scopes) => void;
     disabled?: boolean;
 }
 
@@ -21,7 +22,10 @@ function CollectionSelectorHeaderToggle({
     const entityType = useEntityType();
 
     const intl = useIntl();
-    const [enabled, setEnabled] = useState(false);
+
+    const someBindingsDisabled = useBinding_someBindingsDisabled();
+
+    const [enabled, setEnabled] = useState(someBindingsDisabled);
     const [scope, setScope] = useState<Scopes>('page');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -30,10 +34,17 @@ function CollectionSelectorHeaderToggle({
         setAnchorEl(null);
     };
 
-    const selectScope = (newScope: Scopes) => {
+    const selectScope = (event: SyntheticEvent, newScope: Scopes) => {
         setScope(newScope);
+        setEnabled(!enabled);
+        onClick(event, !enabled, newScope);
+
         closeMenu();
     };
+
+    useEffect(() => {
+        setEnabled(someBindingsDisabled);
+    }, [setEnabled, someBindingsDisabled]);
 
     const tooltipTitle = useMemo(() => {
         if (scope === 'page') {
@@ -47,17 +58,10 @@ function CollectionSelectorHeaderToggle({
             : 'workflows.collectionSelector.toggle.disable.all.tooltip';
     }, [enabled, scope]);
 
-    const buttonTitle = useMemo(() => {
-        if (scope === 'page') {
-            return enabled
-                ? 'workflows.collectionSelector.toggle.enable'
-                : 'workflows.collectionSelector.toggle.disable';
-        }
-
-        return enabled
-            ? 'workflows.collectionSelector.toggle.enable.all'
-            : 'workflows.collectionSelector.toggle.disable.all';
-    }, [enabled, scope]);
+    const buttonTitle = useMemo(
+        () => (enabled ? 'cta.enable' : 'cta.disable'),
+        [enabled]
+    );
 
     const menuOptions = useMemo(() => {
         if (enabled) {
@@ -91,49 +95,23 @@ function CollectionSelectorHeaderToggle({
                 ...dataGridEntireCellButtonStyling,
             }}
         >
-            <Stack
-                direction="row"
-                sx={{
-                    ...dataGridEntireCellButtonStyling,
-                    py: 0,
-                }}
+            <Tooltip
+                title={intl.formatMessage(
+                    {
+                        id: tooltipTitle,
+                    },
+                    { itemType, entityType }
+                )}
             >
-                <Tooltip
-                    title={intl.formatMessage(
-                        {
-                            id: tooltipTitle,
-                        },
-                        { itemType, entityType }
-                    )}
-                >
-                    <Button
-                        disabled={disabled}
-                        size="small"
-                        variant="text"
-                        sx={{
-                            py: 0,
-                            px: 0.5,
-                            textTransform: 'none',
-                        }}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            setEnabled(!enabled);
-                            onClick(event, !enabled, scope);
-                        }}
-                    >
-                        {intl.formatMessage({
-                            id: buttonTitle,
-                        })}
-                    </Button>
-                </Tooltip>
                 <Button
                     disabled={disabled}
+                    endIcon={<KeyboardArrowDown />}
                     size="small"
                     variant="text"
                     sx={{
-                        p: 0,
-                        minWidth: 20,
-                        maxWidth: 20,
+                        ...dataGridEntireCellButtonStyling,
+                        py: 0,
+                        px: 0.5,
                         textTransform: 'none',
                     }}
                     onClick={(event) => {
@@ -141,35 +119,26 @@ function CollectionSelectorHeaderToggle({
                         setAnchorEl(event.currentTarget);
                     }}
                 >
-                    <KeyboardArrowDown />
+                    {intl.formatMessage({
+                        id: buttonTitle,
+                    })}
                 </Button>
-                <Menu open={showMenu} anchorEl={anchorEl} onClose={closeMenu}>
-                    <HeaderToggleMenuItem
-                        desc={
-                            <FormattedMessage
-                                id={menuOptions[0].desc}
-                                values={{ itemType, entityType }}
-                            />
-                        }
-                        onClick={() => selectScope('all')}
-                        scope="all"
-                        scopeState={scope}
-                        title={<FormattedMessage id={menuOptions[0].title} />}
-                    />
-                    <HeaderToggleMenuItem
-                        desc={
-                            <FormattedMessage
-                                id={menuOptions[1].desc}
-                                values={{ itemType, entityType }}
-                            />
-                        }
-                        onClick={() => selectScope('page')}
-                        scope="page"
-                        scopeState={scope}
-                        title={<FormattedMessage id={menuOptions[1].title} />}
-                    />
-                </Menu>
-            </Stack>
+            </Tooltip>
+
+            <Menu
+                anchorEl={anchorEl}
+                onClose={closeMenu}
+                open={showMenu}
+                sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
+            >
+                <ScopeMenuContent
+                    closeMenu={closeMenu}
+                    initialScope={scope}
+                    itemType={itemType}
+                    menuOptions={menuOptions}
+                    updateScope={selectScope}
+                />
+            </Menu>
         </Box>
     );
 }
