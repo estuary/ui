@@ -22,7 +22,7 @@ export const supabaseClient = createClient(
     supabaseSettings.anonKey
 );
 
-// This is not a real provider. This is here so that we know createClient is called early and also
+// This is not a normal provider... more like a guard... kind of. This is here so that we know createClient is called early and also
 //  so it is called in a somewhat consistent order. This is also waiting until the client has been
 //  constructed before letting the application start rendering.
 function SupabaseProvider({ children }: BaseComponentProps) {
