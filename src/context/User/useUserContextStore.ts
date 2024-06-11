@@ -2,11 +2,11 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
 import produce from 'immer';
-import { UserContextStore } from './types';
+import { UserStore } from './types';
 
 const name = 'estuary.user-provider-store';
 
-const useUserContextStore = create<UserContextStore>()(
+const useUserStore = create<UserStore>()(
     devtools((set) => {
         return {
             initialized: false,
@@ -53,4 +53,4 @@ const useUserContextStore = create<UserContextStore>()(
     }, devtoolsOptions(name))
 );
 
-export { useUserContextStore };
+export { useUserStore };

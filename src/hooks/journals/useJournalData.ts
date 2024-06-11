@@ -9,14 +9,14 @@ import {
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
-import { useUserContextStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
-    const session = useUserContextStore((state) => state.session);
+    const session = useUserStore((state) => state.session);
 
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);

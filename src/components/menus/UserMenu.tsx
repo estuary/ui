@@ -5,7 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import UserAvatar from 'components/shared/UserAvatar';
 import { supabaseClient } from 'context/Supabase';
-import { useUserContextStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,9 +23,7 @@ const nonInteractiveMenuStyling: SxProps = {
 
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
-    const userDetails = useUserContextStore(
-        useShallow((state) => state.userDetails)
-    );
+    const userDetails = useUserStore(useShallow((state) => state.userDetails));
 
     const handlers = {
         logout: async () => {

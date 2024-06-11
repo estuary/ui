@@ -4,16 +4,17 @@ import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { getUserDetails } from 'services/supabase';
 import { supabaseClient } from 'context/Supabase';
-import { useUserContextStore } from './useUserContextStore';
+import { useUserStore } from './useUserContextStore';
 
 const UserStoreProvider = ({ children }: BaseComponentProps) => {
-    const [setInitialized, setSession, setUser, setUserDetails] =
-        useUserContextStore((state) => [
+    const [setInitialized, setSession, setUser, setUserDetails] = useUserStore(
+        (state) => [
             state.setInitialized,
             state.setSession,
             state.setUser,
             state.setUserDetails,
-        ]);
+        ]
+    );
 
     useEffect(() => {
         // This listens for all events including sign in and sign out

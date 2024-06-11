@@ -8,7 +8,7 @@ export interface AuthSession {
     session: Session | null;
 }
 
-export interface UserContextStore extends AuthSession {
+export interface UserStore extends AuthSession {
     setInitialized: (newVal: AuthSession['initialized']) => void;
     setSession: (newVal: AuthSession['session']) => void;
     setUser: (newVal: AuthSession['user']) => void;

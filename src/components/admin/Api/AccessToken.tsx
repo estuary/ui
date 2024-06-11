@@ -1,11 +1,11 @@
 import { Box, Stack, Typography } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import ExternalLink from 'components/shared/ExternalLink';
-import { useUserContextStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { FormattedMessage } from 'react-intl';
 
 function AccessToken() {
-    const session = useUserContextStore((state) => state.session);
+    const session = useUserStore((state) => state.session);
 
     return (
         <Box sx={{ p: 2 }}>

@@ -5,7 +5,7 @@ import {
 } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { supabaseClient } from 'context/Supabase';
-import { useUserContextStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'context/User/useUserContextStore';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
@@ -37,7 +37,7 @@ const Auth = () => {
 
     // We can fetch user here and not session because we are
     //  potentially creating the session here down below.
-    const user = useUserContextStore((state) => state.user);
+    const user = useUserStore((state) => state.user);
 
     useEffect(() => {
         // If we have already processed we do not need to try getting

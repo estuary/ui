@@ -1,4 +1,4 @@
-import { useUserContextStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
@@ -45,7 +45,7 @@ export const gatewayFetcher = ({
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { onError } = useSWRConfig();
-    const session = useUserContextStore((state) => state.session);
+    const session = useUserStore((state) => state.session);
 
     const readable = useEntitiesStore_capabilities_readable();
     const grants = Object.keys(readable);
