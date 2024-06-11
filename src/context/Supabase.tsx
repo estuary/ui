@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { BaseComponentProps } from 'types';
-import { useUser } from './UserContext';
+import { useUserContextStore } from './User/useUserContextStore';
 
 if (
     !import.meta.env.VITE_SUPABASE_URL ||
@@ -26,7 +26,7 @@ export const supabaseClient = createClient(
 //  so it is called in a somewhat consistent order. This is also waiting until the client has been
 //  constructed before letting the application start rendering.
 function SupabaseProvider({ children }: BaseComponentProps) {
-    const { initialized } = useUser();
+    const initialized = useUserContextStore((state) => state.initialized);
 
     if (!initialized) {
         return <FullPageSpinner />;

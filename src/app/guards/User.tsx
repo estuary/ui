@@ -1,5 +1,5 @@
 import { unauthenticatedRoutes } from 'app/routes';
-import { useUser } from 'context/UserContext';
+import { useUserContextStore } from 'context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -14,7 +14,7 @@ function UserGuard({ children }: BaseComponentProps) {
     //  everytime the user focuses on the tab we could end up spamming calls.
     const identifiedUser = useRef(false);
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-    const { user } = useUser();
+    const user = useUserContextStore((state) => state.user);
 
     useEffect(() => {
         if (user && !identifiedUser.current) {

@@ -1,4 +1,4 @@
-import { useUser } from 'context/UserContext';
+import { useUserContextStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
 import { client } from 'services/client';
 import useSWR from 'swr';
@@ -90,7 +90,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
 // Returns an auth token for accessing the provided `prefixes` scopes in the data plane.
 // This token is not stored in local storage.
 const useScopedGatewayAuthToken = (prefix: string | null) => {
-    const { session } = useUser();
+    const session = useUserContextStore((state) => state.session);
     const { data, error } = useSWR(
         prefix === null
             ? null

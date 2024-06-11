@@ -1,6 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'context/Supabase';
-import { useUser } from 'context/UserContext';
+import { useUserContextStore } from 'context/User/useUserContextStore';
 import { TABLES } from 'services/supabase';
 
 export interface DraftQuery {
@@ -14,7 +14,7 @@ const DRAFT_COLS = ['id', 'detail', 'updated_at', 'user_id'].join(',');
 const defaultResponse: DraftQuery[] = [];
 
 function useDraft(catalogName: string | null) {
-    const { user } = useUser();
+    const user = useUserContextStore((state) => state.user);
 
     const { data, error, mutate, isValidating } = useQuery(
         catalogName && user?.id

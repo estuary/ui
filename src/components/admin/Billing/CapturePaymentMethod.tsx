@@ -12,7 +12,7 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import AlertBox from 'components/shared/AlertBox';
-import { useUser } from 'context/UserContext';
+import { useUserContextStore } from 'context/User/useUserContextStore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
@@ -29,7 +29,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { user, userDetails } = useUser();
+    const [user, userDetails] = useUserContextStore((state) => [
+        state.user,
+        state.userDetails,
+    ]);
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');

@@ -1,5 +1,5 @@
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import { useUser } from 'context/UserContext';
+import { useUserContextStore } from 'context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -17,7 +17,11 @@ interface Props extends BaseComponentProps {
 // TODO (auth) pulling and checking both session and user is probbaly not needed but
 //  wanted to be as precise as possible.
 function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
-    const { session, user } = useUser();
+    const [session, user] = useUserContextStore((state) => [
+        state.session,
+        state.user,
+    ]);
+
     const location = useLocation();
     const redirectTo = useLoginRedirectPath();
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
