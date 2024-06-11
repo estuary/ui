@@ -21,7 +21,7 @@ export interface PublicationSpecsExt_PublicationHistory {
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     return supabaseClient
         .from(TABLES.PUBLICATION_SPECS_EXT)
-        .select(`*`)
+        .select(`pub_id, published_at, detail, user_email, spec`)
         .eq('catalog_name', catalogName)
         .order('published_at', {
             ascending: false,
