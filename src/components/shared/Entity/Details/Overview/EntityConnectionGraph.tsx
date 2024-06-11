@@ -45,7 +45,9 @@ function EntityConnectionsGraph({ currentNode }: Props) {
     }, [currentNode, setNodes]);
 
     return (
-        <CardWrapper>
+        <CardWrapper
+            message={<FormattedMessage id="details.scopedSystemGraph.header" />}
+        >
             {!nodes ? (
                 <GraphLoadingState />
             ) : error ? (

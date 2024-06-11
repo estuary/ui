@@ -1,20 +1,12 @@
 import { useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
-import { eChartsColors } from 'context/Theme';
-import { EChartsOption } from 'echarts';
-import { SankeyChart } from 'echarts/charts';
-import {
-    GridComponent,
-    LegendComponent,
-    TooltipComponent,
-} from 'echarts/components';
-import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import cytoscape, { Core, EdgeDefinition, NodeDefinition } from 'cytoscape';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { debounce } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props {
@@ -24,17 +16,26 @@ interface Props {
     parentNodes: EntityNode[];
 }
 
-const getNodeColor = (entityType: string): string => {
-    if (entityType === 'collection') {
-        return eChartsColors.medium[1];
-    }
+type Relationship = 'parent' | 'self' | 'child';
 
-    if (entityType === 'capture') {
-        return eChartsColors.medium[0];
-    }
+interface GridPosition {
+    row: number;
+    col: number;
+}
 
-    return eChartsColors.light[0];
-};
+interface Node extends NodeDefinition {
+    data: {
+        gridPosition: GridPosition;
+        id: string;
+        name: string;
+        relationship: Relationship;
+        type: Entity;
+    };
+}
+
+interface Edge extends EdgeDefinition {
+    data: { id: string; source: string; target: string };
+}
 
 const getDetailsPageURLPath = (entityType: string): string => {
     if (entityType === 'collection') {
@@ -48,6 +49,29 @@ const getDetailsPageURLPath = (entityType: string): string => {
     return authenticatedRoutes.materializations.details.overview.fullPath;
 };
 
+const getRowIndex = (
+    count: number,
+    previousIndex: number,
+    selfIndex: number,
+    maxRelationsEven: boolean
+): number => {
+    const compositeIndex =
+        maxRelationsEven && previousIndex >= selfIndex
+            ? previousIndex + 1
+            : previousIndex;
+
+    return count === 1 ? selfIndex : compositeIndex;
+};
+
+const onClick = (event: cytoscape.EventObject) => {
+    const { cy, target } = event;
+
+    // The shorthand for the id property cannot be used as a selector here.
+    const node = cy.$id(target.id());
+
+    console.log('single click', node.data('name'));
+};
+
 function ScopedSystemGraph({
     childNodes,
     currentNode,
@@ -57,202 +81,235 @@ function ScopedSystemGraph({
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
+    const [cyCore, setCyCore] = useState<Core | null>(null);
 
-    useEffect(() => {
-        if (!myChart) {
-            echarts.use([
-                CanvasRenderer,
-                GridComponent,
-                LegendComponent,
-                SankeyChart,
-                TooltipComponent,
-            ]);
+    const [nodes, edges, rowCount] = useMemo(() => {
+        const childCount = childNodes.length;
+        const parentCount = parentNodes.length;
 
-            const chartDom = document.getElementById(containerId);
+        const maxRelationsOfType =
+            childCount > parentCount ? childCount : parentCount;
 
-            if (chartDom) {
-                const chart = echarts.init(chartDom);
+        const maxRelationsEven = maxRelationsOfType % 2 === 0;
 
-                // Save off chart into state
-                setMyChart(chart);
+        const numberOfRows = maxRelationsEven
+            ? maxRelationsOfType + 1
+            : maxRelationsOfType;
 
-                // wire up resizing
-                window.addEventListener('resize', () => {
-                    chart.resize();
-                });
-            }
-        }
-    }, [containerId, myChart]);
+        const selfIndex = Math.ceil((numberOfRows - 1) / 2);
 
-    const [seriesData, links] = useMemo(() => {
-        const currentNodeColor = getNodeColor(currentNode.spec_type);
-
-        const data: any[] = [
+        const nodeEls: Node[] = [
             {
-                name: currentNode.catalog_name,
-                itemStyle: {
-                    color: currentNodeColor,
-                    borderColor: currentNodeColor,
+                data: {
+                    gridPosition: { row: selfIndex, col: 2 },
+                    id: currentNode.id,
+                    name: currentNode.catalog_name,
+                    relationship: 'self',
+                    type: currentNode.spec_type as Entity,
                 },
             },
         ];
 
-        const edges: any[] = [];
+        const edgeEls: Edge[] = [];
 
-        const parentLinkValue =
-            childNodes.length && parentNodes.length > 0
-                ? childNodes.length / parentNodes.length
-                : 1;
+        parentNodes.forEach(({ catalog_name, id, spec_type }, index) => {
+            const row = getRowIndex(
+                parentCount,
+                index,
+                selfIndex,
+                maxRelationsEven
+            );
 
-        parentNodes.forEach(({ catalog_name, spec_type }) => {
-            const color = getNodeColor(spec_type);
-
-            data.push({
-                name: catalog_name,
-                itemStyle: {
-                    color,
-                    borderColor: color,
+            nodeEls.push({
+                data: {
+                    gridPosition: { row, col: 1 },
+                    id,
+                    name: catalog_name,
+                    relationship: 'parent',
+                    type: spec_type as Entity,
                 },
             });
 
-            edges.push({
-                source: catalog_name,
-                target: currentNode.catalog_name,
-                value: parentLinkValue,
+            edgeEls.push({
+                data: {
+                    id: `${id} to ${currentNode.id}`,
+                    source: id,
+                    target: currentNode.id,
+                },
             });
         });
 
-        childNodes.forEach(({ catalog_name, spec_type }) => {
-            const color = getNodeColor(spec_type);
+        childNodes.forEach(({ catalog_name, id, spec_type }, index) => {
+            const row = getRowIndex(
+                childCount,
+                index,
+                selfIndex,
+                maxRelationsEven
+            );
 
-            data.push({
-                name: catalog_name,
-                itemStyle: {
-                    color,
-                    borderColor: color,
+            nodeEls.push({
+                data: {
+                    gridPosition: { row, col: 3 },
+                    id,
+                    name: catalog_name,
+                    relationship: 'child',
+                    type: spec_type as Entity,
                 },
             });
 
-            edges.push({
-                source: currentNode.catalog_name,
-                target: catalog_name,
-                value: 1,
+            edgeEls.push({
+                data: {
+                    id: `${id} to ${currentNode.id}`,
+                    source: currentNode.id,
+                    target: id,
+                },
             });
         });
 
-        return [data, edges];
+        return [nodeEls, edgeEls, numberOfRows];
     }, [childNodes, currentNode, parentNodes]);
 
     useEffect(() => {
-        const option: EChartsOption = {
-            animation: false,
-            darkMode: theme.palette.mode === 'dark',
-            grid: {
-                left: 20,
-                top: 40,
-                right: 20,
-                bottom: 10,
-                containLabel: true,
+        console.log('nodes', nodes);
+        console.log('edges', edges);
+
+        const core = cytoscape({
+            // The container in which the data visualization will be rendered.
+            container: document.getElementById(containerId),
+
+            // The set of initial graph elements.
+            elements: {
+                nodes,
+                edges,
             },
-            series: [
+
+            // The stylesheet for the graph.
+            style: [
                 {
-                    type: 'sankey',
-                    data: seriesData,
-                    label: {
-                        backgroundColor: theme.palette.background.paper,
-                        borderRadius: 4,
-                        padding: 6,
-                        verticalAlign: 'middle',
+                    selector: 'edge',
+                    style: {
+                        'line-color': defaultOutlineColor[theme.palette.mode],
+                        'target-arrow-shape': 'none',
+                        'width': 2,
                     },
-                    lineStyle: {
-                        color: 'source',
-                        curveness: 0.5,
+                },
+                {
+                    selector: 'node',
+                    style: {
+                        'color': theme.palette.text.primary,
+                        'height': 21,
+                        'label': 'data(name)',
+                        'font-size': 14,
+                        'width': 21,
                     },
-                    links,
+                },
+                {
+                    selector: 'node[relationship = "self"]',
+                    style: {
+                        'text-background-color':
+                            theme.palette.mode === 'light'
+                                ? '#EFEFEF'
+                                : '#5A5A5A',
+                        'text-background-opacity': 1,
+                        'text-background-padding': '4px',
+                        'text-background-shape': 'roundrectangle',
+                        'text-margin-y': -8,
+                    },
+                },
+                {
+                    selector: 'node[relationship = "parent"]',
+                    style: {
+                        'background-color': eChartsColors.medium[0],
+                        'text-halign': 'left',
+                        'text-margin-x': -8,
+                        'text-valign': 'center',
+                    },
+                },
+                {
+                    selector: 'node[relationship = "child"]',
+                    style: {
+                        'background-color': eChartsColors.medium[1],
+                        'text-halign': 'right',
+                        'text-margin-x': 8,
+                        'text-valign': 'center',
+                    },
                 },
             ],
-            textStyle: {
-                color: theme.palette.text.primary,
-            },
-            tooltip: {
-                trigger: 'item',
-            },
-        };
 
-        myChart?.setOption(option);
+            // Placeholder
+            layout: {
+                cols: 3,
+                condense: true,
+                fit: false,
+                name: 'grid',
+                nodeDimensionsIncludeLabels: true,
+                position: (node) => {
+                    const gridPosition: GridPosition =
+                        node.data('gridPosition');
+
+                    return gridPosition;
+                },
+                rows: rowCount,
+            },
+
+            // Whether user events (e.g. mouse wheel, pinch-to-zoom) are allowed to zoom the graph.
+            userZoomingEnabled: false,
+        });
+
+        const centerNode = core.$id(currentNode.id);
+        core.center(centerNode);
+
+        // const centerRow = centerNode.data('gridPosition.row');
+        // const lowerBound = centerRow > 0 ? centerRow - 1 : 0;
+
+        // const focalNodes = core.nodes(
+        //     `[gridPosition.row >= ${lowerBound}][gridPosition.row !> ${centerRow}],[gridPosition.row !< ${centerRow}][gridPosition.row <= ${
+        //         centerRow + 1
+        //     }]`
+        // );
+        // core.fit(focalNodes);
+
+        setCyCore(core);
     }, [
-        links,
-        myChart,
-        seriesData,
+        containerId,
+        currentNode.id,
+        edges,
+        nodes,
+        rowCount,
         theme.palette.background.paper,
         theme.palette.mode,
         theme.palette.text.primary,
     ]);
 
-    // const [doubleClicked, setDoubleClicked] = useState(false);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onClick = useCallback(
-        debounce((params: echarts.ECElementEvent) => {
-            console.log(params);
-
-            if (params.dataType === 'edge') {
-                return;
-            }
-
-            console.log('Yo... we clicked a node!');
-
-            const selectedNode = childNodes
-                .concat(parentNodes)
-                .find((node) => node.catalog_name === params.name);
-
-            if (selectedNode) {
-                console.log('Node selected: ', selectedNode);
-            }
-        }, 750),
-        [childNodes, currentNode, parentNodes]
-    );
-
     const onDoubleClick = useCallback(
-        (params: echarts.ECElementEvent) => {
-            myChart?.off('click');
+        (event: cytoscape.EventObject) => {
+            const { cy, target } = event;
 
-            console.log(params);
+            // The shorthand for the id property cannot be used as a selector here.
+            const node = cy.$id(target.id());
 
-            if (params.dataType === 'edge') {
-                return;
-            }
+            if (node.data('relationship') !== 'self') {
+                console.log('double click', node.data('name'));
 
-            console.log('Yo... we double clicked a node!');
-
-            const selectedNode = childNodes
-                .concat(parentNodes)
-                .find((node) => node.catalog_name === params.name);
-
-            if (selectedNode) {
-                console.log('Node selected: ', selectedNode);
-
-                const basePath = getDetailsPageURLPath(selectedNode.spec_type);
+                const basePath = getDetailsPageURLPath(node.data('type'));
 
                 const route = getPathWithParams(basePath, {
-                    [GlobalSearchParams.CATALOG_NAME]:
-                        selectedNode.catalog_name,
+                    [GlobalSearchParams.CATALOG_NAME]: node.data('name'),
                 });
 
                 navigate(route);
             }
         },
-        [childNodes, myChart, navigate, parentNodes]
+        [navigate]
     );
 
     useEffect(() => {
-        myChart?.on('click', (params) => onClick(params));
+        cyCore?.on('oneclick', 'node', (event) => onClick(event));
 
-        myChart?.on('dblclick', (params) => onDoubleClick(params));
-    }, [myChart, onClick, onDoubleClick]);
+        cyCore?.on('dblclick', 'node', (event) => onDoubleClick(event));
+    }, [cyCore, onDoubleClick]);
 
-    return <div id={containerId} style={{ height: 350 }} />;
+    return <div id={containerId} style={{ width: 'inherit', height: 350 }} />;
 }
 
 export default ScopedSystemGraph;
