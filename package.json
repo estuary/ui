@@ -53,7 +53,7 @@
         "@mui/x-date-pickers": "^6.19.5",
         "@stripe/react-stripe-js": "^2.1.0",
         "@stripe/stripe-js": "^1.52.1",
-        "@supabase-cache-helpers/postgrest-swr": "^1.7.4",
+        "@supabase-cache-helpers/postgrest-swr": "^1.7.5",
         "@supabase/postgrest-js": "^1.15.5",
         "@supabase/supabase-js": "^2.43.4",
         "@testing-library/jest-dom": "^6.4.2",
