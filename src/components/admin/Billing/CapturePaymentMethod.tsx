@@ -139,7 +139,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     options={{
                         mode: 'billing',
                         defaultValues: {
-                            name: session?.user?.user_metadata.full_name,
+                            name: session?.user.user_metadata.full_name,
                         },
                         display: { name: 'organization' },
                     }}
@@ -154,7 +154,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                         readOnly: loading,
                         defaultValues: {
                             billingDetails: {
-                                name: session?.user?.user_metadata.full_name,
+                                name: session?.user.user_metadata.full_name,
                             },
                         },
                     }}
