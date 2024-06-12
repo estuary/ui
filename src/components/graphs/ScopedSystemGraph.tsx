@@ -1,10 +1,22 @@
-import { useTheme } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
+import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
+import ZoomSettings from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Zoom';
+import {
+    defaultOutline,
+    defaultOutlineColor,
+    eChartsColors,
+} from 'context/Theme';
 import cytoscape, { Core, EdgeDefinition, NodeDefinition } from 'cytoscape';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    SyntheticEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
@@ -309,7 +321,44 @@ function ScopedSystemGraph({
         cyCore?.on('dblclick', 'node', (event) => onDoubleClick(event));
     }, [cyCore, onDoubleClick]);
 
-    return <div id={containerId} style={{ width: 'inherit', height: 350 }} />;
+    const setUserZoomingEnabled = useScopedSystemGraph(
+        (state) => state.setUserZoomingEnabled
+    );
+
+    const onFreeformZoomChange = useCallback(
+        (event: SyntheticEvent<Element, Event>, checked: boolean) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            setUserZoomingEnabled(cyCore, checked);
+        },
+        [cyCore, setUserZoomingEnabled]
+    );
+
+    return (
+        <>
+            <Stack
+                direction="row"
+                sx={{
+                    px: 1,
+                    justifyContent: 'flex-end',
+                    border: defaultOutline[theme.palette.mode],
+                    borderBottom: 'none',
+                }}
+            >
+                <ZoomSettings onFreeformZoomChange={onFreeformZoomChange} />
+            </Stack>
+
+            <div
+                id={containerId}
+                style={{
+                    width: 'inherit',
+                    height: 350,
+                    border: defaultOutline[theme.palette.mode],
+                }}
+            />
+        </>
+    );
 }
 
 export default ScopedSystemGraph;
