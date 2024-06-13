@@ -6,8 +6,9 @@ import { ScopedSystemGraphState } from './types';
 
 const getInitialStateData = (): Pick<
     ScopedSystemGraphState,
-    'maxZoom' | 'minZoom' | 'userZoomingEnabled' | 'zoom'
+    'currentNode' | 'maxZoom' | 'minZoom' | 'userZoomingEnabled' | 'zoom'
 > => ({
+    currentNode: null,
     maxZoom: 5,
     minZoom: 0.5,
     userZoomingEnabled: false,
@@ -19,6 +20,16 @@ const getInitialState = (
     get: StoreApi<ScopedSystemGraphState>['getState']
 ): ScopedSystemGraphState => ({
     ...getInitialStateData(),
+
+    setCurrentNode: (value) => {
+        set(
+            produce((state: ScopedSystemGraphState) => {
+                state.currentNode = value;
+            }),
+            false,
+            'current node updated'
+        );
+    },
 
     setUserZoomingEnabled: (cyCore, value) => {
         set(

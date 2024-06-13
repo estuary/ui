@@ -1,6 +1,7 @@
 import { Stack, useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
+import NodeTooltip from 'components/shared/Entity/Details/Overview/Connections/NodeTooltip';
 import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
 import ZoomSettings from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Zoom';
 import {
@@ -9,6 +10,7 @@ import {
     eChartsColors,
 } from 'context/Theme';
 import cytoscape, { Core, EdgeDefinition, NodeDefinition } from 'cytoscape';
+import cytoscapePopper, { PopperFactory } from 'cytoscape-popper';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import {
     SyntheticEvent,
@@ -28,26 +30,31 @@ interface Props {
     parentNodes: EntityNode[];
 }
 
-type Relationship = 'parent' | 'self' | 'child';
+export type Relationship = 'parent' | 'self' | 'child';
 
 interface GridPosition {
     row: number;
     col: number;
 }
 
+export interface NodeData {
+    gridPosition: GridPosition;
+    id: string;
+    name: string;
+    relationship: Relationship;
+    type: Entity;
+}
+
 interface Node extends NodeDefinition {
-    data: {
-        gridPosition: GridPosition;
-        id: string;
-        name: string;
-        relationship: Relationship;
-        type: Entity;
-    };
+    data: NodeData;
 }
 
 interface Edge extends EdgeDefinition {
     data: { id: string; source: string; target: string };
 }
+
+const popperFactory: PopperFactory = (_ref, _content, _options) =>
+    document.createElement('div');
 
 const getDetailsPageURLPath = (entityType: string): string => {
     if (entityType === 'collection') {
@@ -185,6 +192,8 @@ function ScopedSystemGraph({
         console.log('nodes', nodes);
         console.log('edges', edges);
 
+        cytoscape.use(cytoscapePopper(popperFactory));
+
         const core = cytoscape({
             // The container in which the data visualization will be rendered.
             container: document.getElementById(containerId),
@@ -318,11 +327,72 @@ function ScopedSystemGraph({
         [navigate]
     );
 
+    const setCurrentNode = useScopedSystemGraph(
+        (state) => state.setCurrentNode
+    );
+
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [anchorTriggerY, setAnchorTriggerY] = useState<string>('');
+    const [anchorTriggerX, setAnchorTriggerX] = useState<string>('');
+
+    const onNodeMouseOver = useCallback(
+        (event: cytoscape.EventObject) => {
+            console.log('mouseover or drag', event);
+
+            const { cy, target } = event;
+
+            // The shorthand for the id property cannot be used as a selector here.
+            const nodeBound = cy
+                .$id(target.id())
+                .popperRef()
+                .getBoundingClientRect();
+
+            let anchor = document.getElementById(target.id());
+
+            if (!anchor) {
+                anchor = document.createElement('div');
+                anchor.id = target.id();
+
+                anchor.setAttribute(
+                    'style',
+                    `width: ${nodeBound.width}px; height: ${nodeBound.height}px; position: absolute; top: ${nodeBound.top}px; left: ${nodeBound.left}px; z-index: -1;`
+                );
+
+                document.body.appendChild(anchor);
+
+                setCurrentNode(target.data());
+            } else {
+                anchor.setAttribute(
+                    'style',
+                    `width: ${nodeBound.width}px; height: ${nodeBound.height}px; position: absolute; top: ${nodeBound.top}px; left: ${nodeBound.left}px; z-index: -1;`
+                );
+            }
+
+            setAnchorEl(anchor);
+            setAnchorTriggerX(anchor.style.left);
+            setAnchorTriggerY(anchor.style.top);
+        },
+        [setAnchorEl, setAnchorTriggerX, setAnchorTriggerY, setCurrentNode]
+    );
+
     useEffect(() => {
         cyCore?.on('oneclick', 'node', (event) => onClick(event));
 
         cyCore?.on('dblclick', 'node', (event) => onDoubleClick(event));
-    }, [cyCore, onDoubleClick]);
+
+        cyCore?.on('mouseover drag ', 'node', (event) =>
+            onNodeMouseOver(event)
+        );
+    }, [cyCore, onDoubleClick, onNodeMouseOver]);
+
+    useEffect(() => {
+        cyCore?.on('mouseout', 'node', () => {
+            if (anchorEl) {
+                anchorEl.remove();
+                setAnchorEl(null);
+            }
+        });
+    }, [anchorEl, anchorTriggerX, anchorTriggerY, cyCore, setAnchorEl]);
 
     const setUserZoomingEnabled = useScopedSystemGraph(
         (state) => state.setUserZoomingEnabled
@@ -381,6 +451,8 @@ function ScopedSystemGraph({
                     border: defaultOutline[theme.palette.mode],
                 }}
             />
+
+            <NodeTooltip anchorEl={anchorEl} />
         </>
     );
 }
