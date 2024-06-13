@@ -32,7 +32,7 @@ function FreeformZoomOption({ onFreeformZoomChange, disabled }: Props) {
                     <FormattedMessage id="details.scopedSystemGraph.toolbar.zoom.freeformZoom.label" />
                 }
                 labelPlacement="start"
-                style={{ margin: 0 }}
+                style={{ margin: 0, justifyContent: 'space-between' }}
             />
         </FormControl>
     );

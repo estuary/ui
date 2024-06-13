@@ -1196,6 +1196,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.scopedSystemGraph.toolbar.zoom.header': `Zoom Settings`,
     'details.scopedSystemGraph.toolbar.zoom.ariaLabel': `Open zoom settings menu`,
     'details.scopedSystemGraph.toolbar.zoom.freeformZoom.label': `Motion to zoom`,
+    'details.scopedSystemGraph.toolbar.zoom.manualZoom.label': `Zoom`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,

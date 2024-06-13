@@ -1,19 +1,24 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Divider, Stack, Typography, useTheme } from '@mui/material';
 import IconMenu from 'components/menus/IconMenu';
 import { disabledButtonText_primary } from 'context/Theme';
 import { ZoomIn } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import FreeformZoomOption from './FreeformZoomOption';
+import ManualZoom from './ManualZoom';
 
 interface Props {
     onFreeformZoomChange: (
         event: React.SyntheticEvent<Element, Event>,
         checked: boolean
     ) => void;
+    onManualZoom: (
+        event: React.SyntheticEvent<Element, Event>,
+        value: number
+    ) => void;
     disabled?: boolean;
 }
 
-function ZoomSettings({ onFreeformZoomChange, disabled }: Props) {
+function ZoomSettings({ onFreeformZoomChange, onManualZoom, disabled }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -45,7 +50,11 @@ function ZoomSettings({ onFreeformZoomChange, disabled }: Props) {
                 <FormattedMessage id="details.scopedSystemGraph.toolbar.zoom.header" />
             </Typography>
 
-            <Stack sx={{ px: 2 }}>
+            <Stack spacing={1} sx={{ px: 2 }}>
+                <ManualZoom disabled={disabled} onManualZoom={onManualZoom} />
+
+                <Divider />
+
                 <FreeformZoomOption
                     disabled={disabled}
                     onFreeformZoomChange={onFreeformZoomChange}

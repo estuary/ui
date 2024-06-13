@@ -195,6 +195,9 @@ function ScopedSystemGraph({
                 edges,
             },
 
+            minZoom: 0.5,
+            maxZoom: 5,
+
             // The stylesheet for the graph.
             style: [
                 {
@@ -335,6 +338,24 @@ function ScopedSystemGraph({
         [cyCore, setUserZoomingEnabled]
     );
 
+    const setZoom = useScopedSystemGraph((state) => state.setZoom);
+
+    const onManualZoom = useCallback(
+        (event: SyntheticEvent<Element, Event>, value: number) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            setZoom(cyCore, value);
+        },
+        [cyCore, setZoom]
+    );
+
+    useEffect(() => {
+        cyCore?.on('scrollzoom', () => {
+            setZoom(cyCore);
+        });
+    }, [cyCore, setZoom]);
+
     return (
         <>
             <Stack
@@ -346,7 +367,10 @@ function ScopedSystemGraph({
                     borderBottom: 'none',
                 }}
             >
-                <ZoomSettings onFreeformZoomChange={onFreeformZoomChange} />
+                <ZoomSettings
+                    onFreeformZoomChange={onFreeformZoomChange}
+                    onManualZoom={onManualZoom}
+                />
             </Stack>
 
             <div
