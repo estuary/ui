@@ -1,9 +1,9 @@
 import { Stack, useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
-import NodeTooltip from 'components/shared/Entity/Details/Overview/Connections/NodeTooltip';
 import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
 import ZoomSettings from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Zoom';
+import NodeTooltip from 'components/shared/Entity/Details/Overview/Connections/tooltips/NodeTooltip';
 import {
     defaultOutline,
     defaultOutlineColor,

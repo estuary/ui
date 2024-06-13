@@ -1,11 +1,8 @@
 import { Box, Divider, Popper, Stack, Typography } from '@mui/material';
-import { Relationship } from 'components/graphs/ScopedSystemGraph';
 import { paperBackground } from 'context/Theme';
-import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
-import { CSSProperties, ReactElement } from 'react';
 import { FormatDateOptions, useIntl } from 'react-intl';
-import { Entity } from 'types';
-import { useScopedSystemGraph } from './Store/Store';
+import { useScopedSystemGraph } from '../Store/Store';
+import EntityIcon from './EntityIcon';
 
 interface Props {
     anchorEl: HTMLElement | null;
@@ -17,43 +14,10 @@ const TIME_SETTINGS: FormatDateOptions = {
     year: 'numeric',
 };
 
-const getEntityColor = (relationship: Relationship): string => {
-    if (relationship === 'parent') {
-        return 'rgba(83, 83, 204, 0.3)';
-    }
-
-    if (relationship === 'child') {
-        return 'rgba(32, 140, 81, 0.4)';
-    }
-
-    return '#EFEFEF';
-};
-
-const getEntityIcon = (
-    entityType: Entity,
-    style?: CSSProperties
-): ReactElement => {
-    if (entityType === 'capture') {
-        return <CloudUpload style={style} />;
-    }
-
-    if (entityType === 'materialization') {
-        return <CloudDownload style={style} />;
-    }
-
-    return <DatabaseScript style={style} />;
-};
-
 function NodeTooltip({ anchorEl }: Props) {
     const intl = useIntl();
 
     const currentNode = useScopedSystemGraph((state) => state.currentNode);
-
-    const entityColor = currentNode
-        ? getEntityColor(currentNode.relationship)
-        : '#343434';
-
-    const entityIcon = currentNode ? getEntityIcon(currentNode.type) : null;
 
     return (
         <Popper
@@ -73,21 +37,9 @@ function NodeTooltip({ anchorEl }: Props) {
             >
                 {currentNode ? (
                     <Stack direction="row" spacing={1}>
-                        {entityIcon ? (
-                            <Box style={{ marginTop: 6 }}>
-                                <Box
-                                    style={{
-                                        alignItems: 'center',
-                                        backgroundColor: entityColor,
-                                        borderRadius: '50%',
-                                        display: 'inline-flex',
-                                        padding: 4,
-                                    }}
-                                >
-                                    {entityIcon}
-                                </Box>
-                            </Box>
-                        ) : null}
+                        <Box style={{ marginTop: 6 }}>
+                            <EntityIcon />
+                        </Box>
 
                         <Stack>
                             <Typography style={{ fontWeight: 500 }}>
