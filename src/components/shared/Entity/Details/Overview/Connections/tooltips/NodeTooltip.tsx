@@ -1,9 +1,9 @@
-import { Box, Divider, Popper, Stack, Typography } from '@mui/material';
+import { Box, Popper, Stack, Typography } from '@mui/material';
 import { paperBackground } from 'context/Theme';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import { useScopedSystemGraph } from '../Store/Store';
 import EntityIcon from './EntityIcon';
-import Statistic from './Statistic';
+import UsageSection from './Usage';
 
 interface Props {
     anchorEl: HTMLElement | null;
@@ -66,24 +66,7 @@ function NodeTooltip({ anchorEl }: Props) {
                                 Monthly Usage
                             </Typography>
 
-                            <Stack direction="row" spacing={1}>
-                                <Statistic label="Data Read" value="23 GB" />
-
-                                <Divider orientation="vertical" />
-
-                                <Statistic label="Data Written" value="16 GB" />
-
-                                <Divider orientation="vertical" />
-
-                                <Statistic label="Docs Read" value="2.31 K" />
-
-                                <Divider orientation="vertical" />
-
-                                <Statistic
-                                    label="Docs Written"
-                                    value="1.50 K"
-                                />
-                            </Stack>
+                            <UsageSection />
                         </Stack>
                     </Stack>
                 ) : (
