@@ -13,15 +13,14 @@ function useJournalNameForLogs(
     region: number = 0
 ) {
     return useMemo(() => {
-        const collectionName = `ops.${REGIONS[region]}.v1/logs`;
-        return [
-            !hasLength(entityType)
-                ? ''
-                : `${collectionName}/kind=${
-                      entityType[0] ?? DEFAULT_FILTER
-                  }/name=${encodeURIComponent(entityName)}/pivot=00`,
-            entityName,
-        ];
+        const selector = `estuary.dev/collection=ops.${
+            REGIONS[region]
+        }.v1/logs,estuary.dev/field/name=${entityName}/kind=${
+            entityType[0] ?? DEFAULT_FILTER
+        }/pivot=00`;
+        // const selector = `estuary.dev/collection=ops.${REGIONS[region]}.v1/logs,estuary.dev/field/name=${entityName}`;
+
+        return [!hasLength(entityType) ? '' : selector, entityName];
     }, [entityName, entityType, region]);
 }
 
