@@ -57,15 +57,6 @@ function NodeTooltip({ anchorEl }: Props) {
                                 )}`}
                             </Typography>
 
-                            <Typography
-                                variant="caption"
-                                style={{
-                                    marginBottom: 4,
-                                }}
-                            >
-                                Monthly Usage
-                            </Typography>
-
                             <UsageSection />
                         </Stack>
                     </Stack>

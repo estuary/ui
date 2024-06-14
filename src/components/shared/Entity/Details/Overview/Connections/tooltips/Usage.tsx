@@ -1,5 +1,5 @@
-import { Box, Divider, Stack } from '@mui/material';
-import { useIntl } from 'react-intl';
+import { Box, Divider, Stack, Typography } from '@mui/material';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Entity } from 'types';
 import { useScopedSystemGraph } from '../Store/Store';
 import Statistic from './Statistic';
@@ -38,34 +38,45 @@ function UsageSection() {
     const statTypes = getStatistics(entityType);
 
     return (
-        <Stack direction="row" spacing={1}>
-            {statTypes.map((statType, index) => {
-                const stat = Math.floor(Math.random() * 98 + 1);
-                const unit = byteStats.includes(statType) ? 'GB' : 'K';
+        <>
+            <Typography
+                variant="caption"
+                style={{
+                    marginBottom: 4,
+                }}
+            >
+                <FormattedMessage id="details.scopedSystemGraph.tooltip.usage.header" />
+            </Typography>
 
-                return (
-                    <Box
-                        key={`${statType}-${index}`}
-                        style={{ display: 'inline-flex' }}
-                    >
-                        <Statistic
-                            label={intl.formatMessage({
-                                id: `entityTable.stats.${statType}`,
-                            })}
-                            value={`${stat} ${unit}`}
-                        />
+            <Stack direction="row" spacing={1}>
+                {statTypes.map((statType, index) => {
+                    const stat = Math.floor(Math.random() * 98 + 1);
+                    const unit = byteStats.includes(statType) ? 'GB' : 'K';
 
-                        {index !== statTypes.length - 1 ? (
-                            <Divider
-                                flexItem
-                                orientation="vertical"
-                                style={{ marginLeft: 8 }}
+                    return (
+                        <Box
+                            key={`${statType}-${index}`}
+                            style={{ display: 'inline-flex' }}
+                        >
+                            <Statistic
+                                label={intl.formatMessage({
+                                    id: `entityTable.stats.${statType}`,
+                                })}
+                                value={`${stat} ${unit}`}
                             />
-                        ) : null}
-                    </Box>
-                );
-            })}
-        </Stack>
+
+                            {index !== statTypes.length - 1 ? (
+                                <Divider
+                                    flexItem
+                                    orientation="vertical"
+                                    style={{ marginLeft: 8 }}
+                                />
+                            ) : null}
+                        </Box>
+                    );
+                })}
+            </Stack>
+        </>
     );
 }
 
