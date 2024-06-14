@@ -3,14 +3,14 @@ import { FormattedMessage } from 'react-intl';
 import { useScopedSystemGraph } from '../../Store/Store';
 
 interface Props {
-    onFreeformZoomChange: (
+    onFreeformZoom: (
         event: React.SyntheticEvent<Element, Event>,
         checked: boolean
     ) => void;
     disabled?: boolean;
 }
 
-function FreeformZoomOption({ onFreeformZoomChange, disabled }: Props) {
+function FreeformZoomOption({ onFreeformZoom, disabled }: Props) {
     const userZoomingEnabled = useScopedSystemGraph(
         (state) => state.userZoomingEnabled
     );
@@ -24,7 +24,7 @@ function FreeformZoomOption({ onFreeformZoomChange, disabled }: Props) {
                         value={userZoomingEnabled}
                         checked={userZoomingEnabled}
                         disabled={disabled}
-                        onChange={onFreeformZoomChange}
+                        onChange={onFreeformZoom}
                         sx={{ ml: 2 }}
                     />
                 }

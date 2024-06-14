@@ -1,7 +1,6 @@
 import { Stack, useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
-import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
 import ZoomSettings from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Zoom';
 import NodeTooltip from 'components/shared/Entity/Details/Overview/Connections/tooltips/NodeTooltip';
 import {
@@ -12,17 +11,13 @@ import {
 import cytoscape, { Core, EdgeDefinition, NodeDefinition } from 'cytoscape';
 import cytoscapePopper, { PopperFactory } from 'cytoscape-popper';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import {
-    SyntheticEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 import useTooltip from './useTooltip';
+import useZoomFreeform from './useZoomFreeform';
+import useZoomManual from './useZoomManual';
 
 interface Props {
     childNodes: EntityNode[];
@@ -104,6 +99,8 @@ function ScopedSystemGraph({
     const [cyCore, setCyCore] = useState<Core | null>(null);
 
     const { anchorEl } = useTooltip(cyCore);
+    const { onFreeformZoom } = useZoomFreeform(cyCore);
+    const { onManualZoom } = useZoomManual(cyCore);
 
     const [nodes, edges, rowCount] = useMemo(() => {
         const childCount = childNodes.length;
@@ -326,38 +323,6 @@ function ScopedSystemGraph({
         cyCore?.on('dblclick', 'node', (event) => onDoubleClick(event));
     }, [cyCore, onDoubleClick]);
 
-    const setUserZoomingEnabled = useScopedSystemGraph(
-        (state) => state.setUserZoomingEnabled
-    );
-
-    const onFreeformZoomChange = useCallback(
-        (event: SyntheticEvent<Element, Event>, checked: boolean) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            setUserZoomingEnabled(cyCore, checked);
-        },
-        [cyCore, setUserZoomingEnabled]
-    );
-
-    const setZoom = useScopedSystemGraph((state) => state.setZoom);
-
-    const onManualZoom = useCallback(
-        (event: SyntheticEvent<Element, Event>, value: number) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            setZoom(cyCore, value);
-        },
-        [cyCore, setZoom]
-    );
-
-    useEffect(() => {
-        cyCore?.on('scrollzoom', () => {
-            setZoom(cyCore);
-        });
-    }, [cyCore, setZoom]);
-
     return (
         <>
             <Stack
@@ -370,7 +335,7 @@ function ScopedSystemGraph({
                 }}
             >
                 <ZoomSettings
-                    onFreeformZoomChange={onFreeformZoomChange}
+                    onFreeformZoom={onFreeformZoom}
                     onManualZoom={onManualZoom}
                 />
             </Stack>

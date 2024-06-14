@@ -7,7 +7,7 @@ import FreeformZoomOption from './FreeformZoomOption';
 import ManualZoom from './ManualZoom';
 
 interface Props {
-    onFreeformZoomChange: (
+    onFreeformZoom: (
         event: React.SyntheticEvent<Element, Event>,
         checked: boolean
     ) => void;
@@ -18,7 +18,7 @@ interface Props {
     disabled?: boolean;
 }
 
-function ZoomSettings({ onFreeformZoomChange, onManualZoom, disabled }: Props) {
+function ZoomSettings({ onFreeformZoom, onManualZoom, disabled }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -57,7 +57,7 @@ function ZoomSettings({ onFreeformZoomChange, onManualZoom, disabled }: Props) {
 
                 <FreeformZoomOption
                     disabled={disabled}
-                    onFreeformZoomChange={onFreeformZoomChange}
+                    onFreeformZoom={onFreeformZoom}
                 />
             </Stack>
         </IconMenu>
