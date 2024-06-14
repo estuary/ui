@@ -22,6 +22,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import useTooltip from './useTooltip';
 
 interface Props {
     childNodes: EntityNode[];
@@ -101,6 +102,8 @@ function ScopedSystemGraph({
     const navigate = useNavigate();
 
     const [cyCore, setCyCore] = useState<Core | null>(null);
+
+    const { anchorEl } = useTooltip(cyCore);
 
     const [nodes, edges, rowCount] = useMemo(() => {
         const childCount = childNodes.length;
@@ -283,16 +286,6 @@ function ScopedSystemGraph({
         const centerNode = core.$id(currentNode.id);
         core.center(centerNode);
 
-        // const centerRow = centerNode.data('gridPosition.row');
-        // const lowerBound = centerRow > 0 ? centerRow - 1 : 0;
-
-        // const focalNodes = core.nodes(
-        //     `[gridPosition.row >= ${lowerBound}][gridPosition.row !> ${centerRow}],[gridPosition.row !< ${centerRow}][gridPosition.row <= ${
-        //         centerRow + 1
-        //     }]`
-        // );
-        // core.fit(focalNodes);
-
         setCyCore(core);
     }, [
         containerId,
@@ -327,72 +320,11 @@ function ScopedSystemGraph({
         [navigate]
     );
 
-    const setCurrentNode = useScopedSystemGraph(
-        (state) => state.setCurrentNode
-    );
-
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const [anchorTriggerY, setAnchorTriggerY] = useState<string>('');
-    const [anchorTriggerX, setAnchorTriggerX] = useState<string>('');
-
-    const onNodeMouseOver = useCallback(
-        (event: cytoscape.EventObject) => {
-            console.log('mouseover or drag', event);
-
-            const { cy, target } = event;
-
-            // The shorthand for the id property cannot be used as a selector here.
-            const nodeBound = cy
-                .$id(target.id())
-                .popperRef()
-                .getBoundingClientRect();
-
-            let anchor = document.getElementById(target.id());
-
-            if (!anchor) {
-                anchor = document.createElement('div');
-                anchor.id = target.id();
-
-                anchor.setAttribute(
-                    'style',
-                    `width: ${nodeBound.width}px; height: ${nodeBound.height}px; position: absolute; top: ${nodeBound.top}px; left: ${nodeBound.left}px; z-index: -1;`
-                );
-
-                document.body.appendChild(anchor);
-
-                setCurrentNode(target.data());
-            } else {
-                anchor.setAttribute(
-                    'style',
-                    `width: ${nodeBound.width}px; height: ${nodeBound.height}px; position: absolute; top: ${nodeBound.top}px; left: ${nodeBound.left}px; z-index: -1;`
-                );
-            }
-
-            setAnchorEl(anchor);
-            setAnchorTriggerX(anchor.style.left);
-            setAnchorTriggerY(anchor.style.top);
-        },
-        [setAnchorEl, setAnchorTriggerX, setAnchorTriggerY, setCurrentNode]
-    );
-
     useEffect(() => {
         cyCore?.on('oneclick', 'node', (event) => onClick(event));
 
         cyCore?.on('dblclick', 'node', (event) => onDoubleClick(event));
-
-        cyCore?.on('mouseover drag ', 'node', (event) =>
-            onNodeMouseOver(event)
-        );
-    }, [cyCore, onDoubleClick, onNodeMouseOver]);
-
-    useEffect(() => {
-        cyCore?.on('mouseout', 'node', () => {
-            if (anchorEl) {
-                anchorEl.remove();
-                setAnchorEl(null);
-            }
-        });
-    }, [anchorEl, anchorTriggerX, anchorTriggerY, cyCore, setAnchorEl]);
+    }, [cyCore, onDoubleClick]);
 
     const setUserZoomingEnabled = useScopedSystemGraph(
         (state) => state.setUserZoomingEnabled
