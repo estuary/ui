@@ -1,6 +1,7 @@
 import { Stack, useTheme } from '@mui/material';
 import { EntityNode } from 'api/liveSpecFlows';
 import { authenticatedRoutes } from 'app/routes';
+import NodeSearch from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Search';
 import ZoomSettings from 'components/shared/Entity/Details/Overview/Connections/Toolbar/Zoom';
 import NodeTooltip from 'components/shared/Entity/Details/Overview/Connections/tooltips/NodeTooltip';
 import {
@@ -15,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Entity } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
+import useNodeSearch from './useNodeSearch';
 import useTooltip from './useTooltip';
 import useZoomFreeform from './useZoomFreeform';
 import useZoomManual from './useZoomManual';
@@ -41,7 +43,7 @@ export interface NodeData {
     type: Entity;
 }
 
-interface Node extends NodeDefinition {
+export interface Node extends NodeDefinition {
     data: NodeData;
 }
 
@@ -136,10 +138,6 @@ function ScopedSystemGraph({
 
     const [cyCore, setCyCore] = useState<Core | null>(null);
 
-    const { anchorEl } = useTooltip(cyCore);
-    const { onFreeformZoom } = useZoomFreeform(cyCore);
-    const { onManualZoom } = useZoomManual(cyCore);
-
     const [nodes, edges, rowCount] = useMemo(() => {
         const childCount = childNodes.length;
         const parentCount = parentNodes.length;
@@ -189,6 +187,11 @@ function ScopedSystemGraph({
 
         return [nodeEls, edgeEls, numberOfRows];
     }, [childNodes, currentNode, parentNodes]);
+
+    const { onSelectOption, searchOptions } = useNodeSearch(cyCore, nodes);
+    const { anchorEl } = useTooltip(cyCore);
+    const { onFreeformZoom } = useZoomFreeform(cyCore);
+    const { onManualZoom } = useZoomManual(cyCore);
 
     useEffect(() => {
         console.log('nodes', nodes);
@@ -260,6 +263,12 @@ function ScopedSystemGraph({
                         'text-valign': 'center',
                     },
                 },
+                {
+                    selector: '.highlight',
+                    style: {
+                        'background-color': eChartsColors.light[1],
+                    },
+                },
             ],
 
             // Placeholder
@@ -329,13 +338,21 @@ function ScopedSystemGraph({
         <>
             <Stack
                 direction="row"
+                spacing={1}
                 sx={{
                     px: 1,
+                    py: 1,
+                    alignItems: 'center',
                     justifyContent: 'flex-end',
                     border: defaultOutline[theme.palette.mode],
                     borderBottom: 'none',
                 }}
             >
+                <NodeSearch
+                    onSelectOption={onSelectOption}
+                    options={searchOptions}
+                />
+
                 <ZoomSettings
                     onFreeformZoom={onFreeformZoom}
                     onManualZoom={onManualZoom}

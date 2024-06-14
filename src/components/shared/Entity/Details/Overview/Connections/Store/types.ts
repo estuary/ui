@@ -10,8 +10,14 @@ export interface ScopedSystemGraphState {
         value?: ScopedSystemGraphState['zoom']
     ) => void;
 
+    // TODO (scoped system graph): Rename this portion of state to be something more specific to hover/drag.
     currentNode: NodeData | null;
     setCurrentNode: (value: ScopedSystemGraphState['currentNode']) => void;
+
+    searchedNodeId: string | null;
+    setSearchedNodeId: (
+        value: ScopedSystemGraphState['searchedNodeId']
+    ) => void;
 
     userZoomingEnabled: boolean;
     setUserZoomingEnabled: (

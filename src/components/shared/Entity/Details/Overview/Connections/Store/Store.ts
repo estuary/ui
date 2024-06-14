@@ -6,11 +6,17 @@ import { ScopedSystemGraphState } from './types';
 
 const getInitialStateData = (): Pick<
     ScopedSystemGraphState,
-    'currentNode' | 'maxZoom' | 'minZoom' | 'userZoomingEnabled' | 'zoom'
+    | 'currentNode'
+    | 'maxZoom'
+    | 'minZoom'
+    | 'searchedNodeId'
+    | 'userZoomingEnabled'
+    | 'zoom'
 > => ({
     currentNode: null,
     maxZoom: 5,
     minZoom: 0.5,
+    searchedNodeId: null,
     userZoomingEnabled: false,
     zoom: 1,
 });
@@ -28,6 +34,18 @@ const getInitialState = (
             }),
             false,
             'current node updated'
+        );
+    },
+
+    setSearchedNodeId: (value) => {
+        const action = value ? 'set' : 'reset';
+
+        set(
+            produce((state: ScopedSystemGraphState) => {
+                state.searchedNodeId = value;
+            }),
+            false,
+            `searched node id ${action}`
         );
     },
 
