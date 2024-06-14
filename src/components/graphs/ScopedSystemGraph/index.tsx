@@ -78,6 +78,44 @@ const getRowIndex = (
     return count === 1 ? selfIndex : compositeIndex;
 };
 
+const getElements = (
+    nodes: EntityNode[],
+    count: number,
+    selfId: string,
+    selfIndex: number,
+    maxRelationsEven: boolean,
+    isParent?: boolean
+): [Node[], Edge[]] => {
+    const nodeEls: Node[] = [];
+    const edgeEls: Edge[] = [];
+
+    const relationship: Relationship = isParent ? 'parent' : 'child';
+
+    nodes.forEach(({ catalog_name, id, spec_type }, index) => {
+        const row = getRowIndex(count, index, selfIndex, maxRelationsEven);
+
+        nodeEls.push({
+            data: {
+                gridPosition: { row, col: isParent ? 1 : 3 },
+                id,
+                name: catalog_name,
+                relationship,
+                type: spec_type as Entity,
+            },
+        });
+
+        edgeEls.push({
+            data: {
+                id: `${id} to ${selfId}`,
+                source: isParent ? id : selfId,
+                target: isParent ? selfId : id,
+            },
+        });
+    });
+
+    return [nodeEls, edgeEls];
+};
+
 const onClick = (event: cytoscape.EventObject) => {
     const { cy, target } = event;
 
@@ -117,7 +155,7 @@ function ScopedSystemGraph({
 
         const selfIndex = Math.ceil((numberOfRows - 1) / 2);
 
-        const nodeEls: Node[] = [
+        const selfNodeEl: Node[] = [
             {
                 data: {
                     gridPosition: { row: selfIndex, col: 2 },
@@ -129,61 +167,25 @@ function ScopedSystemGraph({
             },
         ];
 
-        const edgeEls: Edge[] = [];
+        const [parentNodeEls, parentEdgeEls] = getElements(
+            parentNodes,
+            parentCount,
+            currentNode.id,
+            selfIndex,
+            maxRelationsEven,
+            true
+        );
 
-        parentNodes.forEach(({ catalog_name, id, spec_type }, index) => {
-            const row = getRowIndex(
-                parentCount,
-                index,
-                selfIndex,
-                maxRelationsEven
-            );
+        const [childNodeEls, childEdgeEls] = getElements(
+            childNodes,
+            childCount,
+            currentNode.id,
+            selfIndex,
+            maxRelationsEven
+        );
 
-            nodeEls.push({
-                data: {
-                    gridPosition: { row, col: 1 },
-                    id,
-                    name: catalog_name,
-                    relationship: 'parent',
-                    type: spec_type as Entity,
-                },
-            });
-
-            edgeEls.push({
-                data: {
-                    id: `${id} to ${currentNode.id}`,
-                    source: id,
-                    target: currentNode.id,
-                },
-            });
-        });
-
-        childNodes.forEach(({ catalog_name, id, spec_type }, index) => {
-            const row = getRowIndex(
-                childCount,
-                index,
-                selfIndex,
-                maxRelationsEven
-            );
-
-            nodeEls.push({
-                data: {
-                    gridPosition: { row, col: 3 },
-                    id,
-                    name: catalog_name,
-                    relationship: 'child',
-                    type: spec_type as Entity,
-                },
-            });
-
-            edgeEls.push({
-                data: {
-                    id: `${id} to ${currentNode.id}`,
-                    source: currentNode.id,
-                    target: id,
-                },
-            });
-        });
+        const nodeEls: Node[] = selfNodeEl.concat(parentNodeEls, childNodeEls);
+        const edgeEls: Edge[] = parentEdgeEls.concat(childEdgeEls);
 
         return [nodeEls, edgeEls, numberOfRows];
     }, [childNodes, currentNode, parentNodes]);
