@@ -3,6 +3,7 @@ import { paperBackground } from 'context/Theme';
 import { FormatDateOptions, useIntl } from 'react-intl';
 import { useScopedSystemGraph } from '../Store/Store';
 import EntityIcon from './EntityIcon';
+import Statistic from './Statistic';
 
 interface Props {
     anchorEl: HTMLElement | null;
@@ -66,103 +67,22 @@ function NodeTooltip({ anchorEl }: Props) {
                             </Typography>
 
                             <Stack direction="row" spacing={1}>
-                                <Box
-                                    style={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            // fontSize: 18,
-                                            fontWeight: 500,
-                                            paddingLeft: 4,
-                                            paddingRight: 4,
-                                        }}
-                                    >
-                                        23 GB
-                                    </Typography>
-
-                                    <Typography variant="caption">
-                                        Data Read
-                                    </Typography>
-                                </Box>
+                                <Statistic label="Data Read" value="23 GB" />
 
                                 <Divider orientation="vertical" />
 
-                                <Box
-                                    style={{
-                                        alignItems: 'center',
-
-                                        display: 'inline-flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            fontWeight: 500,
-                                            paddingLeft: 4,
-                                            paddingRight: 4,
-                                        }}
-                                    >
-                                        16 GB
-                                    </Typography>
-
-                                    <Typography variant="caption">
-                                        Data Written
-                                    </Typography>
-                                </Box>
+                                <Statistic label="Data Written" value="16 GB" />
 
                                 <Divider orientation="vertical" />
 
-                                <Box
-                                    style={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            // fontSize: 18,
-                                            fontWeight: 500,
-                                            paddingLeft: 4,
-                                            paddingRight: 4,
-                                        }}
-                                    >
-                                        2.31 K
-                                    </Typography>
-
-                                    <Typography variant="caption">
-                                        Docs Read
-                                    </Typography>
-                                </Box>
+                                <Statistic label="Docs Read" value="2.31 K" />
 
                                 <Divider orientation="vertical" />
 
-                                <Box
-                                    style={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Typography
-                                        style={{
-                                            // fontSize: 18,
-                                            fontWeight: 500,
-                                            paddingLeft: 4,
-                                            paddingRight: 4,
-                                        }}
-                                    >
-                                        1.50 K
-                                    </Typography>
-
-                                    <Typography variant="caption">
-                                        Docs Written
-                                    </Typography>
-                                </Box>
+                                <Statistic
+                                    label="Docs Written"
+                                    value="1.50 K"
+                                />
                             </Stack>
                         </Stack>
                     </Stack>
