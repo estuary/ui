@@ -36,3 +36,6 @@ gha-creds-*.json
 
 # tmp folder for scripts 
 /scripts/tmp
+
+# Going to ignore this file for now. Might end up checking in to prevent folks from having to generate it.
+/supabase_deps/supabase.ts
