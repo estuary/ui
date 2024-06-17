@@ -34,6 +34,6 @@
         "typeRoots": ["src/types", "node_modules/@types"],
         "types": ["vitest", "vite/client", "vitest/globals"]
     },
-    "include": ["src", "deps/flow/flow.d.ts"],
+    "include": ["src", "deps/flow/flow.d.ts", "deps/supabase/types.d.ts"],
     "exclude": ["node_modules", "build", "scripts", "deps/flow/flow-bin"]
 }

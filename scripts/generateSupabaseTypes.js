@@ -14,7 +14,7 @@ if (!flowdir) {
 process.chdir(flowdir.replace('~', process.env.HOME));
 
 // Generate the type file from supabase
-const outputPath = `${process.env.npm_config_local_prefix}/deps/supabase/types.ts`;
+const outputPath = `${process.env.npm_config_local_prefix}/deps/supabase/types.d.ts`;
 exec(
     `npx supabase gen types typescript --project-id "eyrcnmuzzyriypdajwdk" --schema public > ${outputPath}`,
     (error, stdout, stderr) => {
