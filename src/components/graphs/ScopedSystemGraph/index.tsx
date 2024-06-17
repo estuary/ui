@@ -51,9 +51,6 @@ interface Edge extends EdgeDefinition {
     data: { id: string; source: string; target: string };
 }
 
-const popperFactory: PopperFactory = (_ref, _content, _options) =>
-    document.createElement('div');
-
 const getDetailsPageURLPath = (entityType: string): string => {
     if (entityType === 'collection') {
         return authenticatedRoutes.collections.details.overview.fullPath;
@@ -127,6 +124,11 @@ const onClick = (event: cytoscape.EventObject) => {
     console.log('single click', node.data('name'));
 };
 
+const popperFactory: PopperFactory = (_ref, _content, _options) =>
+    document.createElement('div');
+
+cytoscape.use(cytoscapePopper(popperFactory));
+
 function ScopedSystemGraph({
     childNodes,
     currentNode,
@@ -196,8 +198,6 @@ function ScopedSystemGraph({
     useEffect(() => {
         console.log('nodes', nodes);
         console.log('edges', edges);
-
-        cytoscape.use(cytoscapePopper(popperFactory));
 
         const core = cytoscape({
             // The container in which the data visualization will be rendered.
@@ -306,6 +306,7 @@ function ScopedSystemGraph({
         theme.palette.text.primary,
     ]);
 
+    // TODO (scoped system graph): Remove double click interaction as per request.
     const onDoubleClick = useCallback(
         (event: cytoscape.EventObject) => {
             const { cy, target } = event;
