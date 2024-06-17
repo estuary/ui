@@ -12,7 +12,6 @@
         "build": "vite build",
         "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
         "format:fix": "prettier --write '**/*.{js,jsx,ts,tsx}'",
-        "generate-flow-types": "cd flow_deps && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "licenses": "licensee --errors-only",
         "lint": "eslint --ext js,jsx,ts,tsx .",
         "lint-staged": "lint-staged --config .lint-staged.js",
@@ -29,7 +28,9 @@
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
         "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
-        "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty"
+        "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty",
+        "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
+        "generate-supabase-types": "node ./scripts/generateSupabaseTypes"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -169,7 +170,7 @@
         "build",
         "*.json",
         ".vscode",
-        "flow_deps"
+        "deps"
     ],
     "repository": {
         "type": "git",

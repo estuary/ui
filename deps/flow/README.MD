@@ -6,7 +6,9 @@ The types should be used along with the server responses.
 
 ### How do we update the types?
 
-Run `npm run generate-flow-types`, which will download the latest Flow binaries and generate the typescript types into `flow_deps/flow.d.ts`.
+Run `npm run generate-flow-types`, which will download the latest Flow binaries and generate the typescript types into `deps/flow/flow.d.ts`.
+
+Run `npm run generate-supabase-types --flowDir=local/flow/path`, which will generate the latest Supabase types from your local `flow` dir into `deps/supabase/types.ts`
 
 ### How often do we update these files?
 #

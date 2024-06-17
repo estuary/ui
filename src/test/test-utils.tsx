@@ -8,7 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ResourceConfig } from 'stores/Binding/types';
 import { Entity, Schema } from 'types';
 import { mockDeep } from 'vitest-mock-extended';
-import { ConnectorConfig } from '../../flow_deps/flow';
+import { ConnectorConfig } from '../../deps/flow/flow';
 
 export const generateMockUserMetadata = (
     username: string
