@@ -13,6 +13,7 @@ import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import DetailsSection from './DetailsSection';
+import EntityConnectionsGraph from './EntityConnectionGraph';
 
 // TODO (details page)
 // Temporary - allow to pass in the name
@@ -49,6 +50,18 @@ function Overview({ name }: Props) {
                     loading={validatingLiveSpecs}
                 />
             </Grid>
+
+            {latestLiveSpec && entityName ? (
+                <Grid item xs={12}>
+                    <EntityConnectionsGraph
+                        currentNode={{
+                            id: latestLiveSpec.id,
+                            catalog_name: entityName,
+                            spec_type: entityType,
+                        }}
+                    />
+                </Grid>
+            ) : null}
 
             {!isCollection && entityName ? (
                 <Grid item xs={12}>

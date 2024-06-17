@@ -41,12 +41,15 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
                 borderRadius: 3,
             }}
         >
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ mb: 2, alignItems: 'center' }}
+            >
                 {message ? (
                     <Typography
                         sx={{
                             ...cardHeaderSx,
-                            mb: 2,
                             width: '100%',
                         }}
                         component="div"
