@@ -10,6 +10,7 @@ import { FormattedMessage } from 'react-intl';
 import Message from 'components/shared/Error/Message';
 import { BASE_ERROR } from 'services/supabase';
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { isProduction } from 'utils/env-utils';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 
@@ -40,20 +41,29 @@ function Ops() {
             <Stack spacing={2}>
                 <Box>
                     {hydrationError ? (
-                        <AlertBox
-                            severity="error"
-                            title={
-                                <FormattedMessage id="ops.logsTable.hydrationError" />
-                            }
-                            short
-                        >
-                            <Message
-                                error={{
-                                    ...BASE_ERROR,
-                                    message: hydrationError,
-                                }}
-                            />
-                        </AlertBox>
+                        <>
+                            {isProduction ? null : (
+                                <AlertBox severity="warning" short>
+                                    With V2 of Control Plane logs in the UI will
+                                    not work due to an issue with the selector.
+                                </AlertBox>
+                            )}
+
+                            <AlertBox
+                                severity="error"
+                                title={
+                                    <FormattedMessage id="ops.logsTable.hydrationError" />
+                                }
+                                short
+                            >
+                                <Message
+                                    error={{
+                                        ...BASE_ERROR,
+                                        message: hydrationError,
+                                    }}
+                                />
+                            </AlertBox>
+                        </>
                     ) : (
                         <LogsTable />
                     )}
