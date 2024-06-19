@@ -4,9 +4,7 @@ import { supabaseClient } from 'context/Supabase';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
 import { useCallback, useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import useConstant from 'use-constant';
+import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
 
 interface Props {
@@ -24,57 +22,7 @@ const loginSettings = getLoginSettings();
 const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
-    const intl = useIntl();
     const redirectTo = useLoginRedirectPath(redirectToBase);
-
-    const email = {
-        schema: {
-            description: intl.formatMessage({
-                id: 'login.email.description',
-            }),
-            title: intl.formatMessage({
-                id: 'login.email.label',
-            }),
-            minLength: 5,
-            type: 'string',
-        },
-    };
-
-    const token = {
-        schema: {
-            description: intl.formatMessage({
-                id: 'login.token.description',
-            }),
-            title: intl.formatMessage({
-                id: 'login.token.label',
-            }),
-            secret: true,
-            type: 'string',
-        },
-    };
-
-    const verifySchema = {
-        properties: {
-            email: email.schema,
-            token: token.schema,
-        },
-        required: ['email', 'token'],
-        type: 'object',
-    };
-    const verifyUiSchema = useConstant(() =>
-        custom_generateDefaultUISchema(verifySchema)
-    );
-
-    const requestSchema = {
-        properties: {
-            email: email.schema,
-        },
-        required: ['email'],
-        type: 'object',
-    };
-    const requestUiSchema = useConstant(() =>
-        custom_generateDefaultUISchema(requestSchema)
-    );
 
     const redirectPath = useMemo(
         () =>
@@ -84,8 +32,18 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
         [grantToken, redirectTo]
     );
 
-    const magicLinkOnSubmitWithToken = useCallback(
-        (formData: { email: string; token: string }) => {
+    const magicLinkSubmit = useCallback(
+        (formData: { email: string; token?: string }) => {
+            if (!formData.token) {
+                return supabaseClient.auth.signInWithOtp({
+                    email: formData.email,
+                    options: {
+                        emailRedirectTo: redirectPath,
+                        shouldCreateUser: loginSettings.enableEmailRegister,
+                    },
+                });
+            }
+
             return supabaseClient.auth.verifyOtp({
                 email: formData.email,
                 token: formData.token,
@@ -98,34 +56,12 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
         [redirectPath]
     );
 
-    const magicLinkOnSubmitWithoutToken = useCallback(
-        (formData: { email: string }) => {
-            return supabaseClient.auth.signInWithOtp({
-                email: formData.email,
-                options: {
-                    emailRedirectTo: redirectPath,
-                    shouldCreateUser: loginSettings.enableEmailRegister,
-                },
-            });
-        },
-        [redirectPath]
-    );
-
     return (
         <Stack direction="column" spacing={1}>
-            {showTokenValidation ? (
-                <MagicLinkInputs
-                    onSubmit={magicLinkOnSubmitWithToken}
-                    schema={verifySchema}
-                    uiSchema={verifyUiSchema}
-                />
-            ) : (
-                <MagicLinkInputs
-                    onSubmit={magicLinkOnSubmitWithoutToken}
-                    schema={requestSchema}
-                    uiSchema={requestUiSchema}
-                />
-            )}
+            <MagicLinkInputs
+                onSubmit={magicLinkSubmit}
+                showToken={showTokenValidation}
+            />
 
             {hideCodeInput ? null : (
                 <Button
