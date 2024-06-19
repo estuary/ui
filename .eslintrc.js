@@ -4,7 +4,7 @@ module.exports = {
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
     ],
-    ignorePatterns: ['vite.config.ts', '__mocks__'],
+    ignorePatterns: ['vite.config.ts', '__mocks__', 'playwright-tests/'],
     parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
