@@ -1,10 +1,11 @@
 import test, { expect, Page } from '@playwright/test';
-import { startSessionWithUser } from '../helpers/utils';
+import { inituser, startSessionWithUser } from '../helpers/utils';
 import { generateEmail } from './props';
 import { USERS } from '../helpers/users';
 
 test('has basic functionality', async ({ page }) => {
-    await startSessionWithUser(page, USERS.homepage);
+    const uuid = crypto.randomUUID().split('-')[0];
+    await inituser(page, `${USERS.homepage}_${uuid}`);
     await page.goto(`http://localhost:3000/welcome`);
 
     // Make sure the title is right

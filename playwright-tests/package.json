@@ -5,6 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "playwright test",
+        "test-gen": "playwright codegen localhost:3000",
+        "test-report": "playwright show-report ./tmp/reporter/",
         "codegen:setup": "npm run env:setup && NODE_ENV=test npm --prefix ../ start",
         "codegen": "playwright codegen http://localhost:8082/project/default"
     },

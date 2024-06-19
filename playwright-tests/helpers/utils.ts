@@ -51,7 +51,7 @@ export const startSessionWithUser = async (
     page: Page,
     originalName: string
 ) => {
-    const name = `${originalName}_${crypto.randomUUID()}`;
+    const name = `${originalName}`;
     const email = `${name}@example.com`;
     /////////////////////////////////
     // START - AUTH STEPS
