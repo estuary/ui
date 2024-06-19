@@ -18,6 +18,8 @@ Also, you will need playwright browsers installed. This really depends on your s
 
 These should NOT be used for anything like TDD. These are expected more to just make sure "nothing broke" and documenting how things work.
 
+It is probably best to refresh you local before writing/running these. This makes it so the tests do not need to try to manage all the little differences that can creep in on each developer's local.
+
 # How will these be maintained and structured?
 
 No clue right now. This is made to be very ad-hoc and that is how they are right now. It is so easy to write tests with the Code Gen that we might end up not really doing a lot of code reuse here.

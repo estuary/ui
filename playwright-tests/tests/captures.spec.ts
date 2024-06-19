@@ -35,7 +35,7 @@ test('Capture create/edit happy path (Hello World)', async ({ page }) => {
     await page.getByRole('button', { name: 'Next' }).click();
     await expect(
         page.getByRole('button', { name: 'Save and publish' })
-    ).toBeVisible({ timeout: 30000 }); //MAX_DISCOVER_TIME
+    ).toBeVisible({ timeout: 30000 });
 
     // Edit config and see buttons changed
     await page
