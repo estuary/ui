@@ -29,6 +29,14 @@ Every so often we need to reinstall the data plane stuff to update the integrity
 npm run installDataPlane
 ```
 
+### Why don't I see logs locally?
+
+You should get logs with V1 Control Plane. You just need to make sure the Ops Catalog is started.
+
+With the update to V2 Control Plane the logs will no longer work in the UI by default. This is due to how the journal selectors for Logs are currently handled. We ned to know about a "pub id" to add to the selector. Currently there is no consistent way for the UI to fetch this.
+
+To get logs you will need to grab this "pub id" and update the query... details TBD.
+
 # How to start/run?
 
 Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.

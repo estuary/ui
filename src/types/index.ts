@@ -278,6 +278,9 @@ export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     title: string;
     last_pub_id: string;
     updated_at: string;
+
+    // Used ONLY for filtering
+    spec: any;
 }
 
 export interface GatewayAuthTokenResponse {

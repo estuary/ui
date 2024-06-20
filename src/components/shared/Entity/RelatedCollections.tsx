@@ -4,7 +4,7 @@ import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useIntl } from 'react-intl';
 
 interface Props {
-    collections: string[];
+    collections: string[] | null;
 }
 
 function RelatedCollections({ collections }: Props) {
@@ -13,6 +13,10 @@ function RelatedCollections({ collections }: Props) {
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
     );
+
+    if (!collections) {
+        return null;
+    }
 
     const collectionList = collections.map((collection: string) => {
         return {

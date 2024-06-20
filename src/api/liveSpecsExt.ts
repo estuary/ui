@@ -80,6 +80,7 @@ const getLiveSpecs_captures = (
             .select(captureColumns, {
                 count: 'exact',
             })
+            .not('spec', 'is', null)
             .eq('spec_type', 'capture'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
@@ -99,6 +100,7 @@ const getLiveSpecs_materializations = (
             .select(materializationsColumns, {
                 count: 'exact',
             })
+            .not('spec', 'is', null)
             .eq('spec_type', 'materialization'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
