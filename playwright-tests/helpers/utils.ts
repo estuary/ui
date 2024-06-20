@@ -49,13 +49,16 @@ export const getLoginMessage = async (username: string) => {
 
 export const startSessionWithUser = async (
     page: Page,
-    originalName: string
+    originalName: string,
+    skipGoTo?: boolean
 ) => {
     const name = `${originalName}`;
     const email = `${name}@example.com`;
     /////////////////////////////////
     // START - AUTH STEPS
-    await page.goto(`http://localhost:3000/login`);
+    if (!skipGoTo) {
+        await page.goto(`http://localhost:3000/login`);
+    }
 
     // Log in with magic link
     await expect(page.getByText('Sign in to continue')).toBeVisible();

@@ -6,7 +6,6 @@ import { test_base } from '../fixtures/test';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    editExistingCapture,
     openDetailsFromTable,
     saveAndPublish,
     testConfig,
@@ -19,35 +18,33 @@ test_base.describe.serial(
         const userName = `${USERS.captures}_${uuid}`;
         const captureName = `${userName}/${uuid}/source-hello-world`;
 
-        test_base('Create the user', async ({ page }) => {
+        let page: Page;
+        test_base.beforeAll(async ({ browser }) => {
+            page = await browser.newPage();
             await inituser(page, userName);
         });
 
-        test_base(
-            'discover the capture and then publish it',
-            async ({ page }) => {
-                await startSessionWithUser(page, userName);
-                await discover_HelloWorld(page, uuid);
-                await saveAndPublish(page);
-            }
-        );
+        test_base('discover the capture and then publish it', async () => {
+            await discover_HelloWorld(page, uuid);
+            await saveAndPublish(page);
+        });
 
         test_base(
             'published captures can be seen in table and link to details',
-            async ({ page }) => {
-                await startSessionWithUser(page, userName);
+            async () => {
                 await openDetailsFromTable(page, captureName);
             }
         );
 
-        test_base('published capture can be edited', async ({ page }) => {
-            await startSessionWithUser(page, userName);
+        test_base('published capture can be edited', async () => {
             await page.goto(
                 `http://localhost:3000/captures/details/overview?catalogName=${encodeURIComponent(
                     captureName
                 )}`
             );
+
             await page.getByRole('button', { name: 'Edit' }).click();
+
             await editEndpoint_HelloWorld(page, '12');
         });
     }

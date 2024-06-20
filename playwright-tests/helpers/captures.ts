@@ -48,26 +48,32 @@ export const editEndpoint_HelloWorld = async (
 export const testConfig = async (page: Page) => {
     // Test, wait, assert, close
     await page.getByRole('button', { name: 'Test' }).click();
+
     await page
         .getByRole('listitem')
         .locator('div')
         .filter({ hasText: 'Success' });
+
     await page.getByRole('button', { name: 'Close' }).click();
 };
 
 export const saveAndPublish = async (page: Page) => {
     // Save, wait, assert, close, view details
     await page.getByRole('button', { name: 'Save and publish' }).click();
-    await expect(page.getByText('New Capture Created')).toBeVisible();
-    await page.getByRole('button', { name: 'Close' }).click();
+
     await page
         .getByRole('listitem')
         .locator('div')
         .filter({ hasText: 'Success' });
+
+    await page.getByRole('button', { name: 'Close' }).click();
+
+    await expect(page.getByText('Capture Details')).toBeVisible();
 };
 
 export const openDetailsFromTable = async (page: Page, captureName: string) => {
     await page.goto('http://localhost:3000/captures');
+
     await expect(page.getByText('New Capture')).toBeVisible();
 
     await page
