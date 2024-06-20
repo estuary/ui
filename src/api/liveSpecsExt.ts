@@ -80,7 +80,7 @@ const getLiveSpecs_captures = (
         .select(captureColumns, {
             count: 'exact',
         })
-        .filter('spec', 'not.is', null);
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<CaptureQuery>(
         queryBuilder,
@@ -103,7 +103,7 @@ const getLiveSpecs_materializations = (
         .select(materializationsColumns, {
             count: 'exact',
         })
-        .filter('spec', 'not.is', null);
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<MaterializationQuery>(
         queryBuilder,
