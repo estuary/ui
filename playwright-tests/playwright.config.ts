@@ -31,6 +31,9 @@ export default defineConfig({
         trace: 'on',
     },
 
+    // Need to allow more time because our discovers can take 30 seconds
+    timeout: 60000,
+
     /* Configure projects for major browsers */
     projects: [
         {

@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 
-export const discoverHelloWorld = async (page: Page, name: string) => {
+export const discover_HelloWorld = async (page: Page, name: string) => {
     // Go to captures
     await page.goto('http://localhost:3000/captures');
     await expect(
@@ -30,4 +30,50 @@ export const discoverHelloWorld = async (page: Page, name: string) => {
     await expect(
         page.getByRole('button', { name: 'Save and publish' })
     ).toBeVisible({ timeout: 30000 });
+};
+
+export const editEndpoint_HelloWorld = async (
+    page: Page,
+    messageRate: string
+) => {
+    // Edit config and see buttons changed
+    await page.getByRole('button', { name: 'Endpoint Config' }).click();
+    await page.getByLabel('Message Rate *').click();
+    await page.getByLabel('Message Rate *').fill(messageRate);
+    await expect(
+        page.getByRole('button', { name: 'Next', exact: true })
+    ).toBeVisible();
+};
+
+export const testConfig = async (page: Page) => {
+    // Test, wait, assert, close
+    await page.getByRole('button', { name: 'Test' }).click();
+    await page
+        .getByRole('listitem')
+        .locator('div')
+        .filter({ hasText: 'Success' });
+    await page.getByRole('button', { name: 'Close' }).click();
+};
+
+export const saveAndPublish = async (page: Page) => {
+    // Save, wait, assert, close, view details
+    await page.getByRole('button', { name: 'Save and publish' }).click();
+    await expect(page.getByText('New Capture Created')).toBeVisible();
+    await page.getByRole('button', { name: 'Close' }).click();
+    await page
+        .getByRole('listitem')
+        .locator('div')
+        .filter({ hasText: 'Success' });
+};
+
+export const openDetailsFromTable = async (page: Page, captureName: string) => {
+    await page.goto('http://localhost:3000/captures');
+    await expect(page.getByText('New Capture')).toBeVisible();
+
+    await page
+        .getByRole('link', {
+            name: captureName,
+            exact: true,
+        })
+        .click();
 };
