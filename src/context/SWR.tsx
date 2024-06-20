@@ -42,6 +42,11 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                 provider,
                 revalidateIfStale: false,
                 revalidateOnFocus: false,
+
+                // TODO (V2 Perf) the new cache works REALLY well... but we are not ready for that yet. One of
+                //  the main issues is stuff like Live Specs that are updated through publications and not through
+                //  using the mutation calls.
+                revalidateOnMount: true,
             }}
         >
             <SWRConfig
