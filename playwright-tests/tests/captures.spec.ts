@@ -60,7 +60,7 @@ test_base.describe.serial('Captures:', () => {
         ).toBeVisible();
     });
 
-    test_base('editing again can have changes update draft', async () => {
+    test_base('edits can be saved to update draft', async () => {
         await editEndpoint_HelloWorld(page, '123');
         await page.getByRole('button', { name: 'Next', exact: true }).click();
     });
@@ -69,7 +69,7 @@ test_base.describe.serial('Captures:', () => {
         await testConfig(page);
     });
 
-    test_base('drafted changes can be saved', async () => {
+    test_base('drafted changes can be published', async () => {
         await saveAndPublish(page);
     });
 
