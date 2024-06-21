@@ -125,7 +125,8 @@ const getLiveSpecs_collections = (
         .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
         .select(collectionColumns, {
             count: 'exact',
-        });
+        })
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<CollectionQuery>(
         queryBuilder,
