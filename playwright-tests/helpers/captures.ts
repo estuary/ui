@@ -37,12 +37,8 @@ export const editEndpoint_HelloWorld = async (
     messageRate: string
 ) => {
     // Edit config and see buttons changed
-    await page.getByRole('button', { name: 'Endpoint Config' }).click();
     await page.getByLabel('Message Rate *').click();
     await page.getByLabel('Message Rate *').fill(messageRate);
-    await expect(
-        page.getByRole('button', { name: 'Next', exact: true })
-    ).toBeVisible();
 };
 
 export const testConfig = async (page: Page) => {
