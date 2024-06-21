@@ -113,3 +113,16 @@ export const inituser = async (
 
     return [name, email];
 };
+
+export const defaultLocalStorage = async (page: Page) => {
+    await page.context().addInitScript(() => {
+        // Keep the left nav open
+        window.localStorage.setItem(
+            'estuary.navigation-settings',
+            JSON.stringify({ open: true })
+        );
+
+        // Hide the help docs
+        window.localStorage.setItem('estuary.side-panel-docs', 'false');
+    });
+};
