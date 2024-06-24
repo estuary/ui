@@ -77,6 +77,7 @@ export default defineConfig({
         setupFiles: ['./src/setupTests.ts'],
         testTimeout: 10000, // more time for auto retries
         restoreMocks: true,
+        root: './src',
     },
 
     // https://github.com/vitejs/awesome-vite#plugins
