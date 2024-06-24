@@ -1,5 +1,5 @@
 import { expect, Page, request } from '@playwright/test';
-import { generateEmail, inbucketURL } from '../tests/props';
+import { inbucketURL } from '../tests/props';
 
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
