@@ -50,4 +50,15 @@ test_base.describe.serial('Collections:', () => {
         await expect(page.getByRole('code')).toContainText(messageDescription);
         await expect(page.getByRole('code')).toContainText(timeDescription);
     });
+
+    test_base('can materialize from the details page', async () => {
+        await page.getByRole('button', { name: 'Materialize' }).click();
+
+        await page.getByRole('button', { name: 'Docs PostgreSQL' }).click();
+
+        await expect(
+            page.getByRole('button', { name: collectionName })
+        ).toBeVisible();
+        await expect(page.getByLabel('Table *')).toHaveValue('events');
+    });
 });
