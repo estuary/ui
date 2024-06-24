@@ -345,6 +345,7 @@ function EntityTable({
                     <Table
                         size="small"
                         sx={{ minWidth }}
+                        // TODO (tables - aria label) need to make this useful so tests can select tables and help accessibility
                         aria-label={intl.formatMessage({
                             id: 'entityTable.title',
                         })}
