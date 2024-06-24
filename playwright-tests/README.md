@@ -1,12 +1,22 @@
 # WARNING
 
-These tests will create A LOT of random users in Supabase. These are not cleaned up right now. To clean these up you'll need to restart your local Supabase.
+These tests can create A LOT of random users in Supabase. These are not cleaned up right now. To clean these up you'll need to restart your local Supabase db.
+
+## Resetting Supabase
+
+Run the following command in your flow root directory.
+
+```
+supabase db reset --db-url postgresql://postgres:postgres@localhost:5432/postgres
+```
 
 ## Queries to find all users related to tests
 
+```
 SELECT id
 FROM auth.users
 WHERE email ilike 'ui-test\_\_%'
+```
 
 # What do I need to run tests?
 
