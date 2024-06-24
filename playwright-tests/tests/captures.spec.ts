@@ -4,13 +4,13 @@ import { USERS } from '../helpers/users';
 import {
     defaultLocalStorage,
     inituser,
+    openDetailsFromTable,
     startSessionWithUser,
 } from '../helpers/utils';
 import { test_base } from '../fixtures/test';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    openDetailsFromTable,
     saveAndPublish,
     testConfig,
 } from '../helpers/captures';
@@ -33,7 +33,7 @@ test_base.describe.serial('Captures:', () => {
     });
 
     test_base('published can open details', async () => {
-        await openDetailsFromTable(page, captureName);
+        await openDetailsFromTable(page, captureName, 'captures');
     });
 
     test_base('details can open edit', async () => {

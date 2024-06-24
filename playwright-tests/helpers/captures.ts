@@ -18,8 +18,8 @@ export const discover_HelloWorld = async (page: Page, name: string) => {
         .getByRole('button', { name: 'Docs Hello World Capture' })
         .click();
 
-    // Make sure endpoint config has loaded
-    await expect(page.getByLabel('Message Rate *')).toBeVisible();
+    // Wait for things to load
+    await expect(page.getByRole('button', { name: 'Next' })).toBeEnabled();
 
     // Fill out endpoint config
     await page.getByText('Name *').click();
@@ -65,17 +65,4 @@ export const saveAndPublish = async (page: Page) => {
     await page.getByRole('button', { name: 'Close' }).click();
 
     await expect(page.getByText('Capture Details')).toBeVisible();
-};
-
-export const openDetailsFromTable = async (page: Page, captureName: string) => {
-    await page.goto('http://localhost:3000/captures');
-
-    await expect(page.getByText('New Capture')).toBeVisible();
-
-    await page
-        .getByRole('link', {
-            name: captureName,
-            exact: true,
-        })
-        .click();
 };

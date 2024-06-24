@@ -126,3 +126,18 @@ export const defaultLocalStorage = async (page: Page) => {
         window.localStorage.setItem('estuary.side-panel-docs', 'false');
     });
 };
+
+export const openDetailsFromTable = async (
+    page: Page,
+    name: string,
+    entity: 'captures' | 'collections'
+) => {
+    await page.goto(`http://localhost:3000/${entity}`);
+
+    await page
+        .getByRole('link', {
+            name: name,
+            exact: true,
+        })
+        .click();
+};

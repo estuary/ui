@@ -10,12 +10,11 @@ import { test_base } from '../fixtures/test';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    openDetailsFromTable,
     saveAndPublish,
     testConfig,
 } from '../helpers/captures';
 
-test_base.describe.serial.only('Admin:', () => {
+test_base.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.captures}_${uuid}`;
     const captureName = `${userName}/${uuid}/source-hello-world`;
