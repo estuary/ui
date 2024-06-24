@@ -148,5 +148,6 @@ export const defaultPageSetup = async (page: Page, name: string) => {
     await page.route('*js.stripe*', async () => {});
     await page.route('*lr.com', async () => {});
     await defaultLocalStorage(page);
-    return await inituser(page, name);
+    const response = await inituser(page, name);
+    return response;
 };
