@@ -120,6 +120,7 @@ const getLiveSpecs_collections = (
             .select(collectionColumns, {
                 count: 'exact',
             })
+            .not('spec', 'is', null)
             .eq('spec_type', 'collection'),
         ['catalog_name'],
         searchQuery,
