@@ -20,6 +20,8 @@ These should NOT be used for anything like TDD. These are expected more to just 
 
 It is probably best to refresh you local before writing/running these. This makes it so the tests do not need to try to manage all the little differences that can creep in on each developer's local.
 
+Since these are using your real local they also can have issues running all at the same time. This is because your local might not be able to keep up with the demand of running multiple users at the same time. Often, if you want to test something you should mark the suite you want with an `only` and stay focused on one suite at a time.
+
 # How will these be maintained and structured?
 
 No clue right now. This is made to be very ad-hoc and that is how they are right now. It is so easy to write tests with the Code Gen that we might end up not really doing a lot of code reuse here.
