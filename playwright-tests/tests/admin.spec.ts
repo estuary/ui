@@ -1,12 +1,13 @@
-import { expect, Page } from '@playwright/test';
+import { expect, test, Page } from '@playwright/test';
 import { beforeEach } from 'node:test';
 import { USERS } from '../helpers/users';
 import {
     defaultLocalStorage,
+    defaultPageSetup,
+    emailDomain,
     inituser,
     startSessionWithUser,
 } from '../helpers/utils';
-import { test_base } from '../fixtures/test';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
@@ -14,30 +15,29 @@ import {
     testConfig,
 } from '../helpers/captures';
 
-test_base.describe.serial('Admin:', () => {
+test.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.captures}_${uuid}`;
     const captureName = `${userName}/${uuid}/source-hello-world`;
     const tenant = `${userName}/`;
-    const userEmail = `${userName}@example.com`;
+    const userEmail = `${userName}${emailDomain}`;
 
     let page: Page;
-    test_base.beforeAll(async ({ browser }) => {
+    test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultLocalStorage(page);
-        await inituser(page, userName);
+        await defaultPageSetup(page, userName);
         await page.getByLabel('Admin').click();
     });
 
     // TODO (tables - aria label)
     // These need fixed by making the tables have unique selectors.
     //   Should make the aria-label actually useful instead of always "entity table"
-    test_base.describe.skip('Account Access', () => {
-        test_base.beforeAll(async () => {
+    test.describe.skip('Account Access', () => {
+        test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Account Access' }).click();
         });
 
-        test_base('shows user has access to tenant', async () => {
+        test('shows user has access to tenant', async () => {
             await expect(
                 page.getByText('Organization Membership')
             ).toBeVisible();
@@ -52,7 +52,7 @@ test_base.describe.serial('Admin:', () => {
             ).toContainText(tenant);
         });
 
-        test_base('default data sharing with support', async () => {
+        test('default data sharing with support', async () => {
             await expect(page.getByText('Data Sharing')).toBeVisible();
             await expect(
                 page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(2)
@@ -63,11 +63,11 @@ test_base.describe.serial('Admin:', () => {
         });
     });
 
-    test_base.describe('Settings', () => {
-        test_base.beforeAll(async () => {
+    test.describe('Settings', () => {
+        test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Settings' }).click();
         });
-        test_base('shows user has access to tenant', async () => {
+        test('shows user has access to tenant', async () => {
             await expect(
                 page.getByRole('cell', { name: tenant }).first()
             ).toBeVisible();
@@ -79,12 +79,12 @@ test_base.describe.serial('Admin:', () => {
         });
     });
 
-    test_base.describe('Connectors', () => {
-        test_base.beforeAll(async () => {
+    test.describe('Connectors', () => {
+        test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Connectors' }).click();
         });
 
-        test_base('contain the default connectors', async () => {
+        test('contain the default connectors', async () => {
             await expect(
                 page.getByRole('button', { name: 'Docs Hello World Capture' })
             ).toBeVisible();

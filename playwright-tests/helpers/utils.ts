@@ -3,6 +3,8 @@ import { generateEmail, inbucketURL } from '../tests/props';
 
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
+export const emailDomain = '@example.com';
+
 export const getLoginMessage = async (username: string) => {
     const requestContext = await request.newContext();
     const messages = await requestContext
@@ -53,7 +55,7 @@ export const startSessionWithUser = async (
     skipGoTo?: boolean
 ) => {
     const name = `${originalName}`;
-    const email = `${name}@example.com`;
+    const email = `${name}${emailDomain}`;
     /////////////////////////////////
     // START - AUTH STEPS
     if (!skipGoTo) {
@@ -140,4 +142,11 @@ export const openDetailsFromTable = async (
             exact: true,
         })
         .click();
+};
+
+export const defaultPageSetup = async (page: Page, name: string) => {
+    await page.route('*js.stripe*', async () => {});
+    await page.route('*lr.com', async () => {});
+    await defaultLocalStorage(page);
+    return await inituser(page, name);
 };

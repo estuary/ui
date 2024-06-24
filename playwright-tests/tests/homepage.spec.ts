@@ -1,11 +1,17 @@
 import test, { expect, Page } from '@playwright/test';
-import { inituser, startSessionWithUser } from '../helpers/utils';
+import {
+    defaultPageSetup,
+    inituser,
+    startSessionWithUser,
+} from '../helpers/utils';
 import { generateEmail } from './props';
 import { USERS } from '../helpers/users';
 
-test('has basic functionality', async ({ page }) => {
+test('Welcome Page', async ({ page }) => {
     const uuid = crypto.randomUUID().split('-')[0];
-    await inituser(page, `${USERS.homepage}_${uuid}`);
+    const userName = `${USERS.homepage}_${uuid}`;
+    await defaultPageSetup(page, userName);
+
     await page.goto(`http://localhost:3000/welcome`);
 
     // Make sure the title is right
