@@ -14,9 +14,8 @@ import {
     saveAndPublish,
     testConfig,
 } from '../helpers/captures';
+import { messageDescription, timeDescription } from './props';
 
-const messageDescription = 'A human-readable message';
-const timeDescription = 'The time at which this message was generated';
 test.describe.serial('Collections:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.captures}_${uuid}`;

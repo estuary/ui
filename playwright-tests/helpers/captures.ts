@@ -57,6 +57,9 @@ export const saveAndPublish = async (page: Page) => {
     // Save, wait, assert, close, view details
     await page.getByRole('button', { name: 'Save and publish' }).click();
 
+    // Dumb but it works. This was randomly messing up so just adding some buffer
+    await page.waitForTimeout(5000);
+
     await page
         .getByRole('listitem')
         .locator('div')
