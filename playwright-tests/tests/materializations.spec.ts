@@ -7,18 +7,19 @@ import {
     inituser,
     openDetailsFromTable,
     startSessionWithUser,
+    saveAndPublish,
 } from '../helpers/utils';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    saveAndPublish,
     testConfig,
 } from '../helpers/captures';
 import { messageDescription, timeDescription } from './props';
 
-test.describe.serial.only('Materializations:', () => {
+test.describe.serial('Materializations:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.captures}_${uuid}`;
+    const materializationName = `${userName}/${uuid}/materialize-postgres`;
     const collectionName = `${userName}/${uuid}/events`;
 
     let page: Page;
@@ -48,16 +49,22 @@ test.describe.serial.only('Materializations:', () => {
         await page.getByLabel('Address *', { exact: true }).click();
         await page
             .getByLabel('Address *', { exact: true })
-            .fill('172.18.0.20:6543');
+            .fill(process.env.postgres_path);
 
         await page.getByLabel('User *', { exact: true }).click();
-        await page.getByLabel('User *', { exact: true }).fill('testing');
+        await page
+            .getByLabel('User *', { exact: true })
+            .fill(process.env.postgres_user);
 
         await page.getByLabel('Password *', { exact: true }).click();
-        await page.getByLabel('Password *', { exact: true }).fill('testing?');
+        await page
+            .getByLabel('Password *', { exact: true })
+            .fill(process.env.postgres_pass);
 
         await page.getByLabel('Database', { exact: true }).click();
-        await page.getByLabel('Database', { exact: true }).fill('mat_output');
+        await page
+            .getByLabel('Database', { exact: true })
+            .fill(process.env.postgres_db);
     });
 
     test('select a collection for binding', async () => {
@@ -106,5 +113,18 @@ test.describe.serial.only('Materializations:', () => {
         await expect(
             page.getByLabel('Field Selection Editor')
         ).toHaveScreenshot();
+    });
+
+    test('can save and publish', async () => {
+        await saveAndPublish(page);
+        await expect(page.getByText('Materialization Details')).toBeVisible();
+    });
+
+    test('published can open details', async () => {
+        await openDetailsFromTable(
+            page,
+            materializationName,
+            'materializations'
+        );
     });
 });

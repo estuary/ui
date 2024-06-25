@@ -7,11 +7,11 @@ import {
     inituser,
     openDetailsFromTable,
     startSessionWithUser,
+    saveAndPublish,
 } from '../helpers/utils';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    saveAndPublish,
     testConfig,
 } from '../helpers/captures';
 
@@ -29,6 +29,7 @@ test.describe.serial('Captures:', () => {
     test('discover and publish', async () => {
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
+        await expect(page.getByText('Capture Details')).toBeVisible();
     });
 
     test('published can open details', async () => {
@@ -70,6 +71,7 @@ test.describe.serial('Captures:', () => {
 
     test('drafted changes can be published', async () => {
         await saveAndPublish(page);
+        await expect(page.getByText('Capture Details')).toBeVisible();
     });
 
     //     test('saved changes are visible on details spec', async () => {

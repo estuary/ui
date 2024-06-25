@@ -132,7 +132,7 @@ export const defaultLocalStorage = async (page: Page) => {
 export const openDetailsFromTable = async (
     page: Page,
     name: string,
-    entity: 'captures' | 'collections'
+    entity: 'captures' | 'collections' | 'materializations'
 ) => {
     await page.goto(`http://localhost:3000/${entity}`);
 
@@ -150,4 +150,19 @@ export const defaultPageSetup = async (page: Page, name: string) => {
     await defaultLocalStorage(page);
     const response = await inituser(page, name);
     return response;
+};
+
+export const saveAndPublish = async (page: Page) => {
+    // Save, wait, assert, close, view details
+    await page.getByRole('button', { name: 'Save and publish' }).click();
+
+    // Dumb but it works. This was randomly messing up so just adding some buffer
+    await page.waitForTimeout(5000);
+
+    await page
+        .getByRole('listitem')
+        .locator('div')
+        .filter({ hasText: 'Success' });
+
+    await page.getByRole('button', { name: 'Close' }).click();
 };
