@@ -15,9 +15,10 @@ import {
     testConfig,
 } from '../helpers/captures';
 
+const invalidEmail = 'Fake_Invalid_Email';
 test.describe.serial.only('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.captures}_${uuid}`;
+    const userName = `${USERS.admin}_${uuid}`;
     const tenant = `${userName}/`;
     const userEmail = `${userName}${emailDomain}`;
 
@@ -28,43 +29,36 @@ test.describe.serial.only('Admin:', () => {
         await page.getByLabel('Admin').click();
     });
 
-    // TODO (tables - aria label)
-    // These need fixed by making the tables have unique selectors.
-    //   Should make the aria-label actually useful instead of always "entity table"
     test.describe('Account Access', () => {
         test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Account Access' }).click();
         });
 
-        test('shows user has access to tenant', async () => {
-            await expect(
-                page.getByText('Organization Membership')
-            ).toBeVisible();
-            await expect(
-                page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(2)
-            ).toContainText(userName);
-            await expect(
-                page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(3)
-            ).toContainText('admin');
-            await expect(
-                page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(3)
-            ).toContainText(tenant);
+        test('Organization table shows user has admin access', async () => {
+            const table = await page.getByLabel(
+                'Organization Membership Table'
+            );
+            await expect(table).toContainText(userName);
+            await expect(table).toContainText('admin');
+            await expect(table).toContainText(tenant);
         });
 
         test('default data sharing with support', async () => {
-            await expect(page.getByText('Data Sharing')).toBeVisible();
-            await expect(
-                page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(2)
-            ).toContainText(tenant);
-            await expect(
-                page.locator('.MuiTableBody-root .MuiTableRow-root td').nth(3)
-            ).toContainText('estuary_support');
+            const table = await page.getByLabel('Data Sharing Table');
+            await expect(table).toContainText(tenant);
+            await expect(table).toContainText('estuary_support');
         });
     });
 
-    test.describe.only('Settings', () => {
+    test.describe('Settings', () => {
         test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Settings' }).click();
+        });
+
+        test('The tenant will be preselected', async () => {
+            await expect(
+                page.getByLabel('Prefix', { exact: true })
+            ).toHaveValue(tenant);
         });
 
         test.describe('Organization Settings', () => {
@@ -102,31 +96,28 @@ test.describe.serial.only('Admin:', () => {
             });
 
             test('will validate emails', async () => {
-                await page.getByLabel('Email *').fill('invalid');
+                await page.getByLabel('Email *').fill(invalidEmail);
                 await page.getByLabel('Email *').press('Enter');
                 await expect(
                     page.getByText('One or more emails are not')
                 ).toBeVisible();
             });
 
-            test('can be closed', async () => {
-                await page.getByRole('button', { name: 'Cancel' }).click();
+            test('can save invalid emails', async () => {
+                await page.getByRole('button', { name: 'Save' }).click();
+
+                await expect(
+                    page.getByLabel('Organization Notifications Table')
+                ).toContainText(invalidEmail);
             });
         });
 
         test.describe('Cloud Storage', () => {
             test('is defaulted correctly', async () => {
-                await expect(
-                    page.getByLabel('Storage Locations Table')
-                ).toContainText(tenant);
-
-                await expect(
-                    page.getByLabel('Storage Locations Table')
-                ).toContainText('estuary-trial');
-
-                await expect(
-                    page.getByLabel('Storage Locations Table')
-                ).toContainText('collection-data');
+                const table = await page.getByLabel('Storage Locations Table');
+                await expect(table).toContainText(tenant);
+                await expect(table).toContainText('estuary-trial');
+                await expect(table).toContainText('collection-data');
             });
 
             test('can open the storage map configurator dialog', async () => {

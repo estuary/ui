@@ -597,7 +597,9 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
     'accessGrantsTable.users.title': `Organization Membership`,
+    'accessGrantsTable.users.table.aria.label': `Organization Membership Table`,
     'accessGrantsTable.prefixes.title': `Data Sharing`,
+    'accessGrantsTable.prefixes.table.aria.label': `Data Sharing Table`,
     'accessGrantsTable.users.filterLabel': `Filter User or Object`,
     'accessGrantsTable.prefixes.filterLabel': `Filter Prefixes`,
     'accessGrants.message1': `No results found.`,
