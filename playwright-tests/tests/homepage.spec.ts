@@ -4,7 +4,6 @@ import {
     inituser,
     startSessionWithUser,
 } from '../helpers/utils';
-import { generateEmail } from './props';
 import { USERS } from '../helpers/users';
 
 test('Welcome Page', async ({ page }) => {
