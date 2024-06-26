@@ -1197,7 +1197,7 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.scopedSystemGraph.toolbar.zoom.ariaLabel': `Open zoom settings menu`,
     'details.scopedSystemGraph.toolbar.zoom.freeformZoom.label': `Motion to zoom`,
     'details.scopedSystemGraph.toolbar.zoom.manualZoom.label': `Zoom`,
-    'details.scopedSystemGraph.toolbar.search.label': `Search by catalog name`,
+    'details.scopedSystemGraph.toolbar.search.label': `Search entities`,
     'details.scopedSystemGraph.tooltip.usage.header': `Monthly Usage`,
 
     'details.settings.notifications.header': `Notification Settings`,

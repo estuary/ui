@@ -21,6 +21,7 @@ function NodeSearch({ disabled }: Props) {
             filterOptions={(ids, { inputValue }) =>
                 ids
                     .filter((id) => searchOptions[id].includes(inputValue))
+                    .sort()
                     .slice(0, 10)
             }
             getOptionLabel={(id) => searchOptions[id]}
