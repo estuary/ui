@@ -16,7 +16,7 @@ import {
 } from '../helpers/captures';
 
 const invalidEmail = 'Fake_Invalid_Email';
-test.describe.serial.only('Admin:', () => {
+test.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.admin}_${uuid}`;
     const tenant = `${userName}/`;
