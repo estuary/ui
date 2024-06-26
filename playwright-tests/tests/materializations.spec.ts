@@ -18,7 +18,7 @@ import { messageDescription, timeDescription } from './props';
 
 test.describe.serial('Materializations:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.captures}_${uuid}`;
+    const userName = `${USERS.materializations}_${uuid}`;
     const materializationName = `${userName}/${uuid}/materialize-postgres`;
     const collectionName = `${userName}/${uuid}/events`;
 

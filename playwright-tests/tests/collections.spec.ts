@@ -18,7 +18,7 @@ import { messageDescription, timeDescription } from './props';
 
 test.describe.serial('Collections:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.captures}_${uuid}`;
+    const userName = `${USERS.collections}_${uuid}`;
     const collectionName = `${userName}/${uuid}/events`;
 
     let page: Page;
