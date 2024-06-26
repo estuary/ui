@@ -16,6 +16,7 @@ import {
 } from '../helpers/captures';
 
 const invalidEmail = 'Fake_Invalid_Email';
+const testTokens = ['test token 1', 'test token 2', 'test token 3'];
 test.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.admin}_${uuid}`;
@@ -221,6 +222,70 @@ test.describe.serial('Admin:', () => {
             await expect(
                 page.getByRole('link', { name: 'New Connector To request a' })
             ).toBeVisible();
+        });
+    });
+
+    test.describe('Cli-API', () => {
+        test.beforeAll(async () => {
+            await page.getByRole('tab', { name: 'CLI-API' }).click();
+        });
+
+        test('The token table should be empty', async () => {
+            await expect(page.getByLabel('Entity Table')).toContainText(
+                'No refresh tokens found.'
+            );
+        });
+
+        test('can open generate token dialog', async () => {
+            await page.getByRole('button', { name: 'Generate Token' }).click();
+            await expect(
+                page.getByRole('heading', { name: 'Generate Refresh Token' })
+            ).toBeVisible();
+        });
+
+        test('can create a new token', async () => {
+            await page.getByLabel('Description *').click();
+            await page.getByLabel('Description *').fill(testTokens[0]);
+            await page.getByRole('button', { name: 'Generate Token' }).click();
+            await expect(
+                page.getByText('Make sure to copy your')
+            ).toBeVisible();
+        });
+
+        test('can create two more tokens', async () => {
+            await page.getByLabel('Description *').click();
+            await page.getByLabel('Description *').fill(testTokens[1]);
+            await page.getByRole('button', { name: 'Generate Token' }).click();
+            await page.getByLabel('Description *').click();
+            await page.getByLabel('Description *').fill(testTokens[2]);
+            await page.getByRole('button', { name: 'Generate Token' }).click();
+        });
+
+        test('can close the dialog', async () => {
+            await page.getByRole('button', { name: 'Close' }).click();
+            await expect(
+                page.getByLabel('Generate Refresh Token')
+            ).not.toBeVisible();
+        });
+
+        test.describe('can remove all tokens', async () => {
+            testTokens.forEach(async (testToken) => {
+                test(`${testToken} removed`, async () => {
+                    await page
+                        .getByRole('row', { name: testToken })
+                        .getByRole('cell', { name: 'Revoke' })
+                        .click();
+                    await expect(
+                        page.getByLabel('Entity Table')
+                    ).not.toContainText(testToken);
+                });
+            });
+        });
+
+        test('after all removed table should be empty', async () => {
+            await expect(
+                page.getByLabel('Generate Refresh Token')
+            ).not.toBeVisible();
         });
     });
 });
