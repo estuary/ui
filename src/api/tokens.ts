@@ -11,15 +11,14 @@ import {
     handleSuccess,
     supabaseRetry,
 } from 'services/supabase';
+import { RefreshTokenData } from 'types';
 
 const createRefreshToken = async (
     multi_use: boolean,
     valid_for: string,
     detail?: string
 ) => {
-    return supabaseRetry<
-        PostgrestSingleResponse<{ id: string; secret: string }>
-    >(
+    return supabaseRetry<PostgrestSingleResponse<RefreshTokenData>>(
         () =>
             supabaseClient
                 .rpc(RPCS.CREATE_REFRESH_TOKEN, {

@@ -438,3 +438,8 @@ export interface UserDetails {
     emailVerified: boolean;
     avatar: string;
 }
+
+export interface RefreshTokenData {
+    id: string;
+    secret: string;
+}
