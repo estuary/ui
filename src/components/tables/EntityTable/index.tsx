@@ -75,6 +75,9 @@ interface Props {
     showToolbar?: boolean;
     toolbar?: ReactNode;
     ExportComponent?: any;
+
+    // This is a HACK
+    tableAriaLabelKey?: string;
 }
 
 // WARNING - You MUST include a count with your query or else pagination breaks
@@ -105,6 +108,7 @@ function EntityTable({
     keepSelectionOnFilterOrSearch,
     keepSelectionOnPagination,
     ExportComponent,
+    tableAriaLabelKey,
 }: Props) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
@@ -347,7 +351,7 @@ function EntityTable({
                         sx={{ minWidth }}
                         // TODO (tables - aria label) need to make this useful so tests can select tables and help accessibility
                         aria-label={intl.formatMessage({
-                            id: 'entityTable.title',
+                            id: tableAriaLabelKey ?? 'entityTable.title',
                         })}
                     >
                         <EntityTableHeader

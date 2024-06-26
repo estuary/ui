@@ -571,6 +571,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
+    'admin.alerts.table.aria.label': `Organization Notifications Table`,
     'admin.alerts.cta.addAlertMethod': `Configure Notifications`,
     'admin.alerts.dialog.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
     'admin.alerts.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
@@ -619,6 +620,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
 const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.header': `Cloud Storage`,
     'storageMappingsTable.title': `Storage Locations`,
+    'storageMappingsTable.table.aria.label': `Storage Locations Table`,
     'storageMappingsTable.filterLabel': `Filter by Prefix`,
     'storageMappingsTable.message1': `No results found.`,
     'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,

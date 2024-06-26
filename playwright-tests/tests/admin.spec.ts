@@ -7,18 +7,17 @@ import {
     emailDomain,
     inituser,
     startSessionWithUser,
+    saveAndPublish,
 } from '../helpers/utils';
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
-    saveAndPublish,
     testConfig,
 } from '../helpers/captures';
 
-test.describe.serial('Admin:', () => {
+test.describe.serial.only('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.captures}_${uuid}`;
-    const captureName = `${userName}/${uuid}/source-hello-world`;
     const tenant = `${userName}/`;
     const userEmail = `${userName}${emailDomain}`;
 
@@ -32,7 +31,7 @@ test.describe.serial('Admin:', () => {
     // TODO (tables - aria label)
     // These need fixed by making the tables have unique selectors.
     //   Should make the aria-label actually useful instead of always "entity table"
-    test.describe.skip('Account Access', () => {
+    test.describe('Account Access', () => {
         test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Account Access' }).click();
         });
@@ -63,19 +62,149 @@ test.describe.serial('Admin:', () => {
         });
     });
 
-    test.describe('Settings', () => {
+    test.describe.only('Settings', () => {
         test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Settings' }).click();
         });
-        test('shows user has access to tenant', async () => {
-            await expect(
-                page.getByRole('cell', { name: tenant }).first()
-            ).toBeVisible();
-            await page
-                .getByRole('cell', { name: userEmail })
-                .getByRole('list')
-                .click();
-            await page.getByRole('cell', { name: 'collection-data/' }).click();
+
+        test.describe('Organization Settings', () => {
+            test('are defaulted correctly', async () => {
+                await expect(
+                    page.getByLabel('Organization Notifications Table')
+                ).toContainText(tenant);
+
+                await expect(
+                    page.getByLabel('Organization Notifications Table')
+                ).toContainText(userEmail);
+            });
+
+            test('can open the notification configurator dialog', async () => {
+                await page
+                    .getByRole('button', { name: 'Configure Notifications' })
+                    .click();
+                await expect(
+                    page.getByText(
+                        `Choose where you'd like notifications to be sent`
+                    )
+                ).toBeVisible();
+            });
+
+            test('will have current settings loaded', async () => {
+                await expect(
+                    page
+                        .getByLabel('Configure Notification Methods')
+                        .getByText(tenant)
+                ).toBeVisible();
+
+                await expect(
+                    page.getByRole('button', { name: userEmail })
+                ).toBeVisible();
+            });
+
+            test('will validate emails', async () => {
+                await page.getByLabel('Email *').fill('invalid');
+                await page.getByLabel('Email *').press('Enter');
+                await expect(
+                    page.getByText('One or more emails are not')
+                ).toBeVisible();
+            });
+
+            test('can be closed', async () => {
+                await page.getByRole('button', { name: 'Cancel' }).click();
+            });
+        });
+
+        test.describe('Cloud Storage', () => {
+            test('is defaulted correctly', async () => {
+                await expect(
+                    page.getByLabel('Storage Locations Table')
+                ).toContainText(tenant);
+
+                await expect(
+                    page.getByLabel('Storage Locations Table')
+                ).toContainText('estuary-trial');
+
+                await expect(
+                    page.getByLabel('Storage Locations Table')
+                ).toContainText('collection-data');
+            });
+
+            test('can open the storage map configurator dialog', async () => {
+                await page
+                    .getByRole('button', { name: 'Configure Storage' })
+                    .click();
+                await expect(
+                    page.getByText(`Choose where you\'d like ${tenant}`)
+                ).toBeVisible();
+            });
+
+            test('can choose Amazon', async () => {
+                await page.getByLabel('Provider').click();
+                await page
+                    .getByRole('option', {
+                        name: 'Amazon Simple Storage Service',
+                    })
+                    .click();
+                await expect(page.getByLabel('Bucket *')).toBeVisible();
+                await expect(page.getByLabel('Region')).toBeVisible();
+                await expect(
+                    page.getByRole('textbox', { name: 'Prefix' })
+                ).toBeVisible();
+            });
+
+            test('can choose Google', async () => {
+                await page.getByLabel('Provider').click();
+                await page
+                    .getByRole('option', { name: 'Google Cloud Storage' })
+                    .click();
+                await expect(page.getByLabel('Bucket *')).toBeVisible();
+                await expect(
+                    page.getByRole('textbox', { name: 'Prefix' })
+                ).toBeVisible();
+            });
+
+            test('will have inputs validated', async () => {
+                // Test validation
+                await page.getByLabel('Bucket *').click();
+                await page.getByLabel('Bucket *').fill('invalid-bucket!!!!');
+                await expect(
+                    page.getByText('must match pattern')
+                ).toBeVisible();
+
+                // enter valid value
+                await page.getByLabel('Bucket *').click();
+                await page.getByLabel('Bucket *').fill(`fake-bucket-${uuid}`);
+
+                // test validation
+                await page.getByRole('textbox', { name: 'Prefix' }).click();
+                await page
+                    .getByRole('textbox', { name: 'Prefix' })
+                    .fill('fakePrefix');
+                await expect(
+                    page.getByText('must match pattern')
+                ).toBeVisible();
+
+                // enter valid value
+                await page.getByRole('textbox', { name: 'Prefix' }).click();
+                await page
+                    .getByRole('textbox', { name: 'Prefix' })
+                    .fill('fakePrefix/');
+            });
+
+            test('will ensure bucket is real during backend validation', async () => {
+                await page.getByRole('button', { name: 'Save' }).click();
+
+                await expect(
+                    page.getByRole('button', { name: 'Save' })
+                ).toBeEnabled();
+                await expect(page.getByRole('alert')).toContainText(
+                    'failed to put object'
+                );
+            });
+
+            test('can be closed', async () => {
+                await page.getByRole('button', { name: 'Cancel' }).click();
+            });
         });
     });
 
