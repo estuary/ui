@@ -1,5 +1,3 @@
-// {"multi_use": true, "valid_for": "10 days"}
-
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/Supabase';
 import {
