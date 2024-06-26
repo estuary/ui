@@ -3,32 +3,29 @@ import {
     AutocompleteRenderInputParams,
     TextField,
 } from '@mui/material';
-import { SyntheticEvent } from 'react';
+import useNodeSearch from 'components/graphs/ScopedSystemGraph/useNodeSearch';
 import { useIntl } from 'react-intl';
 
 interface Props {
-    onSelectOption: (
-        event: SyntheticEvent<Element, Event>,
-        value: string | null
-    ) => void;
-    options: { [id: string]: string };
     disabled?: boolean;
 }
 
-function NodeSearch({ disabled, onSelectOption, options }: Props) {
+function NodeSearch({ disabled }: Props) {
     const intl = useIntl();
+
+    const { onSelectOption, searchOptions } = useNodeSearch();
 
     return (
         <Autocomplete
             disabled={disabled}
             filterOptions={(ids, { inputValue }) =>
                 ids
-                    .filter((id) => options[id].includes(inputValue))
+                    .filter((id) => searchOptions[id].includes(inputValue))
                     .slice(0, 10)
             }
-            getOptionLabel={(id) => options[id]}
+            getOptionLabel={(id) => searchOptions[id]}
             onChange={onSelectOption}
-            options={Object.keys(options)}
+            options={Object.keys(searchOptions)}
             renderInput={({
                 InputProps,
                 ...params

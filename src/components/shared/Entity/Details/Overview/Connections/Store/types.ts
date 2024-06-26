@@ -1,13 +1,21 @@
+import { EntityNode } from 'api/liveSpecFlows';
 import { NodeData } from 'components/graphs/ScopedSystemGraph';
-import { Core } from 'cytoscape';
+import { CSSProperties } from 'react';
+import { Edge, Node, NodeChange } from 'reactflow';
 
 export interface ScopedSystemGraphState {
-    minZoom: number;
-    maxZoom: number;
-    zoom: number;
-    setZoom: (
-        cyCore: Core | null,
-        value?: ScopedSystemGraphState['zoom']
+    nodes: Node[];
+    setNode: (value: Node[]) => void;
+    setNodeStyle: (value?: CSSProperties) => void;
+    onNodeChange: (value: NodeChange[]) => void;
+
+    edges: Edge[];
+    setEdge: (value: Edge | Edge[]) => void;
+
+    initGraphElements: (
+        childNodes: EntityNode[],
+        currentNode: EntityNode,
+        parentNodes: EntityNode[]
     ) => void;
 
     // TODO (scoped system graph): Rename this portion of state to be something more specific to hover/drag.
@@ -17,11 +25,5 @@ export interface ScopedSystemGraphState {
     searchedNodeId: string | null;
     setSearchedNodeId: (
         value: ScopedSystemGraphState['searchedNodeId']
-    ) => void;
-
-    userZoomingEnabled: boolean;
-    setUserZoomingEnabled: (
-        cyCore: Core | null,
-        value: ScopedSystemGraphState['userZoomingEnabled']
     ) => void;
 }

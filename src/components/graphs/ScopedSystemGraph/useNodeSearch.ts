@@ -1,49 +1,66 @@
-import { Node } from 'components/graphs/ScopedSystemGraph';
 import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
-import { Core } from 'cytoscape';
-import { SyntheticEvent, useCallback, useMemo } from 'react';
+import { eChartsColors } from 'context/Theme';
+import { CSSProperties, SyntheticEvent, useCallback, useMemo } from 'react';
+import { useReactFlow } from 'reactflow';
 
 export interface Options {
     [id: string]: string;
 }
 
-function useNodeSearch(cyCore: Core | null, nodes: Node[]) {
+function useNodeSearch() {
+    const { setCenter } = useReactFlow();
+
+    const nodes = useScopedSystemGraph((state) => state.nodes);
+
     const searchOptions = useMemo(() => {
         const options: Options = {};
 
-        nodes.forEach(({ data: { id, name } }) => {
-            options[id] = name;
+        nodes.forEach(({ id, data: { label } }) => {
+            options[id] = label;
         });
 
         return options;
     }, [nodes]);
 
-    const searchedNodeId = useScopedSystemGraph(
-        (state) => state.searchedNodeId
-    );
     const setSearchedNodeId = useScopedSystemGraph(
         (state) => state.setSearchedNodeId
     );
+    const setNodeStyle = useScopedSystemGraph((state) => state.setNodeStyle);
 
     const onSelectOption = useCallback(
         (event: SyntheticEvent<Element, Event>, value: string | null) => {
             event.preventDefault();
             event.stopPropagation();
 
+            let nodeStyle: CSSProperties | undefined;
+
             if (value) {
-                const node = cyCore?.$id(value);
+                const selectedNode = nodes
+                    .filter((node) => node.id === value)
+                    .at(0);
 
-                node?.addClass('highlight');
-                cyCore?.center(node);
-            } else if (searchedNodeId && !value) {
-                const node = cyCore?.$id(searchedNodeId);
+                if (selectedNode) {
+                    const x =
+                        selectedNode.position.x + (selectedNode.width ?? 0) / 2;
 
-                node?.removeClass('highlight');
+                    const y =
+                        selectedNode.position.y +
+                        (selectedNode.height ?? 0) / 2;
+
+                    const zoom = 1.85;
+
+                    setCenter(x, y, { zoom, duration: 1000 });
+                    nodeStyle = {
+                        borderColor: eChartsColors.medium[0],
+                        boxShadow: `0 0 0 0.5px ${eChartsColors.medium[0]}`,
+                    };
+                }
             }
 
             setSearchedNodeId(value);
+            setNodeStyle(nodeStyle);
         },
-        [cyCore, searchedNodeId, setSearchedNodeId]
+        [nodes, setCenter, setNodeStyle, setSearchedNodeId]
     );
 
     return { onSelectOption, searchOptions };

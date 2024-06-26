@@ -95,6 +95,7 @@
         "react-use": "^17.4.0",
         "react-virtualized-auto-sizer": "^1.0.20",
         "react-window": "^1.8.9",
+        "reactflow": "^11.11.3",
         "readable-numbers": "^1.0.7",
         "retry": "^0.13.1",
         "safe-stable-stringify": "^2.4.3",

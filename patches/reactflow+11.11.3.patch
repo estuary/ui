@@ -1,0 +1,17 @@
+diff --git a/node_modules/reactflow/dist/style.css b/node_modules/reactflow/dist/style.css
+index 3b53bb2..8ebb43a 100644
+--- a/node_modules/reactflow/dist/style.css
++++ b/node_modules/reactflow/dist/style.css
+@@ -133,10 +133,10 @@
+   min-width: 5px;
+   min-height: 5px;
+   width: 6px;
+-  height: 6px;
++  height: 10px;
+   background: #1a192b;
+   border: 1px solid white;
+-  border-radius: 100%;
++  border-radius: 2px;
+ }
+ .react-flow__handle.connectionindicator {
+     pointer-events: all;
