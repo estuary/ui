@@ -96,15 +96,30 @@ test.describe.serial('Admin:', () => {
                 ).toBeVisible();
             });
 
-            test('will validate emails', async () => {
-                await page.getByLabel('Email *').fill(invalidEmail);
-                await page.getByLabel('Email *').press('Enter');
+            test('will validate emails after hitting enter or ,', async () => {
+                const emailInput = await page.getByLabel('Email *');
+                // Enter invalid email and hit enter
+                await emailInput.fill(invalidEmail);
+                await emailInput.press('Enter');
+                await expect(
+                    page.getByText('One or more emails are not')
+                ).toBeVisible();
+
+                // Remove invalid email
+                await emailInput.press('Backspace');
+                await expect(
+                    page.getByText('One or more emails are not')
+                ).not.toBeVisible();
+
+                // add back in invalid with comma
+                await emailInput.fill(`${invalidEmail},`);
+                await emailInput.press('Enter');
                 await expect(
                     page.getByText('One or more emails are not')
                 ).toBeVisible();
             });
 
-            test('can save invalid emails', async () => {
+            test('the errors displaying are non blocking and will save', async () => {
                 await page.getByRole('button', { name: 'Save' }).click();
 
                 await expect(
