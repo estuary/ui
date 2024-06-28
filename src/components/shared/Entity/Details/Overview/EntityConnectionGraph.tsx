@@ -27,6 +27,8 @@ function EntityConnectionsGraph({ currentNode }: Props) {
         (state) => state.initGraphElements
     );
 
+    const resetState = useScopedSystemGraph((state) => state.resetState);
+
     useEffect(() => {
         getConnectedEntities(currentNode.id).then(
             (response) => {
@@ -49,7 +51,11 @@ function EntityConnectionsGraph({ currentNode }: Props) {
             },
             () => {}
         );
-    }, [currentNode, initGraphElements]);
+
+        return () => {
+            resetState();
+        };
+    }, [currentNode, initGraphElements, resetState]);
 
     return (
         <ReactFlowProvider>

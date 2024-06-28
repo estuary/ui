@@ -187,6 +187,10 @@ const getInitialState = (
         );
     },
 
+    resetState: () => {
+        set(getInitialStateData(), false, 'State reset');
+    },
+
     setCurrentNode: (value) => {
         set(
             produce((state: ScopedSystemGraphState) => {

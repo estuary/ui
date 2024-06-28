@@ -26,4 +26,6 @@ export interface ScopedSystemGraphState {
     setSearchedNodeId: (
         value: ScopedSystemGraphState['searchedNodeId']
     ) => void;
+
+    resetState: () => void;
 }
