@@ -1,12 +1,20 @@
+import ShardsDisable from 'components/editor/shards/Disable';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
+import { BooleanParam, useQueryParam } from 'use-query-params';
 
 function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
+    const [forcedToEnable] = useQueryParam(
+        GlobalSearchParams.FORCED_TO_ENABLE,
+        BooleanParam
+    );
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
     const detailsFormHasErrors = useDetailsFormStore(
@@ -14,19 +22,26 @@ function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
     );
     const draftId = useEditorStore_id();
 
-    const forceClose = !detailsFormHasErrors && draftId !== null;
+    const forceOpen = Boolean(forcedToEnable);
 
     return (
         <WrapperWithHeader
-            forceClose={forceClose}
+            forceClose={
+                forceOpen
+                    ? undefined
+                    : !detailsFormHasErrors && draftId !== null
+            }
+            forceOpen={forceOpen}
             header={<DetailsFormHeader messagePrefix={messagePrefix} />}
-            readOnly={readOnly}
+            readOnly={Boolean(!forcedToEnable && readOnly)}
         >
             <DetailsFormForm
                 connectorTags={connectorTags}
                 entityType={entityType}
                 readOnly={readOnly}
             />
+
+            {draftId ? <ShardsDisable renderOpen={forceOpen} /> : null}
         </WrapperWithHeader>
     );
 }

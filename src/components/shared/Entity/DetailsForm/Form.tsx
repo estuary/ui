@@ -231,12 +231,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     return (
         <>
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id={`${messagePrefix}.instructions`} />
-            </Typography>
-
             {readOnly ? (
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 2, maxWidth: 'fit-content' }}>
                     <AlertBox short severity="info">
                         {intl.formatMessage({
                             id: 'entityEdit.alert.detailsFormDisabled',
@@ -244,6 +240,10 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                     </AlertBox>
                 </Box>
             ) : null}
+
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage id={`${messagePrefix}.instructions`} />
+            </Typography>
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (

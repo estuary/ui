@@ -126,7 +126,11 @@ function useGenerateCatalog() {
     );
 
     return useCallback(
-        async (mutateDraftSpecs: Function) => {
+        async (
+            mutateDraftSpecs: Function,
+            toggleDisable?: boolean,
+            skipStoreUpdates?: boolean
+        ) => {
             updateFormStatus(FormStatus.GENERATING);
 
             if (
@@ -143,18 +147,6 @@ function useGenerateCatalog() {
                 return Promise.reject(null);
             } else {
                 resetEditorState(true);
-
-                const encryptedEndpointConfig = await encryptEndpointConfig(
-                    serverUpdateRequired
-                        ? endpointConfigData
-                        : serverEndpointConfigData,
-                    endpointSchema,
-                    serverUpdateRequired,
-                    imageConnectorId,
-                    imageConnectorTagId,
-                    callFailed,
-                    { overrideJsonFormDefaults: true }
-                );
 
                 let evaluatedDraftId = persistedDraftId;
                 let existingTaskData: DraftSpecsExtQuery_ByCatalogName | null =
@@ -207,16 +199,38 @@ function useGenerateCatalog() {
                     evaluatedDraftId = draftsResponse.data[0].id;
                 }
 
-                // Generate the draft spec that will be sent to the server next
-                const draftSpec = generateTaskSpec(
-                    ENTITY_TYPE,
-                    { image: imagePath, config: encryptedEndpointConfig.data },
-                    resourceConfigs,
-                    resourceConfigServerUpdateRequired,
-                    bindings,
-                    existingTaskData,
-                    { fullSource: fullSourceConfigs, sourceCapture }
-                );
+                let draftSpec;
+                if (toggleDisable && existingTaskData) {
+                    // Want to toggle the value to the opposite
+                    existingTaskData.spec.shards.disable =
+                        !existingTaskData.spec.shards.disable;
+                    draftSpec = existingTaskData.spec;
+                } else {
+                    const encryptedEndpointConfig = await encryptEndpointConfig(
+                        serverUpdateRequired
+                            ? endpointConfigData
+                            : serverEndpointConfigData,
+                        endpointSchema,
+                        serverUpdateRequired,
+                        imageConnectorId,
+                        imageConnectorTagId,
+                        callFailed,
+                        { overrideJsonFormDefaults: true }
+                    );
+
+                    draftSpec = generateTaskSpec(
+                        ENTITY_TYPE,
+                        {
+                            image: imagePath,
+                            config: encryptedEndpointConfig.data,
+                        },
+                        resourceConfigs,
+                        resourceConfigServerUpdateRequired,
+                        bindings,
+                        existingTaskData,
+                        { fullSource: fullSourceConfigs, sourceCapture }
+                    );
+                }
 
                 // If there is a draft already with task data then update. We do not match on
                 //   the catalog name as the user could change the name. There is a small issue
@@ -250,6 +264,10 @@ function useGenerateCatalog() {
                     return Promise.reject(null);
                 }
 
+                if (skipStoreUpdates) {
+                    return Promise.resolve(evaluatedDraftId);
+                }
+
                 // This needs to be called before mutate is called so that the
                 //  useServerUpdateRequireMonitor hook is not called more than
                 //  it needs to be. This is important because once the mutate is called
@@ -262,7 +280,7 @@ function useGenerateCatalog() {
                 );
 
                 // Mutate the draft first so that we are not running
-                //  update _after_ the form is showing as "done" wit hthe update
+                //  update _after_ the form is showing as "done"
                 await mutateDraftSpecs();
 
                 // Update all the store state

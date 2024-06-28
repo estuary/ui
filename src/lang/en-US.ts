@@ -1088,6 +1088,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
+
+    'workflows.advancedSettings.title': `Advanced Options`,
+    'workflows.disable.autoEnabledAlert.title': `We have auto enabled this {entityType}`,
+    'workflows.disable.autoEnabledAlert.message': `To keep this {entityType} disabled you will need to disable before ${CTAs['cta.saveEntity']}`,
+    'workflows.disable.title': `Enable {entityType}`,
+    'workflows.disable.message': `Use to toggle the processing of your {entityType}. Takes effect after publishing.`,
+    'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 };
 
 const ShardStatus: ResolvedIntlConfig['messages'] = {
