@@ -17,6 +17,7 @@ function ShardsDisableForm() {
     const { enqueueSnackbar } = useSnackbar();
     const { shardDisabled, updateDisable } = useShards();
 
+    const [updating, setUpdating] = useState(false);
     const [localState, setLocalState] = useState(shardDisabled);
 
     const formActive = useFormStateStore_isActive();
@@ -43,6 +44,9 @@ function ShardsDisableForm() {
                         ),
                         { ...snackbarSettings, variant: 'error' }
                     );
+                })
+                .finally(() => {
+                    setUpdating(false);
                 });
         },
         [enqueueSnackbar, entityType, intl, updateDisable]
@@ -52,11 +56,9 @@ function ShardsDisableForm() {
         <OutlinedToggleButton
             value={value}
             selected={!localState}
-            disabled={formActive}
-            onClick={(event, checked: string) => {
-                event.preventDefault();
-                event.stopPropagation();
-
+            disabled={formActive || updating}
+            onClick={(_, checked: string) => {
+                setUpdating(true);
                 update(checked === 'true');
             }}
         >
