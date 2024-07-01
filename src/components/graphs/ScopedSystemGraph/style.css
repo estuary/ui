@@ -1,0 +1,6 @@
+.highlight-node {
+    border-color: #5353cc;
+    .react-flow__node.selected {
+        box-shadow: 0 0 0 0.5px #5353cc;
+    }
+}
