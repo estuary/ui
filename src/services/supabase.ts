@@ -35,8 +35,7 @@ export const ERROR_MESSAGES = {
 export const tokenHasIssues = (errorMessage?: string) => {
     return (
         errorMessage &&
-        (errorMessage.startsWith('JWSError ') ||
-            errorMessage === ERROR_MESSAGES.jwtExpired ||
+        (errorMessage === ERROR_MESSAGES.jwtExpired ||
             errorMessage.includes(ERROR_MESSAGES.jwsInvalid) ||
             errorMessage.includes(ERROR_MESSAGES.jwtInvalid) ||
             errorMessage.includes(ERROR_MESSAGES.refreshInvalid))

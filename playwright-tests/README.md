@@ -20,9 +20,9 @@ WHERE email ilike 'ui-test\_\_%'
 
 # What do I need to run tests?
 
-You need a full working flow locally. This means you need to start up flow, supabase, and the UI project first. This is using your ACTUAL local. This means it will be impacted by your local.
+You need a full working [flow locally](https://github.com/estuary/flow/tree/master/local). This means you need to start up flow, supabase, and the UI project first. This is using your ACTUAL local. Only write tests that set themselves up within the test (until have a test environment) otherwise they won't work on anyone else's system.
 
-Also, you will need playwright browsers installed. This really depends on your system so you'l lneed to review their install docs.
+Also, you will need playwright browsers installed. This really depends on your system so you'll need to review their install docs.
 
 # How should I approach writing/running tests?
 

@@ -285,7 +285,8 @@ const getStatsForDetails = (
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
 //   This function is temporarily unused since the billing history table component is using filtered data
 //   returned by the billing_report RPC to populate the contents of its rows.
-// PostgrestFilterBuilder<CatalogStats_Billing>
+
+// SBV2-typing (PostgrestFilterBuilder<CatalogStats_Billing>)
 const getStatsForBillingHistoryTable = (
     tenants: string[],
     // pagination: any,
@@ -327,8 +328,6 @@ const getStatsForBillingHistoryTable = (
         searchQuery,
         sorting
     );
-
-    // return queryBuilder.returns<CatalogStats_Billing[]>();
 };
 
 export {

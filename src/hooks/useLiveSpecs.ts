@@ -45,7 +45,7 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
     };
 }
 
-const LiveSpecsDetailsQuery = `
+const LIVE_SPECS_DETAILS_QUERY = `
                 updated_at,
                 created_at,
                 connectorName:connector_title->>en-US::text,
@@ -58,7 +58,7 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
     const { data, error, isValidating } = useQuery<LiveSpecsQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select(LiveSpecsDetailsQuery)
+            .select(LIVE_SPECS_DETAILS_QUERY)
             .eq('catalog_name', catalogName)
             .eq('spec_type', specType)
             .order('updated_at', {

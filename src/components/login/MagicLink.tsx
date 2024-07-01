@@ -32,7 +32,7 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
         [grantToken, redirectTo]
     );
 
-    const magicLinkSubmit = useCallback(
+    const onSubmit = useCallback(
         (formData: { email: string; token?: string }) => {
             if (!formData.token) {
                 return supabaseClient.auth.signInWithOtp({
@@ -59,7 +59,7 @@ const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
     return (
         <Stack direction="column" spacing={1}>
             <MagicLinkInputs
-                onSubmit={magicLinkSubmit}
+                onSubmit={onSubmit}
                 showToken={showTokenValidation}
             />
 
