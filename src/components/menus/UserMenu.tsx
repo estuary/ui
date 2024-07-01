@@ -32,14 +32,15 @@ const UserMenu = ({ iconColor }: Props) => {
     };
 
     if (userDetails) {
+        const { avatar, email, emailVerified, userName } = userDetails;
         return (
             <IconMenu
                 ariaLabel={intl.formatMessage({ id: 'accountMenu.ariaLabel' })}
                 icon={
                     <UserAvatar
-                        userEmail={userDetails.email}
-                        userName={userDetails.userName}
-                        avatarUrl={userDetails.avatar}
+                        userEmail={email}
+                        userName={userName}
+                        avatarUrl={avatar}
                     />
                 }
                 identifier="account-menu"
@@ -49,7 +50,7 @@ const UserMenu = ({ iconColor }: Props) => {
                     <ListItemIcon>
                         <ProfileCircle style={{ color: iconColor }} />
                     </ListItemIcon>
-                    {userDetails.userName}
+                    {userName}
                 </MenuItem>
 
                 <MenuItem sx={nonInteractiveMenuStyling}>
@@ -58,9 +59,9 @@ const UserMenu = ({ iconColor }: Props) => {
                     </ListItemIcon>
 
                     <Stack spacing={0}>
-                        <Typography>{userDetails.email}</Typography>
+                        <Typography>{email}</Typography>
 
-                        {userDetails.emailVerified ? (
+                        {emailVerified ? (
                             <Typography variant="caption">
                                 <FormattedMessage id="accountMenu.emailVerified" />
                             </Typography>
