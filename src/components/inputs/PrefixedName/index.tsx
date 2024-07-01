@@ -149,6 +149,7 @@ function PrefixedName({
         return (
             <TextField
                 disabled
+                fullWidth
                 variant={variantString}
                 label={label}
                 helperText={description}

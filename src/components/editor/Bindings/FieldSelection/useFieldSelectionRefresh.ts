@@ -20,13 +20,17 @@ function useFieldSelectionRefresh() {
     );
 
     const refresh = useCallback(
-        async (draftIdToUse?: string | null) => {
+        async (draftIdToUse?: string | null, toggleDisable?: boolean) => {
             setUpdating(true);
 
             let evaluatedDraftId = draftIdToUse;
-            if (!evaluatedDraftId) {
+            if (!evaluatedDraftId || toggleDisable) {
                 try {
-                    evaluatedDraftId = await generateCatalog(mutateDraftSpec);
+                    evaluatedDraftId = await generateCatalog(
+                        mutateDraftSpec,
+                        toggleDisable,
+                        false // we don't want to skip all the extra updates
+                    );
                 } catch (_error: unknown) {
                     setUpdating(false);
                 }

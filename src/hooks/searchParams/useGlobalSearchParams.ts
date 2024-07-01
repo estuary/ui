@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
+    FORCED_TO_ENABLE = 'forcedEnable',
     DRAFT_ID = 'draftId',
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',

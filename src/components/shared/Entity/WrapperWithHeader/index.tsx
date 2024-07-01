@@ -7,6 +7,7 @@ interface Props {
     header: ReactNode;
     children: ReactNode;
     forceClose?: boolean;
+    forceOpen?: boolean;
     disableClose?: boolean;
     mountClosed?: boolean;
     readOnly?: boolean;
@@ -30,6 +31,7 @@ function WrapperWithHeader({
     header,
     children,
     forceClose,
+    forceOpen,
     disableClose,
     mountClosed,
     readOnly,
@@ -50,7 +52,11 @@ function WrapperWithHeader({
         if (forceClose) {
             setExpanded(false);
         }
-    }, [forceClose]);
+
+        if (forceOpen) {
+            setExpanded(true);
+        }
+    }, [forceClose, forceOpen]);
 
     return (
         <Accordion
