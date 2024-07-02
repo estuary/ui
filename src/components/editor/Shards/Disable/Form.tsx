@@ -6,7 +6,11 @@ import { Check } from 'iconoir-react';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { snackbarSettings } from 'utils/notification-utils';
 import useShards from './useShards';
 
@@ -17,10 +21,10 @@ function ShardsDisableForm() {
     const { enqueueSnackbar } = useSnackbar();
     const { shardDisabled, updateDisable } = useShards();
 
-    const [updating, setUpdating] = useState(false);
     const [localState, setLocalState] = useState(shardDisabled);
 
     const formActive = useFormStateStore_isActive();
+    const setFormState = useFormStateStore_setFormState();
 
     const value: BooleanString = useMemo(
         () => (!localState ? 'true' : 'false'),
@@ -33,6 +37,7 @@ function ShardsDisableForm() {
             updateDisable(newVal)
                 .then(() => {})
                 .catch(() => {
+                    setLocalState(!newVal);
                     enqueueSnackbar(
                         intl.formatMessage(
                             {
@@ -46,19 +51,21 @@ function ShardsDisableForm() {
                     );
                 })
                 .finally(() => {
-                    setUpdating(false);
+                    // We are not used the `Failed` status here because we just show a message and flip the local
+                    //  state back. Since this is non-blocking I think it is safe for right now.
+                    setFormState({ status: FormStatus.UPDATED });
                 });
         },
-        [enqueueSnackbar, entityType, intl, updateDisable]
+        [enqueueSnackbar, entityType, intl, setFormState, updateDisable]
     );
 
     return (
         <OutlinedToggleButton
             value={value}
             selected={!localState}
-            disabled={formActive || updating}
+            disabled={formActive}
             onClick={(_, checked: string) => {
-                setUpdating(true);
+                setFormState({ status: FormStatus.UPDATING, error: null });
                 update(checked === 'true');
             }}
         >
