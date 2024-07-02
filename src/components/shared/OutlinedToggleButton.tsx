@@ -2,7 +2,6 @@ import {
     SxProps,
     Theme,
     ToggleButton,
-    ToggleButtonProps,
     toggleButtonClasses,
     useTheme,
 } from '@mui/material';
@@ -17,12 +16,7 @@ import {
     primaryColoredOutline_disabled,
     primaryColoredOutline_hovered,
 } from 'context/Theme';
-
-interface Props extends ToggleButtonProps {
-    defaultStateSx?: SxProps<Theme>;
-    disabledStateSx?: SxProps<Theme>;
-    selectedStateSx?: SxProps<Theme>;
-}
+import { OutlinedToggleButtonProps } from './types';
 
 function OutlinedToggleButton({
     children,
@@ -35,7 +29,7 @@ function OutlinedToggleButton({
     onChange,
     onClick,
     ...props
-}: Props) {
+}: OutlinedToggleButtonProps) {
     const theme = useTheme();
 
     const defaultDisabledStateSx: SxProps<Theme> = selected

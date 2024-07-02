@@ -1,14 +1,14 @@
-import { ToggleButtonOwnProps } from '@mui/material';
 import { BooleanString } from 'components/editor/Bindings/Backfill';
 import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
 import { Check } from 'iconoir-react';
 import { useMemo } from 'react';
+import { OutlinedToggleButtonProps } from './types';
 
 function BooleanToggleButton({
     children,
     selected,
     ...theRest
-}: Omit<ToggleButtonOwnProps, 'value'>) {
+}: Omit<OutlinedToggleButtonProps, 'value'>) {
     const value: BooleanString = useMemo(
         () => (selected ? 'true' : 'false'),
         [selected]
