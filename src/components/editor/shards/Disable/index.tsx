@@ -15,7 +15,7 @@ interface Props {
 
 function ShardsDisable({ renderOpen }: Props) {
     const forcedToEnable = useGlobalSearchParams(
-        GlobalSearchParams.FORCED_TO_ENABLE
+        GlobalSearchParams.FORCED_SHARD_ENABLE
     );
 
     const entityType = useEntityType();

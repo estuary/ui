@@ -123,8 +123,8 @@ const optionalColumns = columns.filter(
 );
 
 function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
-    const { 1: setDisableOnSave } = useQueryParam(
-        GlobalSearchParams.FORCED_TO_ENABLE,
+    const { 1: setForcedEnable } = useQueryParam(
+        GlobalSearchParams.FORCED_SHARD_ENABLE,
         BooleanParam
     );
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
@@ -290,7 +290,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                     // Only update the param to keep track when we do this so if someone
                     //  reloads the page their draft will get switched back properly
                     if (forceEnabled) {
-                        setDisableOnSave(forceEnabled);
+                        setForcedEnable(forceEnabled);
                     }
 
                     fireBackgroundTest.current = false;
@@ -312,7 +312,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         formStatus,
         initializeSelections,
         refresh,
-        setDisableOnSave,
+        setForcedEnable,
         setRecommendFields,
         stagedBindingIndex,
     ]);

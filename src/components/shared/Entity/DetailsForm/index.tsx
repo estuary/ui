@@ -11,7 +11,7 @@ import { BooleanParam, useQueryParam } from 'use-query-params';
 
 function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
     const [forcedToEnable] = useQueryParam(
-        GlobalSearchParams.FORCED_TO_ENABLE,
+        GlobalSearchParams.FORCED_SHARD_ENABLE,
         BooleanParam
     );
 
