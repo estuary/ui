@@ -1,4 +1,4 @@
-import ShardsDisable from 'components/editor/shards/Disable';
+import ShardsEditor from 'components/editor/Shards';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
@@ -41,7 +41,7 @@ function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
                 readOnly={readOnly}
             />
 
-            {draftId ? <ShardsDisable renderOpen={forceOpen} /> : null}
+            <ShardsEditor renderOpen={forceOpen} />
         </WrapperWithHeader>
     );
 }
