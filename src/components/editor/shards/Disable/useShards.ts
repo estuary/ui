@@ -5,6 +5,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
+import produce from 'immer';
 import { useCallback, useMemo } from 'react';
 import { Schema } from 'types';
 
@@ -18,31 +19,33 @@ function useShards() {
     const updateShards = useCallback(
         async (newShard: Schema) => {
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
-                console.log('shards update skipped');
-                // This means we are calling before a draft was made and that is okay. We'll use the values
-                //      from the store while generating the spec
+                console.error(
+                    'useShards is missing at least one of: draftId, draft spec, or mutateDraftSpecs function'
+                );
                 return Promise.resolve();
-            } else {
-                const spec: Schema = draftSpecs[0].spec;
+            }
 
-                spec.shards ??= {};
-                spec.shards = {
-                    ...spec.shards,
-                    ...newShard,
-                };
-
-                const updateResponse = await modifyDraftSpec(spec, {
+            // Make sure shards is there to update but do not overwrite any existing settings
+            const updateResponse = await modifyDraftSpec(
+                produce(draftSpecs[0].spec, (newVal: any) => {
+                    newVal.shards ??= {};
+                    newVal.shards = {
+                        ...newVal.shards,
+                        ...newShard,
+                    };
+                }),
+                {
                     draft_id: draftId,
                     catalog_name: draftSpecs[0].catalog_name,
                     spec_type: taskSpecType,
-                });
-
-                if (updateResponse.error) {
-                    return Promise.reject('update failed');
                 }
+            );
 
-                return mutateDraftSpecs();
+            if (updateResponse.error) {
+                return Promise.reject('update failed');
             }
+
+            return mutateDraftSpecs();
         },
         [draftId, draftSpecs, mutateDraftSpecs, taskSpecType]
     );
