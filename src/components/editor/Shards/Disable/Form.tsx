@@ -25,6 +25,8 @@ function ShardsDisableForm() {
 
     const update = useCallback(
         (newVal: boolean) => {
+            setFormState({ status: FormStatus.UPDATING, error: null });
+
             setLocalState(newVal);
             updateDisable(newVal)
                 .then(() => {})
@@ -56,7 +58,6 @@ function ShardsDisableForm() {
             disabled={formActive}
             selected={!localState}
             onClick={(_, checked: string) => {
-                setFormState({ status: FormStatus.UPDATING, error: null });
                 update(checked === 'true');
             }}
         >

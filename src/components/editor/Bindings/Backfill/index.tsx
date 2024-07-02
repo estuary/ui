@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
+import { BooleanString } from 'components/shared/buttons/types';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -21,8 +22,6 @@ import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import useUpdateBackfillCounter, {
     BindingMetadata,
 } from './useUpdateBackfillCounter';
-
-export type BooleanString = 'true' | 'false';
 
 interface Props {
     description: ReactNode;

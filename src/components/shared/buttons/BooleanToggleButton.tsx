@@ -1,8 +1,7 @@
-import { BooleanString } from 'components/editor/Bindings/Backfill';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import { Check } from 'iconoir-react';
 import { useMemo } from 'react';
-import { OutlinedToggleButtonProps } from './types';
+import { BooleanString, OutlinedToggleButtonProps } from './types';
 
 function BooleanToggleButton({
     children,
