@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import BooleanToggleButton from 'components/shared/BooleanToggleButton';
+import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {

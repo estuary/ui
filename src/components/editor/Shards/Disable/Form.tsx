@@ -1,4 +1,4 @@
-import BooleanToggleButton from 'components/shared/BooleanToggleButton';
+import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { useEntityType } from 'context/EntityContext';
 
 import { useSnackbar } from 'notistack';
