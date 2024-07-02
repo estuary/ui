@@ -1,6 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
-import { Check } from 'iconoir-react';
+import BooleanToggleButton from 'components/shared/BooleanToggleButton';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -64,11 +63,6 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
         bindingIndex,
         currentBindingUUID,
     ]);
-
-    const value: BooleanString = useMemo(
-        () => (selected ? 'true' : 'false'),
-        [selected]
-    );
 
     const draftSpec = useMemo(
         () =>
@@ -166,8 +160,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 <Typography component="div">{description}</Typography>
             </Stack>
 
-            <OutlinedToggleButton
-                value={value}
+            <BooleanToggleButton
                 selected={selected}
                 disabled={
                     formActive || !hasLength(collections) || allBindingsDisabled
@@ -180,11 +173,7 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 }}
             >
                 <FormattedMessage id="workflows.collectionSelector.manualBackfill.cta.backfill" />
-
-                {selected ? (
-                    <Check style={{ marginLeft: 8, fontSize: 13 }} />
-                ) : null}
-            </OutlinedToggleButton>
+            </BooleanToggleButton>
         </Box>
     );
 }

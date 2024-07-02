@@ -1,10 +1,8 @@
-import { BooleanString } from 'components/editor/Bindings/Backfill';
-import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
+import BooleanToggleButton from 'components/shared/BooleanToggleButton';
 import { useEntityType } from 'context/EntityContext';
 
-import { Check } from 'iconoir-react';
 import { useSnackbar } from 'notistack';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useFormStateStore_isActive,
@@ -20,16 +18,10 @@ function ShardsDisableForm() {
 
     const { enqueueSnackbar } = useSnackbar();
     const { shardDisabled, updateDisable } = useShards();
-
     const [localState, setLocalState] = useState(shardDisabled);
 
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
-
-    const value: BooleanString = useMemo(
-        () => (!localState ? 'true' : 'false'),
-        [localState]
-    );
 
     const update = useCallback(
         (newVal: boolean) => {
@@ -60,25 +52,20 @@ function ShardsDisableForm() {
     );
 
     return (
-        <OutlinedToggleButton
-            value={value}
-            selected={!localState}
+        <BooleanToggleButton
             disabled={formActive}
+            selected={!localState}
             onClick={(_, checked: string) => {
                 setFormState({ status: FormStatus.UPDATING, error: null });
                 update(checked === 'true');
             }}
         >
             {!localState ? (
-                <>
-                    <FormattedMessage id="common.enabled" />
-
-                    <Check style={{ marginLeft: 8, fontSize: 13 }} />
-                </>
+                <FormattedMessage id="common.enabled" />
             ) : (
                 <FormattedMessage id="common.disabled" />
             )}
-        </OutlinedToggleButton>
+        </BooleanToggleButton>
     );
 }
 
