@@ -1,5 +1,4 @@
-import useClient from 'hooks/supabase-swr/hooks/useClient';
-import { LRUCache } from 'lru-cache';
+import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -9,6 +8,7 @@ import { tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'types';
+import { supabaseClient } from './Supabase';
 
 const DEFAULT_RETRY_COUNT = 3;
 export const DEFAULT_POLLING = 2500;
@@ -27,21 +27,26 @@ export const extendedPollSettings = {
     revalidateOnFocus: false,
 };
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
-    const supabaseClient = useClient();
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
 
-    const cache = useCallback(() => {
-        return new LRUCache({
-            max: 500,
-        });
+    const provider = useCallback(() => {
+        return new LRUMapWithDelete<string, any>(500);
     }, []);
 
     return (
         <SWRConfig
             value={{
-                provider: cache,
+                // https://supabase-cache-helpers.vercel.app/configuration
+                provider,
+                revalidateIfStale: false,
+                revalidateOnFocus: false,
+
+                // TODO (V2 Perf) the new cache works REALLY well... but we are not ready for that yet. One of
+                //  the main issues is stuff like Live Specs that are updated through publications and not through
+                //  using the mutation calls.
+                revalidateOnMount: true,
             }}
         >
             <SWRConfig
@@ -78,11 +83,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                     onError: async (error, _key, _config) => {
                         // This happens when a call to the server has returned a 401 but
                         //      the UI thinks the User is still valid. So we need to log them out.
-                        const localUserInvalid =
-                            error.message === AUTH_ERROR &&
-                            Boolean(supabaseClient.auth.user());
-
-                        if (localUserInvalid || tokenHasIssues(error.message)) {
+                        if (
+                            error.message === AUTH_ERROR ||
+                            tokenHasIssues(error.message)
+                        ) {
                             logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
                                 trigger: 'swr',
                             });

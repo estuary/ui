@@ -1,16 +1,15 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
     defaultTableFilter,
-    distributedTableFilter,
     escapeReservedCharacters,
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
@@ -75,22 +74,19 @@ const getLiveSpecs_captures = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<CaptureQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(captureColumns, {
-            count: 'exact',
-        })
-        .not('spec', 'is', null);
-
-    queryBuilder = defaultTableFilter<CaptureQuery>(
-        queryBuilder,
+    return defaultTableFilter<CaptureQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(captureColumns, {
+                count: 'exact',
+            })
+            .not('spec', 'is', null)
+            .eq('spec_type', 'capture'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'capture');
-
-    return queryBuilder;
+    );
 };
 
 const getLiveSpecs_materializations = (
@@ -98,22 +94,19 @@ const getLiveSpecs_materializations = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<MaterializationQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(materializationsColumns, {
-            count: 'exact',
-        })
-        .not('spec', 'is', null);
-
-    queryBuilder = defaultTableFilter<MaterializationQuery>(
-        queryBuilder,
+    return defaultTableFilter<MaterializationQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(materializationsColumns, {
+                count: 'exact',
+            })
+            .not('spec', 'is', null)
+            .eq('spec_type', 'materialization'),
         ['catalog_name', QUERY_PARAM_CONNECTOR_TITLE],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'materialization');
-
-    return queryBuilder;
+    );
 };
 
 const getLiveSpecs_collections = (
@@ -121,22 +114,19 @@ const getLiveSpecs_collections = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(collectionColumns, {
-            count: 'exact',
-        })
-        .not('spec', 'is', null);
-
-    queryBuilder = defaultTableFilter<CollectionQuery>(
-        queryBuilder,
+    return defaultTableFilter<CollectionQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(collectionColumns, {
+                count: 'exact',
+            })
+            .not('spec', 'is', null)
+            .eq('spec_type', 'collection'),
         ['catalog_name'],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', 'collection');
-
-    return queryBuilder;
+    );
 };
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
@@ -156,26 +146,23 @@ const getLiveSpecs_collectionsSelector = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<CollectionSelectorQuery>(TABLES.LIVE_SPECS_EXT)
-        .select(
-            specType === 'capture'
-                ? collectionsSelectorColumns_capture
-                : collectionsSelectorColumns,
-            {
-                count: 'exact',
-            }
-        );
-
-    queryBuilder = defaultTableFilter<CollectionSelectorQuery>(
-        queryBuilder,
+    return defaultTableFilter<CollectionSelectorQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(
+                specType === 'capture'
+                    ? collectionsSelectorColumns_capture
+                    : collectionsSelectorColumns,
+                {
+                    count: 'exact',
+                }
+            )
+            .eq('spec_type', specType),
         ['catalog_name'],
         searchQuery,
         sorting,
         pagination
-    ).eq('spec_type', specType);
-
-    return queryBuilder;
+    );
 };
 
 const getLiveSpecs_existingTasks = (
@@ -191,23 +178,22 @@ const getLiveSpecs_existingTasks = (
 
     const columns = taskColumns.concat(',connector_id');
 
-    let queryBuilder = supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(columns, {
-            count: 'exact',
-        })
-        .eq('connector_id', connectorId)
-        .not('catalog_name', 'ilike', 'ops/%')
-        .not('catalog_name', 'ilike', `${DEMO_TENANT}%`);
-
-    queryBuilder = distributedTableFilter<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
-    >(queryBuilder, ['catalog_name'], searchQuery, sorting).eq(
-        'spec_type',
-        specType
+    return defaultTableFilter<
+        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
+    >(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(columns, {
+                count: 'exact',
+            })
+            .eq('connector_id', connectorId)
+            .not('catalog_name', 'ilike', 'ops/%')
+            .not('catalog_name', 'ilike', `${DEMO_TENANT}%`)
+            .eq('spec_type', specType),
+        ['catalog_name'],
+        searchQuery,
+        sorting
     );
-
-    return queryBuilder;
 };
 
 // Hydration-specific queries

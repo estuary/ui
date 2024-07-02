@@ -1,3 +1,4 @@
+import { supabaseClient } from 'context/Supabase';
 import { ConnectorTag } from 'hooks/connectors/shared';
 import {
     LiveSpecsExtQuery,
@@ -7,7 +8,6 @@ import {
     TABLES,
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
 } from 'services/supabase';
 import { Entity } from 'types';

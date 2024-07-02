@@ -91,6 +91,7 @@ function PrefixAlertTable() {
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
                 toolbar={<AlertGenerateButton />}
+                tableAriaLabelKey="admin.alerts.table.aria.label"
             />
         </TableHydrator>
     );

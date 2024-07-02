@@ -74,6 +74,7 @@ function StorageMappingsTable({ header }: Props) {
                     showToolbar
                     toolbar={<StorageMappingsGenerateButton />}
                     hideFilter
+                    tableAriaLabelKey="storageMappingsTable.table.aria.label"
                 />
             </TableHydrator>
         </Box>

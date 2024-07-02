@@ -1,29 +1,20 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { User, createClient } from '@supabase/supabase-js';
-import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
+import { User } from '@supabase/supabase-js';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
+import {
+    JobStatus,
+    SortDirection,
+    SupabaseInvokeResponse,
+    UserDetails,
+} from 'types';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
-
-if (
-    !import.meta.env.VITE_SUPABASE_URL ||
-    !import.meta.env.VITE_SUPABASE_ANON_KEY
-) {
-    throw new Error(
-        'You must set the Supabase url and anon key in the env settings.'
-    );
-}
-
-const supabaseSettings = {
-    url: import.meta.env.VITE_SUPABASE_URL,
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-};
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
@@ -115,11 +106,6 @@ export const OAUTH_OPERATIONS = {
     ENCRYPT_CONFIG: 'encrypt-config',
 };
 
-export const supabaseClient = createClient(
-    supabaseSettings.url,
-    supabaseSettings.anonKey
-);
-
 // https://github.com/orgs/supabase/discussions/19651
 const reservedWrapper = `%22`;
 // eslint-disable-next-line no-useless-escape
@@ -164,15 +150,17 @@ export interface SortingProps<Data> {
 export const DEFAULT_POLLING_INTERVAL = 750;
 export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
-export const defaultTableFilter = <Data>(
-    query: PostgrestFilterBuilder<Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
+
+// TODO (V2 typing) - query should take in filter builder better
+export const defaultTableFilter = <Response>(
+    query: any,
+    searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
-    sorting: SortingProps<Data>[],
+    sorting: SortingProps<Response>[],
     pagination?: Pagination,
-    protocol?: Protocol<Data>
-) => {
-    let queryBuilder = query;
+    protocol?: Protocol<Response>
+): PostgrestFilterBuilder<any, any, Response> => {
+    let queryBuilder = query as PostgrestFilterBuilder<any, any, Response>;
 
     if (searchQuery) {
         queryBuilder = queryBuilder.or(
@@ -187,7 +175,7 @@ export const defaultTableFilter = <Data>(
     }
 
     forEach(sorting, (sort) => {
-        queryBuilder = queryBuilder.order(sort.col, {
+        queryBuilder = queryBuilder.order(sort.col as string, {
             ascending: sort.direction === 'asc',
         });
     });
@@ -198,7 +186,7 @@ export const defaultTableFilter = <Data>(
 
     if (protocol?.value) {
         queryBuilder = queryBuilder.filter(
-            protocol.column,
+            protocol.column as string,
             'eq',
             protocol.value
         );
@@ -207,69 +195,28 @@ export const defaultTableFilter = <Data>(
     return queryBuilder;
 };
 
-export const distributedTableFilter = <Data>(
-    query: ToPostgrestFilterBuilder<Data>,
-    searchParam: Array<keyof Data | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
-    searchQuery: string | null,
-    sorting: SortingProps<Data>[],
-    pagination?: Pagination,
-    protocol?: Protocol<Data>
-) => {
-    let queryBuilder = query;
-
-    if (searchQuery) {
-        queryBuilder = queryBuilder.or(
-            searchParam
-                .map((param) => {
-                    return `${param}.ilike.*${escapeReservedCharacters(
-                        searchQuery
-                    )}*`;
-                })
-                .join(',')
-        );
+export const getUserDetails = (
+    user: User | null | undefined
+): UserDetails | null => {
+    if (!user) {
+        return null;
     }
 
-    forEach(sorting, (sort) => {
-        queryBuilder = queryBuilder.order(sort.col, {
-            ascending: sort.direction === 'asc',
-        });
-    });
+    let userName, email, emailVerified, avatar;
 
-    if (pagination) {
-        queryBuilder = queryBuilder.range(pagination.from, pagination.to);
-    }
-
-    if (protocol?.value) {
-        queryBuilder = queryBuilder.filter(
-            protocol.column,
-            'eq',
-            protocol.value
-        );
-    }
-
-    return queryBuilder;
-};
-
-export const getUserDetails = (user: User | null | undefined) => {
-    let userName, email, emailVerified, avatar, id;
-
-    if (user) {
-        if (!isEmpty(user.user_metadata)) {
-            email = user.user_metadata.email;
-            emailVerified = user.user_metadata.email_verified;
-            avatar = user.user_metadata.avatar_url;
-            userName = user.user_metadata.full_name ?? email;
-        } else {
-            userName = user.email;
-            email = user.email;
-            emailVerified = false;
-        }
-
-        id = user.id;
+    if (!isEmpty(user.user_metadata)) {
+        email = user.user_metadata.email;
+        emailVerified = user.user_metadata.email_verified;
+        avatar = user.user_metadata.avatar_url;
+        userName = user.user_metadata.full_name ?? email;
+    } else {
+        userName = user.email;
+        email = user.email;
+        emailVerified = false;
     }
 
     return {
-        id,
+        id: user.id,
         userName,
         email,
         emailVerified,
@@ -312,15 +259,19 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
             const response = await makeCall();
 
             const error = response.error;
+            const {
+                data: { session },
+                error: authError,
+            } = await supabaseClient.auth.getSession();
 
             // If we got an error that needs to force the user out sign them out
             if (
                 tokenHasIssues(error?.message) &&
-                Boolean(supabaseClient.auth.user())
+                (Boolean(session?.user) || authError)
             ) {
                 logRocketEvent(
                     CustomEvents.SUPABASE_CALL_UNAUTHENTICATED,
-                    error?.message ?? 'no error'
+                    error?.message ?? authError?.message ?? 'no error'
                 );
                 logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
                     trigger: 'SupabaseRetry',
@@ -358,7 +309,8 @@ export const insertSupabase = (
         () =>
             supabaseClient
                 .from(table)
-                .insert(Array.isArray(data) ? data : [data]),
+                .insert(Array.isArray(data) ? data : [data])
+                .select(),
         'insert'
     ).then(handleSuccess, handleFailure);
 };
@@ -370,7 +322,7 @@ export const updateSupabase = (
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () => supabaseClient.from(table).update(data).match(matchData),
+        () => supabaseClient.from(table).update(data).match(matchData).select(),
         'update'
     ).then(handleSuccess, handleFailure);
 };
@@ -380,7 +332,7 @@ export const deleteSupabase = (
     matchData: any
 ): PromiseLike<CallSupabaseResponse<any>> => {
     return supabaseRetry(
-        () => supabaseClient.from(table).delete().match(matchData),
+        () => supabaseClient.from(table).delete().match(matchData).select(),
         'delete'
     ).then(handleSuccess, handleFailure);
 };
@@ -432,7 +384,7 @@ export const parsePagedFetchAllResponse = <T>(
 export const pagedFetchAll = async <T>(
     pageSize: number,
     retryKey: string,
-    fetcher: (start: number) => PostgrestFilterBuilder<T>
+    fetcher: (start: number) => any //PostgrestFilterBuilder<any, any, T, any, any>
 ) => {
     const promises: Promise<PostgrestResponse<T>>[] = [];
     let hasMore = true;

@@ -1,3 +1,5 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
+
 export enum CustomEvents {
     AUTH_SIGNOUT = 'Auth_Signout',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
@@ -54,3 +56,10 @@ export enum CustomEvents {
 }
 
 export type CommonStatuses = 'success' | 'failed' | 'exception' | 'skipped';
+
+export type SuccessResponse<T> = Pick<
+    PostgrestResponse<T>,
+    'status' | 'statusText' | 'count'
+> & {
+    data: T[];
+};

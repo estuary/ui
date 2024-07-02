@@ -1,7 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import { useQuery, useSelect } from '../supabase-swr';
 import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
 
 // TODO (connectors store) - this is temporary
@@ -13,25 +14,19 @@ import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
 //      then always pull from that. The store could also cache the schemas, etc.
 //      when the user selects a connector.
 function useValidConnectorsExist(protocol: string | null) {
-    const connectorTagsQuery = useQuery<ConnectorsExist>(
-        TABLES.CONNECTORS,
-        {
-            columns: CONNECTORS_EXIST_QUERY,
-            filter: (query) =>
-                requiredConnectorColumnsExist<ConnectorsExist>(
-                    query,
-                    'connector_tags'
-                ).eq('connector_tags.protocol', protocol as string),
-        },
-        [protocol]
+    const { data } = useQuery(
+        protocol
+            ? requiredConnectorColumnsExist<ConnectorsExist[]>(
+                  supabaseClient
+                      .from(TABLES.CONNECTORS)
+                      .select(CONNECTORS_EXIST_QUERY)
+                      .eq('connector_tags.protocol', protocol),
+                  'connector_tags'
+              )
+            : null
     );
 
-    const { data } = useSelect(protocol ? connectorTagsQuery : null);
-
-    return useMemo(
-        () => (data?.data ? data.data.length > 0 : false),
-        [data?.data]
-    );
+    return useMemo(() => (data ? data.length > 0 : false), [data]);
 }
 
 export default useValidConnectorsExist;

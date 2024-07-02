@@ -1,14 +1,13 @@
 import { CircularProgress } from '@mui/material';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getStatsForDetails } from 'api/stats';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useEntityType } from 'context/EntityContext';
-import { useSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import prettyBytes from 'pretty-bytes';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import readable from 'readable-numbers';
-import { CatalogStats_Details } from 'types';
 
 interface Props {
     entityName: string;
@@ -21,7 +20,7 @@ function TotalsSection({ entityName }: Props) {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const { data, isValidating } = useSelectNew<CatalogStats_Details>(
+    const { data, isValidating } = useQuery(
         getStatsForDetails(entityName, entityType, 'monthly', {
             months: 1,
         }),
@@ -31,8 +30,8 @@ function TotalsSection({ entityName }: Props) {
     );
 
     const displayData = useMemo<KeyValue[] | null>(() => {
-        if (!isValidating && data?.data[0]) {
-            const scope = data.data[0];
+        if (!isValidating && data?.[0]) {
+            const scope = data[0];
 
             const totalBytes =
                 (scope.bytes_read ?? 0) + (scope.bytes_written ?? 0);
@@ -59,7 +58,7 @@ function TotalsSection({ entityName }: Props) {
         }
 
         return null;
-    }, [data?.data, intl, isValidating]);
+    }, [data, intl, isValidating]);
 
     return (
         <CardWrapper

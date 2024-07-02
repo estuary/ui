@@ -167,7 +167,7 @@ function GitPodButton({
                     generateDraftWithSpecs(),
                 ]);
 
-                if (!evaluatedDraftId) {
+                if (!evaluatedDraftId || !token.data) {
                     throw new Error(
                         intl.formatMessage({
                             id: 'newTransform.errors.urlNotGenerated',
@@ -177,7 +177,7 @@ function GitPodButton({
 
                 return generateGitPodURL(
                     evaluatedDraftId,
-                    token,
+                    token.data,
                     language,
                     sourceCollectionSet ?? sourceCollectionArray,
                     catalogName

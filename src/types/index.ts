@@ -430,3 +430,16 @@ export interface Shard {
     name: string;
     rClockBegin: string;
 }
+
+export interface UserDetails {
+    id: string;
+    userName: string;
+    email: string;
+    emailVerified: boolean;
+    avatar: string;
+}
+
+export interface RefreshTokenData {
+    id: string;
+    secret: string;
+}

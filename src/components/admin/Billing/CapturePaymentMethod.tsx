@@ -12,11 +12,10 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import AlertBox from 'components/shared/AlertBox';
-import { useUser } from 'context/UserContext';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
-import { getUserDetails } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 
 export interface PaymentFormProps {
@@ -30,8 +29,10 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { session } = useUser();
-    const { email } = getUserDetails(session?.user);
+    const [user, userDetails] = useUserStore((state) => [
+        state.user,
+        state.userDetails,
+    ]);
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');
@@ -95,7 +96,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                 confirmParams: {
                     payment_method_data: {
                         billing_details: {
-                            email,
+                            email: userDetails?.email,
                         },
                     },
                     return_url: `${window.location.protocol}//${window.location.host}${window.location.pathname}`,
@@ -125,7 +126,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         } finally {
             setLoading(false);
         }
-    }, [elements, email, intl, onError, onSuccess, stripe]);
+    }, [elements, intl, onError, onSuccess, stripe, userDetails?.email]);
 
     return (
         <>
@@ -139,7 +140,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     options={{
                         mode: 'billing',
                         defaultValues: {
-                            name: session?.user?.user_metadata.full_name,
+                            name: user?.user_metadata.full_name,
                         },
                         display: { name: 'organization' },
                     }}
@@ -154,7 +155,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                         readOnly: loading,
                         defaultValues: {
                             billingDetails: {
-                                name: session?.user?.user_metadata.full_name,
+                                name: user?.user_metadata.full_name,
                             },
                         },
                     }}

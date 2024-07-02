@@ -7,7 +7,7 @@ import {
     generateMockResourceConfig,
 } from 'test/test-utils';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
-import { ConnectorConfig } from '../../../flow_deps/flow';
+import { ConnectorConfig } from '../../../deps/flow/flow';
 
 describe('getBindingIndex', () => {
     let defaultResponse: number, matchedCollection: string;

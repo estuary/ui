@@ -1,19 +1,18 @@
 import { Provider } from '@supabase/supabase-js';
 import { unauthenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { getPathWithParams } from 'utils/misc-utils';
 import { useCallback, useMemo } from 'react';
 import { SupportedProvider } from 'types/authProviders';
+import { supabaseClient } from 'context/Supabase';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;
 
 function useLoginHandler(grantToken?: string, isRegister?: boolean) {
-    const supabaseClient = useClient();
     const intl = useIntl();
 
     const { enqueueSnackbar } = useSnackbar();
@@ -51,27 +50,26 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                 : redirectTo;
 
             try {
-                const { error } = await supabaseClient.auth.signIn(
-                    {
-                        provider,
-                    },
-                    {
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider,
+                    options: {
                         redirectTo: grantToken
                             ? getPathWithParams(redirectBaseURL, {
                                   [GlobalSearchParams.GRANT_TOKEN]: grantToken,
                               })
                             : redirectBaseURL,
-                        shouldCreateUser: isRegister,
                         scopes,
                         queryParams,
-                    }
-                );
+                        // TODO (SBv2) this is not here anymore - need to figure out if it is important
+                        // shouldCreateUser: isRegister,
+                    },
+                });
                 if (error) loginFailed(provider);
             } catch (error: unknown) {
                 loginFailed(provider);
             }
         },
-        [grantToken, isRegister, loginFailed, redirectTo, supabaseClient.auth]
+        [grantToken, isRegister, loginFailed, redirectTo]
     );
 
     return useMemo(

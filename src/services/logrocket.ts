@@ -3,7 +3,11 @@ import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
-import { getUserDetails, OAUTH_OPERATIONS } from 'services/supabase';
+import {
+    DEFAULT_FILTER,
+    getUserDetails,
+    OAUTH_OPERATIONS,
+} from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
@@ -206,11 +210,11 @@ export const identifyUser = (user: User) => {
         const userDetails = getUserDetails(user);
 
         if (logRocketSettings.idUser.includeName) {
-            traits.name = userDetails.userName;
+            traits.name = userDetails?.userName ?? DEFAULT_FILTER;
         }
 
         if (logRocketSettings.idUser.includeEmail) {
-            traits.email = userDetails.email;
+            traits.email = userDetails?.email ?? DEFAULT_FILTER;
         }
 
         // Just want to be very very safe

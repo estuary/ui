@@ -1,8 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
 import { DEFAULT_POLLING } from 'context/SWR';
 import { TABLES } from 'services/supabase';
-import { SWRConfiguration } from 'swr';
 import { JobStatus } from 'types';
-import { useQuery, useSelectSingle } from './supabase-swr/';
 
 export interface Publications {
     id: string;
@@ -10,29 +10,24 @@ export interface Publications {
     logs_token: string;
 }
 
-const PUBLICATION_COLS = ['id', 'job_status', 'logs_token'];
+const PUBLICATION_COLS = ['id', 'job_status', 'logs_token'].join(',');
 
 function usePublications(lastPubId: string | null, enablePolling?: boolean) {
-    const publicationsQuery = useQuery<Publications>(
-        TABLES.PUBLICATIONS,
+    const { data, error } = useQuery(
+        lastPubId
+            ? supabaseClient
+                  .from(TABLES.PUBLICATIONS)
+                  .select(PUBLICATION_COLS)
+                  .eq('id', lastPubId)
+                  .single<Publications>()
+            : null,
         {
-            columns: PUBLICATION_COLS,
-            filter: (query) => query.eq('id', lastPubId as string),
-        },
-        [lastPubId]
-    );
-
-    const options: SWRConfiguration = {
-        refreshInterval: enablePolling ? DEFAULT_POLLING : undefined,
-    };
-
-    const { data, error } = useSelectSingle(
-        lastPubId ? publicationsQuery : null,
-        options
+            refreshInterval: enablePolling ? DEFAULT_POLLING : undefined,
+        }
     );
 
     return {
-        publication: data ? data.data : null,
+        publication: data ?? null,
         error,
     };
 }

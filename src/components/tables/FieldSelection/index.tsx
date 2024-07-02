@@ -132,7 +132,7 @@ function FieldSelectionTable({ projections }: Props) {
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
+                        id: 'fieldSelection.table.label',
                     })}
                 >
                     <EntityTableHeader

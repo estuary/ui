@@ -1,17 +1,13 @@
-import {
-    getPublicationHistoryByCatalogName,
-    PublicationSpecsExt_PublicationHistory,
-} from 'api/publicationSpecsExt';
-import { useSelectNew } from './supabase-swr/hooks/useSelect';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { getPublicationHistoryByCatalogName } from 'api/publicationSpecsExt';
 
 function usePublicationSpecsExt_History(catalogName?: string) {
-    const { data, error, mutate, isValidating } =
-        useSelectNew<PublicationSpecsExt_PublicationHistory>(
-            catalogName ? getPublicationHistoryByCatalogName(catalogName) : null
-        );
+    const { data, error, mutate, isValidating } = useQuery(
+        catalogName ? getPublicationHistoryByCatalogName(catalogName) : null
+    );
 
     return {
-        publications: data ? data.data : null,
+        publications: data ?? null,
         error,
         mutate,
         isValidating,

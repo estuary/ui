@@ -9,13 +9,13 @@ interface GatewayAuthTokenResponse {
     token: string;
 }
 
+const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
+const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
+
 const getGatewayAuthConfig = (
     prefixes: string[],
     sessionKey: string | undefined
 ): Promise<GatewayAuthTokenResponse[]> => {
-    const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
-    const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
-
     const headers: HeadersInit = {};
 
     headers.apikey = supabaseAnonymousKey;

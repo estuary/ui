@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import { logRocketConsole } from 'services/shared';
@@ -10,7 +11,6 @@ import {
     insertSupabase,
     RPCS,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
     updateSupabase,
@@ -106,9 +106,10 @@ const getAppliedDirectives = (
     type: keyof typeof DIRECTIVES,
     token?: string
 ) => {
-    let queryBuilder = supabaseClient.from<JoinedAppliedDirective>(
-        TABLES.APPLIED_DIRECTIVES
-    ).select(`
+    let queryBuilder = supabaseClient
+        .from(TABLES.APPLIED_DIRECTIVES)
+        .select(
+            `
             id,
             directive_id,
             job_status,
@@ -117,9 +118,9 @@ const getAppliedDirectives = (
             user_claims,
             updated_at,
             directives !inner(uses_remaining, spec->>type)
-        `);
-
-    queryBuilder = queryBuilder.eq('directives.spec->>type', type);
+        `
+        )
+        .eq('directives.spec->>type', type);
 
     if (token) {
         queryBuilder = queryBuilder.eq('directives.token', token);
@@ -128,7 +129,8 @@ const getAppliedDirectives = (
     return DIRECTIVES[type]
         .queryFilter(queryBuilder)
         .order('updated_at', { ascending: false })
-        .limit(1);
+        .limit(1)
+        .returns<JoinedAppliedDirective[]>();
 };
 
 const generateGrantDirective = (
@@ -174,23 +176,19 @@ const getDirectivesByType = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.DIRECTIVES)
-        .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
-            count: 'exact',
-        })
-        .eq('spec->>type', directiveType)
-        .or(`uses_remaining.eq.1,uses_remaining.is.null`);
-
-    queryBuilder = defaultTableFilter<GrantDirective_AccessLinks>(
-        queryBuilder,
+    return defaultTableFilter<GrantDirective_AccessLinks[]>(
+        supabaseClient
+            .from(TABLES.DIRECTIVES)
+            .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
+                count: 'exact',
+            })
+            .eq('spec->>type', directiveType)
+            .or(`uses_remaining.eq.1,uses_remaining.is.null`),
         ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder;
 };
 
 const disableDirective = (directiveId: string) => {

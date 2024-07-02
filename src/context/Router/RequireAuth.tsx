@@ -1,5 +1,5 @@
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import { useUser } from 'context/UserContext';
+import { useUserStore } from 'context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -15,12 +15,13 @@ interface Props extends BaseComponentProps {
 }
 
 function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
-    const { session } = useUser();
+    const user = useUserStore((state) => state.user);
+
     const location = useLocation();
     const redirectTo = useLoginRedirectPath();
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
 
-    if (session?.user && firstLoad) {
+    if (user && firstLoad) {
         // Handles: when an already logged in user visits an access grant link
         //  when a user is coming back from registration
         const to =
@@ -37,7 +38,7 @@ function RequireAuth({ children, firstLoad, checkForGrant }: Props) {
         return <Navigate to={to} replace />;
     }
 
-    if ((!session || !session.user) && !firstLoad) {
+    if (!user && !firstLoad) {
         // When not first load and no user, go to login with the location where the user wants to go
         logRocketConsole('RequireAuth : Navigate : login', {
             to: unauthenticatedRoutes.login.path,

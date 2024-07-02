@@ -4,10 +4,11 @@ import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
 import UserAvatar from 'components/shared/UserAvatar';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
-import useUserDetails from 'hooks/useUserDetails';
+import { supabaseClient } from 'context/Supabase';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useShallow } from 'zustand/react/shallow';
 import IconMenu from './IconMenu';
 
 interface Props {
@@ -22,8 +23,7 @@ const nonInteractiveMenuStyling: SxProps = {
 
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
-    const supabaseClient = useClient();
-    const { userName, email, emailVerified, avatar } = useUserDetails();
+    const userDetails = useUserStore(useShallow((state) => state.userDetails));
 
     const handlers = {
         logout: async () => {
@@ -31,7 +31,8 @@ const UserMenu = ({ iconColor }: Props) => {
         },
     };
 
-    if (userName && email) {
+    if (userDetails) {
+        const { avatar, email, emailVerified, userName } = userDetails;
         return (
             <IconMenu
                 ariaLabel={intl.formatMessage({ id: 'accountMenu.ariaLabel' })}

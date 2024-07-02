@@ -19,7 +19,7 @@ import {
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { ConnectorConfig } from '../../flow_deps/flow';
+import { ConnectorConfig } from '../../deps/flow/flow';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;

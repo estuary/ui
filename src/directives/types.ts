@@ -1,5 +1,7 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { SuccessResponse } from 'hooks/supabase-swr';
+import {
+    PostgrestFilterBuilder,
+    PostgrestSingleResponse,
+} from '@supabase/postgrest-js';
 import { KeyedMutator } from 'swr';
 import { AppliedDirective, JoinedAppliedDirective } from 'types';
 
@@ -49,11 +51,12 @@ export type UserClaims =
     | OnboardClaim
     | StorageMappingsClaim;
 
+// TODO (V2 typing) - queryFilter should take in filter builder better
 export interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
-        queryBuilder: PostgrestFilterBuilder<JoinedAppliedDirective>
-    ) => PostgrestFilterBuilder<JoinedAppliedDirective>;
+        queryBuilder: any //PostgrestFilterBuilder<any, any, any>
+    ) => PostgrestFilterBuilder<any, any, any>;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null
@@ -63,5 +66,5 @@ export interface DirectiveSettings<T> {
 export interface DirectiveProps {
     directive: any;
     status: DirectiveStates;
-    mutate: KeyedMutator<SuccessResponse<JoinedAppliedDirective>>;
+    mutate: KeyedMutator<PostgrestSingleResponse<JoinedAppliedDirective[]>>;
 }

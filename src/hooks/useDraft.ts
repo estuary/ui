@@ -1,6 +1,7 @@
-import { useUser } from 'context/UserContext';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { TABLES } from 'services/supabase';
-import { useQuery, useSelect } from './supabase-swr';
 
 export interface DraftQuery {
     id: string;
@@ -9,32 +10,26 @@ export interface DraftQuery {
     user_id: string;
 }
 
-const DRAFT_COLS = ['id', 'detail', 'updated_at', 'user_id'];
+const DRAFT_COLS = ['id', 'detail', 'updated_at', 'user_id'].join(',');
 const defaultResponse: DraftQuery[] = [];
 
 function useDraft(catalogName: string | null) {
-    const { session } = useUser();
+    const user = useUserStore((state) => state.user);
 
-    const draftQuery = useQuery<DraftQuery>(
-        TABLES.DRAFTS_EXT,
-        {
-            columns: DRAFT_COLS,
-            filter: (query) =>
-                query
-                    .eq('detail', catalogName as string)
-                    // @ts-expect-error We check for the session.userid down below and if it is missing the query is not called
-                    .eq('user_id', session.user.id)
-                    .order('updated_at', { ascending: false }),
-        },
-        [catalogName]
-    );
-
-    const { data, error, mutate, isValidating } = useSelect(
-        catalogName && session?.user?.id ? draftQuery : null
+    const { data, error, mutate, isValidating } = useQuery(
+        catalogName && user?.id
+            ? supabaseClient
+                  .from(TABLES.DRAFTS_EXT)
+                  .select(DRAFT_COLS)
+                  .eq('detail', catalogName)
+                  .eq('user_id', user.id)
+                  .order('updated_at', { ascending: false })
+                  .returns<DraftQuery[]>()
+            : null
     );
 
     return {
-        drafts: data ? data.data : defaultResponse,
+        drafts: data ?? defaultResponse,
         error,
         mutate,
         isValidating,

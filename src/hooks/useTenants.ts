@@ -1,9 +1,9 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
 import { useMemo } from 'react';
 import useSWR from 'swr';
-import { TenantHidesDataPreview, Tenants } from 'types';
+import { Tenants } from 'types';
 import { DEMO_TENANT, hasLength, stripPathing } from 'utils/misc-utils';
-import { useSelectSingleNew } from './supabase-swr/hooks/useSelectSingle';
 
 const defaultResponse: Tenants[] = [];
 
@@ -37,13 +37,12 @@ export function useTenantHidesDataPreview(entityName: string) {
         return getTenantHidesPreview(tenantName);
     }, [isDemo, tenantName]);
 
-    const { data, error, isValidating } =
-        useSelectSingleNew<TenantHidesDataPreview>(query, {
-            refreshInterval: 15000,
-        });
+    const { data, error, isValidating } = useQuery(query, {
+        refreshInterval: 1500,
+    });
 
     const response = useMemo(
-        () => (isDemo ? false : data ? Boolean(data.data.hide_preview) : null),
+        () => (isDemo ? false : data ? Boolean(data.hide_preview) : null),
         [data, isDemo]
     );
 

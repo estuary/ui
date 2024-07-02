@@ -1,8 +1,8 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     DEFAULT_FILTER,
     insertSupabase,
     JOB_STATUS_COLUMNS,
-    supabaseClient,
     TABLES,
 } from 'services/supabase';
 

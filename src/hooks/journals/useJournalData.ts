@@ -1,4 +1,3 @@
-import { useUser } from 'context/UserContext';
 import { singleCallSettings } from 'context/SWR';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
@@ -10,13 +9,14 @@ import {
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
-    const { session } = useUser();
+    const session = useUserStore((state) => state.session);
 
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);

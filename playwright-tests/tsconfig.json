@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "module": "commonjs"
+    },
+    "include": ["tests", "helpers", "types"],
+    "exclude": ["node_modules"]
+}

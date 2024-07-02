@@ -1,5 +1,6 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient, supabaseRetry, TABLES } from 'services/supabase';
+import { supabaseClient } from 'context/Supabase';
+import { supabaseRetry, TABLES } from 'services/supabase';
 import { Schema } from 'types';
 
 export interface PublicationSpecsExt_PublicationHistory {
@@ -19,14 +20,13 @@ export interface PublicationSpecsExt_PublicationHistory {
 
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     return supabaseClient
-        .from<PublicationSpecsExt_PublicationHistory>(
-            TABLES.PUBLICATION_SPECS_EXT
-        )
-        .select(`*`)
+        .from(TABLES.PUBLICATION_SPECS_EXT)
+        .select(`pub_id, published_at, detail, user_email, spec`)
         .eq('catalog_name', catalogName)
         .order('published_at', {
             ascending: false,
-        });
+        })
+        .returns<PublicationSpecsExt_PublicationHistory[]>();
 };
 
 export const getLiveSpecIdByPublication = (
@@ -38,12 +38,11 @@ export const getLiveSpecIdByPublication = (
     >(
         () =>
             supabaseClient
-                .from<PublicationSpecsExt_PublicationHistory>(
-                    TABLES.PUBLICATION_SPECS_EXT
-                )
+                .from(TABLES.PUBLICATION_SPECS_EXT)
                 .select(`live_spec_id`)
                 .eq('pub_id', pubId)
-                .eq('catalog_name', catalogName),
+                .eq('catalog_name', catalogName)
+                .returns<PublicationSpecsExt_PublicationHistory[]>(),
         'getLiveSpecIdByPublication'
     );
 };

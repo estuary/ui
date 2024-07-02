@@ -58,6 +58,9 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
     const filterKey = showUser
         ? 'accessGrantsTable.users.filterLabel'
         : 'accessGrantsTable.prefixes.filterLabel';
+    const tableKey = showUser
+        ? 'accessGrantsTable.users.table.aria.label'
+        : 'accessGrantsTable.prefixes.table.aria.label';
 
     return (
         <Box sx={{ mb: showUser ? 8 : 0 }}>
@@ -117,6 +120,7 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
                             }
                         />
                     }
+                    tableAriaLabelKey={tableKey}
                 />
             </TableHydrator>
         </Box>
