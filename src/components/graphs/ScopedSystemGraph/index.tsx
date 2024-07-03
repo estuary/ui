@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/Connections/Store/Store';
-import { NodeDefinition } from 'cytoscape';
 import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Entity } from 'types';
@@ -22,10 +21,6 @@ export interface NodeData {
     name: string;
     relationship: Relationship;
     type: Entity;
-}
-
-export interface Node extends NodeDefinition {
-    data: NodeData;
 }
 
 function ScopedSystemGraph({ containerId }: Props) {
