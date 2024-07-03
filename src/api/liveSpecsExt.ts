@@ -79,7 +79,8 @@ const getLiveSpecs_captures = (
         .from<CaptureQuery>(TABLES.LIVE_SPECS_EXT)
         .select(captureColumns, {
             count: 'exact',
-        });
+        })
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<CaptureQuery>(
         queryBuilder,
@@ -101,7 +102,8 @@ const getLiveSpecs_materializations = (
         .from<MaterializationQuery>(TABLES.LIVE_SPECS_EXT)
         .select(materializationsColumns, {
             count: 'exact',
-        });
+        })
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<MaterializationQuery>(
         queryBuilder,
@@ -123,7 +125,8 @@ const getLiveSpecs_collections = (
         .from<CollectionQuery>(TABLES.LIVE_SPECS_EXT)
         .select(collectionColumns, {
             count: 'exact',
-        });
+        })
+        .not('spec', 'is', null);
 
     queryBuilder = defaultTableFilter<CollectionQuery>(
         queryBuilder,
