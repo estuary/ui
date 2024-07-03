@@ -4,3 +4,40 @@
         box-shadow: 0 0 0 0.5px #5353cc;
     }
 }
+
+.react-flow__node-entity {
+    border-radius: var(--node-border-radius);
+    font-family: 'Inter', monospace;
+    font-size: 10px;
+    height: 37px;
+    width: 200px;
+}
+
+.react-flow__node-entity .wrapper {
+    overflow: hidden;
+    display: flex;
+    padding: 2px;
+    position: relative;
+    border-radius: var(--node-border-radius);
+    flex-grow: 1;
+  }
+
+  .react-flow__handle {
+    position: absolute;
+    pointer-events: none;
+    min-width: 5px;
+    min-height: 5px;
+    width: 7px;
+    height: 7px;
+    background: #1a192b;
+    border: 1px solid white;
+    border-radius: 100%;
+  }
+
+  .react-flow__handle.source {
+    right: -3px;
+  }
+  
+  .react-flow__handle.target {
+    left: -3px;
+  }

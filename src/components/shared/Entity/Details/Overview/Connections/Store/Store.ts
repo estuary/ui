@@ -1,10 +1,11 @@
 import { EntityNode } from 'api/liveSpecFlows';
 import { Relationship } from 'components/graphs/ScopedSystemGraph';
+import { EntityNodeData } from 'components/graphs/ScopedSystemGraph/EntityNode';
 import { eChartsColors } from 'context/Theme';
 import produce from 'immer';
 import { unionBy } from 'lodash';
 import { CSSProperties } from 'react';
-import { Edge, Node, Position, addEdge, applyNodeChanges } from 'reactflow';
+import { Edge, Node, addEdge, applyNodeChanges } from 'reactflow';
 import { Entity } from 'types';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
@@ -22,24 +23,23 @@ const NODE_STYLE: CSSProperties = {
     width: 200,
 };
 
-const getNodeType = (
+const evaluateConnectedNodes = (
     relationship: Relationship,
     parentCount?: number,
     childCount?: number
-): Node['type'] => {
+): Pick<EntityNodeData, 'childrenExist' | 'parentsExist'> => {
     if (relationship === 'parent') {
-        return 'input';
+        return { childrenExist: true };
     }
 
     if (relationship === 'child') {
-        return 'output';
+        return { parentsExist: true };
     }
 
-    if (!parentCount || !childCount) {
-        return parentCount ? 'output' : 'input';
-    }
-
-    return 'default';
+    return {
+        childrenExist: Boolean(childCount && childCount > 0),
+        parentsExist: Boolean(parentCount && parentCount > 0),
+    };
 };
 
 const getYPosition = (
@@ -71,7 +71,8 @@ const setElements = (
     const edgeEls: Edge[] = [];
 
     const relationship: Relationship = isParent ? 'parent' : 'child';
-    const nodeType = getNodeType(relationship);
+    const { childrenExist, parentsExist } =
+        evaluateConnectedNodes(relationship);
     const x = isParent ? 100 : 700;
 
     nodes.forEach(({ catalog_name, id, spec_type }, index) => {
@@ -79,17 +80,19 @@ const setElements = (
 
         nodeEls.push({
             data: {
+                childrenExist,
                 label: catalog_name,
+                parentsExist,
                 relationship,
                 type: spec_type as Entity,
             },
             draggable: true,
             id,
             position: { x, y },
-            sourcePosition: Position.Right,
-            style: NODE_STYLE,
-            targetPosition: Position.Left,
-            type: nodeType,
+            // sourcePosition: Position.Right,
+            // style: NODE_STYLE,
+            // targetPosition: Position.Left,
+            type: 'entityNode',
         });
 
         edgeEls.push({
@@ -136,19 +139,28 @@ const getInitialState = (
 
         const selfYPosition = Math.ceil((numberOfRows - 1) / 2) * NODE_DISTANCE;
 
+        const { childrenExist, parentsExist } = evaluateConnectedNodes(
+            'self',
+            parentCount,
+            childCount
+        );
+
         const selfNodeEl: Node[] = [
             {
                 data: {
+                    childrenExist,
                     label: currentNode.catalog_name,
+                    parentsExist,
                     relationship: 'self',
                     type: currentNode.spec_type as Entity,
                 },
                 id: currentNode.id,
                 position: { x: 400, y: selfYPosition },
-                sourcePosition: Position.Right,
-                style: NODE_STYLE,
-                targetPosition: Position.Left,
-                type: getNodeType('self', parentCount, childCount),
+                type: 'entityNode',
+                // sourcePosition: Position.Right,
+                // style: NODE_STYLE,
+                // targetPosition: Position.Left,
+                // type: getNodeType('self', parentCount, childCount),
             },
         ];
 

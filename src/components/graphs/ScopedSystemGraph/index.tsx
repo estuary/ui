@@ -3,6 +3,8 @@ import { useScopedSystemGraph } from 'components/shared/Entity/Details/Overview/
 import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Entity } from 'types';
+import EntityNode from './EntityNode';
+import './style.css';
 
 interface Props {
     containerId: string;
@@ -23,6 +25,8 @@ export interface NodeData {
     type: Entity;
 }
 
+const customNodeTypes = { entityNode: EntityNode };
+
 function ScopedSystemGraph({ containerId }: Props) {
     const edges = useScopedSystemGraph((state) => state.edges);
     const nodes = useScopedSystemGraph((state) => state.nodes);
@@ -35,6 +39,7 @@ function ScopedSystemGraph({ containerId }: Props) {
                 fitView
                 id={containerId}
                 nodes={nodes}
+                nodeTypes={customNodeTypes}
                 onNodesChange={onNodeChange}
                 snapToGrid
             >

@@ -1199,6 +1199,8 @@ const Details: ResolvedIntlConfig['messages'] = {
     'details.scopedSystemGraph.toolbar.zoom.manualZoom.label': `Zoom`,
     'details.scopedSystemGraph.toolbar.search.label': `Search entities`,
     'details.scopedSystemGraph.tooltip.usage.header': `Monthly Usage`,
+    'details.scopedSystemGraph.tooltip.action.edit': `Edit`,
+    'details.scopedSystemGraph.tooltip.action.details': `View details`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
