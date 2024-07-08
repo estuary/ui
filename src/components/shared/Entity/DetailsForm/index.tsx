@@ -40,7 +40,6 @@ function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
                 entityType={entityType}
                 readOnly={readOnly}
             />
-
             <ShardsEditor renderOpen={forceOpen} />
         </WrapperWithHeader>
     );

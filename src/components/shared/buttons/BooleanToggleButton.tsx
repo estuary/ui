@@ -6,7 +6,7 @@ import { BooleanString, OutlinedToggleButtonProps } from './types';
 function BooleanToggleButton({
     children,
     selected,
-    ...theRest
+    ...props
 }: Omit<OutlinedToggleButtonProps, 'value'>) {
     const value: BooleanString = useMemo(
         () => (selected ? 'true' : 'false'),
@@ -14,7 +14,7 @@ function BooleanToggleButton({
     );
 
     return (
-        <OutlinedToggleButton {...theRest} selected={selected} value={value}>
+        <OutlinedToggleButton {...props} selected={selected} value={value}>
             {children}
 
             {selected ? (
