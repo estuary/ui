@@ -1,13 +1,12 @@
 import { AlertColor } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { SuccessResponse } from 'hooks/supabase-swr';
+import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { KeyedMutator } from 'swr';
 
 export interface DraftSpecResponse {
     draftSpecs: DraftSpecQuery[];
     isValidating: boolean;
-    mutate: KeyedMutator<SuccessResponse<DraftSpecQuery>> | null;
+    mutate: KeyedMutator<PostgrestResponse<DraftSpecQuery>> | null;
     error?: PostgrestError;
 }
 

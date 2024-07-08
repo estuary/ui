@@ -1,10 +1,10 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     defaultTableFilter,
     parsePagedFetchAllResponse,
     pagedFetchAll,
     RPCS,
     SortingProps,
-    supabaseClient,
     TABLES,
     DEFAULT_PAGING_SIZE,
 } from 'services/supabase';
@@ -16,31 +16,27 @@ const getGrants = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from(TABLES.COMBINED_GRANTS_EXT)
-        .select(
-            `
+    return defaultTableFilter(
+        supabaseClient
+            .from(TABLES.COMBINED_GRANTS_EXT)
+            .select(
+                `
             id, 
             subject_role, 
             object_role, 
             capability,
             updated_at
         `,
-            {
-                count: 'exact',
-            }
-        )
-        .neq('subject_role', null);
-
-    queryBuilder = defaultTableFilter(
-        queryBuilder,
+                {
+                    count: 'exact',
+                }
+            )
+            .neq('subject_role', null),
         ['subject_role', 'object_role'],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder;
 };
 
 // Used to display user grants in admin page
@@ -49,33 +45,31 @@ const getGrants_Users = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
+    const query = supabaseClient
         .from(TABLES.COMBINED_GRANTS_EXT)
         .select(
             `
-            id, 
-            object_role, 
-            capability,
-            user_avatar_url,
-            user_full_name,
-            user_email,
-            updated_at
-        `,
+                id, 
+                object_role, 
+                capability,
+                user_avatar_url,
+                user_full_name,
+                user_email,
+                updated_at
+            `,
             {
                 count: 'exact',
             }
         )
         .or('user_email.neq.null,user_full_name.neq.null');
 
-    queryBuilder = defaultTableFilter(
-        queryBuilder,
+    return defaultTableFilter<typeof query>(
+        query,
         ['user_full_name', 'user_email', 'object_role'],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder;
 };
 
 export async function getAuthRoles(
@@ -87,7 +81,7 @@ export async function getAuthRoles(
         'getAuthRoles',
         (start) =>
             supabaseClient
-                .rpc<AuthRoles>(RPCS.AUTH_ROLES, {
+                .rpc(RPCS.AUTH_ROLES, {
                     min_capability: capability,
                 })
                 .range(start, start + pageSize - 1)
@@ -107,7 +101,7 @@ const getUserInformationByPrefix = (
         objectRoles.length > 5 ? objectRoles.slice(0, 4) : objectRoles;
 
     return supabaseClient
-        .from<Grant_UserExt>(TABLES.COMBINED_GRANTS_EXT)
+        .from(TABLES.COMBINED_GRANTS_EXT)
         .select(
             `
                     capability,
@@ -122,7 +116,8 @@ const getUserInformationByPrefix = (
         .eq('capability', capability)
         .in('object_role', evaluatedObjectRoles)
         .is('subject_role', null)
-        .filter('user_email', 'not.is', null);
+        .filter('user_email', 'not.is', null)
+        .returns<Grant_UserExt[]>();
 };
 
 export { getGrants, getGrants_Users, getUserInformationByPrefix };

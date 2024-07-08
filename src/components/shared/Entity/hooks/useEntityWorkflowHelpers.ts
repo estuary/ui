@@ -1,4 +1,3 @@
-import { RealtimeSubscription } from '@supabase/supabase-js';
 import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
@@ -9,7 +8,6 @@ import {
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
@@ -34,7 +32,6 @@ import { snackbarSettings } from 'utils/notification-utils';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
-    const supabaseClient = useClient();
     const navigate = useNavigate();
     const entityType = useEntityType();
     const intl = useIntl();
@@ -96,7 +93,7 @@ function useEntityWorkflowHelpers() {
     ]);
 
     const callFailed = useCallback(
-        (formState: any, subscription?: RealtimeSubscription) => {
+        (formState: any) => {
             const setFailureState = () => {
                 setFormState({
                     status: FormStatus.FAILED,
@@ -105,18 +102,9 @@ function useEntityWorkflowHelpers() {
                 });
             };
 
-            if (subscription) {
-                supabaseClient
-                    .removeSubscription(subscription)
-                    .then(() => {
-                        setFailureState();
-                    })
-                    .catch(() => {});
-            } else {
-                setFailureState();
-            }
+            setFailureState();
         },
-        [setFormState, supabaseClient]
+        [setFormState]
     );
 
     const entityDetailsBaseURL = useMemo(() => {

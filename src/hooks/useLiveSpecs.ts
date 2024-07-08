@@ -1,7 +1,9 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { supabaseClient } from 'context/Supabase';
+import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { useQuery, useSelect } from './supabase-swr/';
 
 export interface LiveSpecsQuery extends Schema {
     catalog_name: string;
@@ -13,55 +15,37 @@ export interface LiveSpecsQuery extends Schema {
 const queryColumns = ['catalog_name', 'spec_type'];
 const defaultResponse: LiveSpecsQuery[] = [];
 
-const withKey =
-    (key: string) =>
-    (useSWRNext: any) =>
-    (params: any, fetcher: any, config: any) => {
-        // Pass the serialized key, and unserialize it in fetcher.
-        return useSWRNext(key, () => fetcher(...params), config);
-    };
-
 function useLiveSpecs(specType?: Entity, matchName?: string) {
-    const draftSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: queryColumns,
-            filter: (query) => {
-                let queryBuilder = query
-                    .eq('spec_type', specType)
-                    .order('updated_at', {
-                        ascending: false,
-                    });
+    const draftSpecQuery = useMemo(() => {
+        if (!specType) {
+            return null;
+        }
 
-                if (matchName) {
-                    queryBuilder = queryBuilder.like(
-                        'catalog_name',
-                        `${matchName}%`
-                    );
-                }
+        let queryBuilder = supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(queryColumns.join(','))
+            .eq('spec_type', specType)
+            .order('updated_at', {
+                ascending: false,
+            });
 
-                return queryBuilder;
-            },
-        },
-        [specType, matchName]
-    );
+        if (matchName) {
+            queryBuilder = queryBuilder.like('catalog_name', `${matchName}%`);
+        }
 
-    const { data, error, isValidating } = useSelect(
-        specType ? draftSpecQuery : null
-    );
+        return queryBuilder.returns<LiveSpecsQuery[]>();
+    }, [matchName, specType]);
+
+    const { data, error, isValidating } = useQuery(draftSpecQuery);
 
     return {
-        liveSpecs: data ? data.data : defaultResponse,
+        liveSpecs: data ?? defaultResponse,
         error,
         isValidating,
     };
 }
 
-function useLiveSpecs_details(specType: Entity, catalogName: string) {
-    const draftSpecQuery = useQuery<LiveSpecsQuery>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: `
+const LIVE_SPECS_DETAILS_QUERY = `
                 updated_at,
                 created_at,
                 connectorName:connector_title->>en-US::text,
@@ -69,23 +53,22 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
                 writes_to,
                 reads_from,
                 spec
-            `,
-            filter: (query) => {
-                return query
-                    .eq('catalog_name', catalogName)
-                    .eq('spec_type', specType)
-                    .order('updated_at', {
-                        ascending: false,
-                    });
-            },
-        },
-        [specType, catalogName]
+            `;
+function useLiveSpecs_details(specType: Entity, catalogName: string) {
+    const { data, error, isValidating } = useQuery<LiveSpecsQuery[]>(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(LIVE_SPECS_DETAILS_QUERY)
+            .eq('catalog_name', catalogName)
+            .eq('spec_type', specType)
+            .order('updated_at', {
+                ascending: false,
+            })
+            .returns<LiveSpecsQuery[]>()
     );
 
-    const { data, error, isValidating } = useSelect(draftSpecQuery);
-
     return {
-        liveSpecs: data ? data.data : defaultResponse,
+        liveSpecs: data ?? defaultResponse,
         error,
         isValidating,
     };
@@ -101,28 +84,25 @@ export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
         key: string[];
     };
 }
-const specQuery = queryColumns.concat(['id', 'spec', 'last_pub_id']);
-
+const specQuery = queryColumns.concat(['id', 'spec', 'last_pub_id']).join(',');
 export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
-    const liveSpecQuery = useQuery<LiveSpecsQuery_spec>(
-        TABLES.LIVE_SPECS_EXT,
-        {
-            columns: specQuery,
-            filter: (query) =>
-                query.filter('catalog_name', 'in', `(${collectionNames})`),
-        },
-        [collectionNames]
-    );
+    const liveSpecQuery = useMemo(() => {
+        if (!hasLength(collectionNames)) {
+            return null;
+        }
 
-    const { data, error, isValidating } = useSelect(
-        hasLength(collectionNames) ? liveSpecQuery : null,
-        { use: [withKey(id)] }
-    );
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(specQuery)
+            .filter('catalog_name', 'in', `(${collectionNames})`)
+            .returns<LiveSpecsQuery_spec[]>();
+    }, [collectionNames]);
+
+    const { data, error, isValidating } =
+        useQuery<LiveSpecsQuery_spec[]>(liveSpecQuery);
 
     return {
-        liveSpecs: data
-            ? data.data
-            : (defaultResponse as LiveSpecsQuery_spec[]),
+        liveSpecs: data ?? (defaultResponse as LiveSpecsQuery_spec[]),
         error,
         isValidating,
     };

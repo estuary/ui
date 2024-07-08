@@ -1,6 +1,5 @@
-// {"multi_use": true, "valid_for": "10 days"}
-
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import {
     RPCS,
     SortingProps,
@@ -8,18 +7,16 @@ import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
 } from 'services/supabase';
+import { RefreshTokenData } from 'types';
 
 const createRefreshToken = async (
     multi_use: boolean,
     valid_for: string,
     detail?: string
 ) => {
-    return supabaseRetry<
-        PostgrestSingleResponse<{ id: string; secret: string }>
-    >(
+    return supabaseRetry<PostgrestSingleResponse<RefreshTokenData>>(
         () =>
             supabaseClient
                 .rpc(RPCS.CREATE_REFRESH_TOKEN, {
@@ -50,23 +47,19 @@ const getRefreshTokensForTable = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<RefreshTokenQuery>(TABLES.REFRESH_TOKENS)
-        .select('created_at,detail,id,multi_use,uses,valid_for', {
-            count: 'exact',
-        });
-
-    queryBuilder = defaultTableFilter<RefreshTokenQuery>(
-        queryBuilder,
+    return defaultTableFilter<RefreshTokenQuery[]>(
+        supabaseClient
+            .from(TABLES.REFRESH_TOKENS)
+            .select('created_at,detail,id,multi_use,uses,valid_for', {
+                count: 'exact',
+            })
+            .eq('multi_use', true)
+            .neq('valid_for', INVALID_TOKEN_INTERVAL),
         ['detail'],
         searchQuery,
         sorting,
         pagination
-    )
-        .eq('multi_use', true)
-        .neq('valid_for', INVALID_TOKEN_INTERVAL);
-
-    return queryBuilder;
+    );
 };
 
 const updateRefreshTokenValidity = (id: string, interval: string) => {
@@ -74,7 +67,7 @@ const updateRefreshTokenValidity = (id: string, interval: string) => {
         () =>
             supabaseClient
                 .from(TABLES.REFRESH_TOKENS)
-                .update({ valid_for: interval }, { returning: 'minimal' })
+                .update({ valid_for: interval })
                 .match({ id }),
         'updateRefreshTokenValidity'
     ).then(handleSuccess, handleFailure);

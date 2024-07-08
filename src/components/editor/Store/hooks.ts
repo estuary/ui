@@ -4,7 +4,7 @@ import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provid
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useDraftSpecs, { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { DraftSpecQuery, useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
@@ -585,12 +585,10 @@ export const useHydrateEditorState = (
     // call-outs include: the collection tab of the binding selector relies on the draft ID
     // stored in the 'id' property of the local editor store state; the capture auto-discovery settings
     // rely on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
-    const response = useDraftSpecs(
+    const response = useDraftSpecs_forEditor(
         draftId ?? persistedDraftId ?? draftIdInURL,
-        {
-            specType,
-            catalogName,
-        }
+        specType,
+        catalogName
     );
 
     useEffect(() => {

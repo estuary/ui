@@ -36,3 +36,10 @@ gha-creds-*.json
 
 # tmp folder for scripts 
 /scripts/tmp
+/blob-report/
+
+# Playwright related
+/playwright-tests/node_modules/
+/playwright-tests/reporter/
+/playwright-tests/results/
+/playwright-tests/tmp/

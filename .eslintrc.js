@@ -4,7 +4,7 @@ module.exports = {
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
     ],
-    ignorePatterns: ['vite.config.ts', '__mocks__'],
+    ignorePatterns: ['vite.config.ts', '__mocks__', 'playwright-tests/'],
     parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
@@ -62,6 +62,11 @@ module.exports = {
             {
                 name: '@emotion/react',
                 message: 'Do not access emotion directly. Load through MUI',
+            },
+            {
+                name: '@supabase/supabase-js',
+                importNames: ['PostgrestResponse'],
+                message: 'Please use @supabase/postgrest-js',
             },
         ],
     },

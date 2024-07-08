@@ -6,7 +6,7 @@
         "lib": ["es6", "dom", "dom.iterable", "esnext", "ES2022.Object"],
         "sourceMap": true,
         "importHelpers": true,
-        "declaration": true,
+        "declaration": false,
         "rootDir": "src",
         "strict": true,
         "noUnusedLocals": true,
@@ -34,6 +34,12 @@
         "typeRoots": ["src/types", "node_modules/@types"],
         "types": ["vitest", "vite/client", "vitest/globals"]
     },
-    "include": ["src", "flow_deps/flow.d.ts"],
-    "exclude": ["node_modules", "build", "scripts", "flow_deps/flow-bin"]
+    "include": ["src", "deps/flow/flow.d.ts", "deps/supabase/types.d.ts"],
+    "exclude": [
+        "node_modules",
+        "build",
+        "scripts",
+        "deps/flow/flow-bin",
+        "playwright-tests"
+    ]
 }

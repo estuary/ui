@@ -1,8 +1,5 @@
-import { JsonSchema } from '@jsonforms/core';
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import { Box, Button, Typography } from '@mui/material';
-import { ApiError } from '@supabase/supabase-js';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { AuthApiError } from '@supabase/supabase-js';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
@@ -10,22 +7,13 @@ import { useSnackbar, VariantType } from 'notistack';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import {
-    defaultOptions,
-    hideValidation,
-    showValidation,
-} from 'services/jsonforms/shared';
 
 interface Props {
     onSubmit: Function;
-    schema: JsonSchema;
-    uiSchema: any; //UISchemaElement
+    showToken?: boolean;
 }
 
-const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
-    const hasToken = schema.properties?.token;
-
+const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
@@ -33,21 +21,7 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [submitError, setSubmitError] = useState<ApiError | null>(null);
-    const [formData, setFormData] = useState<{
-        email: string | undefined;
-        token?: string | undefined;
-    }>(
-        hasToken
-            ? {
-                  email: undefined,
-                  token: undefined,
-              }
-            : {
-                  email: undefined,
-              }
-    );
-    const [formErrors, setFormErrors] = useState<any[] | undefined>([]);
+    const [submitError, setSubmitError] = useState<AuthApiError | null>(null);
 
     const displayNotification = (id: string, variant: VariantType) => {
         enqueueSnackbar(
@@ -67,32 +41,36 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
+
+            const formData = Object.fromEntries(
+                new FormData(event.currentTarget)
+            );
+
             if (
-                !isEmpty(formErrors) ||
                 isEmpty(formData.email) ||
-                (hasToken && isEmpty(formData.token))
+                (showToken && isEmpty(formData.token))
             ) {
                 setShowErrors(true);
                 return;
             }
 
-            setSubmitError(null);
             setShowErrors(false);
+            setSubmitError(null);
             setLoading(true);
 
             const { error } = await onSubmit(formData);
 
             if (error) {
-                setLoading(false);
                 setSubmitError(error);
+                setLoading(false);
                 return;
             }
 
-            if (!hasToken) {
-                setLoading(false);
-                displayNotification('login.magicLink', 'success');
-            } else {
+            if (showToken) {
                 navigate(authenticatedRoutes.home.path, { replace: true });
+            } else {
+                displayNotification('login.magicLink', 'success');
+                setLoading(false);
             }
         },
     };
@@ -121,26 +99,50 @@ const MagicLinkInputs = ({ onSubmit, schema, uiSchema }: Props) => {
                     justifyContent: 'center',
                 }}
             >
-                <JsonForms
-                    readonly={loading}
-                    schema={schema}
-                    uischema={uiSchema}
-                    data={formData}
-                    renderers={defaultRenderers}
-                    cells={materialCells}
-                    config={defaultOptions}
-                    validationMode={
-                        showErrors ? showValidation() : hideValidation()
-                    }
-                    onChange={(state) => {
-                        setFormData(state.data);
-                        setFormErrors(state.errors);
-                    }}
+                <TextField
+                    required
+                    fullWidth
+                    autoComplete="email"
+                    disabled={loading}
+                    helperText={intl.formatMessage({
+                        id: 'login.email.description',
+                    })}
+                    label={intl.formatMessage({
+                        id: 'login.email.label',
+                    })}
+                    name="email"
+                    error={showErrors}
+                    color={showErrors ? 'error' : undefined}
                 />
 
-                <Button type="submit" sx={{ mt: 3 }}>
+                {showToken ? (
+                    <TextField
+                        required
+                        fullWidth
+                        disabled={loading}
+                        helperText={intl.formatMessage({
+                            id: 'login.token.description',
+                        })}
+                        label={intl.formatMessage({
+                            id: 'login.token.label',
+                        })}
+                        name="token"
+                        error={showErrors}
+                        color={showErrors ? 'error' : undefined}
+                        inputProps={{
+                            minLength: 5,
+                        }}
+                    />
+                ) : null}
+
+                <Button
+                    name="Sign In"
+                    type="submit"
+                    sx={{ mt: 3 }}
+                    disabled={loading}
+                >
                     <FormattedMessage
-                        id={hasToken ? 'cta.verifyOTP' : 'cta.magicLink'}
+                        id={showToken ? 'cta.verifyOTP' : 'cta.magicLink'}
                     />
                 </Button>
             </form>

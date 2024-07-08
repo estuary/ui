@@ -1,4 +1,4 @@
-import { useUser } from 'context/UserContext';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { isBefore } from 'date-fns';
 import { decodeJwt, JWTPayload } from 'jose';
 import { isEmpty } from 'lodash';
@@ -20,11 +20,12 @@ import {
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-export const gatewayFetcher = (
-    endpoint: string,
-    prefixes: string[],
-    sessionKey: string | undefined
-): Promise<GatewayAuthTokenResponse[]> => {
+type GatewayFetcherArgs = [string, string[], string | undefined];
+export const gatewayFetcher = ({
+    0: endpoint,
+    1: prefixes,
+    2: sessionKey,
+}: GatewayFetcherArgs): Promise<GatewayAuthTokenResponse[]> => {
     const headers: HeadersInit = {};
 
     // Use the supabase key because we're calling a Supabase function to fetch
@@ -44,7 +45,7 @@ export const gatewayFetcher = (
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { onError } = useSWRConfig();
-    const { session } = useUser();
+    const session = useUserStore((state) => state.session);
 
     const readable = useEntitiesStore_capabilities_readable();
     const grants = Object.keys(readable);

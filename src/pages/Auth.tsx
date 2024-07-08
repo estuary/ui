@@ -4,8 +4,8 @@ import {
     unauthenticatedRoutes,
 } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { useUser } from 'context/UserContext';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
+import { supabaseClient } from 'context/Supabase';
+import { useUserStore } from 'context/User/useUserContextStore';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
@@ -33,12 +33,11 @@ const Auth = () => {
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const supabaseClient = useClient();
     const { enqueueSnackbar } = useSnackbar();
 
     // We can fetch user here and not session because we are
     //  potentially creating the session here down below.
-    const { user } = useUser();
+    const user = useUserStore((state) => state.user);
 
     useEffect(() => {
         // If we have already processed we do not need to try getting
@@ -60,7 +59,7 @@ const Auth = () => {
 
             savingUser.current = false;
             await supabaseClient.auth.signOut();
-            navigate(unauthenticatedRoutes.login.path);
+            navigate(unauthenticatedRoutes.login.path, { replace: true });
         };
 
         const success = () => {
@@ -74,9 +73,7 @@ const Auth = () => {
         if (!user) {
             savingUser.current = true;
             supabaseClient.auth
-                .getSessionFromUrl({
-                    storeSession: true,
-                })
+                .initialize()
                 .then(async (response) => {
                     if (response.error) {
                         trackEvent('failed');
@@ -86,8 +83,9 @@ const Auth = () => {
                         success();
                     }
                 })
-                .catch(() => {
+                .catch(async (error) => {
                     trackEvent('exception');
+                    await failed(error.message);
                 });
         } else {
             trackEvent('skipped');

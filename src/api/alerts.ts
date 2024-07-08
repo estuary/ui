@@ -1,3 +1,4 @@
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
 import { stringifyJSON } from 'services/stringify';
 import {
@@ -7,7 +8,6 @@ import {
     handleSuccess,
     insertSupabase,
     SortingProps,
-    supabaseClient,
     supabaseRetry,
     TABLES,
     updateSupabase,
@@ -132,10 +132,11 @@ const getNotificationSubscriptionForUser = async (
     const data = await supabaseRetry(
         () =>
             supabaseClient
-                .from<AlertSubscriptionQuery>(TABLES.ALERT_SUBSCRIPTIONS)
+                .from(TABLES.ALERT_SUBSCRIPTIONS)
                 .select(`id, catalog_prefix, email`)
                 .eq('catalog_prefix', prefix)
-                .eq('email', email),
+                .eq('email', email)
+                .returns<AlertSubscriptionQuery[]>(),
         'getNotificationSubscriptionForUser'
     ).then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
 
@@ -148,50 +149,40 @@ const getNotificationSubscriptionsForTable = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    let queryBuilder = supabaseClient
-        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
-        .select(
-            `    
-                id,
-                updated_at,
-                catalog_prefix,
-                email
-            `,
-            { count: 'exact' }
-        )
-        .eq('catalog_prefix', catalogPrefix);
-
-    queryBuilder = defaultTableFilter<AlertSubscriptionsExtendedQuery>(
-        queryBuilder,
+    return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
+        supabaseClient
+            .from(TABLES.ALERT_SUBSCRIPTIONS)
+            .select(`id, updated_at, catalog_prefix, email`, { count: 'exact' })
+            .eq('catalog_prefix', catalogPrefix),
         ['catalog_prefix', 'email'],
         searchQuery,
         sorting,
         pagination
     );
-
-    return queryBuilder;
 };
 
 const getNotificationSubscriptions = async (prefix?: string) => {
-    let queryBuilder = supabaseClient
-        .from<AlertSubscriptionsExtendedQuery>(TABLES.ALERT_SUBSCRIPTIONS)
-        .select(
-            `    
+    const data = await supabaseRetry(() => {
+        let queryBuilder = supabaseClient
+            .from(TABLES.ALERT_SUBSCRIPTIONS)
+            .select(
+                `    
             id,
             updated_at,
             catalog_prefix,
             email
         `
-        );
+            );
 
-    if (prefix) {
-        queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
-    }
+        if (prefix) {
+            queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
+        }
 
-    const data = await supabaseRetry(
-        () => queryBuilder,
-        'getNotificationSubscriptions'
-    ).then(handleSuccess<AlertSubscriptionsExtendedQuery[]>, handleFailure);
+        return queryBuilder.returns<AlertSubscriptionsExtendedQuery[]>();
+    }, 'getNotificationSubscriptions').then(
+        handleSuccess<AlertSubscriptionsExtendedQuery[]>,
+        handleFailure
+    );
 
     return data;
 };
@@ -200,9 +191,10 @@ const getTaskNotification = async (catalogName: string) => {
     const data = await supabaseRetry(
         () =>
             supabaseClient
-                .from<DataProcessingAlertQuery>(TABLES.ALERT_DATA_PROCESSING)
+                .from(TABLES.ALERT_DATA_PROCESSING)
                 .select(`catalog_name, evaluation_interval`)
-                .eq('catalog_name', catalogName),
+                .eq('catalog_name', catalogName)
+                .returns<DataProcessingAlertQuery[]>(),
         'getTaskNotification'
     ).then(handleSuccess<DataProcessingAlertQuery[]>, handleFailure);
 

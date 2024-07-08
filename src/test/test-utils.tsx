@@ -3,14 +3,12 @@ import { RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AppProviders from 'context';
 import ThemeProvider from 'context/Theme';
-import { SwrSupabaseContext } from 'hooks/supabase-swr';
 import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { supabaseClient } from 'services/supabase';
 import { ResourceConfig } from 'stores/Binding/types';
 import { Entity, Schema } from 'types';
 import { mockDeep } from 'vitest-mock-extended';
-import { ConnectorConfig } from '../../flow_deps/flow';
+import { ConnectorConfig } from '../../deps/flow/flow';
 
 export const generateMockUserMetadata = (
     username: string
@@ -128,11 +126,8 @@ const MockProviders = ({ children, username }: any) => {
         mockAuthSession.user.user_metadata = generateMockUserMetadata(username);
     }
 
-    return (
-        <SwrSupabaseContext.Provider value={supabaseClient}>
-            {children}
-        </SwrSupabaseContext.Provider>
-    );
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 };
 
 export const customRender = async (

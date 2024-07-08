@@ -3,12 +3,12 @@ import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
 import { BaseComponentProps } from 'types';
-import ClientProvider from 'context/Client';
 import ThemeProvider from 'context/Theme';
 import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { TableSettingsProvider } from 'context/TableSettings';
-import { UserContextProvider } from './UserContext';
+import SupabaseProvider from './Supabase';
+import { UserStoreProvider } from './User';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
@@ -16,19 +16,19 @@ const AppProviders = ({ children }: BaseComponentProps) => {
             <ThemeProvider>
                 <IconoirProvider>
                     <ErrorBoundryWrapper>
-                        <ClientProvider>
-                            <NotificationProvider>
-                                <SwrConfigProvider>
-                                    <UserContextProvider>
+                        <NotificationProvider>
+                            <SwrConfigProvider>
+                                <UserStoreProvider>
+                                    <SupabaseProvider>
                                         <SidePanelDocsProvider>
                                             <TableSettingsProvider>
                                                 {children}
                                             </TableSettingsProvider>
                                         </SidePanelDocsProvider>
-                                    </UserContextProvider>
-                                </SwrConfigProvider>
-                            </NotificationProvider>
-                        </ClientProvider>
+                                    </SupabaseProvider>
+                                </UserStoreProvider>
+                            </SwrConfigProvider>
+                        </NotificationProvider>
                     </ErrorBoundryWrapper>
                 </IconoirProvider>
             </ThemeProvider>
