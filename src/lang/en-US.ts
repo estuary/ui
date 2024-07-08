@@ -1094,8 +1094,8 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 
     'workflows.advancedSettings.title': `Advanced Options`,
-    'workflows.disable.autoEnabledAlert.title': `We have auto enabled this {entityType}`,
-    'workflows.disable.autoEnabledAlert.message': `To keep this {entityType} disabled you will need to disable before ${CTAs['cta.saveEntity']}`,
+    'workflows.disable.autoEnabledAlert.title': `We have automatically enabled this {entityType} to ensure we can test the connection with the endpoint.`,
+    'workflows.disable.autoEnabledAlert.message': `To keep this {entityType} disabled you will need to disable before clicking ${CTAs['cta.saveEntity']}.`,
     'workflows.disable.title': `Enable {entityType}`,
     'workflows.disable.message': `Use to toggle the processing of your {entityType}. Setting takes effect only after publishing.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
