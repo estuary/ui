@@ -1097,7 +1097,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.disable.autoEnabledAlert.title': `We have automatically enabled this {entityType} to ensure we can test the connection with the endpoint.`,
     'workflows.disable.autoEnabledAlert.message': `To keep this {entityType} disabled you will need to disable before clicking ${CTAs['cta.saveEntity']}.`,
     'workflows.disable.title': `Enable {entityType}`,
-    'workflows.disable.message': `Use to toggle the processing of your {entityType}. Setting takes effect only after publishing.`,
+    'workflows.disable.message': `Toggle the processing of your {entityType}. Setting takes effect only after publishing.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 };
 
