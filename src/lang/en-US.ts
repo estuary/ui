@@ -571,6 +571,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
+    'admin.alerts.table.aria.label': `Organization Notifications Table`,
     'admin.alerts.cta.addAlertMethod': `Configure Notifications`,
     'admin.alerts.dialog.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
     'admin.alerts.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
@@ -596,7 +597,9 @@ const Welcome: ResolvedIntlConfig['messages'] = {
 const AccessGrants: ResolvedIntlConfig['messages'] = {
     'accessGrantsTable.header': `Captures`,
     'accessGrantsTable.users.title': `Organization Membership`,
+    'accessGrantsTable.users.table.aria.label': `Organization Membership Table`,
     'accessGrantsTable.prefixes.title': `Data Sharing`,
+    'accessGrantsTable.prefixes.table.aria.label': `Data Sharing Table`,
     'accessGrantsTable.users.filterLabel': `Filter User or Object`,
     'accessGrantsTable.prefixes.filterLabel': `Filter Prefixes`,
     'accessGrants.message1': `No results found.`,
@@ -619,6 +622,7 @@ const AccessGrants: ResolvedIntlConfig['messages'] = {
 const StorageMappings: ResolvedIntlConfig['messages'] = {
     'storageMappings.header': `Cloud Storage`,
     'storageMappingsTable.title': `Storage Locations`,
+    'storageMappingsTable.table.aria.label': `Storage Locations Table`,
     'storageMappingsTable.filterLabel': `Filter by Prefix`,
     'storageMappingsTable.message1': `No results found.`,
     'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
@@ -1418,6 +1422,7 @@ const NotBeforeNotAfter: ResolvedIntlConfig['messages'] = {
 
 const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.header': `Field Selection`,
+    'fieldSelection.table.label': `Field Selection Editor`,
     'fieldSelection.message': `Determine which fields in your collection get materialized. By default, the connector dynamically selects the fields exported by your materialization. Click "${CTAs['cta.refresh']}" to update the table below. For more details, please {docLink}.`,
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,

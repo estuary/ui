@@ -1,7 +1,7 @@
 import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useRefreshTokenStore } from '../Store/create';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 function RefreshTokenTitle({ setOpen }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const saving = useRefreshTokenStore((state) => state.saving);
@@ -36,6 +37,7 @@ function RefreshTokenTitle({ setOpen }: Props) {
 
             <IconButton disabled={saving} onClick={closeDialog}>
                 <Xmark
+                    aria-label={intl.formatMessage({ id: 'cta.close' })}
                     style={{
                         fontSize: '1rem',
                         color: theme.palette.text.primary,

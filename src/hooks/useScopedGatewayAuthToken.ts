@@ -1,4 +1,4 @@
-import { useUser } from 'context/UserContext';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
 import { client } from 'services/client';
 import useSWR from 'swr';
@@ -17,18 +17,18 @@ export interface Token {
 }
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-const fetcher = async (
-    endpoint: string,
-    prefix: string,
-    sessionKey: string | undefined
-): Promise<Token> => {
-    const headers: HeadersInit = {};
-
-    const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
-
-    headers.apikey = supabaseAnonymousKey;
-    headers.Authorization = `Bearer ${sessionKey}`;
-    headers['Content-Type'] = 'application/json';
+const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
+type FetcherArgs = [string, string, string | undefined];
+const fetcher = async ({
+    0: endpoint,
+    1: prefix,
+    2: sessionKey,
+}: FetcherArgs): Promise<Token> => {
+    const headers: HeadersInit = {
+        'apikey': supabaseAnonymousKey,
+        'Authorization': `Bearer ${sessionKey}`,
+        'Content-Type': 'application/json',
+    };
 
     const response: GatewayAuthTokenResponse[] = await client(endpoint, {
         data: { prefixes: [prefix] },
@@ -90,7 +90,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
 // Returns an auth token for accessing the provided `prefixes` scopes in the data plane.
 // This token is not stored in local storage.
 const useScopedGatewayAuthToken = (prefix: string | null) => {
-    const { session } = useUser();
+    const session = useUserStore((state) => state.session);
     const { data, error } = useSWR(
         prefix === null
             ? null

@@ -1,17 +1,18 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getAppliedDirectives } from 'api/directives';
 import { DIRECTIVES } from 'directives/shared';
 import { useMemo } from 'react';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
-import { useSelectNew } from './supabase-swr/hooks/useSelect';
+import { AppliedDirective } from 'types';
 
 function useAppliedDirectives(type: keyof typeof DIRECTIVES, token?: string) {
-    const { data, error, mutate, isValidating } =
-        useSelectNew<JoinedAppliedDirective>(getAppliedDirectives(type, token));
+    const { data, error, mutate, isValidating } = useQuery(
+        getAppliedDirectives(type, token)
+    );
 
     return useMemo(
         () => ({
             appliedDirective: data
-                ? (data.data[0] as AppliedDirective<any> | undefined)
+                ? (data[0] as AppliedDirective<any> | undefined)
                 : null,
             error,
             mutate,

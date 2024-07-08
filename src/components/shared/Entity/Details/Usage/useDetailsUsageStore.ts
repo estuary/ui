@@ -18,7 +18,6 @@ const useDetailsUsageStore = create<DetailsUsageState>()(
     persist(
         devtools((set) => {
             return {
-                foo: 'sup',
                 range: 6,
                 statType: 'bytes',
                 setRange: (newVal) => {

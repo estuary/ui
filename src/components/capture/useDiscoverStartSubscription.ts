@@ -4,7 +4,6 @@ import {
 } from 'components/editor/Store/hooks';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
@@ -24,6 +23,7 @@ import {
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Entity } from 'types';
+import { supabaseClient } from 'context/Supabase';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {
@@ -37,8 +37,6 @@ const trackEvent = (payload: any) => {
 
 function useDiscoverStartSubscription(entityType: Entity) {
     const postGenerateMutate = useMutateDraftSpec();
-
-    const supabaseClient = useClient();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -146,7 +144,6 @@ function useDiscoverStartSubscription(entityType: Entity) {
             setPreviousEndpointConfig,
             setServerUpdateRequired,
             storeDiscoveredCollections,
-            supabaseClient,
         ]
     );
 }

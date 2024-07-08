@@ -7,7 +7,7 @@ import retry from 'retry';
 import { logRocketEvent, retryAfterFailure } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { handleFailure, handleSuccess } from 'services/supabase';
-import { useUser } from 'context/UserContext';
+import { useUserStore } from 'context/User/useUserContextStore';
 
 const { verifyURL } = getMarketplaceSettings();
 
@@ -28,7 +28,7 @@ interface MarketplaceVerifyResponse {
 }
 
 const useMarketplaceVerify = () => {
-    const { session } = useUser();
+    const session = useUserStore((state) => state.session);
 
     return useCallback(
         (tenant: string) => {

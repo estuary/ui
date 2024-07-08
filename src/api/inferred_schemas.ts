@@ -1,7 +1,7 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
@@ -11,9 +11,10 @@ export const fetchInferredSchema = (collectionName: string) => {
     const queryBuilder = supabaseRetry(
         () =>
             supabaseClient
-                .from<InferredSchemas>(TABLES.INFERRED_SCHEMAS)
+                .from(TABLES.INFERRED_SCHEMAS)
                 .select(`schema`)
-                .eq('collection_name', collectionName),
+                .eq('collection_name', collectionName)
+                .returns<InferredSchemas[]>(),
         'fetchInferredSchema'
     ).then(handleSuccess<Pick<InferredSchemas, 'schema'>[]>, handleFailure);
 

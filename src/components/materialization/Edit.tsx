@@ -13,7 +13,7 @@ import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useDraftSpecs from 'hooks/useDraftSpecs';
+import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
@@ -38,10 +38,8 @@ function MaterializationEdit() {
 
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
-        persistedDraftId,
-        { lastPubId }
-    );
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
+        useDraftSpecs_editWorkflow(persistedDraftId, lastPubId);
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();

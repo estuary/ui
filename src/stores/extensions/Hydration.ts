@@ -107,7 +107,7 @@ export const getStoreWithHydrationSettings = (
 };
 
 export interface AsyncOperationProps {
-    fetcher: PostgrestFilterBuilder<any> | null;
+    fetcher: PostgrestFilterBuilder<any, any, any> | null;
     loading: boolean;
     response: any;
     error: any;

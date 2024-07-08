@@ -1,11 +1,6 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
-import {
-    FUNCTIONS,
-    TABLES,
-    invokeSupabase,
-    supabaseClient,
-} from 'services/supabase';
+import { FUNCTIONS, TABLES, invokeSupabase } from 'services/supabase';
 import { Tenants } from 'types';
 import { formatDateForApi } from 'utils/billing-utils';
 
@@ -107,12 +102,12 @@ export const getInvoicesBetween = (
     billed_prefix: string,
     date_start: Date,
     date_end: Date
-): PromiseLike<PostgrestResponse<Invoice>> => {
+) => {
     const formattedStart = formatDateForApi(date_start);
     const formattedEnd = formatDateForApi(date_end);
 
     return supabaseClient
-        .from<Invoice>(TABLES.INVOICES)
+        .from(TABLES.INVOICES)
         .select(invoicesQuery)
         .filter('billed_prefix', 'eq', billed_prefix)
         .or(
@@ -124,7 +119,8 @@ export const getInvoicesBetween = (
             ].join(',')})`
         )
         .order('date_start', { ascending: false })
-        .throwOnError();
+        .throwOnError()
+        .returns<Invoice[]>();
 };
 
 export interface MultiplePaymentMethods {

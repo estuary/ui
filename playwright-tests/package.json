@@ -1,0 +1,25 @@
+{
+    "name": "playwright-tests",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "playwright test",
+        "test-gen": "playwright codegen localhost:3000",
+        "test-report": "playwright show-report ./tmp/reporter/",
+        "codegen:setup": "npm run env:setup && NODE_ENV=test npm --prefix ../ start",
+        "codegen": "playwright codegen http://localhost:8082/project/default"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@playwright/test": "^1.41.2",
+        "@types/node": "^20.11.16",
+        "dotenv": "^16.4.5",
+        "pg": "^8.12.0"
+    },
+    "dependencies": {
+        "@types/pg": "^8.11.6"
+    }
+}

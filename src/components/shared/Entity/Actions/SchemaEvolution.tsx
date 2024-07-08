@@ -11,8 +11,8 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useEntityType } from 'context/EntityContext';
+import { supabaseClient } from 'context/Supabase';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useClient from 'hooks/supabase-swr/hooks/useClient';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
@@ -36,7 +36,6 @@ interface Props {
 }
 
 function SchemaEvolution({ onFailure }: Props) {
-    const supabaseClient = useClient();
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const { jobStatusPoller } = useJobStatusPoller();

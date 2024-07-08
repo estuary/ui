@@ -1,3 +1,4 @@
+import { supabaseClient } from 'context/Supabase';
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
@@ -9,7 +10,6 @@ import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    supabaseClient,
     supabaseRetry,
     CONNECTOR_DETAILS,
 } from 'services/supabase';
@@ -22,34 +22,29 @@ const getConnectors = (
     sortDirection: SortDirection,
     protocol: string | null
 ) => {
-    let queryBuilder = supabaseClient
-        .from<ConnectorWithTagDetailQuery>(TABLES.CONNECTORS)
-        .select(CONNECTOR_WITH_TAG_QUERY);
-
-    queryBuilder = defaultTableFilter<ConnectorWithTagDetailQuery>(
-        queryBuilder,
-        [CONNECTOR_NAME, CONNECTOR_DETAILS],
-        searchQuery,
-        [
-            {
-                col: CONNECTOR_RECOMMENDED,
-                direction: 'desc',
-            },
-            {
-                col: CONNECTOR_NAME,
-                direction: sortDirection,
-            },
-        ],
-        undefined,
-        { column: 'connector_tags.protocol', value: protocol }
-    );
-
-    queryBuilder = requiredConnectorColumnsExist<ConnectorWithTagDetailQuery>(
-        queryBuilder,
+    // TODO (V2 typing) - need a way to handle single vs multiple responses
+    return requiredConnectorColumnsExist<ConnectorWithTagDetailQuery>(
+        defaultTableFilter<ConnectorWithTagDetailQuery>(
+            supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(CONNECTOR_WITH_TAG_QUERY),
+            [CONNECTOR_NAME, CONNECTOR_DETAILS],
+            searchQuery,
+            [
+                {
+                    col: CONNECTOR_RECOMMENDED,
+                    direction: 'desc',
+                },
+                {
+                    col: CONNECTOR_NAME,
+                    direction: sortDirection,
+                },
+            ],
+            undefined,
+            { column: 'connector_tags.protocol', value: protocol }
+        ),
         'connector_tags'
-    );
-
-    return queryBuilder;
+    ).returns<ConnectorWithTagDetailQuery[]>();
 };
 
 // Hydration-specific queries

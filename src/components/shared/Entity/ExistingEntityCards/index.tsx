@@ -7,11 +7,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import {
-    CaptureQueryWithSpec,
-    getLiveSpecs_existingTasks,
-    MaterializationQueryWithSpec,
-} from 'api/liveSpecsExt';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { getLiveSpecs_existingTasks } from 'api/liveSpecsExt';
 import ExistingEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/Existing';
 import NewEntityCard from 'components/shared/Entity/ExistingEntityCards/Cards/New';
 import ExistingEntityCardSkeleton from 'components/shared/Entity/ExistingEntityCards/Skeleton';
@@ -26,8 +23,6 @@ import { semiTransparentBackground } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { ToPostgrestFilterBuilder } from 'hooks/supabase-swr';
-import { useDistributedSelectNew } from 'hooks/supabase-swr/hooks/useSelect';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -70,30 +65,16 @@ function ExistingEntityCards() {
         status: TableStatuses.LOADING,
     });
 
-    const liveSpecQuery: ToPostgrestFilterBuilder<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
-    > = useMemo(() => {
-        return getLiveSpecs_existingTasks(
-            entityType,
-            connectorId,
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ]
-        );
-    }, [connectorId, entityType, searchQuery, sortDirection]);
-
-    const { data: useSelectResponse, isValidating } = useDistributedSelectNew<
-        CaptureQueryWithSpec | MaterializationQueryWithSpec
-    >(liveSpecQuery);
-
-    const selectData = useMemo(
-        () => (useSelectResponse ? useSelectResponse.data : []),
-        [useSelectResponse]
+    const { data: selectResponse, isValidating } = useQuery(
+        getLiveSpecs_existingTasks(entityType, connectorId, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ])
     );
+
+    const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
     useEffect(() => {
         setQueryData(selectData);

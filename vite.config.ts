@@ -77,6 +77,16 @@ export default defineConfig({
         setupFiles: ['./src/setupTests.ts'],
         testTimeout: 10000, // more time for auto retries
         restoreMocks: true,
+        exclude: [
+            '**/playwright-tests/**',
+
+            // Below are defaults
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/cypress/**',
+            '**/.{idea,git,cache,output,temp}/**',
+            '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+        ],
     },
 
     // https://github.com/vitejs/awesome-vite#plugins

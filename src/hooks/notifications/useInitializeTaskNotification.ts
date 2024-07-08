@@ -1,5 +1,4 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { useUser } from 'context/UserContext';
 import {
     AlertSubscriptionQuery,
     DataProcessingAlertQuery,
@@ -11,9 +10,10 @@ import { useCallback, useMemo } from 'react';
 import { BASE_ERROR } from 'services/supabase';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
+import { useUserStore } from 'context/User/useUserContextStore';
 
 function useInitializeTaskNotification(catalogName: string) {
-    const { session } = useUser();
+    const user = useUserStore((state) => state.user);
 
     const adminCapabilities = useEntitiesStore_capabilities_adminable();
     const objectRoles = Object.keys(adminCapabilities);
@@ -34,7 +34,7 @@ function useInitializeTaskNotification(catalogName: string) {
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!session?.user?.email || !prefix) {
+        if (!user?.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -45,18 +45,18 @@ function useInitializeTaskNotification(catalogName: string) {
         const response = await createNotificationSubscription([
             {
                 catalog_prefix: prefix,
-                email: session.user.email,
+                email: user.email,
             },
         ]);
 
         return response;
-    }, [prefix, session?.user?.email]);
+    }, [prefix, user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
         data: AlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
-        if (!session?.user?.email || !prefix) {
+        if (!user?.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
                 data: null,
@@ -65,10 +65,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         const { data: existingSubscription, error: existingSubscriptionError } =
-            await getNotificationSubscriptionForUser(
-                prefix,
-                session.user.email
-            );
+            await getNotificationSubscriptionForUser(prefix, user.email);
 
         if (existingSubscriptionError) {
             // Failed to determine the existence of a notification subscription for the task.
@@ -76,7 +73,7 @@ function useInitializeTaskNotification(catalogName: string) {
         }
 
         return { data: existingSubscription };
-    }, [prefix, session?.user?.email]);
+    }, [prefix, user?.email]);
 
     const getNotifications = useCallback(async (): Promise<{
         data: DataProcessingAlertQuery | null;

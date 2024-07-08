@@ -172,6 +172,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                             <Checkbox value={acknowledgedDocuments} required />
                         }
                         onChange={handlers.update}
+                        name="accept"
                         label={
                             <FormattedMessage
                                 id="legal.docs.accept"
