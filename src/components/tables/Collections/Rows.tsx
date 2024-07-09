@@ -3,13 +3,11 @@ import { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'stores/names';
 
 import { StatsResponse } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
 import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';
@@ -32,7 +30,6 @@ interface RowsProps {
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
-    const tenantDetails = useTenantDetails();
     const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
@@ -55,43 +52,25 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 entityStatusTypes={[entityType, 'derivation']}
             />
 
-            {hasLength(tenantDetails) ? (
-                <>
-                    <Bytes
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.bytes_written_to_me
-                                : null
-                        }
-                    />
+            <Bytes
+                val={
+                    stats ? stats[row.catalog_name]?.bytes_written_to_me : null
+                }
+            />
 
-                    <Bytes
-                        read
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.bytes_read_from_me
-                                : null
-                        }
-                    />
+            <Bytes
+                read
+                val={stats ? stats[row.catalog_name]?.bytes_read_from_me : null}
+            />
 
-                    <Docs
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.docs_written_to_me
-                                : null
-                        }
-                    />
+            <Docs
+                val={stats ? stats[row.catalog_name]?.docs_written_to_me : null}
+            />
 
-                    <Docs
-                        read
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.docs_read_from_me
-                                : null
-                        }
-                    />
-                </>
-            ) : null}
+            <Docs
+                read
+                val={stats ? stats[row.catalog_name]?.docs_read_from_me : null}
+            />
 
             <TimeStamp time={row.updated_at} />
 

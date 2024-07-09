@@ -4,13 +4,12 @@ import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
-import { hasLength } from 'utils/misc-utils';
 
 function AdminTabs() {
     const intl = useIntl();
     const { pathname } = useLocation();
     const [selectedTab, setSelectedTab] = useState(0);
-    const tenantDetails = useTenantDetails();
+    const { hasTenants } = useTenantDetails();
 
     const tabProps = useMemo(() => {
         const response = [
@@ -24,7 +23,7 @@ function AdminTabs() {
             },
         ];
 
-        if (hasLength(tenantDetails)) {
+        if (hasTenants) {
             response.push({
                 label: 'admin.tabs.billing',
                 path: authenticatedRoutes.admin.billing.fullPath,
@@ -41,7 +40,7 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.api.fullPath,
             },
         ]);
-    }, [tenantDetails]);
+    }, [hasTenants]);
 
     const tabs = useMemo(
         () =>
