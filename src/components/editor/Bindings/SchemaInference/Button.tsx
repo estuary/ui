@@ -8,7 +8,7 @@ import {
     useBindingsEditorStore_setLoadingInferredSchema,
 } from 'components/editor/Bindings/Store/hooks';
 import { useEntityWorkflow } from 'context/Workflow';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+import useGatewayAuthToken from 'hooks/gatewayAuthToken/useGatewayAuthToken';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUnmountPromise } from 'react-use';

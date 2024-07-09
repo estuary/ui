@@ -1,14 +1,13 @@
+import { clearGatewayAuthTokenCache } from 'hooks/gatewayAuthToken/cache';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useMemo, useState } from 'react';
-import { useEffectOnce, useLocalStorage } from 'react-use';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { useEffectOnce } from 'react-use';
 
 function useLoginStateHandler(showRegistration?: boolean) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-    const { 2: clearGatewayConfig } = useLocalStorage(LocalStorageKeys.GATEWAY);
-    useEffectOnce(() => clearGatewayConfig());
+    useEffectOnce(() => clearGatewayAuthTokenCache());
 
     const [tabIndex, setTabIndex] = useState(Boolean(showRegistration) ? 1 : 0);
     const handleChange = useCallback(

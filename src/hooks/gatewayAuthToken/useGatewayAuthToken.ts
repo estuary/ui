@@ -12,20 +12,43 @@ import {
     getGatewayAuthTokenSettings,
     getSupabaseAnonymousKey,
 } from 'utils/env-utils';
-import {
-    getStoredGatewayAuthConfig,
-    storeGatewayAuthConfig,
-} from 'utils/localStorage-utils';
+import { getStoredGatewayAuthConfig, storeGatewayAuthConfig } from './cache';
 
 const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
+interface GatewayAuthTokenFetcherResponse extends GatewayAuthTokenResponse {
+    cached?: boolean;
+}
+
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-type GatewayFetcherArgs = [string, string[], string | undefined];
+type GatewayFetcherArgs = [string, string[], string | undefined, string];
 export const gatewayFetcher = ({
     0: endpoint,
     1: prefixes,
     2: sessionKey,
-}: GatewayFetcherArgs): Promise<GatewayAuthTokenResponse[]> => {
+    3: cacheKey,
+}: GatewayFetcherArgs): Promise<GatewayAuthTokenFetcherResponse[]> => {
+    // Grab the Gateway token from local storage
+    let jwt: JWTPayload | undefined,
+        gatewayConfig: GatewayAuthTokenResponse | null;
+    try {
+        gatewayConfig = getStoredGatewayAuthConfig(cacheKey);
+        jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
+    } catch {
+        jwt = undefined;
+        gatewayConfig = null;
+    }
+
+    // Check if the Gateway token is expired and we need to get a new one
+    let tokenExpired = true;
+    if (jwt?.exp) {
+        tokenExpired = isBefore(jwt.exp * 1000, Date.now());
+    }
+
+    if (!tokenExpired && gatewayConfig?.gateway_url) {
+        return Promise.resolve([{ ...gatewayConfig, cached: true }]);
+    }
+
     const headers: HeadersInit = {};
 
     // Use the supabase key because we're calling a Supabase function to fetch
@@ -62,8 +85,14 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
           )
         : [];
 
+    const authorizedPrefixCount = authorized_prefixes.length;
+    const hasAuthorizedPrefixes = authorizedPrefixCount > 0;
+    const cacheKey = hasAuthorizedPrefixes
+        ? authorized_prefixes.join(',')
+        : null;
+
     if (prefixes) {
-        if (authorized_prefixes.length !== prefixes.length) {
+        if (authorizedPrefixCount !== prefixes.length) {
             logRocketEvent(CustomEvents.GATEWAY_TOKEN_INVALID_PREFIX, {
                 prefixes: prefixes.filter(
                     (prefix) => !allowed_prefixes.includes(prefix)
@@ -72,33 +101,25 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         }
     }
 
-    // Grab the Gateway token from local storage
-    let jwt: JWTPayload | undefined;
-    try {
-        const gatewayConfig = getStoredGatewayAuthConfig();
-        jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
-    } catch {
-        jwt = undefined;
-    }
-
-    // Check if the Gateway token is expired and we need to get a new one
-    let tokenExpired = true;
-    if (jwt?.exp) {
-        tokenExpired = isBefore(jwt.exp * 1000, Date.now());
-    }
+    console.log('hasAuthorizedPrefixes', hasAuthorizedPrefixes);
+    console.log('cacheKey', cacheKey);
 
     const { data, mutate } = useSWR(
-        tokenExpired || authorized_prefixes.length > 0
+        hasAuthorizedPrefixes
             ? [
                   gatewayAuthTokenEndpoint,
                   authorized_prefixes,
                   session?.access_token,
+                  cacheKey,
               ]
             : null,
         gatewayFetcher,
         {
             onSuccess: ([config]) => {
-                storeGatewayAuthConfig(config);
+                if (config.cached) {
+                    return;
+                }
+                storeGatewayAuthConfig(cacheKey, config);
             },
             onError: (error, key, config) => {
                 logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {

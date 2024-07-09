@@ -1,6 +1,6 @@
 import { singleCallSettings } from 'context/SWR';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
-import useGatewayAuthToken from 'hooks/useGatewayAuthToken';
+import useGatewayAuthToken from 'hooks/gatewayAuthToken/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
 import useSWR from 'swr';
