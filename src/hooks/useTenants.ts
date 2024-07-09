@@ -38,8 +38,7 @@ export function useTenantHidesDataPreview(entityName: string) {
     }, [isDemo, tenantName]);
 
     const { data, error, isValidating } = useQuery(query, {
-        revalidateOnMount: true,
-        revalidateOnFocus: true,
+        refreshInterval: 30000,
     });
 
     const response = useMemo(
