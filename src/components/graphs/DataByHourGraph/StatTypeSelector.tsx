@@ -1,6 +1,6 @@
 import { ToggleButtonGroup } from '@mui/material';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
-import OutlinedToggleButton from 'components/shared/OutlinedToggleButton';
+import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 

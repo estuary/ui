@@ -1,5 +1,5 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { BooleanString } from 'components/editor/Bindings/Backfill';
+import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityType } from 'context/EntityContext';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useCallback } from 'react';
