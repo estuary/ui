@@ -1,7 +1,7 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
-import { useUnmount } from 'react-use';
+import { useUnmount, useUpdateEffect } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
@@ -49,8 +49,9 @@ export const TableHydrator = ({
         setDisableMultiSelect(disableMultiSelect ?? false);
     }, [disableMultiSelect, setDisableMultiSelect]);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
         if (query) {
+            console.log('hydrate', hydrate);
             setQuery(query);
             hydrate();
         }
