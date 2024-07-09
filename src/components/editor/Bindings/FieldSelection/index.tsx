@@ -23,6 +23,7 @@ import FieldSelectionTable, {
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEqual } from 'lodash';
 import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -46,6 +47,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { Schema, TableColumns } from 'types';
 import { WithRequiredNonNullProperty } from 'types/utils';
+import { BooleanParam, useQueryParam } from 'use-query-params';
 import { hasLength } from 'utils/misc-utils';
 import {
     evaluateRequiredIncludedFields,
@@ -121,6 +123,10 @@ const optionalColumns = columns.filter(
 );
 
 function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
+    const { 1: setForcedEnable } = useQueryParam(
+        GlobalSearchParams.FORCED_SHARD_ENABLE,
+        BooleanParam
+    );
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
@@ -274,10 +280,24 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         } else {
             if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
                 if (fireBackgroundTest.current) {
+                    // We only want to force an update if the spec is disabled. This way when a
+                    //  test is ran there wil not be an error and the backend will connect to the
+                    // connector.  When the user goes to saves we will flip this back
+                    const forceEnabled = Boolean(
+                        draftSpecs[0].spec?.shards?.disable
+                    );
+
+                    // Only update the param to keep track when we do this so if someone
+                    //  reloads the page their draft will get switched back properly
+                    if (forceEnabled) {
+                        setForcedEnable(forceEnabled);
+                    }
+
                     fireBackgroundTest.current = false;
                     setRefreshRequired(false);
                     logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_AUTO);
-                    void refresh(draftId);
+
+                    void refresh(draftId, forceEnabled);
                 }
             }
 
@@ -292,6 +312,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         formStatus,
         initializeSelections,
         refresh,
+        setForcedEnable,
         setRecommendFields,
         stagedBindingIndex,
     ]);

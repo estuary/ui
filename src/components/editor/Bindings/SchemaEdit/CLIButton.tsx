@@ -6,7 +6,7 @@ import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_editModeEnabled,
 } from 'components/editor/Bindings/Store/hooks';
-import ButtonWithPopper from 'components/shared/ButtonWithPopper';
+import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 function SchemaEditCLIButton() {
