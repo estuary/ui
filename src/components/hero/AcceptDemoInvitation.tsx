@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
@@ -82,7 +82,7 @@ function AcceptDemoInvitation({
     };
 
     return (
-        <>
+        <Stack>
             {serverError ? (
                 <Box sx={{ mb: 3 }}>
                     <Error
@@ -102,7 +102,7 @@ function AcceptDemoInvitation({
                 clickHandler={applyDirective}
                 disabled={loading}
             />
-        </>
+        </Stack>
     );
 }
 
