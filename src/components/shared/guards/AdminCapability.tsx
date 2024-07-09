@@ -11,11 +11,7 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
 
     const entityTypeValue = useEntityType();
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = useMemo(
-        () => Object.keys(adminCapabilities),
-        [adminCapabilities]
-    );
+    const objectRoles = useEntitiesStore_capabilities_adminable();
 
     // TODO (maybe) Possibly we should just include this logic in the useEntityType hook?
     // Just to be safe translating the entity type from the hook. Probably was safe just passing
