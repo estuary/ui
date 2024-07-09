@@ -8,7 +8,14 @@ function ShardsDisableWarning() {
     const entityType = useEntityType();
 
     return (
-        <Box sx={{ mb: 2 }}>
+        <Box
+            sx={{
+                'mb': 2,
+                '& .MuiAlertTitle-root': {
+                    textTransform: 'capitalize',
+                },
+            }}
+        >
             <AlertBox
                 short
                 severity="warning"
@@ -21,12 +28,22 @@ function ShardsDisableWarning() {
                     />
                 }
             >
-                <FormattedMessage
-                    id="workflows.disable.autoEnabledAlert.message"
-                    values={{
-                        entityType,
-                    }}
-                />
+                <Box>
+                    <FormattedMessage
+                        id="workflows.disable.autoEnabledAlert.message"
+                        values={{
+                            entityType,
+                        }}
+                    />
+                </Box>
+                <Box>
+                    <FormattedMessage
+                        id="workflows.disable.autoEnabledAlert.instructions"
+                        values={{
+                            entityType,
+                        }}
+                    />
+                </Box>
             </AlertBox>
         </Box>
     );
