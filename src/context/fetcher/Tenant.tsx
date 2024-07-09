@@ -35,7 +35,7 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
     return (
         <TenantContext.Provider
             value={{
-                hasTenants: !hasLength(tenants),
+                hasTenants: hasLength(tenants),
                 tenants,
             }}
         >
