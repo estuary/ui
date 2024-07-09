@@ -22,7 +22,7 @@ interface GatewayAuthTokenFetcherResponse extends GatewayAuthTokenResponse {
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
 type GatewayFetcherArgs = [string, string[], string | undefined, string];
-export const gatewayFetcher = ({
+const gatewayFetcher = ({
     0: endpoint,
     1: prefixes,
     2: sessionKey,
@@ -30,13 +30,13 @@ export const gatewayFetcher = ({
 }: GatewayFetcherArgs): Promise<GatewayAuthTokenFetcherResponse[]> => {
     // Grab the Gateway token from local storage
     let jwt: JWTPayload | undefined,
-        gatewayConfig: GatewayAuthTokenResponse | null;
+        gatewayConfig: GatewayAuthTokenResponse | undefined;
     try {
         gatewayConfig = getStoredGatewayAuthConfig(cacheKey);
         jwt = gatewayConfig ? decodeJwt(gatewayConfig.token) : undefined;
     } catch {
         jwt = undefined;
-        gatewayConfig = null;
+        gatewayConfig = undefined;
     }
 
     // Check if the Gateway token is expired and we need to get a new one
@@ -45,6 +45,8 @@ export const gatewayFetcher = ({
         tokenExpired = isBefore(jwt.exp * 1000, Date.now());
     }
 
+    // If the token is still good and it contains a URL (mainly checking b/c typescript) then just
+    //  used the cached value.
     if (!tokenExpired && gatewayConfig?.gateway_url) {
         return Promise.resolve([{ ...gatewayConfig, cached: true }]);
     }
@@ -101,11 +103,8 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
         }
     }
 
-    console.log('hasAuthorizedPrefixes', hasAuthorizedPrefixes);
-    console.log('cacheKey', cacheKey);
-
     const { data, mutate } = useSWR(
-        hasAuthorizedPrefixes
+        hasAuthorizedPrefixes && cacheKey
             ? [
                   gatewayAuthTokenEndpoint,
                   authorized_prefixes,
