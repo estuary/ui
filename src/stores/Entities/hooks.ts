@@ -12,24 +12,33 @@ import { useEntitiesStore } from './Store';
 //  I think there is a chance we could use some kind of permissions library to help with this.
 
 export const useEntitiesStore_capabilities_readable = () => {
-    return useEntitiesStore((state) => ({
-        ...state.capabilities.admin,
-        ...state.capabilities.write,
-        ...state.capabilities.read,
-    }));
+    return useEntitiesStore(
+        useShallow((state) =>
+            Object.keys({
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
+                ...state.capabilities.read,
+            })
+        )
+    );
 };
 
-export const useEntitiesStore_capabilities_writable = () => {
-    return useEntitiesStore((state) => {
-        return {
-            ...state.capabilities.admin,
-            ...state.capabilities.write,
-        };
-    });
-};
+// Not being used right now but commenting out to make the pattern more clear
+// export const useEntitiesStore_capabilities_writable = () => {
+//     return useEntitiesStore(
+//         useShallow((state) => {
+//             return {
+//                 ...state.capabilities.admin,
+//                 ...state.capabilities.write,
+//             };
+//         })
+//     );
+// };
 
 export const useEntitiesStore_capabilities_adminable = () => {
-    return useEntitiesStore((state) => state.capabilities.admin);
+    return useEntitiesStore(
+        useShallow((state) => Object.keys(state.capabilities.admin))
+    );
 };
 
 export const useEntitiesStore_hasSupportRole = () => {
@@ -44,7 +53,7 @@ export const useEntitiesStore_hasDemoTenantAccess = () => {
     const readable = useEntitiesStore_capabilities_readable();
     return useEntitiesStore(
         useShallow(() => {
-            return Object.keys(readable).includes(DEMO_TENANT);
+            return readable.includes(DEMO_TENANT);
         })
     );
 };

@@ -7,8 +7,7 @@ import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 function AccessLinksButton() {
     const [open, setOpen] = useState<boolean>(false);
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
+    const objectRoles = useEntitiesStore_capabilities_adminable();
 
     return objectRoles.length > 0 ? (
         <Box>

@@ -15,8 +15,7 @@ import { useUserStore } from 'context/User/useUserContextStore';
 function useInitializeTaskNotification(catalogName: string) {
     const user = useUserStore((state) => state.user);
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
+    const objectRoles = useEntitiesStore_capabilities_adminable();
 
     const prefix = useMemo(() => {
         if (!hasLength(objectRoles)) {
