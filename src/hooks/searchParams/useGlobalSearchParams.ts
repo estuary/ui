@@ -5,15 +5,16 @@ export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
     DRAFT_ID = 'draftId',
+    FORCED_SHARD_ENABLE = 'forcedEnable',
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
+    HOME_PAGE_ERROR = 'homePageError',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
+    LOGIN_HINTS_GOOGLE = 'google_login_hint',
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
-    HOME_PAGE_ERROR = 'homePageError',
-    LOGIN_HINTS_GOOGLE = 'google_login_hint',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
