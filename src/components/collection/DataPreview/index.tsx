@@ -95,9 +95,11 @@ export function DataPreview({ collectionName }: Props) {
                         variant="text"
                         startIcon={<Refresh style={{ fontSize: 12 }} />}
                         onClick={() => journalData.refresh()}
-                        disabled={
-                            isLoading || !hasLength(journalData.data?.documents)
-                        }
+                        disabled={Boolean(
+                            isLoading ||
+                                !hasLength(journalData.data?.documents) ||
+                                hide
+                        )}
                         sx={{
                             height: 'auto',
                         }}
