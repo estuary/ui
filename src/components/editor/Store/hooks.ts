@@ -5,7 +5,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { DraftSpecQuery, useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import {
+    LiveSpecsQuery_details,
+    LiveSpecsQuery_spec,
+} from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import { Entity } from 'types';
@@ -231,9 +234,9 @@ export const useEditorStore_setCurrentCatalog = (
     >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
 };
 
-export function useEditorStore_specs<T = DraftSpecQuery | LiveSpecsQuery_spec>(
-    params?: SelectorParams | undefined
-) {
+export function useEditorStore_specs<
+    T = DraftSpecQuery | LiveSpecsQuery_spec | LiveSpecsQuery_details,
+>(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 
     const useZustandStore = localScope
@@ -249,7 +252,7 @@ export function useEditorStore_specs<T = DraftSpecQuery | LiveSpecsQuery_spec>(
 }
 
 export function useEditorStore_setSpecs<
-    T = DraftSpecQuery | LiveSpecsQuery_spec,
+    T = DraftSpecQuery | LiveSpecsQuery_spec | LiveSpecsQuery_details,
 >(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 
