@@ -1,6 +1,6 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
-import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
 import { createEditorStore } from 'components/editor/Store/create';
+import LiveSpecsHydratorForDetails from 'components/editor/Store/LiveSpecsHydratorForDetails';
 import EditButton from 'components/shared/Entity/Details/EditButton';
 import MaterializeButton from 'components/shared/Entity/Details/MaterializeButton';
 import RenderTab from 'components/shared/Entity/Details/RenderTab';
@@ -29,10 +29,7 @@ function EntityDetails() {
 
     return (
         <LocalZustandProvider createStore={localStore}>
-            <LiveSpecsHydrator
-                collectionNames={[catalogName]}
-                localZustandScope={true}
-            >
+            <LiveSpecsHydratorForDetails catalogName={catalogName}>
                 <ShardHydrator catalogName={catalogName}>
                     <Stack spacing={2} sx={{ m: 1 }}>
                         <Stack
@@ -42,7 +39,10 @@ function EntityDetails() {
                             <Typography
                                 component="span"
                                 variant="h6"
-                                sx={{ ...truncateTextSx, alignItems: 'center' }}
+                                sx={{
+                                    ...truncateTextSx,
+                                    alignItems: 'center',
+                                }}
                             >
                                 {catalogName}
                             </Typography>
@@ -63,7 +63,7 @@ function EntityDetails() {
                         <RenderTab />
                     </Box>
                 </ShardHydrator>
-            </LiveSpecsHydrator>
+            </LiveSpecsHydratorForDetails>
         </LocalZustandProvider>
     );
 }
