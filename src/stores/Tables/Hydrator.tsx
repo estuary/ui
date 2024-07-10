@@ -59,6 +59,7 @@ export const TableHydrator = ({
             // Our table queries update the URL and use a library to help manage that. This library
             //  ties in with the react router which means there will be an extra render. So on most table
             //  we do not want this and can just skip one of the updates.
+            // TODO (query param rendering)
             // Read More: https://github.com/pbeshai/use-query-params/issues/160
             if (skipFirstHydration.current) {
                 skipFirstHydration.current = false;
