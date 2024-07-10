@@ -30,8 +30,7 @@ function useValidatePrefix({
     const intl = useIntl();
 
     // Store stuff
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
+    const objectRoles = useEntitiesStore_capabilities_adminable();
     const singleOption = objectRoles.length === 1;
 
     // Local State for editing

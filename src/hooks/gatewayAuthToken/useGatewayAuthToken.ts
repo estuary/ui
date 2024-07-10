@@ -72,8 +72,7 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
     const { onError } = useSWRConfig();
     const session = useUserStore((state) => state.session);
 
-    const readable = useEntitiesStore_capabilities_readable();
-    const grants = Object.keys(readable);
+    const grants = useEntitiesStore_capabilities_readable();
 
     const allowed_prefixes: string[] = !isEmpty(grants)
         ? grants.map((grant) => grant)

@@ -1,5 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
+import { EXTENDED_POLL_INTERVAL } from 'context/SWR';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 import { Tenants } from 'types';
@@ -38,7 +39,7 @@ export function useTenantHidesDataPreview(entityName: string) {
     }, [isDemo, tenantName]);
 
     const { data, error, isValidating } = useQuery(query, {
-        refreshInterval: 1500,
+        refreshInterval: EXTENDED_POLL_INTERVAL,
     });
 
     const response = useMemo(

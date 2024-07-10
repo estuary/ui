@@ -32,8 +32,7 @@ interface Props {
 function DemoButton({ step, type }: Props) {
     const navigate = useNavigate();
 
-    const adminCapabilities = useEntitiesStore_capabilities_adminable();
-    const objectRoles = Object.keys(adminCapabilities);
+    const objectRoles = useEntitiesStore_capabilities_adminable();
 
     const demoAccessExists = useEntitiesStore_hasDemoTenantAccess();
 
