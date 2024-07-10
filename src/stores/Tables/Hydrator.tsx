@@ -55,9 +55,6 @@ export const TableHydrator = ({
 
     useEffect(() => {
         if (query) {
-            // Still setting the query otherwise Admin Settings tables break
-            setQuery(query);
-
             // THIS IS GROSS!
             // Our table queries update the URL and use a library to help manage that. This library
             //  ties in with the react router which means there will be an extra render. So on most table
@@ -67,6 +64,8 @@ export const TableHydrator = ({
                 skipFirstHydration.current = false;
                 return;
             }
+
+            setQuery(query);
             hydrate();
         }
     }, [hydrate, query, setQuery]);

@@ -65,6 +65,7 @@ function PrefixAlertTable() {
 
     return (
         <TableHydrator
+            disableQueryParamHack
             query={query}
             selectableTableStoreName={SelectTableStoreNames.PREFIX_ALERTS}
         >
