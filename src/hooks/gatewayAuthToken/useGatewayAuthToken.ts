@@ -18,16 +18,19 @@ const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
 
 interface GatewayAuthTokenFetcherResponse extends GatewayAuthTokenResponse {
     cached?: boolean;
+    cacheKey?: string;
 }
 
 // The request body for this API is a string array corresponding to the prefixes a user has access to.
-type GatewayFetcherArgs = [string, string[], string | undefined, string];
+type GatewayFetcherArgs = [string, string[], string | undefined];
 const gatewayFetcher = ({
     0: endpoint,
     1: prefixes,
     2: sessionKey,
-    3: cacheKey,
 }: GatewayFetcherArgs): Promise<GatewayAuthTokenFetcherResponse[]> => {
+    // The endpoint should stay the same so just using the prefixes and the session key as the cache key
+    const cacheKey = `${prefixes.join(',')}__${sessionKey}`;
+
     // Grab the Gateway token from local storage
     let jwt: JWTPayload | undefined,
         gatewayConfig: GatewayAuthTokenResponse | undefined;
@@ -65,7 +68,14 @@ const gatewayFetcher = ({
             headers,
         },
         sessionKey
-    );
+    ).then((response: any) => {
+        return [
+            {
+                ...response[0],
+                cacheKey,
+            },
+        ];
+    });
 };
 
 const useGatewayAuthToken = (prefixes: string[] | null) => {
@@ -88,9 +98,6 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
 
     const authorizedPrefixCount = authorized_prefixes.length;
     const hasAuthorizedPrefixes = authorizedPrefixCount > 0;
-    const cacheKey = hasAuthorizedPrefixes
-        ? authorized_prefixes.join(',')
-        : null;
 
     if (prefixes) {
         if (authorizedPrefixCount !== prefixes.length) {
@@ -103,12 +110,11 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
     }
 
     const { data, mutate } = useSWR(
-        hasAuthorizedPrefixes && cacheKey
+        hasAuthorizedPrefixes
             ? [
                   gatewayAuthTokenEndpoint,
                   authorized_prefixes,
                   session?.access_token,
-                  cacheKey,
               ]
             : null,
         gatewayFetcher,
@@ -117,7 +123,8 @@ const useGatewayAuthToken = (prefixes: string[] | null) => {
                 if (config.cached) {
                     return;
                 }
-                storeGatewayAuthConfig(cacheKey, config);
+                const { cacheKey, ...theRest } = config;
+                storeGatewayAuthConfig(cacheKey, theRest);
             },
             onError: (error, key, config) => {
                 logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {
