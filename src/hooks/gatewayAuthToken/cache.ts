@@ -6,14 +6,14 @@ import { GatewayAuthTokenResponse } from 'types';
 const gatewayTokenCache = new LRUMap<string, GatewayAuthTokenResponse>(10);
 
 export const storeGatewayAuthConfig = (
-    key: string | null,
+    key: string | null | undefined,
     { gateway_url, token }: GatewayAuthTokenResponse
 ): void => {
     key ? gatewayTokenCache.set(key, { gateway_url, token }) : null;
 };
 
 export const getStoredGatewayAuthConfig = (
-    key: string | undefined | null
+    key: string | null | undefined
 ): GatewayAuthTokenResponse | undefined => {
     if (!key) {
         return undefined;
