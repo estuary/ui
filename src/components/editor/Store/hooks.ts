@@ -232,7 +232,7 @@ export const useEditorStore_setCurrentCatalog = (
 };
 
 export function useEditorStore_specs<
-    T = DraftSpecQuery | LiveSpecsQuery_details | LiveSpecsQuery_details,
+    T = DraftSpecQuery | LiveSpecsQuery_details,
 >(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 
@@ -249,7 +249,7 @@ export function useEditorStore_specs<
 }
 
 export function useEditorStore_setSpecs<
-    T = DraftSpecQuery | LiveSpecsQuery_details | LiveSpecsQuery_details,
+    T = DraftSpecQuery | LiveSpecsQuery_details,
 >(params?: SelectorParams | undefined) {
     const localScope = params?.localScope;
 
