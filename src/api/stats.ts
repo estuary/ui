@@ -214,14 +214,7 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
-    const subjectRoleFilters = tenants
-        .map(
-            (tenant) =>
-                `catalog_name.ilike.${escapeReservedCharacters(tenant)}%`
-        )
-        .join(',');
-
+const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
     const today = new Date();
 
     return supabaseClient
@@ -239,7 +232,7 @@ const getStatsForBilling = (tenants: string[], startDate: AllowedDates) => {
         .eq('grain', monthlyGrain)
         .gte('ts', convertToUTC(startDate, monthlyGrain))
         .lte('ts', convertToUTC(today, monthlyGrain))
-        .or(subjectRoleFilters)
+        .like('catalog_name', `${escapeReservedCharacters(tenant)}%`)
         .order('ts', { ascending: false })
         .returns<CatalogStats_Billing[]>();
 };
@@ -293,10 +286,10 @@ const getStatsForBillingHistoryTable = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
+    // switched this query to use `like` but never tested so might require `ilike` but that impacts perf (Q2 2024)
     const subjectRoleFilters = tenants
         .map(
-            (tenant) =>
-                `catalog_name.ilike.${escapeReservedCharacters(tenant)}%`
+            (tenant) => `catalog_name.like.${escapeReservedCharacters(tenant)}%`
         )
         .join(',');
 
