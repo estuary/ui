@@ -3,7 +3,7 @@ import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import EditLink from '../EditLink';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 function EditButton({ buttonVariant }: Props) {
-    const spec = useEditorStore_specs<LiveSpecsQuery_spec>({
+    const spec = useEditorStore_specs<LiveSpecsQuery_details>({
         localScope: true,
     });
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

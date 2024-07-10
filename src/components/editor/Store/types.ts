@@ -40,7 +40,7 @@ export interface EditorStoreState<T> {
     catalogName: string;
     setCatalogName: (newVal: EditorStoreState<T>['catalogName']) => void;
 
-    // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_spec, or null.
+    // TODO: Resolve conflicting type. Determine whether current catalog can be a DraftSpecQuery, LiveSpecsQuery_details, or null.
     //   See the FileSelector component for reference.
     currentCatalog: DraftSpec;
     setCurrentCatalog: (newVal: EditorStoreState<T>['currentCatalog']) => void;

@@ -2,6 +2,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
+import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import JournalAlerts from 'components/journals/Alerts';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
@@ -9,7 +10,7 @@ import {
     useJournalData,
     useJournalsForCollection,
 } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_spec, useLiveSpecs_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useTenantHidesDataPreview } from 'hooks/useTenants';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
@@ -39,14 +40,13 @@ export function DataPreview({ collectionName }: Props) {
     const { error: tenantHidesError, hide } =
         useTenantHidesDataPreview(collectionName);
 
-    const { liveSpecs: publicationSpecs } = useLiveSpecs_spec(
-        `datapreview-${collectionName}`,
-        // Only fetch data when we know for sure that we should not be hiding it
-        hide === false ? [collectionName] : []
-    );
+    const editorSpecs = useEditorStore_specs<LiveSpecsQuery_details>({
+        localScope: true,
+    });
+
     const spec = useMemo(
-        () => publicationSpecs[0] as LiveSpecsQuery_spec | undefined,
-        [publicationSpecs]
+        () => (editorSpecs && hasLength(editorSpecs) ? editorSpecs[0] : null),
+        [editorSpecs]
     );
 
     const journals = useJournalsForCollection(spec?.catalog_name);
