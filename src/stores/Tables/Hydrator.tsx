@@ -1,6 +1,6 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -14,6 +14,7 @@ interface TableHydratorProps extends BaseComponentProps {
     query: PostgrestFilterBuilder<any, any, any> | null;
     selectableTableStoreName: SelectTableStoreNames;
     disableMultiSelect?: boolean;
+    disableQueryParamHack?: boolean;
 }
 
 export const TableHydrator = ({
@@ -21,7 +22,10 @@ export const TableHydrator = ({
     disableMultiSelect,
     query,
     selectableTableStoreName,
+    disableQueryParamHack,
 }: TableHydratorProps) => {
+    const skipFirstHydration = useRef(!disableQueryParamHack);
+
     const setQuery = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['setQuery']
@@ -51,7 +55,18 @@ export const TableHydrator = ({
 
     useEffect(() => {
         if (query) {
+            // Still setting the query otherwise Admin Settings tables break
             setQuery(query);
+
+            // THIS IS GROSS!
+            // Our table queries update the URL and use a library to help manage that. This library
+            //  ties in with the react router which means there will be an extra render. So on most table
+            //  we do not want this and can just skip one of the updates.
+            // Read More: https://github.com/pbeshai/use-query-params/issues/160
+            if (skipFirstHydration.current) {
+                skipFirstHydration.current = false;
+                return;
+            }
             hydrate();
         }
     }, [hydrate, query, setQuery]);
