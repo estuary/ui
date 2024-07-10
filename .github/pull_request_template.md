@@ -25,7 +25,7 @@ https://github.com/estuary/ui/issues/issue_number
 -   [ ] Collections
 -   [ ] HomePage
 -   [ ] Login
--   [ ] Materialization:
+-   [ ] Materialization
 
 ## Screenshots
 
