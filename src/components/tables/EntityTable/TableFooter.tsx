@@ -45,6 +45,7 @@ function EntityTableFooter({
                         page={page}
                         onPageChange={onPageChange}
                         onRowsPerPageChange={onRowsPerPageChange}
+                        showLastButton={false}
                         SelectProps={{
                             // TODO (table filtering)
                             // Same as the other one

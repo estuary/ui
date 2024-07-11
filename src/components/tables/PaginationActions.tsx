@@ -30,12 +30,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
         nextButtonClick: (event: React.MouseEvent<HTMLButtonElement>) => {
             onPageChange(event, page + 1);
         },
-        lastPageButtonClick: (event: React.MouseEvent<HTMLButtonElement>) => {
-            onPageChange(
-                event,
-                Math.max(0, Math.ceil(count / rowsPerPage) - 1)
-            );
-        },
     };
 
     return (
@@ -76,19 +70,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
                     <NavArrowLeft />
                 ) : (
                     <NavArrowRight />
-                )}
-            </IconButton>
-
-            <IconButton
-                onClick={handlers.lastPageButtonClick}
-                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                aria-label="last page"
-                sx={{ color: theme.palette.text.primary }}
-            >
-                {theme.direction === 'rtl' ? (
-                    <FastArrowLeft />
-                ) : (
-                    <FastArrowRight />
                 )}
             </IconButton>
         </Box>
