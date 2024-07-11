@@ -78,7 +78,7 @@ const getLiveSpecs_captures = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(captureColumns, {
-                count: 'exact',
+                count: 'planned',
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'capture'),
@@ -98,7 +98,7 @@ const getLiveSpecs_materializations = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(materializationsColumns, {
-                count: 'exact',
+                count: 'planned',
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'materialization'),
@@ -118,7 +118,7 @@ const getLiveSpecs_collections = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionColumns, {
-                count: 'exact',
+                count: 'planned',
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'collection'),
@@ -154,7 +154,7 @@ const getLiveSpecs_collectionsSelector = (
                     ? collectionsSelectorColumns_capture
                     : collectionsSelectorColumns,
                 {
-                    count: 'exact',
+                    count: 'planned',
                 }
             )
             .eq('spec_type', specType),
@@ -184,7 +184,7 @@ const getLiveSpecs_existingTasks = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(columns, {
-                count: 'exact',
+                count: 'planned',
             })
             .eq('connector_id', connectorId)
             .not('catalog_name', 'ilike', 'ops/%')
