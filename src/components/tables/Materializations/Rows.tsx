@@ -5,12 +5,10 @@ import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import { getEntityTableRowSx } from 'context/Theme';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'stores/names';
 import { StatsResponse } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
@@ -33,7 +31,6 @@ interface RowProps {
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
-    const tenantDetails = useTenantDetails();
     const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
@@ -68,27 +65,15 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
             />
 
-            {hasLength(tenantDetails) ? (
-                <>
-                    <Bytes
-                        read
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.bytes_read_by_me
-                                : null
-                        }
-                    />
+            <Bytes
+                read
+                val={stats ? stats[row.catalog_name]?.bytes_read_by_me : null}
+            />
 
-                    <Docs
-                        read
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.docs_read_by_me
-                                : null
-                        }
-                    />
-                </>
-            ) : null}
+            <Docs
+                read
+                val={stats ? stats[row.catalog_name]?.docs_read_by_me : null}
+            />
 
             <RelatedCollectionsCell values={row.reads_from} />
 

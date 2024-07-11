@@ -3,13 +3,13 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import MaterializeLink from '../MaterializeLink';
 
 function MaterializeButton() {
     const entityType = useEntityType();
 
-    const spec = useEditorStore_specs<LiveSpecsQuery_spec>({
+    const spec = useEditorStore_specs<LiveSpecsQuery_details>({
         localScope: true,
     });
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

@@ -15,7 +15,7 @@ function useBillingCatalogStats() {
 
     const { data, error, mutate, isValidating } = useQuery(
         hasLength(selectedTenant) && hasLength(invoices)
-            ? getStatsForBilling([selectedTenant], invoices[0].date_start)
+            ? getStatsForBilling(selectedTenant, invoices[0].date_start)
             : null,
         extendedPollSettings
     );

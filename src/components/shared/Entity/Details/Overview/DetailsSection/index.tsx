@@ -3,14 +3,14 @@ import CardWrapper from 'components/admin/Billing/CardWrapper';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
-import { LiveSpecsQuery } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     entityName: string;
-    latestLiveSpec: LiveSpecsQuery | null;
+    latestLiveSpec: LiveSpecsQuery_details | null;
     loading: boolean;
 }
 

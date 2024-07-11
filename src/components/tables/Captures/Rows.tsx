@@ -6,11 +6,9 @@ import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { StatsResponse } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
@@ -34,7 +32,6 @@ export interface RowProps {
 
 function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
     const theme = useTheme();
-    const tenantDetails = useTenantDetails();
     const entityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator(
@@ -63,25 +60,15 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
                 imageTag={`${row.connector_image_name}${row.connector_image_tag}`}
             />
 
-            {hasLength(tenantDetails) ? (
-                <>
-                    <Bytes
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.bytes_written_by_me
-                                : null
-                        }
-                    />
+            <Bytes
+                val={
+                    stats ? stats[row.catalog_name]?.bytes_written_by_me : null
+                }
+            />
 
-                    <Docs
-                        val={
-                            stats
-                                ? stats[row.catalog_name]?.docs_written_by_me
-                                : null
-                        }
-                    />
-                </>
-            ) : null}
+            <Docs
+                val={stats ? stats[row.catalog_name]?.docs_written_by_me : null}
+            />
 
             <RelatedCollectionsCell values={row.writes_to} />
 

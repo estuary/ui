@@ -3,7 +3,6 @@ import { supabaseClient } from 'context/Supabase';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { Entity, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 export interface LiveSpecsQuery extends Schema {
     catalog_name: string;
@@ -45,64 +44,49 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
     };
 }
 
-const LIVE_SPECS_DETAILS_QUERY = `
-                updated_at,
-                created_at,
-                connectorName:connector_title->>en-US::text,
-                connector_tag_documentation_url,
-                writes_to,
-                reads_from,
-                spec
-            `;
-function useLiveSpecs_details(specType: Entity, catalogName: string) {
-    const { data, error, isValidating } = useQuery<LiveSpecsQuery[]>(
-        supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select(LIVE_SPECS_DETAILS_QUERY)
-            .eq('catalog_name', catalogName)
-            .eq('spec_type', specType)
-            .order('updated_at', {
-                ascending: false,
-            })
-            .returns<LiveSpecsQuery[]>()
-    );
-
-    return {
-        liveSpecs: data ?? defaultResponse,
-        error,
-        isValidating,
-    };
-}
-
-export interface LiveSpecsQuery_spec extends LiveSpecsQuery {
-    id: string;
-    spec: {
+export interface LiveSpecsQuery_details extends LiveSpecsQuery {
+    'id': string;
+    'spec': {
         schema: {
             properties: Record<string, any>;
             required?: string[];
         };
         key: string[];
     };
+    'writes_to': string[] | null;
+    'created_at': string;
+    'connectorName:connector_title->>en-US::text': string;
+    'connector_tag_documentation_url': string;
+    'reads_from': string[] | null;
 }
-const specQuery = queryColumns.concat(['id', 'spec', 'last_pub_id']).join(',');
-export function useLiveSpecs_spec(id: string, collectionNames?: string[]) {
-    const liveSpecQuery = useMemo(() => {
-        if (!hasLength(collectionNames)) {
-            return null;
-        }
-
-        return supabaseClient
+const detailsQuery = queryColumns
+    .concat([
+        'id',
+        'last_pub_id',
+        'writes_to',
+        'updated_at',
+        'created_at',
+        'connectorName:connector_title->>en-US::text',
+        'connector_tag_documentation_url',
+        'reads_from',
+        'spec',
+    ])
+    .join(',');
+function useLiveSpecs_details(specType: Entity, catalogName: string) {
+    const { data, error, isValidating } = useQuery<LiveSpecsQuery_details[]>(
+        supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select(specQuery)
-            .filter('catalog_name', 'in', `(${collectionNames})`)
-            .returns<LiveSpecsQuery_spec[]>();
-    }, [collectionNames]);
-
-    const { data, error, isValidating } =
-        useQuery<LiveSpecsQuery_spec[]>(liveSpecQuery);
+            .select(detailsQuery)
+            .eq('catalog_name', catalogName)
+            .eq('spec_type', specType)
+            .order('updated_at', {
+                ascending: false,
+            })
+            .returns<LiveSpecsQuery_details[]>()
+    );
 
     return {
-        liveSpecs: data ?? (defaultResponse as LiveSpecsQuery_spec[]),
+        liveSpecs: data ?? (defaultResponse as LiveSpecsQuery_details[]),
         error,
         isValidating,
     };

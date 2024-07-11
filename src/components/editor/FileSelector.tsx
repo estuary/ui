@@ -66,7 +66,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
         localScope: localZustandScope,
     });
 
-    // TODO: Update type LiveSpecsQuery_spec | DraftSpecQuery
+    // TODO: Update type LiveSpecsQuery_details | DraftSpecQuery
     const setCurrentCatalog = useEditorStore_setCurrentCatalog({
         localScope: localZustandScope,
     });

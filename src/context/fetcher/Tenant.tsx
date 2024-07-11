@@ -3,8 +3,16 @@ import useTenants from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps, Tenants } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
-const TenantContext = createContext<Tenants[] | null>(null);
+export interface TenantContextData {
+    hasTenants: boolean;
+    tenants: Tenants[] | null;
+}
+const TenantContext = createContext<TenantContextData>({
+    hasTenants: false,
+    tenants: null,
+});
 
 const TenantContextProvider = ({ children }: BaseComponentProps) => {
     const { tenants, error, isValidating } = useTenants();
@@ -25,7 +33,12 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
     }
 
     return (
-        <TenantContext.Provider value={tenants}>
+        <TenantContext.Provider
+            value={{
+                hasTenants: hasLength(tenants),
+                tenants,
+            }}
+        >
             {children}
         </TenantContext.Provider>
     );

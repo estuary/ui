@@ -18,6 +18,15 @@ https://github.com/estuary/ui/issues/issue_number
 
 -   unit testing covered
 
+#### Playwright tests ran locally
+
+-   [ ] Admin
+-   [ ] Captures
+-   [ ] Collections
+-   [ ] HomePage
+-   [ ] Login
+-   [ ] Materialization
+
 ## Screenshots
 
 _If applicable - please include some screenshots of the new UI_

@@ -17,7 +17,11 @@ import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
-function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
+function Hydrator({
+    disableQueryParamHack,
+    entity,
+    selectedCollections,
+}: TableHydratorProps) {
     const selectingCaptures = entity === 'capture';
     const tableColumns = useCollectionsSelectorColumns(selectingCaptures);
 
@@ -66,6 +70,7 @@ function Hydrator({ entity, selectedCollections }: TableHydratorProps) {
 
     return (
         <TableHydrator
+            disableQueryParamHack={disableQueryParamHack}
             query={query}
             selectableTableStoreName={selectableTableStoreName}
             disableMultiSelect={selectingCaptures}
