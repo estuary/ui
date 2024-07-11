@@ -34,6 +34,7 @@ export default function FieldFilter({ disabled }: Props) {
 
     return (
         <TextField
+            defaultValue={searchQuery}
             disabled={disabled}
             label={intl.formatMessage({
                 id: 'fieldSelection.table.label.filter',

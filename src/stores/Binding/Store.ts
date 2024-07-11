@@ -903,6 +903,7 @@ const getInitialState = (
                         : null;
 
                 state.currentBinding = binding ?? null;
+                state.searchQuery = null;
             }),
             false,
             'Current binding changed'
