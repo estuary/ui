@@ -1,7 +1,7 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingStoreNames } from 'stores/names';
 import { useShallow } from 'zustand/react/shallow';
-import { FullSource, FullSourceDictionary } from './slices/TimeTravel';
+import { FullSource, FullSourceJsonForms } from './slices/TimeTravel';
 import { BindingState, ResourceConfig } from './types';
 
 export const useBinding_hydrated = () => {
@@ -359,6 +359,20 @@ export const useBinding_setSingleSelection = () => {
     );
 };
 
+export const useBinding_searchQuery = () => {
+    return useZustandStore<BindingState, BindingState['searchQuery']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.searchQuery
+    );
+};
+
+export const useBinding_setSearchQuery = () => {
+    return useZustandStore<BindingState, BindingState['setSearchQuery']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setSearchQuery
+    );
+};
+
 export const useBinding_selectionSaving = () => {
     return useZustandStore<BindingState, BindingState['selectionSaving']>(
         BindingStoreNames.GENERAL,
@@ -388,7 +402,7 @@ export const useBinding_fullSourceOfBinding = (bindingUUID: any) => {
 
 export const useBinding_fullSourceOfBindingProperty = (
     bindingUUID: any,
-    property: keyof FullSourceDictionary
+    property: keyof FullSourceJsonForms
 ) => {
     return useZustandStore<BindingState, any>(
         BindingStoreNames.GENERAL,

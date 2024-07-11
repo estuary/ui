@@ -6,6 +6,7 @@ import Rows from 'components/tables/FieldSelection/Rows';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBinding_searchQuery } from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { TablePrefixes } from 'stores/Tables/hooks';
@@ -76,6 +77,20 @@ function FieldSelectionTable({ projections }: Props) {
         },
     };
 
+    const searchQuery = useBinding_searchQuery();
+
+    const processedProjections = useMemo(
+        () =>
+            searchQuery
+                ? projections?.filter(
+                      ({ field, ptr }) =>
+                          field.includes(searchQuery) ||
+                          ptr?.includes(searchQuery)
+                  )
+                : projections,
+        [projections, searchQuery]
+    );
+
     useEffect(() => {
         if (
             formStatus === FormStatus.INIT ||
@@ -90,15 +105,18 @@ function FieldSelectionTable({ projections }: Props) {
             formStatus === FormStatus.TESTING_BACKGROUND
         ) {
             setTableState({ status: TableStatuses.LOADING });
+        } else if (processedProjections && processedProjections.length > 0) {
+            setTableState({
+                status: TableStatuses.DATA_FETCHED,
+            });
         } else {
             setTableState({
-                status:
-                    projections && projections.length > 0
-                        ? TableStatuses.DATA_FETCHED
-                        : TableStatuses.NO_EXISTING_DATA,
+                status: searchQuery
+                    ? TableStatuses.UNMATCHED_FILTER
+                    : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, projections]);
+    }, [formStatus, processedProjections, searchQuery]);
 
     const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
@@ -157,12 +175,12 @@ function FieldSelectionTable({ projections }: Props) {
                         rows={
                             !failed &&
                             !loading &&
-                            projections &&
-                            projections.length > 0 &&
+                            processedProjections &&
+                            processedProjections.length > 0 &&
                             formStatus !== FormStatus.TESTING ? (
                                 <Rows
                                     columns={columnsToShow}
-                                    data={projections}
+                                    data={processedProjections}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}
                                 />

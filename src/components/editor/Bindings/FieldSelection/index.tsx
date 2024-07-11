@@ -20,6 +20,7 @@ import FieldSelectionTable, {
     columns,
     optionalColumnIntlKeys,
 } from 'components/tables/FieldSelection';
+import FieldFilter from 'components/tables/FieldSelection/FieldFilter';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
@@ -429,12 +430,18 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <Stack direction="row" sx={{ mb: 1, justifyContent: 'flex-end' }}>
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ mb: 1, alignItems: 'center', justifyContent: 'flex-end' }}
+            >
                 <SelectColumnMenu
                     columns={optionalColumns}
                     onChange={updateTableSettings}
                     disabled={loading}
                 />
+
+                <FieldFilter disabled={loading} />
             </Stack>
 
             <FieldSelectionTable projections={data} />

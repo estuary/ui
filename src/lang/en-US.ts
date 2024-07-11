@@ -1454,6 +1454,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
+    'fieldSelection.table.label.filter': `Filter fields`,
 };
 
 const Notifications: ResolvedIntlConfig['messages'] = {
