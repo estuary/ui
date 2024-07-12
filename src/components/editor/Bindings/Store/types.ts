@@ -42,6 +42,9 @@ export interface BindingsEditorState {
     inferredSpec: Schema | null | undefined;
     setInferredSpec: (value: BindingsEditorState['inferredSpec']) => void;
 
+    initializing: boolean;
+    setInitializing: (value: BindingsEditorState['initializing']) => void;
+
     documentsRead: number | null | undefined;
     setDocumentsRead: (value: BindingsEditorState['documentsRead']) => void;
 

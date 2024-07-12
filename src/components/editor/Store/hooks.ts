@@ -572,7 +572,6 @@ export const useHydrateEditorState = (
         catalogName
     );
 
-    console.log(`${draftId}`, localScope);
     useEffect(() => {
         if (
             !response.isValidating &&

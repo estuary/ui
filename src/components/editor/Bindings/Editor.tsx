@@ -14,6 +14,7 @@ import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator'
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
     useEditorStore_setCurrentCatalog,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
@@ -29,6 +30,7 @@ import {
 } from 'stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
+import { useBindingsEditorStore } from './Store/create';
 
 interface Props {
     itemType: string;
@@ -45,9 +47,12 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const currentBindingUUID = useBinding_currentBindingUUID();
 
     // Bindings Editor Store
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const collectionData = useBindingsEditorStore_collectionData();
     const collectionInitializationAlert =
         useBindingsEditorStore_collectionInitializationAlert();
+
+    const initializing = useBindingsEditorStore((state) => state.initializing);
 
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
@@ -81,7 +86,12 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
         currentCollection,
     ]);
 
-    console.log('currentCollection', currentCollection);
+    console.log('Binding Editor : currentCollection', currentCollection);
+    console.log('Binding Editor : collectionData', collectionData);
+    console.log('Binding Editor : draftSpecs', draftSpecs);
+    console.log(
+        '-------------------------------------------------------------------------------------'
+    );
 
     if (!currentCollection || !currentBindingUUID) {
         return null;
@@ -154,7 +164,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                             </Typography>
                         )}
 
-                        {collectionData ? (
+                        {!initializing && collectionData ? (
                             collectionData.belongsToDraft ? (
                                 <DraftSpecEditorHydrator
                                     draftId={draftId}

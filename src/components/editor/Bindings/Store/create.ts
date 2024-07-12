@@ -165,6 +165,7 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponseEmpty'
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
+    | 'initializing'
     | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
@@ -184,6 +185,7 @@ const getInitialMiscData = (): Pick<
     inferSchemaResponseDoneProcessing: false,
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
+    initializing: true,
     hasIncompatibleCollections: false,
 });
 
@@ -196,6 +198,16 @@ const getInitialState = (
     get: StoreApi<BindingsEditorState>['getState']
 ): BindingsEditorState => ({
     ...getInitialStateData(),
+
+    setInitializing: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.initializing = value;
+            }),
+            false,
+            'Initializing Set'
+        );
+    },
 
     setEditModeEnabled: (value) => {
         set(

@@ -16,7 +16,6 @@ interface Props {
 // TODO (details) want to make some kidn of summary of totals and potentially
 //  include the cost. Leaving here as this can be used lated when we add this section
 function TotalsSection({ entityName }: Props) {
-    console.log('entityname', entityName);
     const intl = useIntl();
     const entityType = useEntityType();
 
