@@ -78,21 +78,22 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         setCollectionData,
     ]);
 
+    // If the schema is updated via the scheme inference
+    //  of CLI button we want to fire mutate and make sure we get the latest
     useUpdateEffect(() => {
-        console.log('sup', {
-            schemaUpdated,
-            collectionInitializationDone,
-            mutate,
-        });
-        // If the schema is updated via the scheme inference
-        //  of CLI button we want to fire mutate and make sure we get the latest
-        // If the collection was initialized we need to fire mutate so that the collection
-        //  spec editor can refresh itself and know about the new draft we just created
-        //  for the collection
-        if (mutate && (schemaUpdated || collectionInitializationDone)) {
+        if (mutate && schemaUpdated) {
             void mutate();
         }
-    }, [mutate, schemaUpdated, collectionInitializationDone]);
+    }, [schemaUpdated]);
+
+    // If the collection was initialized we need to fire mutate so that the collection
+    //  spec editor can refresh itself and know about the new draft we just created
+    //  for the collection
+    useUpdateEffect(() => {
+        if (mutate && collectionInitializationDone) {
+            void mutate();
+        }
+    }, [mutate, collectionInitializationDone]);
 
     const onKeyChange = useCallback(
         async (_event, keys) => {
