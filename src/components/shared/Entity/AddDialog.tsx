@@ -42,6 +42,7 @@ function AddDialog({
                         <Box>
                             {open ? (
                                 <BindingSelectorTable
+                                    disableQueryParamHack
                                     entity={entity}
                                     selectedCollections={selectedCollections}
                                 />

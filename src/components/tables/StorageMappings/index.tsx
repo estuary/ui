@@ -43,6 +43,7 @@ function StorageMappingsTable({ header }: Props) {
     return (
         <Box>
             <TableHydrator
+                disableQueryParamHack
                 query={query}
                 selectableTableStoreName={
                     SelectTableStoreNames.STORAGE_MAPPINGS

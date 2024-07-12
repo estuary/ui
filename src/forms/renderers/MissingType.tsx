@@ -31,7 +31,7 @@ const MissingTypeRenderer = (props: LayoutProps) => {
     return (
         <Hidden xsUp={!visible}>
             <Alert severity="error">
-                Error: Invalid field definition at
+                <span>Error: Invalid field definition at</span>
                 <code>
                     {path}: {schemaOptions?.ref}
                 </code>

@@ -13,13 +13,13 @@ import {
 import Error from 'components/shared/Error';
 import { tableAlternateRowsSx } from 'context/Theme';
 import { useJournalData } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 
 interface PreviewTableModeProps {
-    spec: LiveSpecsQuery_spec;
+    spec: LiveSpecsQuery_details;
     journalData: ReturnType<typeof useJournalData>;
 }
 

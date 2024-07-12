@@ -10,14 +10,14 @@ import {
 } from 'context/Theme';
 import { JournalRecord } from 'hooks/journals/types';
 import { useJournalData } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_spec } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface PreviewJsonModeProps {
-    spec: LiveSpecsQuery_spec;
+    spec: LiveSpecsQuery_details;
     journalData: ReturnType<typeof useJournalData>;
 }
 

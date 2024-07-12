@@ -68,6 +68,7 @@ function AccessLinksTable() {
     return (
         <Box>
             <TableHydrator
+                disableQueryParamHack
                 query={query}
                 selectableTableStoreName={selectableTableStoreName}
             >

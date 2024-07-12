@@ -17,7 +17,7 @@ interface Props {
 function TenantSelector({ updateStoreState }: Props) {
     const intl = useIntl();
 
-    const tenants = useTenantDetails();
+    const { tenants } = useTenantDetails();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant

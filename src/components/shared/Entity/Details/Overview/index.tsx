@@ -1,12 +1,13 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
+import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
 import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
+import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { hasLength } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
@@ -25,13 +26,14 @@ function Overview({ name }: Props) {
     const isCollection = entityType === 'collection';
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const entityName = name ?? catalogName;
-    const { liveSpecs, isValidating: validatingLiveSpecs } =
-        useLiveSpecs_details(entityType, entityName);
+
+    const editorSpecs = useEditorStore_specs<LiveSpecsQuery_details>({
+        localScope: true,
+    });
 
     const latestLiveSpec = useMemo(
-        () =>
-            !validatingLiveSpecs && hasLength(liveSpecs) ? liveSpecs[0] : null,
-        [liveSpecs, validatingLiveSpecs]
+        () => (editorSpecs && hasLength(editorSpecs) ? editorSpecs[0] : null),
+        [editorSpecs]
     );
 
     const taskTypes = useDetailsEntityTaskTypes();
@@ -46,7 +48,7 @@ function Overview({ name }: Props) {
                 <DetailsSection
                     entityName={entityName}
                     latestLiveSpec={latestLiveSpec}
-                    loading={validatingLiveSpecs}
+                    loading={!Boolean(latestLiveSpec)}
                 />
             </Grid>
 

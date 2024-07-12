@@ -1,4 +1,5 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
+import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -15,9 +16,12 @@ const Docs = ({ read, val }: Props) => {
     const defaultedVal = val ?? 0;
     const number = useMemo(() => formatDocs(defaultedVal), [defaultedVal]);
 
+    const hideColumnsSx = useHideStatsColumnsSx();
+
     return (
         <TableCell
             sx={{
+                ...hideColumnsSx,
                 minWidth: 'min-content',
                 maxWidth: 'min-content',
             }}

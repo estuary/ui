@@ -1,5 +1,6 @@
 import { TableCell, Typography } from '@mui/material';
 import DateFilter from 'components/filters/Date';
+import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
 import { useTenantDetails } from 'context/fetcher/Tenant';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo } from 'react';
@@ -9,7 +10,6 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { hasLength } from 'utils/misc-utils';
 
 interface Props {
     selectableTableStoreName: SelectTableStoreNames;
@@ -25,8 +25,8 @@ const StatsHeader = ({
     headerSuffix,
 }: Props) => {
     const intl = useIntl();
-    const tenantDetails = useTenantDetails();
-    const hasStats = hasLength(tenantDetails);
+    const { hasTenants: hasStats } = useTenantDetails();
+    const hideStatsColumnsSX = useHideStatsColumnsSx();
 
     const isValidating = useZustandStore<
         SelectableTableStore,
@@ -73,7 +73,7 @@ const StatsHeader = ({
 
     return (
         <>
-            <TableCell>
+            <TableCell sx={hideStatsColumnsSX}>
                 <Typography
                     component="span"
                     sx={{ mt: 0.5, fontWeight: 500, whiteSpace: 'nowrap' }}
@@ -81,7 +81,7 @@ const StatsHeader = ({
                     {firstColHeader}
                 </Typography>
             </TableCell>
-            <TableCell>
+            <TableCell sx={hideStatsColumnsSX}>
                 {hideFilter ? (
                     <Typography
                         component="span"
