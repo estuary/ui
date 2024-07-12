@@ -1,8 +1,8 @@
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
-    getLiveSpecsByCatalogName,
-    LiveSpecsExtQuery_ByCatalogName,
+    getLiveSpecsByCatalogNameForInitializingDraft,
+    LiveSpecsExtQuery_ByCatalogNameForInitializingDraft,
 } from 'api/liveSpecsExt';
 import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
@@ -34,11 +34,12 @@ const createGenericDraft = async (): Promise<string | null> => {
 
 const getCollection = async (
     collectionName: string
-): Promise<LiveSpecsExtQuery_ByCatalogName | null> => {
-    const liveSpecResponse = await getLiveSpecsByCatalogName(
-        collectionName,
-        specType
-    );
+): Promise<LiveSpecsExtQuery_ByCatalogNameForInitializingDraft | null> => {
+    const liveSpecResponse =
+        await getLiveSpecsByCatalogNameForInitializingDraft(
+            collectionName,
+            specType
+        );
 
     if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
         return liveSpecResponse.data[0];
@@ -200,7 +201,7 @@ function useInitializeCollectionDraft() {
                 setPersistedDraftId(newDraftId);
             }
 
-            setInitializing(true);
+            setInitializing(false);
         },
         [
             createCollectionDraftSpec,

@@ -243,6 +243,11 @@ export interface LiveSpecsExtQuery_ByCatalogName {
     last_pub_id: string;
 }
 
+export interface LiveSpecsExtQuery_ByCatalogNameForInitializingDraft {
+    spec: any;
+    last_pub_id: string;
+}
+
 const getLiveSpecsByCatalogName = async (
     catalogName: string,
     specType: Entity
@@ -256,6 +261,26 @@ const getLiveSpecsByCatalogName = async (
                 .eq('spec_type', specType),
         'getLiveSpecsByCatalogName'
     ).then(handleSuccess<LiveSpecsExtQuery_ByCatalogName[]>, handleFailure);
+
+    return data;
+};
+
+const getLiveSpecsByCatalogNameForInitializingDraft = async (
+    catalogName: string,
+    specType: Entity
+) => {
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(`spec,last_pub_id`)
+                .eq('catalog_name', catalogName)
+                .eq('spec_type', specType),
+        'getLiveSpecsByCatalogNameForInitializingDraft'
+    ).then(
+        handleSuccess<LiveSpecsExtQuery_ByCatalogNameForInitializingDraft[]>,
+        handleFailure
+    );
 
     return data;
 };
@@ -378,4 +403,5 @@ export {
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecsByCatalogNameForInitializingDraft,
 };
