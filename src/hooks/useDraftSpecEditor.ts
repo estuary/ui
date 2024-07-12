@@ -28,6 +28,7 @@ function useDraftSpecEditor(
     const currentCatalog = useEditorStore_currentCatalog({
         localScope,
     });
+
     const setSpecs = useEditorStore_setSpecs({
         localScope,
     });
@@ -129,10 +130,18 @@ function useDraftSpecEditor(
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
     useEffect(() => {
-        if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
+        // Make sure that we only ever update the draftSpec after the currentCatalog has been updated
+        //  Otherwise the old binding will get populated while still waiting for the new one to get done
+        //  initializing and then it will show the PREVIOUS collection in the editor
+        if (
+            currentCatalog &&
+            currentCatalog.catalog_name === entityName &&
+            !isEqual(draftSpecRef.current, currentCatalog)
+        ) {
             setDraftSpec(currentCatalog);
+            draftSpecRef.current = currentCatalog;
         }
-    }, [currentCatalog]);
+    }, [currentCatalog, entityName]);
 
     // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
     //    because we are comparing two JSON objects that are being stringified and that means the order
