@@ -558,14 +558,6 @@ export const useHydrateEditorState = (
 ) => {
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
 
-    // TODO (draft editor) - pass in the draftId you care about so this can fall back to `null`
-    //  properly and wait to fetch when the time is appropriate
-
-    // This fallback chain of draft IDs is required because of how the global editor store
-    // differs in keeping record of the draft ID from its local counterpart. Notable component
-    // call-outs include:
-    // collection tab of the binding selector   relies on the draft ID
-    // capture auto-discovery settings           relies on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
     const response = useDraftSpecs_forEditor(
         draftId ?? null,
         specType,

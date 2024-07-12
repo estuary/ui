@@ -134,30 +134,6 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog]);
 
-    // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
-    //    because we are comparing two JSON objects that are being stringified and that means the order
-    //    change change whenever. We should probably compare the two objects and THEN if those do not match
-    //    show an error/diff editor.
-    //
-    // useEffectOnce(() => {
-    //     const publicationSubscription = supabaseClient
-    //         .from(TABLES.DRAFT_SPECS)
-    //         .on('*', async (payload: any) => {
-    //             if (payload.new.spec) {
-    //                 setServerUpdates(payload.new.spec);
-    //             }
-    //         })
-    //         .subscribe();
-
-    //     setSubscription(publicationSubscription);
-
-    //     return () => {
-    //         if (subscription) {
-    //             void supabaseClient.removeSubscription(subscription);
-    //         }
-    //     };
-    // });
-
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return useMemo(() => {
         return {
