@@ -151,6 +151,7 @@ function FieldSelectionTable({ bindingUUID, projections }: Props) {
         <>
             <Stack
                 direction="row"
+                spacing={1}
                 sx={{
                     mb: 1,
                     alignItems: 'center',

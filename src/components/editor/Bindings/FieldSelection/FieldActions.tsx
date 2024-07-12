@@ -21,7 +21,7 @@ export default function FieldActions({
             <FieldActionButton
                 bindingUUID={bindingUUID}
                 disabled={!recommended[bindingUUID] || loading}
-                labelId="fieldSelection.table.cta.defaultAllFields"
+                labelId="fieldSelection.table.cta.defaultField"
                 projections={projections}
                 selectedValue="default"
             />
