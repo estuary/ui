@@ -33,6 +33,7 @@ import { CustomEvents } from 'services/types';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
+    useBinding_recommendFields,
     useBinding_selectionSaving,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
@@ -144,6 +145,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Store
+    const recommended = useBinding_recommendFields();
     const setRecommendFields = useBinding_setRecommendFields();
     const initializeSelections = useBinding_initializeSelections();
     const stagedBindingIndex = useBinding_currentBindingIndex();
@@ -446,7 +448,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                 >
                     <FieldActionButton
                         bindingUUID={bindingUUID}
-                        disabled={loading}
+                        disabled={!recommended[bindingUUID] || loading}
                         labelId="fieldSelection.table.cta.defaultAllFields"
                         projections={data}
                         selectedValue="default"
