@@ -439,18 +439,18 @@ export const getInitialState = (
 
                     state.hydrated = true;
 
-                    // Setting count is weird because we do not want all queries always fetching exact counts
-                    //  The live spec tables only fetch exact count when the pagination.from is 0. That way
-                    //  they only get count on the first page or when the user kicks off a search.
-                    // So we only want to add a count when there is one in the response and nothing in the store
-                    //  of
-                    // If the response has a count that does not equal the current state
-                    state.query.count =
-                        (!state.query.count && response.count) ||
-                        (Number.isInteger(response.count) &&
-                            state.query.count !== response.count)
-                            ? response.count
-                            : state.query.count;
+                    const hasNewCount = Number.isInteger(response.count);
+                    if (
+                        // We have no count and just recieved one so update
+                        //  ex: initial load
+                        (!state.query.count && hasNewCount) ||
+                        // We already have a count, but there is a new one, and it has changed
+                        //  ex: filter or count change since last time viewing 1st page
+                        (state.query.count !== response.count && hasNewCount)
+                    ) {
+                        state.query.count = response.count;
+                    }
+
                     state.query.response = response.data;
                     state.query.loading = false;
                 }),
