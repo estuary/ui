@@ -14,7 +14,6 @@ import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator'
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_draftSpecs,
     useEditorStore_setCurrentCatalog,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
@@ -47,12 +46,14 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const currentBindingUUID = useBinding_currentBindingUUID();
 
     // Bindings Editor Store
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const collectionData = useBindingsEditorStore_collectionData();
     const collectionInitializationAlert =
         useBindingsEditorStore_collectionInitializationAlert();
 
     const initializing = useBindingsEditorStore((state) => state.initializing);
+    const setInitializing = useBindingsEditorStore(
+        (state) => state.setInitializing
+    );
 
     const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
@@ -69,12 +70,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
         localScope: true,
     });
 
-    const [activeTab, setActiveTab] = useState<number>(0);
+    const [activeTab, setActiveTab] = useState<number>(1);
     useEffect(() => {
         if (tabProps[activeTab].value === 'schema' && currentCollection) {
             console.log('clearing out current catalog');
             setCurrentCatalog(null);
             setCollectionSpecs(null);
+            setInitializing(true);
 
             void initializeCollectionDraft(currentCollection);
         }
@@ -84,16 +86,10 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
         setCurrentCatalog,
         activeTab,
         currentCollection,
+        setInitializing,
     ]);
 
-    console.log('Binding Editor : currentCollection', currentCollection);
-    console.log('Binding Editor : collectionData', collectionData);
-    console.log('Binding Editor : draftSpecs', draftSpecs);
-    console.log(
-        '-------------------------------------------------------------------------------------'
-    );
-
-    if (!currentCollection || !currentBindingUUID) {
+    if (!currentCollection || !currentBindingUUID || initializing) {
         return null;
     }
 
@@ -104,114 +100,116 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                 setSelectedTab={setActiveTab}
             />
 
-            <Box sx={{ p: 1 }}>
-                {tabProps[activeTab].value === 'config' ? (
-                    <ResourceConfig
-                        bindingUUID={currentBindingUUID}
-                        collectionName={currentCollection}
-                        readOnly={readOnly}
-                    />
-                ) : collectionData || collectionData === null ? (
-                    <Stack spacing={2}>
-                        {schemaUpdateErrored ? (
-                            <AlertBox severity="warning" short>
-                                <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
-                            </AlertBox>
-                        ) : null}
+            <DraftSpecEditorHydrator
+                draftId={collectionData?.belongsToDraft ? draftId : null}
+                entityType="collection"
+                entityName={currentCollection}
+                localScope
+            >
+                <Box sx={{ p: 1 }}>
+                    {tabProps[activeTab].value === 'config' ? (
+                        <ResourceConfig
+                            bindingUUID={currentBindingUUID}
+                            collectionName={currentCollection}
+                            readOnly={readOnly}
+                        />
+                    ) : collectionData || collectionData === null ? (
+                        <Stack spacing={2}>
+                            {schemaUpdateErrored ? (
+                                <AlertBox severity="warning" short>
+                                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
+                                </AlertBox>
+                            ) : null}
 
-                        {collectionInitializationAlert ? (
-                            <AlertBox
-                                short
-                                severity={
-                                    collectionInitializationAlert.severity
-                                }
-                                title={
-                                    <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
-                                }
-                            >
-                                <FormattedMessage
-                                    id={collectionInitializationAlert.messageId}
-                                />
-                            </AlertBox>
-                        ) : null}
+                            {collectionInitializationAlert ? (
+                                <AlertBox
+                                    short
+                                    severity={
+                                        collectionInitializationAlert.severity
+                                    }
+                                    title={
+                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
+                                    }
+                                >
+                                    <FormattedMessage
+                                        id={
+                                            collectionInitializationAlert.messageId
+                                        }
+                                    />
+                                </AlertBox>
+                            ) : null}
 
-                        {persistedDraftId ? (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
+                            {persistedDraftId ? (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <Typography variant="h6" sx={{ mr: 1 }}>
+                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
+                                            <FormattedMessage id="terms.documentation" />
+                                        </ExternalLink>
+                                    </Typography>
+
+                                    <Stack direction="row" spacing={1}>
+                                        <SchemaInferenceButton />
+
+                                        <SchemaEditCLIButton />
+
+                                        <SchemaEditToggle />
+                                    </Stack>
+                                </Box>
+                            ) : (
                                 <Typography variant="h6" sx={{ mr: 1 }}>
                                     <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                                    <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                        <FormattedMessage id="terms.documentation" />
-                                    </ExternalLink>
                                 </Typography>
+                            )}
 
-                                <Stack direction="row" spacing={1}>
-                                    <SchemaInferenceButton />
-
-                                    <SchemaEditCLIButton />
-
-                                    <SchemaEditToggle />
-                                </Stack>
-                            </Box>
-                        ) : (
-                            <Typography variant="h6" sx={{ mr: 1 }}>
-                                <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
-                            </Typography>
-                        )}
-
-                        {!initializing && collectionData ? (
-                            collectionData.belongsToDraft ? (
-                                <DraftSpecEditorHydrator
-                                    draftId={draftId}
-                                    entityType="collection"
-                                    entityName={currentCollection}
-                                    localScope
-                                >
+                            {collectionData ? (
+                                collectionData.belongsToDraft ? (
                                     <CollectionSchemaEditor
                                         entityName={currentCollection}
                                         localZustandScope
                                     />
-                                </DraftSpecEditorHydrator>
+                                ) : (
+                                    <ControlledEditor />
+                                )
                             ) : (
-                                <ControlledEditor />
-                            )
-                        ) : (
-                            <CollectionSchemaEditorSkeleton />
-                        )}
-                    </Stack>
-                ) : (
-                    <AlertBox
-                        severity="warning"
-                        short
-                        title={
-                            <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
-                        }
-                    >
-                        <Typography>
-                            <FormattedMessage
-                                id="workflows.collectionSelector.error.message.missingCollectionSchema"
-                                values={{
-                                    itemType,
-                                    entityType,
-                                }}
-                            />
-                        </Typography>
-                        <Typography>
-                            <FormattedMessage
-                                id="workflows.collectionSelector.error.fix.missingCollectionSchema"
-                                values={{
-                                    itemType,
-                                }}
-                            />
-                        </Typography>
-                    </AlertBox>
-                )}
-            </Box>
+                                <CollectionSchemaEditorSkeleton />
+                            )}
+                        </Stack>
+                    ) : (
+                        <AlertBox
+                            severity="warning"
+                            short
+                            title={
+                                <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
+                            }
+                        >
+                            <Typography>
+                                <FormattedMessage
+                                    id="workflows.collectionSelector.error.message.missingCollectionSchema"
+                                    values={{
+                                        itemType,
+                                        entityType,
+                                    }}
+                                />
+                            </Typography>
+                            <Typography>
+                                <FormattedMessage
+                                    id="workflows.collectionSelector.error.fix.missingCollectionSchema"
+                                    values={{
+                                        itemType,
+                                    }}
+                                />
+                            </Typography>
+                        </AlertBox>
+                    )}
+                </Box>
+            </DraftSpecEditorHydrator>
         </Box>
     );
 }
