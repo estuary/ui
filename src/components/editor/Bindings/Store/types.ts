@@ -8,7 +8,7 @@ export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
 
-    collectionInitializationDone: null | boolean;
+    collectionInitializationDone: boolean;
     setCollectionInitializationDone: (
         value: BindingsEditorState['collectionInitializationDone']
     ) => void;

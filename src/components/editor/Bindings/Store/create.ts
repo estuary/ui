@@ -170,7 +170,7 @@ const getInitialMiscData = (): Pick<
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
-    collectionInitializationDone: null,
+    collectionInitializationDone: false,
     documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,

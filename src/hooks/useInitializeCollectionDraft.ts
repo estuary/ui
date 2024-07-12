@@ -111,20 +111,21 @@ function useInitializeCollectionDraft() {
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
                 });
+
+                setCollectionInitializationDone(true);
             } else {
                 updateBindingsEditorState({
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
 
+                setCollectionInitializationDone(false);
                 setCollectionInitializationAlert({
                     severity: 'warning',
                     messageId:
                         'workflows.collectionSelector.error.message.draftCreationFailed',
                 });
             }
-
-            setCollectionInitializationDone(true);
         },
         [
             setCollectionInitializationAlert,
