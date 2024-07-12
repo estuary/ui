@@ -359,6 +359,13 @@ export const useBinding_setSingleSelection = () => {
     );
 };
 
+export const useBinding_setMultiSelection = () => {
+    return useZustandStore<BindingState, BindingState['setMultiSelection']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setMultiSelection
+    );
+};
+
 export const useBinding_searchQuery = () => {
     return useZustandStore<BindingState, BindingState['searchQuery']>(
         BindingStoreNames.GENERAL,

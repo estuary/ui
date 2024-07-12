@@ -54,6 +54,7 @@ import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
+import FieldActionButton from './FieldActionButton';
 import RefreshStatus from './RefreshStatus';
 import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
@@ -432,16 +433,47 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
 
             <Stack
                 direction="row"
-                spacing={1}
-                sx={{ mb: 1, alignItems: 'center', justifyContent: 'flex-end' }}
+                sx={{
+                    mb: 1,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
             >
-                <SelectColumnMenu
-                    columns={optionalColumns}
-                    onChange={updateTableSettings}
-                    disabled={loading}
-                />
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <FieldActionButton
+                        bindingUUID={bindingUUID}
+                        disabled={loading}
+                        labelId="fieldSelection.table.cta.defaultAllFields"
+                        projections={data}
+                        selectedValue="default"
+                    />
 
-                <FieldFilter disabled={loading} />
+                    <FieldActionButton
+                        bindingUUID={bindingUUID}
+                        disabled={loading}
+                        labelId="fieldSelection.table.cta.excludeAllFields"
+                        projections={data}
+                        selectedValue="exclude"
+                    />
+                </Stack>
+
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <FieldFilter disabled={loading} />
+
+                    <SelectColumnMenu
+                        columns={optionalColumns}
+                        onChange={updateTableSettings}
+                        disabled={loading}
+                    />
+                </Stack>
             </Stack>
 
             <FieldSelectionTable projections={data} />

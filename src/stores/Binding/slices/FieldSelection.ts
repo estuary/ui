@@ -1,9 +1,10 @@
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import produce from 'immer';
+import { StoreApi } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 import { BindingState } from '../types';
 
-interface FieldSelection {
+export interface FieldSelection {
     [field: string]: FieldSelectionType | null;
 }
 
@@ -28,6 +29,10 @@ export interface StoreWithFieldSelection {
         field: string,
         selectionType: FieldSelectionType | null
     ) => void;
+    setMultiSelection: (
+        bindingUUID: string,
+        updatedFields: FieldSelection
+    ) => void;
 
     selectionSaving: boolean;
     setSelectionSaving: (
@@ -49,7 +54,8 @@ export const getInitialFieldSelectionData = (): Pick<
 });
 
 export const getStoreWithFieldSelectionSettings = (
-    set: NamedSet<StoreWithFieldSelection>
+    set: NamedSet<StoreWithFieldSelection>,
+    get: StoreApi<StoreWithFieldSelection>['getState']
 ): StoreWithFieldSelection => ({
     ...getInitialFieldSelectionData(),
 
@@ -95,6 +101,27 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Selection Saving Set'
+        );
+    },
+
+    setMultiSelection: (bindingUUID, updatedFields) => {
+        const { selections } = get();
+
+        const fields = selections[bindingUUID];
+
+        set(
+            produce((state: BindingState) => {
+                state.selections[bindingUUID] = {
+                    ...fields,
+                    ...updatedFields,
+                };
+
+                if (!state.selectionSaving) {
+                    state.selectionSaving = true;
+                }
+            }),
+            false,
+            'Multiple Field Selections Set'
         );
     },
 
