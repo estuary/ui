@@ -74,11 +74,12 @@ const getLiveSpecs_captures = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
+    console.log('pagination', pagination);
     return defaultTableFilter<CaptureQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(captureColumns, {
-                count: 'exact',
+                count: pagination.from === 0 ? 'exact' : undefined,
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'capture'),
@@ -98,7 +99,7 @@ const getLiveSpecs_materializations = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(materializationsColumns, {
-                count: 'exact',
+                count: pagination.from === 0 ? 'exact' : undefined,
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'materialization'),
@@ -118,7 +119,7 @@ const getLiveSpecs_collections = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionColumns, {
-                count: 'exact',
+                count: pagination.from === 0 ? 'exact' : undefined,
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'collection'),
