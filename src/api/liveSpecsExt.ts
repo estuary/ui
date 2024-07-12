@@ -20,6 +20,7 @@ import {
     LiveSpecsExtBaseQuery,
 } from 'types';
 import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
+import { getCountSettings } from 'utils/table-utils';
 
 const baseColumns = [
     'catalog_name',
@@ -67,9 +68,6 @@ const materializationsColumns = commonColumns.concat(['reads_from']).join(',');
 const materializationsColumnsWithSpec = materializationsColumns.concat(',spec');
 
 const collectionColumns = baseColumns.join(',');
-
-const getCountSettings = (pagination: any) =>
-    pagination.from === 0 ? 'exact' : undefined;
 
 // Entity table-specific queries
 const getLiveSpecs_captures = (
