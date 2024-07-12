@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_recommendFields,
-    useBinding_searchQuery,
     useBinding_setMultiSelection,
 } from 'stores/Binding/hooks';
 import { FieldSelection } from 'stores/Binding/slices/FieldSelection';
@@ -53,23 +52,14 @@ export default function FieldActionButton({
 }: Props) {
     const recommended = useBinding_recommendFields();
     const setMultiSelection = useBinding_setMultiSelection();
-    const searchQuery = useBinding_searchQuery();
 
     return (
         <Button
             disabled={disabled}
             onClick={() => {
-                const filteredProjections = searchQuery
-                    ? projections?.filter(
-                          ({ field, ptr }) =>
-                              field.includes(searchQuery) ||
-                              ptr?.includes(searchQuery)
-                      )
-                    : projections;
-
-                if (filteredProjections) {
+                if (projections) {
                     const updatedFields = evaluateUpdatedFields(
-                        filteredProjections,
+                        projections,
                         recommended[bindingUUID],
                         selectedValue
                     );

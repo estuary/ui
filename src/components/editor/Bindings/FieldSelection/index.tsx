@@ -16,24 +16,17 @@ import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
-import FieldSelectionTable, {
-    columns,
-    optionalColumnIntlKeys,
-} from 'components/tables/FieldSelection';
-import FieldFilter from 'components/tables/FieldSelection/FieldFilter';
-import SelectColumnMenu from 'components/tables/SelectColumnMenu';
-import { useDisplayTableColumns } from 'context/TableSettings';
+import FieldSelectionTable from 'components/tables/FieldSelection';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { isEqual } from 'lodash';
-import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
-    useBinding_recommendFields,
     useBinding_selectionSaving,
     useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
@@ -46,16 +39,12 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { TablePrefixes } from 'stores/Tables/hooks';
-import { Schema, TableColumns } from 'types';
-import { WithRequiredNonNullProperty } from 'types/utils';
+import { Schema } from 'types';
 import { BooleanParam, useQueryParam } from 'use-query-params';
-import { hasLength } from 'utils/misc-utils';
 import {
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
-import FieldActionButton from './FieldActionButton';
 import RefreshStatus from './RefreshStatus';
 import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
@@ -113,24 +102,11 @@ const mapConstraintsToProjections = (
         };
     });
 
-const optionalColumns = columns.filter(
-    (
-        column
-    ): column is WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'> =>
-        typeof column.headerIntlKey === 'string' &&
-        hasLength(column.headerIntlKey)
-            ? Object.values(optionalColumnIntlKeys).includes(
-                  column.headerIntlKey
-              )
-            : false
-);
-
 function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const { 1: setForcedEnable } = useQueryParam(
         GlobalSearchParams.FORCED_SHARD_ENABLE,
         BooleanParam
     );
-    const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const isEdit = useEntityWorkflow_Editing();
     const fireBackgroundTest = useRef(isEdit);
@@ -145,7 +121,6 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
     const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Store
-    const recommended = useBinding_recommendFields();
     const setRecommendFields = useBinding_setRecommendFields();
     const initializeSelections = useBinding_initializeSelections();
     const stagedBindingIndex = useBinding_currentBindingIndex();
@@ -363,51 +338,6 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         setSelectionSaving,
     ]);
 
-    const updateTableSettings = (
-        event: SyntheticEvent,
-        checked: boolean,
-        column: string
-    ) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const existingSettings = tableSettings ?? {};
-
-        const shownOptionalColumns = Object.hasOwn(
-            existingSettings,
-            TablePrefixes.fieldSelection
-        )
-            ? existingSettings[TablePrefixes.fieldSelection]
-                  .shownOptionalColumns
-            : [];
-
-        const columnShown = shownOptionalColumns.includes(column);
-
-        const evaluatedSettings =
-            !checked && columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: shownOptionalColumns.filter(
-                              (value) => value !== column
-                          ),
-                      },
-                  }
-                : checked && !columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: [
-                              ...shownOptionalColumns,
-                              column,
-                          ],
-                      },
-                  }
-                : existingSettings;
-
-        setTableSettings(evaluatedSettings);
-    };
-
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
@@ -433,52 +363,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <Stack
-                direction="row"
-                sx={{
-                    mb: 1,
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <FieldActionButton
-                        bindingUUID={bindingUUID}
-                        disabled={!recommended[bindingUUID] || loading}
-                        labelId="fieldSelection.table.cta.defaultAllFields"
-                        projections={data}
-                        selectedValue="default"
-                    />
-
-                    <FieldActionButton
-                        bindingUUID={bindingUUID}
-                        disabled={loading}
-                        labelId="fieldSelection.table.cta.excludeAllFields"
-                        projections={data}
-                        selectedValue="exclude"
-                    />
-                </Stack>
-
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <FieldFilter disabled={loading} />
-
-                    <SelectColumnMenu
-                        columns={optionalColumns}
-                        onChange={updateTableSettings}
-                        disabled={loading}
-                    />
-                </Stack>
-            </Stack>
-
-            <FieldSelectionTable projections={data} />
+            <FieldSelectionTable bindingUUID={bindingUUID} projections={data} />
         </Box>
     );
 }
