@@ -8,6 +8,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { CheckSquareSolid } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SupportedProvider } from 'types/authProviders';
 import { getLoginSettings } from 'utils/env-utils';
@@ -17,6 +18,18 @@ const loginSettings = getLoginSettings();
 interface Props {
     showRegistration?: boolean;
 }
+
+const Check = () => {
+    return (
+        <Typography
+            sx={{
+                color: (theme) => theme.palette.success.main,
+            }}
+        >
+            <CheckSquareSolid />
+        </Typography>
+    );
+};
 
 const Login = ({ showRegistration }: Props) => {
     useBrowserTitle('routeTitle.login');
@@ -62,6 +75,32 @@ const Login = ({ showRegistration }: Props) => {
                         }
                     />
                 </Typography>
+
+                {isRegister ? (
+                    <Box>
+                        <Stack
+                            direction="row"
+                            style={{ justifyContent: 'center' }}
+                            spacing={1}
+                        >
+                            <Check />
+                            <Box component="span">
+                                <FormattedMessage id="login.register.note1" />
+                            </Box>
+                        </Stack>
+                        <Stack
+                            direction="row"
+                            component="h3"
+                            style={{ justifyContent: 'center' }}
+                            spacing={1}
+                        >
+                            <Check />
+                            <Typography component="span">
+                                <FormattedMessage id="login.register.note2" />
+                            </Typography>
+                        </Stack>
+                    </Box>
+                ) : null}
 
                 <Stack direction="column" spacing={2}>
                     <Box>
