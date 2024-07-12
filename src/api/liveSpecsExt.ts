@@ -68,18 +68,20 @@ const materializationsColumnsWithSpec = materializationsColumns.concat(',spec');
 
 const collectionColumns = baseColumns.join(',');
 
+const getCountSettings = (pagination: any) =>
+    pagination.from === 0 ? 'exact' : undefined;
+
 // Entity table-specific queries
 const getLiveSpecs_captures = (
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    console.log('pagination', pagination);
     return defaultTableFilter<CaptureQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(captureColumns, {
-                count: pagination.from === 0 ? 'exact' : undefined,
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'capture'),
@@ -99,7 +101,7 @@ const getLiveSpecs_materializations = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(materializationsColumns, {
-                count: pagination.from === 0 ? 'exact' : undefined,
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'materialization'),
@@ -119,7 +121,7 @@ const getLiveSpecs_collections = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionColumns, {
-                count: pagination.from === 0 ? 'exact' : undefined,
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'collection'),
