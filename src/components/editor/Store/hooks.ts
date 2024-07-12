@@ -1,9 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+
 import { DraftSpecQuery, useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
 import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
@@ -441,23 +439,6 @@ export const useEditorStore_setDraftInitializationError = (
     );
 };
 
-export const useEditorStore_queryResponse = (
-    params?: SelectorParams | undefined
-) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['queryResponse']
-    >(storeName(entityType, localScope), (state) => state.queryResponse);
-};
-
 export const useEditorStore_setQueryResponse = (
     params?: SelectorParams | undefined
 ) => {
@@ -511,7 +492,7 @@ export const useEditorStore_queryResponse_isValidating = (
         EditorStoreState<DraftSpecQuery>['queryResponse']['isValidating']
     >(
         storeName(entityType, localScope),
-        (state) => state.queryResponse.isValidating
+        useShallow((state) => state.queryResponse.isValidating)
     );
 };
 
@@ -571,29 +552,38 @@ export const useEditorStore_resetState = (
 
 export const useHydrateEditorState = (
     specType: Entity,
+    draftId: string | null | undefined,
     catalogName?: string,
     localScope?: boolean
 ) => {
-    const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
-
-    const draftId = useEditorStore_id({ localScope });
-    const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
+
+    // TODO (draft editor) - pass in the draftId you care about so this can fall back to `null`
+    //  properly and wait to fetch when the time is appropriate
 
     // This fallback chain of draft IDs is required because of how the global editor store
     // differs in keeping record of the draft ID from its local counterpart. Notable component
-    // call-outs include: the collection tab of the binding selector relies on the draft ID
-    // stored in the 'id' property of the local editor store state; the capture auto-discovery settings
-    // rely on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
+    // call-outs include:
+    // collection tab of the binding selector   relies on the draft ID
+    // capture auto-discovery settings           relies on the draft ID stored in the 'persistedDraftId' property of the global editor store state.
     const response = useDraftSpecs_forEditor(
-        draftId ?? persistedDraftId ?? draftIdInURL,
+        draftId ?? null,
         specType,
         catalogName
     );
 
+    console.log(`${draftId}`, localScope);
     useEffect(() => {
-        if (!response.isValidating) {
+        if (
+            !response.isValidating &&
+            // If we have a local editor then we need to have a draft spec there before we set the query response
+            //  this basically handles the edge case of the 'collection tab of the binding selector' getting a white
+            //  page of death sometimes when clicking through bindings on the schema tab.
+            // The binding selector mainly works as an side effect of this query being set
+            (Boolean(localScope) ? response.draftSpecs.length > 0 : true)
+        ) {
+            console.log('updating query', response);
             setQueryResponse(response);
         }
-    }, [setQueryResponse, response]);
+    }, [localScope, response, setQueryResponse]);
 };

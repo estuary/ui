@@ -146,6 +146,7 @@ function EntityEdit({
                 <DraftSpecEditorHydrator
                     entityType={entityType}
                     entityName={entityName}
+                    draftId={persistedDraftId}
                 >
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (

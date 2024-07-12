@@ -13,6 +13,9 @@ import DerivationConfig from 'components/transformation/create/Config';
 import GitPodButton from 'components/transformation/create/GitPodButton';
 import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'components/transformation/create/Schema';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import usePageTitle from 'hooks/usePageTitle';
 import { useUnmount } from 'react-use';
 import { CustomEvents } from 'services/types';
@@ -33,6 +36,8 @@ function DerivationCreateAlternate() {
         header: authenticatedRoutes.beta.new.title,
         headerLink: 'https://docs.estuary.dev/concepts/derivations/',
     });
+
+    const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
@@ -58,6 +63,7 @@ function DerivationCreateAlternate() {
 
     return (
         <DraftSpecEditorHydrator
+            draftId={draftIdInURL}
             entityType="collection"
             entityName={catalogName}
         >

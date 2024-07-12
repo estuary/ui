@@ -153,6 +153,7 @@ function EntityCreate({
         <DraftSpecEditorHydrator
             entityType={entityType}
             entityName={entityName}
+            draftId={draftId}
         >
             {toolbar}
 
