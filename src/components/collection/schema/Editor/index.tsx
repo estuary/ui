@@ -1,4 +1,5 @@
 import { Grid, Stack, Typography } from '@mui/material';
+import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
@@ -38,6 +39,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
     // We need to know the schema was updated so we can "reload" this section
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
+    const collectionInitializationDone = useBindingsEditorStore(
+        (state) => state.collectionInitializationDone
+    );
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
 
@@ -75,12 +79,20 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     ]);
 
     useUpdateEffect(() => {
+        console.log('sup', {
+            schemaUpdated,
+            collectionInitializationDone,
+            mutate,
+        });
         // If the schema is updated via the scheme inference
         //  of CLI button we want to fire mutate and make sure we get the latest
-        if (mutate && schemaUpdated) {
+        // If the collection was initialized we need to fire mutate so that the collection
+        //  spec editor can refresh itself and know about the new draft we just created
+        //  for the collection
+        if (mutate && (schemaUpdated || collectionInitializationDone)) {
             void mutate();
         }
-    }, [schemaUpdated]);
+    }, [mutate, schemaUpdated, collectionInitializationDone]);
 
     const onKeyChange = useCallback(
         async (_event, keys) => {

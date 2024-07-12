@@ -4,6 +4,7 @@ import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
 } from 'api/liveSpecsExt';
+import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
@@ -48,6 +49,9 @@ const getCollection = async (
 
 function useInitializeCollectionDraft() {
     // Bindings Editor Store
+    const setCollectionInitializationDone = useBindingsEditorStore(
+        (state) => state.setCollectionInitializationDone
+    );
     const setCollectionData = useBindingsEditorStore_setCollectionData();
     const setCollectionInitializationAlert =
         useBindingsEditorStore_setCollectionInitializationAlert();
@@ -119,8 +123,14 @@ function useInitializeCollectionDraft() {
                         'workflows.collectionSelector.error.message.draftCreationFailed',
                 });
             }
+
+            setCollectionInitializationDone(true);
         },
-        [setCollectionInitializationAlert, updateBindingsEditorState]
+        [
+            setCollectionInitializationAlert,
+            setCollectionInitializationDone,
+            updateBindingsEditorState,
+        ]
     );
 
     const getCollectionDraftSpecs = useCallback(
@@ -150,6 +160,7 @@ function useInitializeCollectionDraft() {
                     });
 
                     if (lastPubId && expectedPubId !== lastPubId) {
+                        setCollectionInitializationDone(false);
                         setCollectionInitializationAlert({
                             severity: 'warning',
                             messageId:
@@ -226,6 +237,7 @@ function useInitializeCollectionDraft() {
         [
             createCollectionDraftSpec,
             setCollectionInitializationAlert,
+            setCollectionInitializationDone,
             setDraftId,
             setLocalDraftId,
             setPersistedDraftId,
