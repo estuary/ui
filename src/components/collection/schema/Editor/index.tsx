@@ -1,4 +1,5 @@
 import { Grid, Stack, Typography } from '@mui/material';
+import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
@@ -40,6 +41,8 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
+
+    const initializing = useBindingsEditorStore((state) => state.initializing);
 
     const inferSchemaResponseDoneProcessing =
         useBindingsEditorStore_inferSchemaResponseDoneProcessing();
@@ -98,8 +101,10 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         [onChange]
     );
 
+    console.log('CollectionSchemaEditor:draftSpec', draftSpec);
+
     if (draftSpec && entityName) {
-        if (!inferSchemaResponseDoneProcessing) {
+        if (!inferSchemaResponseDoneProcessing || initializing) {
             return <CollectionSchemaEditorSkeleton />;
         }
         return (
