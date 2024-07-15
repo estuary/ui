@@ -25,8 +25,6 @@ function DraftSpecEditor({
             monitorCurrentCatalog
         );
 
-    console.log('draftSpec', draftSpec);
-
     if (draftSpec) {
         return (
             <MonacoEditor
