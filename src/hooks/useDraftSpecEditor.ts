@@ -16,7 +16,8 @@ import { Entity } from 'types';
 function useDraftSpecEditor(
     entityName: string | undefined,
     localScope?: boolean,
-    editorSchemaScope?: string
+    editorSchemaScope?: string,
+    monitorCurrentCatalog?: boolean
 ) {
     // Local State
     // We store off a ref and a state so we can constantly do compares against
@@ -107,6 +108,7 @@ function useDraftSpecEditor(
         [draftId, draftSpec, mutate]
     );
 
+    // This is mainly for the binding collection editing
     useEffect(() => {
         if (draftSpecs.length > 0) {
             setSpecs(draftSpecs);
@@ -129,29 +131,16 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
-    // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
-    //    because we are comparing two JSON objects that are being stringified and that means the order
-    //    change change whenever. We should probably compare the two objects and THEN if those do not match
-    //    show an error/diff editor.
-    //
-    // useEffectOnce(() => {
-    //     const publicationSubscription = supabaseClient
-    //         .from(TABLES.DRAFT_SPECS)
-    //         .on('*', async (payload: any) => {
-    //             if (payload.new.spec) {
-    //                 setServerUpdates(payload.new.spec);
-    //             }
-    //         })
-    //         .subscribe();
-
-    //     setSubscription(publicationSubscription);
-
-    //     return () => {
-    //         if (subscription) {
-    //             void supabaseClient.removeSubscription(subscription);
-    //         }
-    //     };
-    // });
+    // This for advanced spec editor
+    useEffect(() => {
+        if (
+            monitorCurrentCatalog &&
+            currentCatalog &&
+            !isEqual(draftSpecRef.current, currentCatalog)
+        ) {
+            setDraftSpec(currentCatalog);
+        }
+    }, [currentCatalog, monitorCurrentCatalog]);
 
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return useMemo(() => {

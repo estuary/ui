@@ -7,6 +7,7 @@ export interface Props {
     localZustandScope?: boolean;
     editorHeight?: number;
     entityName?: string;
+    monitorCurrentCatalog?: boolean;
 }
 
 function DraftSpecEditor({
@@ -14,9 +15,17 @@ function DraftSpecEditor({
     localZustandScope = false,
     editorHeight,
     entityName,
+    monitorCurrentCatalog,
 }: Props) {
     const { draftSpec, isValidating, onChange, defaultValue } =
-        useDraftSpecEditor(entityName, localZustandScope);
+        useDraftSpecEditor(
+            entityName,
+            localZustandScope,
+            undefined,
+            monitorCurrentCatalog
+        );
+
+    console.log('draftSpec', draftSpec);
 
     if (draftSpec) {
         return (
