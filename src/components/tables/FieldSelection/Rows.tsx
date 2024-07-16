@@ -11,7 +11,10 @@ import {
     getStickyTableCell,
 } from 'context/Theme';
 import { orderBy } from 'lodash';
-import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_recommendFields,
+} from 'stores/Binding/hooks';
 import { SortDirection, TableColumns } from 'types';
 import {
     basicSort_string,
@@ -86,6 +89,7 @@ const displayOptionalColumn = (columns: TableColumns[], intlKey: string) =>
 
 function Row({ columns, row }: RowProps) {
     const currentBindingUUID = useBinding_currentBindingUUID();
+    const recommended = useBinding_recommendFields();
 
     const pointerColumnDisplayed = displayOptionalColumn(
         columns,
@@ -98,6 +102,8 @@ function Row({ columns, row }: RowProps) {
     );
 
     const actionRestricted =
+        currentBindingUUID &&
+        !recommended[currentBindingUUID] &&
         row.constraint?.type &&
         (row.constraint.type === ConstraintTypes.FIELD_REQUIRED ||
             row.constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
@@ -115,7 +121,9 @@ function Row({ columns, row }: RowProps) {
             <TableCell sx={getStickyTableCell()}>
                 <Typography
                     style={
-                        actionRestricted || row.selectionType !== 'default'
+                        actionRestricted ||
+                        (row.selectionType !== 'default' &&
+                            row.selectionType !== null)
                             ? { fontWeight: 700 }
                             : { fontStyle: 'italic' }
                     }
