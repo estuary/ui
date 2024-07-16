@@ -1,5 +1,8 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    CompositeProjection,
+    ConstraintTypes,
+} from 'components/editor/Bindings/FieldSelection/types';
 import ChipListCell from 'components/tables/cells/ChipList';
 import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
@@ -94,6 +97,12 @@ function Row({ columns, row }: RowProps) {
         optionalColumnIntlKeys.details
     );
 
+    const actionRestricted =
+        row.constraint?.type &&
+        (row.constraint.type === ConstraintTypes.FIELD_REQUIRED ||
+            row.constraint.type === ConstraintTypes.LOCATION_REQUIRED ||
+            row.constraint.type === ConstraintTypes.UNSATISFIABLE);
+
     return (
         <TableRow
             sx={{
@@ -104,7 +113,15 @@ function Row({ columns, row }: RowProps) {
             }}
         >
             <TableCell sx={getStickyTableCell()}>
-                <Typography>{row.field}</Typography>
+                <Typography
+                    style={
+                        actionRestricted || row.selectionType !== 'default'
+                            ? { fontWeight: 700 }
+                            : { fontStyle: 'italic' }
+                    }
+                >
+                    {row.field}
+                </Typography>
             </TableCell>
 
             {pointerColumnDisplayed ? (
