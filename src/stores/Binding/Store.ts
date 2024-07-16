@@ -15,7 +15,6 @@ import {
     isEqual,
     omit,
     omitBy,
-    orderBy,
     pick,
     union,
 } from 'lodash';
@@ -58,27 +57,64 @@ import {
 
 const STORE_KEY = 'Bindings';
 
-const sortBindings = (bindings: any) => {
-    return orderBy(
-        bindings,
-        ['disable', (binding) => getCollectionName(binding)],
-        ['desc', 'asc']
-    );
+const sortByDisableStatus = (
+    disabledA: boolean,
+    disabledB: boolean,
+    collectionA: string,
+    collectionB: string,
+    ascendingSort: boolean
+) => {
+    // If a is enabled and b is disabled then return <0 to put a first
+    if (!disabledA && disabledB) {
+        return -1;
+    }
+
+    // If a is disabled and b is enabled then return >0 to put b first
+    if (disabledA && !disabledB) {
+        return 1;
+    }
+
+    return ascendingSort
+        ? collectionA.localeCompare(collectionB)
+        : collectionB.localeCompare(collectionA);
+};
+
+const sortBindings = (bindings: any[]) => {
+    return bindings.sort((a, b) => {
+        const collectionA = getCollectionName(a);
+        const collectionB = getCollectionName(b);
+
+        return sortByDisableStatus(
+            a?.disable ?? false,
+            b?.disable ?? false,
+            collectionA,
+            collectionB,
+            true
+        );
+    });
 };
 
 const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
     const sortedResources: ResourceConfigDictionary = {};
 
-    orderBy(
-        Object.entries(resourceConfigs),
-        [
-            ([_uuid, config]) => config.meta.disable,
-            ([_uuid, config]) => config.meta.collectionName,
-        ],
-        ['desc', 'asc']
-    ).forEach(([uuid, config]) => {
-        sortedResources[uuid] = config;
-    });
+    Object.entries(resourceConfigs)
+        .sort(([_uuidA, configA], [_uuidB, configB]) => {
+            const { disable: disabledA, collectionName: collectionA } =
+                configA.meta;
+            const { disable: disabledB, collectionName: collectionB } =
+                configB.meta;
+
+            return sortByDisableStatus(
+                disabledA ?? false,
+                disabledB ?? false,
+                collectionA,
+                collectionB,
+                true
+            );
+        })
+        .forEach(([uuid, config]) => {
+            sortedResources[uuid] = config;
+        });
 
     return sortedResources;
 };
