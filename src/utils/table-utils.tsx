@@ -4,6 +4,9 @@ import { FormattedMessage } from 'react-intl';
 import { Pagination } from 'services/supabase';
 import { TableColumns, TableIntlConfig, TableStatuses } from 'types';
 
+export const getCountSettings = (pagination: any) =>
+    pagination.from === 0 ? 'exact' : undefined;
+
 export const getEmptyTableHeader = (
     tableStatus: TableStatuses,
     intlConfig: TableIntlConfig

@@ -6,19 +6,13 @@ import {
     nextSaturday,
     parseISO,
     previousSunday,
-    startOfMonth,
     sub,
     subDays,
     subMonths,
     subWeeks,
 } from 'date-fns';
 import { UTCDate } from '@date-fns/utc';
-import {
-    defaultTableFilter,
-    escapeReservedCharacters,
-    SortingProps,
-    TABLES,
-} from 'services/supabase';
+import { escapeReservedCharacters, TABLES } from 'services/supabase';
 import {
     CatalogStats,
     CatalogStats_Billing,
@@ -280,52 +274,47 @@ const getStatsForDetails = (
 //   returned by the billing_report RPC to populate the contents of its rows.
 
 // SBV2-typing (PostgrestFilterBuilder<CatalogStats_Billing>)
-const getStatsForBillingHistoryTable = (
-    tenants: string[],
-    // pagination: any,
-    searchQuery: any,
-    sorting: SortingProps<any>[]
-) => {
-    // switched this query to use `like` but never tested so might require `ilike` but that impacts perf (Q2 2024)
-    const subjectRoleFilters = tenants
-        .map(
-            (tenant) => `catalog_name.like.${escapeReservedCharacters(tenant)}%`
-        )
-        .join(',');
+// const getStatsForBillingHistoryTable = (
+//     tenants: string[],
+//     // pagination: any,
+//     searchQuery: any,
+//     sorting: SortingProps<any>[]
+// ) => {
+//     // switched this query to use `like` but never tested so might require `ilike` but that impacts perf (Q2 2024)
+//     const subjectRoleFilters = tenants
+//         .map(
+//             (tenant) => `catalog_name.like.${escapeReservedCharacters(tenant)}%`
+//         )
+//         .join(',');
 
-    const today = new Date();
-    const currentMonth = startOfMonth(today);
-    const startMonth = subMonths(currentMonth, 5);
+//     const today = new Date();
+//     const currentMonth = startOfMonth(today);
+//     const startMonth = subMonths(currentMonth, 5);
 
-    const query = supabaseClient
-        .from(TABLES.CATALOG_STATS)
-        .select(
-            `    
-            catalog_name,
-            grain,
-            ts,
-            bytes_written_by_me,
-            bytes_read_by_me,
-            flow_document
-        `,
-            { count: 'exact' }
-        )
-        .eq('grain', monthlyGrain)
-        .gte('ts', convertToUTC(startMonth, monthlyGrain))
-        .lte('ts', convertToUTC(today, monthlyGrain))
-        .or(subjectRoleFilters);
+//     const query = supabaseClient
+//         .from(TABLES.CATALOG_STATS)
+//         .select(
+//             `
+//             catalog_name,
+//             grain,
+//             ts,
+//             bytes_written_by_me,
+//             bytes_read_by_me,
+//             flow_document
+//         `,
+//             { count: 'exact' }
+//         )
+//         .eq('grain', monthlyGrain)
+//         .gte('ts', convertToUTC(startMonth, monthlyGrain))
+//         .lte('ts', convertToUTC(today, monthlyGrain))
+//         .or(subjectRoleFilters);
 
-    return defaultTableFilter<typeof query>(
-        query,
-        ['ts'],
-        searchQuery,
-        sorting
-    );
-};
+//     return defaultTableFilter<typeof query>(
+//         query,
+//         ['ts'],
+//         searchQuery,
+//         sorting
+//     );
+// };
 
-export {
-    getStatsByName,
-    getStatsForBilling,
-    getStatsForBillingHistoryTable,
-    getStatsForDetails,
-};
+export { getStatsByName, getStatsForBilling, getStatsForDetails };
