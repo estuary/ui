@@ -355,6 +355,11 @@ export const semiTransparentBackgroundIntensified = {
     dark: 'rgba(247, 249, 252, 0.08)',
 };
 
+export const textloadingColor = {
+    light: 'rgba(11, 19, 30, 0.4)',
+    dark: 'rgba(247, 249, 252, 0.4)',
+};
+
 export const jsonFormsGroupHeaders = {
     light: 'white',
     dark: 'transparent',
