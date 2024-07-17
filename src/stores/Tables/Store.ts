@@ -439,7 +439,18 @@ export const getInitialState = (
 
                     state.hydrated = true;
 
-                    state.query.count = response.count;
+                    const hasNewCount = Number.isInteger(response.count);
+                    if (
+                        // We have no count and just recieved one so update
+                        //  ex: initial load
+                        (!state.query.count && hasNewCount) ||
+                        // We already have a count, but there is a new one, and it has changed
+                        //  ex: user entered a filter or count change since last time they viewed the 1st page
+                        (state.query.count !== response.count && hasNewCount)
+                    ) {
+                        state.query.count = response.count;
+                    }
+
                     state.query.response = response.data;
                     state.query.loading = false;
                 }),
