@@ -12,7 +12,7 @@ import {
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
+import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
@@ -32,10 +32,7 @@ const getInitialStateData = (): Pick<
     };
 };
 
-export const getInitialState = (
-    set: NamedSet<BillingState>,
-    get: StoreApi<BillingState>['getState']
-): BillingState => {
+export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
@@ -81,9 +78,7 @@ export const getInitialState = (
                     // Since the selected tenant is subject to vary, the billed prefix of the record input must be
                     // validated against the selected tenant before altering the billing history.
                     if (value[0].billed_prefix === selectedTenant) {
-                        const { invoices } = get();
-
-                        const evaluatedBillingHistory = invoices.filter(
+                        const evaluatedBillingHistory = state.invoices.filter(
                             (record) =>
                                 record.date_start !== value[0].date_start &&
                                 record.date_end !== value[0].date_end
@@ -172,8 +167,5 @@ export const getInitialState = (
 };
 
 export const useBillingStore = create<BillingState>()(
-    devtools(
-        (set, get) => getInitialState(set, get),
-        devtoolsOptions('billing')
-    )
+    devtools((set) => getInitialState(set), devtoolsOptions('billing'))
 );
