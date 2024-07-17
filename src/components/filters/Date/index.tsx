@@ -81,7 +81,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 variant="text"
                 color="primary"
                 sx={{ whiteSpace: 'nowrap' }}
-                startIcon={<Calendar style={{ fontSize: 13 }} />}
+                endIcon={<Calendar style={{ fontSize: 13 }} />}
             >
                 <FormattedMessage id={`filter.time.${statsFilter}`} />
             </Button>
