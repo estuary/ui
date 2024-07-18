@@ -26,7 +26,6 @@ export interface BillingState extends StoreWithHydration {
 
     invoices: Invoice[];
     setInvoices: (value: Invoice[]) => void;
-    updateInvoices: (value: Invoice[], selectedTenant: string) => void;
 
     paymentMethodExists: boolean | null;
     setPaymentMethodExists: (value: any[] | undefined) => void;

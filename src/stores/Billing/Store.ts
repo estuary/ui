@@ -52,7 +52,8 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
                 produce((state: BillingState) => {
                     if (state.active) {
                         state.invoices = value;
-                        state.selectedInvoiceId = invoiceId(value[0]);
+                        state.selectedInvoiceId =
+                            value.length > 0 ? invoiceId(value[0]) : null;
                     }
                 }),
                 false,
@@ -68,40 +69,6 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
                 }),
                 false,
                 'Billing History Initialized'
-            );
-        },
-
-        updateInvoices: (value, selectedTenant) => {
-            set(
-                produce((state: BillingState) => {
-                    // This action is used to update the record of the active billing cycle at a regular interval.
-                    // Since the selected tenant is subject to vary, the billed prefix of the record input must be
-                    // validated against the selected tenant before altering the billing history.
-                    if (value[0].billed_prefix === selectedTenant) {
-                        const evaluatedBillingHistory = state.invoices.filter(
-                            (record) =>
-                                record.date_start !== value[0].date_start &&
-                                record.date_end !== value[0].date_end
-                        );
-
-                        evaluatedBillingHistory.unshift(value[0]);
-
-                        if (
-                            !evaluatedBillingHistory.find(
-                                (inv) =>
-                                    invoiceId(inv) === state.selectedInvoiceId
-                            )
-                        ) {
-                            state.selectedInvoiceId = invoiceId(
-                                evaluatedBillingHistory[0]
-                            );
-                        }
-
-                        state.invoices = evaluatedBillingHistory;
-                    }
-                }),
-                false,
-                'Billing Details Updated'
             );
         },
 
