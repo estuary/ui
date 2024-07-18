@@ -107,16 +107,17 @@ export const getInvoicesBetween = (
     const formattedEnd = formatDateForApi(date_end);
 
     return supabaseClient
-        .from(TABLES.INVOICES)
+        .from(TABLES.INVOICES_EXT)
         .select(invoicesQuery)
         .filter('billed_prefix', 'eq', billed_prefix)
+        .eq('invoice_type', 'manual')
         .or(
-            `invoice_type.eq.manual,and(${[
+            `${[
                 `date_start.gte.${formattedStart}`,
                 `date_start.lte.${formattedEnd}`,
                 `date_end.gte.${formattedStart}`,
                 `date_end.lte.${formattedEnd}`,
-            ].join(',')})`
+            ].join(',')}`
         )
         .order('date_start', { ascending: false })
         .throwOnError()
