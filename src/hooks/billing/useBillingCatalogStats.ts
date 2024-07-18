@@ -19,7 +19,7 @@ function useBillingCatalogStats() {
     );
 
     return {
-        billingStats: data ?? historyInitialized ? [] : null,
+        billingStats: data ?? (historyInitialized ? [] : null),
         error,
         mutate,
         isValidating,
