@@ -1,7 +1,6 @@
 import {
-    CircularProgress,
+    Button,
     Divider,
-    IconButton,
     ListItem,
     Menu,
     Stack,
@@ -9,7 +8,7 @@ import {
 } from '@mui/material';
 import { StatsFilter } from 'api/stats';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Filter } from 'iconoir-react';
+import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -41,11 +40,6 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
         SelectableTableStore['setStatsFilter']
     >(selectableTableStoreName, selectableTableStoreSelectors.statsFilter.set);
 
-    const stats = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['stats']
-    >(selectableTableStoreName, selectableTableStoreSelectors.stats.get);
-
     const handlers = {
         closeMenu: () => {
             setAnchorEl(null);
@@ -73,7 +67,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 {header}
             </Typography>
 
-            <IconButton
+            <Button
                 id="stat-filter-selector-button"
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
@@ -84,14 +78,13 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 )}
                 onClick={handlers.openMenu}
                 disabled={disabled}
+                variant="text"
                 color="primary"
+                sx={{ whiteSpace: 'nowrap' }}
+                endIcon={<Calendar style={{ fontSize: 13 }} />}
             >
-                {!disabled && stats === null ? (
-                    <CircularProgress size={15} />
-                ) : (
-                    <Filter style={{ fontSize: 13 }} />
-                )}
-            </IconButton>
+                <FormattedMessage id={`filter.time.${statsFilter}`} />
+            </Button>
 
             <Menu
                 id="stat-filter-selector-menu"

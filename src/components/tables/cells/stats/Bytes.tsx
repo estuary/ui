@@ -1,6 +1,6 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
+import { textloadingColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { formatBytes } from './shared';
@@ -39,9 +39,7 @@ const Bytes = ({ read, val }: Props) => {
                             transitionDelay: statsLoading ? '800ms' : '0ms',
                             color: (theme) =>
                                 statsLoading
-                                    ? semiTransparentBackgroundIntensified[
-                                          theme.palette.mode
-                                      ]
+                                    ? textloadingColor[theme.palette.mode]
                                     : null,
                         }}
                     >

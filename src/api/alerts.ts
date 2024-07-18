@@ -152,7 +152,7 @@ const getNotificationSubscriptionsForTable = (
     return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         supabaseClient
             .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .select(`id, updated_at, catalog_prefix, email`, { count: 'exact' })
+            .select(`id, updated_at, catalog_prefix, email`)
             .eq('catalog_prefix', catalogPrefix),
         ['catalog_prefix', 'email'],
         searchQuery,
