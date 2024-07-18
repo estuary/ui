@@ -8,6 +8,11 @@ export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
 
+    collectionInitializationDone: boolean;
+    setCollectionInitializationDone: (
+        value: BindingsEditorState['collectionInitializationDone']
+    ) => void;
+
     collectionInitializationAlert: null | {
         severity: AlertColor;
         messageId: string;
