@@ -511,7 +511,7 @@ export const useEditorStore_queryResponse_isValidating = (
         EditorStoreState<DraftSpecQuery>['queryResponse']['isValidating']
     >(
         storeName(entityType, localScope),
-        (state) => state.queryResponse.isValidating
+        useShallow((state) => state.queryResponse.isValidating)
     );
 };
 
@@ -529,7 +529,10 @@ export const useEditorStore_queryResponse_mutate = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']['mutate']
-    >(storeName(entityType, localScope), (state) => state.queryResponse.mutate);
+    >(
+        storeName(entityType, localScope),
+        useShallow((state) => state.queryResponse.mutate)
+    );
 };
 
 export const useEditorStore_queryResponse_draftedBindingIndex = (
