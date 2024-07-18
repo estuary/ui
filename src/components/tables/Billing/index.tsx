@@ -41,6 +41,7 @@ function BillingHistoryTable() {
 
     const selectedInvoice = useBilling_selectedInvoice();
 
+    const active = useBillingStore((state) => state.active);
     const hydrated = useBillingStore((state) => state.hydrated);
     const networkFailed = useBillingStore((state) => state.networkFailed);
     const billingHistory = useBillingStore((state) => state.invoices);
@@ -87,7 +88,7 @@ function BillingHistoryTable() {
                             ? { status: TableStatuses.NETWORK_FAILED }
                             : { status: TableStatuses.NO_EXISTING_DATA }
                     }
-                    loading={!hydrated}
+                    loading={Boolean(active || !hydrated)}
                     rows={dataRows}
                 />
             </Table>
