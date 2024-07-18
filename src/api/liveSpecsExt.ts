@@ -20,6 +20,7 @@ import {
     LiveSpecsExtBaseQuery,
 } from 'types';
 import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
+import { getCountSettings } from 'utils/table-utils';
 
 const baseColumns = [
     'catalog_name',
@@ -78,7 +79,7 @@ const getLiveSpecs_captures = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(captureColumns, {
-                count: 'exact',
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'capture'),
@@ -98,7 +99,7 @@ const getLiveSpecs_materializations = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(materializationsColumns, {
-                count: 'exact',
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'materialization'),
@@ -118,7 +119,7 @@ const getLiveSpecs_collections = (
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionColumns, {
-                count: 'exact',
+                count: getCountSettings(pagination),
             })
             .not('spec', 'is', null)
             .eq('spec_type', 'collection'),

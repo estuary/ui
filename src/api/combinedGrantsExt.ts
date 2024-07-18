@@ -9,6 +9,7 @@ import {
     DEFAULT_PAGING_SIZE,
 } from 'services/supabase';
 import { AuthRoles, Capability, Grant_UserExt } from 'types';
+import { getCountSettings } from 'utils/table-utils';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -28,7 +29,7 @@ const getGrants = (
             updated_at
         `,
                 {
-                    count: 'exact',
+                    count: getCountSettings(pagination),
                 }
             )
             .neq('subject_role', null),
