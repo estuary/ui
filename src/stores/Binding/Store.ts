@@ -265,7 +265,7 @@ const getInitialState = (
     get: StoreApi<BindingState>['getState']
 ): BindingState => ({
     ...getInitialStoreData(),
-    ...getStoreWithFieldSelectionSettings(set, get),
+    ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
 

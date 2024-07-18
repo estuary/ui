@@ -1,6 +1,5 @@
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import produce from 'immer';
-import { StoreApi } from 'zustand';
 import { NamedSet } from 'zustand/middleware';
 import { BindingState } from '../types';
 
@@ -54,8 +53,7 @@ export const getInitialFieldSelectionData = (): Pick<
 });
 
 export const getStoreWithFieldSelectionSettings = (
-    set: NamedSet<StoreWithFieldSelection>,
-    get: StoreApi<StoreWithFieldSelection>['getState']
+    set: NamedSet<StoreWithFieldSelection>
 ): StoreWithFieldSelection => ({
     ...getInitialFieldSelectionData(),
 
@@ -105,12 +103,10 @@ export const getStoreWithFieldSelectionSettings = (
     },
 
     setMultiSelection: (bindingUUID, updatedFields) => {
-        const { selections } = get();
-
-        const fields = selections[bindingUUID];
-
         set(
             produce((state: BindingState) => {
+                const fields = state.selections[bindingUUID];
+
                 state.selections[bindingUUID] = {
                     ...fields,
                     ...updatedFields,

@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import { debounce } from 'lodash';
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_searchQuery,
@@ -18,14 +18,10 @@ export default function FieldFilter({ disabled }: Props) {
     const searchQuery = useBinding_searchQuery();
     const setSearchQuery = useBinding_setSearchQuery();
 
-    const isFiltering = useRef(Boolean(searchQuery));
-
     const filterTable = debounce(
         (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             const filterQuery = event.target.value;
             const hasQuery = Boolean(filterQuery && filterQuery.length > 0);
-
-            isFiltering.current = hasQuery;
 
             setSearchQuery(hasQuery ? filterQuery : null);
         },
