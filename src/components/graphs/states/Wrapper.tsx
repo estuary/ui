@@ -11,9 +11,6 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const networkFailed = useBillingStore((state) => state.networkFailed);
     const billingHistory = useBillingStore((state) => state.invoices);
-    const dataByTaskGraphDetails = useBillingStore(
-        (state) => state.dataByTaskGraphDetails
-    );
 
     if (networkFailed) {
         return (
@@ -26,9 +23,10 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
                 }
             />
         );
-    } else if (billingStoreHydrated) {
-        return hasLength(billingHistory) &&
-            hasLength(dataByTaskGraphDetails) ? (
+    }
+
+    if (billingStoreHydrated) {
+        return hasLength(billingHistory) ? (
             <Box sx={eChartsTooltipSX}>{children}</Box>
         ) : (
             <EmptyGraphState
@@ -37,9 +35,9 @@ function GraphStateWrapper({ children }: BaseComponentProps) {
                 }
             />
         );
-    } else {
-        return <GraphLoadingState />;
     }
+
+    return <GraphLoadingState />;
 }
 
 export default GraphStateWrapper;

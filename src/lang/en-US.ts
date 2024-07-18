@@ -492,7 +492,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier.`,
     'admin.billing.error.details.header': `There was a network issue.`,
-    'admin.billing.error.details.message': `There was an error fetching your billing. ${Error['error.tryAgain']}`,
+    'admin.billing.error.details.message': `There was an error fetching your billing details. ${Error['error.tryAgain']}`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `${CTAs['cta.support']}`,

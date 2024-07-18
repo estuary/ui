@@ -14,7 +14,6 @@ import AlertBox from 'components/shared/AlertBox';
 import BillingLineItemsTable from 'components/tables/BillLineItems';
 import BillingHistoryTable from 'components/tables/Billing';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
-import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
 import usePageTitle from 'hooks/usePageTitle';
 import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -63,9 +62,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
 
     const selectedInvoice = useBilling_selectedInvoice();
-    const setDataByTaskGraphDetails = useBillingStore(
-        (state) => state.setDataByTaskGraphDetails
-    );
 
     const resetBillingState = useBillingStore((state) => state.resetState);
 
@@ -80,12 +76,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
         return { start: startMonth, end: currentMonth };
     }, [currentMonth]);
-
-    const {
-        billingStats,
-        error: billingStatsError,
-        isValidating: isValidatingStats,
-    } = useBillingCatalogStats();
 
     useEffect(() => {
         if (selectedTenant) {
@@ -124,29 +114,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         setHydrationErrorsExist,
         setInvoices,
         setNetworkFailed,
-    ]);
-
-    useEffect(() => {
-        if (!isValidatingStats && billingStats) {
-            setDataByTaskGraphDetails(billingStats);
-
-            if (!hydrated) {
-                setHydrated(true);
-            }
-        }
-
-        if (billingStatsError) {
-            setHydrationErrorsExist(true);
-            setHydrated(true);
-        }
-    }, [
-        billingStats,
-        billingStatsError,
-        hydrated,
-        isValidatingStats,
-        setDataByTaskGraphDetails,
-        setHydrated,
-        setHydrationErrorsExist,
     ]);
 
     useUnmount(() => resetBillingState());
