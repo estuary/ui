@@ -443,3 +443,9 @@ export interface RefreshTokenData {
     id: string;
     secret: string;
 }
+
+export interface UserInfoSummary {
+    hasDemoAccess: boolean;
+    hasSupportAccess: boolean;
+    hasAnyAccess: boolean;
+}
