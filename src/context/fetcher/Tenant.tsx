@@ -23,7 +23,7 @@ const TenantBillingDetailsContextProvider = ({
 
     const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
 
-    // TODO (payment method warning)
+    // TODO (payment method notification)
     // This does work a bit off of a side effect but that is fine for now.
     //  Eventually I'd like to move this provider logic into the payment method
     //  warning handled itself. As it is really the thing that care about these values.
