@@ -150,6 +150,7 @@ const getInitialMiscData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
     | 'collectionInitializationAlert'
+    | 'collectionInitializationDone'
     | 'documentsRead'
     | 'inferredSchemaApplicationErrored'
     | 'inferredSpec'
@@ -169,6 +170,7 @@ const getInitialMiscData = (): Pick<
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
+    collectionInitializationDone: false,
     documentsRead: null,
     inferredSchemaApplicationErrored: false,
     inferredSpec: null,
@@ -224,6 +226,16 @@ const getInitialState = (
             }),
             false,
             'Collection Initialization Alert Set'
+        );
+    },
+
+    setCollectionInitializationDone: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.collectionInitializationDone = value;
+            }),
+            false,
+            'Collection Initialization Done Set'
         );
     },
 

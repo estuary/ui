@@ -1,4 +1,6 @@
-import { Box, Table, TableContainer } from '@mui/material';
+import { Box, Stack, Table, TableContainer } from '@mui/material';
+import FieldActions from 'components/editor/Bindings/FieldSelection/FieldActions';
+import TableColumnSelector from 'components/editor/Bindings/FieldSelection/TableColumnSelector';
 import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
@@ -6,12 +8,15 @@ import Rows from 'components/tables/FieldSelection/Rows';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBinding_searchQuery } from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import FieldFilter from './FieldFilter';
 
 interface Props {
+    bindingUUID: string;
     projections: CompositeProjection[] | null | undefined;
 }
 
@@ -52,7 +57,7 @@ const evaluateColumnsToShow = (columnsToHide: string[]) =>
             : true
     );
 
-function FieldSelectionTable({ projections }: Props) {
+function FieldSelectionTable({ bindingUUID, projections }: Props) {
     const intl = useIntl();
 
     const formStatus = useFormStateStore_status();
@@ -76,6 +81,20 @@ function FieldSelectionTable({ projections }: Props) {
         },
     };
 
+    const searchQuery = useBinding_searchQuery();
+
+    const processedProjections = useMemo(
+        () =>
+            searchQuery
+                ? projections?.filter(
+                      ({ field, ptr }) =>
+                          field.includes(searchQuery) ||
+                          ptr?.includes(searchQuery)
+                  )
+                : projections,
+        [projections, searchQuery]
+    );
+
     useEffect(() => {
         if (
             formStatus === FormStatus.INIT ||
@@ -90,15 +109,18 @@ function FieldSelectionTable({ projections }: Props) {
             formStatus === FormStatus.TESTING_BACKGROUND
         ) {
             setTableState({ status: TableStatuses.LOADING });
+        } else if (processedProjections && processedProjections.length > 0) {
+            setTableState({
+                status: TableStatuses.DATA_FETCHED,
+            });
         } else {
             setTableState({
-                status:
-                    projections && projections.length > 0
-                        ? TableStatuses.DATA_FETCHED
-                        : TableStatuses.NO_EXISTING_DATA,
+                status: searchQuery
+                    ? TableStatuses.UNMATCHED_FILTER
+                    : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, projections]);
+    }, [formStatus, processedProjections, searchQuery]);
 
     const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
@@ -126,52 +148,80 @@ function FieldSelectionTable({ projections }: Props) {
     }, [tableSettings]);
 
     return (
-        <Box>
-            <TableContainer component={Box}>
-                <Table
-                    size="small"
-                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                    aria-label={intl.formatMessage({
-                        id: 'fieldSelection.table.label',
-                    })}
-                >
-                    <EntityTableHeader
-                        columns={columnsToShow}
-                        columnToSort={columnToSort}
-                        sortDirection={sortDirection}
-                        headerClick={handlers.sort}
-                        selectData={true}
-                    />
+        <>
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                    mb: 1,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <FieldActions
+                    bindingUUID={bindingUUID}
+                    loading={loading}
+                    projections={processedProjections}
+                />
 
-                    <EntityTableBody
-                        columns={columnsToShow}
-                        noExistingDataContentIds={{
-                            header: 'fieldSelection.table.empty.header',
-                            message: failed
-                                ? 'fieldSelection.table.error.message'
-                                : 'fieldSelection.table.empty.message',
-                            disableDoclink: true,
-                        }}
-                        tableState={tableState}
-                        loading={loading}
-                        rows={
-                            !failed &&
-                            !loading &&
-                            projections &&
-                            projections.length > 0 &&
-                            formStatus !== FormStatus.TESTING ? (
-                                <Rows
-                                    columns={columnsToShow}
-                                    data={projections}
-                                    sortDirection={sortDirection}
-                                    columnToSort={columnToSort}
-                                />
-                            ) : null
-                        }
-                    />
-                </Table>
-            </TableContainer>
-        </Box>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <FieldFilter disabled={loading} />
+
+                    <TableColumnSelector columns={columns} loading={loading} />
+                </Stack>
+            </Stack>
+
+            <Box>
+                <TableContainer component={Box}>
+                    <Table
+                        size="small"
+                        sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                        aria-label={intl.formatMessage({
+                            id: 'fieldSelection.table.label',
+                        })}
+                    >
+                        <EntityTableHeader
+                            columns={columnsToShow}
+                            columnToSort={columnToSort}
+                            sortDirection={sortDirection}
+                            headerClick={handlers.sort}
+                            selectData={true}
+                        />
+
+                        <EntityTableBody
+                            columns={columnsToShow}
+                            noExistingDataContentIds={{
+                                header: 'fieldSelection.table.empty.header',
+                                message: failed
+                                    ? 'fieldSelection.table.error.message'
+                                    : 'fieldSelection.table.empty.message',
+                                disableDoclink: true,
+                            }}
+                            tableState={tableState}
+                            loading={loading}
+                            rows={
+                                !failed &&
+                                !loading &&
+                                processedProjections &&
+                                processedProjections.length > 0 &&
+                                formStatus !== FormStatus.TESTING ? (
+                                    <Rows
+                                        columns={columnsToShow}
+                                        data={processedProjections}
+                                        sortDirection={sortDirection}
+                                        columnToSort={columnToSort}
+                                    />
+                                ) : null
+                            }
+                        />
+                    </Table>
+                </TableContainer>
+            </Box>
+        </>
     );
 }
 
