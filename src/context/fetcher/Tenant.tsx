@@ -23,7 +23,7 @@ const TenantBillingDetailsContextProvider = ({
 
     const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
 
-    // These
+    // We suppress payment warnings for support role anyway so don't bother fetching for them
     const { tenants, error, isValidating } = useTenantsDetailsForPayment(
         hasSupportRole ? [] : tenantsWithAdmin.slice(0, MAX_TENANTS)
     );
