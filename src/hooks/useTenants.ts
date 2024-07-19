@@ -1,20 +1,18 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
 import { useMemo } from 'react';
-import useSWR from 'swr';
-import { Tenants } from 'types';
+import { TenantPaymentDetails } from 'types';
 import { DEMO_TENANT, hasLength, stripPathing } from 'utils/misc-utils';
 
-const defaultResponse: Tenants[] = [];
+const defaultResponse: TenantPaymentDetails[] = [];
 
 export function useTenantsDetailsForPayment(tenants: string[]) {
-    const { data, error, isValidating } = useSWR(
-        'useTenants',
-        hasLength(tenants) ? () => getTenantDetails(tenants) : null
+    const { data, error, isValidating } = useQuery(
+        hasLength(tenants) ? getTenantDetails(tenants) : null
     );
 
     return {
-        tenants: data ? (data.data as Tenants[]) : defaultResponse,
+        tenants: data ?? defaultResponse,
         error,
         isValidating,
     };

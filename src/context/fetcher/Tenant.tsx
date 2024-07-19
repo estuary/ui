@@ -5,10 +5,10 @@ import { useTenantsDetailsForPayment } from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
-import { BaseComponentProps, Tenants } from 'types';
+import { BaseComponentProps, TenantPaymentDetails } from 'types';
 
 export interface TenantContextData {
-    tenantBillingDetails: Tenants[] | null;
+    tenantBillingDetails: TenantPaymentDetails[] | null;
 }
 const TenantContext = createContext<TenantContextData>({
     tenantBillingDetails: null,
