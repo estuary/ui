@@ -2,7 +2,7 @@ import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { DataByHourRange } from 'components/graphs/types';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { cardHeaderSx, linkButtonSx } from 'context/Theme';
-import { Filter } from 'iconoir-react';
+import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -44,7 +44,7 @@ function HourlyRangeFilter() {
                 aria-labelledby="hourly-filter-selector__label"
                 variant="text"
                 disableElevation
-                endIcon={<Filter style={{ fontSize: 13 }} />}
+                endIcon={<Calendar style={{ fontSize: 13 }} />}
                 onClick={handlers.openMenu}
                 sx={{ ...linkButtonSx }}
             >
