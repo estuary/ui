@@ -74,7 +74,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 ) {
                     // Remove the include property if no fields are marked for explicit inclusion, otherwise set the property.
                     if (hasLength(includedFields)) {
-                        const formattedFields = {};
+                        const formattedFields: Schema = {};
 
                         includedFields.forEach((field) => {
                             formattedFields[field] = {};

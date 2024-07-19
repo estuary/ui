@@ -1443,7 +1443,9 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.update.failed': `Field selection update failed`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.defaultField': `Default`,
+    'fieldSelection.table.cta.defaultAllFields': `Default All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
+    'fieldSelection.table.cta.excludeAllFields': `Exclude All`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
@@ -1456,6 +1458,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
+    'fieldSelection.table.label.filter': `Filter fields`,
 };
 
 const Notifications: ResolvedIntlConfig['messages'] = {
