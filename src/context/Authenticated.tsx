@@ -5,7 +5,6 @@ import { BaseComponentProps } from 'types';
 import RequireAuth from 'context/Router/RequireAuth';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import QueryParamProvider from './QueryParam';
-import PreFetchDataProvider from './fetcher';
 import { UserInfoSummaryStoreProvider } from './UserInfoSummary';
 
 interface Props extends BaseComponentProps {
@@ -22,11 +21,9 @@ export function AuthenticatedOnlyContext({ children, hideSpinner }: Props) {
                     <ZustandProvider>
                         <UserInfoSummaryStoreProvider>
                             <AppGuards>
-                                <PreFetchDataProvider>
-                                    <ConfirmationModalContextProvider>
-                                        {children}
-                                    </ConfirmationModalContextProvider>
-                                </PreFetchDataProvider>
+                                <ConfirmationModalContextProvider>
+                                    {children}
+                                </ConfirmationModalContextProvider>
                             </AppGuards>
                         </UserInfoSummaryStoreProvider>
                     </ZustandProvider>

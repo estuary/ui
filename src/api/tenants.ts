@@ -1,22 +1,15 @@
 import { supabaseClient } from 'context/Supabase';
 import { TABLES } from 'services/supabase';
-import { TenantHidesDataPreview, Tenants } from 'types';
+import { TenantHidesDataPreview, TenantPaymentDetails } from 'types';
 
-const COLUMNS = [
-    'gcm_account_id',
-    'payment_provider',
-    'tasks_quota',
-    'tenant',
-    'trial_start',
-    'hide_preview',
-];
+const COLUMNS = ['gcm_account_id', 'payment_provider', 'tenant', 'trial_start'];
 
 const getTenantDetails = async (tenants: string[]) => {
     return supabaseClient
         .from(TABLES.TENANTS)
         .select(COLUMNS.join(','))
         .in('tenant', tenants)
-        .returns<Tenants[]>();
+        .returns<TenantPaymentDetails[]>();
 };
 
 const getTenantHidesPreview = (tenant: string) => {
@@ -24,7 +17,7 @@ const getTenantHidesPreview = (tenant: string) => {
         .from(TABLES.TENANTS)
         .select('hide_preview')
         .eq('tenant', tenant)
-        .single<TenantHidesDataPreview>();
+        .maybeSingle<TenantHidesDataPreview>();
 };
 
 export { getTenantDetails, getTenantHidesPreview };

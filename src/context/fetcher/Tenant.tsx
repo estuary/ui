@@ -1,26 +1,31 @@
 import { MAX_TENANTS } from 'api/billing';
 import FullPageError from 'components/fullPage/Error';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useTenantsDetailsForPayment } from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
 import { BaseComponentProps, Tenants } from 'types';
-import { hasLength } from 'utils/misc-utils';
 
 export interface TenantContextData {
-    hasTenants: boolean;
-    tenants: Tenants[] | null;
+    tenantsBillingDetails: Tenants[] | null;
 }
 const TenantContext = createContext<TenantContextData>({
-    hasTenants: false,
-    tenants: null,
+    tenantsBillingDetails: null,
 });
 
-const TenantContextProvider = ({ children }: BaseComponentProps) => {
+const TenantBillingDetailsContextProvider = ({
+    children,
+}: BaseComponentProps) => {
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
     const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
 
+    // These
     const { tenants, error, isValidating } = useTenantsDetailsForPayment(
-        tenantsWithAdmin.slice(0, MAX_TENANTS)
+        hasSupportRole ? [] : tenantsWithAdmin.slice(0, MAX_TENANTS)
     );
 
     if (error) {
@@ -41,8 +46,7 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
     return (
         <TenantContext.Provider
             value={{
-                hasTenants: hasLength(tenants),
-                tenants,
+                tenantsBillingDetails: tenants,
             }}
         >
             {children}
@@ -53,8 +57,8 @@ const TenantContextProvider = ({ children }: BaseComponentProps) => {
 // TODO (optimization): Consider defining a hook that returns an array of mapped tenant names.
 //   The majority of the components that call useTenantDetails do so to extract a memoized
 //   array of tenant names.
-const useTenantDetails = () => {
+const useTenantBillingDetails = () => {
     return useContext(TenantContext);
 };
 
-export { TenantContextProvider, useTenantDetails };
+export { TenantBillingDetailsContextProvider, useTenantBillingDetails };

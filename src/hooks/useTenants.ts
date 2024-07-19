@@ -43,10 +43,26 @@ export function useTenantHidesDataPreview(entityName: string) {
         revalidateOnMount: true,
     });
 
-    const response = useMemo(
-        () => (isDemo ? false : data ? Boolean(data.hide_preview) : null),
-        [data, isDemo]
-    );
+    const response = useMemo(() => {
+        // We always let the demo show preview
+        if (isDemo) {
+            return false;
+        }
+
+        // We have a response so check it
+        if (data) {
+            return Boolean(data.hide_preview);
+        }
+
+        // Null means the call is done but the user does not have access
+        //  to see the tenant details
+        if (data === null) {
+            return true;
+        }
+
+        // We still don't have a good enough response so default to null
+        return null;
+    }, [data, isDemo]);
 
     return useMemo(
         () => ({

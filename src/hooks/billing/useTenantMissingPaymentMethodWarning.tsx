@@ -4,7 +4,7 @@ import {
     getPaymentMethodsForTenants,
 } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useTenantBillingDetails } from 'context/fetcher/Tenant';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { DateTime } from 'luxon';
@@ -37,7 +37,7 @@ function useTenantMissingPaymentMethodWarning() {
         notificationStoreSelectors.hideNotification
     );
 
-    const { tenants } = useTenantDetails();
+    const { tenantsBillingDetails } = useTenantBillingDetails();
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
@@ -52,16 +52,22 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!hasSupportRole && tenants) {
-                setPaymentMethods(await getPaymentMethodsForTenants(tenants));
+            if (!hasSupportRole && tenantsBillingDetails) {
+                setPaymentMethods(
+                    await getPaymentMethodsForTenants(tenantsBillingDetails)
+                );
             }
         };
 
         void fetchData();
-    }, [hasSupportRole, tenants]);
+    }, [hasSupportRole, tenantsBillingDetails]);
 
     useEffect(() => {
-        if (showedNotificationOnce.current || !tenants || !paymentMethods) {
+        if (
+            showedNotificationOnce.current ||
+            !tenantsBillingDetails ||
+            !paymentMethods
+        ) {
             return;
         }
 
@@ -73,7 +79,7 @@ function useTenantMissingPaymentMethodWarning() {
         }
 
         // Find all the tenants the user can access that are in the trial period
-        const tenantsInTrial = tenants
+        const tenantsInTrial = tenantsBillingDetails
             .filter((tenantDetail) => tenantDetail.trial_start)
             .sort((first, second) =>
                 basicSort_string(first.trial_start, second.trial_start, 'asc')
@@ -225,7 +231,7 @@ function useTenantMissingPaymentMethodWarning() {
         hideNotification,
         paymentMethods,
         showNotification,
-        tenants,
+        tenantsBillingDetails,
     ]);
 
     return paymentMethods;
