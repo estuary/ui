@@ -4,7 +4,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { noop } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
@@ -18,6 +18,10 @@ function TenantSelector({ updateStoreState }: Props) {
     const intl = useIntl();
 
     const tenantNames = useEntitiesStore_tenantsWithAdmin();
+    const tenantNamesHaveLength = useMemo(
+        () => hasLength(tenantNames),
+        [tenantNames]
+    );
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
@@ -44,7 +48,7 @@ function TenantSelector({ updateStoreState }: Props) {
     );
 
     useEffect(() => {
-        if (hasLength(tenantNames)) {
+        if (tenantNamesHaveLength) {
             // Try using the value from the URL first so if the param gets updated the dropdown changes
             const newVal =
                 hasLength(defaultSelectedTenant) &&
@@ -59,9 +63,15 @@ function TenantSelector({ updateStoreState }: Props) {
                 handledDefault.current = true;
             }
         }
-    }, [defaultSelectedTenant, defaultValue, tenantNames, updateState]);
+    }, [
+        defaultSelectedTenant,
+        defaultValue,
+        tenantNames,
+        tenantNamesHaveLength,
+        updateState,
+    ]);
 
-    return selectedTenant && hasLength(tenantNames) ? (
+    return selectedTenant && tenantNamesHaveLength ? (
         <AutocompletedField
             label={intl.formatMessage({
                 id: 'common.tenant',
