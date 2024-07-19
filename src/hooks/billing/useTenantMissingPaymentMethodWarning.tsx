@@ -5,13 +5,13 @@ import {
 } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { DateTime } from 'luxon';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'services/shared';
-import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -38,7 +38,9 @@ function useTenantMissingPaymentMethodWarning() {
     );
 
     const { tenants } = useTenantDetails();
-    const hasSupportRole = useEntitiesStore_hasSupportRole();
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
 
     const [paymentMethods, setPaymentMethods] =
         useState<MultiplePaymentMethods | null>(null);

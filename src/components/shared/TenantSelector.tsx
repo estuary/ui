@@ -1,12 +1,12 @@
 import { Skeleton } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useTenantDetails } from 'context/fetcher/Tenant';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { noop } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
@@ -17,7 +17,8 @@ interface Props {
 function TenantSelector({ updateStoreState }: Props) {
     const intl = useIntl();
 
-    const { tenants } = useTenantDetails();
+    const tenantNames = useEntitiesStore_capabilities_adminable();
+
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant
@@ -29,14 +30,6 @@ function TenantSelector({ updateStoreState }: Props) {
     );
     const [inputValue, setInputValue] = useState('');
     const [defaultValue, setDefaultValue] = useState<string | null>(null);
-
-    const tenantNames = useMemo<string[] | null>(
-        () =>
-            tenants && tenants.length > 0
-                ? tenants.map(({ tenant }) => tenant)
-                : null,
-        [tenants]
-    );
 
     const updateState = useCallback(
         (value: string) => {
@@ -51,7 +44,7 @@ function TenantSelector({ updateStoreState }: Props) {
     );
 
     useEffect(() => {
-        if (tenantNames) {
+        if (hasLength(tenantNames)) {
             // Try using the value from the URL first so if the param gets updated the dropdown changes
             const newVal =
                 hasLength(defaultSelectedTenant) &&
@@ -68,7 +61,7 @@ function TenantSelector({ updateStoreState }: Props) {
         }
     }, [defaultSelectedTenant, defaultValue, tenantNames, updateState]);
 
-    return selectedTenant && tenantNames ? (
+    return selectedTenant && hasLength(tenantNames) ? (
         <AutocompletedField
             label={intl.formatMessage({
                 id: 'common.tenant',

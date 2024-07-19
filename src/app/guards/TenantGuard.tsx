@@ -22,7 +22,7 @@ function TenantGuard({ children }: BaseComponentProps) {
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
     const mutate = useUserInfoSummaryStore((state) => state.mutate);
 
-    const showOnboarding = hasAnyAccess || showBeta;
+    const showOnboarding = !hasAnyAccess || showBeta;
     if (showOnboarding) {
         return (
             <OnboardGuard grantsMutate={mutate} forceDisplay={showOnboarding} />

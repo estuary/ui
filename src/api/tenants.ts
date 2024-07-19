@@ -1,10 +1,5 @@
 import { supabaseClient } from 'context/Supabase';
-import {
-    DEFAULT_PAGING_SIZE,
-    pagedFetchAll,
-    parsePagedFetchAllResponse,
-    TABLES,
-} from 'services/supabase';
+import { TABLES } from 'services/supabase';
 import { TenantHidesDataPreview, Tenants } from 'types';
 
 const COLUMNS = [
@@ -16,19 +11,12 @@ const COLUMNS = [
     'hide_preview',
 ];
 
-const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
-    const responses = await pagedFetchAll<Tenants>(
-        pageSize,
-        'getTenantDetails',
-        (start) =>
-            supabaseClient
-                .from(TABLES.TENANTS)
-                .select(COLUMNS.join(','))
-                .range(start, start + pageSize - 1)
-                .returns<Tenants[]>()
-    );
-
-    return parsePagedFetchAllResponse<Tenants>(responses);
+const getTenantDetails = async (tenants: string[]) => {
+    return supabaseClient
+        .from(TABLES.TENANTS)
+        .select(COLUMNS.join(','))
+        .in('tenant', tenants)
+        .returns<Tenants[]>();
 };
 
 const getTenantHidesPreview = (tenant: string) => {

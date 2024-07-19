@@ -1,7 +1,9 @@
+import { MAX_TENANTS } from 'api/billing';
 import FullPageError from 'components/fullPage/Error';
-import useTenants from 'hooks/useTenants';
+import { useTenantsDetailsForPayment } from 'hooks/useTenants';
 import { createContext, useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
 import { BaseComponentProps, Tenants } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -15,7 +17,11 @@ const TenantContext = createContext<TenantContextData>({
 });
 
 const TenantContextProvider = ({ children }: BaseComponentProps) => {
-    const { tenants, error, isValidating } = useTenants();
+    const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
+
+    const { tenants, error, isValidating } = useTenantsDetailsForPayment(
+        tenantsWithAdmin.slice(0, MAX_TENANTS)
+    );
 
     if (error) {
         return (

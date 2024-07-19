@@ -7,9 +7,10 @@ import { DEMO_TENANT, hasLength, stripPathing } from 'utils/misc-utils';
 
 const defaultResponse: Tenants[] = [];
 
-function useTenants() {
-    const { data, error, isValidating } = useSWR('useTenants', () =>
-        getTenantDetails()
+export function useTenantsDetailsForPayment(tenants: string[]) {
+    const { data, error, isValidating } = useSWR(
+        'useTenants',
+        hasLength(tenants) ? () => getTenantDetails(tenants) : null
     );
 
     return {
@@ -56,5 +57,3 @@ export function useTenantHidesDataPreview(entityName: string) {
         [error, isValidating, response]
     );
 }
-
-export default useTenants;

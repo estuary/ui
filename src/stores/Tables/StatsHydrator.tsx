@@ -1,4 +1,4 @@
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useEffect } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
@@ -17,7 +17,7 @@ const StatsHydrator = ({
     children,
     selectableTableStoreName,
 }: StatsHydratorProps) => {
-    const { hasTenants } = useTenantDetails();
+    const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
 
     const queryLoading = useZustandStore<
         SelectableTableStore,
@@ -35,10 +35,10 @@ const StatsHydrator = ({
     >(selectableTableStoreName, selectableTableStoreSelectors.stats.set);
 
     useEffect(() => {
-        if (hasTenants && !queryLoading && queryResponse) {
+        if (hasAnyAccess && !queryLoading && queryResponse) {
             setStats();
         }
-    }, [queryLoading, queryResponse, setStats, hasTenants]);
+    }, [queryLoading, queryResponse, setStats, hasAnyAccess]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
