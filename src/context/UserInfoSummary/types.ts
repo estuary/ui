@@ -14,6 +14,4 @@ export interface UserInfoStore extends UserInfoSummary {
         newVal: KeyedMutator<PostgrestSingleResponse<UserInfoSummary>>
     ) => void;
     setHasDemoAccess: (newVal: boolean) => void;
-    setHasSupportAccess: (newVal: boolean) => void;
-    setHasAnyAccess: (newVal: boolean) => void;
 }

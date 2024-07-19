@@ -9,17 +9,10 @@ const name = 'estuary.user-info-store';
 const useUserInfoSummaryStore = create<UserInfoStore>()(
     devtools((set) => {
         return {
+            hasDemoAccess: false,
+            hasSupportAccess: false,
+            hasAnyAccess: false,
             mutate: null,
-            setMutate: (newVal) => {
-                set(
-                    produce((state) => {
-                        state.mutate = newVal;
-                    }),
-                    false,
-                    'setMutate'
-                );
-            },
-
             populateAll: (newVal) => {
                 set(
                     produce((state) => {
@@ -31,7 +24,6 @@ const useUserInfoSummaryStore = create<UserInfoStore>()(
                     'setHasDemoAccess'
                 );
             },
-            hasDemoAccess: false,
             setHasDemoAccess: (newVal) => {
                 set(
                     produce((state) => {
@@ -41,26 +33,13 @@ const useUserInfoSummaryStore = create<UserInfoStore>()(
                     'setHasDemoAccess'
                 );
             },
-
-            hasSupportAccess: false,
-            setHasSupportAccess: (newVal) => {
+            setMutate: (newVal) => {
                 set(
                     produce((state) => {
-                        state.hasSupportAccess = newVal;
+                        state.mutate = newVal;
                     }),
                     false,
-                    'setHasSupportAccess'
-                );
-            },
-
-            hasAnyAccess: false,
-            setHasAnyAccess: (newVal) => {
-                set(
-                    produce((state) => {
-                        state.hasAnyAccess = newVal;
-                    }),
-                    false,
-                    'setHasAnyAccess'
+                    'setMutate'
                 );
             },
         };
