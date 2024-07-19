@@ -1,7 +1,7 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/Supabase';
+import { UserInfoSummary } from 'context/UserInfoSummary/types';
 import { RPCS, supabaseRetry } from 'services/supabase';
-import { UserInfoSummary } from 'types';
 
 export const getUserInfoSummary = async () => {
     return supabaseRetry<PostgrestSingleResponse<UserInfoSummary>>(
