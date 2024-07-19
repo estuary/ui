@@ -19,19 +19,20 @@ const initializeNotificationSubscriptions = async (prefix?: string) => {
 
 function useAlertSubscriptionDialog(prefix?: string) {
     const [open, setOpen] = useState(false);
-    const [subscriptions, setSubscriptions] =
-        useState<PrefixSubscriptionDictionary | null>(null);
+    const [subscriptions, setSubscriptions] = useState<
+        PrefixSubscriptionDictionary | null | undefined
+    >(undefined);
 
     const openGenerateAlertDialog = async (
         event: React.MouseEvent<HTMLElement>
     ) => {
         event.preventDefault();
 
-        const existingSubscriptions = await initializeNotificationSubscriptions(
-            prefix
-        );
+        // const existingSubscriptions = await initializeNotificationSubscriptions(
+        //     prefix
+        // );
 
-        setSubscriptions(existingSubscriptions);
+        // setSubscriptions(existingSubscriptions);
         setOpen(true);
     };
 

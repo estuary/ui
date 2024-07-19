@@ -17,7 +17,7 @@ function AlertEditButton({ prefix }: Props) {
                 <FormattedMessage id="cta.edit" />
             </Button>
 
-            {subscriptions === null ? null : (
+            {subscriptions ? (
                 <AlertSubscriptionDialog
                     headerId="admin.alerts.dialog.update.header"
                     open={open}
@@ -25,7 +25,7 @@ function AlertEditButton({ prefix }: Props) {
                     subscriptions={subscriptions}
                     staticPrefix={prefix}
                 />
-            )}
+            ) : null}
         </TableCell>
     );
 }

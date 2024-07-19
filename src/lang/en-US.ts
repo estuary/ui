@@ -581,6 +581,7 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.alerts.table.noContent.header': `No subscriptions found.`,
     'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Notification Method`,
+    'admin.alerts.error.initializationFailed': `An issue was encountered fetching existing alert subscriptions. Please try again.`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,

@@ -47,7 +47,7 @@ function AlertSubscriptionDialog({
 
     useEffect(() => {
         if (open) {
-            const emails = {};
+            const emails: EmailDictionary = {};
 
             Object.entries(subscriptions).forEach(([key, value]) => {
                 emails[key] = value.userSubscriptions.map(({ email }) => email);
