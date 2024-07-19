@@ -37,7 +37,7 @@ function useTenantMissingPaymentMethodWarning() {
         notificationStoreSelectors.hideNotification
     );
 
-    const { tenantsBillingDetails } = useTenantBillingDetails();
+    const { tenantBillingDetails } = useTenantBillingDetails();
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
@@ -52,20 +52,20 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!hasSupportRole && tenantsBillingDetails) {
+            if (!hasSupportRole && tenantBillingDetails) {
                 setPaymentMethods(
-                    await getPaymentMethodsForTenants(tenantsBillingDetails)
+                    await getPaymentMethodsForTenants(tenantBillingDetails)
                 );
             }
         };
 
         void fetchData();
-    }, [hasSupportRole, tenantsBillingDetails]);
+    }, [hasSupportRole, tenantBillingDetails]);
 
     useEffect(() => {
         if (
             showedNotificationOnce.current ||
-            !tenantsBillingDetails ||
+            !tenantBillingDetails ||
             !paymentMethods
         ) {
             return;
@@ -79,7 +79,7 @@ function useTenantMissingPaymentMethodWarning() {
         }
 
         // Find all the tenants the user can access that are in the trial period
-        const tenantsInTrial = tenantsBillingDetails
+        const tenantsInTrial = tenantBillingDetails
             .filter((tenantDetail) => tenantDetail.trial_start)
             .sort((first, second) =>
                 basicSort_string(first.trial_start, second.trial_start, 'asc')
@@ -231,7 +231,7 @@ function useTenantMissingPaymentMethodWarning() {
         hideNotification,
         paymentMethods,
         showNotification,
-        tenantsBillingDetails,
+        tenantBillingDetails,
     ]);
 
     return paymentMethods;

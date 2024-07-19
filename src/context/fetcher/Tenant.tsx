@@ -8,10 +8,10 @@ import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
 import { BaseComponentProps, Tenants } from 'types';
 
 export interface TenantContextData {
-    tenantsBillingDetails: Tenants[] | null;
+    tenantBillingDetails: Tenants[] | null;
 }
 const TenantContext = createContext<TenantContextData>({
-    tenantsBillingDetails: null,
+    tenantBillingDetails: null,
 });
 
 const TenantBillingDetailsContextProvider = ({
@@ -46,7 +46,7 @@ const TenantBillingDetailsContextProvider = ({
     return (
         <TenantContext.Provider
             value={{
-                tenantsBillingDetails: tenants,
+                tenantBillingDetails: tenants,
             }}
         >
             {children}
