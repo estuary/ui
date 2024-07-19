@@ -1,8 +1,8 @@
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getUserInfoSummary } from 'api/userInfoSummary';
-import useSWR from 'swr';
 
 function useUserInfoSummary() {
-    return useSWR('useUserInfoSummary', () => getUserInfoSummary());
+    return useQuery(getUserInfoSummary());
 }
 
 export default useUserInfoSummary;

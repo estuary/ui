@@ -13,10 +13,10 @@ const UserInfoSummaryStoreProvider = ({ children }: BaseComponentProps) => {
     const setMutate = useUserInfoSummaryStore((state) => state.setMutate);
 
     useEffect(() => {
-        if (data?.data) {
-            populateAll(data.data);
+        if (data) {
+            populateAll(data);
         }
-    }, [data?.data, populateAll]);
+    }, [data, populateAll]);
 
     useEffect(() => {
         setMutate(mutate);
@@ -24,7 +24,7 @@ const UserInfoSummaryStoreProvider = ({ children }: BaseComponentProps) => {
 
     // if we're loading that means an initial load
     // if we're validating with data then we're running a mutate and don't want to mess with the view
-    if (isLoading || (!data?.data && isValidating)) {
+    if (isLoading || (!data && isValidating)) {
         return null;
     }
 
