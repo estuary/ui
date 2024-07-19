@@ -4,7 +4,7 @@ import {
     getPaymentMethodsForTenants,
 } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
-import { useTenantBillingDetails } from 'context/fetcher/Tenant';
+import { useTenantBillingDetails } from 'context/fetcher/TenantBillingDetails';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { DateTime } from 'luxon';
