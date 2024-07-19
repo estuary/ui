@@ -6,7 +6,7 @@ import useGlobalSearchParams, {
 import { noop } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { hasLength } from 'utils/misc-utils';
 
@@ -17,7 +17,7 @@ interface Props {
 function TenantSelector({ updateStoreState }: Props) {
     const intl = useIntl();
 
-    const tenantNames = useEntitiesStore_capabilities_adminable();
+    const tenantNames = useEntitiesStore_tenantsWithAdmin();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
