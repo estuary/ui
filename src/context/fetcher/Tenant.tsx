@@ -23,6 +23,11 @@ const TenantBillingDetailsContextProvider = ({
 
     const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
 
+    // TODO (payment method warning)
+    // This does work a bit off of a side effect but that is fine for now.
+    //  Eventually I'd like to move this provider logic into the payment method
+    //  warning handled itself. As it is really the thing that care about these values.
+
     // We suppress payment warnings for support role anyway so don't bother fetching for them
     const { tenants, error, isValidating } = useTenantsDetailsForPayment(
         hasSupportRole ? [] : tenantsWithAdmin.slice(0, MAX_TENANTS)
