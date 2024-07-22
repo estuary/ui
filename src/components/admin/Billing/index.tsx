@@ -83,6 +83,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     useEffect(() => {
         if (selectedTenant) {
             void (async () => {
+                setNetworkFailed(null);
                 setActive(true);
                 try {
                     const response = await getInvoicesBetween(
