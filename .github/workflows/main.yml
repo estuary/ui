@@ -27,7 +27,7 @@ jobs:
                   scope: '@estuary'
 
             - name: Get Deps
-              run: npm install
+              run: npm ci
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,7 +50,7 @@ jobs:
                   cache-dependency-path: '**/package-lock.json'
 
             - name: Get Deps
-              run: npm install
+              run: npm ci
 
             - name: Licenses
               run: npm run licenses
@@ -97,7 +97,7 @@ jobs:
                   cache-dependency-path: '**/package-lock.json'
 
             - name: Get Deps
-              run: npm install
+              run: npm ci
 
             - name: Create a release build
               run: npm run build
