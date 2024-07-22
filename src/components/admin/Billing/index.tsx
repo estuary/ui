@@ -44,6 +44,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Billing Store
+    // TODO (billing store)
+    // The `active` stuff could probably be removed now that other stuff is
+    //  cleaned up - but leaving to make it easier
     const [active, setActive] = useBillingStore((state) => [
         state.active,
         state.setActive,
