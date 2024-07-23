@@ -126,8 +126,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         <>
             <AdminTabs />
 
-            <BillingLoadError />
-
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={9}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
@@ -148,6 +146,8 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+                <BillingLoadError />
+
                 <Grid item xs={12} md={6}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}

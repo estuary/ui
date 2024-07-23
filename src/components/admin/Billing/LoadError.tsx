@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
@@ -13,7 +13,7 @@ function BillingLoadError() {
     }
 
     return (
-        <Box style={{ padding: 2 }}>
+        <Grid item xs={12}>
             <AlertBox
                 short
                 severity="warning"
@@ -23,7 +23,7 @@ function BillingLoadError() {
             >
                 <FormattedMessage id="admin.billing.error.details.message" />
             </AlertBox>
-        </Box>
+        </Grid>
     );
 }
 
