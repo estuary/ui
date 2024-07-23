@@ -7,6 +7,7 @@ import { submitDirective } from 'api/directives';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import { defaultOutline } from 'context/Theme';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
@@ -32,6 +33,9 @@ function AcceptGrant({
     grantedCapability,
 }: Props) {
     const { jobStatusPoller } = useJobStatusPoller();
+    const mutate_userInfoSummary = useUserInfoSummaryStore(
+        (state) => state.mutate
+    );
 
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
@@ -60,6 +64,20 @@ function AcceptGrant({
                 jobStatusQuery(data),
                 async () => {
                     trackEvent(`${directiveName}:Complete`, directive);
+
+                    if (mutate_userInfoSummary) {
+                        mutate_userInfoSummary()
+                            .then(() => {
+                                trackEvent(
+                                    `${directiveName}:UserInfoSummary:Mutate:Success`
+                                );
+                            })
+                            .catch(() => {
+                                trackEvent(
+                                    `${directiveName}:UserInfoSummary:Mutate:Error`
+                                );
+                            });
+                    }
 
                     if (mutate) {
                         mutate()

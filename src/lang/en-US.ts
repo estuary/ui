@@ -221,6 +221,8 @@ const FullPage: ResolvedIntlConfig['messages'] = {
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
+
+    'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 };
 
 const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
@@ -491,12 +493,15 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier.`,
+    'admin.billing.error.details.header': `There was a network issue.`,
+    'admin.billing.error.details.message': `There was an error fetching your billing details. ${Error['error.tryAgain']}`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `${CTAs['cta.support']}`,
     'admin.billing.error.undefinedPricingTier.docPath': `${CommonMessages['support.email']}`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.label.lineItems': `Your bill for:`,
+    'admin.billing.label.lineItems.empty': `No bill to display`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,

@@ -2,13 +2,11 @@ import { Box, Grid, Link } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import DemoDialog from 'components/hero/DemoDialog';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import {
-    useEntitiesStore_capabilities_adminable,
-    useEntitiesStore_hasDemoTenantAccess,
-} from 'stores/Entities/hooks';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
 import { DEMO_TENANT, getPathWithParams, hasLength } from 'utils/misc-utils';
 
@@ -34,7 +32,9 @@ function DemoButton({ step, type }: Props) {
 
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
-    const demoAccessExists = useEntitiesStore_hasDemoTenantAccess();
+    const demoAccessExists = useUserInfoSummaryStore(
+        (state) => state.hasDemoAccess
+    );
 
     const [open, setOpen] = useState(false);
 

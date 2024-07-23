@@ -1,10 +1,8 @@
-import FullPageError from 'components/fullPage/Error';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import useUserGrants from 'hooks/useUserGrants';
 import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import OnboardGuard from './OnboardGuard';
 
@@ -21,29 +19,10 @@ function TenantGuard({ children }: BaseComponentProps) {
         [showTenantCreation]
     );
 
-    const {
-        userGrants,
-        isValidating: checkingGrants,
-        mutate,
-        error,
-    } = useUserGrants(true);
+    const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
+    const mutate = useUserInfoSummaryStore((state) => state.mutate);
 
-    if (error) {
-        return (
-            <FullPageError
-                error={error}
-                message={
-                    <FormattedMessage id="fetcher.tenants.error.message" />
-                }
-            />
-        );
-    }
-
-    if (checkingGrants) {
-        return null;
-    }
-
-    const showOnboarding = userGrants.length === 0 || showBeta;
+    const showOnboarding = !hasAnyAccess || showBeta;
     if (showOnboarding) {
         return (
             <OnboardGuard grantsMutate={mutate} forceDisplay={showOnboarding} />

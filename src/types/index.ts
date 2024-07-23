@@ -167,6 +167,13 @@ export interface Tenants {
     gcm_account_id?: string | null;
 }
 
+export interface TenantPaymentDetails {
+    gcm_account_id: string | null;
+    payment_provider: TenantPaymentProviders;
+    tenant: string;
+    trial_start: string;
+}
+
 export interface TenantHidesDataPreview {
     hide_preview: boolean;
     // Just for queries

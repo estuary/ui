@@ -1,7 +1,7 @@
 import { supabaseClient } from 'context/Supabase';
 import pLimit from 'p-limit';
 import { FUNCTIONS, TABLES, invokeSupabase } from 'services/supabase';
-import { Tenants } from 'types';
+import { TenantPaymentDetails } from 'types';
 import { formatDateForApi } from 'utils/billing-utils';
 
 const OPERATIONS = {
@@ -107,16 +107,17 @@ export const getInvoicesBetween = (
     const formattedEnd = formatDateForApi(date_end);
 
     return supabaseClient
-        .from(TABLES.INVOICES)
+        .from(TABLES.INVOICES_EXT)
         .select(invoicesQuery)
         .filter('billed_prefix', 'eq', billed_prefix)
+        .eq('invoice_type', 'manual')
         .or(
-            `invoice_type.eq.manual,and(${[
+            `${[
                 `date_start.gte.${formattedStart}`,
                 `date_start.lte.${formattedEnd}`,
                 `date_end.gte.${formattedStart}`,
                 `date_end.lte.${formattedEnd}`,
-            ].join(',')})`
+            ].join(',')}`
         )
         .order('date_start', { ascending: false })
         .throwOnError()
@@ -131,9 +132,9 @@ export interface MultiplePaymentMethods {
 // Very few people are using multiple prefixes (Q4 2023) so allowing us to check 5 for now
 //  is more than enough. This also prevents people in the support role from hammering the server
 //  fetching payment methods for tenants they do now "own"
-const MAX_TENANTS = 5;
+export const MAX_TENANTS = 5;
 export const getPaymentMethodsForTenants = async (
-    tenants: Tenants[]
+    tenants: TenantPaymentDetails[]
 ): Promise<MultiplePaymentMethods> => {
     const limiter = pLimit(3);
     const promises: Array<Promise<any>> = [];
