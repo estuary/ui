@@ -121,6 +121,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.resetPassword': `Reset Password`,
     'cta.magicLink': `Sign in with magic link`,
     'cta.verifyOTP': `Sign in with OTP`,
+    'cta.sso': `Sign in with SSO`,
     'cta.clickHere': `Click here`,
     'cta.details': `Details`,
     'cta.preview': `Preview`,
@@ -364,6 +365,10 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
     'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
+
+    'login.sso': 'Single Sign On (SSO) Successful',
+    'login.domain.description': `Please enter the domain for your organization`,
+    'login.domain.label': `Domain`,
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',

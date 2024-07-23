@@ -29,6 +29,7 @@ function OrganizationNameField() {
             </FormLabel>
 
             <TextField
+                autoComplete="organization"
                 error={nameMissing || nameInvalid}
                 helperText={intl.formatMessage({
                     id:
