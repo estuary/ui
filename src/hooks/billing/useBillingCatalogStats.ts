@@ -1,9 +1,12 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getStatsForBilling } from 'api/stats';
-import { extendedPollSettings } from 'context/SWR';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useTenantStore } from 'stores/Tenant/Store';
+import { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
+
+const defaultResponse: CatalogStats_Billing[] = [];
+const loadingResponse = null;
 
 function useBillingCatalogStats() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -16,12 +19,12 @@ function useBillingCatalogStats() {
     const { data, error, mutate, isValidating } = useQuery(
         hasLength(selectedTenant) && hasLength(invoices)
             ? getStatsForBilling(selectedTenant, invoices[0].date_start)
-            : null,
-        extendedPollSettings
+            : null
     );
 
     return {
-        billingStats: data ?? historyInitialized ? [] : null,
+        billingStats:
+            data ?? (historyInitialized ? defaultResponse : loadingResponse),
         error,
         mutate,
         isValidating,

@@ -12,7 +12,7 @@ import {
 } from 'utils/billing-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
+import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
@@ -32,10 +32,7 @@ const getInitialStateData = (): Pick<
     };
 };
 
-export const getInitialState = (
-    set: NamedSet<BillingState>,
-    get: StoreApi<BillingState>['getState']
-): BillingState => {
+export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
@@ -55,7 +52,8 @@ export const getInitialState = (
                 produce((state: BillingState) => {
                     if (state.active) {
                         state.invoices = value;
-                        state.selectedInvoiceId = invoiceId(value[0]);
+                        state.selectedInvoiceId =
+                            value.length > 0 ? invoiceId(value[0]) : null;
                     }
                 }),
                 false,
@@ -71,42 +69,6 @@ export const getInitialState = (
                 }),
                 false,
                 'Billing History Initialized'
-            );
-        },
-
-        updateInvoices: (value, selectedTenant) => {
-            set(
-                produce((state: BillingState) => {
-                    // This action is used to update the record of the active billing cycle at a regular interval.
-                    // Since the selected tenant is subject to vary, the billed prefix of the record input must be
-                    // validated against the selected tenant before altering the billing history.
-                    if (value[0].billed_prefix === selectedTenant) {
-                        const { invoices } = get();
-
-                        const evaluatedBillingHistory = invoices.filter(
-                            (record) =>
-                                record.date_start !== value[0].date_start &&
-                                record.date_end !== value[0].date_end
-                        );
-
-                        evaluatedBillingHistory.unshift(value[0]);
-
-                        if (
-                            !evaluatedBillingHistory.find(
-                                (inv) =>
-                                    invoiceId(inv) === state.selectedInvoiceId
-                            )
-                        ) {
-                            state.selectedInvoiceId = invoiceId(
-                                evaluatedBillingHistory[0]
-                            );
-                        }
-
-                        state.invoices = evaluatedBillingHistory;
-                    }
-                }),
-                false,
-                'Billing Details Updated'
             );
         },
 
@@ -172,8 +134,5 @@ export const getInitialState = (
 };
 
 export const useBillingStore = create<BillingState>()(
-    devtools(
-        (set, get) => getInitialState(set, get),
-        devtoolsOptions('billing')
-    )
+    devtools((set) => getInitialState(set), devtoolsOptions('billing'))
 );

@@ -17,7 +17,7 @@ import {
 
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
-test.describe.serial('Admin:', () => {
+test.describe.serial.only('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
     const userName = `${USERS.admin}_${uuid}`;
     const tenant = `${userName}/`;
@@ -212,6 +212,24 @@ test.describe.serial('Admin:', () => {
             test('can be closed', async () => {
                 await page.getByRole('button', { name: 'Cancel' }).click();
             });
+        });
+    });
+
+    test.describe('Billing', () => {
+        test.beforeAll(async () => {
+            await page.getByRole('tab', { name: 'Billing' }).click();
+        });
+
+        test('shows details about the free tier', async () => {
+            await expect(page.locator('#root')).toContainText(
+                'The free tier lets you try Flow with up to 2 tasks and 10GB per month'
+            );
+        });
+
+        test('shows the tenant in the selector', async () => {
+            await expect(
+                page.getByRole('combobox', { name: 'Prefix' })
+            ).toHaveValue(tenant);
         });
     });
 
