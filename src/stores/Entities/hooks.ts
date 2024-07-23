@@ -1,7 +1,7 @@
 import { singleCallSettings } from 'context/SWR';
 import { useEffect } from 'react';
 import useSWR from 'swr';
-import { DEMO_TENANT, ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
+import { stripPathing } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useEntitiesStore } from './Store';
 
@@ -41,20 +41,15 @@ export const useEntitiesStore_capabilities_adminable = () => {
     );
 };
 
-export const useEntitiesStore_hasSupportRole = () => {
+export const useEntitiesStore_tenantsWithAdmin = () => {
     return useEntitiesStore(
-        useShallow((state) =>
-            Boolean(state.capabilities.admin[ESTUARY_SUPPORT_ROLE])
-        )
-    );
-};
-
-export const useEntitiesStore_hasDemoTenantAccess = () => {
-    const readable = useEntitiesStore_capabilities_readable();
-    return useEntitiesStore(
-        useShallow(() => {
-            return readable.includes(DEMO_TENANT);
-        })
+        useShallow((state) => [
+            ...new Set(
+                Object.keys(state.capabilities.admin).map((tenant) =>
+                    stripPathing(tenant, true)
+                )
+            ),
+        ])
     );
 };
 

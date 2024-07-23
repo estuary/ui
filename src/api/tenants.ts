@@ -1,34 +1,15 @@
 import { supabaseClient } from 'context/Supabase';
-import {
-    DEFAULT_PAGING_SIZE,
-    pagedFetchAll,
-    parsePagedFetchAllResponse,
-    TABLES,
-} from 'services/supabase';
-import { TenantHidesDataPreview, Tenants } from 'types';
+import { TABLES } from 'services/supabase';
+import { TenantHidesDataPreview, TenantPaymentDetails } from 'types';
 
-const COLUMNS = [
-    'gcm_account_id',
-    'payment_provider',
-    'tasks_quota',
-    'tenant',
-    'trial_start',
-    'hide_preview',
-];
+const COLUMNS = ['gcm_account_id', 'payment_provider', 'tenant', 'trial_start'];
 
-const getTenantDetails = async (pageSize: number = DEFAULT_PAGING_SIZE) => {
-    const responses = await pagedFetchAll<Tenants>(
-        pageSize,
-        'getTenantDetails',
-        (start) =>
-            supabaseClient
-                .from(TABLES.TENANTS)
-                .select(COLUMNS.join(','))
-                .range(start, start + pageSize - 1)
-                .returns<Tenants[]>()
-    );
-
-    return parsePagedFetchAllResponse<Tenants>(responses);
+const getTenantDetails = (tenants: string[]) => {
+    return supabaseClient
+        .from(TABLES.TENANTS)
+        .select(COLUMNS.join(','))
+        .in('tenant', tenants)
+        .returns<TenantPaymentDetails[]>();
 };
 
 const getTenantHidesPreview = (tenant: string) => {
@@ -36,7 +17,7 @@ const getTenantHidesPreview = (tenant: string) => {
         .from(TABLES.TENANTS)
         .select('hide_preview')
         .eq('tenant', tenant)
-        .single<TenantHidesDataPreview>();
+        .maybeSingle<TenantHidesDataPreview>();
 };
 
 export { getTenantDetails, getTenantHidesPreview };

@@ -86,13 +86,14 @@ export enum TABLES {
 }
 
 export enum RPCS {
+    AUTH_ROLES = 'auth_roles',
+    BILLING_REPORT = 'billing_report_202308',
+    CREATE_REFRESH_TOKEN = 'create_refresh_token',
     DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION = 'draft_collections_eligible_for_deletion',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
-    VIEW_LOGS = 'view_logs',
-    CREATE_REFRESH_TOKEN = 'create_refresh_token',
-    BILLING_REPORT = 'billing_report_202308',
-    AUTH_ROLES = 'auth_roles',
     REPUBLISH_PREFIX = 'republish_prefix',
+    USER_INFO_SUMMARY = 'user_info_summary',
+    VIEW_LOGS = 'view_logs',
 }
 
 export enum FUNCTIONS {

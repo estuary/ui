@@ -221,6 +221,8 @@ const FullPage: ResolvedIntlConfig['messages'] = {
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
+
+    'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 };
 
 const EntitiesHydrator: ResolvedIntlConfig['messages'] = {

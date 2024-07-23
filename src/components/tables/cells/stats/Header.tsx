@@ -1,7 +1,7 @@
 import { TableCell, Typography } from '@mui/material';
 import DateFilter from 'components/filters/Date';
 import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,7 +25,8 @@ const StatsHeader = ({
     headerSuffix,
 }: Props) => {
     const intl = useIntl();
-    const { hasTenants: hasStats } = useTenantDetails();
+    const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
+
     const hideStatsColumnsSX = useHideStatsColumnsSx();
 
     const isValidating = useZustandStore<
@@ -93,7 +94,7 @@ const StatsHeader = ({
                     <DateFilter
                         header={secondColHeader}
                         disabled={
-                            !hasStats ||
+                            !hasAnyAccess ||
                             isValidating ||
                             networkFailed ||
                             queryCount === 0

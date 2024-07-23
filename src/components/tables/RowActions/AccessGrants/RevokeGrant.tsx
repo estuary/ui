@@ -9,6 +9,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import Progress from './Progress';
 
 export interface Props {
@@ -65,6 +66,8 @@ function RevokeGrant({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
+    const mutate = useUserInfoSummaryStore((state) => state.mutate);
+
     useMount(() => {
         void revokeGrant(
             grant.id,
@@ -78,8 +81,11 @@ function RevokeGrant({
     useEffect(() => {
         if (progress === ProgressStates.SUCCESS) {
             incrementSuccessfulTransformations();
+            if (mutate) {
+                void mutate();
+            }
         }
-    }, [incrementSuccessfulTransformations, progress]);
+    }, [incrementSuccessfulTransformations, mutate, progress]);
 
     return (
         <Progress
