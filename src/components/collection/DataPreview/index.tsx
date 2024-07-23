@@ -128,11 +128,13 @@ export function DataPreview({ collectionName }: Props) {
             }
         >
             <>
-                <JournalAlerts
-                    journalData={journalData}
-                    journalsData={journalsData}
-                    notFoundTitleMessage="collectionsPreview.notFound.message"
-                />
+                {!hide ? (
+                    <JournalAlerts
+                        journalData={journalData}
+                        journalsData={journalsData}
+                        notFoundTitleMessage="collectionsPreview.notFound.message"
+                    />
+                ) : null}
 
                 {tenantHidesError || hide ? (
                     <AlertBox short severity="info">

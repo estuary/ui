@@ -286,6 +286,7 @@ function PrefixedName({
                                 value={prefix}
                                 variant="standard"
                                 sx={{
+                                    'maxWidth': 150,
                                     'minWidth': 75,
                                     '& .MuiSelect-select': {
                                         paddingBottom: 0.2,
