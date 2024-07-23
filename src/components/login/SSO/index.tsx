@@ -6,6 +6,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 import useRedirectPath from '../useRedirectPath';
 import { DefaultLoginProps } from '../types';
 
@@ -16,6 +17,7 @@ interface FormDataInputs {
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);
 
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
 
@@ -39,17 +41,11 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
         );
     };
 
-    const onSubmit = useCallback(
-        (formData: FormDataInputs) => {
-            return supabaseClient.auth.signInWithSSO({
-                domain: formData.domain,
-                options: {
-                    redirectTo: redirectPath,
-                },
-            });
-        },
-        [redirectPath]
-    );
+    const onSubmit = useCallback((formData: FormDataInputs) => {
+        return supabaseClient.auth.signInWithSSO({
+            domain: formData.domain,
+        });
+    }, []);
 
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,6 +76,7 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
             displayNotification('login.sso', 'success');
             setLoading(false);
+            navigate(redirectPath);
         },
     };
 
