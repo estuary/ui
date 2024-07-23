@@ -9,6 +9,8 @@ import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
 import {
     doubleElevationHoverBackground,
     getStickyTableCell,
+    optionalFieldStyle,
+    requiredFieldStyle,
 } from 'context/Theme';
 import { orderBy } from 'lodash';
 import {
@@ -120,12 +122,12 @@ function Row({ columns, row }: RowProps) {
         >
             <TableCell sx={getStickyTableCell()}>
                 <Typography
-                    style={
+                    sx={
                         actionRestricted ||
                         (row.selectionType !== 'default' &&
                             row.selectionType !== null)
-                            ? { fontWeight: 700 }
-                            : { fontStyle: 'italic' }
+                            ? requiredFieldStyle
+                            : optionalFieldStyle
                     }
                 >
                     {row.field}

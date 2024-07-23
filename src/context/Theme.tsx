@@ -679,6 +679,9 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
     },
 };
 
+export const requiredFieldStyle = { fontWeight: 700 };
+export const optionalFieldStyle = { fontStyle: 'italic' };
+
 // TODO (echarts) need to make a color service or something to
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order

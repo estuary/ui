@@ -1,4 +1,5 @@
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
+import { optionalFieldStyle, requiredFieldStyle } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { useMemo } from 'react';
 import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
@@ -41,8 +42,8 @@ function Row({ row }: RowProps) {
                     spacing={1}
                     style={
                         row.exists === 'must'
-                            ? { fontWeight: 700 }
-                            : { fontStyle: 'italic' }
+                            ? requiredFieldStyle
+                            : optionalFieldStyle
                     }
                 >
                     <Box>{row.name}</Box>
