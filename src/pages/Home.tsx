@@ -1,6 +1,7 @@
 //TODO (UI / UX) - These icons are not final
 import { Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
+import Dashboard from 'components/dashboard';
 import HeroImageAndDescription from 'components/hero';
 import LoginNotifications from 'components/login/Notifications';
 import useGlobalSearchParams, {
@@ -41,6 +42,8 @@ const Home = () => {
             </Toolbar>
 
             <HeroImageAndDescription />
+
+            <Dashboard />
         </>
     );
 };

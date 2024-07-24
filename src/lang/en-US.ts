@@ -61,6 +61,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.entity': `Entity`,
+    'terms.sources': `Sources`,
+    'terms.destinations': `Destinations`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -328,6 +330,10 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.hero.3.button': `See the materialization`,
 
     'home.hero.button': `See The Demo`,
+
+    'home.dashboard.greetingBanner.title': `Welcome back, {userName}`,
+    'home.dashboard.greetingBanner.title.fallback': `Welcome back`,
+    'home.dashboard.greetingBanner.message': `Here is a summary of your overall data`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {
