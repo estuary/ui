@@ -1,6 +1,6 @@
 import { Stack, Box, Button, TextField, Typography } from '@mui/material';
 import { supabaseClient } from 'context/Supabase';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { AuthError } from '@supabase/supabase-js';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
@@ -9,10 +9,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import useRedirectPath from '../useRedirectPath';
 import { DefaultLoginProps } from '../types';
-
-interface FormDataInputs {
-    domain: string;
-}
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);
@@ -41,12 +37,6 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
         );
     };
 
-    const onSubmit = useCallback((formData: FormDataInputs) => {
-        return supabaseClient.auth.signInWithSSO({
-            domain: formData.domain,
-        });
-    }, []);
-
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
@@ -66,7 +56,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             setSubmitError(null);
             setLoading(true);
 
-            const { error } = await onSubmit(formData);
+            const { error } = await supabaseClient.auth.signInWithSSO({
+                domain: formData.domain,
+            });
 
             if (error) {
                 setSubmitError(error);
