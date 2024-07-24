@@ -58,6 +58,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
             const { data, error } = await supabaseClient.auth.signInWithSSO({
                 domain: formData.domain,
+                options: {
+                    redirectTo: redirectPath,
+                },
             });
 
             if (error) {
