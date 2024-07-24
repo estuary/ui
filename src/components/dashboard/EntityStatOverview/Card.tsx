@@ -4,11 +4,11 @@ import LinkWrapper from 'components/shared/LinkWrapper';
 import { ReactElement } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Entity } from 'types';
+import ActiveEntityCount from './ActiveEntityCount';
 import Statistic from './Statistic';
 
 interface Props {
     background: { light: string; dark: string };
-    count: number;
     entityType: Entity;
     Icon: ReactElement;
     monthlyStat?: number;
@@ -40,7 +40,6 @@ const getTitleId = (entityType: string): string => {
 
 export default function Card({
     background,
-    count,
     entityType,
     Icon,
     monthlyStat,
@@ -89,18 +88,14 @@ export default function Card({
                     justifyContent: 'space-between',
                 }}
             >
-                <Statistic
-                    label={intl.formatMessage({
-                        id: 'data.active',
-                    })}
-                    value={count}
-                />
+                <ActiveEntityCount entityType={entityType} />
 
                 {typeof monthlyStat === 'number' ? (
                     <Statistic
                         label={intl.formatMessage({
                             id: 'filter.time.thisMonth',
                         })}
+                        loading={false}
                         value={monthlyStat}
                         byteUnit
                     />

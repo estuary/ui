@@ -1,14 +1,15 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import prettyBytes from 'pretty-bytes';
 import { ReactNode } from 'react';
 
 interface Props {
     label: ReactNode;
+    loading: boolean;
     value: number;
     byteUnit?: boolean;
 }
 
-export default function Statistic({ label, value, byteUnit }: Props) {
+export default function Statistic({ label, loading, value, byteUnit }: Props) {
     return (
         <Box
             style={{
@@ -19,14 +20,18 @@ export default function Statistic({ label, value, byteUnit }: Props) {
         >
             <Typography variant="caption">{label}</Typography>
 
-            <Typography variant="h6">
-                {byteUnit
-                    ? prettyBytes(value, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                      })
-                    : value}
-            </Typography>
+            {loading ? (
+                <Skeleton height={32} width={64} />
+            ) : (
+                <Typography variant="h6">
+                    {byteUnit
+                        ? prettyBytes(value, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                          })
+                        : value}
+                </Typography>
+            )}
         </Box>
     );
 }

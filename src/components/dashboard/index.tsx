@@ -18,7 +18,6 @@ export default function Dashboard() {
             <Grid item xs={4}>
                 <Card
                     background={semiTransparentBackground_blue}
-                    count={1}
                     entityType="collection"
                     Icon={<DatabaseScript fontSize={12} />}
                 />
@@ -27,7 +26,6 @@ export default function Dashboard() {
             <Grid item xs={4}>
                 <Card
                     background={semiTransparentBackground_teal}
-                    count={1}
                     entityType="capture"
                     Icon={<CloudUpload fontSize={12} />}
                     monthlyStat={1048}
@@ -37,7 +35,6 @@ export default function Dashboard() {
             <Grid item xs={4}>
                 <Card
                     background={semiTransparentBackground_purple}
-                    count={0}
                     entityType="materialization"
                     Icon={<CloudDownload fontSize={12} />}
                     monthlyStat={0}
