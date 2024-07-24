@@ -56,13 +56,19 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             setSubmitError(null);
             setLoading(true);
 
-            const { error } = await supabaseClient.auth.signInWithSSO({
+            const { data, error } = await supabaseClient.auth.signInWithSSO({
                 domain: formData.domain,
             });
 
             if (error) {
                 setSubmitError(error);
                 setLoading(false);
+                return;
+            }
+
+            if (data.url) {
+                // redirect the user to the identity provider's authentication flow
+                window.location.href = data.url;
                 return;
             }
 
