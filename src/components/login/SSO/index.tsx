@@ -63,9 +63,12 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             });
 
             if (error) {
+                // Saw these messages but no clue how to handle them right now
+                // sso_provider_not_found
+
                 // The errors returned by this call are kind of weird so overriding
                 //  and setting a common message.
-                setSubmitError('login.signinFailed.message');
+                setSubmitError('login.signinFailed.message.default');
                 setLoading(false);
                 return;
             }
