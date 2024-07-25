@@ -444,6 +444,7 @@ export interface UserDetails {
     email: string;
     emailVerified: boolean;
     avatar: string;
+    usedSSO: boolean;
 }
 
 export interface RefreshTokenData {

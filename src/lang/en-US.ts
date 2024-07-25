@@ -369,6 +369,7 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.sso': 'Single Sign On (SSO) Successful',
     'login.domain.description': `Please enter the domain for your organization`,
     'login.domain.label': `Domain`,
+    'login.signinFailed.message': `There was an issue signing you in. ${Error['error.tryAgain']}`,
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',

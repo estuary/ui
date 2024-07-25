@@ -1,7 +1,6 @@
 import { Stack, Box, Button, TextField, Typography } from '@mui/material';
 import { supabaseClient } from 'context/Supabase';
 import React, { useState } from 'react';
-import { AuthError } from '@supabase/supabase-js';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
@@ -20,7 +19,7 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [submitError, setSubmitError] = useState<AuthError | null>(null);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const displayNotification = (id: string, variant: VariantType) => {
         enqueueSnackbar(
@@ -64,7 +63,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             });
 
             if (error) {
-                setSubmitError(error);
+                // The errors returned by this call are kind of weird so overriding
+                //  and setting a common message.
+                setSubmitError('login.signinFailed.message');
                 setLoading(false);
                 return;
             }
@@ -90,7 +91,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                     }}
                 >
                     <AlertBox severity="error" short>
-                        <Typography>{submitError.message}</Typography>
+                        <Typography>
+                            <FormattedMessage id={submitError} />
+                        </Typography>
                     </AlertBox>
                 </Box>
             ) : null}

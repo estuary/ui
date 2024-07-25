@@ -203,17 +203,21 @@ export const getUserDetails = (
         return null;
     }
 
-    let userName, email, emailVerified, avatar;
+    let userName, email, emailVerified, avatar, usedSSO;
 
     if (!isEmpty(user.user_metadata)) {
         email = user.user_metadata.email;
         emailVerified = user.user_metadata.email_verified;
         avatar = user.user_metadata.avatar_url;
         userName = user.user_metadata.full_name ?? email;
+        usedSSO = user.app_metadata.provider
+            ? user.app_metadata.provider.startsWith('sso')
+            : false;
     } else {
         userName = user.email;
         email = user.email;
         emailVerified = false;
+        usedSSO = false;
     }
 
     return {
@@ -222,6 +226,7 @@ export const getUserDetails = (
         email,
         emailVerified,
         avatar,
+        usedSSO,
     };
 };
 
