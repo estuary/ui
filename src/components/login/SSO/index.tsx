@@ -2,15 +2,20 @@ import { Stack, Box, Button, TextField, Typography } from '@mui/material';
 import { supabaseClient } from 'context/Supabase';
 import React, { useState } from 'react';
 import AlertBox from 'components/shared/AlertBox';
-import { isEmpty } from 'lodash';
 import { useSnackbar, VariantType } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
+import { hasLength } from 'utils/misc-utils';
 import useRedirectPath from '../useRedirectPath';
 import { DefaultLoginProps } from '../types';
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);
+
+    const ssoDomain = useGlobalSearchParams(GlobalSearchParams.SSO_DOMAIN);
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -46,7 +51,10 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                 new FormData(event.currentTarget)
             );
 
-            if (isEmpty(formData.domain)) {
+            const splitEmail = formData.email.split('@');
+            const submittedDomain = splitEmail[1];
+
+            if (!hasLength(submittedDomain)) {
                 setShowErrors(true);
                 return;
             }
@@ -56,7 +64,7 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             setLoading(true);
 
             const { data, error } = await supabaseClient.auth.signInWithSSO({
-                domain: formData.domain,
+                domain: submittedDomain,
                 options: {
                     redirectTo: redirectPath,
                 },
@@ -68,7 +76,14 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
                 // The errors returned by this call are kind of weird so overriding
                 //  and setting a common message.
-                setSubmitError('login.signinFailed.message.default');
+                setSubmitError(
+                    intl.formatMessage(
+                        { id: 'login.signinFailed.message.default' },
+                        {
+                            domain: submittedDomain,
+                        }
+                    )
+                );
                 setLoading(false);
                 return;
             }
@@ -86,54 +101,59 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     };
 
     return (
-        <Stack direction="column" spacing={1}>
+        <Stack direction="column" spacing={3} style={{ width: '100%' }}>
             {submitError ? (
-                <Box
-                    sx={{
-                        mb: 5,
-                    }}
-                >
+                <Box>
                     <AlertBox severity="error" short>
+                        <Typography>{submitError}</Typography>
                         <Typography>
-                            <FormattedMessage id={submitError} />
+                            <FormattedMessage id="error.tryAgain" />
                         </Typography>
                     </AlertBox>
                 </Box>
             ) : null}
 
-            <form
-                onSubmit={handlers.submit}
-                style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <TextField
-                    autoComplete="url"
-                    color={showErrors ? 'error' : undefined}
-                    disabled={loading}
-                    error={showErrors}
-                    fullWidth
-                    helperText={intl.formatMessage({
-                        id: 'login.domain.description',
-                    })}
-                    label={intl.formatMessage({ id: 'login.domain.label' })}
-                    name="domain"
-                    required
-                />
-
-                <Button
-                    disabled={loading}
-                    name="SSO Sign In"
-                    type="submit"
-                    sx={{ mt: 3 }}
+            <Box>
+                <form
+                    onSubmit={handlers.submit}
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
                 >
-                    <FormattedMessage id="cta.sso" />
-                </Button>
-            </form>
+                    <TextField
+                        autoComplete="email"
+                        color={showErrors ? 'error' : undefined}
+                        defaultValue={ssoDomain}
+                        disabled={loading}
+                        error={showErrors}
+                        fullWidth
+                        helperText={intl.formatMessage({
+                            id: 'login.companyEmail.description',
+                        })}
+                        inputProps={{
+                            type: 'email',
+                        }}
+                        label={intl.formatMessage({
+                            id: 'login.companyEmail.label',
+                        })}
+                        name="email"
+                        required
+                    />
+
+                    <Button
+                        disabled={loading}
+                        name="SSO Sign In"
+                        type="submit"
+                        sx={{ mt: 3 }}
+                    >
+                        <FormattedMessage id="cta.sso" />
+                    </Button>
+                </form>
+            </Box>
         </Stack>
     );
 };

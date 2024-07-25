@@ -367,9 +367,9 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': 'Single Sign On (SSO) Successful',
-    'login.domain.description': `Please enter the domain for your organization`,
-    'login.domain.label': `Domain`,
-    'login.signinFailed.message.default': `There was an issue signing you in. ${Error['error.tryAgain']}`,
+    'login.companyEmail.description': `Please enter your company email`,
+    'login.companyEmail.label': `Company Email`,
+    'login.signinFailed.message.default': `There was an issue finding and using an SSO provider for the domain "{domain}".`,
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
