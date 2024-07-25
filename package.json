@@ -19,7 +19,7 @@
         "maintenance:off": "rm public/maintenance",
         "maintenance:on": "touch public/maintenance",
         "postinstall": "patch-package",
-        "pre_commit": "npm run lint-staged && npm run licenses",
+        "pre_commit": "npm run lint-staged && npm run licenses && npm run typecheck",
         "prepare": "husky install",
         "preview": "vite preview",
         "start": "npm run licenses && vite",

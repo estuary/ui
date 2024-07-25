@@ -5,17 +5,13 @@ import AlertBox from 'components/shared/AlertBox';
 import { useSnackbar, VariantType } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+
 import { hasLength } from 'utils/misc-utils';
 import useRedirectPath from '../useRedirectPath';
 import { DefaultLoginProps } from '../types';
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);
-
-    const ssoDomain = useGlobalSearchParams(GlobalSearchParams.SSO_DOMAIN);
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -127,7 +123,6 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                     <TextField
                         autoComplete="email"
                         color={showErrors ? 'error' : undefined}
-                        defaultValue={ssoDomain}
                         disabled={loading}
                         error={showErrors}
                         fullWidth
