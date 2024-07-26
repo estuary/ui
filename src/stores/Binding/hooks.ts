@@ -215,6 +215,20 @@ export const useBinding_someBindingsDisabled = () => {
     );
 };
 
+export const useBinding_disabledBindings = () => {
+    return useZustandStore<BindingState, string[]>(
+        BindingStoreNames.GENERAL,
+        useShallow((state) => Array.from(state.disabledCollections.keys()))
+    );
+};
+
+export const useBinding_collectionsRequiringRediscovery = () => {
+    return useZustandStore<BindingState, string[]>(
+        BindingStoreNames.GENERAL,
+        useShallow((state) => state.collectionsRequiringRediscovery)
+    );
+};
+
 export const useBinding_bindingErrorsExist = () => {
     return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
         BindingStoreNames.GENERAL,

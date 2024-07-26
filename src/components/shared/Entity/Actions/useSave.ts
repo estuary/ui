@@ -17,6 +17,7 @@ import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
+    useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -75,6 +76,7 @@ function useSave(
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+    const disabledBindings = useBinding_disabledBindings();
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -229,11 +231,16 @@ function useSave(
                             (collection) => !collections.includes(collection)
                         );
 
+                    // For a test we do not want to remove
+                    const disabledCollections: string[] = dryRun
+                        ? []
+                        : disabledBindings;
+
                     const deleteDraftSpecsResponse =
                         await deleteDraftSpecsByCatalogName(
                             draftId,
                             'collection',
-                            unboundCollections
+                            [...unboundCollections, ...disabledCollections]
                         );
                     if (deleteDraftSpecsResponse.error) {
                         return onFailure({
@@ -270,6 +277,7 @@ function useSave(
         },
         [
             collections,
+            disabledBindings,
             dryRun,
             entityDescription,
             fullSourceErrorsExist,
