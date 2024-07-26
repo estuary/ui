@@ -29,7 +29,7 @@ const LoginWrapper = ({
                 maxWidth: 550,
             }}
         >
-            <Stack spacing={4}>
+            <Stack spacing={4} style={{ width: '100%' }}>
                 <LoginTabs handleChange={handleChange} tabIndex={tabIndex} />
 
                 <Stack spacing={2} style={{ alignItems: 'center' }}>

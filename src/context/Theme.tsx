@@ -446,16 +446,6 @@ export const tableRowActive_Finished__Background = {
     dark: 'rgba(196, 211, 233, 0.7)',
 };
 
-export const registerPerkCheck = {
-    light: '#24A99D',
-    dark: '#24A99D',
-};
-
-export const registerPerkHighlight = {
-    light: '#6D85ED',
-    dark: '#6D85ED',
-};
-
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -687,6 +677,22 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
             borderBottomRightRadius: 4,
         },
     },
+};
+
+export const registerPerkCheck = {
+    light: '#24A99D',
+    dark: '#24A99D',
+};
+
+export const registerPerkHighlight = {
+    light: '#6D85ED',
+    dark: '#6D85ED',
+};
+
+export const defaultLoginButtonStyling = {
+    borderWidth: 2,
+    color: sample_grey[600],
+    fontWeight: 600,
 };
 
 // TODO (echarts) need to make a color service or something to

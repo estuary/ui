@@ -1,6 +1,7 @@
 import { FormattedMessage } from 'react-intl';
 import { Button } from '@mui/material';
 import { ProviderButtonProps } from '../types';
+import { defaulticonSize } from './shared';
 
 const AzureButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
     return (
@@ -10,8 +11,8 @@ const AzureButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
             startIcon={
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width={25}
-                    height={25}
+                    width={defaulticonSize}
+                    height={defaulticonSize}
                     x="0px"
                     y="0px"
                     viewBox="0 0 48 48"

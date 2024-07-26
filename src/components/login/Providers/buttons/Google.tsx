@@ -2,6 +2,7 @@ import { FormattedMessage } from 'react-intl';
 import { Button } from '@mui/material';
 import useLoginHints from 'hooks/searchParams/useLoginHints';
 import { ProviderButtonProps } from '../types';
+import { defaulticonSize } from './shared';
 
 const GoogleButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
     const { google } = useLoginHints();
@@ -14,8 +15,8 @@ const GoogleButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 64 64"
-                    width={25}
-                    height={25}
+                    width={defaulticonSize}
+                    height={defaulticonSize}
                 >
                     <linearGradient
                         id="95yY7w43Oj6n2vH63j6HJb"

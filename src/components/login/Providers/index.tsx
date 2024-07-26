@@ -1,5 +1,8 @@
-import { Button, Stack } from '@mui/material';
+import { Button, Divider, Stack } from '@mui/material';
+import { defaultLoginButtonStyling } from 'context/Theme';
+import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
+import { unauthenticatedRoutes } from 'app/routes';
 import LoginButton from './LoginButton';
 import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
@@ -31,7 +34,20 @@ function LoginProviders({
                 );
             })}
             {!isRegister && loginSettings.showSSO ? (
-                <Button>Sign in with SSO</Button>
+                <>
+                    <Divider flexItem>
+                        <FormattedMessage id="login.separator" />
+                    </Divider>
+                    <Button
+                        fullWidth
+                        style={defaultLoginButtonStyling}
+                        size="large"
+                        variant="outlined"
+                        href={unauthenticatedRoutes.poc.login.fullPath}
+                    >
+                        <FormattedMessage id="cta.sso" />
+                    </Button>
+                </>
             ) : null}
         </Stack>
     );
