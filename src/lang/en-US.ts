@@ -373,7 +373,6 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': `Single Sign-On (SSO) Successful`,
-    'login.sso.disabled': `Single Sign-On (SSO) is currently disabled`,
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
