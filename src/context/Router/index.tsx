@@ -87,7 +87,16 @@ const router = createBrowserRouter(
             />
 
             <Route
-                path={unauthenticatedRoutes.poc.login.fullPath}
+                path={unauthenticatedRoutes.sso.register.fullPath}
+                element={
+                    <RequireAuth firstLoad checkForGrant>
+                        <EnterpriseLogin />
+                    </RequireAuth>
+                }
+            />
+
+            <Route
+                path={unauthenticatedRoutes.sso.login.fullPath}
                 element={
                     <RequireAuth firstLoad checkForGrant>
                         <EnterpriseLogin />

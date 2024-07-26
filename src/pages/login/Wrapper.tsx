@@ -1,22 +1,26 @@
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
+import { unauthenticatedRoutes } from 'app/routes';
 import FullPageDialog from 'components/fullPage/Dialog';
 import Logo from 'components/navigation/Logo';
 import useLoginBodyClass from 'hooks/login/useLoginBodyClass';
+import { NavArrowLeft } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
 import RegisterPerk from './Perk';
 import LoginTabs from './Tabs';
 
 interface Props extends BaseComponentProps {
-    handleChange?: (event: any, val: any) => void;
-    tabIndex: number;
     isRegister: boolean;
+    tabIndex: number;
+    handleChange?: (event: any, val: any) => void;
+    showBack?: boolean;
 }
 
 const LoginWrapper = ({
     children,
     handleChange,
     isRegister,
+    showBack,
     tabIndex,
 }: Props) => {
     useLoginBodyClass();
@@ -29,6 +33,16 @@ const LoginWrapper = ({
                 maxWidth: 550,
             }}
         >
+            {showBack ? (
+                <Button
+                    href={unauthenticatedRoutes.login.path}
+                    startIcon={<NavArrowLeft />}
+                    style={{ alignSelf: 'start' }}
+                    variant="text"
+                >
+                    More Options
+                </Button>
+            ) : null}
             <Stack spacing={4} style={{ width: '100%' }}>
                 <LoginTabs handleChange={handleChange} tabIndex={tabIndex} />
 

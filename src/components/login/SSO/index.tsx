@@ -145,7 +145,7 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         type="submit"
                         sx={{ mt: 3 }}
                     >
-                        <FormattedMessage id="cta.sso" />
+                        <FormattedMessage id="cta.login.sso" />
                     </Button>
                 </form>
             </Box>

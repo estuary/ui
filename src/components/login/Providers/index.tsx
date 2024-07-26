@@ -1,11 +1,10 @@
-import { Button, Divider, Stack } from '@mui/material';
-import { defaultLoginButtonStyling } from 'context/Theme';
+import { Divider, Stack } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
-import { unauthenticatedRoutes } from 'app/routes';
 import LoginButton from './LoginButton';
 import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
+import SSOButton from './buttons/SSO';
 
 const loginSettings = getLoginSettings();
 
@@ -19,7 +18,7 @@ function LoginProviders({
     return (
         <Stack
             spacing={2}
-            sx={{
+            style={{
                 alignItems: 'center',
             }}
         >
@@ -33,20 +32,12 @@ function LoginProviders({
                     />
                 );
             })}
-            {!isRegister && loginSettings.showSSO ? (
+            {loginSettings.showSSO ? (
                 <>
                     <Divider flexItem>
                         <FormattedMessage id="login.separator" />
                     </Divider>
-                    <Button
-                        fullWidth
-                        style={defaultLoginButtonStyling}
-                        size="large"
-                        variant="outlined"
-                        href={unauthenticatedRoutes.poc.login.fullPath}
-                    >
-                        <FormattedMessage id="cta.sso" />
-                    </Button>
+                    <SSOButton isRegister={isRegister} />
                 </>
             ) : null}
         </Stack>
