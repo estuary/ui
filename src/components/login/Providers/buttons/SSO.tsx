@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { defaultLoginButtonStyling } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { unauthenticatedRoutes } from 'app/routes';
@@ -8,7 +8,11 @@ import { LoginProps } from '../types';
 
 function SSOButton({ isRegister }: LoginProps) {
     if (isRegister) {
-        return <MessageWithLink messageID="login.sso.register.message.help" />;
+        return (
+            <Box style={{ ...defaultLoginButtonStyling, borderWidth: 0 }}>
+                <MessageWithLink messageID="login.sso.register.message.help" />
+            </Box>
+        );
     }
 
     return (
