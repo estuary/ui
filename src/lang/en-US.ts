@@ -361,9 +361,13 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
     'login.tabs.login': `Sign In`,
     'login.tabs.register': `Register`,
-    'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
-    'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
+    'login.login.message': `Get started with ${CommonMessages.productName}`,
+    'login.register.message': `Get started with ${CommonMessages.productName}`,
+    'login.register.perks1.emphasis': `No credit card`,
+    'login.register.perks1': `{emphasis} required`,
+    'login.register.perks2.emphasis': `free trial`,
+    'login.register.perks2': `30 days {emphasis}`,
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': 'Single Sign On (SSO) Successful',

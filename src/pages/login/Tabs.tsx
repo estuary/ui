@@ -9,6 +9,10 @@ interface Props {
 function LoginTabs({ handleChange, tabIndex }: Props) {
     const intl = useIntl();
 
+    if (!handleChange) {
+        return null;
+    }
+
     return (
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabIndex} onChange={handleChange} variant="fullWidth">

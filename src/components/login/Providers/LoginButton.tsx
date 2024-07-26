@@ -1,10 +1,14 @@
+import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import { sample_grey } from 'context/Theme';
 import AzureButton from './buttons/Azure';
 import GithubButton from './buttons/Github';
 import GoogleButton from './buttons/Google';
-import { LoginButtonProps } from './types';
+import { LoginButtonProps, ProviderButtonProps } from './types';
 
 function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
-    let ButtonComponent, scopes: string;
+    let ButtonComponent: (props: ProviderButtonProps) => EmotionJSX.Element,
+        scopes: string;
+
     switch (provider) {
         case 'github':
             ButtonComponent = GithubButton;
@@ -19,6 +23,11 @@ function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
 
     return (
         <ButtonComponent
+            style={{
+                color: sample_grey[700],
+                fontWeight: 500,
+            }}
+            fullWidth
             isRegister={isRegister}
             login={(params) => login(provider, scopes, params)}
         />

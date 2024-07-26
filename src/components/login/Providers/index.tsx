@@ -1,7 +1,10 @@
-import { Box, Stack } from '@mui/material';
+import { Button, Stack } from '@mui/material';
+import { getLoginSettings } from 'utils/env-utils';
 import LoginButton from './LoginButton';
 import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
+
+const loginSettings = getLoginSettings();
 
 function LoginProviders({
     grantToken,
@@ -19,15 +22,17 @@ function LoginProviders({
         >
             {providers.map((provider) => {
                 return (
-                    <Box key={`oidc-login-button__${provider}`}>
-                        <LoginButton
-                            login={login}
-                            provider={provider}
-                            isRegister={isRegister}
-                        />
-                    </Box>
+                    <LoginButton
+                        key={`oidc-login-button__${provider}`}
+                        login={login}
+                        provider={provider}
+                        isRegister={isRegister}
+                    />
                 );
             })}
+            {!isRegister && loginSettings.showSSO ? (
+                <Button>Sign in with SSO</Button>
+            ) : null}
         </Stack>
     );
 }

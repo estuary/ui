@@ -1,3 +1,4 @@
+import { ButtonProps } from '@mui/material';
 import { Schema } from 'types';
 import { SupportedProvider } from 'types/authProviders';
 
@@ -13,7 +14,7 @@ export interface LoginButtonProps {
     isRegister?: boolean;
 }
 
-export interface ProviderButtonProps {
+export interface ProviderButtonProps extends ButtonProps {
     login: (params?: any) => Promise<void>;
     isRegister?: boolean;
 }

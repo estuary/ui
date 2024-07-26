@@ -446,6 +446,16 @@ export const tableRowActive_Finished__Background = {
     dark: 'rgba(196, 211, 233, 0.7)',
 };
 
+export const registerPerkCheck = {
+    light: '#24A99D',
+    dark: '#24A99D',
+};
+
+export const registerPerkHighlight = {
+    light: '#6D85ED',
+    dark: '#6D85ED',
+};
+
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
