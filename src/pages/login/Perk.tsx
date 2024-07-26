@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import MessageWithEmphasis from 'components/content/MessageWithEmphasis';
 import { registerPerkCheck, registerPerkHighlight } from 'context/Theme';
 import { CheckCircleSolid } from 'iconoir-react';
@@ -10,15 +10,15 @@ interface Props {
 function RegisterPerk({ messageID }: Props) {
     return (
         <Stack direction="row" spacing={1}>
-            <Typography
+            <Box
                 sx={{
                     color: (theme) => registerPerkCheck[theme.palette.mode],
                 }}
             >
                 <CheckCircleSolid />
-            </Typography>
+            </Box>
 
-            <Typography
+            <Box
                 sx={{
                     'whiteSpace': 'nowrap',
                     '& b': {
@@ -28,7 +28,7 @@ function RegisterPerk({ messageID }: Props) {
                 }}
             >
                 <MessageWithEmphasis messageID={messageID} />
-            </Typography>
+            </Box>
         </Stack>
     );
 }

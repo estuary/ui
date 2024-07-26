@@ -13,6 +13,7 @@ interface Props extends BaseComponentProps {
     isRegister: boolean;
     tabIndex: number;
     handleChange?: (event: any, val: any) => void;
+    headerMessageId?: string;
     showBack?: boolean;
 }
 
@@ -22,6 +23,7 @@ const LoginWrapper = ({
     isRegister,
     showBack,
     tabIndex,
+    headerMessageId,
 }: Props) => {
     useLoginBodyClass();
 
@@ -40,7 +42,7 @@ const LoginWrapper = ({
                     style={{ alignSelf: 'start' }}
                     variant="text"
                 >
-                    More Options
+                    <FormattedMessage id="login.sso.back" />
                 </Button>
             ) : null}
             <Stack spacing={4} style={{ width: '100%' }}>
@@ -52,9 +54,10 @@ const LoginWrapper = ({
                     <Typography component="h1" align="center" variant="h5">
                         <FormattedMessage
                             id={
-                                isRegister
+                                headerMessageId ??
+                                (isRegister
                                     ? 'login.register.message'
-                                    : 'login.login.message'
+                                    : 'login.login.message')
                             }
                         />
                     </Typography>

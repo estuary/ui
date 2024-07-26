@@ -158,6 +158,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
+    'cta.contactUs': `Contact Us`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -281,7 +282,7 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
     'helpMenu.support': `Email Support`,
     'helpMenu.support.link': `${CommonMessages['support.email']}`,
-    'helpMenu.contact': `Contact Us`,
+    'helpMenu.contact': `${CTAs['cta.contactUs']}`,
     'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
@@ -371,7 +372,19 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
     'login.register.perks2': `30 days {emphasis}`,
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
-    'login.sso': 'Single Sign On (SSO) Successful',
+    'login.sso': `Single Sign-On (SSO) Successful`,
+    'login.sso.disabled': `Single Sign-On (SSO) is currently disabled`,
+    'login.sso.back': `Back to Sign In`,
+    'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
+
+    'login.sso.register.message.help': `To register with Single Sign-On {docLink}.`,
+    'login.sso.register.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.register.message.help.docPath': `${Header['helpMenu.contact.link']}`,
+
+    'login.sso.message.help': `To enable Single Sign-On on your account {docLink}.`,
+    'login.sso.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.message.help.docPath': `${Header['helpMenu.contact.link']}`,
+
     'login.companyEmail.description': `Please enter your company email`,
     'login.companyEmail.label': `Company Email`,
     'login.signinFailed.message.default': `There was an issue finding and using an SSO provider for the domain "{domain}".`,

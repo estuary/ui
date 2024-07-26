@@ -1,4 +1,11 @@
-import { Stack, Box, Button, TextField, Typography } from '@mui/material';
+import {
+    Stack,
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Divider,
+} from '@mui/material';
 import { supabaseClient } from 'context/Supabase';
 import React, { useState } from 'react';
 import AlertBox from 'components/shared/AlertBox';
@@ -7,15 +14,16 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { hasLength } from 'utils/misc-utils';
+import MessageWithLink from 'components/content/MessageWithLink';
 import useRedirectPath from '../useRedirectPath';
 import { DefaultLoginProps } from '../types';
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);
 
+    const intl = useIntl();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
-    const intl = useIntl();
 
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -98,6 +106,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
     return (
         <Stack direction="column" spacing={3} style={{ width: '100%' }}>
+            <Typography>
+                <FormattedMessage id="login.sso.header" />
+            </Typography>
             {submitError ? (
                 <Box>
                     <AlertBox severity="error" short>
@@ -148,6 +159,10 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         <FormattedMessage id="cta.login.sso" />
                     </Button>
                 </form>
+            </Box>
+            <Divider />
+            <Box>
+                <MessageWithLink messageID="login.sso.message.help" />
             </Box>
         </Stack>
     );

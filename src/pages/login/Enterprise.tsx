@@ -2,6 +2,7 @@ import FullPageError from 'components/fullPage/Error';
 import SSOForm from 'components/login/SSO';
 import useLoginStateHandler from 'hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'hooks/useBrowserTitle';
+import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
 import LoginWrapper from './Wrapper';
 
@@ -14,7 +15,9 @@ const EnterpriseLogin = () => {
 
     if (!showSSO) {
         return (
-            <FullPageError error="Using SSO to login is currently disabled. Please contact support" />
+            <FullPageError
+                error={<FormattedMessage id="login.sso.disabled" />}
+            />
         );
     }
 

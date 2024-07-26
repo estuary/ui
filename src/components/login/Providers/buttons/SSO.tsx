@@ -3,9 +3,14 @@ import { defaultLoginButtonStyling } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { unauthenticatedRoutes } from 'app/routes';
 import { Lock } from 'iconoir-react';
+import MessageWithLink from 'components/content/MessageWithLink';
 import { LoginProps } from '../types';
 
 function SSOButton({ isRegister }: LoginProps) {
+    if (isRegister) {
+        return <MessageWithLink messageID="login.sso.register.message.help" />;
+    }
+
     return (
         <Button
             fullWidth
@@ -13,15 +18,9 @@ function SSOButton({ isRegister }: LoginProps) {
             style={defaultLoginButtonStyling}
             size="large"
             variant="text"
-            href={
-                isRegister
-                    ? unauthenticatedRoutes.sso.register.fullPath
-                    : unauthenticatedRoutes.sso.login.fullPath
-            }
+            href={unauthenticatedRoutes.sso.login.fullPath}
         >
-            <FormattedMessage
-                id={isRegister ? 'cta.register.sso' : 'cta.login.sso'}
-            />
+            <FormattedMessage id="cta.login.sso" />
         </Button>
     );
 }
