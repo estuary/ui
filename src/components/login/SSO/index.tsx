@@ -100,7 +100,9 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
             displayNotification('login.sso', 'success');
             setLoading(false);
-            navigate(redirectPath);
+            navigate(redirectPath, {
+                replace: true,
+            });
         },
     };
 
