@@ -229,13 +229,6 @@ export const useBinding_disabledBindings = (entityType: Entity) => {
     );
 };
 
-export const useBinding_collectionsRequiringRediscovery = () => {
-    return useZustandStore<BindingState, string[]>(
-        BindingStoreNames.GENERAL,
-        useShallow((state) => state.collectionsRequiringRediscovery)
-    );
-};
-
 export const useBinding_bindingErrorsExist = () => {
     return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
         BindingStoreNames.GENERAL,
