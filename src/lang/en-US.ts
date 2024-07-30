@@ -101,6 +101,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
+    'filter.time.thisYear': `This Year`,
+    'filter.time.allTime': `All Time`,
 
     'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
 
@@ -334,6 +336,8 @@ const Home: ResolvedIntlConfig['messages'] = {
     'home.dashboard.greetingBanner.title': `Welcome back, {userName}`,
     'home.dashboard.greetingBanner.title.fallback': `Welcome back`,
     'home.dashboard.greetingBanner.message': `Here is a summary of your overall data`,
+
+    'home.dashboard.dataTrendsGraph.title.prefix': `Usage for`,
 };
 
 const PageNotFound: ResolvedIntlConfig['messages'] = {

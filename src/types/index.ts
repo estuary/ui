@@ -207,6 +207,17 @@ interface BaseCatalogStats {
     ts: string;
 }
 
+export interface DefaultStats extends BaseCatalogStats {
+    bytes_written_by_me: number;
+    docs_written_by_me: number;
+    bytes_read_by_me: number;
+    docs_read_by_me: number;
+    bytes_written_to_me: number;
+    docs_written_to_me: number;
+    bytes_read_from_me: number;
+    docs_read_from_me: number;
+}
+
 export interface CatalogStats_Billing extends BaseCatalogStats {
     bytes_written_by_me: number;
     bytes_read_by_me: number;
@@ -218,6 +229,22 @@ export interface CatalogStats_Details extends BaseCatalogStats {
     docs_read?: number;
     bytes_written?: number;
     docs_written?: number;
+}
+
+export interface CatalogStats_Dashboard extends BaseCatalogStats {
+    bytes_read?: number;
+    bytes_written?: number;
+    docs_read?: number;
+    docs_written?: number;
+    flow_document: any;
+}
+
+export interface CatalogStats_Graph extends Pick<BaseCatalogStats, 'ts'> {
+    bytes_read?: number;
+    bytes_written?: number;
+    docs_read?: number;
+    docs_written?: number;
+    flow_document: any;
 }
 
 export interface Directive {

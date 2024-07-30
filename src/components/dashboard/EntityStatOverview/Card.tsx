@@ -68,7 +68,11 @@ export default function Card({
                     justifyContent: 'space-between',
                 }}
             >
-                <Stack direction="row" spacing={1}>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    style={{ alignItems: 'center' }}
+                >
                     {Icon}
 
                     <Typography style={{ fontWeight: 500 }}>

@@ -5,6 +5,7 @@ import {
     semiTransparentBackground_teal,
 } from 'context/Theme';
 import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
+import DataTrendsGraph from './DataTrendsGraph';
 import Card from './EntityStatOverview/Card';
 import GreetingBanner from './GreetingBanner';
 
@@ -39,6 +40,10 @@ export default function Dashboard() {
                     Icon={<CloudDownload fontSize={12} />}
                     monthlyStat={0}
                 />
+            </Grid>
+
+            <Grid item xs={12}>
+                <DataTrendsGraph />
             </Grid>
         </Grid>
     );

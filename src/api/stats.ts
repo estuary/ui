@@ -1,4 +1,6 @@
+import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import {
     Duration,
     isSaturday,
@@ -11,17 +13,17 @@ import {
     subMonths,
     subWeeks,
 } from 'date-fns';
-import { UTCDate } from '@date-fns/utc';
+import pLimit from 'p-limit';
 import { escapeReservedCharacters, TABLES } from 'services/supabase';
 import {
     CatalogStats,
     CatalogStats_Billing,
+    CatalogStats_Dashboard,
     CatalogStats_Details,
+    DefaultStats,
     Entity,
 } from 'types';
-import pLimit from 'p-limit';
 import { CHUNK_SIZE } from 'utils/misc-utils';
-import { supabaseClient } from 'context/Supabase';
 
 export type StatsFilter =
     | 'today'
@@ -30,20 +32,6 @@ export type StatsFilter =
     | 'thisWeek'
     | 'lastMonth'
     | 'thisMonth';
-
-export interface DefaultStats {
-    catalog_name: string;
-    grain: string;
-    ts: string;
-    bytes_written_by_me: number;
-    docs_written_by_me: number;
-    bytes_read_by_me: number;
-    docs_read_by_me: number;
-    bytes_written_to_me: number;
-    docs_written_to_me: number;
-    bytes_read_from_me: number;
-    docs_read_from_me: number;
-}
 
 const BASE_QUERY = `
             catalog_name,
@@ -87,7 +75,10 @@ const MATERIALIZATION_QUERY = `
 const hourlyGrain = 'hourly';
 const dailyGrain = 'daily';
 const monthlyGrain = 'monthly';
-type Grains = typeof hourlyGrain | typeof dailyGrain | typeof monthlyGrain;
+export type Grains =
+    | typeof hourlyGrain
+    | typeof dailyGrain
+    | typeof monthlyGrain;
 type AllowedDates = Date | string | number;
 
 // Make sure that this matched the derivation closely
@@ -269,6 +260,44 @@ const getStatsForDetails = (
         .returns<CatalogStats_Details[]>();
 };
 
+const getStatsForDashboard = (
+    tenant: string,
+    grain: Grains,
+    endDate: Date,
+    duration?: Duration,
+    entityType?: Entity
+) => {
+    const past = duration ? sub(endDate, duration) : endDate;
+
+    const gt = convertToUTC(past, grain);
+    const lte = convertToUTC(endDate, grain);
+
+    let query: string;
+    switch (entityType) {
+        case 'capture':
+            query = CAPTURE_QUERY;
+            break;
+        case 'materialization':
+            query = MATERIALIZATION_QUERY;
+            break;
+        case 'collection':
+            query = COLLECTION_QUERY;
+            break;
+        default:
+            query = DEFAULT_QUERY;
+    }
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(query)
+        .ilike('catalog_name', `${tenant}/%`)
+        .eq('grain', grain)
+        .gt('ts', gt)
+        .lte('ts', lte)
+        .order('ts', { ascending: true })
+        .returns<(CatalogStats_Dashboard | DefaultStats)[]>();
+};
+
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
 //   This function is temporarily unused since the billing history table component is using filtered data
 //   returned by the billing_report RPC to populate the contents of its rows.
@@ -317,4 +346,9 @@ const getStatsForDetails = (
 //     );
 // };
 
-export { getStatsByName, getStatsForBilling, getStatsForDetails };
+export {
+    getStatsByName,
+    getStatsForBilling,
+    getStatsForDashboard,
+    getStatsForDetails,
+};
