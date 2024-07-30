@@ -1,5 +1,6 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { BindingStoreNames } from 'stores/names';
+import { Entity } from 'types';
 import { useShallow } from 'zustand/react/shallow';
 import { FullSource, FullSourceJsonForms } from './slices/TimeTravel';
 import { BindingState, ResourceConfig } from './types';
@@ -215,10 +216,16 @@ export const useBinding_someBindingsDisabled = () => {
     );
 };
 
-export const useBinding_disabledBindings = () => {
+// We are only using this to clean up - hence checking for `capture` here because that
+//  is the only entity that we want to clean up disabled collections
+export const useBinding_disabledBindings = (entityType: Entity) => {
     return useZustandStore<BindingState, string[]>(
         BindingStoreNames.GENERAL,
-        useShallow((state) => Array.from(state.disabledCollections.keys()))
+        useShallow((state) =>
+            entityType === 'capture'
+                ? Array.from(state.disabledCollections.keys())
+                : []
+        )
     );
 };
 

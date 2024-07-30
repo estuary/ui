@@ -31,6 +31,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { hasLength } from 'utils/misc-utils';
+import { useEntityType } from 'context/EntityContext';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {
@@ -74,9 +75,11 @@ function useSave(
         notificationStoreSelectors.showNotification
     );
 
+    const entityType = useEntityType();
+
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
-    const disabledBindings = useBinding_disabledBindings();
+    const disabledBindings = useBinding_disabledBindings(entityType);
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -231,7 +234,8 @@ function useSave(
                             (collection) => !collections.includes(collection)
                         );
 
-                    // For a test we do not want to remove
+                    // For a test we do not want to remove from draft - otherwise we would need
+                    //  to add them back in after the test.
                     const disabledCollections: string[] = dryRun
                         ? []
                         : disabledBindings;
