@@ -1,11 +1,14 @@
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-import { defaultLoginButtonStyling } from 'context/Theme';
+import { useTheme } from '@mui/material';
+import { loginButtonStyling } from 'context/Theme';
 import AzureButton from './buttons/Azure';
 import GithubButton from './buttons/Github';
 import GoogleButton from './buttons/Google';
 import { LoginButtonProps, ProviderButtonProps } from './types';
 
 function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
+    const theme = useTheme();
+
     let ButtonComponent: (props: ProviderButtonProps) => EmotionJSX.Element,
         scopes: string;
 
@@ -23,7 +26,7 @@ function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
 
     return (
         <ButtonComponent
-            style={defaultLoginButtonStyling}
+            sx={loginButtonStyling[theme.palette.mode]}
             size="large"
             fullWidth
             isRegister={isRegister}

@@ -680,19 +680,29 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
 };
 
 export const registerPerkCheck = {
-    light: '#24A99D',
-    dark: '#24A99D',
+    light: '#74d4d4',
+    dark: '#74d4d4',
 };
 
 export const registerPerkHighlight = {
-    light: '#6D85ED',
-    dark: '#6D85ED',
+    light: sample_blue[600],
+    dark: sample_blue[400],
 };
 
-export const defaultLoginButtonStyling = {
+const defaultLoginButtonStyling = {
     borderWidth: 2,
-    color: sample_grey[600],
     fontWeight: 600,
+};
+
+export const loginButtonStyling = {
+    light: {
+        ...defaultLoginButtonStyling,
+        color: sample_grey[600],
+    },
+    dark: {
+        ...defaultLoginButtonStyling,
+        color: sample_grey[100],
+    },
 };
 
 // TODO (echarts) need to make a color service or something to

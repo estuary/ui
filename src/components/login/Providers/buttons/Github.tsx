@@ -1,9 +1,12 @@
-import { Button } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
+import { sample_grey } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { ProviderButtonProps } from '../types';
 import { defaulticonSize } from './shared';
 
 const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
+    const theme = useTheme();
+
     return (
         <Button
             {...props}
@@ -12,6 +15,9 @@ const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
                 <svg
                     role="img"
                     viewBox="0 0 24 24"
+                    fill={
+                        sample_grey[theme.palette.mode === 'dark' ? 100 : 800]
+                    }
                     width={defaulticonSize}
                     height={defaulticonSize}
                     xmlns="http://www.w3.org/2000/svg"
