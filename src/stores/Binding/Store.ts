@@ -230,6 +230,7 @@ const getInitialMiscData = (): Pick<
     | 'backfillAllBindings'
     | 'backfilledBindings'
     | 'collectionsRequiringRediscovery'
+    | 'disabledCollections'
     | 'discoveredCollections'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
@@ -242,6 +243,7 @@ const getInitialMiscData = (): Pick<
     backfillAllBindings: false,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
+    disabledCollections: new Set(),
     discoveredCollections: [],
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
@@ -367,6 +369,7 @@ const getInitialState = (
 
                 state.rediscoveryRequired = false;
                 state.collectionsRequiringRediscovery = [];
+                state.disabledCollections.clear();
 
                 state.backfilledBindings = [];
                 state.backfillAllBindings = false;
@@ -1038,6 +1041,7 @@ const getInitialState = (
                                         collectionRequiringRediscovery ===
                                         collectionName
                                 );
+
                             if (existingIndex > -1) {
                                 state.collectionsRequiringRediscovery.splice(
                                     existingIndex,
@@ -1048,6 +1052,8 @@ const getInitialState = (
                                     state.collectionsRequiringRediscovery
                                 );
                             }
+
+                            state.disabledCollections.add(collectionName);
                         } else {
                             delete state.resourceConfigs[uuid].meta.disable;
 
@@ -1058,6 +1064,8 @@ const getInitialState = (
 
                                 state.rediscoveryRequired = true;
                             }
+
+                            state.disabledCollections.delete(collectionName);
                         }
                     });
                 }),
