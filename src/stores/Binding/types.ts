@@ -77,6 +77,7 @@ export interface BindingState
     ) => void;
 
     collectionsRequiringRediscovery: string[];
+    disabledCollections: Set<string>;
     rediscoveryRequired: boolean;
     resetRediscoverySettings: () => void;
 
