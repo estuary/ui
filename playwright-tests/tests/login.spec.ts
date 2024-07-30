@@ -10,17 +10,21 @@ test('has basic functionality', async ({ page }) => {
     await page.getByText('Register').click();
     await expect(
         page.getByRole('heading', {
-            name: 'Please log in with a provider to use Estuary Flow for free.',
+            name: 'Get started with Estuary Flow',
         })
     ).toBeVisible();
+    await expect(page.locator('#root')).toContainText(
+        'To register with Single Sign-On Contact Us.'
+    );
 
     // Go back to login
     await page.getByText('Sign In').click();
     await expect(
         page.getByRole('heading', {
-            name: 'Sign in to continue to Estuary Flow.',
+            name: 'Get started with Estuary Flow',
         })
     ).toBeVisible();
+    await expect(page.getByRole('link')).toContainText('Sign in with SSO');
 
     // Check on auth providers
     await expect(page.getByText('Sign in with Google')).toBeVisible();
