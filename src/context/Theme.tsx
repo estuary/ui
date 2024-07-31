@@ -690,8 +690,11 @@ export const registerPerkHighlight = {
 };
 
 const defaultLoginButtonStyling = {
-    borderWidth: 2,
-    fontWeight: 600,
+    'borderWidth': 2,
+    'fontWeight': 600,
+    '&:hover': {
+        borderWidth: 2,
+    },
 };
 
 export const loginButtonStyling = {
