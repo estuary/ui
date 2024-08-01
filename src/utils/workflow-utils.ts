@@ -354,6 +354,12 @@ export const evaluateRecommendedIncludedFields = (
     );
 };
 
+export const evaluateRequiredExcludedFields = (
+    constraintType: ConstraintTypes
+): boolean => {
+    return constraintType === ConstraintTypes.FIELD_FORBIDDEN;
+};
+
 export interface ConnectorVersionEvaluationOptions {
     connectorId: string;
     existingImageTag: string;

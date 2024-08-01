@@ -15,6 +15,7 @@ import {
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     evaluateRecommendedIncludedFields,
+    evaluateRequiredExcludedFields,
     evaluateRequiredIncludedFields,
 } from 'utils/workflow-utils';
 
@@ -55,6 +56,8 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
         constraint.type
     );
 
+    const excludeRequired = evaluateRequiredExcludedFields(constraint.type);
+
     const coloredIncludeButton =
         selectedValue === 'default' && includeRecommended;
 
@@ -78,7 +81,9 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     value="include"
                     coloredDefaultState={coloredIncludeButton}
                     disabled={
-                        formActive || (includeRequired && !recommendFields)
+                        formActive ||
+                        excludeRequired ||
+                        (includeRequired && !recommendFields)
                     }
                     onClick={() => {
                         const singleValue =
@@ -105,7 +110,9 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     disabled={includeRequired || formActive}
                     onClick={() => {
                         const singleValue =
-                            selectedValue !== 'exclude' ? 'exclude' : null;
+                            selectedValue !== 'exclude' || excludeRequired
+                                ? 'exclude'
+                                : null;
 
                         const selectionType = evaluateSelectionType(
                             recommendFields[bindingUUID],
