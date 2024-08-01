@@ -90,13 +90,9 @@ const mapConstraintsToProjections = (
                     constraint.type
                 );
 
-                const excludeRequired = evaluateRequiredExcludedFields(
-                    constraint.type
-                );
-
                 selectionType = includeRequired
                     ? 'include'
-                    : excludeRequired
+                    : evaluateRequiredExcludedFields(constraint.type)
                     ? 'exclude'
                     : null;
             }
