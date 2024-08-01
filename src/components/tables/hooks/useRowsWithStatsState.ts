@@ -57,8 +57,6 @@ function useRowsWithStatsState(
         SelectableTableStore['hydrationErrorsExist']
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
-    console.log('statsFailed', statsFailed);
-
     useEffect(() => {
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
