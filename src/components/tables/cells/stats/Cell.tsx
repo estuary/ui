@@ -47,9 +47,6 @@ const StatsCell = ({
                         sx={{
                             transitionDelay: statsLoading ? '800ms' : '0ms',
                             color: (theme) =>
-                                // failed
-                                //     ? theme.palette.error[theme.palette.mode]
-                                //     :
                                 statsLoading
                                     ? textloadingColor[theme.palette.mode]
                                     : null,
