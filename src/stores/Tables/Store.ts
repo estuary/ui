@@ -299,6 +299,7 @@ export const getInitialState = (
                 setHydrationErrorsExist,
                 setStatsFailed,
             } = get();
+
             const { response } = query;
             const catalogNames = flatMap(response, (data) => {
                 return data.catalog_name;

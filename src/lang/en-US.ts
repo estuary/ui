@@ -431,7 +431,6 @@ const EntityTable: ResolvedIntlConfig['messages'] = {
     'entityTable.stats.docs_written': `Docs Written`,
 
     'entityTable.stats.error': `Failed to fetch stats.`,
-    'entityTable.stats.cell.error': `___`,
 
     'entityTable.unmatchedFilter.header': `No results found.`,
     'entityTable.unmatchedFilter.message': `We couldn't find any data matching your search. Please try a different filter.`,

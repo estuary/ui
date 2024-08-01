@@ -47,16 +47,16 @@ const StatsCell = ({
                         sx={{
                             transitionDelay: statsLoading ? '800ms' : '0ms',
                             color: (theme) =>
+                                // failed
+                                //     ? theme.palette.error[theme.palette.mode]
+                                //     :
                                 statsLoading
                                     ? textloadingColor[theme.palette.mode]
                                     : null,
+                            opacity: failed ? 0.4 : 1,
                         }}
                     >
-                        {failed
-                            ? intl.formatMessage({
-                                  id: 'entityTable.stats.cell.error',
-                              })
-                            : number}
+                        {number}
                     </Typography>
                 </Tooltip>
             </Box>

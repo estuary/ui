@@ -44,8 +44,6 @@ function Row({
         authenticatedRoutes.collections.details.overview.fullPath
     );
 
-    console.log('statsFailed', statsFailed);
-
     return (
         <TableRow
             key={`Entity-${row.id}`}
