@@ -107,7 +107,11 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     selectedValue={selectedValue}
                     value="exclude"
                     coloredDefaultState={coloredExcludeButton}
-                    disabled={includeRequired || formActive}
+                    disabled={
+                        formActive ||
+                        includeRequired ||
+                        (excludeRequired && !recommendFields)
+                    }
                     onClick={() => {
                         const singleValue =
                             selectedValue !== 'exclude' || excludeRequired
