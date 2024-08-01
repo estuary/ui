@@ -54,7 +54,7 @@ function useRowsWithStatsState(
 
     const statsFailed = useZustandStore<
         SelectableTableStore,
-        SelectableTableStore['hydrationErrorsExist']
+        SelectableTableStore['statsFailed']
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
     useEffect(() => {
