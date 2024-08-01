@@ -24,13 +24,21 @@ interface RowsProps {
 
 export interface RowProps {
     stats?: StatsResponse;
+    statsFailed?: boolean;
     row: CaptureQueryWithStats;
     setRow: any;
     isSelected: boolean;
     showEntityStatus: boolean;
 }
 
-function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
+function Row({
+    isSelected,
+    setRow,
+    row,
+    stats,
+    statsFailed,
+    showEntityStatus,
+}: RowProps) {
     const theme = useTheme();
     const entityType = useEntityType();
 
@@ -61,12 +69,14 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             />
 
             <Bytes
+                failed={statsFailed}
                 val={
                     stats ? stats[row.catalog_name]?.bytes_written_by_me : null
                 }
             />
 
             <Docs
+                failed={statsFailed}
                 val={stats ? stats[row.catalog_name]?.docs_written_by_me : null}
             />
 
@@ -80,7 +90,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    const { stats, selected, setRow } = useRowsWithStatsState(
+    const { stats, selected, setRow, statsFailed } = useRowsWithStatsState(
         SelectTableStoreNames.CAPTURE,
         data
     );
@@ -90,6 +100,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
             {data.map((row) => (
                 <Row
                     stats={stats}
+                    statsFailed={statsFailed}
                     row={row}
                     key={row.id}
                     isSelected={selected.has(row.id)}

@@ -52,6 +52,13 @@ function useRowsWithStatsState(
         SelectableTableStore['stats']
     >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
 
+    const statsFailed = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['hydrationErrorsExist']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
+
+    console.log('statsFailed', statsFailed);
+
     useEffect(() => {
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
@@ -61,8 +68,9 @@ function useRowsWithStatsState(
             selected,
             setRow,
             stats,
+            statsFailed,
         }),
-        [selected, setRow, stats]
+        [selected, setRow, stats, statsFailed]
     );
 }
 
