@@ -17,7 +17,6 @@ import HomePage from 'pages/Home';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
 import BasicLogin from 'pages/login/Basic';
-import MagicLinkLogin from 'pages/login/MagicLink';
 import MarketplaceCallback from 'pages/marketplace/Callback';
 import MarketplaceVerification from 'pages/marketplace/Verification';
 import { Suspense } from 'react';
@@ -29,6 +28,7 @@ import {
     createRoutesFromElements,
 } from 'react-router-dom';
 import { handledLazy } from 'services/react';
+import EnterpriseLogin from 'pages/login/Enterprise';
 import Authenticated from './Authenticated';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import CapturesTable from './CapturesTable';
@@ -87,10 +87,19 @@ const router = createBrowserRouter(
             />
 
             <Route
-                path={unauthenticatedRoutes.poc.login.fullPath}
+                path={unauthenticatedRoutes.sso.register.fullPath}
                 element={
                     <RequireAuth firstLoad checkForGrant>
-                        <MagicLinkLogin />
+                        <EnterpriseLogin />
+                    </RequireAuth>
+                }
+            />
+
+            <Route
+                path={unauthenticatedRoutes.sso.login.fullPath}
+                element={
+                    <RequireAuth firstLoad checkForGrant>
+                        <EnterpriseLogin />
                     </RequireAuth>
                 }
             />

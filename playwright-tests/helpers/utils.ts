@@ -63,7 +63,7 @@ export const startSessionWithUser = async (
     }
 
     // Log in with magic link
-    await expect(page.getByText('Sign in to continue')).toBeVisible();
+    await expect(page.getByText('Get started with Estuary Flow')).toBeVisible();
     await page.getByLabel('Email').type(email);
     await page.getByRole('button', { name: 'Sign in with magic link' }).click();
     await expect(
