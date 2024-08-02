@@ -42,6 +42,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
 import { BooleanParam, useQueryParam } from 'use-query-params';
 import {
+    evaluateRequiredExcludedFields,
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
@@ -89,7 +90,11 @@ const mapConstraintsToProjections = (
                     constraint.type
                 );
 
-                selectionType = includeRequired ? 'include' : null;
+                selectionType = includeRequired
+                    ? 'include'
+                    : evaluateRequiredExcludedFields(constraint.type)
+                    ? 'exclude'
+                    : null;
             }
         }
 
