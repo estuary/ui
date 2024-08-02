@@ -2,7 +2,7 @@ import { Provider } from '@supabase/supabase-js';
 
 export type SupportedProvider = Extract<
     Provider,
-    'azure' | 'github' | 'google'
+    'azure' | 'github' | 'google' | 'sso'
 >;
 
 // To support marketplace we must first support logging in with that provider

@@ -1,36 +1,18 @@
 import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { supabaseClient } from 'context/Supabase';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
-
-interface Props {
-    grantToken?: string;
-    hideCodeInput?: boolean;
-}
-
-// TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
-//   need to move the routes to a single location. Also... just need to make the route
-//   settings in all JSON probably.
-const redirectToBase = `${window.location.origin}/auth`;
+import { MagicLinkProps } from './types';
+import useRedirectPath from './useRedirectPath';
 
 const loginSettings = getLoginSettings();
 
-const MagicLink = ({ grantToken, hideCodeInput }: Props) => {
+const MagicLink = ({ grantToken, hideCodeInput }: MagicLinkProps) => {
     const [showTokenValidation, setShowTokenValidation] = useState(false);
 
-    const redirectTo = useLoginRedirectPath(redirectToBase);
-
-    const redirectPath = useMemo(
-        () =>
-            grantToken
-                ? `${redirectTo}?${GlobalSearchParams.GRANT_TOKEN}=${grantToken}`
-                : redirectTo,
-        [grantToken, redirectTo]
-    );
+    const redirectPath = useRedirectPath(grantToken);
 
     const onSubmit = useCallback(
         (formData: { email: string; token?: string }) => {

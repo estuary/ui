@@ -35,12 +35,14 @@ export const getAPIPath = () => {
 
 export const getLoginSettings = () => {
     const showEmail = import.meta.env.VITE_SHOW_EMAIL_LOGIN === ENABLED;
+    const showSSO = import.meta.env.VITE_SHOW_SSO === ENABLED;
     const enableEmailRegister =
         import.meta.env.VITE_ALLOW_EMAIL_REGISTER === ENABLED;
 
     return {
         enableEmailRegister,
         showEmail,
+        showSSO,
     };
 };
 

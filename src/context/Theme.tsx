@@ -679,6 +679,35 @@ export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
     },
 };
 
+export const registerPerkCheck = {
+    light: '#74d4d4',
+    dark: '#74d4d4',
+};
+
+export const registerPerkHighlight = {
+    light: sample_blue[600],
+    dark: sample_blue[400],
+};
+
+const defaultLoginButtonStyling = {
+    'borderWidth': 2,
+    'fontWeight': 600,
+    '&:hover': {
+        borderWidth: 2,
+    },
+};
+
+export const loginButtonStyling = {
+    light: {
+        ...defaultLoginButtonStyling,
+        color: sample_grey[600],
+    },
+    dark: {
+        ...defaultLoginButtonStyling,
+        color: sample_grey[100],
+    },
+};
+
 // TODO (echarts) need to make a color service or something to
 //  generate a proper ECharts theme. These two colors are taken
 //  from ECharts default colors they apply in order

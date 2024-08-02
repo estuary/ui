@@ -259,18 +259,22 @@ export const unauthenticatedRoutes = {
     login: {
         path: '/login',
     },
-    poc: {
-        path: '/poc',
-        login: {
-            path: 'login',
-            fullPath: '/poc/login',
-        },
-    },
     register: {
         path: '/register',
         callback: {
             path: 'callback',
             fullPath: '/register/callback',
+        },
+    },
+    sso: {
+        path: '/sso',
+        login: {
+            path: 'login',
+            fullPath: '/sso/login',
+        },
+        register: {
+            path: 'register',
+            fullPath: '/sso/register',
         },
     },
     magicLink: {

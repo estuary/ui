@@ -1,7 +1,12 @@
-import { Box, Stack } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
+import { getLoginSettings } from 'utils/env-utils';
 import LoginButton from './LoginButton';
 import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
+import SSOButton from './buttons/SSO';
+
+const loginSettings = getLoginSettings();
 
 function LoginProviders({
     grantToken,
@@ -13,21 +18,28 @@ function LoginProviders({
     return (
         <Stack
             spacing={2}
-            sx={{
+            style={{
                 alignItems: 'center',
             }}
         >
             {providers.map((provider) => {
                 return (
-                    <Box key={`oidc-login-button__${provider}`}>
-                        <LoginButton
-                            login={login}
-                            provider={provider}
-                            isRegister={isRegister}
-                        />
-                    </Box>
+                    <LoginButton
+                        key={`oidc-login-button__${provider}`}
+                        login={login}
+                        provider={provider}
+                        isRegister={isRegister}
+                    />
                 );
             })}
+            {loginSettings.showSSO ? (
+                <>
+                    <Divider flexItem>
+                        <FormattedMessage id="login.separator" />
+                    </Divider>
+                    <SSOButton isRegister={isRegister} />
+                </>
+            ) : null}
         </Stack>
     );
 }
