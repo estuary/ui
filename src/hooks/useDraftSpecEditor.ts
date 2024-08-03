@@ -93,7 +93,7 @@ function useDraftSpecEditor(
                     },
                     undefined,
                     undefined,
-                    'Updated with Advanced Editor'
+                    'Manually Edited'
                 );
 
                 if (updateResponse.error) {
