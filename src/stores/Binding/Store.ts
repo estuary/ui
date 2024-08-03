@@ -918,12 +918,6 @@ const getInitialState = (
                               (uuid) => !bindingUUIDs.includes(uuid)
                           );
 
-                console.log('existingBindingUUIDs', existingBindingUUIDs);
-                console.log(
-                    'state.backfilledBindings',
-                    state.backfilledBindings
-                );
-
                 state.backfillAllBindings =
                     hasLength(existingBindingUUIDs) &&
                     existingBindingUUIDs.length ===
