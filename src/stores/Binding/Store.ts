@@ -79,7 +79,7 @@ const sortByDisableStatus = (
         : collectionB.localeCompare(collectionA);
 };
 
-const sortBindings = (bindings: any[]) => {
+export const sortBindings = (bindings: any[]) => {
     return bindings.sort((a, b) => {
         const collectionA = getCollectionName(a);
         const collectionB = getCollectionName(b);
@@ -94,7 +94,9 @@ const sortBindings = (bindings: any[]) => {
     });
 };
 
-const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
+export const sortResourceConfigs = (
+    resourceConfigs: ResourceConfigDictionary
+) => {
     const sortedResources: ResourceConfigDictionary = {};
 
     Object.entries(resourceConfigs)
@@ -157,6 +159,8 @@ const getResourceConfig = (
 
     const collectionName = getCollectionName(binding);
     const disableProp = getDisableProps(disable);
+
+    console.log('binding', binding);
 
     // Take the binding resource and place into config OR
     // generate a default in case there are any issues with it
@@ -310,6 +314,8 @@ const getInitialState = (
                 // Run through and make sure all collections have a corresponding resource config
                 const modifiedResourceConfigs = state.resourceConfigs;
 
+                console.log('state.bindings', state.bindings);
+
                 Object.entries(state.bindings).forEach(
                     ([collectionName, bindingUUIDs], outerIndex) => {
                         bindingUUIDs.forEach((bindingUUID, innerIndex) => {
@@ -327,6 +333,13 @@ const getInitialState = (
                                     bindingUUID
                                 )
                             ) {
+                                console.log('collectionName', collectionName);
+                                console.log(
+                                    'state.resourceConfigs[bindingUUID]',
+                                    state.resourceConfigs[bindingUUID]
+                                );
+                                console.log('bindingIndex', bindingIndex);
+                                console.log('__________________________');
                                 state.resourceConfigs[
                                     bindingUUID
                                 ].meta.bindingIndex = bindingIndex;
@@ -346,15 +359,15 @@ const getInitialState = (
                     }
                 );
 
-                const sortedResourceConfigs = sortResourceConfigs(
-                    modifiedResourceConfigs
-                );
+                // const sortedResourceConfigs = sortResourceConfigs(
+                //     modifiedResourceConfigs
+                // );
 
-                state.resourceConfigs = sortedResourceConfigs;
-                populateResourceConfigErrors(state, sortedResourceConfigs);
+                state.resourceConfigs = modifiedResourceConfigs;
+                populateResourceConfigErrors(state, modifiedResourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, sortedResourceConfigs);
+                initializeCurrentBinding(state, modifiedResourceConfigs);
             }),
             false,
             'Empty bindings added'
@@ -379,15 +392,14 @@ const getInitialState = (
                 const discoveredBindings: any[] =
                     draftSpecResponse.data[0].spec.bindings;
 
-                sortBindings(discoveredBindings).forEach(
-                    (binding: any, index) => {
-                        const collection = getCollectionName(binding);
-                        const UUID = crypto.randomUUID();
+                // sortBindings(discoveredBindings)
+                discoveredBindings.forEach((binding: any, index) => {
+                    const collection = getCollectionName(binding);
+                    const UUID = crypto.randomUUID();
 
-                        initializeBinding(state, collection, UUID);
-                        initializeResourceConfig(state, binding, UUID, index);
-                    }
-                );
+                    initializeBinding(state, collection, UUID);
+                    initializeResourceConfig(state, binding, UUID, index);
+                });
 
                 state.discoveredCollections = Object.values(
                     state.resourceConfigs
@@ -563,15 +575,15 @@ const getInitialState = (
                     }
                 });
 
-                const sortedResourceConfigs = sortResourceConfigs(
-                    state.resourceConfigs
-                );
+                // const sortedResourceConfigs = sortResourceConfigs(
+                //     state.resourceConfigs
+                // );
 
-                state.resourceConfigs = sortedResourceConfigs;
-                populateResourceConfigErrors(state, sortedResourceConfigs);
+                // state.resourceConfigs = sortedResourceConfigs;
+                populateResourceConfigErrors(state, state.resourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, sortedResourceConfigs);
+                initializeCurrentBinding(state, state.resourceConfigs);
             }),
             false,
             'Binding dependent state prefilled'
@@ -629,9 +641,9 @@ const getInitialState = (
                 // If previous state had no collections set to first
                 // If selected item is removed set to first.
                 // If adding new ones set to last
-                state.resourceConfigs = sortResourceConfigs(
-                    state.resourceConfigs
-                );
+                // state.resourceConfigs = sortResourceConfigs(
+                //     state.resourceConfigs
+                // );
                 const bindingUUIDs = Object.keys(state.resourceConfigs);
 
                 const selectedBindingUUID =
@@ -916,6 +928,12 @@ const getInitialState = (
                         : state.backfilledBindings.filter(
                               (uuid) => !bindingUUIDs.includes(uuid)
                           );
+
+                console.log('existingBindingUUIDs', existingBindingUUIDs);
+                console.log(
+                    'state.backfilledBindings',
+                    state.backfilledBindings
+                );
 
                 state.backfillAllBindings =
                     hasLength(existingBindingUUIDs) &&
