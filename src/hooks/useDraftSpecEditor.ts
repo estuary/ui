@@ -84,11 +84,17 @@ function useDraftSpecEditor(
                 });
 
                 // Update only the SPEC on the server
-                const updateResponse = await modifyDraftSpec(updatedSpec, {
-                    draft_id: draftId,
-                    catalog_name: catalogName,
-                    spec_type: specType,
-                });
+                const updateResponse = await modifyDraftSpec(
+                    updatedSpec,
+                    {
+                        draft_id: draftId,
+                        catalog_name: catalogName,
+                        spec_type: specType,
+                    },
+                    undefined,
+                    undefined,
+                    'Updated with Advanced Editor'
+                );
 
                 if (updateResponse.error) {
                     return Promise.reject();
