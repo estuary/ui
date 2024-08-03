@@ -376,6 +376,9 @@ const getInitialState = (
                 state.backfilledBindings = [];
                 state.backfillAllBindings = false;
 
+                // TODO (perf) - we could probably go ahead and figure out the sort
+                //  while also going through and initializing but I am really tired right now
+
                 // Go through the discovered bindings BEFORE sorting so that
                 //  we know the original indexs of all the bindings.
                 state.resourceConfigs = {};
