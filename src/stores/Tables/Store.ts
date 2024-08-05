@@ -77,6 +77,8 @@ export interface SelectableTableStore extends StoreWithHydration {
 
     setStats: () => void;
     stats: StatsResponse;
+    statsFailed: boolean;
+    setStatsFailed: (val: boolean) => void;
 
     statsFilter: StatsFilter;
     setStatsFilter: (val: SelectableTableStore['statsFilter']) => void;
@@ -109,6 +111,7 @@ export const getInitialStateData = (): Pick<
     | 'selected'
     | 'disableMultiSelect'
     | 'stats'
+    | 'statsFailed'
     | 'statsFilter'
     | 'successfulTransformations'
 > => {
@@ -120,6 +123,7 @@ export const getInitialStateData = (): Pick<
         selected: initialCreateStates.selected(),
         disableMultiSelect: false,
         stats: null,
+        statsFailed: false,
         statsFilter: 'today',
         successfulTransformations:
             initialCreateStates.successfulTransformations,
@@ -151,6 +155,16 @@ export const getInitialState = (
                 }),
                 false,
                 'Single Select set'
+            );
+        },
+
+        setStatsFailed: (value) => {
+            set(
+                produce((state: SelectableTableStore) => {
+                    state.statsFailed = value;
+                }),
+                false,
+                'Stats Failed set'
             );
         },
 
@@ -279,7 +293,13 @@ export const getInitialState = (
         },
 
         setStats: async () => {
-            const { query, statsFilter, setHydrationErrorsExist } = get();
+            const {
+                query,
+                statsFilter,
+                setHydrationErrorsExist,
+                setStatsFailed,
+            } = get();
+
             const { response } = query;
             const catalogNames = flatMap(response, (data) => {
                 return data.catalog_name;
@@ -293,6 +313,7 @@ export const getInitialState = (
 
                 if (error) {
                     setHydrationErrorsExist(true);
+                    setStatsFailed(true);
                     // data is not always returned
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 } else if (data) {
@@ -320,6 +341,7 @@ export const getInitialState = (
                         set(
                             produce((state) => {
                                 state.stats = statsData;
+                                state.statsFailed = false;
                             }),
                             false,
                             'Table Store Stats Hydration Success'
@@ -328,6 +350,7 @@ export const getInitialState = (
                         set(
                             produce((state) => {
                                 state.stats = [];
+                                state.statsFailed = false;
                             }),
                             false,
                             'Table Store Stats Hydration Success : Empty'
@@ -503,6 +526,7 @@ export const selectableTableStoreSelectors = {
     stats: {
         set: (state: SelectableTableStore) => state.setStats,
         get: (state: SelectableTableStore) => state.stats,
+        failed: (state: SelectableTableStore) => state.statsFailed,
     },
     statsFilter: {
         set: (state: SelectableTableStore) => state.setStatsFilter,

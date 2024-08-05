@@ -21,6 +21,7 @@ interface RowProps {
     setRow: any;
     showEntityStatus: boolean;
     stats?: StatsResponse;
+    statsFailed?: boolean;
 }
 
 interface RowsProps {
@@ -28,7 +29,14 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
+function Row({
+    isSelected,
+    setRow,
+    row,
+    stats,
+    statsFailed,
+    showEntityStatus,
+}: RowProps) {
     const theme = useTheme();
     const entityType = useEntityType();
 
@@ -53,6 +61,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
             />
 
             <Bytes
+                failed={statsFailed}
                 val={
                     stats ? stats[row.catalog_name]?.bytes_written_to_me : null
                 }
@@ -60,15 +69,18 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 
             <Bytes
                 read
+                failed={statsFailed}
                 val={stats ? stats[row.catalog_name]?.bytes_read_from_me : null}
             />
 
             <Docs
+                failed={statsFailed}
                 val={stats ? stats[row.catalog_name]?.docs_written_to_me : null}
             />
 
             <Docs
                 read
+                failed={statsFailed}
                 val={stats ? stats[row.catalog_name]?.docs_read_from_me : null}
             />
 
@@ -83,7 +95,7 @@ function Row({ isSelected, setRow, row, stats, showEntityStatus }: RowProps) {
 }
 
 function Rows({ data, showEntityStatus }: RowsProps) {
-    const { stats, selected, setRow } = useRowsWithStatsState(
+    const { stats, selected, setRow, statsFailed } = useRowsWithStatsState(
         SelectTableStoreNames.COLLECTION,
         data
     );
@@ -98,6 +110,7 @@ function Rows({ data, showEntityStatus }: RowsProps) {
                     setRow={setRow}
                     showEntityStatus={showEntityStatus}
                     stats={stats}
+                    statsFailed={statsFailed}
                 />
             ))}
         </>
