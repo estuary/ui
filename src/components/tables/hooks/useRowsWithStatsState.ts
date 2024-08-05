@@ -52,6 +52,11 @@ function useRowsWithStatsState(
         SelectableTableStore['stats']
     >(selectTableStoreName, selectableTableStoreSelectors.stats.get);
 
+    const statsFailed = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['statsFailed']
+    >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
+
     useEffect(() => {
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
@@ -61,8 +66,9 @@ function useRowsWithStatsState(
             selected,
             setRow,
             stats,
+            statsFailed,
         }),
-        [selected, setRow, stats]
+        [selected, setRow, stats, statsFailed]
     );
 }
 
