@@ -7,8 +7,8 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, isEqual, set } from 'lodash';
+import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { debounce, get, has, isEqual, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
@@ -23,6 +23,7 @@ function useDraftSpecEditor(
     // We store off a ref and a state so we can constantly do compares against
     //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
+    const [syncingDrafts, setSyncingDrafts] = useState(false);
     const draftSpecRef = useRef<DraftSpec>(null);
 
     // Draft Editor Store
@@ -137,14 +138,24 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
-    // This for advanced spec editor
+    // This for keeping advanced spec editor updated as the forms
+    //  above it change. Especially stuff like backfill, autoDiscover, and timeTravel
+    const debouncedUpdate = useRef(
+        debounce((updatedCurrentCatalog: DraftSpecQuery) => {
+            console.log('editor updating');
+            setDraftSpec(updatedCurrentCatalog);
+            setSyncingDrafts(false);
+        }, 500)
+    );
+
     useEffect(() => {
         if (
             monitorCurrentCatalog &&
             currentCatalog &&
             !isEqual(draftSpecRef.current, currentCatalog)
         ) {
-            setDraftSpec(currentCatalog);
+            setSyncingDrafts(true);
+            debouncedUpdate.current(currentCatalog);
         }
     }, [currentCatalog, monitorCurrentCatalog]);
 
@@ -153,11 +164,19 @@ function useDraftSpecEditor(
         return {
             onChange: processEditorValue,
             draftSpec,
+            syncingDrafts,
             isValidating,
             mutate,
             defaultValue: specAsString,
         };
-    }, [draftSpec, isValidating, mutate, processEditorValue, specAsString]);
+    }, [
+        draftSpec,
+        isValidating,
+        mutate,
+        processEditorValue,
+        specAsString,
+        syncingDrafts,
+    ]);
 }
 
 export default useDraftSpecEditor;

@@ -143,6 +143,8 @@ function MonacoEditor({
             // Fetch the current value of the editor
             const currentValue = editorRef.current?.getValue();
 
+            console.log('updateValue', updateValue);
+
             // Make sure we have a value and handled to call
             if (onChange && typeof currentValue === 'string') {
                 setStatus(EditorStatus.EDITING, evaluatedPath);
@@ -273,6 +275,8 @@ function MonacoEditor({
 
             // Update the local copy
             setLocalCopy(value);
+
+            console.log('calling change');
 
             // Fire off the debounced change to keep the server up to date
             debouncedChange(undoing);
