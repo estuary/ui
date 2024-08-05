@@ -80,7 +80,6 @@ interface Props {
     tableAriaLabelKey?: string;
 }
 
-// WARNING - You MUST include a count with your query or else pagination breaks
 function EntityTable({
     columns,
     noExistingDataContentIds,

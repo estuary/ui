@@ -69,7 +69,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     successfulTransformations: number;
     incrementSuccessfulTransformations: () => void;
 
-    resetState: () => void;
+    resetState: (keepCount: boolean) => void;
 
     setQuery: (query: PostgrestFilterBuilder<any, any, any>) => void;
     query: AsyncOperationProps;
@@ -411,12 +411,29 @@ export const getInitialState = (
             );
         },
 
-        resetState: () => {
+        resetState: (keepCount) => {
+            // Safe to use `set` and `get` together here
+            const previousCount = get().query.count;
+
             set(
                 { ...getInitialStateData(), ...getInitialHydrationData() },
                 false,
                 'Resetting State'
             );
+
+            // We do not always want to reset the `count` because we only fetch count
+            //  when a user is on the first page of a table. Keeping `count` around after
+            //  reset means they can easily click the back button and come back to a table
+            //  that has pagination enabled.
+            if (keepCount) {
+                set(
+                    produce((state: SelectableTableStore) => {
+                        state.query.count = previousCount;
+                    }),
+                    false,
+                    'Resetting State - Add Count Again'
+                );
+            }
         },
 
         hydrate: async () => {
