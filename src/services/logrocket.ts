@@ -2,7 +2,6 @@ import { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 import {
     DEFAULT_FILTER,
     getUserDetails,
@@ -42,7 +41,7 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
     );
 
 // for endpoints where we do not want to mess with the request at all
-const ignoreURLs = ['lr-in-prod'];
+const ignoreURLs = ['logr-ingest', 'logrocket'];
 const shouldIgnore = (url?: string) =>
     ignoreURLs.some((el) => url?.includes(el));
 
@@ -201,7 +200,6 @@ export const initLogRocket = () => {
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
     }
 };
 
