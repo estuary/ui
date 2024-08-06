@@ -142,7 +142,6 @@ function useDraftSpecEditor(
     //  above it change. Especially stuff like backfill, autoDiscover, and timeTravel
     const debouncedUpdate = useRef(
         debounce((updatedCurrentCatalog: DraftSpecQuery) => {
-            console.log('editor updating');
             setDraftSpec(updatedCurrentCatalog);
             setSyncingDrafts(false);
         }, 500)

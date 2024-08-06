@@ -71,7 +71,7 @@ function MonacoEditor({
     // Need to keep a local copy so that as we are parsing/formatting JSON to save it
     //  the editor will not format and move the cursor around and will just keep
     //  displaying what the user has entered/edited
-    const [localCopy, setLocalCopy] = useState('');
+    const [localCopy, setLocalCopy] = useState(defaultValue ?? '');
     const [showServerDiff, setShowServerDiff] = useState(false);
 
     const serverUpdate = useEditorStore_serverUpdate({
@@ -142,8 +142,6 @@ function MonacoEditor({
 
             // Fetch the current value of the editor
             const currentValue = editorRef.current?.getValue();
-
-            console.log('updateValue', updateValue);
 
             // Make sure we have a value and handled to call
             if (onChange && typeof currentValue === 'string') {
@@ -260,9 +258,16 @@ function MonacoEditor({
         change: (value: any, ev: any) => {
             logRocketConsole('handlers:change', {
                 status,
-                value,
                 ev,
             });
+
+            // if the editor is disabled then don't handle the change. That way if
+            //  we are syncing the edit with latest currentCatalog we don't accidently
+            //  fire a change.
+            if (disabled) {
+                logRocketConsole('handlers:change:skipped:disabled');
+                return;
+            }
 
             // Safely grab if the user is undoing. That way we can skip the formatting
             // otherwise they might get stuck undoing the formatting.
@@ -275,8 +280,6 @@ function MonacoEditor({
 
             // Update the local copy
             setLocalCopy(value);
-
-            console.log('calling change');
 
             // Fire off the debounced change to keep the server up to date
             debouncedChange(undoing);

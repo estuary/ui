@@ -17,7 +17,7 @@ function DraftSpecEditor({
     entityName,
     monitorCurrentCatalog,
 }: Props) {
-    const { draftSpec, isValidating, onChange, defaultValue } =
+    const { draftSpec, isValidating, onChange, defaultValue, syncingDrafts } =
         useDraftSpecEditor(
             entityName,
             localZustandScope,
@@ -28,7 +28,7 @@ function DraftSpecEditor({
     if (draftSpec) {
         return (
             <MonacoEditor
-                disabled={disabled}
+                disabled={Boolean(syncingDrafts || disabled)}
                 localZustandScope={localZustandScope}
                 height={editorHeight}
                 onChange={onChange}
