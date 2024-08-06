@@ -49,6 +49,7 @@ export interface MonacoEditorProps {
     defaultValue?: string;
     path?: string;
     editorLabel?: string;
+    manualSyncing?: boolean;
 }
 
 function MonacoEditor({
@@ -62,6 +63,7 @@ function MonacoEditor({
     defaultValue,
     path,
     editorLabel,
+    manualSyncing,
 }: MonacoEditorProps) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -254,6 +256,14 @@ function MonacoEditor({
         if (typeof defaultValue === 'string') setLocalCopy(defaultValue);
     }, [setLocalCopy, defaultValue]);
 
+    // If we're syncing go ahead and put the status to idle so the
+    //  editor kind of "resets"
+    useEffect(() => {
+        if (manualSyncing) {
+            setStatus(EditorStatus.IDLE, evaluatedPath);
+        }
+    }, [evaluatedPath, setStatus, manualSyncing]);
+
     const handlers = {
         change: (value: any, ev: any) => {
             logRocketConsole('handlers:change', {
@@ -264,8 +274,12 @@ function MonacoEditor({
             // if the editor is disabled then don't handle the change. That way if
             //  we are syncing the edit with latest currentCatalog we don't accidently
             //  fire a change.
-            if (disabled) {
-                logRocketConsole('handlers:change:skipped:disabled');
+            if (disabled || manualSyncing) {
+                logRocketConsole('handlers:change:skipped', {
+                    disabled,
+                    syncing: manualSyncing,
+                });
+                setStatus(EditorStatus.SAVING, evaluatedPath);
                 return;
             }
 

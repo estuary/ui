@@ -24,7 +24,7 @@ function useDraftSpecEditor(
     // We store off a ref and a state so we can constantly do compares against
     //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
-    const [syncingDrafts, setSyncingDrafts] = useState(false);
+    const [currentCatalogSyncing, setCurrentCatalogSyncing] = useState(false);
     const draftSpecRef = useRef<DraftSpec>(null);
 
     // Draft Editor Store
@@ -144,7 +144,7 @@ function useDraftSpecEditor(
     const debouncedUpdate = useRef(
         debounce((updatedCurrentCatalog: DraftSpecQuery) => {
             setDraftSpec(updatedCurrentCatalog);
-            setSyncingDrafts(false);
+            setCurrentCatalogSyncing(false);
         }, DEFAULT_UPDATE_WAIT)
     );
 
@@ -154,7 +154,7 @@ function useDraftSpecEditor(
             currentCatalog &&
             !isEqual(draftSpecRef.current, currentCatalog)
         ) {
-            setSyncingDrafts(true);
+            setCurrentCatalogSyncing(true);
             debouncedUpdate.current(currentCatalog);
         }
     }, [currentCatalog, monitorCurrentCatalog]);
@@ -162,20 +162,20 @@ function useDraftSpecEditor(
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return useMemo(() => {
         return {
-            onChange: processEditorValue,
+            currentCatalogSyncing,
+            defaultValue: specAsString,
             draftSpec,
-            syncingDrafts,
             isValidating,
             mutate,
-            defaultValue: specAsString,
+            onChange: processEditorValue,
         };
     }, [
+        currentCatalogSyncing,
         draftSpec,
         isValidating,
         mutate,
         processEditorValue,
         specAsString,
-        syncingDrafts,
     ]);
 }
 
