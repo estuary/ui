@@ -12,6 +12,7 @@ import { debounce, get, has, isEqual, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
+import { DEFAULT_UPDATE_WAIT } from 'utils/workflow-utils';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
@@ -144,7 +145,7 @@ function useDraftSpecEditor(
         debounce((updatedCurrentCatalog: DraftSpecQuery) => {
             setDraftSpec(updatedCurrentCatalog);
             setSyncingDrafts(false);
-        }, 500)
+        }, DEFAULT_UPDATE_WAIT)
     );
 
     useEffect(() => {
