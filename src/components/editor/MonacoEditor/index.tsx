@@ -71,7 +71,7 @@ function MonacoEditor({
     // Need to keep a local copy so that as we are parsing/formatting JSON to save it
     //  the editor will not format and move the cursor around and will just keep
     //  displaying what the user has entered/edited
-    const [localCopy, setLocalCopy] = useState(defaultValue ?? '');
+    const [localCopy, setLocalCopy] = useState('');
     const [showServerDiff, setShowServerDiff] = useState(false);
 
     const serverUpdate = useEditorStore_serverUpdate({
