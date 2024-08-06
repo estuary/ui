@@ -26,7 +26,7 @@ function TenantOptions() {
     const updateStoreState = useCallback(() => {
         resetBillingState();
 
-        resetBillingSelectTableState();
+        resetBillingSelectTableState(false);
         setHydrated(false);
         setHydrationErrorsExist(false);
     }, [
