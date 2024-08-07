@@ -1,4 +1,6 @@
+import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { supabaseClient } from 'context/Supabase';
 import {
     Duration,
     isSaturday,
@@ -11,17 +13,17 @@ import {
     subMonths,
     subWeeks,
 } from 'date-fns';
-import { UTCDate } from '@date-fns/utc';
+import { DateTime } from 'luxon';
+import pLimit from 'p-limit';
 import { escapeReservedCharacters, TABLES } from 'services/supabase';
 import {
     CatalogStats,
     CatalogStats_Billing,
+    CatalogStats_Dashboard,
     CatalogStats_Details,
     Entity,
 } from 'types';
-import pLimit from 'p-limit';
 import { CHUNK_SIZE } from 'utils/misc-utils';
-import { supabaseClient } from 'context/Supabase';
 
 export type StatsFilter =
     | 'today'
@@ -87,7 +89,10 @@ const MATERIALIZATION_QUERY = `
 const hourlyGrain = 'hourly';
 const dailyGrain = 'daily';
 const monthlyGrain = 'monthly';
-type Grains = typeof hourlyGrain | typeof dailyGrain | typeof monthlyGrain;
+export type Grains =
+    | typeof hourlyGrain
+    | typeof dailyGrain
+    | typeof monthlyGrain;
 type AllowedDates = Date | string | number;
 
 // Make sure that this matched the derivation closely
@@ -269,6 +274,45 @@ const getStatsForDetails = (
         .returns<CatalogStats_Details[]>();
 };
 
+export interface DefaultStatsWithDocument extends DefaultStats {
+    flow_document: any;
+}
+
+const getStatsForDashboard = (
+    tenant: string,
+    grain: Grains,
+    endDate: DateTime,
+    duration?: Duration,
+    entityType?: Entity
+) => {
+    const past = duration ? endDate.minus(duration) : endDate;
+
+    let query: string;
+    switch (entityType) {
+        case 'capture':
+            query = CAPTURE_QUERY;
+            break;
+        case 'materialization':
+            query = MATERIALIZATION_QUERY;
+            break;
+        case 'collection':
+            query = COLLECTION_QUERY;
+            break;
+        default:
+            query = DEFAULT_QUERY;
+    }
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(`${query},flow_document`)
+        .ilike('catalog_name', `${tenant}/%`)
+        .eq('grain', grain)
+        .gte('ts', past)
+        .lte('ts', endDate)
+        .order('ts', { ascending: true })
+        .returns<(CatalogStats_Dashboard | DefaultStatsWithDocument)[]>();
+};
+
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
 //   This function is temporarily unused since the billing history table component is using filtered data
 //   returned by the billing_report RPC to populate the contents of its rows.
@@ -317,4 +361,9 @@ const getStatsForDetails = (
 //     );
 // };
 
-export { getStatsByName, getStatsForBilling, getStatsForDetails };
+export {
+    getStatsByName,
+    getStatsForBilling,
+    getStatsForDashboard,
+    getStatsForDetails,
+};

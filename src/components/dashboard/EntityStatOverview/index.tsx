@@ -2,16 +2,15 @@ import { Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import LinkWrapper from 'components/shared/LinkWrapper';
 import { ReactElement } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { Entity } from 'types';
 import ActiveEntityCount from './ActiveEntityCount';
-import Statistic from './Statistic';
+import MonthlyUsage from './MonthlyUsage';
 
 interface Props {
     Icon: ReactElement;
     background: { light: string; dark: string };
     entityType: Entity;
-    monthlyStat?: number;
 }
 
 const getEntityPageURLPath = (entityType: string): string => {
@@ -42,10 +41,7 @@ export default function EntityStatOverview({
     Icon,
     background,
     entityType,
-    monthlyStat,
 }: Props) {
-    const intl = useIntl();
-
     const route = getEntityPageURLPath(entityType);
     const titleId = getTitleId(entityType);
 
@@ -94,15 +90,9 @@ export default function EntityStatOverview({
             >
                 <ActiveEntityCount entityType={entityType} />
 
-                {typeof monthlyStat === 'number' ? (
-                    <Statistic
-                        label={intl.formatMessage({
-                            id: 'filter.time.thisMonth',
-                        })}
-                        loading={false}
-                        value={monthlyStat}
-                        byteUnit
-                    />
+                {entityType === 'capture' ||
+                entityType === 'materialization' ? (
+                    <MonthlyUsage byteUnit entityType={entityType} />
                 ) : null}
             </Stack>
         </Stack>

@@ -25,7 +25,6 @@ export default function Dashboard() {
                     Icon={<CloudUpload fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_teal}
                     entityType="capture"
-                    monthlyStat={1048}
                 />
             </Grid>
 
@@ -34,7 +33,6 @@ export default function Dashboard() {
                     Icon={<CloudDownload fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_purple}
                     entityType="materialization"
-                    monthlyStat={0}
                 />
             </Grid>
         </Grid>
