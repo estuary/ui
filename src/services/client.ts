@@ -1,4 +1,4 @@
-import { FETCH_DEFAULT_ERROR } from './shared';
+import { FETCH_DEFAULT_ERROR, logRocketConsole } from './shared';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
@@ -46,7 +46,7 @@ export const client = <Response, Request = {}>(
             }
         })
         .catch((error) => {
-            console.log('fetchPromise:error', error);
+            logRocketConsole('fetchPromise:error', error);
             return Promise.reject({
                 message: returnOriginalMessage
                     ? error.message

@@ -34,6 +34,7 @@ interface DraftSpecData {
     spec: any;
     catalog_name?: string;
     expect_pub_id?: string;
+    detail?: string;
 }
 
 export const createDraftSpec = (
@@ -61,7 +62,8 @@ export const modifyDraftSpec = (
     draftSpec: any,
     matchData: UpdateMatchData,
     catalogName?: string | null,
-    lastPubId?: string | null
+    lastPubId?: string | null,
+    detail?: string
 ) => {
     let data: DraftSpecData = { spec: draftSpec };
 
@@ -75,6 +77,10 @@ export const modifyDraftSpec = (
 
     if (lastPubId) {
         data = { ...data, expect_pub_id: lastPubId };
+    }
+
+    if (detail) {
+        data = { ...data, detail };
     }
 
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);

@@ -75,8 +75,8 @@ export const TableHydrator = ({
     useUnmount(() => {
         setDisableMultiSelect(false);
 
-        // TODO (https://github.com/estuary/ui/issues/815)
-        resetState();
+        // TODO (cache) https://github.com/estuary/ui/issues/815
+        resetState(true);
     });
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
