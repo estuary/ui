@@ -37,7 +37,7 @@ function DraftSpecEditor({
                 disabled={disabled}
                 height={editorHeight}
                 localZustandScope={localZustandScope}
-                manualSyncing={currentCatalogSyncing}
+                manuallySynced={currentCatalogSyncing}
                 onChange={onChange}
             />
         );
