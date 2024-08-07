@@ -79,21 +79,6 @@ const sortByDisableStatus = (
         : collectionB.localeCompare(collectionA);
 };
 
-const sortBindings = (bindings: any[]) => {
-    return bindings.sort((a, b) => {
-        const collectionA = getCollectionName(a);
-        const collectionB = getCollectionName(b);
-
-        return sortByDisableStatus(
-            a?.disable ?? false,
-            b?.disable ?? false,
-            collectionA,
-            collectionB,
-            true
-        );
-    });
-};
-
 const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
     const sortedResources: ResourceConfigDictionary = {};
 
@@ -214,6 +199,23 @@ const whatChanged = (
     const addedCollections = difference(targetCollections, currentCollections);
 
     return [removedCollections, addedCollections];
+};
+
+const initializeAndGenerateUUID = (
+    state: BindingState,
+    binding: any,
+    index: number
+) => {
+    const collection = getCollectionName(binding);
+    const UUID = crypto.randomUUID();
+
+    initializeBinding(state, collection, UUID);
+    initializeResourceConfig(state, binding, UUID, index);
+
+    return {
+        collection,
+        UUID,
+    };
 };
 
 const getInitialBindingData = (): Pick<
@@ -374,19 +376,21 @@ const getInitialState = (
                 state.backfilledBindings = [];
                 state.backfillAllBindings = false;
 
+                // TODO (perf) - we could probably go ahead and figure out the sort
+                //  while also going through and initializing but I am really tired right now
+
+                // Go through the discovered bindings BEFORE sorting so that
+                //  we know the original indexs of all the bindings.
                 state.resourceConfigs = {};
-
-                const discoveredBindings: any[] =
-                    draftSpecResponse.data[0].spec.bindings;
-
-                sortBindings(discoveredBindings).forEach(
-                    (binding: any, index) => {
-                        const collection = getCollectionName(binding);
-                        const UUID = crypto.randomUUID();
-
-                        initializeBinding(state, collection, UUID);
-                        initializeResourceConfig(state, binding, UUID, index);
+                draftSpecResponse.data[0].spec.bindings.forEach(
+                    (binding: any, index: number) => {
+                        initializeAndGenerateUUID(state, binding, index);
                     }
+                );
+
+                // Now that we have gone through the initialized everything we are safe to sort
+                state.resourceConfigs = sortResourceConfigs(
+                    state.resourceConfigs
                 );
 
                 state.discoveredCollections = Object.values(
@@ -516,11 +520,11 @@ const getInitialState = (
                 }
 
                 bindings.forEach((binding, index) => {
-                    const collection = getCollectionName(binding);
-                    const UUID = crypto.randomUUID();
-
-                    initializeBinding(state, collection, UUID);
-                    initializeResourceConfig(state, binding, UUID, index);
+                    const { UUID, collection } = initializeAndGenerateUUID(
+                        state,
+                        binding,
+                        index
+                    );
 
                     if (entityType === 'materialization') {
                         initializeFullSourceConfig(state, binding, UUID);

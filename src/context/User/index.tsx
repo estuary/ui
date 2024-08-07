@@ -22,8 +22,6 @@ const UserStoreProvider = ({ children }: BaseComponentProps) => {
             async (event, change_session) => {
                 logRocketConsole('Auth:Event:', event);
 
-                console.log('change_session', change_session);
-
                 if (event === 'INITIAL_SESSION') {
                     setInitialized(true);
                 }
