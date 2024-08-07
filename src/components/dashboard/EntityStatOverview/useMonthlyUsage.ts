@@ -1,5 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
+import { isArray } from 'lodash';
 import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import { CatalogStats_Dashboard } from 'types';
@@ -44,5 +45,11 @@ export default function useMonthlyUsage() {
         return [dataWritten, dataRead];
     }, [data]);
 
-    return { captureUsage, error, isValidating, materializationUsage };
+    return {
+        captureUsage,
+        error,
+        isValidating,
+        loading: !isArray(data),
+        materializationUsage,
+    };
 }

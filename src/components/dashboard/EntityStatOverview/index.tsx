@@ -12,6 +12,7 @@ interface Props {
     background: { light: string; dark: string };
     entityType: Entity;
     monthlyUsage?: number;
+    monthlyUsageLoading?: boolean;
 }
 
 const getEntityPageURLPath = (entityType: string): string => {
@@ -43,6 +44,7 @@ export default function EntityStatOverview({
     background,
     entityType,
     monthlyUsage,
+    monthlyUsageLoading,
 }: Props) {
     const intl = useIntl();
 
@@ -99,7 +101,7 @@ export default function EntityStatOverview({
                         label={intl.formatMessage({
                             id: 'filter.time.thisMonth',
                         })}
-                        loading={false}
+                        loading={monthlyUsageLoading ?? false}
                         value={monthlyUsage}
                         byteUnit
                     />
