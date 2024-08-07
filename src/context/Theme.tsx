@@ -355,6 +355,24 @@ export const semiTransparentBackgroundIntensified = {
     dark: 'rgba(247, 249, 252, 0.08)',
 };
 
+// RGB translation of #C2CDFF.
+export const semiTransparentBackground_blue = {
+    light: '#F4F6FF',
+    dark: 'rgba(194, 205, 255, 0.12)',
+};
+
+// RGB translation of #BAEDF2.
+export const semiTransparentBackground_teal = {
+    light: '#EFFBFC',
+    dark: 'rgba(186, 237, 242, 0.12)',
+};
+
+// RGB translation of #D6C2FF.
+export const semiTransparentBackground_purple = {
+    light: '#F7F3FF',
+    dark: 'rgba(214, 194, 255, 0.12)',
+};
+
 export const textloadingColor = {
     light: 'rgba(11, 19, 30, 0.4)',
     dark: 'rgba(247, 249, 252, 0.4)',

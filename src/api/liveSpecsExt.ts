@@ -9,6 +9,7 @@ import {
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
+    SHARDS_DISABLE,
     SortingProps,
     supabaseRetry,
     TABLES,
@@ -368,6 +369,23 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     return data;
 };
 
+interface LiveSpecShards {
+    disable: boolean | null;
+}
+
+const getLiveSpecShards = async (entityType: Entity) => {
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(SHARDS_DISABLE)
+                .eq('spec_type', entityType),
+        'getActiveLiveSpecCount'
+    ).then(handleSuccess<LiveSpecShards[]>, handleFailure);
+
+    return data;
+};
+
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
@@ -379,4 +397,5 @@ export {
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecShards,
 };

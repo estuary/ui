@@ -61,6 +61,8 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.entity': `Entity`,
+    'terms.sources': `Sources`,
+    'terms.destinations': `Destinations`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -155,6 +157,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.back': `Back`,
     'cta.revoke': `Revoke`,
     'cta.goToDetails': `See Details`,
+    'cta.goToEntityPage': `See all`,
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
