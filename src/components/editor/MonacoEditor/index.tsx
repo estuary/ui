@@ -273,13 +273,21 @@ function MonacoEditor({
 
             // if the editor is disabled then don't handle the change. That way if
             //  we are syncing the edit with latest currentCatalog we don't accidently
-            //  fire a change.
+            //  fire a change event.
             if (disabled || manuallySynced) {
                 logRocketConsole('handlers:change:skipped', {
                     disabled,
                     syncing: manuallySynced,
                 });
-                setStatus(EditorStatus.SAVING, evaluatedPath);
+
+                // This is a really small edge case where a user has manually edited the spec, then clicked
+                //  quickly a lot on the backfill button. This can make a state when the editor is firing on change
+                //  because the value has been updated via the manual sync. So if that has happened we
+                //  _should_ be safe resetting the status. Otherwise, the status might get stuck in a funky mode where
+                //  it looks like it is trying to save.
+                if (manuallySynced && status !== EditorStatus.IDLE) {
+                    setStatus(EditorStatus.IDLE, evaluatedPath);
+                }
                 return;
             }
 
