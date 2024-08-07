@@ -4,12 +4,13 @@ import { authenticatedRoutes } from 'app/routes';
 import Dashboard from 'components/dashboard';
 import HeroImageAndDescription from 'components/hero';
 import LoginNotifications from 'components/login/Notifications';
+import { useShowDashboardWelcome } from 'context/DashboardWelcome';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import usePageTitle from 'hooks/usePageTitle';
 import { Plus, Xmark } from 'iconoir-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const Home = () => {
@@ -19,7 +20,7 @@ const Home = () => {
         GlobalSearchParams.HOME_PAGE_ERROR
     );
 
-    const [welcomeShown, setWelcomeShown] = useState(false);
+    const { welcomeShown, setWelcomeShown } = useShowDashboardWelcome();
 
     // home page error related
     const notificationMessage = useMemo(() => {
