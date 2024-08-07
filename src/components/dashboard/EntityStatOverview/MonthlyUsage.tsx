@@ -1,8 +1,7 @@
 import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
 import { DateTime } from 'luxon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useMount } from 'react-use';
 import { CatalogStats_Dashboard, Entity } from 'types';
 import Statistic from './Statistic';
 
@@ -10,6 +9,24 @@ interface Props {
     entityType: Entity;
     byteUnit?: boolean;
 }
+
+// These values are defined in the following `flow` repository file: _ops-catalog/catalog-stats.ts_.
+// TODO (typing): This type should be applied anywhere billing-related code needs to reference this property.
+type FlowDocumentEntityIdentifier = 'capture' | 'materialize' | 'derive';
+
+const getEntityIdentifier = (
+    entityType: Entity
+): FlowDocumentEntityIdentifier => {
+    if (entityType === 'capture') {
+        return 'capture';
+    }
+
+    if (entityType === 'materialization') {
+        return 'materialize';
+    }
+
+    return 'derive';
+};
 
 const isDefaultStatistic = (
     datum: CatalogStats_Dashboard | DefaultStatsWithDocument
@@ -21,7 +38,9 @@ export default function MonthlyUsage({ entityType, byteUnit }: Props) {
     const [loading, setLoading] = useState(true);
     const [usage, setUsage] = useState(0);
 
-    useMount(() => {
+    const targetDocProp = getEntityIdentifier(entityType);
+
+    useEffect(() => {
         const endDate = DateTime.utc().startOf('month');
 
         getStatsForDashboard(
@@ -41,7 +60,7 @@ export default function MonthlyUsage({ entityType, byteUnit }: Props) {
                                 Object.hasOwn(flow_document, 'taskStats') &&
                                 Object.hasOwn(
                                     flow_document.taskStats,
-                                    entityType
+                                    targetDocProp
                                 )
                         )
                         .forEach((datum) => {
@@ -70,7 +89,7 @@ export default function MonthlyUsage({ entityType, byteUnit }: Props) {
                 setLoading(false);
             }
         );
-    });
+    }, [entityType, targetDocProp]);
 
     return (
         <Statistic
