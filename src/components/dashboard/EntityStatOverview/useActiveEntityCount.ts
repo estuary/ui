@@ -1,5 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getLiveSpecShards } from 'api/liveSpecsExt';
+import { isArray } from 'lodash';
 import { useMemo } from 'react';
 import { Entity } from 'types';
 
@@ -17,5 +18,5 @@ export default function useActiveEntityCount(entityType: Entity) {
         [data]
     );
 
-    return { count, error, isValidating };
+    return { count, error, isValidating, loading: !isArray(data) };
 }
