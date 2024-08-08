@@ -283,7 +283,7 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.support': `Email Support`,
     'helpMenu.support.link': `${CommonMessages['support.email']}`,
     'helpMenu.contact': `${CTAs['cta.contactUs']}`,
-    'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
+    'helpMenu.contact.link': `https://estuary.dev/contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
