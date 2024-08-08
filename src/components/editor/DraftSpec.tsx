@@ -17,22 +17,28 @@ function DraftSpecEditor({
     entityName,
     monitorCurrentCatalog,
 }: Props) {
-    const { draftSpec, isValidating, onChange, defaultValue } =
-        useDraftSpecEditor(
-            entityName,
-            localZustandScope,
-            undefined,
-            monitorCurrentCatalog
-        );
+    const {
+        currentCatalogSyncing,
+        defaultValue,
+        draftSpec,
+        isValidating,
+        onChange,
+    } = useDraftSpecEditor(
+        entityName,
+        localZustandScope,
+        undefined,
+        monitorCurrentCatalog
+    );
 
     if (draftSpec) {
         return (
             <MonacoEditor
-                disabled={disabled}
-                localZustandScope={localZustandScope}
-                height={editorHeight}
-                onChange={onChange}
                 defaultValue={defaultValue}
+                disabled={disabled}
+                height={editorHeight}
+                localZustandScope={localZustandScope}
+                manuallySynced={currentCatalogSyncing}
+                onChange={onChange}
             />
         );
     } else if (isValidating) {

@@ -7,11 +7,12 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, isEqual, set } from 'lodash';
+import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { debounce, get, has, isEqual, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
+import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
@@ -23,6 +24,7 @@ function useDraftSpecEditor(
     // We store off a ref and a state so we can constantly do compares against
     //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
+    const [currentCatalogSyncing, setCurrentCatalogSyncing] = useState(false);
     const draftSpecRef = useRef<DraftSpec>(null);
 
     // Draft Editor Store
@@ -137,27 +139,44 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
-    // This for advanced spec editor
+    // This is for keeping advanced spec editor updated as the forms change.
+    //  Especially stuff like backfill, autoDiscover, and timeTravel
+    const debouncedUpdate = useRef(
+        debounce((updatedCurrentCatalog: DraftSpecQuery) => {
+            setDraftSpec(updatedCurrentCatalog);
+            setCurrentCatalogSyncing(false);
+        }, DEFAULT_DEBOUNCE_WAIT)
+    );
+
     useEffect(() => {
         if (
             monitorCurrentCatalog &&
             currentCatalog &&
             !isEqual(draftSpecRef.current, currentCatalog)
         ) {
-            setDraftSpec(currentCatalog);
+            setCurrentCatalogSyncing(true);
+            debouncedUpdate.current(currentCatalog);
         }
     }, [currentCatalog, monitorCurrentCatalog]);
 
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return useMemo(() => {
         return {
-            onChange: processEditorValue,
+            currentCatalogSyncing,
+            defaultValue: specAsString,
             draftSpec,
             isValidating,
             mutate,
-            defaultValue: specAsString,
+            onChange: processEditorValue,
         };
-    }, [draftSpec, isValidating, mutate, processEditorValue, specAsString]);
+    }, [
+        currentCatalogSyncing,
+        draftSpec,
+        isValidating,
+        mutate,
+        processEditorValue,
+        specAsString,
+    ]);
 }
 
 export default useDraftSpecEditor;
