@@ -28,6 +28,7 @@ import {
 } from 'stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
+import useBackgroundTest from './FieldSelection/useBackgroundTest';
 
 interface Props {
     itemType: string;
@@ -38,6 +39,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
+    const { refreshRequired } = useBackgroundTest();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();
@@ -92,6 +94,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                             bindingUUID={currentBindingUUID}
                             collectionName={currentCollection}
                             readOnly={readOnly}
+                            refreshRequired={refreshRequired}
                         />
                     ) : collectionData || collectionData === null ? (
                         <Stack spacing={2}>
