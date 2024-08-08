@@ -15,6 +15,7 @@ import {
     useSchemaEvolution_settingsActive,
 } from 'stores/SchemaEvolution/hooks';
 import { Schema } from 'types';
+import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useAutoDiscovery() {
     // Draft Editor Store
@@ -32,12 +33,11 @@ function useAutoDiscovery() {
     const setSettingsActive = useSchemaEvolution_setSettingsActive();
     const setSettingsSaving = useSchemaEvolution_setSettingsSaving();
 
-    // TODO (schema evolution): Determine a comfortable debounce interval.
     const debouncedUpdate = useRef(
         debounce(() => {
             setSettingsActive(false);
             setSettingsSaving(true);
-        }, 500)
+        }, DEFAULT_DEBOUNCE_WAIT)
     );
 
     useEffect(() => {
