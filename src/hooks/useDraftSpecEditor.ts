@@ -139,8 +139,8 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
-    // This for keeping advanced spec editor updated as the forms
-    //  above it change. Especially stuff like backfill, autoDiscover, and timeTravel
+    // This is for keeping advanced spec editor updated as the forms change.
+    //  Especially stuff like backfill, autoDiscover, and timeTravel
     const debouncedUpdate = useRef(
         debounce((updatedCurrentCatalog: DraftSpecQuery) => {
             setDraftSpec(updatedCurrentCatalog);
