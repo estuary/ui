@@ -41,7 +41,18 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
     );
 
 // for endpoints where we do not want to mess with the request at all
-const ignoreURLs = ['logr-ingest', 'logrocket'];
+//  These should stay in sync with what is added to the CSP policy
+//      public/nginx.conf
+const ignoreURLs = [
+    'logrocket',
+    'lr-ingest',
+    'logrocket',
+    'lr-in',
+    'lr-in-prod',
+    'lr-intake',
+    'intake-lr',
+    'logr-ingest',
+];
 const shouldIgnore = (url?: string) =>
     ignoreURLs.some((el) => url?.includes(el));
 
