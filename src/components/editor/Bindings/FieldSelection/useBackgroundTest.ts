@@ -61,6 +61,10 @@ export default function useBackgroundTest() {
     }, [entityType, formStatus, isEdit]);
 
     useEffect(() => {
+        if (entityType !== 'materialization') {
+            return;
+        }
+
         // If we need an update at the same time we are generating then we need to show
         //  the refresh message.
         if (
@@ -74,9 +78,13 @@ export default function useBackgroundTest() {
             //  a built spec but it is pretty darn close.
             setRefreshRequired(false);
         }
-    }, [bindingUpdated, endpointConfigUpdated, formStatus]);
+    }, [bindingUpdated, endpointConfigUpdated, formStatus, entityType]);
 
     useEffect(() => {
+        if (entityType !== 'materialization') {
+            return;
+        }
+
         if (draftSpecs.length > 0 && formStatus === FormStatus.GENERATED) {
             if (fireBackgroundTest.current) {
                 // We only want to force an update if the spec is disabled. This way when a
@@ -99,7 +107,7 @@ export default function useBackgroundTest() {
                 void refresh(draftId, forceEnabled);
             }
         }
-    }, [draftId, draftSpecs, formStatus, refresh, setForcedEnable]);
+    }, [draftId, draftSpecs, formStatus, refresh, setForcedEnable, entityType]);
 
     return { refreshRequired };
 }
