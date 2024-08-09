@@ -17,12 +17,14 @@ import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 interface Props {
     bindingUUID: string;
     collectionName: string;
+    refreshRequired: boolean;
     readOnly?: boolean;
 }
 
 function ResourceConfig({
     bindingUUID,
     collectionName,
+    refreshRequired,
     readOnly = false,
 }: Props) {
     const entityType = useEntityType();
@@ -78,6 +80,7 @@ function ResourceConfig({
                 <FieldSelectionViewer
                     bindingUUID={bindingUUID}
                     collectionName={collectionName}
+                    refreshRequired={refreshRequired}
                 />
             ) : null}
 
