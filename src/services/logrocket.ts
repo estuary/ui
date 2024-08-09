@@ -41,20 +41,10 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
     );
 
 // for endpoints where we do not want to mess with the request at all
-//  These should stay in sync with what is added to the CSP policy
-//      public/nginx.conf
-const ignoreURLs = [
-    'logrocket',
-    'lr-ingest',
-    'logrocket',
-    'lr-in',
-    'lr-in-prod',
-    'lr-intake',
-    'intake-lr',
-    'logr-ingest',
-];
-const shouldIgnore = (url?: string) =>
-    ignoreURLs.some((el) => url?.includes(el));
+//  These should stay in sync with what is added to the CSP policy (public/nginx.conf)
+const ignoreRegEx =
+    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest)/;
+const shouldIgnore = (url?: string) => ignoreRegEx.test(url ?? '');
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
