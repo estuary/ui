@@ -31,6 +31,7 @@ import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
+const nameTaken = 'is already in use';
 
 const submit_onboard = async (
     requestedTenant: string,
@@ -112,7 +113,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     };
 
     const nameAlreadyUsed = useMemo(
-        () => serverError?.includes('is already in use'),
+        () => serverError?.includes(nameTaken),
         [serverError]
     );
 
