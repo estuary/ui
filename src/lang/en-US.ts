@@ -143,6 +143,8 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     'cta.register.github': `Register with GitHub`,
     'cta.login.azure': `Sign in with Azure`,
     'cta.register.azure': `Register with Azure`,
+    'cta.login.sso': `Sign in with SSO`,
+    'cta.register.sso': `Register with SSO`,
     'cta.configure': `Configure`,
     'cta.showAll': `Show All`,
     'cta.reload': `Reload`,
@@ -156,6 +158,7 @@ const CTAs: ResolvedIntlConfig['messages'] = {
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
+    'cta.contactUs': `Contact Us`,
 };
 
 const Data: ResolvedIntlConfig['messages'] = {
@@ -221,6 +224,8 @@ const FullPage: ResolvedIntlConfig['messages'] = {
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
+
+    'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 };
 
 const EntitiesHydrator: ResolvedIntlConfig['messages'] = {
@@ -277,8 +282,8 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
     'helpMenu.support': `Email Support`,
     'helpMenu.support.link': `${CommonMessages['support.email']}`,
-    'helpMenu.contact': `Contact Us`,
-    'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
+    'helpMenu.contact': `${CTAs['cta.contactUs']}`,
+    'helpMenu.contact.link': `https://estuary.dev/contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
@@ -358,10 +363,30 @@ const LoginPage: ResolvedIntlConfig['messages'] = {
 
     'login.tabs.login': `Sign In`,
     'login.tabs.register': `Register`,
-    'login.login.message': `Sign in to continue to ${CommonMessages.productName}.`,
     'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
-    'login.register.message': `Please log in with a provider to use ${CommonMessages.productName} for free.`,
+    'login.login.message': `Get started with ${CommonMessages.productName}`,
+    'login.register.message': `Get started with ${CommonMessages.productName}`,
+    'login.register.perks1.emphasis': `No credit card`,
+    'login.register.perks1': `{emphasis} required`,
+    'login.register.perks2.emphasis': `free trial`,
+    'login.register.perks2': `30 days {emphasis}`,
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
+
+    'login.sso': `Single Sign-On (SSO) Successful`,
+    'login.sso.back': `Back to Sign In`,
+    'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
+
+    'login.sso.register.message.help': `To register with Single Sign-On {docLink}.`,
+    'login.sso.register.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.register.message.help.docPath': `${Header['helpMenu.contact.link']}`,
+
+    'login.sso.message.help': `To enable Single Sign-On on your account {docLink}.`,
+    'login.sso.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.message.help.docPath': `${Header['helpMenu.contact.link']}`,
+
+    'login.companyEmail.description': `Please enter your company email`,
+    'login.companyEmail.label': `Company Email`,
+    'login.signinFailed.message.default': `There was an issue finding and using an SSO provider for the domain "{domain}".`,
 
     'login.magicLink': 'Magic link sent. Please check your email.',
     'login.magicLink.failed': 'Failed. Please try again.',
@@ -491,12 +516,15 @@ const AdminPage: ResolvedIntlConfig['messages'] = {
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier.`,
+    'admin.billing.error.details.header': `There was a network issue.`,
+    'admin.billing.error.details.message': `There was an error fetching your billing details. ${Error['error.tryAgain']}`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
     'admin.billing.error.undefinedPricingTier': `An issue was encountered gathering information about the pricing tier associated with this tenant. Please {docLink}.`,
     'admin.billing.error.undefinedPricingTier.docLink': `${CTAs['cta.support']}`,
     'admin.billing.error.undefinedPricingTier.docPath': `${CommonMessages['support.email']}`,
     'admin.billing.label.tiers': `Pricing Tier`,
     'admin.billing.label.lineItems': `Your bill for:`,
+    'admin.billing.label.lineItems.empty': `No bill to display`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,
@@ -1442,7 +1470,9 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.update.failed': `Field selection update failed`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.defaultField': `Default`,
+    'fieldSelection.table.cta.defaultAllFields': `Default All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
+    'fieldSelection.table.cta.excludeAllFields': `Exclude All`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.empty.header': `No information found`,
@@ -1455,6 +1485,7 @@ const FieldSelection: ResolvedIntlConfig['messages'] = {
     'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
+    'fieldSelection.table.label.filter': `Filter fields`,
 };
 
 const Notifications: ResolvedIntlConfig['messages'] = {

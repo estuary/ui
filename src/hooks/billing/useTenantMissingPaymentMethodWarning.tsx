@@ -4,14 +4,14 @@ import {
     getPaymentMethodsForTenants,
 } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
-import { useTenantDetails } from 'context/fetcher/Tenant';
+import { useTenantBillingDetails } from 'context/fetcher/TenantBillingDetails';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { DateTime } from 'luxon';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'services/shared';
-import { useEntitiesStore_hasSupportRole } from 'stores/Entities/hooks';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
@@ -37,8 +37,10 @@ function useTenantMissingPaymentMethodWarning() {
         notificationStoreSelectors.hideNotification
     );
 
-    const { tenants } = useTenantDetails();
-    const hasSupportRole = useEntitiesStore_hasSupportRole();
+    const { tenantBillingDetails } = useTenantBillingDetails();
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
 
     const [paymentMethods, setPaymentMethods] =
         useState<MultiplePaymentMethods | null>(null);
@@ -50,16 +52,22 @@ function useTenantMissingPaymentMethodWarning() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!hasSupportRole && tenants) {
-                setPaymentMethods(await getPaymentMethodsForTenants(tenants));
+            if (!hasSupportRole && tenantBillingDetails) {
+                setPaymentMethods(
+                    await getPaymentMethodsForTenants(tenantBillingDetails)
+                );
             }
         };
 
         void fetchData();
-    }, [hasSupportRole, tenants]);
+    }, [hasSupportRole, tenantBillingDetails]);
 
     useEffect(() => {
-        if (showedNotificationOnce.current || !tenants || !paymentMethods) {
+        if (
+            showedNotificationOnce.current ||
+            !tenantBillingDetails ||
+            !paymentMethods
+        ) {
             return;
         }
 
@@ -71,7 +79,7 @@ function useTenantMissingPaymentMethodWarning() {
         }
 
         // Find all the tenants the user can access that are in the trial period
-        const tenantsInTrial = tenants
+        const tenantsInTrial = tenantBillingDetails
             .filter((tenantDetail) => tenantDetail.trial_start)
             .sort((first, second) =>
                 basicSort_string(first.trial_start, second.trial_start, 'asc')
@@ -223,7 +231,7 @@ function useTenantMissingPaymentMethodWarning() {
         hideNotification,
         paymentMethods,
         showNotification,
-        tenants,
+        tenantBillingDetails,
     ]);
 
     return paymentMethods;

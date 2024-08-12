@@ -56,9 +56,9 @@ function EntityTableFooter({
                 </TableRow>
             </TableFooter>
         );
-    } else {
-        return null;
     }
+
+    return null;
 }
 
 export default EntityTableFooter;

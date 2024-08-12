@@ -215,6 +215,24 @@ test.describe.serial('Admin:', () => {
         });
     });
 
+    test.describe('Billing', () => {
+        test.beforeAll(async () => {
+            await page.getByRole('tab', { name: 'Billing' }).click();
+        });
+
+        test('shows details about the free tier', async () => {
+            await expect(page.locator('#root')).toContainText(
+                'The free tier lets you try Flow with up to 2 tasks and 10GB per month'
+            );
+        });
+
+        test('shows the tenant in the selector', async () => {
+            await expect(
+                page.getByRole('combobox', { name: 'Prefix' })
+            ).toHaveValue(tenant);
+        });
+    });
+
     test.describe('Connectors', () => {
         test.beforeAll(async () => {
             await page.getByRole('tab', { name: 'Connectors' }).click();

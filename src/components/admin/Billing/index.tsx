@@ -1,5 +1,5 @@
 import { Divider, Grid, Typography } from '@mui/material';
-import { Invoice, getInvoicesBetween } from 'api/billing';
+import { getInvoicesBetween } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
 import DateRange from 'components/admin/Billing/DateRange';
@@ -14,10 +14,7 @@ import AlertBox from 'components/shared/AlertBox';
 import BillingLineItemsTable from 'components/tables/BillLineItems';
 import BillingHistoryTable from 'components/tables/Billing';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
-import useBillingCatalogStats from 'hooks/billing/useBillingCatalogStats';
-import useInvoice from 'hooks/billing/useBillingRecord';
 import usePageTitle from 'hooks/usePageTitle';
-import { isArray, isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
@@ -30,6 +27,7 @@ import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { TOTAL_CARD_HEIGHT, invoiceId } from 'utils/billing-utils';
 import { AdminBillingProps } from './types';
+import BillingLoadError from './LoadError';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
@@ -38,32 +36,35 @@ const routeTitle = authenticatedRoutes.admin.billing.title;
 const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
+    usePageTitle({
+        header: routeTitle,
+        headerLink: 'https://www.estuary.dev/pricing/',
+    });
+
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Billing Store
-    const hydrated = useBillingStore((state) => state.hydrated);
-    const setHydrated = useBillingStore((state) => state.setHydrated);
+    // TODO (billing store)
+    // The `active` stuff could probably be removed now that other stuff is
+    //  cleaned up - but leaving to make it easier
+    const [active, setActive] = useBillingStore((state) => [
+        state.active,
+        state.setActive,
+    ]);
+    const [hydrated, setHydrated] = useBillingStore((state) => [
+        state.hydrated,
+        state.setHydrated,
+    ]);
     const setHydrationErrorsExist = useBillingStore(
         (state) => state.setHydrationErrorsExist
-    );
-
-    const historyInitialized = useBillingStore(
-        (state) => state.invoicesInitialized
     );
     const setHistoryInitialized = useBillingStore(
         (state) => state.setInvoicesInitialized
     );
     const setInvoices = useBillingStore((state) => state.setInvoices);
-    const updateBillingHistory = useBillingStore(
-        (state) => state.updateInvoices
-    );
-    const setActive = useBillingStore((state) => state.setActive);
     const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
 
     const selectedInvoice = useBilling_selectedInvoice();
-    const setDataByTaskGraphDetails = useBillingStore(
-        (state) => state.setDataByTaskGraphDetails
-    );
 
     const resetBillingState = useBillingStore((state) => state.resetState);
 
@@ -79,18 +80,10 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         return { start: startMonth, end: currentMonth };
     }, [currentMonth]);
 
-    const {
-        billingStats,
-        error: billingStatsError,
-        isValidating: isValidatingStats,
-    } = useBillingCatalogStats();
-
-    const { invoices: currentMonthInvoices, isValidating: isValidatingRecord } =
-        useInvoice(startOfMonth(currentMonth));
-
     useEffect(() => {
-        if (selectedTenant && !hydrated && !historyInitialized) {
+        if (selectedTenant) {
             void (async () => {
+                setNetworkFailed(null);
                 setActive(true);
                 try {
                     const response = await getInvoicesBetween(
@@ -101,86 +94,33 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     if (response.error) {
                         throw new Error(response.error.message);
                     }
-                    const data: Invoice[] = [];
-
-                    response.data.forEach((invoice) => {
-                        data.push(invoice);
-                    });
-
                     setNetworkFailed(null);
-                    setInvoices(data);
+                    setHydrationErrorsExist(false);
+                    setInvoices(response.data);
                 } catch (errorMessage: unknown) {
                     setNetworkFailed(`${errorMessage}`);
                     setHydrationErrorsExist(true);
-                    setHydrated(true);
+                    setInvoices([]);
                 } finally {
+                    setHydrated(true);
                     setHistoryInitialized(true);
+                    setActive(false);
                 }
             })();
         }
     }, [
-        setInvoices,
+        dateRange.end,
+        dateRange.start,
+        selectedTenant,
+        setActive,
         setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
-        dateRange,
-        historyInitialized,
-        hydrated,
-        selectedTenant,
-        setActive,
+        setInvoices,
         setNetworkFailed,
     ]);
 
-    useEffect(() => {
-        if (!isValidatingStats && billingStats) {
-            setDataByTaskGraphDetails(billingStats);
-
-            if (!hydrated) {
-                setHydrated(true);
-            }
-        }
-
-        if (billingStatsError) {
-            setHydrationErrorsExist(true);
-            setHydrated(true);
-        }
-    }, [
-        setDataByTaskGraphDetails,
-        setHydrated,
-        setHydrationErrorsExist,
-        billingStats,
-        billingStatsError,
-        hydrated,
-        isValidatingStats,
-    ]);
-
-    useEffect(() => {
-        if (
-            historyInitialized &&
-            !isValidatingRecord &&
-            !isEmpty(currentMonthInvoices)
-        ) {
-            updateBillingHistory(
-                isArray(currentMonthInvoices)
-                    ? currentMonthInvoices
-                    : [currentMonthInvoices],
-                selectedTenant
-            );
-        }
-    }, [
-        updateBillingHistory,
-        currentMonthInvoices,
-        historyInitialized,
-        isValidatingRecord,
-        selectedTenant,
-    ]);
-
     useUnmount(() => resetBillingState());
-
-    usePageTitle({
-        header: routeTitle,
-        headerLink: 'https://www.estuary.dev/pricing/',
-    });
 
     return (
         <>
@@ -206,6 +146,8 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+                <BillingLoadError />
+
                 <Grid item xs={12} md={6}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
@@ -234,7 +176,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     <CardWrapper
                         height={invoiceCardHeight}
                         message={
-                            hydrated && selectedInvoice ? (
+                            active || !hydrated ? (
+                                <FormattedMessage id="admin.billing.label.lineItems.loading" />
+                            ) : selectedInvoice ? (
                                 <>
                                     <FormattedMessage id="admin.billing.label.lineItems" />
                                     <DateRange
@@ -243,21 +187,19 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                                     />
                                 </>
                             ) : (
-                                <FormattedMessage id="admin.billing.label.lineItems.loading" />
+                                <FormattedMessage id="admin.billing.label.lineItems.empty" />
                             )
                         }
                     >
-                        {hydrated ? (
-                            <>
-                                {/* The key here makes sure that any stateful fetching logic doesn't get confused. */}
-                                <BillingLineItemsTable
-                                    key={
-                                        selectedInvoice
-                                            ? invoiceId(selectedInvoice)
-                                            : null
-                                    }
-                                />
-                            </>
+                        {!active && hydrated ? (
+                            <BillingLineItemsTable
+                                // The key here makes sure that any stateful fetching logic doesn't get confused.
+                                key={
+                                    selectedInvoice
+                                        ? invoiceId(selectedInvoice)
+                                        : null
+                                }
+                            />
                         ) : (
                             <GraphLoadingState />
                         )}

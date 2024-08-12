@@ -2,7 +2,6 @@ import { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 import {
     DEFAULT_FILTER,
     getUserDetails,
@@ -42,9 +41,10 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
     );
 
 // for endpoints where we do not want to mess with the request at all
-const ignoreURLs = ['lr-in-prod'];
-const shouldIgnore = (url?: string) =>
-    ignoreURLs.some((el) => url?.includes(el));
+//  These should stay in sync with what is added to the CSP policy (public/nginx.conf)
+const ignoreRegEx =
+    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest)/;
+const shouldIgnore = (url?: string) => ignoreRegEx.test(url ?? '');
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
@@ -172,6 +172,7 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_VERSION__,
             dom: {
+                disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
             },
@@ -200,7 +201,6 @@ export const initLogRocket = () => {
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
     }
 };
 

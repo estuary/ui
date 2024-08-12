@@ -17,6 +17,7 @@ import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
+    useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -30,6 +31,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { hasLength } from 'utils/misc-utils';
+import { useEntityType } from 'context/EntityContext';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {
@@ -73,8 +75,11 @@ function useSave(
         notificationStoreSelectors.showNotification
     );
 
+    const entityType = useEntityType();
+
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+    const disabledBindings = useBinding_disabledBindings(entityType);
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -229,11 +234,17 @@ function useSave(
                             (collection) => !collections.includes(collection)
                         );
 
+                    // For a test we do not want to remove from draft - otherwise we would need
+                    //  to add them back in after the test.
+                    const disabledCollections: string[] = dryRun
+                        ? []
+                        : disabledBindings;
+
                     const deleteDraftSpecsResponse =
                         await deleteDraftSpecsByCatalogName(
                             draftId,
                             'collection',
-                            unboundCollections
+                            [...unboundCollections, ...disabledCollections]
                         );
                     if (deleteDraftSpecsResponse.error) {
                         return onFailure({
@@ -270,6 +281,7 @@ function useSave(
         },
         [
             collections,
+            disabledBindings,
             dryRun,
             entityDescription,
             fullSourceErrorsExist,

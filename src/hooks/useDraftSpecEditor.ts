@@ -7,27 +7,31 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { DraftSpec } from 'hooks/useDraftSpecs';
-import { get, has, isEqual, set } from 'lodash';
+import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { debounce, get, has, isEqual, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { Entity } from 'types';
+import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
     localScope?: boolean,
-    editorSchemaScope?: string
+    editorSchemaScope?: string,
+    monitorCurrentCatalog?: boolean
 ) {
     // Local State
     // We store off a ref and a state so we can constantly do compares against
     //  the ref and not cause re-renders. This makes sure we do not do extra updates
     const [draftSpec, setDraftSpec] = useState<DraftSpec>(null);
+    const [currentCatalogSyncing, setCurrentCatalogSyncing] = useState(false);
     const draftSpecRef = useRef<DraftSpec>(null);
 
     // Draft Editor Store
     const currentCatalog = useEditorStore_currentCatalog({
         localScope,
     });
+
     const setSpecs = useEditorStore_setSpecs({
         localScope,
     });
@@ -82,11 +86,17 @@ function useDraftSpecEditor(
                 });
 
                 // Update only the SPEC on the server
-                const updateResponse = await modifyDraftSpec(updatedSpec, {
-                    draft_id: draftId,
-                    catalog_name: catalogName,
-                    spec_type: specType,
-                });
+                const updateResponse = await modifyDraftSpec(
+                    updatedSpec,
+                    {
+                        draft_id: draftId,
+                        catalog_name: catalogName,
+                        spec_type: specType,
+                    },
+                    undefined,
+                    undefined,
+                    'Manually Edited'
+                );
 
                 if (updateResponse.error) {
                     return Promise.reject();
@@ -106,6 +116,7 @@ function useDraftSpecEditor(
         [draftId, draftSpec, mutate]
     );
 
+    // This is mainly for the binding collection editing
     useEffect(() => {
         if (draftSpecs.length > 0) {
             setSpecs(draftSpecs);
@@ -128,46 +139,44 @@ function useDraftSpecEditor(
         }
     }, [currentCatalog, draftSpecs, entityName, setSpecs]);
 
+    // This is for keeping advanced spec editor updated as the forms change.
+    //  Especially stuff like backfill, autoDiscover, and timeTravel
+    const debouncedUpdate = useRef(
+        debounce((updatedCurrentCatalog: DraftSpecQuery) => {
+            setDraftSpec(updatedCurrentCatalog);
+            setCurrentCatalogSyncing(false);
+        }, DEFAULT_DEBOUNCE_WAIT)
+    );
+
     useEffect(() => {
-        if (currentCatalog && !isEqual(draftSpecRef.current, currentCatalog)) {
-            setDraftSpec(currentCatalog);
+        if (
+            monitorCurrentCatalog &&
+            currentCatalog &&
+            !isEqual(draftSpecRef.current, currentCatalog)
+        ) {
+            setCurrentCatalogSyncing(true);
+            debouncedUpdate.current(currentCatalog);
         }
-    }, [currentCatalog]);
-
-    // TODO (sync editing) : turning off as right now this will show lots of "Out of sync" errors
-    //    because we are comparing two JSON objects that are being stringified and that means the order
-    //    change change whenever. We should probably compare the two objects and THEN if those do not match
-    //    show an error/diff editor.
-    //
-    // useEffectOnce(() => {
-    //     const publicationSubscription = supabaseClient
-    //         .from(TABLES.DRAFT_SPECS)
-    //         .on('*', async (payload: any) => {
-    //             if (payload.new.spec) {
-    //                 setServerUpdates(payload.new.spec);
-    //             }
-    //         })
-    //         .subscribe();
-
-    //     setSubscription(publicationSubscription);
-
-    //     return () => {
-    //         if (subscription) {
-    //             void supabaseClient.removeSubscription(subscription);
-    //         }
-    //     };
-    // });
+    }, [currentCatalog, monitorCurrentCatalog]);
 
     // TODO (draftSpecEditor) need to better handle returning so we are not causing extra renders
     return useMemo(() => {
         return {
-            onChange: processEditorValue,
+            currentCatalogSyncing,
+            defaultValue: specAsString,
             draftSpec,
             isValidating,
             mutate,
-            defaultValue: specAsString,
+            onChange: processEditorValue,
         };
-    }, [draftSpec, isValidating, mutate, processEditorValue, specAsString]);
+    }, [
+        currentCatalogSyncing,
+        draftSpec,
+        isValidating,
+        mutate,
+        processEditorValue,
+        specAsString,
+    ]);
 }
 
 export default useDraftSpecEditor;

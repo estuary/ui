@@ -15,8 +15,8 @@ import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 
 import AppProviders from './context';
 
-initGoogleTagManager();
 initLogRocket();
+initGoogleTagManager();
 
 // TODO (logrocket | compliance)
 // Eventually we need to make sure to not include LR for certain tenants

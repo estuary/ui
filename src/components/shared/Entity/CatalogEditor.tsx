@@ -37,7 +37,10 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
-                        <DraftSpecEditor disabled={formActive} />
+                        <DraftSpecEditor
+                            disabled={formActive}
+                            monitorCurrentCatalog
+                        />
                     </Paper>
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>

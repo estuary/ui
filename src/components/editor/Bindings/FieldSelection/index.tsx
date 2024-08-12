@@ -12,53 +12,36 @@ import {
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
-import {
-    useEditorStore_id,
-    useEditorStore_queryResponse_draftSpecs,
-} from 'components/editor/Store/hooks';
-import FieldSelectionTable, {
-    columns,
-    optionalColumnIntlKeys,
-} from 'components/tables/FieldSelection';
-import SelectColumnMenu from 'components/tables/SelectColumnMenu';
-import { useDisplayTableColumns } from 'context/TableSettings';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import FieldSelectionTable from 'components/tables/FieldSelection';
 import { isEqual } from 'lodash';
-import { SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
     useBinding_selectionSaving,
-    useBinding_serverUpdateRequired,
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
 } from 'stores/Binding/hooks';
-import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { TablePrefixes } from 'stores/Tables/hooks';
-import { Schema, TableColumns } from 'types';
-import { WithRequiredNonNullProperty } from 'types/utils';
-import { BooleanParam, useQueryParam } from 'use-query-params';
-import { hasLength } from 'utils/misc-utils';
+import { Schema } from 'types';
 import {
+    evaluateRequiredExcludedFields,
     evaluateRequiredIncludedFields,
     getBindingIndex,
 } from 'utils/workflow-utils';
 import RefreshStatus from './RefreshStatus';
-import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 interface Props {
     bindingUUID: string;
     collectionName: string;
+    refreshRequired: boolean;
 }
 
 interface FieldMetadata {
@@ -97,7 +80,11 @@ const mapConstraintsToProjections = (
                     constraint.type
                 );
 
-                selectionType = includeRequired ? 'include' : null;
+                selectionType = includeRequired
+                    ? 'include'
+                    : evaluateRequiredExcludedFields(constraint.type)
+                    ? 'exclude'
+                    : null;
             }
         }
 
@@ -110,36 +97,17 @@ const mapConstraintsToProjections = (
         };
     });
 
-const optionalColumns = columns.filter(
-    (
-        column
-    ): column is WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'> =>
-        typeof column.headerIntlKey === 'string' &&
-        hasLength(column.headerIntlKey)
-            ? Object.values(optionalColumnIntlKeys).includes(
-                  column.headerIntlKey
-              )
-            : false
-);
-
-function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
-    const { 1: setForcedEnable } = useQueryParam(
-        GlobalSearchParams.FORCED_SHARD_ENABLE,
-        BooleanParam
-    );
-    const { tableSettings, setTableSettings } = useDisplayTableColumns();
-
-    const isEdit = useEntityWorkflow_Editing();
-    const fireBackgroundTest = useRef(isEdit);
-
-    const [refreshRequired, setRefreshRequired] = useState(false);
+function FieldSelectionViewer({
+    bindingUUID,
+    collectionName,
+    refreshRequired,
+}: Props) {
     const [saveInProgress, setSaveInProgress] = useState(false);
     const [data, setData] = useState<
         CompositeProjection[] | null | undefined
     >();
 
     const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
-    const { refresh } = useFieldSelectionRefresh();
 
     // Bindings Store
     const setRecommendFields = useBinding_setRecommendFields();
@@ -151,42 +119,11 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const draftId = useEditorStore_id();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
-
-    const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
-    const resourceRequiresUpdate = useBinding_serverUpdateRequired();
-
-    useEffect(() => {
-        return () => {
-            // Mainly for when a user enters edit and their initial bg test fails
-            //  want to make sure we fire off another bg test if they click on
-            //  next and not refresh after updating the config.
-            if (isEdit && formStatus === FormStatus.FAILED) {
-                fireBackgroundTest.current = true;
-            }
-        };
-    }, [formStatus, isEdit]);
-
-    useEffect(() => {
-        // If we need an update at the same time we are generating then we need to show
-        //  the refresh message.
-        if (
-            (resourceRequiresUpdate || serverUpdateRequired) &&
-            formStatus === FormStatus.GENERATING
-        ) {
-            setRefreshRequired(true);
-        } else if (formStatus === FormStatus.TESTED) {
-            // If we are here then the flag might be true and we only can stop showing it
-            //  if there is a test ran. This is kinda janky as a test does not 100% guarantee
-            //  a built spec but it is pretty darn close.
-            setRefreshRequired(false);
-        }
-    }, [formStatus, resourceRequiresUpdate, serverUpdateRequired]);
 
     useEffect(() => {
         const hasDraftSpec = draftSpecs.length > 0;
@@ -278,41 +215,14 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                 }
             }
         } else {
-            if (hasDraftSpec && formStatus === FormStatus.GENERATED) {
-                if (fireBackgroundTest.current) {
-                    // We only want to force an update if the spec is disabled. This way when a
-                    //  test is ran there wil not be an error and the backend will connect to the
-                    // connector.  When the user goes to saves we will flip this back
-                    const forceEnabled = Boolean(
-                        draftSpecs[0].spec?.shards?.disable
-                    );
-
-                    // Only update the param to keep track when we do this so if someone
-                    //  reloads the page their draft will get switched back properly
-                    if (forceEnabled) {
-                        setForcedEnable(forceEnabled);
-                    }
-
-                    fireBackgroundTest.current = false;
-                    setRefreshRequired(false);
-                    logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_AUTO);
-
-                    void refresh(draftId, forceEnabled);
-                }
-            }
-
             setData(null);
         }
     }, [
         bindingUUID,
         collectionName,
-        draftId,
         draftSpecs,
         formActive,
-        formStatus,
         initializeSelections,
-        refresh,
-        setForcedEnable,
         setRecommendFields,
         stagedBindingIndex,
     ]);
@@ -359,51 +269,6 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
         setSelectionSaving,
     ]);
 
-    const updateTableSettings = (
-        event: SyntheticEvent,
-        checked: boolean,
-        column: string
-    ) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const existingSettings = tableSettings ?? {};
-
-        const shownOptionalColumns = Object.hasOwn(
-            existingSettings,
-            TablePrefixes.fieldSelection
-        )
-            ? existingSettings[TablePrefixes.fieldSelection]
-                  .shownOptionalColumns
-            : [];
-
-        const columnShown = shownOptionalColumns.includes(column);
-
-        const evaluatedSettings =
-            !checked && columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: shownOptionalColumns.filter(
-                              (value) => value !== column
-                          ),
-                      },
-                  }
-                : checked && !columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: [
-                              ...shownOptionalColumns,
-                              column,
-                          ],
-                      },
-                  }
-                : existingSettings;
-
-        setTableSettings(evaluatedSettings);
-    };
-
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
@@ -429,15 +294,7 @@ function FieldSelectionViewer({ bindingUUID, collectionName }: Props) {
                 </Stack>
             </Stack>
 
-            <Stack direction="row" sx={{ mb: 1, justifyContent: 'flex-end' }}>
-                <SelectColumnMenu
-                    columns={optionalColumns}
-                    onChange={updateTableSettings}
-                    disabled={loading}
-                />
-            </Stack>
-
-            <FieldSelectionTable projections={data} />
+            <FieldSelectionTable bindingUUID={bindingUUID} projections={data} />
         </Box>
     );
 }

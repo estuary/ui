@@ -3,7 +3,7 @@ import produce from 'immer';
 import { NamedSet } from 'zustand/middleware';
 import { BindingState } from '../types';
 
-interface FieldSelection {
+export interface FieldSelection {
     [field: string]: FieldSelectionType | null;
 }
 
@@ -28,18 +28,26 @@ export interface StoreWithFieldSelection {
         field: string,
         selectionType: FieldSelectionType | null
     ) => void;
+    setMultiSelection: (
+        bindingUUID: string,
+        updatedFields: FieldSelection
+    ) => void;
 
     selectionSaving: boolean;
     setSelectionSaving: (
         value: StoreWithFieldSelection['selectionSaving']
     ) => void;
+
+    searchQuery: string | null;
+    setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
 
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    'recommendFields' | 'selectionSaving' | 'selections'
+    'recommendFields' | 'searchQuery' | 'selectionSaving' | 'selections'
 > => ({
     recommendFields: {},
+    searchQuery: null,
     selectionSaving: false,
     selections: {},
 });
@@ -74,6 +82,45 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
+    setSearchQuery: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.searchQuery = value;
+            }),
+            false,
+            'Search Query Set'
+        );
+    },
+
+    setSelectionSaving: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.selectionSaving = value;
+            }),
+            false,
+            'Selection Saving Set'
+        );
+    },
+
+    setMultiSelection: (bindingUUID, updatedFields) => {
+        set(
+            produce((state: BindingState) => {
+                const fields = state.selections[bindingUUID];
+
+                state.selections[bindingUUID] = {
+                    ...fields,
+                    ...updatedFields,
+                };
+
+                if (!state.selectionSaving) {
+                    state.selectionSaving = true;
+                }
+            }),
+            false,
+            'Multiple Field Selections Set'
+        );
+    },
+
     setSingleSelection: (bindingUUID, field, selectionType) => {
         set(
             produce((state: BindingState) => {
@@ -88,16 +135,6 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Single Field Selection Set'
-        );
-    },
-
-    setSelectionSaving: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.selectionSaving = value;
-            }),
-            false,
-            'Selection Saving Set'
         );
     },
 });

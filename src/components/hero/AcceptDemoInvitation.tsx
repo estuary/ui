@@ -4,6 +4,7 @@ import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
 import MessageWithButton from 'components/content/MessageWithButton';
 import Error from 'components/shared/Error';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -30,6 +31,10 @@ function AcceptDemoInvitation({
     const { directive, mutate } = useDirectiveGuard(directiveName, {
         hideAlert: true,
     });
+
+    const setHasDemoAccess = useUserInfoSummaryStore(
+        (state) => state.setHasDemoAccess
+    );
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -66,6 +71,7 @@ function AcceptDemoInvitation({
                             void mutateAuthRoles();
                         }
 
+                        setHasDemoAccess(true);
                         setLoading(false);
                         setOpen(false);
                         goToFilteredTable();

@@ -23,12 +23,14 @@ function OrganizationNameField() {
     };
 
     return (
-        <FormControl>
-            <FormLabel id="origin" required sx={{ mb: 1, fontSize: 16 }}>
+        <FormControl error={nameMissing || nameInvalid}>
+            <FormLabel id="origin" required sx={{ mb: 1, fontSize: 20 }}>
                 <FormattedMessage id="tenant.input.label" />
             </FormLabel>
 
             <TextField
+                autoComplete="organization"
+                autoFocus
                 error={nameMissing || nameInvalid}
                 helperText={intl.formatMessage({
                     id:
@@ -45,6 +47,7 @@ function OrganizationNameField() {
                 required
                 size="small"
                 value={requestedTenant}
+                variant="outlined"
                 sx={{
                     'maxWidth': 424,
                     '& .MuiInputBase-root': { borderRadius: 3 },

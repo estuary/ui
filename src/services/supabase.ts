@@ -68,7 +68,7 @@ export enum TABLES {
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
     INFERRED_SCHEMAS = 'inferred_schemas',
-    INVOICES = 'invoices_ext',
+    INVOICES_EXT = 'invoices_ext',
     LIVE_SPEC_FLOW = 'live_spec_flow',
     LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
@@ -86,13 +86,14 @@ export enum TABLES {
 }
 
 export enum RPCS {
+    AUTH_ROLES = 'auth_roles',
+    BILLING_REPORT = 'billing_report_202308',
+    CREATE_REFRESH_TOKEN = 'create_refresh_token',
     DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION = 'draft_collections_eligible_for_deletion',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
-    VIEW_LOGS = 'view_logs',
-    CREATE_REFRESH_TOKEN = 'create_refresh_token',
-    BILLING_REPORT = 'billing_report_202308',
-    AUTH_ROLES = 'auth_roles',
     REPUBLISH_PREFIX = 'republish_prefix',
+    USER_INFO_SUMMARY = 'user_info_summary',
+    VIEW_LOGS = 'view_logs',
 }
 
 export enum FUNCTIONS {
@@ -202,17 +203,21 @@ export const getUserDetails = (
         return null;
     }
 
-    let userName, email, emailVerified, avatar;
+    let userName, email, emailVerified, avatar, usedSSO;
 
     if (!isEmpty(user.user_metadata)) {
         email = user.user_metadata.email;
         emailVerified = user.user_metadata.email_verified;
         avatar = user.user_metadata.avatar_url;
         userName = user.user_metadata.full_name ?? email;
+        usedSSO = user.app_metadata.provider
+            ? user.app_metadata.provider.startsWith('sso')
+            : false;
     } else {
         userName = user.email;
         email = user.email;
         emailVerified = false;
+        usedSSO = false;
     }
 
     return {
@@ -221,6 +226,7 @@ export const getUserDetails = (
         email,
         emailVerified,
         avatar,
+        usedSSO,
     };
 };
 
