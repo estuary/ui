@@ -18,7 +18,7 @@ interface OptionalSearchParams {
     [GlobalSearchParams.DRAFT_ID]?: string;
     // Param to keep track of when we force enable something so if someone
     //  reloads the page their draft will get switched back properly.
-    [GlobalSearchParams.FORCED_SHARD_ENABLE]?: number;
+    [GlobalSearchParams.FORCED_SHARD_ENABLE]?: boolean;
 }
 
 export default function useEntityEditNavigate() {

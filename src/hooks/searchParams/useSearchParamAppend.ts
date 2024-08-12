@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { encodeParamVal } from 'utils/misc-utils';
 
 export default function useSearchParamAppend() {
     const [searchParams] = useSearchParams();
@@ -12,12 +13,12 @@ export default function useSearchParamAppend() {
                     sp.delete(key);
 
                     val.forEach((element) => {
-                        sp.append(key, element);
+                        sp.append(key, encodeParamVal(element));
                     });
                 } else if (val === undefined) {
                     sp.delete(key);
                 } else {
-                    sp.set(key, val);
+                    sp.set(key, encodeParamVal(val));
                 }
             });
             return sp;

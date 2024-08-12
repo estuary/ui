@@ -249,7 +249,7 @@ function useInitializeTaskDraft() {
                                 // Only update the param to keep track of when we do this so if someone
                                 //  reloads the page their draft will get switched back properly.
                                 [GlobalSearchParams.FORCED_SHARD_ENABLE]:
-                                    forceEnabled ? 1 : undefined,
+                                    forceEnabled,
                             },
                             true
                         );
