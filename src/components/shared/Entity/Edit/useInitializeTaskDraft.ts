@@ -245,9 +245,6 @@ function useInitializeTaskDraft() {
                                 [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]:
                                     prefillLiveSpecIds,
                                 [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId,
-
-                                // Only update the param to keep track of when we do this so if someone
-                                //  reloads the page their draft will get switched back properly.
                                 [GlobalSearchParams.FORCED_SHARD_ENABLE]:
                                     forceEnabled,
                             },
