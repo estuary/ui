@@ -7,7 +7,11 @@ import {
 } from 'directives/Onboard/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-function OrganizationNameField() {
+interface Props {
+    forceError?: boolean;
+}
+
+function OrganizationNameField({ forceError }: Props) {
     const intl = useIntl();
 
     // Onboarding Store
@@ -22,8 +26,10 @@ function OrganizationNameField() {
         },
     };
 
+    const showError = Boolean(nameMissing || nameInvalid || forceError);
+
     return (
-        <FormControl error={nameMissing || nameInvalid}>
+        <FormControl error={showError}>
             <FormLabel id="origin" required sx={{ mb: 1, fontSize: 20 }}>
                 <FormattedMessage id="tenant.input.label" />
             </FormLabel>
@@ -31,7 +37,7 @@ function OrganizationNameField() {
             <TextField
                 autoComplete="organization"
                 autoFocus
-                error={nameMissing || nameInvalid}
+                error={showError}
                 helperText={intl.formatMessage({
                     id:
                         nameMissing || nameInvalid
