@@ -22,7 +22,7 @@ import {
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
@@ -111,6 +111,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    const nameAlreadyUsed = useMemo(
+        () => serverError?.includes('is already in use'),
+        [serverError]
+    );
+
     useMount(() => {
         trackEvent(`${directiveName}:Viewed`);
     });
@@ -174,7 +179,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <OrganizationNameField />
+                        <OrganizationNameField forceError={nameAlreadyUsed} />
 
                         <OnboardingSurvey />
 
