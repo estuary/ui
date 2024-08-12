@@ -4,7 +4,6 @@ import {
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useRef, useState } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -12,15 +11,9 @@ import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { BooleanParam, useQueryParam } from 'use-query-params';
 import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 export default function useBackgroundTest() {
-    const { 1: setForcedEnable } = useQueryParam(
-        GlobalSearchParams.FORCED_SHARD_ENABLE,
-        BooleanParam
-    );
-
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
@@ -87,27 +80,14 @@ export default function useBackgroundTest() {
 
         if (draftSpecs.length > 0 && formStatus === FormStatus.GENERATED) {
             if (fireBackgroundTest.current) {
-                // We only want to force an update if the spec is disabled. This way when a
-                //  test is ran there will not be an error and the backend will connect to the
-                // connector.  When the user goes to save, we will flip this back.
-                const forceEnabled = Boolean(
-                    draftSpecs[0].spec?.shards?.disable
-                );
-
-                // Only update the param to keep track of when we do this so if someone
-                //  reloads the page their draft will get switched back properly.
-                if (forceEnabled) {
-                    setForcedEnable(forceEnabled);
-                }
-
                 fireBackgroundTest.current = false;
                 setRefreshRequired(false);
                 logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_AUTO);
 
-                void refresh(draftId, forceEnabled);
+                void refresh(draftId);
             }
         }
-    }, [draftId, draftSpecs, formStatus, refresh, setForcedEnable, entityType]);
+    }, [draftId, draftSpecs.length, entityType, formStatus, refresh]);
 
     return { refreshRequired };
 }
