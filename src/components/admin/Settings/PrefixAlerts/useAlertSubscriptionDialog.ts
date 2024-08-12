@@ -9,9 +9,7 @@ const initializeNotificationSubscriptions = async (prefix?: string) => {
     const { data } = await getNotificationSubscriptions(prefix);
 
     if (data) {
-        const processedData = formatNotificationSubscriptionsByPrefix(data);
-
-        return processedData;
+        return formatNotificationSubscriptionsByPrefix(data);
     }
 
     return null;
@@ -39,7 +37,7 @@ function useAlertSubscriptionDialog(prefix?: string) {
     useEffect(() => {
         void (async () => {
             if (open) {
-                setSubscriptions(null);
+                // setSubscriptions(null);
 
                 const existingSubscriptions =
                     await initializeNotificationSubscriptions(prefix);

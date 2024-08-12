@@ -23,7 +23,7 @@ interface Props {
     headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
-    subscriptions: PrefixSubscriptionDictionary;
+    subscriptions: PrefixSubscriptionDictionary | null | undefined;
     staticPrefix?: string;
 }
 
@@ -47,6 +47,12 @@ function AlertSubscriptionDialog({
 
     useEffect(() => {
         if (open) {
+            if (subscriptions === null || subscriptions === undefined) {
+                setExistingEmails({});
+
+                return;
+            }
+
             const emails: EmailDictionary = {};
 
             Object.entries(subscriptions).forEach(([key, value]) => {
@@ -175,7 +181,11 @@ function AlertSubscriptionDialog({
                 </Button>
 
                 <SaveButton
-                    disabled={Boolean(prefixHasErrors)}
+                    disabled={Boolean(
+                        prefixHasErrors ||
+                            subscriptions === null ||
+                            subscriptions === undefined
+                    )}
                     existingEmails={existingEmails}
                     prefix={prefix}
                     setOpen={setOpen}
