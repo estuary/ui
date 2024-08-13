@@ -12,6 +12,10 @@ export default function EmailListField({ open }: Props) {
         (state) => state.subscriptions
     );
 
+    const serverError = useAlertSubscriptionsStore(
+        (state) => state.serverError
+    );
+
     const prefix = useAlertSubscriptionsStore((state) => state.prefix);
 
     const existingEmails = useAlertSubscriptionsStore(
@@ -50,8 +54,9 @@ export default function EmailListField({ open }: Props) {
                 <Skeleton height={38} width={490} />
             ) : (
                 <EmailSelector
-                    prefix={prefix}
+                    disabled={!!serverError}
                     emailsByPrefix={updatedEmails}
+                    prefix={prefix}
                     setEmailsByPrefix={setUpdatedEmails}
                 />
             )}

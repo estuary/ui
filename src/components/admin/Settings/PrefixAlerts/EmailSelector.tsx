@@ -24,6 +24,7 @@ interface Props {
     prefix: string;
     emailsByPrefix: EmailDictionary;
     setEmailsByPrefix: (value: EmailDictionary) => void;
+    disabled?: boolean;
 }
 
 // Validation is VERY basic 'non-whitespace@non-whitespace'
@@ -53,7 +54,12 @@ const flattenValues = (values: Values, checkCommas: boolean): string[] => {
     );
 };
 
-function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
+function EmailSelector({
+    disabled,
+    prefix,
+    emailsByPrefix,
+    setEmailsByPrefix,
+}: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
@@ -89,7 +95,7 @@ function EmailSelector({ prefix, emailsByPrefix, setEmailsByPrefix }: Props) {
     return (
         <FormControl fullWidth>
             <Autocomplete
-                disabled={!prefix}
+                disabled={disabled ?? !prefix}
                 disableCloseOnSelect
                 filterOptions={(options) =>
                     options.filter((option) => {

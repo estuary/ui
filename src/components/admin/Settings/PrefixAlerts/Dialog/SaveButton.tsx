@@ -47,11 +47,7 @@ function SaveButton({ closeDialog }: Props) {
 
     const disabled = useMemo(
         () =>
-            Boolean(
-                !hasLength(prefix) ||
-                    prefixErrorsExist ||
-                    subscriptions === undefined
-            ),
+            Boolean(!hasLength(prefix) || prefixErrorsExist || !subscriptions),
         [prefix, prefixErrorsExist, subscriptions]
     );
 

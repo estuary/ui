@@ -81,7 +81,7 @@ function AlertSubscriptionDialog({
             <DialogContent sx={{ mt: 1 }}>
                 {serverError ? (
                     <Box style={{ marginBottom: 16 }}>
-                        <AlertBox severity="warning" short>
+                        <AlertBox severity="error" short>
                             <FormattedMessage id="admin.alerts.error.initializationFailed" />
                         </AlertBox>
                     </Box>
