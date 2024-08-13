@@ -6,6 +6,7 @@ import {
     DialogTitle,
     Grid,
     IconButton,
+    Skeleton,
     TextField,
     Typography,
     useTheme,
@@ -128,7 +129,9 @@ function AlertSubscriptionDialog({
                     }}
                 >
                     <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                        {staticPrefix ? (
+                        {subscriptions === undefined ? (
+                            <Skeleton height={38} width={345} />
+                        ) : staticPrefix ? (
                             <TextField
                                 InputProps={{
                                     sx: { borderRadius: 3 },
@@ -166,11 +169,15 @@ function AlertSubscriptionDialog({
                             display: 'flex',
                         }}
                     >
-                        <EmailSelector
-                            prefix={prefix}
-                            emailsByPrefix={updatedEmails}
-                            setEmailsByPrefix={setUpdatedEmails}
-                        />
+                        {subscriptions === undefined ? (
+                            <Skeleton height={38} width={490} />
+                        ) : (
+                            <EmailSelector
+                                prefix={prefix}
+                                emailsByPrefix={updatedEmails}
+                                setEmailsByPrefix={setUpdatedEmails}
+                            />
+                        )}
                     </Grid>
                 </Grid>
             </DialogContent>
