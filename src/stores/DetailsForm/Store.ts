@@ -36,7 +36,7 @@ const getConnectorImage = async (
 
     if (!error && data && data.length > 0) {
         const connector = data[0];
-        const { image_name, logo_url } = connector;
+        const { image_name, logo_url, capture_interval } = connector;
 
         const options: ConnectorVersionEvaluationOptions | undefined =
             existingImageTag ? { connectorId, existingImageTag } : undefined;
@@ -45,6 +45,7 @@ const getConnectorImage = async (
 
         return {
             connectorId,
+            captureInterval: capture_interval,
             id: connectorTag.id,
             imageName: image_name,
             imagePath: `${image_name}${connectorTag.image_tag}`,
@@ -58,6 +59,7 @@ const getConnectorImage = async (
 const initialDetails: Details = {
     data: {
         connectorImage: {
+            captureInterval: null,
             connectorId: '',
             id: '',
             iconPath: '',
@@ -316,6 +318,7 @@ export const getInitialState = (
                     imageName: '',
                     imagePath: '',
                     connectorId,
+                    captureInterval: null,
                 });
                 setHydrationErrorsExist(true);
             }

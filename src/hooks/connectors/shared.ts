@@ -71,6 +71,7 @@ export interface ConnectorTagWithDetailTags extends ConnectorTag_Base {
 }
 
 export interface ConnectorWithTagDetailQuery {
+    capture_interval: string | null;
     connector_tags: ConnectorTagWithDetailTags[];
     id: string;
     detail: string;
@@ -88,6 +89,7 @@ export const CONNECTOR_WITH_TAG_QUERY = `
     id,
     detail,
     image_name,
+    capture_interval,
     image:logo_url->>en-US::text,
     ${CONNECTOR_RECOMMENDED},
     title:${CONNECTOR_NAME}::text,
