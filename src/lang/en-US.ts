@@ -32,7 +32,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
-    'common.tenant.creationForm': `Name`,
+    'common.tenant.creationForm': `Organization`,
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
     'common.copyFailed': `Failed to copy`,
