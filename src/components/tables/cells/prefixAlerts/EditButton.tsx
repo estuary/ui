@@ -8,24 +8,27 @@ interface Props {
 }
 
 function AlertEditButton({ prefix }: Props) {
-    const { open, openGenerateAlertDialog, setOpen, subscriptions } =
-        useAlertSubscriptionDialog(prefix);
+    const { open, setOpen } = useAlertSubscriptionDialog(prefix);
 
     return (
         <TableCell>
-            <Button variant="text" onClick={openGenerateAlertDialog}>
+            <Button
+                variant="text"
+                onClick={(event) => {
+                    event.preventDefault();
+
+                    setOpen(true);
+                }}
+            >
                 <FormattedMessage id="cta.edit" />
             </Button>
 
-            {subscriptions ? (
-                <AlertSubscriptionDialog
-                    headerId="admin.alerts.dialog.update.header"
-                    open={open}
-                    setOpen={setOpen}
-                    subscriptions={subscriptions}
-                    staticPrefix={prefix}
-                />
-            ) : null}
+            <AlertSubscriptionDialog
+                headerId="admin.alerts.dialog.update.header"
+                open={open}
+                setOpen={setOpen}
+                staticPrefix={prefix}
+            />
         </TableCell>
     );
 }

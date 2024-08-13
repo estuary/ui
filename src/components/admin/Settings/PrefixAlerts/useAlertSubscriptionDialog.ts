@@ -1,53 +1,44 @@
 import { getNotificationSubscriptions } from 'api/alerts';
 import { useEffect, useState } from 'react';
-import {
-    PrefixSubscriptionDictionary,
-    formatNotificationSubscriptionsByPrefix,
-} from 'utils/notification-utils';
+import { formatNotificationSubscriptionsByPrefix } from 'utils/notification-utils';
+import useAlertSubscriptionsStore from './useAlertSubscriptionsStore';
 
 const initializeNotificationSubscriptions = async (prefix?: string) => {
-    const { data } = await getNotificationSubscriptions(prefix);
+    const { data, error } = await getNotificationSubscriptions(prefix);
 
     if (data) {
-        return formatNotificationSubscriptionsByPrefix(data);
+        return { data: formatNotificationSubscriptionsByPrefix(data), error };
     }
 
-    return null;
+    return { data: null, error };
 };
 
 function useAlertSubscriptionDialog(prefix?: string) {
     const [open, setOpen] = useState(false);
-    const [subscriptions, setSubscriptions] = useState<
-        PrefixSubscriptionDictionary | null | undefined
-    >(undefined);
 
-    const openGenerateAlertDialog = async (
-        event: React.MouseEvent<HTMLElement>
-    ) => {
-        event.preventDefault();
-
-        // const existingSubscriptions = await initializeNotificationSubscriptions(
-        //     prefix
-        // );
-
-        // setSubscriptions(existingSubscriptions);
-        setOpen(true);
-    };
+    const initializeSubscriptionState = useAlertSubscriptionsStore(
+        (state) => state.initializeState
+    );
 
     useEffect(() => {
         void (async () => {
             if (open) {
-                // setSubscriptions(null);
-
-                const existingSubscriptions =
+                const { data: existingSubscriptions, error } =
                     await initializeNotificationSubscriptions(prefix);
 
-                setSubscriptions(existingSubscriptions);
+                initializeSubscriptionState(
+                    prefix,
+                    existingSubscriptions,
+                    error
+                );
             }
         })();
-    }, [open, prefix]);
+    }, [initializeSubscriptionState, open, prefix]);
 
-    return { open, openGenerateAlertDialog, setOpen, subscriptions };
+    return {
+        open,
+        setOpen,
+    };
 }
 
 export default useAlertSubscriptionDialog;

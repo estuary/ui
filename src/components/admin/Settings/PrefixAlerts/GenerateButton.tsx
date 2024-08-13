@@ -4,12 +4,18 @@ import useAlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/u
 import { FormattedMessage } from 'react-intl';
 
 function AlertGenerateButton() {
-    const { open, openGenerateAlertDialog, setOpen, subscriptions } =
-        useAlertSubscriptionDialog();
+    const { open, setOpen } = useAlertSubscriptionDialog();
 
     return (
         <>
-            <Button variant="outlined" onClick={openGenerateAlertDialog}>
+            <Button
+                variant="outlined"
+                onClick={(event) => {
+                    event.preventDefault();
+
+                    setOpen(true);
+                }}
+            >
                 <FormattedMessage id="admin.alerts.cta.addAlertMethod" />
             </Button>
 
@@ -17,7 +23,6 @@ function AlertGenerateButton() {
                 headerId="admin.alerts.dialog.generate.header"
                 open={open}
                 setOpen={setOpen}
-                subscriptions={subscriptions}
             />
         </>
     );

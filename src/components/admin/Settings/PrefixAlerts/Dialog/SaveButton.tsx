@@ -2,9 +2,9 @@ import {
     createNotificationSubscription,
     deleteNotificationSubscription,
 } from 'api/alerts';
-import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
@@ -12,23 +12,13 @@ import {
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
 interface Props {
-    disabled: boolean;
-    existingEmails: EmailDictionary;
-    prefix: string;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-    updatedEmails: EmailDictionary;
+    closeDialog: () => void;
 }
 
-function SaveButton({
-    disabled,
-    existingEmails,
-    prefix,
-    setOpen,
-    updatedEmails,
-}: Props) {
+function SaveButton({ closeDialog }: Props) {
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -37,9 +27,35 @@ function SaveButton({
         selectableTableStoreSelectors.query.hydrate
     );
 
+    const prefix = useAlertSubscriptionsStore((state) => state.prefix);
+    const prefixErrorsExist = useAlertSubscriptionsStore(
+        (state) => state.prefixErrorsExist
+    );
+
+    const subscriptions = useAlertSubscriptionsStore(
+        (state) => state.subscriptions
+    );
+
+    const existingEmails = useAlertSubscriptionsStore(
+        (state) => state.existingEmails
+    );
+    const updatedEmails = useAlertSubscriptionsStore(
+        (state) => state.updatedEmails
+    );
+
     const [loading, setLoading] = useState(false);
 
-    const onClick = async (event: React.MouseEvent<HTMLElement>) => {
+    const disabled = useMemo(
+        () =>
+            Boolean(
+                !hasLength(prefix) ||
+                    prefixErrorsExist ||
+                    subscriptions === undefined
+            ),
+        [prefix, prefixErrorsExist, subscriptions]
+    );
+
+    const onClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setLoading(true);
 
@@ -72,7 +88,7 @@ function SaveButton({
                 });
         });
 
-        const deletedSubsriptions = Object.entries(subscriptionsToCancel).map(
+        const deletedSubscriptions = Object.entries(subscriptionsToCancel).map(
             ([key, emails]) => {
                 return deleteNotificationSubscription(key, emails);
             }
@@ -86,7 +102,7 @@ function SaveButton({
         );
 
         const responses = await Promise.all([
-            ...deletedSubsriptions,
+            ...deletedSubscriptions,
             createdSubscription,
         ]);
 
@@ -96,7 +112,7 @@ function SaveButton({
 
         if (!hasLength(errors)) {
             hydrate();
-            setOpen(false);
+            closeDialog();
         }
 
         setLoading(false);
@@ -106,7 +122,7 @@ function SaveButton({
         <SafeLoadingButton
             variant="contained"
             size="small"
-            disabled={disabled || !hasLength(prefix)}
+            disabled={disabled}
             loading={loading}
             onClick={onClick}
         >

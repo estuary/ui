@@ -13,7 +13,7 @@ import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import UserAvatar from 'components/shared/UserAvatar';
 import usePrefixAdministrators from 'hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Grant_UserExt } from 'types';
 import { hasLength } from 'utils/misc-utils';
@@ -23,7 +23,7 @@ type Values = (Grant_UserExt | string)[];
 interface Props {
     prefix: string;
     emailsByPrefix: EmailDictionary;
-    setEmailsByPrefix: Dispatch<SetStateAction<EmailDictionary>>;
+    setEmailsByPrefix: (value: EmailDictionary) => void;
 }
 
 // Validation is VERY basic 'non-whitespace@non-whitespace'
