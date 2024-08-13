@@ -1110,9 +1110,12 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
-    'workflows.interval.header': `Interval`,
-    'workflows.interval.description': `Intervals are relative to the start of an invocation and not its completion. For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
-    'workflows.interval.label.input': `Interval Schedule`,
+    'workflows.interval.header': `Polling Interval`,
+    'workflows.interval.message': `Allows controlling how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion. For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
+    'workflows.interval.input.label': `Interval`,
+    'workflows.interval.input.seconds': `seconds`,
+    'workflows.interval.input.minutes': `minutes`,
+    'workflows.interval.input.hours': `hours`,
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `Source From Capture`,

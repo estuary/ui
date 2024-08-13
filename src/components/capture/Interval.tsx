@@ -1,9 +1,19 @@
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Stack, TextField, Typography } from '@mui/material';
+import {
+    FormControl,
+    FormHelperText,
+    InputAdornment,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Select,
+    Stack,
+    Typography,
+} from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
-import ClearInput from 'components/shared/Input/Clear';
-import { useState } from 'react';
 
+const DESCRIPTION_ID = 'capture-interval-description';
+const INPUT_ID = 'capture-interval-input';
 interface Props {
     readOnly?: boolean;
 }
@@ -14,7 +24,13 @@ function CaptureInterval({ readOnly }: Props) {
         (state) => state.details.data.connectorImage.captureInterval
     );
 
-    const [localValue, setLocalValue] = useState<string | null>(null);
+    const label = intl.formatMessage({
+        id: 'workflows.interval.input.label',
+    });
+
+    const description = intl.formatMessage({
+        id: 'workflows.interval.input.description',
+    });
 
     if (!captureInterval) {
         return null;
@@ -27,40 +43,88 @@ function CaptureInterval({ readOnly }: Props) {
             </Typography>
 
             <Typography>
-                <FormattedMessage id="workflows.interval.description" />
+                <FormattedMessage id="workflows.interval.message" />
             </Typography>
 
-            <Stack spacing={2} direction="row">
-                <TextField
+            <FormControl
+                error={false}
+                fullWidth={false}
+                variant="outlined"
+                sx={{
+                    '& .MuiFormHelperText-root.Mui-error': {
+                        whiteSpace: 'break-spaces',
+                    },
+                }}
+            >
+                <InputLabel
                     disabled={readOnly}
-                    label={intl.formatMessage({
-                        id: 'workflows.interval.label.input',
-                    })}
-                    size="small"
+                    focused
+                    htmlFor={INPUT_ID}
                     variant="outlined"
-                    value={localValue}
-                    InputProps={{
-                        endAdornment: (
-                            <ClearInput
-                                show={Boolean(!readOnly && localValue)}
-                                onClear={() => {
-                                    console.log('cleared');
-                                    setLocalValue(null);
-                                }}
-                            />
-                        ),
-                    }}
+                >
+                    {label}
+                </InputLabel>
+
+                <OutlinedInput
+                    aria-describedby={DESCRIPTION_ID}
+                    disabled={readOnly}
+                    error={false}
+                    id={INPUT_ID}
+                    label={label}
+                    size="small"
+                    sx={{ borderRadius: 3 }}
                     onChange={(event) => {
-                        console.log('changed', event.target.value);
-                        setLocalValue(event.target.value);
+                        console.log('change', event.target.value);
                     }}
-                    sx={{
-                        'width': '100%',
-                        'my': 1,
-                        '& .MuiInputBase-root': { borderRadius: 3, my: 0 },
-                    }}
+                    endAdornment={
+                        <InputAdornment position="start">
+                            <Select
+                                disabled={readOnly}
+                                disableUnderline
+                                error={false}
+                                required
+                                size="small"
+                                variant="standard"
+                                sx={{
+                                    'maxWidth': 100,
+                                    'minWidth': 100,
+                                    '& .MuiSelect-select': {
+                                        paddingBottom: 0.2,
+                                    },
+                                }}
+                                onChange={(event) => {
+                                    console.log(
+                                        'select change',
+                                        event.target.value
+                                    );
+                                }}
+                            >
+                                <MenuItem value="s" selected>
+                                    <FormattedMessage id="workflows.interval.input.seconds" />
+                                </MenuItem>
+
+                                <MenuItem value="m">
+                                    <FormattedMessage id="workflows.interval.input.minutes" />
+                                </MenuItem>
+
+                                <MenuItem value="h">
+                                    <FormattedMessage id="workflows.interval.input.hours" />
+                                </MenuItem>
+                            </Select>
+                        </InputAdornment>
+                    }
                 />
-            </Stack>
+                <FormHelperText
+                    id={DESCRIPTION_ID}
+                    // error={showErrors ? !description : undefined}
+                >
+                    {/*{firstFormHelperText}*/}
+                    {description}
+                </FormHelperText>
+                {/*                <FormHelperText error={showErrors}>
+                    {secondFormHelperText}
+                </FormHelperText>*/}
+            </FormControl>
         </Stack>
     );
 }
