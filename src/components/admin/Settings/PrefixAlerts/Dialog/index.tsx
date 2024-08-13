@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -11,12 +10,12 @@ import {
     useTheme,
 } from '@mui/material';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
-import AlertBox from 'components/shared/AlertBox';
 import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import EmailListField from './EmailListField';
+import InitializationError from './InitializationError';
 import PrefixField from './PrefixField';
 
 interface Props {
@@ -36,9 +35,6 @@ function AlertSubscriptionDialog({
 }: Props) {
     const theme = useTheme();
 
-    const serverError = useAlertSubscriptionsStore(
-        (state) => state.serverError
-    );
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
     );
@@ -79,13 +75,7 @@ function AlertSubscriptionDialog({
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
-                {serverError ? (
-                    <Box style={{ marginBottom: 16 }}>
-                        <AlertBox severity="error" short>
-                            <FormattedMessage id="admin.alerts.error.initializationFailed" />
-                        </AlertBox>
-                    </Box>
-                ) : null}
+                <InitializationError />
 
                 <Typography sx={{ mb: 2 }}>
                     <FormattedMessage id="admin.alerts.dialog.description" />

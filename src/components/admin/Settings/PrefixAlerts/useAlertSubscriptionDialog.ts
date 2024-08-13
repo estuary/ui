@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { formatNotificationSubscriptionsByPrefix } from 'utils/notification-utils';
 import useAlertSubscriptionsStore from './useAlertSubscriptionsStore';
 
-const initializeNotificationSubscriptions = async (prefix?: string) => {
+export const initializeNotificationSubscriptions = async (prefix?: string) => {
     const { data, error } = await getNotificationSubscriptions(prefix);
 
     if (data) {
