@@ -32,7 +32,7 @@ const CommonMessages: ResolvedIntlConfig['messages'] = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
-    'common.tenant.creationForm': `Name`,
+    'common.tenant.creationForm': `Organization`,
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
     'common.copyFailed': `Failed to copy`,
@@ -286,7 +286,7 @@ const Header: ResolvedIntlConfig['messages'] = {
     'helpMenu.support': `Email Support`,
     'helpMenu.support.link': `${CommonMessages['support.email']}`,
     'helpMenu.contact': `${CTAs['cta.contactUs']}`,
-    'helpMenu.contact.link': `https://estuary.dev/about/#contact-us`,
+    'helpMenu.contact.link': `https://estuary.dev/contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,

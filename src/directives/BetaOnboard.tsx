@@ -22,7 +22,7 @@ import {
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
@@ -31,6 +31,7 @@ import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
+const nameTaken = 'is already in use';
 
 const submit_onboard = async (
     requestedTenant: string,
@@ -111,6 +112,11 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
         },
     };
 
+    const nameAlreadyUsed = useMemo(
+        () => serverError?.includes(nameTaken),
+        [serverError]
+    );
+
     useMount(() => {
         trackEvent(`${directiveName}:Viewed`);
     });
@@ -174,7 +180,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <OrganizationNameField />
+                        <OrganizationNameField forceError={nameAlreadyUsed} />
 
                         <OnboardingSurvey />
 

@@ -49,6 +49,7 @@ export interface MonacoEditorProps {
     defaultValue?: string;
     path?: string;
     editorLabel?: string;
+    manuallySynced?: boolean;
 }
 
 function MonacoEditor({
@@ -62,6 +63,7 @@ function MonacoEditor({
     defaultValue,
     path,
     editorLabel,
+    manuallySynced,
 }: MonacoEditorProps) {
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
@@ -254,13 +256,40 @@ function MonacoEditor({
         if (typeof defaultValue === 'string') setLocalCopy(defaultValue);
     }, [setLocalCopy, defaultValue]);
 
+    // If we're syncing go ahead and put the status to idle so the
+    //  editor kind of "resets"
+    useEffect(() => {
+        if (manuallySynced) {
+            setStatus(EditorStatus.IDLE, evaluatedPath);
+        }
+    }, [evaluatedPath, setStatus, manuallySynced]);
+
     const handlers = {
         change: (value: any, ev: any) => {
             logRocketConsole('handlers:change', {
                 status,
-                value,
                 ev,
             });
+
+            // if the editor is disabled then don't handle the change. That way if
+            //  we are syncing the edit with latest currentCatalog we don't accidently
+            //  fire a change event.
+            if (disabled || manuallySynced) {
+                logRocketConsole('handlers:change:skipped', {
+                    disabled,
+                    syncing: manuallySynced,
+                });
+
+                // This is a really small edge case where a user has manually edited the spec, then clicked
+                //  quickly a lot on the backfill button. This can make a state when the editor is firing on change
+                //  because the value has been updated via the manual sync. So if that has happened we
+                //  _should_ be safe resetting the status. Otherwise, the status might get stuck in a funky mode where
+                //  it looks like it is trying to save.
+                if (manuallySynced && status !== EditorStatus.IDLE) {
+                    setStatus(EditorStatus.IDLE, evaluatedPath);
+                }
+                return;
+            }
 
             // Safely grab if the user is undoing. That way we can skip the formatting
             // otherwise they might get stuck undoing the formatting.
