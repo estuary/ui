@@ -126,11 +126,7 @@ function useGenerateCatalog() {
     );
 
     return useCallback(
-        async (
-            mutateDraftSpecs: Function,
-            toggleDisable?: boolean,
-            skipStoreUpdates?: boolean
-        ) => {
+        async (mutateDraftSpecs: Function, skipStoreUpdates?: boolean) => {
             updateFormStatus(FormStatus.GENERATING);
 
             if (
@@ -199,38 +195,30 @@ function useGenerateCatalog() {
                     evaluatedDraftId = draftsResponse.data[0].id;
                 }
 
-                let draftSpec;
-                if (toggleDisable && existingTaskData) {
-                    // Want to toggle the value to the opposite
-                    existingTaskData.spec.shards.disable =
-                        !existingTaskData.spec.shards.disable;
-                    draftSpec = existingTaskData.spec;
-                } else {
-                    const encryptedEndpointConfig = await encryptEndpointConfig(
-                        serverUpdateRequired
-                            ? endpointConfigData
-                            : serverEndpointConfigData,
-                        endpointSchema,
-                        serverUpdateRequired,
-                        imageConnectorId,
-                        imageConnectorTagId,
-                        callFailed,
-                        { overrideJsonFormDefaults: true }
-                    );
+                const encryptedEndpointConfig = await encryptEndpointConfig(
+                    serverUpdateRequired
+                        ? endpointConfigData
+                        : serverEndpointConfigData,
+                    endpointSchema,
+                    serverUpdateRequired,
+                    imageConnectorId,
+                    imageConnectorTagId,
+                    callFailed,
+                    { overrideJsonFormDefaults: true }
+                );
 
-                    draftSpec = generateTaskSpec(
-                        ENTITY_TYPE,
-                        {
-                            image: imagePath,
-                            config: encryptedEndpointConfig.data,
-                        },
-                        resourceConfigs,
-                        resourceConfigServerUpdateRequired,
-                        bindings,
-                        existingTaskData,
-                        { fullSource: fullSourceConfigs, sourceCapture }
-                    );
-                }
+                const draftSpec = generateTaskSpec(
+                    ENTITY_TYPE,
+                    {
+                        image: imagePath,
+                        config: encryptedEndpointConfig.data,
+                    },
+                    resourceConfigs,
+                    resourceConfigServerUpdateRequired,
+                    bindings,
+                    existingTaskData,
+                    { fullSource: fullSourceConfigs, sourceCapture }
+                );
 
                 // If there is a draft already with task data then update. We do not match on
                 //   the catalog name as the user could change the name. There is a small issue

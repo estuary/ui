@@ -211,6 +211,15 @@ function useInitializeTaskDraft() {
                     await getTaskDraft(task);
 
                 if (evaluatedDraftId) {
+                    // Force disabled materializations enabled. This way when a test is ran
+                    //  there will not be an error and the backend will connect to the connector
+                    const forceEnabled =
+                        Boolean(task.spec?.shards?.disable) &&
+                        taskSpecType === 'materialization';
+                    if (forceEnabled) {
+                        task.spec.shards.disable = false;
+                    }
+
                     const draftSpecsError = await getTaskDraftSpecs(
                         evaluatedDraftId,
                         draftSpecsRequestConfig,
@@ -236,6 +245,8 @@ function useInitializeTaskDraft() {
                                 [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]:
                                     prefillLiveSpecIds,
                                 [GlobalSearchParams.DRAFT_ID]: evaluatedDraftId,
+                                [GlobalSearchParams.FORCED_SHARD_ENABLE]:
+                                    forceEnabled,
                             },
                             true
                         );
