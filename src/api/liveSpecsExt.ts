@@ -369,10 +369,11 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     return data;
 };
 
-const getLiveSpecShards = (entityType: Entity) => {
+const getLiveSpecShards = (tenant: string, entityType: Entity) => {
     return supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(SHARDS_DISABLE)
+        .ilike('catalog_name', `${tenant}%`)
         .eq('spec_type', entityType);
 };
 

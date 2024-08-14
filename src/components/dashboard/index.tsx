@@ -1,4 +1,5 @@
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
+import TenantSelector from 'components/shared/TenantSelector';
 import {
     semiTransparentBackground_blue,
     semiTransparentBackground_purple,
@@ -14,7 +15,17 @@ export default function Dashboard() {
     const { captureUsage, loading, materializationUsage } = useMonthlyUsage();
 
     return (
-        <Grid container spacing={{ xs: 4 }}>
+        <Grid container spacing={{ xs: 4 }} style={{ marginTop: 32 }}>
+            <Grid
+                item
+                xs={12}
+                sx={{ display: 'flex', justifyContent: 'flex-end' }}
+            >
+                <Box style={{ width: 300 }}>
+                    <TenantSelector />
+                </Box>
+            </Grid>
+
             <Grid item xs={4}>
                 <EntityStatOverview
                     Icon={<CloudUpload fontSize={ICON_SIZE} />}

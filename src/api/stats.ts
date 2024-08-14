@@ -305,7 +305,7 @@ const getStatsForDashboard = (
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
         .select(`${query},flow_document`)
-        .ilike('catalog_name', `${tenant}/%`)
+        .ilike('catalog_name', `${tenant}%`)
         .eq('grain', grain)
         .gte('ts', past)
         .lte('ts', endDate)

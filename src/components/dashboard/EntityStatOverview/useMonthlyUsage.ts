@@ -3,17 +3,23 @@ import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
 import { isArray } from 'lodash';
 import { DateTime } from 'luxon';
 import { useMemo } from 'react';
+import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Dashboard } from 'types';
+import { hasLength } from 'utils/misc-utils';
 
 const isDefaultStatistic = (
     datum: CatalogStats_Dashboard | DefaultStatsWithDocument
 ): datum is DefaultStatsWithDocument => 'bytes_read_by_me' in datum;
 
 export default function useMonthlyUsage() {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const endDate = DateTime.utc().startOf('month');
 
     const { data, error, isValidating } = useQuery(
-        getStatsForDashboard('melk', 'monthly', endDate),
+        hasLength(selectedTenant)
+            ? getStatsForDashboard(selectedTenant, 'monthly', endDate)
+            : null,
         {
             refreshInterval: 15000,
         }
