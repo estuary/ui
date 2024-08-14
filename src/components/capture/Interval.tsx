@@ -14,6 +14,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
+const INPUT_SIZE = 'small';
 interface Props {
     readOnly?: boolean;
 }
@@ -26,10 +27,6 @@ function CaptureInterval({ readOnly }: Props) {
 
     const label = intl.formatMessage({
         id: 'workflows.interval.input.label',
-    });
-
-    const description = intl.formatMessage({
-        id: 'workflows.interval.input.description',
     });
 
     if (!captureInterval) {
@@ -49,6 +46,7 @@ function CaptureInterval({ readOnly }: Props) {
             <FormControl
                 error={false}
                 fullWidth={false}
+                size={INPUT_SIZE}
                 variant="outlined"
                 sx={{
                     '& .MuiFormHelperText-root.Mui-error': {
@@ -71,7 +69,7 @@ function CaptureInterval({ readOnly }: Props) {
                     error={false}
                     id={INPUT_ID}
                     label={label}
-                    size="small"
+                    size={INPUT_SIZE}
                     sx={{ borderRadius: 3 }}
                     onChange={(event) => {
                         console.log('change', event.target.value);
@@ -83,7 +81,7 @@ function CaptureInterval({ readOnly }: Props) {
                                 disableUnderline
                                 error={false}
                                 required
-                                size="small"
+                                size={INPUT_SIZE}
                                 variant="standard"
                                 sx={{
                                     'maxWidth': 100,
@@ -118,12 +116,8 @@ function CaptureInterval({ readOnly }: Props) {
                     id={DESCRIPTION_ID}
                     // error={showErrors ? !description : undefined}
                 >
-                    {/*{firstFormHelperText}*/}
-                    {description}
+                    errors go here
                 </FormHelperText>
-                {/*                <FormHelperText error={showErrors}>
-                    {secondFormHelperText}
-                </FormHelperText>*/}
             </FormControl>
         </Stack>
     );
