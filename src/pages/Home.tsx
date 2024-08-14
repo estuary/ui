@@ -34,7 +34,6 @@ const Home = () => {
                     notificationTitle="directives.grant.skipped.title"
                 />
             ) : null}
-
             <Toolbar sx={{ justifyContent: 'center', mb: 3 }}>
                 <Typography variant="h4">
                     <FormattedMessage id="home.main.header" />
