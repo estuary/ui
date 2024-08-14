@@ -17,19 +17,19 @@ export default function Dashboard() {
         <Grid container spacing={{ xs: 4 }}>
             <Grid item xs={4}>
                 <EntityStatOverview
-                    Icon={<DatabaseScript fontSize={ICON_SIZE} />}
-                    background={semiTransparentBackground_blue}
-                    entityType="collection"
-                />
-            </Grid>
-
-            <Grid item xs={4}>
-                <EntityStatOverview
                     Icon={<CloudUpload fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_teal}
                     entityType="capture"
                     monthlyUsage={captureUsage}
                     monthlyUsageLoading={loading}
+                />
+            </Grid>
+
+            <Grid item xs={4}>
+                <EntityStatOverview
+                    Icon={<DatabaseScript fontSize={ICON_SIZE} />}
+                    background={semiTransparentBackground_blue}
+                    entityType="collection"
                 />
             </Grid>
 
