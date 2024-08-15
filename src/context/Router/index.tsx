@@ -5,7 +5,6 @@ import AdminBilling from 'components/admin/Billing';
 import AdminConnectors from 'components/admin/Connectors';
 import AdminSettings from 'components/admin/Settings';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
-import { DashboardWelcomeProvider } from 'context/DashboardWelcome';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
@@ -170,9 +169,7 @@ const router = createBrowserRouter(
                         path={authenticatedRoutes.home.path}
                         element={
                             <Suspense fallback={null}>
-                                <DashboardWelcomeProvider>
-                                    <HomePage />
-                                </DashboardWelcomeProvider>
+                                <HomePage />
                             </Suspense>
                         }
                     />
