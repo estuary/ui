@@ -83,7 +83,7 @@ export default function EntityStatOverview({
                 </Stack>
 
                 <LinkWrapper link={route}>
-                    <FormattedMessage id="cta.goToEntityPage" />
+                    <FormattedMessage id="cta.goToAll" />
                 </LinkWrapper>
             </Stack>
 
