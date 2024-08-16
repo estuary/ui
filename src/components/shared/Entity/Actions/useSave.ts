@@ -9,6 +9,8 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow } from 'context/Workflow';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -31,7 +33,6 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { hasLength } from 'utils/misc-utils';
-import { useEntityType } from 'context/EntityContext';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {
@@ -76,6 +77,7 @@ function useSave(
     );
 
     const entityType = useEntityType();
+    const workflow = useEntityWorkflow();
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
@@ -234,11 +236,12 @@ function useSave(
                             (collection) => !collections.includes(collection)
                         );
 
-                    // For a test we do not want to remove from draft - otherwise we would need
-                    //  to add them back in after the test.
-                    const disabledCollections: string[] = dryRun
-                        ? []
-                        : disabledBindings;
+                    // Drafted collections should not be removed in the capture create workflow
+                    // or when testing the draft.
+                    const disabledCollections: string[] =
+                        dryRun || workflow === 'capture_create'
+                            ? []
+                            : disabledBindings;
 
                     const deleteDraftSpecsResponse =
                         await deleteDraftSpecsByCatalogName(
@@ -293,6 +296,7 @@ function useSave(
             status,
             updateFormStatus,
             waitForPublishToFinish,
+            workflow,
         ]
     );
 }
