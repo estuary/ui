@@ -253,7 +253,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
-    'routeTitle.captures': `Sources`,
+    'routeTitle.captures': CommonMessages['terms.sources'],
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
@@ -270,7 +270,7 @@ const RouteTitles: ResolvedIntlConfig['messages'] = {
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
-    'routeTitle.materializations': `Destinations`,
+    'routeTitle.materializations': CommonMessages['terms.destinations'],
     'routeTitle.registration': `Registration`,
 };
 
