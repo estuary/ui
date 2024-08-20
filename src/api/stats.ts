@@ -21,7 +21,7 @@ import {
 } from 'types';
 import pLimit from 'p-limit';
 import { CHUNK_SIZE } from 'utils/misc-utils';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 
 export type StatsFilter =
     | 'today'

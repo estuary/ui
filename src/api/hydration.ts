@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { ConnectorTag } from 'hooks/connectors/shared';
 import {
     LiveSpecsExtQuery,

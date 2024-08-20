@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import pLimit from 'p-limit';
 import { stringifyJSON } from 'services/stringify';
 import {

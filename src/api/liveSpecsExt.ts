@@ -1,5 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import pLimit from 'p-limit';
 import {
     CONNECTOR_IMAGE,

@@ -1,5 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { DEFAULT_POLLING } from 'context/SWR';
 import { TABLES } from 'services/supabase';
 import { JobStatus } from 'types';
