@@ -282,29 +282,29 @@ const getStatsForDashboard = (
     tenant: string,
     grain: Grains,
     endDate: DateTime,
-    duration?: Duration,
-    entityType?: Entity
+    duration?: Duration
+    // entityType?: Entity
 ) => {
     const past = duration ? endDate.minus(duration) : endDate;
 
-    let query: string;
-    switch (entityType) {
-        case 'capture':
-            query = CAPTURE_QUERY;
-            break;
-        case 'materialization':
-            query = MATERIALIZATION_QUERY;
-            break;
-        case 'collection':
-            query = COLLECTION_QUERY;
-            break;
-        default:
-            query = DEFAULT_QUERY;
-    }
+    // let query: string;
+    // switch (entityType) {
+    //     case 'capture':
+    //         query = CAPTURE_QUERY;
+    //         break;
+    //     case 'materialization':
+    //         query = MATERIALIZATION_QUERY;
+    //         break;
+    //     case 'collection':
+    //         query = COLLECTION_QUERY;
+    //         break;
+    //     default:
+    //         query = DEFAULT_QUERY;
+    // }
 
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
-        .select(`${query},flow_document`)
+        .select(`${DEFAULT_QUERY},flow_document`)
         .ilike('catalog_name', `${tenant}%`)
         .eq('grain', grain)
         .gte('ts', past)
