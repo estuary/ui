@@ -10,14 +10,14 @@ interface Props {
 export default function ActiveEntityCount({ entityType }: Props) {
     const intl = useIntl();
 
-    const { count, loading } = useActiveEntityCount(entityType);
+    const { count, isLoading } = useActiveEntityCount(entityType);
 
     return (
         <Statistic
             label={intl.formatMessage({
                 id: 'data.active',
             })}
-            loading={loading}
+            loading={isLoading}
             value={count}
         />
     );

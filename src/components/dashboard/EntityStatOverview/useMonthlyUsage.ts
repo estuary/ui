@@ -1,6 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
-import { isArray } from 'lodash';
 import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import { useTenantStore } from 'stores/Tenant/Store';
@@ -16,7 +15,7 @@ export default function useMonthlyUsage() {
 
     const endDate = DateTime.utc().startOf('month');
 
-    const { data, error, isValidating } = useQuery(
+    const { data, error, isLoading } = useQuery(
         hasLength(selectedTenant)
             ? getStatsForDashboard(selectedTenant, 'monthly', endDate)
             : null,
@@ -54,8 +53,7 @@ export default function useMonthlyUsage() {
     return {
         captureUsage,
         error,
-        isValidating,
-        loading: !isArray(data),
+        isLoading,
         materializationUsage,
     };
 }

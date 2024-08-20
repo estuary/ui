@@ -12,7 +12,7 @@ import useMonthlyUsage from './EntityStatOverview/useMonthlyUsage';
 const ICON_SIZE = 12;
 
 export default function Dashboard() {
-    const { captureUsage, loading, materializationUsage } = useMonthlyUsage();
+    const { captureUsage, isLoading, materializationUsage } = useMonthlyUsage();
 
     return (
         <Grid container spacing={{ xs: 4 }} style={{ marginTop: 32 }}>
@@ -32,7 +32,7 @@ export default function Dashboard() {
                     background={semiTransparentBackground_teal}
                     entityType="capture"
                     monthlyUsage={captureUsage}
-                    monthlyUsageLoading={loading}
+                    monthlyUsageLoading={isLoading}
                 />
             </Grid>
 
@@ -50,7 +50,7 @@ export default function Dashboard() {
                     background={semiTransparentBackground_purple}
                     entityType="materialization"
                     monthlyUsage={materializationUsage}
-                    monthlyUsageLoading={loading}
+                    monthlyUsageLoading={isLoading}
                 />
             </Grid>
         </Grid>
