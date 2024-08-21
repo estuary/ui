@@ -1,4 +1,7 @@
+import { PostgrestResponse } from '@supabase/postgrest-js';
 import produce from 'immer';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
+import { supabaseRetry } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import { PrefixAlertTableState } from 'stores/Tables/PrefixAlerts/types';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
@@ -31,7 +34,10 @@ export const getInitialState = (
                 'Table Store Hydration Start'
             );
 
-            const response = await fetcher.throwOnError();
+            const response = await supabaseRetry<PostgrestResponse<any>>(
+                () => fetcher,
+                'tablesHydrateStore'
+            );
 
             if (response.error) {
                 set(
@@ -47,9 +53,25 @@ export const getInitialState = (
 
             set(
                 produce((state) => {
+                    state.query.networkFailed = checkErrorMessage(
+                        FAILED_TO_FETCH,
+                        response.error?.message
+                    );
+
                     state.hydrated = true;
 
-                    state.query.count = response.count ?? 0;
+                    const hasNewCount = Number.isInteger(response.count);
+                    if (
+                        // We have no count and just received one so update
+                        //  ex: initial load
+                        (!state.query.count && hasNewCount) ||
+                        // We already have a count, but there is a new one, and it has changed
+                        //  ex: user entered a filter or count change since last time they viewed the 1st page
+                        (state.query.count !== response.count && hasNewCount)
+                    ) {
+                        state.query.count = response.count;
+                    }
+
                     state.query.response = Object.entries(
                         formatNotificationSubscriptionsByPrefix(
                             response.data ?? []
