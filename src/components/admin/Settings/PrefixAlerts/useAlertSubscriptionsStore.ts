@@ -8,16 +8,18 @@ import { EmailDictionary } from './types';
 
 interface AlertSubscriptionState {
     existingEmails: EmailDictionary;
+    initializationError: PostgrestError | null | undefined;
     initializeState: (
         prefix: string | undefined,
         subscriptions: AlertSubscriptionState['subscriptions'],
-        error: AlertSubscriptionState['serverError']
+        error: AlertSubscriptionState['initializationError']
     ) => void;
     prefix: string;
     prefixErrorsExist: boolean;
-    serverError: PostgrestError | null | undefined;
+    saveErrors: (PostgrestError | null | undefined)[];
     subscriptions: PrefixSubscriptionDictionary | null | undefined;
     resetState: () => void;
+    setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
     setUpdatedEmails: (value: AlertSubscriptionState['updatedEmails']) => void;
     updatePrefix: (value: string, errors: string | null) => void;
     updatedEmails: EmailDictionary;
@@ -26,16 +28,18 @@ interface AlertSubscriptionState {
 const getInitialState = (): Pick<
     AlertSubscriptionState,
     | 'existingEmails'
+    | 'initializationError'
     | 'prefix'
     | 'prefixErrorsExist'
-    | 'serverError'
+    | 'saveErrors'
     | 'subscriptions'
     | 'updatedEmails'
 > => ({
     existingEmails: {},
+    initializationError: null,
     prefix: '',
     prefixErrorsExist: false,
-    serverError: null,
+    saveErrors: [],
     subscriptions: undefined,
     updatedEmails: {},
 });
@@ -71,13 +75,22 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         }
 
                         state.subscriptions = subscriptions;
-                        state.serverError = error;
+                        state.initializationError = error;
                     }),
                     false,
                     'state initialized'
                 ),
 
             resetState: () => set(getInitialState(), false, 'state reset'),
+
+            setSaveErrors: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.saveErrors = value;
+                    }),
+                    false,
+                    'save errors set'
+                ),
 
             setUpdatedEmails: (value) =>
                 set(

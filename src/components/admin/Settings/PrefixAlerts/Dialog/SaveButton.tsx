@@ -36,6 +36,10 @@ function SaveButton({ closeDialog }: Props) {
         (state) => state.subscriptions
     );
 
+    const setServerError = useAlertSubscriptionsStore(
+        (state) => state.setSaveErrors
+    );
+
     const existingEmails = useAlertSubscriptionsStore(
         (state) => state.existingEmails
     );
@@ -54,6 +58,7 @@ function SaveButton({ closeDialog }: Props) {
     const onClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setLoading(true);
+        setServerError([]);
 
         const subscriptionsToCancel: { [K: string]: string[] } = {};
         const subscriptionsToCreate: [string, string][] = [];
@@ -104,13 +109,14 @@ function SaveButton({ closeDialog }: Props) {
 
         // The create could be undefined and this was easier to mark than tweak logic
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const errors = responses.filter((r) => r?.error);
+        const errors = responses.filter((r) => r?.error).map((r) => r?.error);
 
         if (!hasLength(errors)) {
             hydrate();
             closeDialog();
         }
 
+        setServerError(errors);
         setLoading(false);
     };
 
