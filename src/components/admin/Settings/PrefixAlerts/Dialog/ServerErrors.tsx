@@ -19,7 +19,7 @@ export default function ServerErrors() {
                     <Error
                         condensed
                         error={error}
-                        key={`save-error-${index}`}
+                        key={`prefix-alert-save-error-${index}`}
                         severity="error"
                     />
                 ) : null
