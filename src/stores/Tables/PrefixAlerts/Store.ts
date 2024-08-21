@@ -36,7 +36,7 @@ export const getInitialState = (
 
             const response = await supabaseRetry<PostgrestResponse<any>>(
                 () => fetcher,
-                'tablesHydrateStore'
+                'prefixAlertTableHydrateStore'
             );
 
             if (response.error) {
