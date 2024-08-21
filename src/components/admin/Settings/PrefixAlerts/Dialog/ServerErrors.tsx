@@ -3,7 +3,7 @@ import Error from 'components/shared/Error';
 import { hasLength } from 'utils/misc-utils';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
-export default function InitializationError() {
+export default function ServerErrors() {
     const serverErrors = useAlertSubscriptionsStore((state) =>
         [state.initializationError].concat(state.saveErrors)
     );
