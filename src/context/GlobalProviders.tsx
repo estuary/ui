@@ -4,10 +4,6 @@ import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 import { enableMapSet, setAutoFreeze } from 'immer';
-import { loader } from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import { useUserStore } from './User/useUserContextStore';
 
 // This is not a normal provider... more like a guard... kind of. This is here so that we know createClient is called early and also
@@ -64,17 +60,6 @@ initGoogleTagManager();
 // Setup immer
 enableMapSet();
 setAutoFreeze(false);
-
-// Setup Monaco
-self.MonacoEnvironment = {
-    getWorker(_, label) {
-        if (label === 'json') {
-            return new JsonWorker();
-        }
-        return new EditorWorker();
-    },
-};
-loader.config({ monaco });
 
 // Setup Supabase
 const supabaseSettings = {
