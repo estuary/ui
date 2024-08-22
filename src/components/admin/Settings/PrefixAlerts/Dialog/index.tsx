@@ -15,8 +15,8 @@ import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import EmailListField from './EmailListField';
-import InitializationError from './InitializationError';
 import PrefixField from './PrefixField';
+import ServerErrors from './ServerErrors';
 
 interface Props {
     headerId: string;
@@ -75,7 +75,7 @@ function AlertSubscriptionDialog({
             </DialogTitle>
 
             <DialogContent sx={{ mt: 1 }}>
-                <InitializationError />
+                <ServerErrors />
 
                 <Typography sx={{ mb: 2 }}>
                     <FormattedMessage id="admin.alerts.dialog.description" />

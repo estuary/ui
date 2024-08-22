@@ -13,7 +13,7 @@ export default function EmailListField({ open }: Props) {
     );
 
     const serverError = useAlertSubscriptionsStore(
-        (state) => state.serverError
+        (state) => state.initializationError
     );
 
     const prefix = useAlertSubscriptionsStore((state) => state.prefix);
