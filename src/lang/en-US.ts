@@ -1107,7 +1107,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.header': `Schema Evolution`,
     'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
-    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Breaking changes re-version collections`,
+    'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Changing primary keys re-versions collections`,
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
