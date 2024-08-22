@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { logRocketConsole } from 'services/shared';
 import { useConnectorStore } from 'stores/Connector/Store';
@@ -8,7 +8,7 @@ import { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 export const ConnectorHydrator = ({ children }: BaseComponentProps) => {
-    const runHydration = useRef(true);
+    const [runHydration, setRunHydration] = useState(true);
 
     const connectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
@@ -24,11 +24,16 @@ export const ConnectorHydrator = ({ children }: BaseComponentProps) => {
         ]);
 
     useEffect(() => {
-        if (!runHydration.current || hydrated || !hasLength(connectorId)) {
+        setRunHydration(true);
+        setHydrated(false);
+    }, [connectorId, setHydrated]);
+
+    useEffect(() => {
+        if (!runHydration || hydrated || !hasLength(connectorId)) {
             return;
         }
 
-        runHydration.current = false;
+        setRunHydration(false);
         setActive(true);
         hydrateState(connectorId)
             .then(

@@ -13,18 +13,7 @@ import { ConnectorState } from './types';
 const STORE_KEY = 'connector';
 
 const getInitialStateData = (): Pick<ConnectorState, 'tag'> => ({
-    tag: {
-        connectors: {
-            image_name: '',
-        },
-        id: '',
-        connector_id: '',
-        default_capture_interval: null,
-        image_tag: '',
-        endpoint_spec_schema: {},
-        resource_spec_schema: {},
-        documentation_url: '',
-    },
+    tag: null,
 });
 
 const getInitialState = (
@@ -50,10 +39,10 @@ const getInitialState = (
                 connectorTagID
             );
 
-            if (error) {
-                get().setHydrationError(error.message);
-                get().setHydrationErrorsExist(true);
-            } else if (data?.resource_spec_schema) {
+            get().setHydrationError(error ? error.message : null);
+            get().setHydrationErrorsExist(Boolean(error));
+
+            if (data?.resource_spec_schema) {
                 get().setTag(data);
             }
         }

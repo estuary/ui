@@ -30,22 +30,19 @@ import {
 import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
 
 interface Props {
-    connectorImage: string;
     readOnly?: boolean;
-    hideBorder?: boolean;
 }
 
 const DOCUSAURUS_THEME = 'docusaurus-theme';
 
-function EndpointConfig({ readOnly = false, hideBorder }: Props) {
+function EndpointConfig({ readOnly = false }: Props) {
     // General hooks
     const intl = useIntl();
     const theme = useTheme();
 
-    const [connectorTag, hydrationError] = useConnectorStore((state) => [
-        state.tag,
-        state.hydrationError,
-    ]);
+    const [connectorTag, hydrationError, hydrated] = useConnectorStore(
+        (state) => [state.tag, state.hydrationError, state.hydrated]
+    );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -235,7 +232,7 @@ function EndpointConfig({ readOnly = false, hideBorder }: Props) {
                 mountClosed={editWorkflow}
                 forceClose={forceClose}
                 readOnly={readOnly}
-                hideBorder={hideBorder}
+                hideBorder={!hydrated}
                 header={<EndpointConfigHeader />}
             >
                 <ErrorBoundryWrapper>

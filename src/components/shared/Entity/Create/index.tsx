@@ -186,14 +186,9 @@ function EntityCreate({
                 </ErrorBoundryWrapper>
             ) : null}
 
-            {imageTag.connectorId ? (
-                <ErrorBoundryWrapper>
-                    <EndpointConfig
-                        connectorImage={imageTag.id}
-                        hideBorder={!displayResourceConfig}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
+            <ErrorBoundryWrapper>
+                <EndpointConfig />
+            </ErrorBoundryWrapper>
 
             {displayResourceConfig ? (
                 <ErrorBoundryWrapper>
