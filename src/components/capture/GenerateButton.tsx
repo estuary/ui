@@ -4,6 +4,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_rediscoveryRequired } from 'stores/Binding/hooks';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
@@ -26,6 +27,10 @@ function CaptureGenerateButton({
 }: Props) {
     const isEdit = useEntityWorkflow_Editing();
     const rediscoveryRequired = useBinding_rediscoveryRequired();
+
+    const hydrationErrorsExist = useConnectorStore(
+        (state) => state.hydrationErrorsExist
+    );
 
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
@@ -81,7 +86,9 @@ function CaptureGenerateButton({
     return (
         <Button
             onClick={processFormData}
-            disabled={disabled || isSaving || formActive}
+            disabled={
+                disabled || isSaving || formActive || hydrationErrorsExist
+            }
             sx={buttonSx}
         >
             <FormattedMessage id="cta.generateCatalog.capture" />
