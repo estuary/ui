@@ -23,6 +23,7 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
+import ConnectorDetailsMissing from './ConnectorDetailsMissing';
 
 interface Props {
     ErrorComponent?: any | boolean;
@@ -101,6 +102,8 @@ function ValidationErrorSummary({
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
+                ) : connectorHydrationErrorsExist ? (
+                    <ConnectorDetailsMissing />
                 ) : hasLength(connectorID) ? (
                     <>
                         <DetailsErrors />

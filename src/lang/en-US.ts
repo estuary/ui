@@ -797,6 +797,8 @@ const EntityCreate: ResolvedIntlConfig['messages'] = {
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
     'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
+    'entityCreate.endpointConfig.connectorDetailsMissingTitle': `We were unable to get required details for the selected connector`,
+
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
     'entityCreate.endpointConfig.entityNameInvalid': `Name invalid`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,

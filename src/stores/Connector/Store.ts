@@ -51,6 +51,7 @@ const getInitialState = (
             );
 
             if (error) {
+                get().setHydrationError(error.message);
                 get().setHydrationErrorsExist(true);
             } else if (data?.resource_spec_schema) {
                 get().setTag(data);
