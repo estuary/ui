@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { isEmpty } from 'lodash';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';

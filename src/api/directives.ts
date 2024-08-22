@@ -1,5 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { DIRECTIVES } from 'directives/shared';
 import { UserClaims } from 'directives/types';
 import { logRocketConsole } from 'services/shared';

@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import pLimit from 'p-limit';
 import { FUNCTIONS, TABLES, invokeSupabase } from 'services/supabase';
 import { TenantPaymentDetails } from 'types';

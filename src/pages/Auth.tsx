@@ -4,7 +4,7 @@ import {
     unauthenticatedRoutes,
 } from 'app/routes';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { useUserStore } from 'context/User/useUserContextStore';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useSnackbar } from 'notistack';

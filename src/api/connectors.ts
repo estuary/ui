@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import {
     CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,

@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import {
     DEFAULT_FILTER,
     insertSupabase,

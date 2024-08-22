@@ -7,8 +7,8 @@ import ThemeProvider from 'context/Theme';
 import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { TableSettingsProvider } from 'context/TableSettings';
-import SupabaseProvider from './Supabase';
 import { UserStoreProvider } from './User';
+import GlobalProviders from './GlobalProviders';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
@@ -19,13 +19,13 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                         <NotificationProvider>
                             <SwrConfigProvider>
                                 <UserStoreProvider>
-                                    <SupabaseProvider>
+                                    <GlobalProviders>
                                         <SidePanelDocsProvider>
                                             <TableSettingsProvider>
                                                 {children}
                                             </TableSettingsProvider>
                                         </SidePanelDocsProvider>
-                                    </SupabaseProvider>
+                                    </GlobalProviders>
                                 </UserStoreProvider>
                             </SwrConfigProvider>
                         </NotificationProvider>

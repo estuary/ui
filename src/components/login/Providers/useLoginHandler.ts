@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { getPathWithParams } from 'utils/misc-utils';
 import { useCallback, useMemo } from 'react';
 import { SupportedProvider } from 'types/authProviders';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;

@@ -6,7 +6,7 @@ import {
     Typography,
     Divider,
 } from '@mui/material';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import React, { useState } from 'react';
 import AlertBox from 'components/shared/AlertBox';
 import { useSnackbar, VariantType } from 'notistack';
