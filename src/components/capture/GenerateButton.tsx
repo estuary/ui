@@ -28,9 +28,7 @@ function CaptureGenerateButton({
     const isEdit = useEntityWorkflow_Editing();
     const rediscoveryRequired = useBinding_rediscoveryRequired();
 
-    const hydrationErrorsExist = useConnectorStore(
-        (state) => state.hydrationErrorsExist
-    );
+    const hydrated = useConnectorStore((state) => state.hydrated);
 
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
@@ -86,9 +84,7 @@ function CaptureGenerateButton({
     return (
         <Button
             onClick={processFormData}
-            disabled={
-                disabled || isSaving || formActive || hydrationErrorsExist
-            }
+            disabled={disabled || isSaving || formActive || !hydrated}
             sx={buttonSx}
         >
             <FormattedMessage id="cta.generateCatalog.capture" />

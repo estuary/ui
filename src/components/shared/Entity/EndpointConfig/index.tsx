@@ -6,6 +6,7 @@ import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import UnknownFormSkeleton from 'components/skeleton/UnknownForm';
 import { useEntityWorkflow } from 'context/Workflow';
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -246,7 +247,11 @@ function EndpointConfig({ readOnly = false }: Props) {
                         </Box>
                     ) : null}
 
-                    <EndpointConfigForm readOnly={readOnly} />
+                    {!hydrated ? (
+                        <UnknownFormSkeleton />
+                    ) : (
+                        <EndpointConfigForm readOnly={readOnly} />
+                    )}
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>
         );

@@ -19,9 +19,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
 
-    const resourceSchema = useConnectorStore(
-        (state) => state.tag?.resource_spec_schema
-    );
+    const [resourceSchema, connector_hydrated] = useConnectorStore((state) => [
+        state.tag?.resource_spec_schema,
+        state.hydrated,
+    ]);
 
     const setHydrated = useBinding_setHydrated();
     const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
@@ -62,8 +63,12 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
                     setActive(false);
                 });
+        } else if (connector_hydrated && !resourceSchema) {
+            setHydrated(true);
+            setHydrationErrorsExist(true);
         }
     }, [
+        connector_hydrated,
         editWorkflow,
         entityType,
         hydrateState,

@@ -4,6 +4,7 @@ import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { FormattedMessage } from 'react-intl';
+import { useConnectorStore } from 'stores/Connector/Store';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
@@ -19,12 +20,14 @@ function MaterializeGenerateButton({ disabled }: Props) {
     const formActive = useFormStateStore_isActive();
     const mutateDraftSpecs = useMutateDraftSpec();
 
+    const hydrated = useConnectorStore((state) => state.hydrated);
+
     return (
         <Button
             onClick={async () => {
                 await generateCatalog(mutateDraftSpecs);
             }}
-            disabled={disabled || isSaving || formActive}
+            disabled={disabled || isSaving || formActive || !hydrated}
             sx={buttonSx}
         >
             <FormattedMessage id="cta.generateCatalog.materialization" />
