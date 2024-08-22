@@ -33,18 +33,19 @@ export const CONNECTORS_EXIST_QUERY = `
     )
 `;
 
-export const CONNECTOR_TAG_QUERY = `
-    connectors(
+const CONNECTOR_TAG_COLS = [
+    `connectors(
         image_name
-    ),
-    connector_id,
-    default_capture_interval,
-    documentation_url,
-    endpoint_spec_schema, 
-    id,
-    image_tag,
-    resource_spec_schema
-`;
+    )`,
+    'connector_id',
+    'default_capture_interval',
+    'documentation_url',
+    'endpoint_spec_schema',
+    'id',
+    'image_tag',
+    'resource_spec_schema',
+];
+export const CONNECTOR_TAG_QUERY = CONNECTOR_TAG_COLS.join(',');
 
 export interface ConnectorTag {
     connectors: {
