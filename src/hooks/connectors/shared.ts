@@ -33,9 +33,6 @@ export const CONNECTORS_EXIST_QUERY = `
     )
 `;
 
-//////////////////////////////
-// useConnectorTag
-//////////////////////////////
 export const CONNECTOR_TAG_QUERY = `
     connectors(
         image_name

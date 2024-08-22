@@ -1,75 +1,61 @@
-import useConnectorTag from 'hooks/connectors/useConnectorTag';
-import { useEffect } from 'react';
-
+import { useEffect, useRef } from 'react';
+import { useUnmount } from 'react-use';
+import { logRocketConsole } from 'services/shared';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
 import { BaseComponentProps } from 'types';
-import { useConnectorStore } from './Store';
+import { hasLength } from 'utils/misc-utils';
 
-function ConnectorHydrator({ children }: BaseComponentProps) {
-    const imageTag = useDetailsFormStore(
-        (state) => state.details.data.connectorImage
+export const ConnectorHydrator = ({ children }: BaseComponentProps) => {
+    const runHydration = useRef(true);
+
+    const connectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
     );
 
-    const [
-        resetState,
-        hydrated,
-        setTag,
-        setHydrated,
-        setHydrationErrorsExist,
-        setHydrationError,
-    ] = useConnectorStore((state) => [
-        state.resetState,
-        state.hydrated,
-        state.setTag,
-        state.setHydrated,
-        state.setHydrationErrorsExist,
-        state.setHydrationError,
-    ]);
-
-    // The useConnectorTag hook can accept a connector ID or a connector tag ID.
-    const { connectorTag, error, isValidating } = useConnectorTag(
-        imageTag.connectorId
-    );
+    const [hydrated, setHydrated, hydrateState, setActive, resetState] =
+        useConnectorStore((state) => [
+            state.hydrated,
+            state.setHydrated,
+            state.hydrateState,
+            state.setActive,
+            state.resetState,
+        ]);
 
     useEffect(() => {
-        if (isValidating || hydrated) {
+        if (!runHydration.current || hydrated || !hasLength(connectorId)) {
             return;
         }
 
-        if (error) {
-            setTag(null);
-
-            setHydrationError(error.message);
-            setHydrationErrorsExist(true);
-        }
-
-        if (connectorTag) {
-            setTag(connectorTag);
-
-            setHydrationError(null);
-            setHydrationErrorsExist(false);
-        }
-
-        setHydrated(true);
-        return () => {
-            resetState();
-        };
+        runHydration.current = false;
+        setActive(true);
+        hydrateState(connectorId)
+            .then(
+                () => {
+                    // No special handling needed
+                },
+                (error) => {
+                    logRocketConsole(
+                        'Failed to hydrate connector details',
+                        error
+                    );
+                }
+            )
+            .finally(() => {
+                setHydrated(true);
+            });
     }, [
-        connectorTag,
-        error,
+        connectorId,
+        hydrateState,
         hydrated,
-        isValidating,
-        resetState,
+        runHydration,
+        setActive,
         setHydrated,
-        setHydrationError,
-        setHydrationErrorsExist,
-        setTag,
     ]);
 
-    return (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>{children}</>
-    );
-}
+    useUnmount(() => resetState());
 
-export default ConnectorHydrator;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
+};

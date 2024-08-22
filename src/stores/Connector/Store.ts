@@ -1,8 +1,10 @@
+import { getConnectorTagDetails } from 'api/connector_tags';
 import produce from 'immer';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
@@ -27,7 +29,7 @@ const getInitialStateData = (): Pick<ConnectorState, 'tag'> => ({
 
 const getInitialState = (
     set: NamedSet<ConnectorState>,
-    _get: StoreApi<ConnectorState>['getState']
+    get: StoreApi<ConnectorState>['getState']
 ): ConnectorState => ({
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getInitialStateData(),
@@ -38,6 +40,22 @@ const getInitialState = (
             false,
             'State reset'
         );
+    },
+
+    hydrateState: async (connectorTagID): Promise<void> => {
+        get().setHydrated(false);
+
+        if (get().active && hasLength(connectorTagID)) {
+            const { data, error } = await getConnectorTagDetails(
+                connectorTagID
+            );
+
+            if (error) {
+                get().setHydrationErrorsExist(true);
+            } else if (data?.resource_spec_schema) {
+                get().setTag(data);
+            }
+        }
     },
 
     setTag: (newVal) => {

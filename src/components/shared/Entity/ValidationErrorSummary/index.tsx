@@ -15,6 +15,7 @@ import {
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'stores/Binding/hooks';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_errorsExist,
@@ -55,11 +56,21 @@ function ValidationErrorSummary({
 
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
+    // Connector Store
+
+    const connectorHydrationErrorsExist = useConnectorStore(
+        (state) => state.hydrationErrorsExist
+    );
+
     // Form State Store
     const displayValidation = useFormStateStore_displayValidation();
 
     const hydrationErrorsExist =
-        endpointConfigHydrationErrorsExist || bindingHydrationErrorsExist;
+        endpointConfigHydrationErrorsExist ||
+        bindingHydrationErrorsExist ||
+        connectorHydrationErrorsExist;
+
+    console.log('connectorHydrationErrorsExist', connectorHydrationErrorsExist);
 
     const formErrorsExist =
         detailsFormErrorsExist ||
