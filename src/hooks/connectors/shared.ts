@@ -39,11 +39,11 @@ export const CONNECTOR_TAG_QUERY = `
     ),
     connector_id,
     default_capture_interval,
-    documentation_url
+    documentation_url,
     endpoint_spec_schema, 
     id,
     image_tag,
-    resource_spec_schema,
+    resource_spec_schema
 `;
 
 export interface ConnectorTag {
