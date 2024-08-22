@@ -20,14 +20,23 @@ function MaterializeGenerateButton({ disabled }: Props) {
     const formActive = useFormStateStore_isActive();
     const mutateDraftSpecs = useMutateDraftSpec();
 
-    const hydrated = useConnectorStore((state) => state.hydrated);
+    const [hydrated, hydrationErrorsExist] = useConnectorStore((state) => [
+        state.hydrated,
+        state.hydrationErrorsExist,
+    ]);
 
     return (
         <Button
             onClick={async () => {
                 await generateCatalog(mutateDraftSpecs);
             }}
-            disabled={disabled || isSaving || formActive || !hydrated}
+            disabled={
+                disabled ||
+                isSaving ||
+                formActive ||
+                !hydrated ||
+                hydrationErrorsExist
+            }
             sx={buttonSx}
         >
             <FormattedMessage id="cta.generateCatalog.materialization" />
