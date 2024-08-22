@@ -12,6 +12,7 @@ import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
+import { BASE_ERROR } from 'services/supabase';
 import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
@@ -41,7 +42,7 @@ function EndpointConfig({ readOnly = false, hideBorder }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [connectorTag, error] = useConnectorStore((state) => [
+    const [connectorTag, hydrationError] = useConnectorStore((state) => [
         state.tag,
         state.hydrationError,
     ]);
@@ -226,8 +227,8 @@ function EndpointConfig({ readOnly = false, hideBorder }: Props) {
         }
     });
 
-    if (error) {
-        return <Error error={error} />;
+    if (hydrationError) {
+        return <Error error={{ ...BASE_ERROR, message: hydrationError }} />;
     } else if (connectorTag) {
         return (
             <WrapperWithHeader
