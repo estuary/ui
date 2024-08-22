@@ -136,7 +136,7 @@ export interface BindingState
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
-        connectorTagId: string,
+        resourceSchema: Schema | undefined,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;
 

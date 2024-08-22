@@ -2,7 +2,6 @@ import useConnectorTag from 'hooks/connectors/useConnectorTag';
 import { useEffect } from 'react';
 
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEnpointConfigStore } from 'stores/EndpointConfig/Store';
 import { BaseComponentProps } from 'types';
 import { useConnectorStore } from './Store';
 
@@ -10,12 +9,6 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
     const imageTag = useDetailsFormStore(
         (state) => state.details.data.connectorImage
     );
-
-    const [setEndpointSchema, endpoint_setHydrationErrorsExist] =
-        useEnpointConfigStore((state) => [
-            state.setEndpointSchema,
-            state.setHydrationErrorsExist,
-        ]);
 
     const [
         resetState,
@@ -43,12 +36,11 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
             return;
         }
 
-        if (error?.message) {
+        if (error) {
             setTag(null);
 
             setHydrationError(error.message);
             setHydrationErrorsExist(true);
-            endpoint_setHydrationErrorsExist(true);
         }
 
         if (connectorTag) {
@@ -56,9 +48,6 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
 
             setHydrationError(null);
             setHydrationErrorsExist(false);
-            endpoint_setHydrationErrorsExist(false);
-
-            setEndpointSchema(connectorTag.endpoint_spec_schema);
         }
 
         setHydrated(true);
@@ -67,12 +56,10 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
         };
     }, [
         connectorTag,
-        endpoint_setHydrationErrorsExist,
         error,
         hydrated,
         isValidating,
         resetState,
-        setEndpointSchema,
         setHydrated,
         setHydrationError,
         setHydrationErrorsExist,

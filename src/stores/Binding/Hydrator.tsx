@@ -1,7 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import { useEffect, useRef } from 'react';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { BaseComponentProps } from 'types';
 import {
@@ -16,12 +16,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const rehydrating = useRef(false);
 
     const entityType = useEntityType();
-
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
 
-    const connectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
+    const resourceSchema = useConnectorStore(
+        (state) => state.tag?.resource_spec_schema
     );
 
     const setHydrated = useBinding_setHydrated();
@@ -34,15 +33,12 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     );
 
     useEffect(() => {
-        if (
-            (workflow && connectorTagId.length > 0) ||
-            workflow === 'collection_create'
-        ) {
+        if ((workflow && resourceSchema) || workflow === 'collection_create') {
             setActive(true);
             hydrateState(
                 editWorkflow,
                 entityType,
-                connectorTagId,
+                resourceSchema,
                 rehydrating.current
             )
                 .then(
@@ -68,10 +64,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 });
         }
     }, [
-        connectorTagId,
         editWorkflow,
         entityType,
         hydrateState,
+        resourceSchema,
         setActive,
         setHydrated,
         setHydrationErrorsExist,

@@ -2,6 +2,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useEffect, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
+import { useConnectorStore } from 'stores/Connector/Store';
 import {
     useEndpointConfig_hydrateState,
     useEndpointConfig_hydrated,
@@ -23,15 +24,20 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const hydrateState = useEndpointConfig_hydrateState();
     const setActive = useEndpointConfig_setActive();
 
+    const enpointSchema = useConnectorStore(
+        (state) => state.tag?.endpoint_spec_schema
+    );
+
     useEffect(() => {
         if (
             runHydration &&
             !hydrated &&
+            enpointSchema &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setRunHydration(false);
             setActive(true);
-            hydrateState(entityType, workflow).then(
+            hydrateState(entityType, workflow, enpointSchema).then(
                 () => {
                     setHydrated(true);
                 },
@@ -47,6 +53,7 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
             );
         }
     }, [
+        enpointSchema,
         entityType,
         hydrateState,
         hydrated,

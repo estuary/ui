@@ -47,7 +47,8 @@ export interface EndpointConfigState
     // Hydration
     hydrateState: (
         entityType: EntityWithCreateWorkflow,
-        workflow: EntityWorkflow | null
+        workflow: EntityWorkflow | null,
+        enpointSchema: Schema | undefined
     ) => Promise<void>;
 
     // Misc.

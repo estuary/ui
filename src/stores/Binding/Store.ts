@@ -26,7 +26,6 @@ import {
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
-import { Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -414,7 +413,7 @@ const getInitialState = (
     hydrateState: async (
         editWorkflow,
         entityType,
-        connectorTagId,
+        resourceSchema,
         rehydrating
     ) => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -432,18 +431,9 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationRehydrating);
 
-        if (connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Resource(connectorTagId);
-
-            if (error) {
-                setHydrationErrorsExist(true);
-            } else if (data?.resource_spec_schema) {
-                const { setResourceSchema } = get();
-
-                await setResourceSchema(
-                    data.resource_spec_schema as unknown as Schema
-                );
-            }
+        if (resourceSchema) {
+            const { setResourceSchema } = get();
+            await setResourceSchema(resourceSchema);
         }
 
         if (editWorkflow && liveSpecIds.length > 0) {
