@@ -1,11 +1,10 @@
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
+import { BASE_ERROR } from 'services/supabase';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import {
-    useEndpointConfigStore_endpointSchema,
-    useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { Schema } from 'types';
+import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
+import { Schema, SupabaseInvokeResponse } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {
@@ -18,20 +17,36 @@ function useDiscoverConfigEncrypt() {
         (state) => state.details.data.connectorImage.id
     );
 
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointSchema = useConnectorStore(
+        (state) => state.tag?.endpoint_spec_schema
+    );
+
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
 
     return useCallback(
         async (selectedEndpointConfig: Schema) => {
-            const encryptedEndpointConfig = await encryptEndpointConfig(
-                selectedEndpointConfig,
-                endpointSchema,
-                serverUpdateRequired,
-                imageConnectorId,
-                imageConnectorTagId,
-                callFailed,
-                { overrideJsonFormDefaults: true }
-            );
+            let encryptedEndpointConfig: SupabaseInvokeResponse<any>;
+            if (endpointSchema) {
+                encryptedEndpointConfig = await encryptEndpointConfig(
+                    selectedEndpointConfig,
+                    endpointSchema,
+                    serverUpdateRequired,
+                    imageConnectorId,
+                    imageConnectorTagId,
+                    callFailed,
+                    { overrideJsonFormDefaults: true }
+                );
+            } else {
+                // We should not ever get here without endpointSchema but needed to make
+                //  typescript happy and decided to handle this properly just in case
+                encryptedEndpointConfig = {
+                    data: null,
+                    error: {
+                        ...BASE_ERROR,
+                        message: 'missing schema',
+                    },
+                };
+            }
 
             if (encryptedEndpointConfig.error) {
                 callFailed({

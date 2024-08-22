@@ -57,7 +57,6 @@ export interface ConnectorTag_Base {
 export interface ConnectorsQuery_DetailsForm {
     id: string;
     image_name: string;
-    capture_interval: string | null;
     logo_url: string;
     connector_tags: ConnectorTag_Base[];
 }
@@ -65,7 +64,6 @@ export interface ConnectorsQuery_DetailsForm {
 const DETAILS_FORM_QUERY = `
     id,
     image_name,
-    capture_interval,
     logo_url:logo_url->>en-US::text,
     connector_tags !inner(
         id,

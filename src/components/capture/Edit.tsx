@@ -7,7 +7,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import EntityEdit from 'components/shared/Entity/Edit';
-import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useGlobalSearchParams, {
@@ -17,11 +16,9 @@ import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
+import WorkflowHydrators from 'components/shared/Entity/WorkflowHydrators';
 
 const entityType = 'capture';
 function CaptureEdit() {
@@ -59,50 +56,44 @@ function CaptureEdit() {
     );
 
     return (
-        <DraftInitializer>
-            <DetailsFormHydrator>
-                <EndpointConfigHydrator>
-                    <BindingHydrator>
-                        <MutateDraftSpecProvider value={updateDraftSpecs}>
-                            <EntityEdit
-                                title="routeTitle.captureEdit"
-                                entityType={entityType}
-                                readOnly={{ detailsForm: true }}
-                                draftSpecMetadata={draftSpecsMetadata}
-                                toolbar={
-                                    <EntityToolbar
-                                        taskNames={taskNames}
-                                        waitTimes={{
-                                            generate: MAX_DISCOVER_TIME,
-                                        }}
-                                        primaryButtonProps={{
-                                            disabled: !draftId,
-                                            logEvent: CustomEvents.CAPTURE_EDIT,
-                                        }}
-                                        secondaryButtonProps={{
-                                            disabled: !hasConnectors,
-                                            logEvent: CustomEvents.CAPTURE_TEST,
-                                        }}
-                                        GenerateButton={
-                                            <CaptureGenerateButton
-                                                entityType={entityType}
-                                                disabled={!hasConnectors}
-                                            />
-                                        }
-                                    />
-                                }
-                                RediscoverButton={
-                                    <RediscoverButton
-                                        entityType={entityType}
-                                        disabled={!hasConnectors}
-                                    />
-                                }
-                            />
-                        </MutateDraftSpecProvider>
-                    </BindingHydrator>
-                </EndpointConfigHydrator>
-            </DetailsFormHydrator>
-        </DraftInitializer>
+        <WorkflowHydrators>
+            <MutateDraftSpecProvider value={updateDraftSpecs}>
+                <EntityEdit
+                    title="routeTitle.captureEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    toolbar={
+                        <EntityToolbar
+                            taskNames={taskNames}
+                            waitTimes={{
+                                generate: MAX_DISCOVER_TIME,
+                            }}
+                            primaryButtonProps={{
+                                disabled: !draftId,
+                                logEvent: CustomEvents.CAPTURE_EDIT,
+                            }}
+                            secondaryButtonProps={{
+                                disabled: !hasConnectors,
+                                logEvent: CustomEvents.CAPTURE_TEST,
+                            }}
+                            GenerateButton={
+                                <CaptureGenerateButton
+                                    entityType={entityType}
+                                    disabled={!hasConnectors}
+                                />
+                            }
+                        />
+                    }
+                    RediscoverButton={
+                        <RediscoverButton
+                            entityType={entityType}
+                            disabled={!hasConnectors}
+                        />
+                    }
+                />
+            </MutateDraftSpecProvider>
+        </WorkflowHydrators>
     );
 }
 

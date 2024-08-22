@@ -2,7 +2,6 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useEffect, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfig_hydrateState,
     useEndpointConfig_hydrated,
@@ -18,10 +17,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
 
     const [runHydration, setRunHydration] = useState(true);
 
-    const connectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
-
     const hydrated = useEndpointConfig_hydrated();
     const setHydrated = useEndpointConfig_setHydrated();
     const setHydrationErrorsExist = useEndpointConfig_setHydrationErrorsExist();
@@ -32,12 +27,11 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
         if (
             runHydration &&
             !hydrated &&
-            connectorTagId.length > 0 &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setRunHydration(false);
             setActive(true);
-            hydrateState(entityType, workflow, connectorTagId).then(
+            hydrateState(entityType, workflow).then(
                 () => {
                     setHydrated(true);
                 },
@@ -53,7 +47,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
             );
         }
     }, [
-        connectorTagId,
         entityType,
         hydrateState,
         hydrated,

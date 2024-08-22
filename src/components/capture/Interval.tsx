@@ -1,4 +1,3 @@
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     FormControl,
     FormHelperText,
@@ -11,6 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useConnectorStore } from 'stores/Connector/Store';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
@@ -21,13 +21,13 @@ interface Props {
 
 function CaptureInterval({ readOnly }: Props) {
     const intl = useIntl();
-    const captureInterval = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.captureInterval
-    );
-
     const label = intl.formatMessage({
         id: 'workflows.interval.input.label',
     });
+
+    const captureInterval = useConnectorStore(
+        (state) => state.tag?.default_capture_interval
+    );
 
     if (!captureInterval) {
         return null;

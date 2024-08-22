@@ -13,7 +13,6 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
             imageName: string;
             imagePath: string;
             connectorId: string;
-            captureInterval: string | null;
         };
     };
 }

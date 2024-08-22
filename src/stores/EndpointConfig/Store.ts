@@ -1,5 +1,5 @@
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
-import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
+import { getLiveSpecsByLiveSpecId } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
@@ -15,7 +15,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { JsonFormsData, Schema } from 'types';
+import { JsonFormsData } from 'types';
 import {
     configCanBeEmpty,
     getDereffedSchema,
@@ -195,11 +195,7 @@ const getInitialState = (
         );
     },
 
-    hydrateState: async (
-        entityType,
-        workflow,
-        connectorTagId
-    ): Promise<void> => {
+    hydrateState: async (entityType, workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
         const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
@@ -213,19 +209,19 @@ const getInitialState = (
             get().setServerUpdateRequired(true);
         }
 
-        if (get().active && connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Endpoint(connectorTagId);
+        // if (get().active && connectorTagId && connectorTagId.length > 0) {
+        //     const { data, error } = await getSchema_Endpoint(connectorTagId);
 
-            if (error) {
-                get().setHydrationErrorsExist(true);
-            }
+        //     if (error) {
+        //         get().setHydrationErrorsExist(true);
+        //     }
 
-            if (get().active && data) {
-                get().setEndpointSchema(
-                    data.endpoint_spec_schema as unknown as Schema
-                );
-            }
-        }
+        //     if (get().active && data) {
+        //         get().setEndpointSchema(
+        //             data.endpoint_spec_schema as unknown as Schema
+        //         );
+        //     }
+        // }
 
         if (get().active && liveSpecId) {
             const { data, error } = draftId

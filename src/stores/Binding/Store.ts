@@ -2,7 +2,6 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-    getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -27,7 +26,6 @@ import {
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
-import { Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -433,19 +431,19 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationRehydrating);
 
-        if (connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Resource(connectorTagId);
+        // if (connectorTagId && connectorTagId.length > 0) {
+        //     const { data, error } = await getSchema_Resource(connectorTagId);
 
-            if (error) {
-                setHydrationErrorsExist(true);
-            } else if (data?.resource_spec_schema) {
-                const { setResourceSchema } = get();
+        //     if (error) {
+        //         setHydrationErrorsExist(true);
+        //     } else if (data?.resource_spec_schema) {
+        //         const { setResourceSchema } = get();
 
-                await setResourceSchema(
-                    data.resource_spec_schema as unknown as Schema
-                );
-            }
-        }
+        //         await setResourceSchema(
+        //             data.resource_spec_schema as unknown as Schema
+        //         );
+        //     }
+        // }
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =

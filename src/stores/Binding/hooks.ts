@@ -19,6 +19,13 @@ export const useBinding_setHydrated = () => {
     );
 };
 
+export const useBinding_setResourceSchema = () => {
+    return useZustandStore<BindingState, BindingState['setResourceSchema']>(
+        BindingStoreNames.GENERAL,
+        (state) => state.setResourceSchema
+    );
+};
+
 export const useBinding_setActive = () => {
     return useZustandStore<BindingState, BindingState['setActive']>(
         BindingStoreNames.GENERAL,

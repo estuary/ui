@@ -1,5 +1,4 @@
 import { supabaseClient } from 'context/Supabase';
-import { ConnectorTag } from 'hooks/connectors/shared';
 import {
     LiveSpecsExtQuery,
     LiveSpecsExt_MaterializeOrTransform,
@@ -11,46 +10,6 @@ import {
     supabaseRetry,
 } from 'services/supabase';
 import { Entity } from 'types';
-
-// TODO (optimization): Consider removing he tight coupling between this file and the stores.
-//  These APIs are truly general purpose. Perhaps break them out by supabase table.
-type ConnectorTagResourceData = Pick<
-    ConnectorTag,
-    'connector_id' | 'resource_spec_schema'
->;
-
-type ConnectorTagEndpointData = Pick<
-    ConnectorTag,
-    'connector_id' | 'endpoint_spec_schema'
->;
-
-export const getSchema_Endpoint = async (connectorTagId: string | null) => {
-    const endpointSchema = await supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.CONNECTOR_TAGS)
-                .select(`endpoint_spec_schema`)
-                .eq('id', connectorTagId)
-                .single(),
-        'getSchema_Endpoint'
-    ).then(handleSuccess<ConnectorTagEndpointData>, handleFailure);
-
-    return endpointSchema;
-};
-
-export const getSchema_Resource = async (connectorTagId: string | null) => {
-    const resourceSchema = await supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.CONNECTOR_TAGS)
-                .select(`resource_spec_schema`)
-                .eq('id', connectorTagId)
-                .single(),
-        'getSchema_Resource'
-    ).then(handleSuccess<ConnectorTagResourceData>, handleFailure);
-
-    return resourceSchema;
-};
 
 const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id,updated_at`;
 

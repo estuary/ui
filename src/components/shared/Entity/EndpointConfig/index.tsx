@@ -7,12 +7,12 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
-import useConnectorTag from 'hooks/connectors/useConnectorTag';
 import { isEmpty, isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'services/ajv';
+import { useConnectorStore } from 'stores/Connector/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_endpointConfig_data,
@@ -36,17 +36,15 @@ interface Props {
 
 const DOCUSAURUS_THEME = 'docusaurus-theme';
 
-function EndpointConfig({
-    connectorImage,
-    readOnly = false,
-    hideBorder,
-}: Props) {
+function EndpointConfig({ readOnly = false, hideBorder }: Props) {
     // General hooks
     const intl = useIntl();
     const theme = useTheme();
 
-    // The useConnectorTag hook can accept a connector ID or a connector tag ID.
-    const { connectorTag, error } = useConnectorTag(connectorImage);
+    const [connectorTag, error] = useConnectorStore((state) => [
+        state.tag,
+        state.hydrationError,
+    ]);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();

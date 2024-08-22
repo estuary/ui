@@ -21,11 +21,12 @@ function useConnectorTag(connectorImage: string | null) {
         );
     }, [connectorImage]);
 
-    const { data, error } = useQuery(query);
+    const { data, error, isValidating } = useQuery(query);
 
     return {
         connectorTag: data ?? null,
         error,
+        isValidating,
     };
 }
 

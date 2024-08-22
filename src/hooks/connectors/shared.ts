@@ -42,6 +42,7 @@ export const CONNECTOR_TAG_QUERY = `
     ),
     id,
     connector_id,
+    default_capture_interval,
     image_tag,
     endpoint_spec_schema, 
     resource_spec_schema, 
@@ -54,9 +55,10 @@ export interface ConnectorTag {
     };
     id: string;
     connector_id: string;
+    default_capture_interval: any | null; //interval
     image_tag: string;
     endpoint_spec_schema: Schema;
-    resource_spec_schema: string;
+    resource_spec_schema: Schema;
     documentation_url: string;
 }
 
@@ -71,7 +73,6 @@ export interface ConnectorTagWithDetailTags extends ConnectorTag_Base {
 }
 
 export interface ConnectorWithTagDetailQuery {
-    capture_interval: string | null;
     connector_tags: ConnectorTagWithDetailTags[];
     id: string;
     detail: string;
@@ -89,7 +90,6 @@ export const CONNECTOR_WITH_TAG_QUERY = `
     id,
     detail,
     image_name,
-    capture_interval,
     image:logo_url->>en-US::text,
     ${CONNECTOR_RECOMMENDED},
     title:${CONNECTOR_NAME}::text,

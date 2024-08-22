@@ -39,7 +39,6 @@ export const getConnectorImageDetails = (
     const connectorTag = evaluateConnectorVersions(connector, options);
 
     return {
-        captureInterval: connector.capture_interval,
         connectorId: connector.id,
         id: connectorTag.id,
         imageName: connector.image_name,
