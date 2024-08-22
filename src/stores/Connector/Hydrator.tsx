@@ -1,6 +1,6 @@
 import useConnectorTag from 'hooks/connectors/useConnectorTag';
 import { useEffect } from 'react';
-import { useBinding_setResourceSchema } from 'stores/Binding/hooks';
+
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEnpointConfigStore } from 'stores/EndpointConfig/Store';
 import { BaseComponentProps } from 'types';
@@ -11,10 +11,11 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
         (state) => state.details.data.connectorImage
     );
 
-    const setEndpointSchema = useEnpointConfigStore(
-        (state) => state.setEndpointSchema
-    );
-    const setResourceSchema = useBinding_setResourceSchema();
+    const [setEndpointSchema, endpoint_setHydrationErrorsExist] =
+        useEnpointConfigStore((state) => [
+            state.setEndpointSchema,
+            state.setHydrationErrorsExist,
+        ]);
 
     const [
         resetState,
@@ -43,26 +44,30 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
         }
 
         if (error?.message) {
+            setTag(null);
+
             setHydrationError(error.message);
             setHydrationErrorsExist(true);
-            setHydrated(true);
+            endpoint_setHydrationErrorsExist(true);
         }
 
         if (connectorTag) {
             setTag(connectorTag);
-            setHydrated(true);
+
             setHydrationError(null);
             setHydrationErrorsExist(false);
+            endpoint_setHydrationErrorsExist(false);
 
             setEndpointSchema(connectorTag.endpoint_spec_schema);
-            void setResourceSchema(connectorTag.resource_spec_schema);
         }
 
+        setHydrated(true);
         return () => {
             resetState();
         };
     }, [
         connectorTag,
+        endpoint_setHydrationErrorsExist,
         error,
         hydrated,
         isValidating,
@@ -71,7 +76,6 @@ function ConnectorHydrator({ children }: BaseComponentProps) {
         setHydrated,
         setHydrationError,
         setHydrationErrorsExist,
-        setResourceSchema,
         setTag,
     ]);
 
