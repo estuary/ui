@@ -205,6 +205,8 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.descriptionLabel': `Description:`,
     'error.tryAgain': `Try again and if the issue persists please contact support.`,
 
+    'error.catalogNameInvalid.message': `{catalogName} is not a valid entity name.`,
+
     'error.fallBack': `no error details to display`,
 };
 

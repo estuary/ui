@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import { EnumDictionary } from 'types/utils';
-import { PREFIX_NAME_PATTERN } from 'utils/misc-utils';
+import { PREFIX_NAME_PATTERN } from 'validation';
 
 export enum CloudProviderCodes {
     GCS = 'GCS',

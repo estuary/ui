@@ -21,11 +21,8 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Capability } from 'types';
-import {
-    appendWithForwardSlash,
-    hasLength,
-    PREFIX_NAME_PATTERN,
-} from 'utils/misc-utils';
+import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
+import { PREFIX_NAME_PATTERN } from 'validation';
 
 interface Props {
     serverError: PostgrestError | null;
