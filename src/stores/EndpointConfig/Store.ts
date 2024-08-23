@@ -214,7 +214,7 @@ const getInitialState = (
         }
 
         if (get().active && newEndpointSchema) {
-            get().setEndpointSchema(newEndpointSchema);
+            await get().setEndpointSchema(newEndpointSchema);
         }
 
         if (get().active && liveSpecId) {

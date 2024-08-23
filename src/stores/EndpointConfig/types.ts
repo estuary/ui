@@ -11,7 +11,9 @@ export interface EndpointConfigState
     extends StoreWithHydration,
         StoreWithCustomErrors {
     endpointSchema: Schema;
-    setEndpointSchema: (val: EndpointConfigState['endpointSchema']) => void;
+    setEndpointSchema: (
+        val: EndpointConfigState['endpointSchema']
+    ) => Promise<void>;
 
     // Encrypted Endpoint Configs
     publishedEndpointConfig: JsonFormsData;

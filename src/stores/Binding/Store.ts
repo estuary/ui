@@ -432,8 +432,7 @@ const getInitialState = (
         resetState(materializationRehydrating);
 
         if (resourceSchema) {
-            const { setResourceSchema } = get();
-            await setResourceSchema(resourceSchema);
+            await get().setResourceSchema(resourceSchema);
         }
 
         if (editWorkflow && liveSpecIds.length > 0) {
