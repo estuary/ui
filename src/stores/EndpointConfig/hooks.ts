@@ -1,98 +1,100 @@
 import { useShallow } from 'zustand/react/shallow';
-import { useEnpointConfigStore } from './Store';
+import { useEndpointConfigStore } from './Store';
 
 export const useEndpointConfigStore_errorsExist = () => {
-    return useEnpointConfigStore((state) => state.errorsExist);
+    return useEndpointConfigStore((state) => state.errorsExist);
 };
 
 export const useEndpointConfigStore_endpointConfigErrors = () => {
-    return useEnpointConfigStore((state) => state.endpointConfigErrors);
+    return useEndpointConfigStore((state) => state.endpointConfigErrors);
 };
 
 export const useEndpointConfigStore_reset = () => {
-    return useEnpointConfigStore((state) => state.resetState);
+    return useEndpointConfigStore((state) => state.resetState);
 };
 
 export const useEndpointConfigStore_changed = () => {
-    return useEnpointConfigStore(useShallow((state) => state.stateChanged));
+    return useEndpointConfigStore(useShallow((state) => state.stateChanged));
 };
 
 export const useEndpointConfigStore_endpointSchema = () => {
-    return useEnpointConfigStore((state) => state.endpointSchema);
+    return useEndpointConfigStore((state) => state.endpointSchema);
 };
 
 export const useEndpointConfigStore_customErrors = () => {
-    return useEnpointConfigStore((state) => state.customErrors);
+    return useEndpointConfigStore((state) => state.customErrors);
 };
 
 export const useEndpointConfigStore_setCustomErrors = () => {
-    return useEnpointConfigStore((state) => state.setCustomErrors);
+    return useEndpointConfigStore((state) => state.setCustomErrors);
 };
 
 export const useEndpointConfigStore_setEndpointSchema = () => {
-    return useEnpointConfigStore((state) => state.setEndpointSchema);
+    return useEndpointConfigStore((state) => state.setEndpointSchema);
 };
 
 export const useEndpointConfigStore_encryptedEndpointConfig_data = () => {
-    return useEnpointConfigStore((state) => state.encryptedEndpointConfig.data);
+    return useEndpointConfigStore(
+        (state) => state.encryptedEndpointConfig.data
+    );
 };
 
 export const useEndpointConfigStore_setEncryptedEndpointConfig = () => {
-    return useEnpointConfigStore((state) => state.setEncryptedEndpointConfig);
+    return useEndpointConfigStore((state) => state.setEncryptedEndpointConfig);
 };
 
 export const useEndpointConfigStore_previousEndpointConfig_data = () => {
-    return useEnpointConfigStore((state) => state.previousEndpointConfig.data);
+    return useEndpointConfigStore((state) => state.previousEndpointConfig.data);
 };
 
 export const useEndpointConfigStore_setPreviousEndpointConfig = () => {
-    return useEnpointConfigStore((state) => state.setPreviousEndpointConfig);
+    return useEndpointConfigStore((state) => state.setPreviousEndpointConfig);
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {
-    return useEnpointConfigStore((state) => state.endpointConfig.data);
+    return useEndpointConfigStore((state) => state.endpointConfig.data);
 };
 
 export const useEndpointConfigStore_setEndpointConfig = () => {
-    return useEnpointConfigStore((state) => state.setEndpointConfig);
+    return useEndpointConfigStore((state) => state.setEndpointConfig);
 };
 
 export const useEndpointConfig_hydrated = () => {
-    return useEnpointConfigStore((state) => state.hydrated);
+    return useEndpointConfigStore((state) => state.hydrated);
 };
 
 export const useEndpointConfig_setHydrated = () => {
-    return useEnpointConfigStore((state) => state.setHydrated);
+    return useEndpointConfigStore((state) => state.setHydrated);
 };
 
 export const useEndpointConfig_hydrationErrorsExist = () => {
-    return useEnpointConfigStore((state) => state.hydrationErrorsExist);
+    return useEndpointConfigStore((state) => state.hydrationErrorsExist);
 };
 
 export const useEndpointConfig_setHydrationErrorsExist = () => {
-    return useEnpointConfigStore((state) => state.setHydrationErrorsExist);
+    return useEndpointConfigStore((state) => state.setHydrationErrorsExist);
 };
 
 export const useEndpointConfig_hydrateState = () => {
-    return useEnpointConfigStore((state) => state.hydrateState);
+    return useEndpointConfigStore((state) => state.hydrateState);
 };
 
 export const useEndpointConfig_setActive = () => {
-    return useEnpointConfigStore((state) => state.setActive);
+    return useEndpointConfigStore((state) => state.setActive);
 };
 
 export const useEndpointConfig_serverUpdateRequired = () => {
-    return useEnpointConfigStore((state) => state.serverUpdateRequired);
+    return useEndpointConfigStore((state) => state.serverUpdateRequired);
 };
 
 export const useEndpointConfig_setServerUpdateRequired = () => {
-    return useEnpointConfigStore((state) => state.setServerUpdateRequired);
+    return useEndpointConfigStore((state) => state.setServerUpdateRequired);
 };
 
 export const useEndpointConfig_endpointCanBeEmpty = () => {
-    return useEnpointConfigStore((state) => state.endpointCanBeEmpty);
+    return useEndpointConfigStore((state) => state.endpointCanBeEmpty);
 };
 
 export const useEndpointConfig_setEndpointCanBeEmpty = () => {
-    return useEnpointConfigStore((state) => state.setEndpointCanBeEmpty);
+    return useEndpointConfigStore((state) => state.setEndpointCanBeEmpty);
 };
