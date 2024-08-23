@@ -10,8 +10,9 @@ export const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
 
 // Based on the patterns connectors use for date time
 // eslint-disable-next-line no-useless-escape
-export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z`;
-export const DATE_TIME_RE = new RegExp(`^(${DATE_TIME_PATTERN})$`);
+export const DATE_TIME_RE = new RegExp(
+    /^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)$/
+);
 
 export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
 
