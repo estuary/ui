@@ -45,7 +45,7 @@ export const CONNECTOR_TAG_COLS = [
     // 'default_capture_interval',
     'image_tag',
     'endpoint_spec_schema',
-    'resource_spec_schema',
+    // 'resource_spec_schema', //not used right now (Q3 2024)
     'documentation_url',
 ];
 export const CONNECTOR_TAG_QUERY = CONNECTOR_TAG_COLS.join(',');
