@@ -42,6 +42,7 @@ export const CONNECTOR_TAG_QUERY = `
     ),
     id,
     connector_id,
+    default_capture_interval,
     image_tag,
     endpoint_spec_schema, 
     resource_spec_schema, 
@@ -54,9 +55,10 @@ export interface ConnectorTag {
     };
     id: string;
     connector_id: string;
+    default_capture_interval: any; //interval
     image_tag: string;
     endpoint_spec_schema: Schema;
-    resource_spec_schema: string;
+    resource_spec_schema: Schema;
     documentation_url: string;
 }
 

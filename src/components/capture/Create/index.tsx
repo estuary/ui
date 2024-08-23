@@ -15,10 +15,8 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CustomEvents } from 'services/types';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
+import WorkflowHydrator from 'stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 function CaptureCreate() {
@@ -84,50 +82,46 @@ function CaptureCreate() {
     );
 
     return (
-        <DetailsFormHydrator>
-            <EndpointConfigHydrator>
-                <BindingHydrator>
-                    <MutateDraftSpecProvider value={updateDraftSpecs}>
-                        <EntityCreate
-                            entityType={entityType}
-                            draftSpecMetadata={draftSpecsMetadata}
-                            toolbar={
-                                <EntityToolbar
-                                    taskNames={taskNames}
-                                    waitTimes={{
-                                        generate: MAX_DISCOVER_TIME,
-                                    }}
-                                    primaryButtonProps={{
-                                        disabled: !draftId,
-                                        logEvent: CustomEvents.CAPTURE_CREATE,
-                                    }}
-                                    secondaryButtonProps={{
-                                        disabled: !hasConnectors,
-                                        logEvent: CustomEvents.CAPTURE_TEST,
-                                    }}
-                                    GenerateButton={
-                                        <CaptureGenerateButton
-                                            entityType={entityType}
-                                            disabled={!hasConnectors}
-                                            createWorkflowMetadata={{
-                                                initiateDiscovery,
-                                                setInitiateDiscovery,
-                                            }}
-                                        />
-                                    }
-                                />
-                            }
-                            RediscoverButton={
-                                <RediscoverButton
+        <WorkflowHydrator>
+            <MutateDraftSpecProvider value={updateDraftSpecs}>
+                <EntityCreate
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    toolbar={
+                        <EntityToolbar
+                            taskNames={taskNames}
+                            waitTimes={{
+                                generate: MAX_DISCOVER_TIME,
+                            }}
+                            primaryButtonProps={{
+                                disabled: !draftId,
+                                logEvent: CustomEvents.CAPTURE_CREATE,
+                            }}
+                            secondaryButtonProps={{
+                                disabled: !hasConnectors,
+                                logEvent: CustomEvents.CAPTURE_TEST,
+                            }}
+                            GenerateButton={
+                                <CaptureGenerateButton
                                     entityType={entityType}
                                     disabled={!hasConnectors}
+                                    createWorkflowMetadata={{
+                                        initiateDiscovery,
+                                        setInitiateDiscovery,
+                                    }}
                                 />
                             }
                         />
-                    </MutateDraftSpecProvider>
-                </BindingHydrator>
-            </EndpointConfigHydrator>
-        </DetailsFormHydrator>
+                    }
+                    RediscoverButton={
+                        <RediscoverButton
+                            entityType={entityType}
+                            disabled={!hasConnectors}
+                        />
+                    }
+                />
+            </MutateDraftSpecProvider>
+        </WorkflowHydrator>
     );
 }
 
