@@ -10,12 +10,14 @@ interface Props extends BaseComponentProps {
     navigateToPath: string;
 }
 
+const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
+
 // This is quick - but really we should just make a general "SearchParamGuard" that
 //  can easily check we have everything we need.
 function ConnectorSelectedGuard({ children, navigateToPath }: Props) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
-    if (!connectorId) {
+    if (!MAC_ADDR_RE.test(connectorId)) {
         return <Navigate to={navigateToPath} replace />;
     }
 
