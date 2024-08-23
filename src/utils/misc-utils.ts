@@ -193,5 +193,5 @@ export const getDereffedSchema = async (val: any) => {
 };
 
 export const configCanBeEmpty = (schema: any) => {
-    return Boolean(!schema.properties || isEmpty(schema.properties));
+    return Boolean(!schema?.properties || isEmpty(schema?.properties));
 };
