@@ -24,7 +24,7 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const hydrateState = useEndpointConfig_hydrateState();
     const setActive = useEndpointConfig_setActive();
 
-    const [enpointSchema, connector_hydrated] = useConnectorStore((state) => [
+    const [endpointSchema, connector_hydrated] = useConnectorStore((state) => [
         state.tag?.endpoint_spec_schema,
         state.hydrated,
     ]);
@@ -34,12 +34,12 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
             runHydration &&
             !hydrated &&
             connector_hydrated &&
-            enpointSchema &&
+            endpointSchema &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setRunHydration(false);
             setActive(true);
-            hydrateState(entityType, workflow, enpointSchema).then(
+            hydrateState(entityType, workflow, endpointSchema).then(
                 () => {
                     setHydrated(true);
                 },
@@ -53,7 +53,7 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
                     );
                 }
             );
-        } else if (connector_hydrated && !enpointSchema) {
+        } else if (connector_hydrated && !endpointSchema) {
             setActive(true);
 
             setHydrated(true);
@@ -61,7 +61,7 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
         }
     }, [
         connector_hydrated,
-        enpointSchema,
+        endpointSchema,
         entityType,
         hydrateState,
         hydrated,

@@ -198,7 +198,7 @@ const getInitialState = (
     hydrateState: async (
         entityType,
         workflow,
-        enpointSchema
+        newEndpointSchema
     ): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
@@ -213,8 +213,8 @@ const getInitialState = (
             get().setServerUpdateRequired(true);
         }
 
-        if (get().active && enpointSchema) {
-            get().setEndpointSchema(enpointSchema);
+        if (get().active && newEndpointSchema) {
+            get().setEndpointSchema(newEndpointSchema);
         }
 
         if (get().active && liveSpecId) {
@@ -273,7 +273,7 @@ const getInitialState = (
     },
 });
 
-export const useEnpointConfigStore = create<EndpointConfigState>()(
+export const useEndpointConfigStore = create<EndpointConfigState>()(
     devtools(
         (set, get) => getInitialState(set, get),
         devtoolsOptions('general-endpoint-config')
