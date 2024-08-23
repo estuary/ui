@@ -36,18 +36,19 @@ export const CONNECTORS_EXIST_QUERY = `
 //////////////////////////////
 // useConnectorTag
 //////////////////////////////
-export const CONNECTOR_TAG_QUERY = `
-    connectors(
+export const CONNECTOR_TAG_COLS = [
+    `connectors(
         image_name
-    ),
-    id,
-    connector_id,
-    default_capture_interval,
-    image_tag,
-    endpoint_spec_schema, 
-    resource_spec_schema, 
-    documentation_url
-`;
+    )`,
+    'id',
+    'connector_id',
+    // 'default_capture_interval',
+    'image_tag',
+    'endpoint_spec_schema',
+    'resource_spec_schema',
+    'documentation_url',
+];
+export const CONNECTOR_TAG_QUERY = CONNECTOR_TAG_COLS.join(',');
 
 export interface ConnectorTag {
     connectors: {
@@ -55,7 +56,7 @@ export interface ConnectorTag {
     };
     id: string;
     connector_id: string;
-    default_capture_interval: any; //interval
+    // default_capture_interval: any; //interval
     image_tag: string;
     endpoint_spec_schema: Schema;
     resource_spec_schema: Schema;
