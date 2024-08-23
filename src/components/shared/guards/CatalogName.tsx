@@ -15,7 +15,7 @@ function CatalogNameGuard({ children }: BaseComponentProps) {
         logRocketEvent(CustomEvents.ERROR_INVALID_CATALOG_NAME, {
             catalogName,
         });
-        return <EntityNotFound />;
+        return <EntityNotFound catalogName={catalogName} />;
     }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
