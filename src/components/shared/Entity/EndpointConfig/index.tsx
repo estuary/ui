@@ -135,44 +135,48 @@ function EndpointConfig({
     ]);
 
     useEffect(() => {
-        const schema = connectorTag?.endpoint_spec_schema;
+        const runUpdates = async () => {
+            const schema = connectorTag?.endpoint_spec_schema;
 
-        // Make sure we have a schema to use otherwise we cannot
-        //  populate data or set the schema. This should never really
-        //  happen here but being safe.
-        if (!schema) {
-            return;
-        }
+            // Make sure we have a schema to use otherwise we cannot
+            //  populate data or set the schema. This should never really
+            //  happen here but being safe.
+            if (!schema) {
+                return;
+            }
 
-        // Update the schema if needed
-        if (updateEndpointSchema) {
-            setEndpointSchema(schema);
-        }
+            // Update the schema if needed
+            if (updateEndpointSchema) {
+                await setEndpointSchema(schema);
+            }
 
-        if (resetEndpointConfig) {
-            // TODO (possible - endpoint config) we might want to move the serverUpdateRequired
-            //   call out of this block and set it if either of the flags are true. We can decide that later.
-            //    In create - if we clear out the configurations we also update the schema
-            //    In edit - we never clear the config and update the schema only if it is unsupported
-            //      if we are moving up an unsupported version then we let the user continue
-            //      with their existing config. If they have to enter new fields then the form will
-            //      detect the change and force them to click next anyway for now (Q1 2024)
-            setServerUpdateRequired(true);
+            if (resetEndpointConfig) {
+                // TODO (possible - endpoint config) we might want to move the serverUpdateRequired
+                //   call out of this block and set it if either of the flags are true. We can decide that later.
+                //    In create - if we clear out the configurations we also update the schema
+                //    In edit - we never clear the config and update the schema only if it is unsupported
+                //      if we are moving up an unsupported version then we let the user continue
+                //      with their existing config. If they have to enter new fields then the form will
+                //      detect the change and force them to click next anyway for now (Q1 2024)
+                setServerUpdateRequired(true);
 
-            // Clear out the encrypted config because we are requiring a server update and
-            //  thus we do not need this to check if that clicked is required again.
-            setEncryptedEndpointConfig({
-                data: {},
-            });
+                // Clear out the encrypted config because we are requiring a server update and
+                //  thus we do not need this to check if that clicked is required again.
+                setEncryptedEndpointConfig({
+                    data: {},
+                });
 
-            // After the schema change we can prefill the data by generating
-            //  the defaults and populate the data/errors. The two set functions
-            //  will automatically generate a default but we can just call it once
-            //  and pass it along (to save a tiny bit of processing)
-            const defaultConfig = createJSONFormDefaults(schema);
-            setEndpointConfig(defaultConfig);
-            setPreviousEndpointConfig(defaultConfig);
-        }
+                // After the schema change we can prefill the data by generating
+                //  the defaults and populate the data/errors. The two set functions
+                //  will automatically generate a default but we can just call it once
+                //  and pass it along (to save a tiny bit of processing)
+                const defaultConfig = createJSONFormDefaults(schema);
+                setEndpointConfig(defaultConfig);
+                setPreviousEndpointConfig(defaultConfig);
+            }
+        };
+
+        void runUpdates();
     }, [
         connectorTag?.endpoint_spec_schema,
         resetEndpointConfig,
