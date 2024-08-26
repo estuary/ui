@@ -1113,7 +1113,7 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.interval.header': `Polling Interval`,
-    'workflows.interval.message': `Allows controlling how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion. For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
+    'workflows.interval.message': `Controls how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion. For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
     'workflows.interval.input.label': `Interval`,
     'workflows.interval.input.seconds': `seconds`,
     'workflows.interval.input.minutes': `minutes`,
