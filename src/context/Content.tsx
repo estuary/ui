@@ -1,6 +1,7 @@
 import enUSMessages from 'lang/en-US';
 import { IntlProvider } from 'react-intl';
-import { logRocketConsole } from 'services/shared';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { BaseComponentProps } from 'types';
 
 // TODO (intl) - Don't hard hardcode to EN
@@ -14,7 +15,9 @@ const ContentProvider = ({ children }: BaseComponentProps) => {
             locale={userLang}
             messages={enUSMessages}
             onError={(err) => {
-                logRocketConsole('Intl:Translation:KeyMissing', err);
+                logRocketEvent(CustomEvents.TRANSLATION_KEY_MISSING, {
+                    key: err.name,
+                });
             }}
         >
             {children}
