@@ -1,6 +1,9 @@
 import { Typography } from '@mui/material';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 interface Props {
     catalogName?: string;
@@ -9,6 +12,12 @@ interface Props {
 const EntityNotFound = ({ catalogName }: Props) => {
     usePageTitle({
         header: 'routeTitle.error.entityNotFound',
+    });
+
+    useMount(() => {
+        logRocketEvent(CustomEvents.ENTITY_NOT_FOUND, {
+            catalogName,
+        });
     });
 
     return (

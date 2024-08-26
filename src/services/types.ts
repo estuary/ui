@@ -18,6 +18,7 @@ export enum CustomEvents {
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
     DIRECTIVE_GUARD_STATE = 'Directive:Guard:State',
+    ENTITY_NOT_FOUND = 'Entity_Not_Found',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',

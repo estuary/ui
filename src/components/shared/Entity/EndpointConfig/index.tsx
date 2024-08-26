@@ -8,7 +8,7 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'context/Workflow';
 import useConnectorTag from 'hooks/connectors/useConnectorTag';
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
@@ -27,6 +27,7 @@ import {
     useEndpointConfig_setServerUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
+import { configCanBeEmpty } from 'utils/misc-utils';
 
 interface Props {
     connectorImage: string;
@@ -83,12 +84,10 @@ function EndpointConfig({
 
     // Storing if this endpointConfig can be empty or not
     //  If so we know there will never be a "change" to the endpoint config
-    const canBeEmpty = useMemo(() => {
-        return (
-            !connectorTag?.endpoint_spec_schema.properties ||
-            isEmpty(connectorTag.endpoint_spec_schema.properties)
-        );
-    }, [connectorTag?.endpoint_spec_schema]);
+    const canBeEmpty = useMemo(
+        () => configCanBeEmpty(connectorTag?.endpoint_spec_schema),
+        [connectorTag?.endpoint_spec_schema]
+    );
 
     useEffect(() => {
         setEndpointCanBeEmpty(canBeEmpty);

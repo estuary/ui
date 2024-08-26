@@ -1,5 +1,19 @@
-import { hasLength, PREFIX_NAME_PATTERN } from 'utils/misc-utils';
-import { PrefixedName_Errors } from './types';
+import { PrefixedName_Errors } from 'components/inputs/PrefixedName/types';
+import { hasLength } from 'utils/misc-utils';
+
+// Based on pattern taken from
+//  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
+export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
+export const CATALOG_NAME_PATTERN = `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`;
+export const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
+
+// Based on the patterns connectors use for date time
+// eslint-disable-next-line no-useless-escape
+export const DATE_TIME_RE = new RegExp(
+    /^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)$/
+);
+
+export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
 
 export const validateCatalogName = (
     value: string,
@@ -19,12 +33,12 @@ export const validateCatalogName = (
     }
 
     // Check the name is the correct format
-    const NAME_RE = new RegExp(
+    const DYNAMIC_NAME_RE = new RegExp(
         `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}${
             allowEndSlash ? '/?' : ''
         }$`
     );
-    if (!isBlank && !NAME_RE.test(value)) {
+    if (!isBlank && !DYNAMIC_NAME_RE.test(value)) {
         return ['invalid'];
     }
 

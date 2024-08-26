@@ -205,6 +205,8 @@ const Error: ResolvedIntlConfig['messages'] = {
     'error.descriptionLabel': `Description:`,
     'error.tryAgain': `Try again and if the issue persists please contact support.`,
 
+    'error.catalogNameInvalid.message': `{catalogName} is not a valid entity name.`,
+
     'error.fallBack': `no error details to display`,
 };
 
@@ -1109,6 +1111,13 @@ const Workflows: ResolvedIntlConfig['messages'] = {
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Changing primary keys re-versions collections`,
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
+
+    'workflows.interval.header': `Polling Interval`,
+    'workflows.interval.message': `Controls how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion. For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
+    'workflows.interval.input.label': `Interval`,
+    'workflows.interval.input.seconds': `seconds`,
+    'workflows.interval.input.minutes': `minutes`,
+    'workflows.interval.input.hours': `hours`,
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `Source From Capture`,
