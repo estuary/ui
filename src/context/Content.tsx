@@ -1,5 +1,6 @@
 import enUSMessages from 'lang/en-US';
 import { IntlProvider } from 'react-intl';
+import { MISSING } from 'services/logrocket';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { BaseComponentProps } from 'types';
@@ -14,9 +15,9 @@ const ContentProvider = ({ children }: BaseComponentProps) => {
             defaultLocale="en-US"
             locale={userLang}
             messages={enUSMessages}
-            onError={(err) => {
+            onError={(err: any) => {
                 logRocketEvent(CustomEvents.TRANSLATION_KEY_MISSING, {
-                    key: err.name,
+                    key: err?.descriptor?.id ?? err?.message ?? MISSING,
                 });
             }}
         >
