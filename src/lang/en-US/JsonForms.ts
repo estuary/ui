@@ -8,7 +8,7 @@ export const JsonForms: Record<string, string> = {
     'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'informational.sshEndpoint.title': `All Estuary traffic comes from a single IP that can be whitelisted:`,
-    'informational.sshEndpoint.ip': `34.121.207.128`,
+    'informational.sshEndpoint.ip': `34.121.207.128, 35.226.75.135, 34.68.62.148`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 
     // OAuth
