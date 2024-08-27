@@ -1,10 +1,11 @@
 //TODO (UI / UX) - These icons are not final
-import { Collapse, IconButton, Toolbar, Typography } from '@mui/material';
+import { Box, Collapse, IconButton, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import Dashboard from 'components/dashboard';
 import HeroImageAndDescription from 'components/hero';
 import LoginNotifications from 'components/login/Notifications';
 import { useShowDashboardWelcome } from 'context/DashboardWelcome';
+import { defaultOutline, semiTransparentBackground } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -38,28 +39,40 @@ const Home = () => {
                 />
             ) : null}
 
-            <Toolbar
-                disableGutters
+            <Box
                 sx={{
-                    justifyContent: welcomeShown ? 'center' : 'flex-start',
-                    mb: 3,
+                    background: (theme) =>
+                        semiTransparentBackground[theme.palette.mode],
+                    border: (theme) => defaultOutline[theme.palette.mode],
+                    borderRadius: 3,
                 }}
             >
-                <Typography variant={welcomeShown ? 'h4' : 'h6'}>
-                    <FormattedMessage id="home.main.header" />
-                </Typography>
-
-                <IconButton
-                    onClick={() => setWelcomeShown(!welcomeShown)}
-                    style={{ position: 'absolute', top: 14, right: 0 }}
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        justifyContent: welcomeShown ? 'center' : 'flex-start',
+                        px: 2,
+                    }}
                 >
-                    {welcomeShown ? <Xmark /> : <Plus />}
-                </IconButton>
-            </Toolbar>
+                    <Typography
+                        variant="h5"
+                        sx={{ fontSize: welcomeShown ? 24 : 18 }}
+                    >
+                        <FormattedMessage id="home.main.header" />
+                    </Typography>
 
-            <Collapse in={welcomeShown}>
-                <HeroImageAndDescription />
-            </Collapse>
+                    <IconButton
+                        onClick={() => setWelcomeShown(!welcomeShown)}
+                        style={{ position: 'absolute', top: 14, right: 8 }}
+                    >
+                        {welcomeShown ? <Xmark /> : <Plus />}
+                    </IconButton>
+                </Toolbar>
+
+                <Collapse in={welcomeShown}>
+                    <HeroImageAndDescription />
+                </Collapse>
+            </Box>
 
             <Dashboard />
         </>

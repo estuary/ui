@@ -11,7 +11,7 @@ function HeroImageAndDescription() {
     const { activeTab } = useHeroTabs();
 
     return (
-        <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000 }}>
+        <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000, p: 2 }}>
             <Grid container spacing={2}>
                 <Grid
                     item

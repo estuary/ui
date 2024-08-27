@@ -15,7 +15,7 @@ export default function Dashboard() {
     const { captureUsage, isLoading, materializationUsage } = useMonthlyUsage();
 
     return (
-        <Grid container spacing={{ xs: 4 }} style={{ marginTop: 32 }}>
+        <Grid container spacing={{ xs: 4 }} style={{ marginTop: 16 }}>
             <Grid
                 item
                 xs={12}
