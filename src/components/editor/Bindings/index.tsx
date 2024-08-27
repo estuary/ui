@@ -103,6 +103,8 @@ function BindingsMultiEditor({
             <Stack spacing={3} sx={{ mb: 5 }}>
                 {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
+                {/*{entityType === 'capture' ? <CaptureInterval /> : null}*/}
+
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
                 {workflow === 'capture_edit' ||

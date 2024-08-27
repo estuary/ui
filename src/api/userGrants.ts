@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { deleteSupabase, TABLES } from 'services/supabase';
 import { UserGrantsTenantGuard } from 'types';
 

@@ -6,7 +6,6 @@ import {
 } from 'components/editor/Store/hooks';
 import MaterializeGenerateButton from 'components/materialization/GenerateButton';
 import EntityEdit from 'components/shared/Entity/Edit';
-import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
@@ -17,9 +16,7 @@ import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
+import WorkflowHydrator from 'stores/Workflow/Hydrator';
 
 function MaterializationEdit() {
     usePageTitle({
@@ -57,42 +54,34 @@ function MaterializationEdit() {
     );
 
     return (
-        <DraftInitializer>
-            <DetailsFormHydrator>
-                <EndpointConfigHydrator>
-                    <BindingHydrator>
-                        <MutateDraftSpecProvider value={updateDraftSpecs}>
-                            <EntityEdit
-                                title="routeTitle.materializationEdit"
-                                entityType={entityType}
-                                readOnly={{ detailsForm: true }}
-                                draftSpecMetadata={draftSpecsMetadata}
-                                toolbar={
-                                    <EntityToolbar
-                                        taskNames={taskNames}
-                                        GenerateButton={
-                                            <MaterializeGenerateButton
-                                                disabled={!hasConnectors}
-                                            />
-                                        }
-                                        primaryButtonProps={{
-                                            disabled: !draftId,
-                                            logEvent:
-                                                CustomEvents.MATERIALIZATION_EDIT,
-                                        }}
-                                        secondaryButtonProps={{
-                                            disabled: !hasConnectors,
-                                            logEvent:
-                                                CustomEvents.MATERIALIZATION_TEST,
-                                        }}
-                                    />
-                                }
-                            />
-                        </MutateDraftSpecProvider>
-                    </BindingHydrator>
-                </EndpointConfigHydrator>
-            </DetailsFormHydrator>
-        </DraftInitializer>
+        <WorkflowHydrator>
+            <MutateDraftSpecProvider value={updateDraftSpecs}>
+                <EntityEdit
+                    title="routeTitle.materializationEdit"
+                    entityType={entityType}
+                    readOnly={{ detailsForm: true }}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    toolbar={
+                        <EntityToolbar
+                            taskNames={taskNames}
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                />
+                            }
+                            primaryButtonProps={{
+                                disabled: !draftId,
+                                logEvent: CustomEvents.MATERIALIZATION_EDIT,
+                            }}
+                            secondaryButtonProps={{
+                                disabled: !hasConnectors,
+                                logEvent: CustomEvents.MATERIALIZATION_TEST,
+                            }}
+                        />
+                    }
+                />
+            </MutateDraftSpecProvider>
+        </WorkflowHydrator>
     );
 }
 

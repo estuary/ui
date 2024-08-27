@@ -1,6 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { TABLES } from 'services/supabase';
 import { KeyedMutator } from 'swr';
 import { Entity, Schema } from 'types';

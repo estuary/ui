@@ -29,6 +29,7 @@ import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
 } from 'utils/workflow-utils';
+import { MAC_ADDR_RE } from 'validation';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -195,9 +196,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     const updateDetails = (details: Details) => {
         if (
-            // TODO (Validators) we need to build out validators for specific types of data
-            details.data.connectorImage.connectorId &&
-            details.data.connectorImage.connectorId.length === 23 &&
+            MAC_ADDR_RE.test(details.data.connectorImage.connectorId) &&
             details.data.connectorImage.connectorId !==
                 originalConnectorImage.connectorId
         ) {

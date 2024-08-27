@@ -4,7 +4,7 @@ import {
     PostgrestResponse,
 } from '@supabase/postgrest-js';
 import { User } from '@supabase/supabase-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
 import {

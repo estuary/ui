@@ -221,7 +221,7 @@ const getInitialState = (
             }
 
             if (get().active && data) {
-                get().setEndpointSchema(
+                await get().setEndpointSchema(
                     data.endpoint_spec_schema as unknown as Schema
                 );
             }
@@ -283,7 +283,7 @@ const getInitialState = (
     },
 });
 
-export const useEnpointConfigStore = create<EndpointConfigState>()(
+export const useEndpointConfigStore = create<EndpointConfigState>()(
     devtools(
         (set, get) => getInitialState(set, get),
         devtoolsOptions('general-endpoint-config')

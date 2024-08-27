@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { TABLES } from 'services/supabase';
 import { TenantHidesDataPreview, TenantPaymentDetails } from 'types';
 

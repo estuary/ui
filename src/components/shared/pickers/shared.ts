@@ -1,5 +1,6 @@
 import { PopoverOrigin } from '@mui/material';
-import { DATE_TIME_PATTERN, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
+import { DATE_TIME_RE } from 'validation';
 
 export const CLEAR_BUTTON_ID_SUFFIX = '__clear-button';
 export const INVALID_DATE = 'Invalid Date';
@@ -25,7 +26,6 @@ export const validateDateTime = (value: string, allowBlank?: boolean): any => {
     }
 
     // Check the date is the correct format
-    const DATE_TIME_RE = new RegExp(`^(${DATE_TIME_PATTERN}$`);
     if (!isBlank && !DATE_TIME_RE.test(value)) {
         return ['invalid'];
     }

@@ -1,6 +1,6 @@
 import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';

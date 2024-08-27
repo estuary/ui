@@ -1,5 +1,6 @@
 import { authenticatedRoutes } from 'app/routes';
 import EntityDetails from 'components/shared/Entity/Details';
+import CatalogNameGuard from 'components/shared/guards/CatalogName';
 import { EntityContextProvider } from 'context/EntityContext';
 import usePageTitle from 'hooks/usePageTitle';
 
@@ -9,7 +10,9 @@ function MaterializationDetails() {
     });
     return (
         <EntityContextProvider value="materialization">
-            <EntityDetails />
+            <CatalogNameGuard>
+                <EntityDetails />
+            </CatalogNameGuard>
         </EntityContextProvider>
     );
 }

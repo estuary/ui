@@ -1,5 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import pLimit from 'p-limit';
 import {

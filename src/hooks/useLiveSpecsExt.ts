@@ -1,6 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { Entity } from 'types';

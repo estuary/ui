@@ -6,15 +6,6 @@ import { derefSchema } from 'services/jsonforms';
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
 
-// Based on pattern taken from
-//  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
-export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
-export const CATALOG_NAME_PATTERN = `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`;
-
-// Based on the patterns connectors use for date time
-// eslint-disable-next-line no-useless-escape
-export const DATE_TIME_PATTERN = `[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z`;
-
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
@@ -193,5 +184,5 @@ export const getDereffedSchema = async (val: any) => {
 };
 
 export const configCanBeEmpty = (schema: any) => {
-    return Boolean(!schema.properties || isEmpty(schema.properties));
+    return Boolean(!schema?.properties || isEmpty(schema?.properties));
 };

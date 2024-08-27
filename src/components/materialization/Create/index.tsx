@@ -14,10 +14,8 @@ import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
 import { useCallback, useEffect, useMemo } from 'react';
 import { CustomEvents } from 'services/types';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
+import WorkflowHydrator from 'stores/Workflow/Hydrator';
 
 function MaterializationCreate() {
     usePageTitle({
@@ -66,38 +64,32 @@ function MaterializationCreate() {
     }, [imageTag, setDraftId]);
 
     return (
-        <DetailsFormHydrator>
-            <EndpointConfigHydrator>
-                <BindingHydrator>
-                    <MutateDraftSpecProvider value={updateDraftSpecs}>
-                        <EntityCreate
-                            entityType={entityType}
-                            draftSpecMetadata={draftSpecsMetadata}
-                            toolbar={
-                                <EntityToolbar
-                                    taskNames={taskNames}
-                                    GenerateButton={
-                                        <MaterializeGenerateButton
-                                            disabled={!hasConnectors}
-                                        />
-                                    }
-                                    primaryButtonProps={{
-                                        disabled: !draftId,
-                                        logEvent:
-                                            CustomEvents.MATERIALIZATION_CREATE,
-                                    }}
-                                    secondaryButtonProps={{
-                                        disabled: !hasConnectors,
-                                        logEvent:
-                                            CustomEvents.MATERIALIZATION_TEST,
-                                    }}
+        <WorkflowHydrator>
+            <MutateDraftSpecProvider value={updateDraftSpecs}>
+                <EntityCreate
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    toolbar={
+                        <EntityToolbar
+                            taskNames={taskNames}
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
                                 />
                             }
+                            primaryButtonProps={{
+                                disabled: !draftId,
+                                logEvent: CustomEvents.MATERIALIZATION_CREATE,
+                            }}
+                            secondaryButtonProps={{
+                                disabled: !hasConnectors,
+                                logEvent: CustomEvents.MATERIALIZATION_TEST,
+                            }}
                         />
-                    </MutateDraftSpecProvider>
-                </BindingHydrator>
-            </EndpointConfigHydrator>
-        </DetailsFormHydrator>
+                    }
+                />
+            </MutateDraftSpecProvider>
+        </WorkflowHydrator>
     );
 }
 

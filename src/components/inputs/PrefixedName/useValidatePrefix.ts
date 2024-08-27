@@ -1,4 +1,3 @@
-import { validateCatalogName } from 'components/inputs/PrefixedName/shared';
 import {
     PrefixedName_Change,
     PrefixedName_Errors,
@@ -7,6 +6,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
 import { hasLength } from 'utils/misc-utils';
+import { validateCatalogName } from 'validation';
 
 interface Options {
     allowBlankName?: boolean;

@@ -1,6 +1,6 @@
 import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/Supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import {
     Duration,
     isSaturday,
