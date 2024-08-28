@@ -15,7 +15,7 @@ const DashboardWelcomeContext = createContext<DashboardWelcomeState | null>(
 const DashboardWelcomeProvider = ({ children }: BaseComponentProps) => {
     const [welcomeShown, setWelcomeShown] = useLocalStorage(
         LocalStorageKeys.DASHBOARD_WELCOME,
-        false
+        true
     );
 
     return (
