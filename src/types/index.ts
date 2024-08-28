@@ -225,7 +225,7 @@ export interface CatalogStats_Dashboard extends BaseCatalogStats {
     bytes_written?: number;
     docs_read?: number;
     docs_written?: number;
-    flow_document: any;
+    task_stats: object | null;
 }
 
 export interface Directive {

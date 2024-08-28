@@ -15,7 +15,11 @@ import {
 } from 'date-fns';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
-import { escapeReservedCharacters, TABLES } from 'services/supabase';
+import {
+    escapeReservedCharacters,
+    TABLES,
+    TASK_STATS,
+} from 'services/supabase';
 import {
     CatalogStats,
     CatalogStats_Billing,
@@ -275,7 +279,7 @@ const getStatsForDetails = (
 };
 
 export interface DefaultStatsWithDocument extends DefaultStats {
-    flow_document: any;
+    task_stats: object | null;
 }
 
 const getStatsForDashboard = (
@@ -304,7 +308,7 @@ const getStatsForDashboard = (
 
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
-        .select(`${DEFAULT_QUERY},flow_document`)
+        .select(`${DEFAULT_QUERY},${TASK_STATS}`)
         .ilike('catalog_name', `${tenant}%`)
         .eq('grain', grain)
         .gte('ts', past)

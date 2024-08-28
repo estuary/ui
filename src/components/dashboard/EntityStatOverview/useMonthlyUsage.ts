@@ -30,10 +30,10 @@ export default function useMonthlyUsage() {
 
         if (data) {
             data.filter(
-                ({ flow_document }) =>
-                    Object.hasOwn(flow_document, 'taskStats') &&
-                    (Object.hasOwn(flow_document.taskStats, 'capture') ||
-                        Object.hasOwn(flow_document.taskStats, 'materialize'))
+                ({ task_stats }) =>
+                    task_stats &&
+                    (Object.hasOwn(task_stats, 'capture') ||
+                        Object.hasOwn(task_stats, 'materialize'))
             ).forEach((datum) => {
                 if (isDefaultStatistic(datum)) {
                     dataWritten += datum.bytes_written_by_me;
