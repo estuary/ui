@@ -6,6 +6,8 @@ import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Dashboard } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
+// The interfaces of this union type have minimal overlap and a type guard is required
+// to access the properties specific to one of the interfaces.
 const isDefaultStatistic = (
     datum: CatalogStats_Dashboard | DefaultStatsWithDocument
 ): datum is DefaultStatsWithDocument => 'bytes_read_by_me' in datum;
