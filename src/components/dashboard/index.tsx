@@ -12,10 +12,11 @@ import useMonthlyUsage from './EntityStatOverview/useMonthlyUsage';
 const ICON_SIZE = 12;
 
 export default function Dashboard() {
-    const { captureUsage, isLoading, materializationUsage } = useMonthlyUsage();
+    const { captureUsage, error, isLoading, materializationUsage } =
+        useMonthlyUsage();
 
     return (
-        <Grid container spacing={{ xs: 4 }} style={{ marginTop: 16 }}>
+        <Grid container spacing={{ xs: 2 }} style={{ marginTop: 16 }}>
             <Grid
                 item
                 xs={12}
@@ -26,17 +27,18 @@ export default function Dashboard() {
                 </Box>
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
                 <EntityStatOverview
                     Icon={<CloudUpload fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_teal}
                     entityType="capture"
                     monthlyUsage={captureUsage}
+                    monthlyUsageError={error}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
                 <EntityStatOverview
                     Icon={<DatabaseScript fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_blue}
@@ -44,12 +46,13 @@ export default function Dashboard() {
                 />
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
                 <EntityStatOverview
                     Icon={<CloudDownload fontSize={ICON_SIZE} />}
                     background={semiTransparentBackground_purple}
                     entityType="materialization"
                     monthlyUsage={materializationUsage}
+                    monthlyUsageError={error}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>

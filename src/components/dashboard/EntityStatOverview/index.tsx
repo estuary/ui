@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { authenticatedRoutes } from 'app/routes';
 import LinkWrapper from 'components/shared/LinkWrapper';
 import { ReactElement } from 'react';
@@ -12,6 +13,7 @@ interface Props {
     background: { light: string; dark: string };
     entityType: Entity;
     monthlyUsage?: number;
+    monthlyUsageError?: PostgrestError;
     monthlyUsageLoading?: boolean;
 }
 
@@ -44,6 +46,7 @@ export default function EntityStatOverview({
     background,
     entityType,
     monthlyUsage,
+    monthlyUsageError,
     monthlyUsageLoading,
 }: Props) {
     const intl = useIntl();
@@ -98,12 +101,19 @@ export default function EntityStatOverview({
 
                 {typeof monthlyUsage === 'number' ? (
                     <Statistic
+                        byteUnit
+                        error={monthlyUsageError}
                         label={intl.formatMessage({
                             id: 'filter.time.thisMonth',
                         })}
                         loading={monthlyUsageLoading ?? false}
+                        tooltip={`${monthlyUsage} ${intl.formatMessage({
+                            id:
+                                entityType === 'materialization'
+                                    ? `entityTable.stats.bytes_read`
+                                    : `entityTable.stats.bytes_written`,
+                        })}`}
                         value={monthlyUsage}
-                        byteUnit
                     />
                 ) : null}
             </Stack>

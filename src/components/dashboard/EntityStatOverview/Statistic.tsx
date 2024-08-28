@@ -1,15 +1,26 @@
-import { Box, Skeleton, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
+import { PostgrestError } from '@supabase/postgrest-js';
 import prettyBytes from 'pretty-bytes';
 import { ReactNode } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
     label: ReactNode;
     loading: boolean;
+    tooltip: string;
     value: number;
     byteUnit?: boolean;
+    error?: PostgrestError;
 }
 
-export default function Statistic({ label, loading, value, byteUnit }: Props) {
+export default function Statistic({
+    byteUnit,
+    error,
+    label,
+    loading,
+    tooltip,
+    value,
+}: Props) {
     return (
         <Box
             style={{
@@ -20,10 +31,20 @@ export default function Statistic({ label, loading, value, byteUnit }: Props) {
         >
             <Typography variant="caption">{label}</Typography>
 
-            {loading ? (
-                <Skeleton height={32} width={64} />
-            ) : (
-                <Typography variant="h6">
+            <Tooltip
+                placement="bottom"
+                title={
+                    error ? (
+                        <FormattedMessage id="entityTable.stats.error" />
+                    ) : (
+                        tooltip
+                    )
+                }
+            >
+                <Typography
+                    variant="h6"
+                    sx={{ opacity: loading || error ? 0.4 : 1 }}
+                >
                     {byteUnit
                         ? prettyBytes(value, {
                               minimumFractionDigits: 2,
@@ -31,7 +52,7 @@ export default function Statistic({ label, loading, value, byteUnit }: Props) {
                           })
                         : value}
                 </Typography>
-            )}
+            </Tooltip>
         </Box>
     );
 }

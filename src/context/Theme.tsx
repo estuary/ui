@@ -373,7 +373,7 @@ export const semiTransparentBackground_purple = {
     dark: 'rgba(214, 194, 255, 0.12)',
 };
 
-export const textloadingColor = {
+export const textLoadingColor = {
     light: 'rgba(11, 19, 30, 0.4)',
     dark: 'rgba(247, 249, 252, 0.4)',
 };
