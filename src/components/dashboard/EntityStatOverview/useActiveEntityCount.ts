@@ -11,10 +11,7 @@ export default function useActiveEntityCount(entityType: Entity) {
     const { data, error, isLoading } = useQuery(
         hasLength(selectedTenant)
             ? getLiveSpecShards(selectedTenant, entityType)
-            : null,
-        {
-            refreshInterval: 15000,
-        }
+            : null
     );
 
     const count = useMemo(

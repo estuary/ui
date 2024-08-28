@@ -24,9 +24,7 @@ export default function useMonthlyUsage() {
         [endDate, selectedTenant]
     );
 
-    const { data, error, isLoading } = useQuery(query, {
-        refreshInterval: 15000,
-    });
+    const { data, error, isLoading } = useQuery(query);
 
     const [captureUsage, materializationUsage] = useMemo(() => {
         let dataWritten = 0;
