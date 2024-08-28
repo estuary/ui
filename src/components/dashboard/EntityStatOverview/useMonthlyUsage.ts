@@ -12,17 +12,19 @@ const isDefaultStatistic = (
 
 export default function useMonthlyUsage() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
     const endDate = DateTime.utc().startOf('month');
 
-    const { data, error, isLoading } = useQuery(
-        hasLength(selectedTenant)
-            ? getStatsForDashboard(selectedTenant, 'monthly', endDate)
-            : null,
-        {
-            refreshInterval: 15000,
-        }
+    const query = useMemo(
+        () =>
+            hasLength(selectedTenant)
+                ? getStatsForDashboard(selectedTenant, 'monthly', endDate)
+                : null,
+        [endDate, selectedTenant]
     );
+
+    const { data, error, isLoading } = useQuery(query, {
+        refreshInterval: 15000,
+    });
 
     const [captureUsage, materializationUsage] = useMemo(() => {
         let dataWritten = 0;
