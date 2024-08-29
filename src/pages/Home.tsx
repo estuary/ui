@@ -8,8 +8,8 @@ import {
     useTheme,
 } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import Dashboard from 'components/dashboard';
 import HeroImageAndDescription from 'components/hero';
+import Dashboard from 'components/home/dashboard';
 import LoginNotifications from 'components/login/Notifications';
 import { useShowDashboardWelcome } from 'context/DashboardWelcome';
 import { defaultOutline, semiTransparentBackground } from 'context/Theme';
