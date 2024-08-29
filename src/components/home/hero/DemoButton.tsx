@@ -1,6 +1,6 @@
 import { Box, Grid, Link } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
-import DemoDialog from 'components/hero/DemoDialog';
+import DemoDialog from 'components/home/hero/DemoDialog';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useCallback, useState } from 'react';
