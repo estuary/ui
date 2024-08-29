@@ -1,6 +1,6 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import prettyBytes from 'pretty-bytes';
+import { formatBytes } from 'components/tables/cells/stats/shared';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
@@ -45,12 +45,7 @@ export default function Statistic({
                     variant="h6"
                     sx={{ opacity: loading || error ? 0.4 : 1 }}
                 >
-                    {byteUnit
-                        ? prettyBytes(value, {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                          })
-                        : value}
+                    {byteUnit ? formatBytes(value) : value}
                 </Typography>
             </Tooltip>
         </Box>
