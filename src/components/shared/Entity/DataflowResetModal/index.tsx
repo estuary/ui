@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
 import { FormattedMessage, useIntl } from 'react-intl';
+import BindingReview from './BindingReview';
 import { DataflowResetModalProps } from './types';
 
 function DataflowResetModal({ open, setOpen }: DataflowResetModalProps) {
@@ -20,7 +21,9 @@ function DataflowResetModal({ open, setOpen }: DataflowResetModalProps) {
                 })}
             </DialogTitleWithClose>
 
-            <DialogContent>One more thing...</DialogContent>
+            <DialogContent>
+                <BindingReview />
+            </DialogContent>
             <DialogActions>
                 <Button
                     variant="outlined"
