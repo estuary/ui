@@ -14,7 +14,6 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
-import DataFlowReset from './DataFlowReset';
 
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
@@ -49,8 +48,6 @@ function EntityDetails() {
                             </Typography>
 
                             <Stack direction="row">
-                                <DataFlowReset />
-
                                 <EditButton buttonVariant="outlined" />
 
                                 <MaterializeButton />

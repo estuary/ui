@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
-import { ReactNode, useCallback, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
@@ -19,16 +19,13 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
+import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
 } from './useUpdateBackfillCounter';
 
-interface Props {
-    description: ReactNode;
-    bindingIndex?: number;
-}
-
-function Backfill({ description, bindingIndex = -1 }: Props) {
+function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
+    const intl = useIntl();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     // Binding Store
@@ -153,7 +150,9 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 <Typography
                     variant={bindingIndex === -1 ? 'formSectionHeader' : 'h6'}
                 >
-                    <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
+                    {intl.formatMessage({
+                        id: 'workflows.collectionSelector.manualBackfill.header',
+                    })}
                 </Typography>
 
                 <Typography component="div">{description}</Typography>
@@ -171,7 +170,9 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                     handleClick(checked === 'true' ? 'false' : 'true');
                 }}
             >
-                <FormattedMessage id="workflows.collectionSelector.manualBackfill.cta.backfill" />
+                {intl.formatMessage({
+                    id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
+                })}
             </BooleanToggleButton>
         </Box>
     );

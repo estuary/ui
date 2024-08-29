@@ -77,6 +77,11 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
+
+    'workflows.collectionSelector.dataflowBackfill.header': `Backfill entire ${CommonMessages['terms.dataFlow']}`,
+    'workflows.collectionSelector.dataflowBackfill.option': `Backfill entire ${CommonMessages['terms.dataFlow']}`,
+    'workflows.collectionSelector.dataflowBackfill.message': `Have any backfill also update Materialization.`,
+
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
     'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,

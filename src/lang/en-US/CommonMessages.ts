@@ -59,6 +59,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.derivation': `Derivation`,
     'terms.documentation': `Docs`,
     'terms.entity': `Entity`,
+    'terms.dataFlow': `Data Flow`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,

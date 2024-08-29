@@ -229,8 +229,9 @@ const getInitialBindingData = (): Pick<
 
 const getInitialMiscData = (): Pick<
     BindingState,
-    | 'backfillAllBindings'
     | 'backfilledBindings'
+    | 'backfillAllBindings'
+    | 'backfillDataflow'
     | 'collectionsRequiringRediscovery'
     | 'disabledCollections'
     | 'discoveredCollections'
@@ -243,6 +244,7 @@ const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
 > => ({
     backfillAllBindings: false,
+    backfillDataflow: true,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     disabledCollections: new Set(),
@@ -1008,6 +1010,16 @@ const getInitialState = (
         );
     },
 
+    setBackfillDataflow: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfillDataflow = value;
+            }),
+            false,
+            'Backfill Dataflow Flag Changed'
+        );
+    },
+
     toggleDisable: (targetUUIDs, value) => {
         // Updating a single item
         // A specific list (toggle page)
@@ -1170,7 +1182,7 @@ const getInitialState = (
     },
 });
 
-export const bindingStore = create<BindingState>()(
+export const useBindingStore = create<BindingState>()(
     devtools(
         (set, get) => getInitialState(set, get),
         devtoolsOptions(BindingStoreNames.GENERAL)
