@@ -373,7 +373,7 @@ const getLiveSpecShards = (tenant: string, entityType: Entity) => {
     return supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
         .select(SHARDS_DISABLE)
-        .ilike('catalog_name', `${tenant}%`)
+        .like('catalog_name', `${tenant}%`)
         .eq('spec_type', entityType);
 };
 

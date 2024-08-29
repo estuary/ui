@@ -285,10 +285,12 @@ export interface DefaultStatsWithDocument extends DefaultStats {
 const getStatsForDashboard = (
     tenant: string,
     grain: Grains,
-    endDate: DateTime,
+    // endDate: DateTime,
     duration?: Duration
     // entityType?: Entity
 ) => {
+    const endDate = DateTime.utc().startOf('month');
+
     const past = duration ? endDate.minus(duration) : endDate;
 
     // let query: string;
@@ -309,7 +311,7 @@ const getStatsForDashboard = (
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
         .select(`${DEFAULT_QUERY},${TASK_STATS}`)
-        .ilike('catalog_name', `${tenant}%`)
+        .like('catalog_name', `${tenant}%`)
         .eq('grain', grain)
         .gte('ts', past)
         .lte('ts', endDate)
