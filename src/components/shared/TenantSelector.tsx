@@ -54,6 +54,8 @@ function TenantSelector({ updateStoreState }: Props) {
                 hasLength(defaultSelectedTenant) &&
                 tenantNames.includes(defaultSelectedTenant)
                     ? defaultSelectedTenant
+                    : hasLength(selectedTenant)
+                    ? selectedTenant
                     : tenantNames[0];
 
             updateState(newVal);
@@ -66,6 +68,7 @@ function TenantSelector({ updateStoreState }: Props) {
     }, [
         defaultSelectedTenant,
         defaultValue,
+        selectedTenant,
         tenantNames,
         tenantNamesHaveLength,
         updateState,
