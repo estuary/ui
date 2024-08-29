@@ -41,4 +41,7 @@ export const HomePage: Record<string, string> = {
     // Welcome
     'welcome.image.alt': `A diagram showing the Flow logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Flow and destination systems on the right receive data from Flow.`,
     'welcome.demo.alt': `A data pipeline diagram showing data moving into Flow from the Wikipedia HTTP source, and coming out of Flow into the Google Sheets destination.`,
+
+    // Dashboard
+    'dashboard.alert.supportRoleTimeouts': `Queries of the catalog_stats table can timeout when using the estuary_support/ role.`,
 };
