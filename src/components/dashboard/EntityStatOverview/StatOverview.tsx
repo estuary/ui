@@ -8,7 +8,6 @@ import {
     semiTransparentBackground_teal,
 } from 'context/Theme';
 import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
-import { ReactElement } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Entity } from 'types';
 import ActiveEntityCount from './ActiveEntityCount';
@@ -59,18 +58,16 @@ const getBackgroundColor = (
     return semiTransparentBackground_purple;
 };
 
-const getEntityIcon = (entityType: string): ReactElement => {
-    const iconSize = 12;
-
+const getEntityIcon = (entityType: string) => {
     if (entityType === 'collection') {
-        return <DatabaseScript fontSize={iconSize} />;
+        return DatabaseScript;
     }
 
     if (entityType === 'capture') {
-        return <CloudUpload fontSize={iconSize} />;
+        return CloudUpload;
     }
 
-    return <CloudDownload fontSize={iconSize} />;
+    return CloudDownload;
 };
 
 export default function StatOverview({
@@ -111,7 +108,7 @@ export default function StatOverview({
                     spacing={1}
                     style={{ alignItems: 'center' }}
                 >
-                    {Icon}
+                    <Icon style={{ fontSize: 12 }} />
 
                     <Typography style={{ fontWeight: 500 }}>
                         <FormattedMessage id={titleId} />
