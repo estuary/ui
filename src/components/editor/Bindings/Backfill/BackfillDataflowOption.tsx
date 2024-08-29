@@ -6,17 +6,20 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 function BackfillDataflowOption() {
-    const [enabled, setEnabled] = useState(false);
-
     const intl = useIntl();
     const formActive = useFormStateStore_isActive();
     const backfilledBindings = useBinding_backfilledBindings();
+
+    const [backfillDataflow, setBackfillDataflow] = useBindingStore((state) => [
+        state.backfillDataflow,
+        state.setBackfillDataflow,
+    ]);
 
     return (
         <Box sx={{ mt: 3 }}>
@@ -39,8 +42,8 @@ function BackfillDataflowOption() {
                     control={
                         <Switch
                             size="small"
-                            value={enabled}
-                            checked={enabled}
+                            value={backfillDataflow}
+                            checked={backfillDataflow}
                             disabled={Boolean(
                                 formActive || backfilledBindings.length < 1
                             )}
@@ -48,7 +51,7 @@ function BackfillDataflowOption() {
                                 event.preventDefault();
                                 event.stopPropagation();
 
-                                setEnabled(checked);
+                                setBackfillDataflow(checked);
                             }}
                         />
                     }

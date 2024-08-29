@@ -4,10 +4,13 @@ import {
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { CustomEvents } from 'services/types';
+import { useBindingStore } from 'stores/Binding/Store';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import DataflowResetModal from '../DataflowResetModal';
 import useSave from './useSave';
 
 interface Props {
@@ -27,10 +30,16 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: Props) {
+    const [open, setOpen] = useState(false);
+
     const save = useSave(logEvent, onFailure, dryRun);
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
+
+    const [backfillDataflow] = useBindingStore((state) => [
+        state.backfillDataflow,
+    ]);
 
     const labelId = buttonLabelId
         ? buttonLabelId
@@ -39,16 +48,23 @@ function EntityCreateSave({
         : `cta.saveEntity${loading ? '.active' : ''}`;
 
     return (
-        <Button
-            onClick={async (event) => {
-                event.preventDefault();
-                await save(draftId);
-            }}
-            disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
-        >
-            <FormattedMessage id={labelId} />
-        </Button>
+        <>
+            <Button
+                onClick={async () => {
+                    if (!dryRun && backfillDataflow) {
+                        console.log('Hey - we need a new modal here');
+                        setOpen(true);
+                        return;
+                    }
+                    await save(draftId);
+                }}
+                disabled={disabled || isSaving || formActive}
+                sx={buttonSx}
+            >
+                <FormattedMessage id={labelId} />
+            </Button>
+            <DataflowResetModal open={open} setOpen={setOpen} />
+        </>
     );
 }
 

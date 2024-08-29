@@ -13,6 +13,8 @@ export const Workflows: Record<string, string> = {
     'workflows.initTask.alert.message.initFailed.docPath': `${CommonMessages['support.email']}`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
+    'workflows.save.review.header': `Review Changes`,
+
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
