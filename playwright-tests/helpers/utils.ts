@@ -102,7 +102,7 @@ export const inituser = async (
 
     // Create Tenant
     await expect(page.getByText(`Let's get started`)).toBeVisible();
-    await page.getByLabel('Name').type(name);
+    await page.getByLabel('Organization').type(name);
     await page.getByRole('button', { name: 'Continue' }).click();
 
     //Wait for processing
