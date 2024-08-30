@@ -19,6 +19,8 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
+import BackfillCount from './BackfillCount';
+import BackfillDataflowOption from './BackfillDataflowOption';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -158,22 +160,30 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 <Typography component="div">{description}</Typography>
             </Stack>
 
-            <BooleanToggleButton
-                selected={selected}
-                disabled={
-                    formActive || !hasLength(collections) || allBindingsDisabled
-                }
-                onClick={(event, checked: string) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+            <Stack direction="row" spacing={2}>
+                <BooleanToggleButton
+                    selected={selected}
+                    disabled={
+                        formActive ||
+                        !hasLength(collections) ||
+                        allBindingsDisabled
+                    }
+                    onClick={(event, checked: string) => {
+                        event.preventDefault();
+                        event.stopPropagation();
 
-                    handleClick(checked === 'true' ? 'false' : 'true');
-                }}
-            >
-                {intl.formatMessage({
-                    id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
-                })}
-            </BooleanToggleButton>
+                        handleClick(checked === 'true' ? 'false' : 'true');
+                    }}
+                >
+                    {intl.formatMessage({
+                        id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
+                    })}
+                </BooleanToggleButton>
+
+                {bindingIndex === -1 ? <BackfillCount /> : null}
+            </Stack>
+
+            {bindingIndex === -1 ? <BackfillDataflowOption /> : null}
         </Box>
     );
 }

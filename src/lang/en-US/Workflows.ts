@@ -79,10 +79,15 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {bindingsTotal, plural,
+        one {collection}
+        other {collections}
+    } marked for backfill.`,
+    'workflows.collectionSelector.manualBackfill.count.empty': `No collections marked for backfill.`,
 
-    'workflows.collectionSelector.dataflowBackfill.header': `Backfill entire ${CommonMessages['terms.dataFlow']}`,
-    'workflows.collectionSelector.dataflowBackfill.option': `Backfill entire ${CommonMessages['terms.dataFlow']}`,
-    'workflows.collectionSelector.dataflowBackfill.message': `Have any backfill also update Materialization.`,
+    'workflows.collectionSelector.dataflowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataflowBackfill.option': `Backfill Capture`,
+    'workflows.collectionSelector.dataflowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,

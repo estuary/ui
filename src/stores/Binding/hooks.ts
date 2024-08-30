@@ -305,3 +305,17 @@ export const useBinding_updateFullSourceConfig = () => {
 export const useBinding_fullSourceErrorsExist = () => {
     return useBindingStore((state) => state.fullSourceErrorsExist);
 };
+
+export const useBinding_backfilledBindings_count = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return state.backfilledBindings.length;
+        })
+    );
+
+export const useBinding_resourceConfigs_count = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return Object.keys(state.resourceConfigs).length;
+        })
+    );

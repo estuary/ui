@@ -4,3 +4,7 @@ export interface BackfillProps {
     description: ReactNode;
     bindingIndex?: number;
 }
+
+export interface BackfillDataflowOptionProps {
+    disabled?: boolean;
+}

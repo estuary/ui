@@ -22,7 +22,6 @@ import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
 import Backfill from './Backfill';
-import BackfillDataflowOption from './Backfill/BackfillDataflowOption';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -117,10 +116,6 @@ function BindingsMultiEditor({
                             />
                         }
                     />
-                ) : null}
-
-                {workflow === 'capture_edit' ? (
-                    <BackfillDataflowOption />
                 ) : null}
             </Stack>
 
