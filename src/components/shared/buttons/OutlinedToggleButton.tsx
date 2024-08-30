@@ -68,8 +68,8 @@ function OutlinedToggleButton({
 
     return (
         <ToggleButton
-            {...props}
             size="small"
+            {...props}
             value={value}
             selected={selected}
             disabled={disabled}

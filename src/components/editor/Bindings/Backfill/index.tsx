@@ -165,6 +165,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
 
             <Stack direction="row" spacing={2}>
                 <BooleanToggleButton
+                    size="large"
                     selected={selected}
                     disabled={
                         formActive ||
