@@ -3,8 +3,13 @@ import StatOverview from './StatOverview';
 import useMonthlyUsage from './useMonthlyUsage';
 
 export default function EntityStatOverview() {
-    const { captureUsage, error, isLoading, materializationUsage } =
-        useMonthlyUsage();
+    const {
+        captureUsage,
+        error,
+        indeterminate,
+        isLoading,
+        materializationUsage,
+    } = useMonthlyUsage();
 
     return (
         <>
@@ -13,6 +18,7 @@ export default function EntityStatOverview() {
                     entityType="capture"
                     monthlyUsage={captureUsage}
                     monthlyUsageError={error}
+                    monthlyUsageIndeterminate={indeterminate}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>
@@ -26,6 +32,7 @@ export default function EntityStatOverview() {
                     entityType="materialization"
                     monthlyUsage={materializationUsage}
                     monthlyUsageError={error}
+                    monthlyUsageIndeterminate={indeterminate}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>

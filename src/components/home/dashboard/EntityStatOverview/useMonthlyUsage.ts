@@ -3,7 +3,7 @@ import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
 import { useMemo } from 'react';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Dashboard } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, RESPONSE_DATA_LIMIT } from 'utils/misc-utils';
 
 // The interfaces of this union type have minimal overlap and a type guard is required
 // to access the properties specific to one of the interfaces.
@@ -53,6 +53,7 @@ export default function useMonthlyUsage() {
     return {
         captureUsage,
         error,
+        indeterminate: data ? data.length >= RESPONSE_DATA_LIMIT : false,
         isLoading,
         materializationUsage,
     };

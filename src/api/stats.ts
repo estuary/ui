@@ -313,6 +313,7 @@ const getStatsForDashboard = (
         .select(`${DEFAULT_QUERY},${TASK_STATS}`)
         .like('catalog_name', `${tenant}%`)
         .eq('grain', grain)
+        .or('bytes_written_by_me.gt.0,bytes_read_by_me.gt.0')
         .gte('ts', past)
         .lte('ts', endDate)
         .order('ts', { ascending: true })

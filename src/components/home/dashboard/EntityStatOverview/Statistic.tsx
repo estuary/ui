@@ -2,7 +2,7 @@ import { Box, Tooltip, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { formatBytes } from 'components/tables/cells/stats/shared';
 import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props {
     label: ReactNode;
@@ -11,16 +11,20 @@ interface Props {
     value: number;
     byteUnit?: boolean;
     error?: PostgrestError;
+    indeterminate?: boolean;
 }
 
 export default function Statistic({
     byteUnit,
     error,
+    indeterminate,
     label,
     loading,
     tooltip,
     value,
 }: Props) {
+    const intl = useIntl();
+
     return (
         <Box
             style={{
@@ -34,18 +38,18 @@ export default function Statistic({
             <Tooltip
                 placement="bottom"
                 title={
-                    error ? (
-                        <FormattedMessage id="entityTable.stats.error" />
-                    ) : (
-                        tooltip
-                    )
+                    error
+                        ? intl.formatMessage({ id: 'entityTable.stats.error' })
+                        : tooltip
                 }
             >
                 <Typography
                     variant="h6"
                     sx={{ opacity: loading || error ? 0.4 : 1 }}
                 >
-                    {byteUnit ? formatBytes(value) : value}
+                    {`${byteUnit ? formatBytes(value) : value}${
+                        indeterminate ? '+' : ''
+                    }`}
                 </Typography>
             </Tooltip>
         </Box>

@@ -3,7 +3,7 @@ import { getLiveSpecShards } from 'api/liveSpecsExt';
 import { useMemo } from 'react';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { Entity } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength, RESPONSE_DATA_LIMIT } from 'utils/misc-utils';
 
 export default function useActiveEntityCount(entityType: Entity) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -20,5 +20,10 @@ export default function useActiveEntityCount(entityType: Entity) {
         [data]
     );
 
-    return { count, error, isLoading };
+    return {
+        count,
+        error,
+        indeterminate: data ? data.length >= RESPONSE_DATA_LIMIT : false,
+        isLoading,
+    };
 }
