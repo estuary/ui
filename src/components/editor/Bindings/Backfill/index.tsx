@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
+import { useEntityWorkflow } from 'context/Workflow';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -29,6 +30,8 @@ import useUpdateBackfillCounter, {
 function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const intl = useIntl();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
+
+    const workflow = useEntityWorkflow();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();
@@ -183,7 +186,9 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 {bindingIndex === -1 ? <BackfillCount /> : null}
             </Stack>
 
-            {bindingIndex === -1 ? <BackfillDataflowOption /> : null}
+            {bindingIndex === -1 && workflow === 'capture_edit' ? (
+                <BackfillDataflowOption />
+            ) : null}
         </Box>
     );
 }
