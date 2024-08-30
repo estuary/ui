@@ -28,7 +28,7 @@ export default function useMonthlyUsage() {
         let dataWritten = 0;
         let dataRead = 0;
 
-        if (data) {
+        if (!error && data) {
             data.filter(
                 ({ task_stats }) =>
                     task_stats &&
@@ -48,7 +48,7 @@ export default function useMonthlyUsage() {
         }
 
         return [dataWritten, dataRead];
-    }, [data]);
+    }, [data, error]);
 
     return {
         captureUsage,
