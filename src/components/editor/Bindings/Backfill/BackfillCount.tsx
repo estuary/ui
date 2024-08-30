@@ -15,6 +15,7 @@ function BackfillCount() {
     return (
         <Chip
             color={noBackfill ? 'info' : 'success'}
+            variant="outlined"
             label={
                 noBackfill
                     ? intl.formatMessage({
