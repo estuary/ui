@@ -85,9 +85,9 @@ export const Workflows: Record<string, string> = {
     } marked for backfill.`,
     'workflows.collectionSelector.manualBackfill.count.empty': `No collections marked for backfill.`,
 
-    'workflows.collectionSelector.dataflowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataflowBackfill.option': `Backfill Capture`,
-    'workflows.collectionSelector.dataflowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
+    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,

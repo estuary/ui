@@ -21,7 +21,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
-import BackfillDataflowOption from './BackfillDataflowOption';
+import BackfillDataFlowOption from './BackfillDataFlowOption';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -188,7 +188,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             </Stack>
 
             {bindingIndex === -1 && workflow === 'capture_edit' ? (
-                <BackfillDataflowOption />
+                <BackfillDataFlowOption />
             ) : null}
         </Box>
     );

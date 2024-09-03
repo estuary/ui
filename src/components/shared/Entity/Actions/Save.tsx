@@ -38,7 +38,7 @@ function EntityCreateSave({
     const draftId = useEditorStore_id();
 
     const [backfillDataflow] = useBindingStore((state) => [
-        state.backfillDataflow,
+        state.backfillDataFlow,
     ]);
 
     const labelId = buttonLabelId

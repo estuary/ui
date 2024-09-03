@@ -231,7 +231,7 @@ const getInitialMiscData = (): Pick<
     BindingState,
     | 'backfilledBindings'
     | 'backfillAllBindings'
-    | 'backfillDataflow'
+    | 'backfillDataFlow'
     | 'collectionsRequiringRediscovery'
     | 'disabledCollections'
     | 'discoveredCollections'
@@ -244,7 +244,7 @@ const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
 > => ({
     backfillAllBindings: false,
-    backfillDataflow: false,
+    backfillDataFlow: false,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     disabledCollections: new Set(),
@@ -1010,10 +1010,10 @@ const getInitialState = (
         );
     },
 
-    setBackfillDataflow: (value) => {
+    setBackfillDataFlow: (value) => {
         set(
             produce((state: BindingState) => {
-                state.backfillDataflow = value;
+                state.backfillDataFlow = value;
             }),
             false,
             'Backfill Dataflow Flag Changed'
