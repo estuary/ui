@@ -1,6 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { DefaultStatsWithDocument, getStatsForDashboard } from 'api/stats';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useMemo } from 'react';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { CatalogStats_Dashboard } from 'types';
@@ -13,18 +12,14 @@ const isDefaultStatistic = (
 ): datum is DefaultStatsWithDocument => 'bytes_read_by_me' in datum;
 
 export default function useMonthlyUsage() {
-    const hasSupportRole = useUserInfoSummaryStore(
-        (state) => state.hasSupportAccess
-    );
-
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const query = useMemo(
         () =>
-            hasLength(selectedTenant) && !hasSupportRole
+            hasLength(selectedTenant)
                 ? getStatsForDashboard(selectedTenant, 'monthly')
                 : null,
-        [hasSupportRole, selectedTenant]
+        [selectedTenant]
     );
 
     const { data, error, isLoading } = useQuery(query);
