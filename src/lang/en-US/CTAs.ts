@@ -48,6 +48,7 @@ export const CTAs: Record<string, string> = {
     'cta.back': `Back`,
     'cta.revoke': `Revoke`,
     'cta.goToDetails': `See Details`,
+    'cta.goToAll': `See all`,
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
