@@ -6,6 +6,8 @@ import { derefSchema } from 'services/jsonforms';
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
 
+export const RESPONSE_DATA_LIMIT = 1000;
+
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 

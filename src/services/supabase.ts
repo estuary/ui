@@ -1,10 +1,10 @@
-import { supabaseClient } from 'context/GlobalProviders';
 import {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
 import { User } from '@supabase/supabase-js';
+import { supabaseClient } from 'context/GlobalProviders';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
 import {
@@ -24,6 +24,9 @@ export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
 export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
 
 export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
+
+export const SHARDS_DISABLE = `spec->shards->disable`;
+export const TASK_STATS = `task_stats:flow_document->taskStats`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',

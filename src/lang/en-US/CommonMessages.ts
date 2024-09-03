@@ -60,6 +60,8 @@ export const CommonMessages: Record<string, string> = {
     'terms.documentation': `Docs`,
     'terms.entity': `Entity`,
     'terms.dataFlow': `Data Flow`,
+    'terms.sources': `Sources`,
+    'terms.destinations': `Destinations`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,

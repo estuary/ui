@@ -1,3 +1,5 @@
+import { CommonMessages } from './CommonMessages';
+
 export const RouteTitles: Record<string, string> = {
     'routeTitle.home': `Welcome`,
     'routeTitle.dashboard': `Dashboard`,
@@ -10,7 +12,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,
-    'routeTitle.captures': `Sources`,
+    'routeTitle.captures': `${CommonMessages['terms.sources']}`,
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
@@ -27,6 +29,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,
-    'routeTitle.materializations': `Destinations`,
+    'routeTitle.materializations': `${CommonMessages['terms.destinations']}`,
     'routeTitle.registration': `Registration`,
 };

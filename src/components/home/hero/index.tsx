@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material';
-import HeroTabs from 'components/hero/Tabs';
+import HeroTabs from 'components/home/hero/Tabs';
 import HeroDemo from './Demo';
 import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';
@@ -11,7 +11,7 @@ function HeroImageAndDescription() {
     const { activeTab } = useHeroTabs();
 
     return (
-        <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000 }}>
+        <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000, p: 2 }}>
             <Grid container spacing={2}>
                 <Grid
                     item

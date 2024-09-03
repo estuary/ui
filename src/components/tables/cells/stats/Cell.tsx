@@ -1,6 +1,6 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { textloadingColor } from 'context/Theme';
+import { textLoadingColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { StatsCellProps } from './types';
@@ -48,7 +48,7 @@ const StatsCell = ({
                             transitionDelay: statsLoading ? '800ms' : '0ms',
                             color: (theme) =>
                                 statsLoading
-                                    ? textloadingColor[theme.palette.mode]
+                                    ? textLoadingColor[theme.palette.mode]
                                     : null,
                             opacity: failed ? 0.4 : 1,
                         }}
