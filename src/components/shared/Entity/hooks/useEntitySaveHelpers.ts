@@ -19,6 +19,7 @@ function useEntitySaveHelpers(disabled?: boolean) {
         () => ({
             buttonDisabled: Boolean(disabled ?? !draftId) || !formsHydrated,
             formSaving: formStatus === FormStatus.SAVING,
+            formTesting: formStatus === FormStatus.TESTING,
             onFailure: callFailed,
         }),
         [callFailed, disabled, draftId, formStatus, formsHydrated]
