@@ -10,8 +10,6 @@ function useEntitySaveHelpers(disabled?: boolean) {
     const formsHydrated = useEntityWorkflowHydrated();
 
     const draftId = useEditorStore_id();
-    // const isSaving = useEditorStore_isSaving();
-    // const formActive = useFormStateStore_isActive();
 
     const formStatus = useFormStateStore_status();
 
