@@ -35,7 +35,8 @@ export type StatsFilter =
     | 'lastWeek'
     | 'thisWeek'
     | 'lastMonth'
-    | 'thisMonth';
+    | 'thisMonth'
+    | 'allTime';
 
 export interface DefaultStats {
     catalog_name: string;
@@ -52,22 +53,22 @@ export interface DefaultStats {
 }
 
 const BASE_QUERY = `
-            catalog_name,
-            grain,
-            ts
+    catalog_name,
+    grain,
+    ts
 `;
 
-const DEFAULT_QUERY = `    
-            ${BASE_QUERY},
-            bytes_written_by_me,
-            docs_written_by_me,
-            bytes_read_by_me,
-            docs_read_by_me,
-            bytes_written_to_me,
-            docs_written_to_me,
-            bytes_read_from_me,
-            docs_read_from_me
-        `;
+const DEFAULT_COLS = [
+    'bytes_written_by_me',
+    'docs_written_by_me',
+    'bytes_read_by_me',
+    'docs_read_by_me',
+    'bytes_written_to_me',
+    'docs_written_to_me',
+    'bytes_read_from_me',
+    'docs_read_from_me',
+];
+const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
 
 // Queries just for details panel
 const CAPTURE_QUERY = `
@@ -194,6 +195,10 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
                     .eq('grain', monthlyGrain);
                 break;
 
+            case 'allTime':
+                queryBuilder = queryBuilder.eq('grain', monthlyGrain);
+                break;
+
             default:
                 throw new Error('Unsupported filter used in Stats Query');
         }
@@ -223,10 +228,8 @@ const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
         .select(
-            `    
-            catalog_name,
-            grain,
-            ts,
+            `
+            ${BASE_QUERY},
             bytes_written_by_me,
             bytes_read_by_me,
             flow_document

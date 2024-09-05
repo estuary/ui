@@ -108,6 +108,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 <DateFilterOption {...optionProps} option="lastWeek" />
                 <DateFilterOption {...optionProps} option="thisMonth" />
                 <DateFilterOption {...optionProps} option="lastMonth" />
+                <DateFilterOption {...optionProps} option="allTime" />
             </Menu>
         </Stack>
     );
