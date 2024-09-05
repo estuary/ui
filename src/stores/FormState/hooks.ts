@@ -138,3 +138,39 @@ export const useFormStateStore_messagePrefix = () => {
         (state) => state.messagePrefix
     );
 };
+
+export const useFormStateStore_showInterstitialSave = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['showInterstitialSave']
+    >(storeName(workflow), (state) => state.showInterstitialSave);
+};
+
+export const useFormStateStore_setShowInterstitialSave = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['setShowInterstitialSave']
+    >(storeName(workflow), (state) => state.setShowInterstitialSave);
+};
+
+export const useFormStateStore_hasInterstitialSave = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['hasInterstitialSave']
+    >(storeName(workflow), (state) => state.hasInterstitialSave);
+};
+
+export const useFormStateStore_setHasInterstitialSave = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['setHasInterstitialSave']
+    >(storeName(workflow), (state) => state.setHasInterstitialSave);
+};

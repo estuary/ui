@@ -46,6 +46,17 @@ export interface EntityFormState {
     formState: FormState;
     setFormState: (data: Partial<FormState>) => void;
 
+    // Used to show an interstitial view before save
+    hasInterstitialSave: boolean;
+    setHasInterstitialSave: (
+        data: EntityFormState['hasInterstitialSave']
+    ) => void;
+
+    showInterstitialSave: boolean;
+    setShowInterstitialSave: (
+        data: EntityFormState['showInterstitialSave']
+    ) => void;
+
     // Form Status
     isIdle: boolean;
     isActive: boolean;
