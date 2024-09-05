@@ -1,14 +1,8 @@
 import { Box } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import ChipWrapper, { ChipDisplay } from './Wrapper';
-
-export interface ChipListProps {
-    values: string[] | ChipDisplay[];
-    disabled?: boolean;
-    maxChips?: number;
-    stripPath?: boolean;
-}
+import { ChipListProps } from './types';
+import ChipWrapper from './Wrapper';
 
 function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
     const intl = useIntl();

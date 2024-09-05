@@ -11,20 +11,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
 import LinkWrapper from '../LinkWrapper';
-
-export interface ChipDisplay {
-    display: string;
-    link?: string;
-    title?: string;
-}
-
-interface Props {
-    onClick?: () => void;
-    disabled?: boolean;
-    stripPath?: boolean;
-    title?: string;
-    val: ChipDisplay;
-}
+import { ChipWrapperProps } from './types';
 
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
@@ -33,7 +20,13 @@ const chipListHoverStyling = {
     cursor: 'pointer',
 };
 
-function ChipWrapper({ disabled, onClick, stripPath, title, val }: Props) {
+function ChipWrapper({
+    disabled,
+    onClick,
+    stripPath,
+    title,
+    val,
+}: ChipWrapperProps) {
     const intl = useIntl();
     const displayValue = stripPath
         ? intl.formatMessage(

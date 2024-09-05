@@ -330,4 +330,8 @@ export const Workflows: Record<string, string> = {
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
+
+    // Reset Data Flow
+    'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
+    'resetDataFlow.materializations.empty': `No related materializations`,
 };

@@ -5,11 +5,14 @@ import Error from 'components/shared/Error';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useEffect, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { BindingReviewProps } from './types';
 
 function RelatedMaterializations({ selected }: BindingReviewProps) {
+    const intl = useIntl();
+
     const { data, error, isValidating } = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
@@ -32,8 +35,11 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
     return (
         <Box>
             <Typography>
-                Select which Materialization you want backfilled
+                {intl.formatMessage({
+                    id: 'resetDataFlow.materializations.header',
+                })}
             </Typography>
+
             {isValidating ? <LinearProgress /> : null}
 
             {error ? <Error error={error} condensed /> : null}
@@ -44,7 +50,11 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
                     maxChips={10}
                 />
             ) : (
-                <Box>No related materializations.</Box>
+                <Box>
+                    {intl.formatMessage({
+                        id: 'resetDataFlow.materializations.empty',
+                    })}
+                </Box>
             )}
         </Box>
     );
