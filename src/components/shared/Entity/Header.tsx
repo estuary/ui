@@ -11,7 +11,6 @@ import EntitySaveButton from './Actions/SaveButton';
 import EntityTestButton from './Actions/TestButton';
 import { EntitySaveButtonProps, EntityTestButtonProps } from './Actions/types';
 import EntityViewDetails from './Actions/ViewDetails';
-import DataflowResetModal from './DataflowResetModal';
 import HeaderLogs from './HeaderLogs';
 
 interface Props {
@@ -104,8 +103,6 @@ function EntityToolbar({
             </Box>
 
             {!hideLogs ? <HeaderLogs taskNames={taskNames} /> : null}
-
-            <DataflowResetModal />
         </Stack>
     );
 }

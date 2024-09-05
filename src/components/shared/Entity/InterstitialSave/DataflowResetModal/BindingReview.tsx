@@ -3,37 +3,26 @@ import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import ChipList from 'components/shared/ChipList';
 import { supabaseClient } from 'context/GlobalProviders';
 import { TABLES } from 'services/supabase';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useShallow } from 'zustand/react/shallow';
+import { BindingReviewProps } from './types';
 
-function BindingReview() {
-    const collectionsBeingBackfilled = useBindingStore(
-        useShallow((state) => {
-            return state.backfilledBindings.map((backfilledBinding) => {
-                return state.resourceConfigs[backfilledBinding].meta
-                    .collectionName;
-            });
-        })
-    );
-
+function BindingReview({ selected }: BindingReviewProps) {
     const response = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select('catalog_name')
             .eq('spec_type', 'materialization')
-            .overlaps('reads_from', collectionsBeingBackfilled)
+            .overlaps('reads_from', selected)
     );
 
-    console.log('collectionsBeingBackfilled', collectionsBeingBackfilled);
+    console.log('collectionsBeingBackfilled', selected);
     console.log('response', response);
 
     return (
         <Box>
             <Typography>
-                {collectionsBeingBackfilled.length} Collections that will be
-                backfilled
+                {selected.length} Collections that will be backfilled
             </Typography>
-            <ChipList values={collectionsBeingBackfilled} maxChips={10} />
+            <ChipList values={selected} maxChips={10} />
 
             <Box>
                 <Typography>

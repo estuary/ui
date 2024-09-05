@@ -1,16 +1,14 @@
 import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 
 import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_setShowInterstitialSave,
     useFormStateStore_showInterstitialSave,
 } from 'stores/FormState/hooks';
-import BindingReview from './BindingReview';
+import { InterstitialSaveProps } from './types';
 
-function DataflowResetModal() {
-    const intl = useIntl();
-
+function InterstitialSave({ children, title }: InterstitialSaveProps) {
     const showInterstitialSave = useFormStateStore_showInterstitialSave();
     const setShowInterstitialSave = useFormStateStore_setShowInterstitialSave();
 
@@ -22,14 +20,10 @@ function DataflowResetModal() {
                 }}
                 id=""
             >
-                {intl.formatMessage({
-                    id: 'workflows.save.review.header',
-                })}
+                {title}
             </DialogTitleWithClose>
 
-            <DialogContent>
-                <BindingReview />
-            </DialogContent>
+            <DialogContent>{children}</DialogContent>
             <DialogActions>
                 <Button
                     variant="outlined"
@@ -55,4 +49,4 @@ function DataflowResetModal() {
     );
 }
 
-export default DataflowResetModal;
+export default InterstitialSave;

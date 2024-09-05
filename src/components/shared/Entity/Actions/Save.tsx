@@ -7,10 +7,8 @@ import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setShowInterstitialSave,
-} from 'stores/FormState/hooks';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import useDataFlowResetPrompt from '../hooks/useDataFlowResetPrompt';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
@@ -28,7 +26,7 @@ function EntityCreateSave({
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
-    const setShowInterstitialSave = useFormStateStore_setShowInterstitialSave();
+    const showDataFlowResetPrompt = useDataFlowResetPrompt();
 
     const [backfillDataflow] = useBindingStore((state) => [
         state.backfillDataFlow,
@@ -44,7 +42,13 @@ function EntityCreateSave({
         <Button
             onClick={async () => {
                 if (!dryRun && backfillDataflow) {
-                    setShowInterstitialSave(true);
+                    showDataFlowResetPrompt((data) => {
+                        if (data) {
+                            console.log('YES', { data });
+                        } else {
+                            console.log('NO', { data });
+                        }
+                    });
                     return;
                 }
                 await save(draftId);
