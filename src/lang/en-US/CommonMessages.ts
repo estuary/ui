@@ -100,6 +100,7 @@ export const CommonMessages: Record<string, string> = {
     'filter.time.thisWeek': `This Week`,
     'filter.time.lastMonth': `Last Month`,
     'filter.time.thisMonth': `This Month`,
+    'filter.time.allTime': `All Time`,
 
     'catalogName.limitations': `letters, numbers, periods, underscores, and hyphens`,
 
