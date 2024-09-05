@@ -1,4 +1,4 @@
-import { Box, Skeleton, Typography } from '@mui/material';
+import { Box, LinearProgress, Typography } from '@mui/material';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import ChipList from 'components/shared/ChipList';
 import Error from 'components/shared/Error';
@@ -10,15 +10,16 @@ import { hasLength } from 'utils/misc-utils';
 import { BindingReviewProps } from './types';
 
 function RelatedMaterializations({ selected }: BindingReviewProps) {
-    const confirmationModal = useConfirmationModalContext();
-
     const { data, error, isValidating } = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select('catalog_name')
             .eq('spec_type', 'materialization')
-            .overlaps('reads_from', selected)
+            .overlaps('reads_from', selected),
+        {}
     );
+
+    const confirmationModal = useConfirmationModalContext();
 
     const foundData = useMemo(() => hasLength(data), [data]);
 
@@ -28,20 +29,16 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
         }
     }, [foundData, isValidating, confirmationModal]);
 
-    if (isValidating) {
-        return <Skeleton />;
-    }
-
-    if (error) {
-        return <Error error={error} />;
-    }
-
     return (
         <Box>
             <Typography>
                 Select which Materialization you want backfilled
             </Typography>
-            {foundData ? (
+            {isValidating ? <LinearProgress /> : null}
+
+            {error ? <Error error={error} condensed /> : null}
+
+            {!error && foundData ? (
                 <ChipList
                     values={data ? data.map((datum) => datum.catalog_name) : []}
                     maxChips={10}
