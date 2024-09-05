@@ -4,6 +4,7 @@ import {
 } from 'api/alerts';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import { useZustandStore } from 'context/Zustand/provider';
+import { union } from 'lodash';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -78,9 +79,13 @@ function SaveButton({ closeDialog }: Props) {
                     });
             }
 
-            const processedValues = emailsExistForPrefix
-                ? value.filter((email) => !existingEmails[key].includes(email))
-                : value;
+            const processedValues = union(
+                emailsExistForPrefix
+                    ? value.filter(
+                          (email) => !existingEmails[key].includes(email)
+                      )
+                    : value
+            );
 
             processedValues
                 .map((email): [string, string] => [key, email])
