@@ -44,7 +44,11 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             resolver.current?.(false);
             setShowConfirmationModal(false);
         },
-        show: (userSettings: IConfirmationModalOptions) => {
+        show: (
+            userSettings: IConfirmationModalOptions,
+            continueAllowedDefault = true
+        ) => {
+            setContinueAllowed(continueAllowedDefault);
             setSettings({
                 ...getDefaultSettings(),
                 ...userSettings,

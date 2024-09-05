@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 export interface IConfirmationModalOptions {
     confirmText?: string;
@@ -8,11 +8,9 @@ export interface IConfirmationModalOptions {
 }
 
 export interface IConfirmationModalContext {
-    setContinueAllowed: (newVal: boolean) => void;
-    showConfirmation: ({
-        title,
-        message,
-        confirmText,
-        cancelText,
-    }: IConfirmationModalOptions) => Promise<any>;
+    setContinueAllowed: Dispatch<SetStateAction<boolean>>;
+    showConfirmation: (
+        { title, message, confirmText, cancelText }: IConfirmationModalOptions,
+        allowContinueDefault?: boolean
+    ) => Promise<any>;
 }

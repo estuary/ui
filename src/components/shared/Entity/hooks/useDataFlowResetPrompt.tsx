@@ -2,7 +2,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useCallback } from 'react';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useShallow } from 'zustand/react/shallow';
-import BindingReview from '../InterstitialSave/DataflowResetModal/BindingReview';
+import BindingReview from '../DataflowResetModal/BindingReview';
 
 function useDataFlowResetPrompt() {
     const confirmationModalContext = useConfirmationModalContext();
@@ -18,21 +18,18 @@ function useDataFlowResetPrompt() {
 
     return useCallback(
         (callback: (data: any) => void) => {
-            // Need to make sure they select a materialization first
-            confirmationModalContext?.setContinueAllowed(false);
-
             confirmationModalContext
-                ?.showConfirmation({
-                    message: (
-                        <BindingReview
-                            selected={collectionsBeingBackfilled}
-                            setContinuedAllowed={
-                                confirmationModalContext.setContinueAllowed
-                            }
-                        />
-                    ),
-                    title: 'workflows.save.review.header',
-                })
+                ?.showConfirmation(
+                    {
+                        message: (
+                            <BindingReview
+                                selected={collectionsBeingBackfilled}
+                            />
+                        ),
+                        title: 'workflows.save.review.header',
+                    },
+                    false
+                )
                 .then((data) => {
                     console.log('then', data);
                     callback(data);
