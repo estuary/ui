@@ -83,17 +83,9 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    | 'formState'
-    | 'isIdle'
-    | 'isActive'
-    | 'messagePrefix'
-    | 'hasInterstitialSave'
-    | 'showInterstitialSave'
+    'formState' | 'isIdle' | 'isActive' | 'messagePrefix'
 > => ({
     formState: initialFormState,
-
-    hasInterstitialSave: false,
-    showInterstitialSave: false,
 
     isIdle: true,
     isActive: false,
@@ -177,9 +169,6 @@ const getInitialState = (
             'Form Status Updated'
         );
     },
-
-    setHasInterstitialSave: () => {},
-    setShowInterstitialSave: () => {},
 
     resetState: () => {
         set(
