@@ -251,7 +251,7 @@ export const openDetailsFromTable = async (
     }
 
     // Open the details
-    await page.getByLabel(`View details of ${name}`).click();
+    await page.getByRole('link', { name: `View details of ${name}` }).click();
 };
 
 export const defaultPageSetup = async (page: Page, test: any, name: string) => {
