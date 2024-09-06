@@ -238,16 +238,20 @@ export const getLinkForEntity = (entity: Entity) => {
     }
 };
 
+export const goToEntityPage = async (page: Page, entity: Entity) => {
+    await page.getByLabel(getLinkForEntity(entity)).click();
+};
+
 export const openDetailsFromTable = async (
     page: Page,
     name: string,
-    entity: 'captures' | 'collections' | 'materializations',
+    entity: Entity,
     goDirectly: boolean = false
 ) => {
     if (goDirectly) {
         await page.goto(`http://localhost:3000/${entity}`);
     } else {
-        await page.getByLabel(getLinkForEntity(entity)).click();
+        await goToEntityPage(page, entity);
     }
 
     // Open the details

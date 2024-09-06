@@ -25,7 +25,6 @@ test.describe.serial('Captures:', () => {
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
         authProps = await defaultPageSetup(page, test, USERS.captures);
-
         captureName = `${authProps.name}/${uuid}/source-hello-world`;
 
         await page.getByLabel('Admin').click();

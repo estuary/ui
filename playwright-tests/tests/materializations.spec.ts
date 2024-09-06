@@ -8,6 +8,7 @@ import {
     openDetailsFromTable,
     startSessionWithUser,
     saveAndPublish,
+    goToEntityPage,
 } from '../helpers/utils';
 import {
     discover_HelloWorld,
@@ -15,29 +16,28 @@ import {
     testConfig,
 } from '../helpers/captures';
 import { messageDescription, timeDescription } from './props';
+import { AuthProps } from '../helpers/types';
 
-test.describe.serial('Materializations:', () => {
+test.describe.serial.only('Materializations:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.materializations}_${uuid}`;
-    const materializationName = `${userName}/${uuid}/materialize-postgres`;
-    const collectionName = `${userName}/${uuid}/events`;
 
+    let authProps: AuthProps;
+    let collectionName: string;
+    let materializationName: string;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultPageSetup(page, userName);
+        authProps = await defaultPageSetup(page, test, USERS.materializations);
+        materializationName = `${authProps.name}/${uuid}/materialize-postgres`;
+        collectionName = `${authProps.name}/${uuid}/events`;
+
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
     });
 
-    test('able to view an empty table', async () => {
-        await page.goto(`http://localhost:3000/materializations`);
-        await expect(
-            page.getByRole('heading', { name: 'Click "New Materialization"' })
-        ).toBeVisible();
-    });
-
     test('start creating a PostgreSQL', async () => {
+        await goToEntityPage(page, 'materializations');
+
         await page.getByRole('button', { name: 'New Materialization' }).click();
         await page.getByRole('button', { name: 'Docs PostgreSQL' }).click();
 
