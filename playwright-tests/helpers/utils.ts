@@ -13,7 +13,7 @@ import {
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
 export const emailDomain = '@example.com';
-export const tenantSuffix = '__tenant';
+export const tenantSuffix = '_tenant';
 
 const updateSavedAuth = (filePath: string, updates: Partial<AuthFile>) => {
     console.log('updateSavedAuth:reading');
@@ -258,8 +258,12 @@ export const openDetailsFromTable = async (
         await goToEntityPage(page, entity);
     }
 
+    await expect(
+        page.getByLabel('View details').getByRole('link', { name })
+    ).toBeVisible();
+
     // Open the details
-    await page.getByRole('link', { name: `View details of ${name}` }).click();
+    await page.getByRole('link', { name }).click();
 };
 
 export const defaultPageSetup = async (page: Page, test: any, name: string) => {

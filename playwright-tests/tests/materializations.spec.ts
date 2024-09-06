@@ -18,7 +18,7 @@ import {
 import { messageDescription, timeDescription } from './props';
 import { AuthProps } from '../helpers/types';
 
-test.describe.serial.only('Materializations:', () => {
+test.describe.serial('Materializations:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let authProps: AuthProps;
