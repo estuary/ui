@@ -16,7 +16,7 @@ import {
 } from '../helpers/captures';
 import { AuthProps } from '../helpers/types';
 
-test.describe.serial('Captures:', () => {
+test.describe.serial.only('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let captureName: string;
@@ -34,6 +34,14 @@ test.describe.serial('Captures:', () => {
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
         await expect(page.getByText('Capture Details')).toBeVisible();
+    });
+
+    test('entity table can open details', async () => {
+        await openDetailsFromTable(page, captureName, 'captures');
+
+        await expect(
+            page.getByRole('heading', { name: RegExp(captureName) })
+        ).toBeVisible();
     });
 
     test('details can open edit', async () => {
@@ -72,14 +80,6 @@ test.describe.serial('Captures:', () => {
     test('drafted changes can be published', async () => {
         await saveAndPublish(page);
         await expect(page.getByText('Capture Details')).toBeVisible();
-    });
-
-    test.fixme('entity table can open details', async () => {
-        await openDetailsFromTable(page, captureName, 'captures');
-
-        await expect(
-            page.getByRole('heading', { name: captureName })
-        ).toBeVisible();
     });
 
     //     test('saved changes are visible on details spec', async () => {

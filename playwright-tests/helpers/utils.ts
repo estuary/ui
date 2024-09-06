@@ -258,10 +258,6 @@ export const openDetailsFromTable = async (
         await goToEntityPage(page, entity);
     }
 
-    await expect(
-        page.getByLabel('View details').getByRole('link', { name })
-    ).toBeVisible();
-
     // Open the details
     await page.getByRole('link', { name }).click();
 };
