@@ -258,6 +258,8 @@ export const openDetailsFromTable = async (
         await goToEntityPage(page, entity);
     }
 
+    await page.waitForURL(`**/${entity}`);
+
     // Open the details
     await page.getByRole('link', { name }).click();
 };
