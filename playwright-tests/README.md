@@ -15,7 +15,7 @@ supabase db reset --db-url postgresql://postgres:postgres@localhost:5432/postgre
 ```
 SELECT id
 FROM auth.users
-WHERE email ilike 'ui-test\_\_%'
+WHERE email ilike 'ui-pw\_\_%'
 ```
 
 # What do I need to run tests?
