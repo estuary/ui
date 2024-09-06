@@ -1,5 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { beforeEach } from 'node:test';
+import { AuthProps } from '../helpers/types';
 import { USERS } from '../helpers/users';
 import {
     defaultLocalStorage,
@@ -13,20 +14,14 @@ import {
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
 
-test.describe.serial('Admin:', () => {
+test.describe.serial.only('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
-    let userEmail: string;
-    let userName: string;
-    let tenant: string;
+    let authProps: AuthProps;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        const authprops = await defaultPageSetup(page, test, USERS.admin);
-
-        userEmail = authprops.email;
-        userName = authprops.name;
-        tenant = authprops.tenant;
+        authProps = await defaultPageSetup(page, test, USERS.admin);
 
         await page.getByLabel('Admin').click();
     });
@@ -40,14 +35,14 @@ test.describe.serial('Admin:', () => {
             const table = await page.getByLabel(
                 'Organization Membership Table'
             );
-            await expect(table).toContainText(userName);
+            await expect(table).toContainText(authProps.name);
             await expect(table).toContainText('admin');
-            await expect(table).toContainText(tenant);
+            await expect(table).toContainText(authProps.tenant);
         });
 
         test('default data sharing with support', async () => {
             const table = await page.getByLabel('Data Sharing Table');
-            await expect(table).toContainText(tenant);
+            await expect(table).toContainText(authProps.tenant);
             await expect(table).toContainText('estuary_support');
         });
     });
@@ -57,21 +52,21 @@ test.describe.serial('Admin:', () => {
             await page.getByRole('tab', { name: 'Settings' }).click();
         });
 
-        test('The tenant will be preselected', async () => {
+        test('The authProps.tenant will be preselected', async () => {
             await expect(
                 page.getByLabel('Prefix', { exact: true })
-            ).toHaveValue(tenant);
+            ).toHaveValue(authProps.tenant);
         });
 
         test.describe('Organization Settings', () => {
             test('are defaulted correctly', async () => {
                 await expect(
                     page.getByLabel('Organization Notifications Table')
-                ).toContainText(tenant);
+                ).toContainText(authProps.tenant);
 
                 await expect(
                     page.getByLabel('Organization Notifications Table')
-                ).toContainText(userEmail);
+                ).toContainText(authProps.email);
             });
 
             test('can open the notification configurator dialog', async () => {
@@ -89,11 +84,11 @@ test.describe.serial('Admin:', () => {
                 await expect(
                     page
                         .getByLabel('Configure Notification Methods')
-                        .getByText(tenant)
+                        .getByText(authProps.tenant)
                 ).toBeVisible();
 
                 await expect(
-                    page.getByRole('button', { name: userEmail })
+                    page.getByRole('button', { name: authProps.email })
                 ).toBeVisible();
             });
 
@@ -143,7 +138,7 @@ test.describe.serial('Admin:', () => {
         test.describe('Cloud Storage', () => {
             test('is defaulted correctly', async () => {
                 const table = await page.getByLabel('Storage Locations Table');
-                await expect(table).toContainText(tenant);
+                await expect(table).toContainText(authProps.tenant);
                 await expect(table).toContainText('estuary-trial');
                 await expect(table).toContainText('collection-data');
             });
@@ -153,7 +148,9 @@ test.describe.serial('Admin:', () => {
                     .getByRole('button', { name: 'Configure Storage' })
                     .click();
                 await expect(
-                    page.getByText(`Choose where you\'d like ${tenant}`)
+                    page.getByText(
+                        `Choose where you\'d like ${authProps.tenant}`
+                    )
                 ).toBeVisible();
             });
 
@@ -238,10 +235,10 @@ test.describe.serial('Admin:', () => {
             );
         });
 
-        test('shows the tenant in the selector', async () => {
+        test('shows the authProps.tenant in the selector', async () => {
             await expect(
                 page.getByRole('combobox', { name: 'Prefix' })
-            ).toHaveValue(tenant);
+            ).toHaveValue(authProps.tenant);
         });
     });
 
