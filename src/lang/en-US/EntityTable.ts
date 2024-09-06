@@ -58,6 +58,7 @@ export const EntityTable: Record<string, string> = {
 
     'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
 
+    'entityTable.viewDetails.aria': `View details of {name}`,
     'entityTable.edit.aria': `Edit specification of {name}`,
     'entityTable.materialize.aria': `Materialize {name}`,
 

@@ -42,7 +42,15 @@ function EntityNameLink({
                     })}
                 >
                     <Box>
-                        <LinkWrapper link={detailsLink}>{name}</LinkWrapper>
+                        <LinkWrapper
+                            ariaLabel={intl.formatMessage(
+                                { id: 'entityTable.viewDetails.aria' },
+                                { name }
+                            )}
+                            link={detailsLink}
+                        >
+                            {name}
+                        </LinkWrapper>
                     </Box>
                 </Tooltip>
             </Stack>

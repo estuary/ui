@@ -14,7 +14,7 @@ import {
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
 
-test.describe.serial.only('Admin:', () => {
+test.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let authProps: AuthProps;
