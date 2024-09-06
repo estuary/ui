@@ -1,6 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import { beforeEach } from 'node:test';
-import { USERS } from '../helpers/users';
+import { USERS, USER_PREFIX } from '../helpers/users';
 import {
     defaultLocalStorage,
     defaultPageSetup,
@@ -15,15 +15,24 @@ import {
     testConfig,
 } from '../helpers/captures';
 
-test.describe.serial('Captures:', () => {
+test.describe.serial.only('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.captures}_${uuid}`;
-    const captureName = `${userName}/${uuid}/source-hello-world`;
 
+    let captureName: string;
+    let userEmail: string;
+    let userName: string;
+    let tenant: string;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultPageSetup(page, userName);
+        const authprops = await defaultPageSetup(page, test, USERS.captures);
+
+        userEmail = authprops.email;
+        userName = authprops.name;
+        tenant = authprops.tenant;
+        captureName = `${userName}/${uuid}/source-hello-world`;
+
+        await page.getByLabel('Admin').click();
     });
 
     test('discover and publish', async () => {
@@ -80,17 +89,23 @@ test.describe.serial('Captures:', () => {
 });
 
 const setting1 = 'Automatically keep schemas up';
-const setting2 = 'Breaking changes re-version';
+const setting2 = 'Changing primary keys';
 const setting3 = 'Automatically add new';
 test.describe.serial('Schema Evolution Settings', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.captures}_${uuid}`;
 
+    let userName: string;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
         await defaultLocalStorage(page);
-        await inituser(page, userName);
+        const authprops = await defaultPageSetup(
+            page,
+            test,
+            `${USERS.captures}__schema-evolution`
+        );
+
+        userName = authprops.name;
     });
 
     test('discover', async () => {

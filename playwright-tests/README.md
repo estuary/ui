@@ -34,6 +34,8 @@ It is probably best to refresh you local before writing/running these. This make
 
 If you place a file in `/tests/.auth/${userName}.json` and follow the `AuthFile` type in `helpers/types.ts` that tests will use that while logging in with that user name. This can be helpful to allow you to go manually create users, agree to legal terms, and create a tenant.
 
+While logging in the tests store these files automatically. Then update them as they agree to legal terms and creating a tenant. To make sure nothing is lost we create backups everytime we make a change. This means the folder can get REALLY big if you don't keep an eye on. So remember to clean it up every once in awhile.
+
 ### WARNING
 
 If you alter state on the server then it will be there on your next run. So if you alter state please make sure you clean it up. You can also use this to manually setup complex test cases and do it for a one-off user. If you do this please try to make sure the setup is done via a playwright test (that can be skipped) OR is documented in a read me. Something to allow future engineers to also be able to run these tests.

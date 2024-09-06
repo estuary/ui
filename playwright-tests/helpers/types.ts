@@ -4,11 +4,16 @@ export interface AuthFile {
     tenant: string | null;
 }
 
-export interface AuthProps extends AuthFile {
+export interface BaseAuthProps {
     name: string;
     filePath: string;
     saved: boolean;
+}
+
+export interface AuthProps extends AuthFile, BaseAuthProps {
     tenant: string;
 }
 
-export type StartSessionWithUserResponse = AuthProps;
+export interface StartSessionWithUserResponse extends AuthFile, BaseAuthProps {
+    tenant: string | null;
+}
