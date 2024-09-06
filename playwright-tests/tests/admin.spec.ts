@@ -17,16 +17,16 @@ import {
 
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
-test.describe.serial('Admin:', () => {
+test.describe.serial.only('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.admin}_${uuid}`;
+    const userName = `${USERS.admin}`;
     const tenant = `${userName}/`;
     const userEmail = `${userName}${emailDomain}`;
 
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultPageSetup(page, userName);
+        await defaultPageSetup(page, test, userName);
         await page.getByLabel('Admin').click();
     });
 

@@ -1,10 +1,34 @@
-import { expect, Page, request } from '@playwright/test';
+import { expect, Page, request, TestType } from '@playwright/test';
 import { inbucketURL } from '../tests/props';
+
+import path = require('path');
+import fs = require('fs');
+import { AuthFile, AuthProps, StartSessionWithUserResponse } from './types';
 
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
 export const emailDomain = '@example.com';
+export const tenantSuffix = '__tenant';
 
+const updateSavedAuth = (filePath: string, updates: Partial<AuthFile>) => {
+    console.log('updateSavedAuth:reading');
+    const authSettings: AuthFile = JSON.parse(
+        fs.readFileSync(filePath).toString()
+    );
+
+    const backedUpFile = `${filePath}.backup.${Date.now().toString()}`;
+    console.log('updateSavedAuth:backingUp', backedUpFile);
+    fs.writeFileSync(backedUpFile, JSON.stringify(authSettings));
+
+    const updatedValue = {
+        ...authSettings,
+        ...updates,
+    };
+    console.log('updateSavedAuth:updating', updatedValue);
+    fs.writeFileSync(filePath, JSON.stringify(updatedValue));
+};
+
+// Used to fetch the OTP we need during login. This hits your actual local InBucket from Supabase
 export const getLoginMessage = async (username: string) => {
     const requestContext = await request.newContext();
     const messages = await requestContext
@@ -51,18 +75,29 @@ export const getLoginMessage = async (username: string) => {
 
 export const startSessionWithUser = async (
     page: Page,
+    test: any,
     originalName: string,
     skipGoTo?: boolean
-) => {
+): Promise<StartSessionWithUserResponse> => {
+    console.log('startingSession:start');
     const name = `${originalName}`;
-    const email = `${name}${emailDomain}`;
-    /////////////////////////////////
-    // START - AUTH STEPS
+    const filePath = `${test.info().project.testDir}/.auth/${name}.json`;
+    const authFileExists = fs.existsSync(filePath);
+
+    console.log('startingSession:saved:checking');
+    let authSettings: AuthFile | undefined;
+    if (authFileExists) {
+        console.log('startingSession:saved:found');
+        authSettings = JSON.parse(fs.readFileSync(filePath).toString());
+    }
+
     if (!skipGoTo) {
+        console.log('startingSession:login:skipped');
         await page.goto(`http://localhost:3000/login`);
     }
 
-    // Log in with magic link
+    console.log('startingSession:login:start');
+    const email = authSettings?.email ?? `${name}${emailDomain}`;
     await expect(page.getByText('Get started with Estuary Flow')).toBeVisible();
     await page.getByLabel('Email').type(email);
     await page.getByRole('button', { name: 'Sign in with magic link' }).click();
@@ -70,40 +105,89 @@ export const startSessionWithUser = async (
         page.getByText('Magic link sent. Please check your email.')
     ).toBeVisible();
 
-    // Snag the details from the inbucket API
+    console.log('startingSession:login:token:fetch');
     const { token } = await getLoginMessage(name);
 
-    // Fill in the rest of the auth form
+    console.log('startingSession:login:token:enter');
     await page
         .getByRole('button', { name: 'Already have an OTP code?' })
         .click();
     await page.getByLabel('OTP').type(token);
     await page.getByText('Sign in with OTP').click();
 
-    return [name, email];
+    console.log('startingSession:login:settings:check', {
+        authSettings,
+    });
+    if (!authSettings) {
+        console.log('startingSession:login:settings:defaulting');
+        authSettings = {
+            email,
+            legalDone: false,
+            tenant: null,
+        };
+
+        fs.writeFileSync(filePath, JSON.stringify(authSettings));
+    }
+
+    console.log('startingSession:end');
+    return {
+        email: authSettings?.email ?? email,
+        legalDone: authSettings?.legalDone ?? false,
+        tenant: authSettings?.tenant ?? null,
+        filePath,
+        name,
+        saved: true,
+    };
 };
 
 export const inituser = async (
     page: Page,
+    test: any,
     originalName: string,
     logout?: boolean
-) => {
-    const [name, email] = await startSessionWithUser(page, originalName);
+): Promise<AuthProps> => {
+    let newTenant;
 
-    // Agree to Legal
-    const legalStuffResponse = await expect
-        .soft(page.getByText('Legal Stuff'))
-        .toBeVisible();
+    const { name, email, filePath, legalDone, tenant } =
+        await startSessionWithUser(page, test, originalName);
 
-    await page
-        .getByText('I accept the Privacy Policy and Terms of Service')
-        .click();
-    await page.getByRole('button', { name: 'Continue' }).click();
+    console.log(`legal:checking`, { legalDone });
+    if (!legalDone) {
+        console.log(`legal:started:${name}`);
 
-    // Create Tenant
-    await expect(page.getByText(`Let's get started`)).toBeVisible();
-    await page.getByLabel('Organization').type(name);
-    await page.getByRole('button', { name: 'Continue' }).click();
+        // Agree to Legal
+        const legalStuffResponse = await expect
+            .soft(page.getByText('Legal Stuff'))
+            .toBeVisible();
+
+        await page
+            .getByText('I accept the Privacy Policy and Terms of Service')
+            .click();
+        await page.getByRole('button', { name: 'Continue' }).click();
+
+        updateSavedAuth(filePath, {
+            legalDone: true,
+        });
+
+        console.log(`legal:done:${name}`);
+    }
+
+    console.log(`tenant:checking`, { tenant });
+    if (!tenant) {
+        newTenant = `${name}${tenantSuffix}`;
+        console.log(`tenant:started:${name},${newTenant}`);
+
+        // Create Tenant
+        await expect(page.getByText(`Let's get started`)).toBeVisible();
+        await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
+        await page.getByRole('button', { name: 'Continue' }).click();
+
+        updateSavedAuth(filePath, {
+            tenant: newTenant,
+        });
+
+        console.log(`tenant:done:${name},${newTenant}`);
+    }
 
     //Wait for processing
     await expect(page.getByText('Welcome to Flow!')).toBeVisible();
@@ -113,7 +197,14 @@ export const inituser = async (
         await expect(page.getByText('Sign in to continue')).toBeVisible();
     }
 
-    return [name, email];
+    return {
+        email,
+        filePath,
+        legalDone: true,
+        name,
+        saved: true,
+        tenant: tenant ?? newTenant ?? 'ERROR_WITH_TENANT',
+    };
 };
 
 export const defaultLocalStorage = async (page: Page) => {
@@ -144,11 +235,11 @@ export const openDetailsFromTable = async (
         .click();
 };
 
-export const defaultPageSetup = async (page: Page, name: string) => {
+export const defaultPageSetup = async (page: Page, test: any, name: string) => {
     await page.route('*js.stripe*', async () => {});
     await page.route('*lr.com', async () => {});
     await defaultLocalStorage(page);
-    const response = await inituser(page, name);
+    const response = await inituser(page, test, name);
     return response;
 };
 
