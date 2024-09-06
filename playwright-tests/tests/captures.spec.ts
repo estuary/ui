@@ -14,23 +14,19 @@ import {
     editEndpoint_HelloWorld,
     testConfig,
 } from '../helpers/captures';
+import { AuthProps } from '../helpers/types';
 
 test.describe.serial.only('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let captureName: string;
-    let userEmail: string;
-    let userName: string;
-    let tenant: string;
+    let authProps: AuthProps;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        const authprops = await defaultPageSetup(page, test, USERS.captures);
+        authProps = await defaultPageSetup(page, test, USERS.captures);
 
-        userEmail = authprops.email;
-        userName = authprops.name;
-        tenant = authprops.tenant;
-        captureName = `${userName}/${uuid}/source-hello-world`;
+        captureName = `${authProps.name}/${uuid}/source-hello-world`;
 
         await page.getByLabel('Admin').click();
     });
@@ -43,12 +39,16 @@ test.describe.serial.only('Captures:', () => {
 
     test('published can open details', async () => {
         await openDetailsFromTable(page, captureName, 'captures');
+
+        await expect(
+            page.getByRole('heading', { name: captureName })
+        ).toBeVisible();
     });
 
     test('details can open edit', async () => {
         await page.getByRole('button', { name: 'Edit' }).click();
 
-        // Want to give a bit of time for the Endpoint Conig t load in
+        // Want to give a bit of time for the Endpoint Conig to load in
         await expect(
             page.getByRole('button', { name: 'Endpoint Config' })
         ).toBeVisible();
@@ -94,18 +94,16 @@ const setting3 = 'Automatically add new';
 test.describe.serial('Schema Evolution Settings', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
-    let userName: string;
+    let authProps: AuthProps;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
         await defaultLocalStorage(page);
-        const authprops = await defaultPageSetup(
+        authProps = await defaultPageSetup(
             page,
             test,
             `${USERS.captures}__schema-evolution`
         );
-
-        userName = authprops.name;
     });
 
     test('discover', async () => {

@@ -3,7 +3,12 @@ import { inbucketURL } from '../tests/props';
 
 import path = require('path');
 import fs = require('fs');
-import { AuthFile, AuthProps, StartSessionWithUserResponse } from './types';
+import {
+    AuthFile,
+    AuthProps,
+    Entity,
+    StartSessionWithUserResponse,
+} from './types';
 
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 
@@ -220,19 +225,33 @@ export const defaultLocalStorage = async (page: Page) => {
     });
 };
 
+export const getLinkForEntity = (entity: Entity) => {
+    switch (entity) {
+        case 'captures':
+            return 'Sources';
+        case 'collections':
+            return 'Collections';
+        case 'materializations':
+            return 'Destinations';
+        default:
+            throw Error('unknown entity');
+    }
+};
+
 export const openDetailsFromTable = async (
     page: Page,
     name: string,
-    entity: 'captures' | 'collections' | 'materializations'
+    entity: 'captures' | 'collections' | 'materializations',
+    goDirectly: boolean = false
 ) => {
-    await page.goto(`http://localhost:3000/${entity}`);
+    if (goDirectly) {
+        await page.goto(`http://localhost:3000/${entity}`);
+    } else {
+        await page.getByLabel(getLinkForEntity(entity)).click();
+    }
 
-    await page
-        .getByRole('link', {
-            name: name,
-            exact: true,
-        })
-        .click();
+    // Open the details
+    await page.getByLabel(`View details of ${name}`).click();
 };
 
 export const defaultPageSetup = async (page: Page, test: any, name: string) => {

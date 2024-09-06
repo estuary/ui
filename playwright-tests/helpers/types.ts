@@ -17,3 +17,5 @@ export interface AuthProps extends AuthFile, BaseAuthProps {
 export interface StartSessionWithUserResponse extends AuthFile, BaseAuthProps {
     tenant: string | null;
 }
+
+export type Entity = 'captures' | 'collections' | 'materializations';
