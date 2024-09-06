@@ -9,24 +9,25 @@ import {
     startSessionWithUser,
     saveAndPublish,
 } from '../helpers/utils';
-import {
-    discover_HelloWorld,
-    editEndpoint_HelloWorld,
-    testConfig,
-} from '../helpers/captures';
 
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
-test.describe.serial.only('Admin:', () => {
-    const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.admin}`;
-    const tenant = `${userName}/`;
-    const userEmail = `${userName}${emailDomain}`;
 
+test.describe.serial('Admin:', () => {
+    const uuid = crypto.randomUUID().split('-')[0];
+
+    let userEmail: string;
+    let userName: string;
+    let tenant: string;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultPageSetup(page, test, userName);
+        const authprops = await defaultPageSetup(page, test, USERS.admin);
+
+        userEmail = authprops.email;
+        userName = authprops.name;
+        tenant = authprops.tenant;
+
         await page.getByLabel('Admin').click();
     });
 
@@ -97,26 +98,23 @@ test.describe.serial.only('Admin:', () => {
             });
 
             test('will validate emails after hitting enter or ,', async () => {
+                const validationMessage = 'One or more emails';
                 const emailInput = await page.getByLabel('Email *');
                 // Enter invalid email and hit enter
                 await emailInput.fill(invalidEmail);
                 await emailInput.press('Enter');
-                await expect(
-                    page.getByText('One or more emails are not')
-                ).toBeVisible();
+                await expect(page.getByText(validationMessage)).toBeVisible();
 
                 // Remove invalid email
                 await emailInput.press('Backspace');
                 await expect(
-                    page.getByText('One or more emails are not')
+                    page.getByText(validationMessage)
                 ).not.toBeVisible();
 
                 // add back in invalid with comma
                 await emailInput.fill(`${invalidEmail},`);
                 await emailInput.press('Enter');
-                await expect(
-                    page.getByText('One or more emails are not')
-                ).toBeVisible();
+                await expect(page.getByText(validationMessage)).toBeVisible();
             });
 
             test('the errors displaying are non blocking and will save', async () => {
@@ -125,6 +123,20 @@ test.describe.serial.only('Admin:', () => {
                 await expect(
                     page.getByLabel('Organization Notifications Table')
                 ).toContainText(invalidEmail);
+            });
+
+            test('saved invalid emails can be removed', async () => {
+                await page.getByRole('button', { name: 'Edit' }).click();
+
+                const emailInput = await page.getByLabel('Email *');
+                await emailInput.click();
+                await emailInput.press('Backspace');
+
+                await page.getByRole('button', { name: 'Save' }).click();
+
+                await expect(
+                    page.getByLabel('Organization Notifications Table')
+                ).not.toContainText(invalidEmail);
             });
         });
 
