@@ -75,10 +75,6 @@ test.describe.serial('Captures:', () => {
     });
 
     test.fixme('entity table can open details', async () => {
-        // TODO (FIX THIS)
-        // This stupid thing won't work for some reason I cannot figure out
-        //  the link is there, I can see it, Playwright test-gen can see it, but
-        //  it still just WONT CLICK THE THING
         await openDetailsFromTable(page, captureName, 'captures');
 
         await expect(
