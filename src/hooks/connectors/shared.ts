@@ -87,19 +87,21 @@ export interface ConnectorWithTagDetailQuery {
     [CONNECTOR_NAME]: undefined;
 }
 
+const CONNECTOR_TAG_INNER_COLS = [
+    'connector_id',
+    'disable_backfill',
+    'documentation_url',
+    'endpoint_spec_schema->>title',
+    'id',
+    'image_tag',
+    'protocol',
+];
 export const CONNECTOR_WITH_TAG_QUERY = `
+    ${CONNECTOR_RECOMMENDED},
     id,
     detail,
     image_name,
     image:logo_url->>en-US::text,
-    ${CONNECTOR_RECOMMENDED},
     title:${CONNECTOR_NAME}::text,
-    connector_tags !inner(
-        documentation_url,
-        protocol,
-        image_tag,
-        id,
-        connector_id,
-        endpoint_spec_schema->>title
-    )
+    connector_tags !inner(${CONNECTOR_TAG_INNER_COLS.join(',')})
 `;
