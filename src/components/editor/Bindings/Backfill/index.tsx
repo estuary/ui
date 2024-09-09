@@ -7,17 +7,16 @@ import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
     useBinding_backfilledBindings,
-    useBinding_collections,
     useBinding_currentCollection,
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
+    useBinding_collections_count,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import { BackfillProps } from './types';
@@ -35,7 +34,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     // Binding Store
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
-    const collections = useBinding_collections();
+    const collectionsCount = useBinding_collections_count();
     const allBindingsDisabled = useBinding_allBindingsDisabled();
 
     const backfillAllBindings = useBinding_backfillAllBindings();
@@ -148,6 +147,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         ]
     );
 
+    const disabled = formActive || collectionsCount < 1 || allBindingsDisabled;
+
     return (
         <Box sx={{ mt: 3 }}>
             <Stack spacing={1} sx={{ mb: 2 }}>
@@ -166,11 +167,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 <BooleanToggleButton
                     size={bindingIndex === -1 ? 'large' : undefined}
                     selected={selected}
-                    disabled={
-                        formActive ||
-                        !hasLength(collections) ||
-                        allBindingsDisabled
-                    }
+                    disabled={disabled}
                     onClick={(event, checked: string) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -183,7 +180,9 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     })}
                 </BooleanToggleButton>
 
-                {bindingIndex === -1 ? <BackfillCount /> : null}
+                {bindingIndex === -1 ? (
+                    <BackfillCount disabled={disabled} />
+                ) : null}
             </Stack>
 
             {/* // TODO (reset dataflow)
