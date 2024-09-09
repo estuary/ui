@@ -8,10 +8,10 @@ import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
     useBinding_backfilledBindings,
-    useBinding_collections,
     useBinding_currentCollection,
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
+    useBinding_collections_count,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
@@ -19,7 +19,6 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import { BackfillProps } from './types';
@@ -37,14 +36,16 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     // Binding Store
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
-    const collections = useBinding_collections();
+    const collectionsCount = useBinding_collections_count();
     const allBindingsDisabled = useBinding_allBindingsDisabled();
 
     const backfillAllBindings = useBinding_backfillAllBindings();
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
 
-    const backfillDisabled = useBindingStore((state) => state.backfillDisabled);
+    const backfillNotSupported = useBindingStore(
+        (state) => state.backfillDisabled
+    );
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -52,6 +53,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
+
+    const disabled = formActive || collectionsCount < 1 || allBindingsDisabled;
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -152,7 +155,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         ]
     );
 
-    if (backfillDisabled) {
+    if (backfillNotSupported) {
         if (bindingIndex === -1) {
             return (
                 <AlertBox severity="warning">
@@ -183,11 +186,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 <BooleanToggleButton
                     size={bindingIndex === -1 ? 'large' : undefined}
                     selected={selected}
-                    disabled={
-                        formActive ||
-                        !hasLength(collections) ||
-                        allBindingsDisabled
-                    }
+                    disabled={disabled}
                     onClick={(event, checked: string) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -200,7 +199,9 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     })}
                 </BooleanToggleButton>
 
-                {bindingIndex === -1 ? <BackfillCount /> : null}
+                {bindingIndex === -1 ? (
+                    <BackfillCount disabled={disabled} />
+                ) : null}
             </Stack>
 
             {/* // TODO (reset dataflow)

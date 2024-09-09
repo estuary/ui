@@ -8,3 +8,7 @@ export interface BackfillProps {
 export interface BackfillDataflowOptionProps {
     disabled?: boolean;
 }
+
+export interface BackfillCountProps {
+    disabled?: boolean;
+}
