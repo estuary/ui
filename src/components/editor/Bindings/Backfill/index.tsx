@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
-import { ReactNode, useCallback, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
@@ -19,17 +19,18 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
+import BackfillCount from './BackfillCount';
+import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
 } from './useUpdateBackfillCounter';
 
-interface Props {
-    description: ReactNode;
-    bindingIndex?: number;
-}
-
-function Backfill({ description, bindingIndex = -1 }: Props) {
+function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
+    const intl = useIntl();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
+
+    // TODO (reset dataflow)
+    // const workflow = useEntityWorkflow();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();
@@ -153,26 +154,43 @@ function Backfill({ description, bindingIndex = -1 }: Props) {
                 <Typography
                     variant={bindingIndex === -1 ? 'formSectionHeader' : 'h6'}
                 >
-                    <FormattedMessage id="workflows.collectionSelector.manualBackfill.header" />
+                    {intl.formatMessage({
+                        id: 'workflows.collectionSelector.manualBackfill.header',
+                    })}
                 </Typography>
 
                 <Typography component="div">{description}</Typography>
             </Stack>
 
-            <BooleanToggleButton
-                selected={selected}
-                disabled={
-                    formActive || !hasLength(collections) || allBindingsDisabled
-                }
-                onClick={(event, checked: string) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+            <Stack direction="row" spacing={2}>
+                <BooleanToggleButton
+                    size={bindingIndex === -1 ? 'large' : undefined}
+                    selected={selected}
+                    disabled={
+                        formActive ||
+                        !hasLength(collections) ||
+                        allBindingsDisabled
+                    }
+                    onClick={(event, checked: string) => {
+                        event.preventDefault();
+                        event.stopPropagation();
 
-                    handleClick(checked === 'true' ? 'false' : 'true');
-                }}
-            >
-                <FormattedMessage id="workflows.collectionSelector.manualBackfill.cta.backfill" />
-            </BooleanToggleButton>
+                        handleClick(checked === 'true' ? 'false' : 'true');
+                    }}
+                >
+                    {intl.formatMessage({
+                        id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
+                    })}
+                </BooleanToggleButton>
+
+                {bindingIndex === -1 ? <BackfillCount /> : null}
+            </Stack>
+
+            {/* // TODO (reset dataflow)
+            {bindingIndex === -1 && workflow === 'capture_edit' ? (
+                <BackfillDataFlowOption />
+            ) : null}
+            */}
         </Box>
     );
 }

@@ -1,7 +1,9 @@
+export const USER_PREFIX = 'ui-pw_';
+
 export const USERS = {
-    admin: 'ui-test__admin',
-    captures: 'ui-test__captures',
-    collections: 'ui-test__collections',
-    homepage: 'ui-test__homepage',
-    materializations: 'ui-test__materialization',
+    admin: `${USER_PREFIX}adm`,
+    captures: `${USER_PREFIX}cap`,
+    collections: `${USER_PREFIX}col`,
+    homepage: `${USER_PREFIX}wel`,
+    materializations: `${USER_PREFIX}mat`,
 };

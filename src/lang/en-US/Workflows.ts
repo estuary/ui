@@ -13,6 +13,8 @@ export const Workflows: Record<string, string> = {
     'workflows.initTask.alert.message.initFailed.docPath': `${CommonMessages['support.email']}`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
+    'workflows.save.review.header': `Review Changes`,
+
     'workflows.collectionSelector.cta.rediscover': `Refresh`,
     'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
@@ -77,6 +79,14 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
+
+    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
+
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
     'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,
@@ -318,4 +328,8 @@ export const Workflows: Record<string, string> = {
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
+
+    // Reset Data Flow
+    'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
+    'resetDataFlow.materializations.empty': `No related materializations`,
 };

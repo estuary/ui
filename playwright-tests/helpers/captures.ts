@@ -1,10 +1,18 @@
 import { expect, Page } from '@playwright/test';
 
-export const discover_HelloWorld = async (page: Page, name: string) => {
+export const discover_HelloWorld = async (
+    page: Page,
+    name: string,
+    stopIfAlreadyThere: boolean = false
+) => {
     // Go to captures
     await page.goto('http://localhost:3000/captures');
     await expect(
-        page.getByRole('heading', { name: 'Click "New Capture" to get' })
+        stopIfAlreadyThere
+            ? page.getByRole('heading', {
+                  name: 'Click "New Capture" to get',
+              })
+            : page.getByRole('button', { name: 'New Capture' })
     ).toBeVisible();
 
     // Enter Create

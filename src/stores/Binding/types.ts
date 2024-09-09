@@ -89,6 +89,9 @@ export interface BindingState
 
     backfillAllBindings: boolean;
 
+    backfillDataFlow: boolean;
+    setBackfillDataFlow: (val: BindingState['backfillDataFlow']) => void;
+
     // Resource Schema
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => Promise<void>;

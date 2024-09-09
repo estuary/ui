@@ -101,6 +101,7 @@ function EntityToolbar({
                     </Box>
                 </Fade>
             </Box>
+
             {!hideLogs ? <HeaderLogs taskNames={taskNames} /> : null}
         </Stack>
     );

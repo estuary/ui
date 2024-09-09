@@ -15,16 +15,19 @@ import {
     testConfig,
 } from '../helpers/captures';
 import { messageDescription, timeDescription } from './props';
+import { AuthProps } from '../helpers/types';
 
 test.describe.serial('Collections:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
-    const userName = `${USERS.collections}_${uuid}`;
-    const collectionName = `${userName}/${uuid}/events`;
 
+    let authProps: AuthProps;
+    let collectionName: string;
     let page: Page;
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
-        await defaultPageSetup(page, userName);
+        authProps = await defaultPageSetup(page, test, USERS.collections);
+        collectionName = `${authProps.name}/${uuid}/events`;
+
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
     });
