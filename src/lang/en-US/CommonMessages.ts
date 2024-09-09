@@ -43,6 +43,7 @@ export const CommonMessages: Record<string, string> = {
     'common.exampleName': `marketing_data`,
     'common.revoking': `Revoking...`,
     'common.revoked': `Revoked`,
+    'common.default': `Default`,
 
     // Aria
     'aria.openExpand': `show more`,

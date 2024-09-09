@@ -47,7 +47,12 @@ export default function useDataPlaneField() {
     }, [dataPlaneOption, setLoading, setOptions]);
 
     const dataPlaneSchema = useMemo(() => {
-        const dataPlanesOneOf = [] as { title: string; const: Object }[];
+        const dataPlanesOneOf = [
+            {
+                const: { data_plane_name: '', id: '' },
+                title: intl.formatMessage({ id: 'common.default' }),
+            },
+        ] as { title: string; const: Object }[];
 
         if (options.length > 0) {
             options.forEach((option) => {
