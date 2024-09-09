@@ -51,10 +51,10 @@ export const CONNECTOR_TAG_COLS = [
 export const CONNECTOR_TAG_QUERY = CONNECTOR_TAG_COLS.join(',');
 
 export interface ConnectorTag {
-    backfill_disabled: boolean;
     connectors: {
         image_name: string;
     };
+    disable_backfill: boolean;
     id: string;
     connector_id: string;
     // default_capture_interval: any; //interval

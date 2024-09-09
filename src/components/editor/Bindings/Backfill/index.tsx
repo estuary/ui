@@ -1,5 +1,4 @@
 import { Box, Stack, Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useCallback, useMemo } from 'react';
@@ -12,8 +11,8 @@ import {
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
     useBinding_collections_count,
+    useBinding_backfillNotSupported,
 } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -21,6 +20,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
+import BackfillNotSupported from './BackfillNotSupported';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -42,10 +42,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const backfillAllBindings = useBinding_backfillAllBindings();
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
-
-    const backfillNotSupported = useBindingStore(
-        (state) => state.backfillDisabled
-    );
+    const backfillNotSupported = useBinding_backfillNotSupported();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -157,12 +154,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
 
     if (backfillNotSupported) {
         if (bindingIndex === -1) {
-            return (
-                <AlertBox severity="warning">
-                    This entityType doesn’t support backfills. To backfill it,
-                    disable each binding, save and then re-enable and save.
-                </AlertBox>
-            );
+            return <BackfillNotSupported />;
         }
 
         return null;

@@ -315,3 +315,8 @@ export const useBinding_backfilledBindings_count = () =>
             return state.backfilledBindings.length;
         })
     );
+
+export const useBinding_backfillNotSupported = () =>
+    useBindingStore((state) => {
+        return state.backfillNotSupported;
+    });

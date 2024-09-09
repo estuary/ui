@@ -16,7 +16,7 @@ import { Entity } from 'types';
 //  These APIs are truly general purpose. Perhaps break them out by supabase table.
 type ConnectorTagResourceData = Pick<
     ConnectorTag,
-    'connector_id' | 'resource_spec_schema' | 'backfill_disabled'
+    'connector_id' | 'resource_spec_schema' | 'disable_backfill'
 >;
 
 type ConnectorTagEndpointData = Pick<
