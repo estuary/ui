@@ -53,7 +53,7 @@ function BackfillCount({ disabled }: BackfillCountProps) {
                               id: 'workflows.collectionSelector.manualBackfill.count.disabled',
                           },
                           {
-                              itemType: itemType_backfill,
+                              itemType: itemType_bindings,
                           }
                       )
                     : noBackfill
