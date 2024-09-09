@@ -21,7 +21,7 @@ export const Navigation: Record<string, string> = {
     'helpMenu.contact.link': `https://estuary.dev/contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
     'helpMenu.status': `Status`,
-    'helpMenu.status.link': `https://estuary.statuspage.io`,
+    'helpMenu.status.link': `https://status.estuary.dev/`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
     'accountMenu.tooltip': `My Account`,
