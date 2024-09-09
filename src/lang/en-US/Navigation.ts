@@ -20,6 +20,8 @@ export const Navigation: Record<string, string> = {
     'helpMenu.contact': `${CTAs['cta.contactUs']}`,
     'helpMenu.contact.link': `https://estuary.dev/contact-us`,
     'helpMenu.about': `About ${CommonMessages.productName}`,
+    'helpMenu.status': `Status`,
+    'helpMenu.status.link': `https://estuary.statuspage.io`,
 
     'accountMenu.ariaLabel': `Open Account Menu`,
     'accountMenu.tooltip': `My Account`,

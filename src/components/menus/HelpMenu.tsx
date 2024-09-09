@@ -19,6 +19,11 @@ function HelpMenu() {
                 <FormattedMessage id="helpMenu.docs" />
             </ExternalLinkMenuItem>
             <ExternalLinkMenuItem
+                link={intl.formatMessage({ id: 'helpMenu.status.link' })}
+            >
+                <FormattedMessage id="helpMenu.status" />
+            </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.slack.link' })}
             >
                 <FormattedMessage id="helpMenu.slack" />
