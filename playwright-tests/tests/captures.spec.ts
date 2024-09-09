@@ -18,7 +18,7 @@ import { AuthProps } from '../helpers/types';
 
 const defaultBackfillMessage = 'no bindings marked for backfill';
 
-test.describe.serial.only('Captures:', () => {
+test.describe.serial('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let captureName: string;
