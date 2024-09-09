@@ -37,7 +37,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             processedEntityName: string,
             encryptedEndpointConfigResponse: any,
             rediscover?: boolean,
-            updateOnly?: boolean
+            updateOnly?: boolean,
+            dataPlaneName?: string
         ) => {
             // If we are doing a rediscovery and we have a draft then go ahead and use that draft
             //  that way the most recent changes to bindings and endpoints will get added to the draft before rediscovery
@@ -70,7 +71,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
                 encryptedEndpointConfigResponse,
                 imageConnectorTagId,
                 newDraftId,
-                updateOnly
+                updateOnly,
+                dataPlaneName
             );
 
             if (discoverResponse.error) {
