@@ -79,11 +79,9 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {bindingsTotal, plural,
-        one {collection}
-        other {collections}
-    } marked for backfill.`,
-    'workflows.collectionSelector.manualBackfill.count.empty': `No collections marked for backfill.`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
 
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
