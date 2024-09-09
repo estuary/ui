@@ -243,9 +243,9 @@ export const goToEntityPage = async (page: Page, entity: Entity) => {
 };
 
 // TODO (FIX THIS)
-// This stupid thing won't work for some reason I cannot figure out
-//  the link is there, I can see it, Playwright test-gen can see it, but
-//  it still just WONT CLICK THE THING
+// This stupid thing won't work for some reason I cannot figure out.
+//  The link is there, I can see it, Playwright test-gen can see it, but
+//  the test cannot see the link.
 export const openDetailsFromTable = async (
     page: Page,
     name: string,
