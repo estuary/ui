@@ -231,6 +231,7 @@ const getInitialMiscData = (): Pick<
     BindingState,
     | 'backfilledBindings'
     | 'backfillAllBindings'
+    | 'backfillDisabled'
     | 'backfillDataFlow'
     | 'collectionsRequiringRediscovery'
     | 'disabledCollections'
@@ -245,6 +246,7 @@ const getInitialMiscData = (): Pick<
 > => ({
     backfillAllBindings: false,
     backfillDataFlow: false,
+    backfillDisabled: false,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     disabledCollections: new Set(),
@@ -441,11 +443,13 @@ const getInitialState = (
             if (error) {
                 setHydrationErrorsExist(true);
             } else if (data?.resource_spec_schema) {
-                const { setResourceSchema } = get();
+                const { setBackfillDisabled, setResourceSchema } = get();
 
                 await setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
                 );
+
+                setBackfillDisabled(data.backfill_disabled);
             }
         }
 
@@ -1017,6 +1021,16 @@ const getInitialState = (
             }),
             false,
             'Backfill Dataflow Flag Changed'
+        );
+    },
+
+    setBackfillDisabled: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfillDisabled = value;
+            }),
+            false,
+            'Backfill Disabled Changed'
         );
     },
 

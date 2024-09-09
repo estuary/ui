@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useCallback, useMemo } from 'react';
@@ -12,6 +13,7 @@ import {
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -41,6 +43,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const backfillAllBindings = useBinding_backfillAllBindings();
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
+
+    const backfillDisabled = useBindingStore((state) => state.backfillDisabled);
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -147,6 +151,19 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             updateBackfillCounter,
         ]
     );
+
+    if (backfillDisabled) {
+        if (bindingIndex === -1) {
+            return (
+                <AlertBox severity="warning">
+                    This entityType doesn’t support backfills. To backfill it,
+                    disable each binding, save and then re-enable and save.
+                </AlertBox>
+            );
+        }
+
+        return null;
+    }
 
     return (
         <Box sx={{ mt: 3 }}>

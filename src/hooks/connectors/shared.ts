@@ -51,6 +51,7 @@ export const CONNECTOR_TAG_COLS = [
 export const CONNECTOR_TAG_QUERY = CONNECTOR_TAG_COLS.join(',');
 
 export interface ConnectorTag {
+    backfill_disabled: boolean;
     connectors: {
         image_name: string;
     };
@@ -89,7 +90,6 @@ export interface ConnectorWithTagDetailQuery {
 
 const CONNECTOR_TAG_INNER_COLS = [
     'connector_id',
-    'disable_backfill',
     'documentation_url',
     'endpoint_spec_schema->>title',
     'id',

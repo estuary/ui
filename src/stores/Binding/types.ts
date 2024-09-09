@@ -96,6 +96,10 @@ export interface BindingState
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => Promise<void>;
 
+    // Backfill Disabled
+    backfillDisabled: boolean;
+    setBackfillDisabled: (val: BindingState['backfillDisabled']) => void;
+
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
 
