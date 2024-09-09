@@ -122,6 +122,9 @@ export const useBinding_collections = () => {
     return useBindingStore(useShallow((state) => state.getCollections()));
 };
 
+export const useBinding_collections_count = () =>
+    useBindingStore(useShallow((state) => state.getCollections().length));
+
 export const useBinding_toggleDisable = () => {
     return useBindingStore((state) => state.toggleDisable);
 };
@@ -310,12 +313,5 @@ export const useBinding_backfilledBindings_count = () =>
     useBindingStore(
         useShallow((state) => {
             return state.backfilledBindings.length;
-        })
-    );
-
-export const useBinding_resourceConfigs_count = () =>
-    useBindingStore(
-        useShallow((state) => {
-            return Object.keys(state.resourceConfigs).length;
         })
     );
