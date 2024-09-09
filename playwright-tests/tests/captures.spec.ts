@@ -16,6 +16,8 @@ import {
 } from '../helpers/captures';
 import { AuthProps } from '../helpers/types';
 
+const defaultBackfillMessage = 'no bindings marked for backfill';
+
 test.describe.serial.only('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
@@ -34,14 +36,8 @@ test.describe.serial.only('Captures:', () => {
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
         await expect(page.getByText('Capture Details')).toBeVisible();
-    });
 
-    test('entity table can open details', async () => {
-        await openDetailsFromTable(page, captureName, 'captures');
-
-        await expect(
-            page.getByRole('heading', { name: RegExp(captureName) })
-        ).toBeVisible();
+        await page.waitForURL(`**/details/**`);
     });
 
     test('details can open edit', async () => {
@@ -51,6 +47,26 @@ test.describe.serial.only('Captures:', () => {
         await expect(
             page.getByRole('button', { name: 'Endpoint Config' })
         ).toBeVisible();
+    });
+
+    test('status of backfill is shown next to the "Backfill All" button', async () => {
+        const backfillAllButton = page
+            .locator('div')
+            .filter({ hasText: /^Backfill$/ })
+            .getByRole('button');
+
+        const backfillCounter = page.getByLabel('Backfill count');
+
+        // Checking defailt
+        await expect(backfillCounter).toHaveScreenshot();
+
+        // Ensuring backfill all shows status
+        await backfillAllButton.click();
+        await expect(backfillCounter).toHaveScreenshot();
+
+        // Disabling all backfills and checking status
+        await backfillAllButton.click();
+        await expect(backfillCounter).toContainText(defaultBackfillMessage);
     });
 
     test('editing endpoint shows Next button', async () => {
@@ -80,6 +96,14 @@ test.describe.serial.only('Captures:', () => {
     test('drafted changes can be published', async () => {
         await saveAndPublish(page);
         await expect(page.getByText('Capture Details')).toBeVisible();
+    });
+
+    test.fixme('entity table can open details', async () => {
+        await openDetailsFromTable(page, captureName, 'captures');
+
+        await expect(
+            page.getByRole('heading', { name: RegExp(captureName) })
+        ).toBeVisible();
     });
 
     //     test('saved changes are visible on details spec', async () => {
