@@ -118,6 +118,9 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
+    'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
+    'workflows.dataPlane.label': `Data Plane`,
+
     // Field Selection
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.table.label': `Field Selection Editor`,

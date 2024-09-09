@@ -30,6 +30,7 @@ import {
     evaluateConnectorVersions,
 } from 'utils/workflow-utils';
 import { MAC_ADDR_RE } from 'validation';
+import useDataPlaneField from './useDataPlaneField';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
@@ -139,60 +140,81 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         return response;
     }, [connectorTags, versionEvaluationOptions]);
 
-    const schema = useMemo(() => {
-        return {
-            properties: {
-                [CATALOG_NAME_SCOPE]: { type: 'string' },
-                [CONNECTOR_IMAGE_SCOPE]: {
-                    description: intl.formatMessage({
-                        id: 'connector.description',
-                    }),
-                    oneOf: connectorsOneOf,
-                    type: 'object',
-                },
-                description: {
-                    description: intl.formatMessage({
-                        id: 'description.description',
-                    }),
-                    type: 'string',
-                },
-            },
-            required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
-            type: 'object',
-        };
-    }, [connectorsOneOf, intl]);
+    const { dataPlaneSchema, dataPlaneUISchema } = useDataPlaneField();
 
-    const uiSchema = {
-        elements: [
-            {
-                elements: [
-                    {
-                        label: intl.formatMessage({
-                            id: 'entityCreate.connector.label',
-                        }),
-                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
-                        type: 'Control',
-                    },
-                    {
-                        label: intl.formatMessage({
-                            id: 'entityName.label',
-                        }),
-                        scope: `#/properties/${CATALOG_NAME_SCOPE}`,
-                        type: 'Control',
-                    },
-                    {
-                        label: intl.formatMessage({
-                            id: 'description.label',
-                        }),
-                        scope: '#/properties/description',
-                        type: 'Control',
-                    },
-                ],
-                type: 'HorizontalLayout',
+    const schema = useMemo(() => {
+        const baseProperties = {
+            [CATALOG_NAME_SCOPE]: { type: 'string' },
+            [CONNECTOR_IMAGE_SCOPE]: {
+                description: intl.formatMessage({
+                    id: 'connector.description',
+                }),
+                oneOf: connectorsOneOf,
+                type: 'object',
             },
-        ],
-        type: 'VerticalLayout',
-    };
+            description: {
+                description: intl.formatMessage({
+                    id: 'description.description',
+                }),
+                type: 'string',
+            },
+        };
+
+        const baseRequirements = [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE];
+
+        return dataPlaneSchema
+            ? {
+                  properties: {
+                      ...baseProperties,
+                      ...dataPlaneSchema,
+                  },
+                  required: baseRequirements.concat('dataPlane'),
+                  type: 'object',
+              }
+            : {
+                  properties: baseProperties,
+                  required: baseRequirements,
+                  type: 'object',
+              };
+    }, [connectorsOneOf, dataPlaneSchema, intl]);
+
+    const uiSchema = useMemo(() => {
+        const baseHorizontalElements = [
+            {
+                label: intl.formatMessage({
+                    id: 'entityCreate.connector.label',
+                }),
+                scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
+                type: 'Control',
+            },
+            {
+                label: intl.formatMessage({
+                    id: 'entityName.label',
+                }),
+                scope: `#/properties/${CATALOG_NAME_SCOPE}`,
+                type: 'Control',
+            },
+            {
+                label: intl.formatMessage({
+                    id: 'description.label',
+                }),
+                scope: '#/properties/description',
+                type: 'Control',
+            },
+        ];
+
+        return {
+            elements: [
+                {
+                    elements: dataPlaneUISchema
+                        ? baseHorizontalElements.concat(dataPlaneUISchema)
+                        : baseHorizontalElements,
+                    type: 'HorizontalLayout',
+                },
+            ],
+            type: 'VerticalLayout',
+        };
+    }, [dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
         if (
@@ -215,7 +237,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         } else {
             setDetails(details);
 
-            // For edit we can set the Drafted Enity Name because the store sets the name
+            // For edit we can set the Drafted Entity Name because the store sets the name
             //  and then set the entityNameChanged flag to false. Then we can reference
             //  the previous version to not lose settings (ex: bindings for Materialization)
             // For create we set the entity name changed flag so we can keep an eye

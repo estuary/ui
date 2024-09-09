@@ -231,6 +231,7 @@ export const getInitialState = (
     hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
+        const dataPlaneOption = searchParams.get(GlobalSearchParams.DATA_PLANE);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
         const createWorkflow =
@@ -253,8 +254,13 @@ export const getInitialState = (
                         errors,
                     } = initialDetails;
 
+                    const dataPlane =
+                        dataPlaneOption === 'show_option'
+                            ? { data_plane_name: '', id: '' }
+                            : undefined;
+
                     setPreviousDetails({
-                        data: { entityName, connectorImage },
+                        data: { entityName, connectorImage, dataPlane },
                         errors,
                     });
                 } else {
