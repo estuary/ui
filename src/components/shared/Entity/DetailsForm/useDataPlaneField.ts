@@ -2,19 +2,40 @@ import { DataPlaneOption, getDataPlaneOptions } from 'api/dataPlane';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { Details } from 'stores/DetailsForm/types';
+import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
-export default function useDataPlaneField() {
+export default function useDataPlaneField(
+    entityType: EntityWithCreateWorkflow
+) {
     const dataPlaneOption = useGlobalSearchParams(
         GlobalSearchParams.DATA_PLANE
+    );
+    const dataPlaneIdInURL = useGlobalSearchParams(
+        GlobalSearchParams.DATA_PLANE_ID
     );
 
     const intl = useIntl();
 
+    const navigateToCreate = useEntityCreateNavigate();
+
     const [loading, setLoading] = useState(false);
     const [options, setOptions] = useState<DataPlaneOption[]>([]);
+
+    const storedDataPlaneId = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.id
+    );
+    const setDetails_dataPlane = useDetailsFormStore(
+        (state) => state.setDetails_dataPlane
+    );
+    const setEntityNameChanged = useDetailsFormStore(
+        (state) => state.setEntityNameChanged
+    );
 
     useEffect(() => {
         if (dataPlaneOption === 'show_option') {
@@ -88,5 +109,54 @@ export default function useDataPlaneField() {
             : null;
     }, [dataPlaneOption, intl]);
 
-    return { dataPlaneSchema, dataPlaneUISchema, loading };
+    const evaluateDataPlane = useCallback(
+        (
+            details: Details,
+            selectedDataPlaneId: string | undefined
+        ): boolean => {
+            if (
+                dataPlaneOption === 'show_option' &&
+                selectedDataPlaneId !== storedDataPlaneId
+            ) {
+                if (selectedDataPlaneId === dataPlaneIdInURL) {
+                    const selectedOption = options.find(
+                        (option) => option.id === selectedDataPlaneId
+                    );
+
+                    setDetails_dataPlane(selectedOption);
+                } else {
+                    setEntityNameChanged(details.data.entityName);
+
+                    navigateToCreate(
+                        entityType,
+                        details.data.connectorImage.connectorId,
+                        true,
+                        true,
+                        selectedDataPlaneId ?? null
+                    );
+
+                    return true;
+                }
+            }
+
+            return false;
+        },
+        [
+            dataPlaneIdInURL,
+            dataPlaneOption,
+            entityType,
+            navigateToCreate,
+            options,
+            setDetails_dataPlane,
+            setEntityNameChanged,
+            storedDataPlaneId,
+        ]
+    );
+
+    return {
+        dataPlaneSchema,
+        dataPlaneUISchema,
+        loading,
+        evaluateDataPlane,
+    };
 }

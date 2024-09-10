@@ -140,7 +140,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         return response;
     }, [connectorTags, versionEvaluationOptions]);
 
-    const { dataPlaneSchema, dataPlaneUISchema } = useDataPlaneField();
+    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
+        useDataPlaneField(entityType);
 
     const schema = useMemo(() => {
         const baseProperties = {
@@ -217,6 +218,16 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     }, [dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
+        let updateCompleted = false;
+
+        const selectedDataPlaneId = details.data.dataPlane?.id;
+
+        updateCompleted = evaluateDataPlane(details, selectedDataPlaneId);
+
+        if (updateCompleted) {
+            return;
+        }
+
         if (
             MAC_ADDR_RE.test(details.data.connectorImage.connectorId) &&
             details.data.connectorImage.connectorId !==
@@ -231,7 +242,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                     entityType,
                     details.data.connectorImage.connectorId,
                     true,
-                    true
+                    true,
+                    selectedDataPlaneId ?? null
                 );
             }
         } else {

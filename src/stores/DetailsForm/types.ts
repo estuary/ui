@@ -28,6 +28,7 @@ export interface DetailsFormState
     setDetails_connector: (
         connector: Details['data']['connectorImage']
     ) => void;
+    setDetails_dataPlane: (value: Details['data']['dataPlane']) => void;
 
     errorsExist: boolean;
 

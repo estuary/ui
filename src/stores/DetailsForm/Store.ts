@@ -166,6 +166,16 @@ export const getInitialState = (
         );
     },
 
+    setDetails_dataPlane: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.details.data.dataPlane = value;
+            }),
+            false,
+            'Details Data Plane Changed'
+        );
+    },
+
     setConnectors: (val) => {
         set(
             produce((state: DetailsFormState) => {

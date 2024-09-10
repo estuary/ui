@@ -17,12 +17,21 @@ export default function useEntityCreateNavigate() {
             entity: EntityWithCreateWorkflow,
             id?: string | null | undefined,
             replace?: boolean,
-            advanceToForm?: boolean
+            advanceToForm?: boolean,
+            dataPlaneId?: string | null
         ) => {
             let newSearchParams: URLSearchParams | null = null;
             if (hasLength(id)) {
                 newSearchParams = appendSearchParams({
                     [GlobalSearchParams.CONNECTOR_ID]: id,
+                });
+            }
+
+            if (typeof dataPlaneId !== 'undefined') {
+                newSearchParams = appendSearchParams({
+                    [GlobalSearchParams.DATA_PLANE_ID]: hasLength(dataPlaneId)
+                        ? dataPlaneId
+                        : undefined,
                 });
             }
 
