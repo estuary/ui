@@ -11,7 +11,7 @@ import {
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
     useBinding_collections_count,
-    useBinding_backfillNotSupported,
+    useBinding_backfillSupported,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
@@ -42,7 +42,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const backfillAllBindings = useBinding_backfillAllBindings();
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
-    const backfillNotSupported = useBinding_backfillNotSupported();
+    const backfillSupported = useBinding_backfillSupported();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -55,7 +55,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         formActive ||
         collectionsCount < 1 ||
         allBindingsDisabled ||
-        backfillNotSupported;
+        !backfillSupported;
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -157,7 +157,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     );
 
     // Do not want to overload the user with "this is not supported" so only showing message on the "backfill all" toggle.
-    if (backfillNotSupported && bindingIndex !== -1) {
+    if (!backfillSupported && bindingIndex !== -1) {
         return null;
     }
 
@@ -174,7 +174,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
 
                 <Typography component="div">{description}</Typography>
 
-                {backfillNotSupported ? <BackfillNotSupportedWarning /> : null}
+                {!backfillSupported ? <BackfillNotSupportedWarning /> : null}
             </Stack>
 
             <Stack direction="row" spacing={2}>
@@ -194,7 +194,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     })}
                 </BooleanToggleButton>
 
-                {bindingIndex === -1 && !backfillNotSupported ? (
+                {backfillSupported && bindingIndex === -1 ? (
                     <BackfillCount disabled={disabled} />
                 ) : null}
             </Stack>
