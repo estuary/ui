@@ -3,7 +3,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
 
-function BackfillNotSupported() {
+function BackfillNotSupportedWarning() {
     const intl = useIntl();
     const entityType = useEntityType();
 
@@ -30,4 +30,4 @@ function BackfillNotSupported() {
     );
 }
 
-export default BackfillNotSupported;
+export default BackfillNotSupportedWarning;

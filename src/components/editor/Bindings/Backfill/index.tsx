@@ -20,7 +20,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
-import BackfillNotSupported from './BackfillNotSupported';
+import BackfillNotSupportedWarning from './BackfillNotSupportedWarning';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -51,7 +51,11 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
-    const disabled = formActive || collectionsCount < 1 || allBindingsDisabled;
+    const disabled =
+        formActive ||
+        collectionsCount < 1 ||
+        allBindingsDisabled ||
+        backfillNotSupported;
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -152,11 +156,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         ]
     );
 
-    if (backfillNotSupported) {
-        if (bindingIndex === -1) {
-            return <BackfillNotSupported />;
-        }
-
+    if (backfillNotSupported && bindingIndex !== -1) {
         return null;
     }
 
@@ -172,6 +172,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 </Typography>
 
                 <Typography component="div">{description}</Typography>
+
+                {backfillNotSupported ? <BackfillNotSupportedWarning /> : null}
             </Stack>
 
             <Stack direction="row" spacing={2}>
@@ -191,7 +193,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     })}
                 </BooleanToggleButton>
 
-                {bindingIndex === -1 ? (
+                {bindingIndex === -1 && !backfillNotSupported ? (
                     <BackfillCount disabled={disabled} />
                 ) : null}
             </Stack>
