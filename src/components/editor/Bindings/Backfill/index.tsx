@@ -156,6 +156,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         ]
     );
 
+    // Do not want to overload the user with "this is not supported" so only showing message on the "backfill all" toggle.
     if (backfillNotSupported && bindingIndex !== -1) {
         return null;
     }
