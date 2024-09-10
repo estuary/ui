@@ -1,138 +1,86 @@
-import { useZustandStore } from 'context/Zustand/provider';
-import { BindingStoreNames } from 'stores/names';
 import { Entity } from 'types';
 import { useShallow } from 'zustand/react/shallow';
-import { FullSource, FullSourceJsonForms } from './slices/TimeTravel';
-import { BindingState, ResourceConfig } from './types';
+import { FullSourceJsonForms } from './slices/TimeTravel';
+import { useBindingStore } from './Store';
+import { ResourceConfig } from './types';
 
 export const useBinding_hydrated = () => {
-    return useZustandStore<BindingState, BindingState['hydrated']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.hydrated
-    );
+    return useBindingStore((state) => state.hydrated);
 };
 
 export const useBinding_setHydrated = () => {
-    return useZustandStore<BindingState, BindingState['setHydrated']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setHydrated
-    );
+    return useBindingStore((state) => state.setHydrated);
 };
 
 export const useBinding_setActive = () => {
-    return useZustandStore<BindingState, BindingState['setActive']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setActive
-    );
+    return useBindingStore((state) => state.setActive);
 };
 
 export const useBinding_hydrationErrorsExist = () => {
-    return useZustandStore<BindingState, BindingState['hydrationErrorsExist']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.hydrationErrorsExist
-    );
+    return useBindingStore((state) => state.hydrationErrorsExist);
 };
 
 export const useBinding_setHydrationErrorsExist = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['setHydrationErrorsExist']
-    >(BindingStoreNames.GENERAL, (state) => state.setHydrationErrorsExist);
+    return useBindingStore((state) => state.setHydrationErrorsExist);
 };
 
 export const useBinding_hydrateState = () => {
-    return useZustandStore<BindingState, BindingState['hydrateState']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.hydrateState
-    );
+    return useBindingStore((state) => state.hydrateState);
 };
 
 export const useBinding_prefillBindingDependentState = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['prefillBindingDependentState']
-    >(BindingStoreNames.GENERAL, (state) => state.prefillBindingDependentState);
+    return useBindingStore((state) => state.prefillBindingDependentState);
 };
 
 export const useBinding_resetState = () => {
-    return useZustandStore<BindingState, BindingState['resetState']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.resetState
-    );
+    return useBindingStore((state) => state.resetState);
 };
 
 export const useBinding_serverUpdateRequired = () => {
-    return useZustandStore<BindingState, BindingState['serverUpdateRequired']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.serverUpdateRequired
-    );
+    return useBindingStore((state) => state.serverUpdateRequired);
 };
 
 export const useBinding_setServerUpdateRequired = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['setServerUpdateRequired']
-    >(BindingStoreNames.GENERAL, (state) => state.setServerUpdateRequired);
+    return useBindingStore((state) => state.setServerUpdateRequired);
 };
 
 export const useBinding_resourceSchema = () => {
-    return useZustandStore<BindingState, BindingState['resourceSchema']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.resourceSchema
-    );
+    return useBindingStore((state) => state.resourceSchema);
 };
 
 export const useBinding_resourceConfig = (bindingUUID: string) => {
-    return useZustandStore<BindingState, ResourceConfig | undefined>(
-        BindingStoreNames.GENERAL,
-        (state) =>
-            Object.hasOwn(state.resourceConfigs, bindingUUID)
-                ? state.resourceConfigs[bindingUUID]
-                : undefined
+    return useBindingStore((state) =>
+        Object.hasOwn(state.resourceConfigs, bindingUUID)
+            ? state.resourceConfigs[bindingUUID]
+            : undefined
     );
 };
 
 export const useBinding_resourceConfigs = () => {
-    return useZustandStore<BindingState, BindingState['resourceConfigs']>(
-        BindingStoreNames.GENERAL,
-        useShallow((state) => state.resourceConfigs)
-    );
+    return useBindingStore(useShallow((state) => state.resourceConfigs));
 };
 
 export const useBinding_prefillResourceConfigs = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['prefillResourceConfigs']
-    >(BindingStoreNames.GENERAL, (state) => state.prefillResourceConfigs);
+    return useBindingStore((state) => state.prefillResourceConfigs);
 };
 
 export const useBinding_updateResourceConfig = () => {
-    return useZustandStore<BindingState, BindingState['updateResourceConfig']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.updateResourceConfig
-    );
+    return useBindingStore((state) => state.updateResourceConfig);
 };
 
 export const useBinding_resourceConfigErrorsExist = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['resourceConfigErrorsExist']
-    >(BindingStoreNames.GENERAL, (state) => state.resourceConfigErrorsExist);
+    return useBindingStore((state) => state.resourceConfigErrorsExist);
 };
 
 export const useBinding_resourceConfigErrors = () => {
-    return useZustandStore<BindingState, BindingState['resourceConfigErrors']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.resourceConfigErrors
-    );
+    return useBindingStore((state) => state.resourceConfigErrors);
 };
 
 export const useBinding_resourceConfigOfBindingProperty = (
     bindingUUID: any,
     property: keyof ResourceConfig
 ) => {
-    return useZustandStore<BindingState, any>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
                 return null;
@@ -147,8 +95,7 @@ export const useBinding_resourceConfigOfMetaBindingProperty = (
     bindingUUID: any,
     property: keyof ResourceConfig['meta']
 ) => {
-    return useZustandStore<BindingState, any>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
                 return null;
@@ -160,43 +107,30 @@ export const useBinding_resourceConfigOfMetaBindingProperty = (
 };
 
 export const useBinding_bindings = () => {
-    return useZustandStore<BindingState, BindingState['bindings']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.bindings
-    );
+    return useBindingStore((state) => state.bindings);
 };
 
 export const useBinding_removeBinding = () => {
-    return useZustandStore<BindingState, BindingState['removeBinding']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.removeBinding
-    );
+    return useBindingStore((state) => state.removeBinding);
 };
 
 export const useBinding_removeBindings = () => {
-    return useZustandStore<BindingState, BindingState['removeBindings']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.removeBindings
-    );
+    return useBindingStore((state) => state.removeBindings);
 };
 
 export const useBinding_collections = () => {
-    return useZustandStore<BindingState, string[]>(
-        BindingStoreNames.GENERAL,
-        useShallow((state) => state.getCollections())
-    );
+    return useBindingStore(useShallow((state) => state.getCollections()));
 };
 
+export const useBinding_collections_count = () =>
+    useBindingStore(useShallow((state) => state.getCollections().length));
+
 export const useBinding_toggleDisable = () => {
-    return useZustandStore<BindingState, BindingState['toggleDisable']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.toggleDisable
-    );
+    return useBindingStore((state) => state.toggleDisable);
 };
 
 export const useBinding_allBindingsDisabled = () => {
-    return useZustandStore<BindingState, boolean>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) =>
             Object.values(state.resourceConfigs).every(
                 (config) => config.meta.disable
@@ -206,8 +140,7 @@ export const useBinding_allBindingsDisabled = () => {
 };
 
 export const useBinding_someBindingsDisabled = () => {
-    return useZustandStore<BindingState, boolean>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) =>
             Object.values(state.resourceConfigs).some(
                 (config) => config.meta.disable
@@ -219,8 +152,7 @@ export const useBinding_someBindingsDisabled = () => {
 // We are only using this to clean up - hence checking for `capture` here because that
 //  is the only entity that we want to clean up disabled collections
 export const useBinding_disabledBindings = (entityType: Entity) => {
-    return useZustandStore<BindingState, string[]>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) =>
             entityType === 'capture'
                 ? Array.from(state.disabledCollections.keys())
@@ -230,238 +162,156 @@ export const useBinding_disabledBindings = (entityType: Entity) => {
 };
 
 export const useBinding_bindingErrorsExist = () => {
-    return useZustandStore<BindingState, BindingState['bindingErrorsExist']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.bindingErrorsExist
-    );
+    return useBindingStore((state) => state.bindingErrorsExist);
 };
 
 export const useBinding_setCurrentBinding = () => {
-    return useZustandStore<BindingState, BindingState['setCurrentBinding']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setCurrentBinding
-    );
+    return useBindingStore((state) => state.setCurrentBinding);
 };
 
 export const useBinding_currentCollection = () => {
-    return useZustandStore<BindingState, string | null>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) => state.currentBinding?.collection ?? null)
     );
 };
 
 export const useBinding_currentBindingUUID = () => {
-    return useZustandStore<BindingState, string | null>(
-        BindingStoreNames.GENERAL,
+    return useBindingStore(
         useShallow((state) => state.currentBinding?.uuid ?? null)
     );
 };
 
 export const useBinding_currentBindingIndex = () => {
-    return useZustandStore<BindingState, number>(
-        BindingStoreNames.GENERAL,
-        (state) => {
-            const currentBinding = state.currentBinding;
+    return useBindingStore((state) => {
+        const currentBinding = state.currentBinding;
 
-            return currentBinding
-                ? state.bindings[currentBinding.collection].findIndex(
-                      (uuid) => uuid === currentBinding.uuid
-                  )
-                : -1;
-        }
-    );
+        return currentBinding
+            ? state.bindings[currentBinding.collection].findIndex(
+                  (uuid) => uuid === currentBinding.uuid
+              )
+            : -1;
+    });
 };
 
 export const useBinding_evaluateDiscoveredBindings = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['evaluateDiscoveredBindings']
-    >(BindingStoreNames.GENERAL, (state) => state.evaluateDiscoveredBindings);
+    return useBindingStore((state) => state.evaluateDiscoveredBindings);
 };
 
 export const useBinding_removeDiscoveredBindings = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['removeDiscoveredBindings']
-    >(BindingStoreNames.GENERAL, (state) => state.removeDiscoveredBindings);
+    return useBindingStore((state) => state.removeDiscoveredBindings);
 };
 
 export const useBinding_discoveredCollections = () => {
-    return useZustandStore<BindingState, BindingState['discoveredCollections']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.discoveredCollections
-    );
+    return useBindingStore((state) => state.discoveredCollections);
 };
 
 export const useBinding_setRestrictedDiscoveredCollections = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['setRestrictedDiscoveredCollections']
-    >(
-        BindingStoreNames.GENERAL,
-        (state) => state.setRestrictedDiscoveredCollections
-    );
+    return useBindingStore((state) => state.setRestrictedDiscoveredCollections);
 };
 
 export const useBinding_rediscoveryRequired = () => {
-    return useZustandStore<BindingState, BindingState['rediscoveryRequired']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.rediscoveryRequired
-    );
+    return useBindingStore((state) => state.rediscoveryRequired);
 };
 
 export const useBinding_resetRediscoverySettings = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['resetRediscoverySettings']
-    >(BindingStoreNames.GENERAL, (state) => state.resetRediscoverySettings);
+    return useBindingStore((state) => state.resetRediscoverySettings);
 };
 
 export const useBinding_backfilledBindings = () => {
-    return useZustandStore<BindingState, BindingState['backfilledBindings']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.backfilledBindings
-    );
+    return useBindingStore((state) => state.backfilledBindings);
 };
 
 export const useBinding_setBackfilledBindings = () => {
-    return useZustandStore<BindingState, BindingState['setBackfilledBindings']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setBackfilledBindings
-    );
+    return useBindingStore((state) => state.setBackfilledBindings);
 };
 
 export const useBinding_backfillAllBindings = () => {
-    return useZustandStore<BindingState, BindingState['backfillAllBindings']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.backfillAllBindings
-    );
+    return useBindingStore((state) => state.backfillAllBindings);
 };
 
 export const useBinding_recommendFields = () => {
-    return useZustandStore<BindingState, BindingState['recommendFields']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.recommendFields
-    );
+    return useBindingStore((state) => state.recommendFields);
 };
 
 export const useBinding_setRecommendFields = () => {
-    return useZustandStore<BindingState, BindingState['setRecommendFields']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setRecommendFields
-    );
+    return useBindingStore((state) => state.setRecommendFields);
 };
 
 export const useBinding_selections = () => {
-    return useZustandStore<BindingState, BindingState['selections']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.selections
-    );
+    return useBindingStore((state) => state.selections);
 };
 
 export const useBinding_initializeSelections = () => {
-    return useZustandStore<BindingState, BindingState['initializeSelections']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.initializeSelections
-    );
+    return useBindingStore((state) => state.initializeSelections);
 };
 
 export const useBinding_setSingleSelection = () => {
-    return useZustandStore<BindingState, BindingState['setSingleSelection']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setSingleSelection
-    );
+    return useBindingStore((state) => state.setSingleSelection);
 };
 
 export const useBinding_setMultiSelection = () => {
-    return useZustandStore<BindingState, BindingState['setMultiSelection']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setMultiSelection
-    );
+    return useBindingStore((state) => state.setMultiSelection);
 };
 
 export const useBinding_searchQuery = () => {
-    return useZustandStore<BindingState, BindingState['searchQuery']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.searchQuery
-    );
+    return useBindingStore((state) => state.searchQuery);
 };
 
 export const useBinding_setSearchQuery = () => {
-    return useZustandStore<BindingState, BindingState['setSearchQuery']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setSearchQuery
-    );
+    return useBindingStore((state) => state.setSearchQuery);
 };
 
 export const useBinding_selectionSaving = () => {
-    return useZustandStore<BindingState, BindingState['selectionSaving']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.selectionSaving
-    );
+    return useBindingStore((state) => state.selectionSaving);
 };
 
 export const useBinding_setSelectionSaving = () => {
-    return useZustandStore<BindingState, BindingState['setSelectionSaving']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.setSelectionSaving
-    );
+    return useBindingStore((state) => state.setSelectionSaving);
 };
 
 export const useBinding_fullSourceOfBinding = (bindingUUID: any) => {
-    return useZustandStore<BindingState, FullSource | undefined | null>(
-        BindingStoreNames.GENERAL,
-        (state) => {
-            if (!bindingUUID) {
-                return null;
-            }
-
-            return state.fullSourceConfigs[bindingUUID]?.data;
+    return useBindingStore((state) => {
+        if (!bindingUUID) {
+            return null;
         }
-    );
+
+        return state.fullSourceConfigs[bindingUUID]?.data;
+    });
 };
 
 export const useBinding_fullSourceOfBindingProperty = (
     bindingUUID: any,
     property: keyof FullSourceJsonForms
-) => {
-    return useZustandStore<BindingState, any>(
-        BindingStoreNames.GENERAL,
-        (state) => {
-            if (!bindingUUID) {
-                return null;
-            }
-
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.fullSourceConfigs[bindingUUID]?.[property];
+): any => {
+    return useBindingStore((state) => {
+        if (!bindingUUID) {
+            return null;
         }
-    );
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        return state.fullSourceConfigs[bindingUUID]?.[property];
+    });
 };
 
 export const useBinding_fullSourceConfigs = () => {
-    return useZustandStore<BindingState, BindingState['fullSourceConfigs']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.fullSourceConfigs
-    );
+    return useBindingStore((state) => state.fullSourceConfigs);
 };
 
 export const useBinding_removeFullSourceConfig = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['removeFullSourceConfig']
-    >(BindingStoreNames.GENERAL, (state) => state.removeFullSourceConfig);
+    return useBindingStore((state) => state.removeFullSourceConfig);
 };
 
 export const useBinding_updateFullSourceConfig = () => {
-    return useZustandStore<
-        BindingState,
-        BindingState['updateFullSourceConfig']
-    >(BindingStoreNames.GENERAL, (state) => state.updateFullSourceConfig);
+    return useBindingStore((state) => state.updateFullSourceConfig);
 };
 
 export const useBinding_fullSourceErrorsExist = () => {
-    return useZustandStore<BindingState, BindingState['fullSourceErrorsExist']>(
-        BindingStoreNames.GENERAL,
-        (state) => state.fullSourceErrorsExist
-    );
+    return useBindingStore((state) => state.fullSourceErrorsExist);
 };
+
+export const useBinding_backfilledBindings_count = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return state.backfilledBindings.length;
+        })
+    );

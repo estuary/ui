@@ -734,6 +734,37 @@ export const eChartsColors = {
     medium: ['#5353cc', '#208c51'],
 };
 
+// If you have custom `sx` on your chip you'll need to import this
+//  and spread it into your custom styling. Or just style with `style`
+export const chipOutlinedStyling: SxProps<Theme> = {
+    '&.MuiChip-outlined': {
+        '&.MuiChip-colorPrimary': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(58, 86, 202, 0.12)',
+        },
+        '&.MuiChip-colorSecondary': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(25, 42, 136, 0.12)',
+        },
+        '&.MuiChip-colorSuccess': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(42, 121, 66, 0.12)',
+        },
+        '&.MuiChip-colorError': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(202, 59, 85, 0.12)',
+        },
+        '&.MuiChip-colorInfo': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(79, 214, 255, 0.12)',
+        },
+        '&.MuiChip-colorWarning': {
+            color: (theme) => theme.palette.text.primary,
+            backgroundColor: 'rgba(237, 108, 2, 0.12)',
+        },
+    },
+};
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {
@@ -814,34 +845,7 @@ const themeSettings = createTheme({
         MuiChip: {
             defaultProps: {
                 deleteIcon: <XmarkCircle style={{ fontSize: 14 }} />,
-                sx: {
-                    '&.MuiChip-outlined': {
-                        '&.MuiChip-colorPrimary': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(58, 86, 202, 0.12)',
-                        },
-                        '&.MuiChip-colorSecondary': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(25, 42, 136, 0.12)',
-                        },
-                        '&.MuiChip-colorSuccess': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(42, 121, 66, 0.12)',
-                        },
-                        '&.MuiChip-colorError': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(202, 59, 85, 0.12)',
-                        },
-                        '&.MuiChip-colorInfo': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(79, 214, 255, 0.12)',
-                        },
-                        '&.MuiChip-colorWarning': {
-                            color: (theme) => theme.palette.text.primary,
-                            backgroundColor: 'rgba(237, 108, 2, 0.12)',
-                        },
-                    },
-                },
+                sx: chipOutlinedStyling,
             },
         },
         MuiFormControl: {

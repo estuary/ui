@@ -4,9 +4,10 @@ import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     link: string;
+    ariaLabel?: string;
 }
 
-function LinkWrapper({ children, link }: Props) {
+function LinkWrapper({ ariaLabel, children, link }: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -15,6 +16,7 @@ function LinkWrapper({ children, link }: Props) {
             reloadDocument={false}
             component={ReactRouterLink}
             to={link}
+            aria-label={ariaLabel}
             sx={{
                 padding: 1,
                 pl: 0,

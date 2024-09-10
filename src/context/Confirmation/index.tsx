@@ -6,25 +6,10 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { createContext, ReactNode, useContext, useRef, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BaseComponentProps } from 'types';
-
-export interface IConfirmationModalOptions {
-    confirmText?: string;
-    cancelText?: string;
-    title?: string;
-    message: string | ReactNode;
-}
-
-interface IConfirmationModalContext {
-    showConfirmation: ({
-        title,
-        message,
-        confirmText,
-        cancelText,
-    }: IConfirmationModalOptions) => Promise<any>;
-}
+import { IConfirmationModalContext, IConfirmationModalOptions } from './types';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';
@@ -48,6 +33,8 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const resolver = useRef<any>();
 
+    const [continueAllowed, setContinueAllowed] = useState<boolean>(true);
+
     const handlers = {
         confirm: () => {
             resolver.current?.(true);
@@ -57,7 +44,11 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             resolver.current?.(false);
             setShowConfirmationModal(false);
         },
-        show: (userSettings: IConfirmationModalOptions) => {
+        show: (
+            userSettings: IConfirmationModalOptions,
+            continueAllowedDefault = true
+        ) => {
+            setContinueAllowed(continueAllowedDefault);
             setSettings({
                 ...getDefaultSettings(),
                 ...userSettings,
@@ -72,7 +63,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
 
     return (
         <ConfirmationModalContext.Provider
-            value={{ showConfirmation: handlers.show }}
+            value={{ setContinueAllowed, showConfirmation: handlers.show }}
         >
             {children}
 
@@ -105,6 +96,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         variant="outlined"
                         onClick={handlers.confirm}
                         autoFocus
+                        disabled={!continueAllowed}
                     >
                         <FormattedMessage id={settings.confirmText} />
                     </Button>

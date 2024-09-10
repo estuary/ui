@@ -14,3 +14,12 @@ export interface EntitySaveButtonProps {
         | CustomEvents.MATERIALIZATION_EDIT;
     disabled?: boolean;
 }
+
+export interface EntityCreateSaveButtonProps {
+    disabled: boolean;
+    loading: boolean;
+    logEvent: CustomEvents;
+    onFailure: Function;
+    buttonLabelId?: string;
+    dryRun?: boolean;
+}

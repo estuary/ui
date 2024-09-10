@@ -5,19 +5,10 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
-import { CustomEvents } from 'services/types';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
-
-interface Props {
-    disabled: boolean;
-    loading: boolean;
-    logEvent: CustomEvents;
-    onFailure: Function;
-    buttonLabelId?: string;
-    dryRun?: boolean;
-}
 
 function EntityCreateSave({
     buttonLabelId,
@@ -26,11 +17,18 @@ function EntityCreateSave({
     loading,
     logEvent,
     onFailure,
-}: Props) {
+}: EntityCreateSaveButtonProps) {
     const save = useSave(logEvent, onFailure, dryRun);
+
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
+
+    // TODO (reset dataflow)
+    // const showDataFlowResetPrompt = useDataFlowResetPrompt();
+    // const [backfillDataflow] = useBindingStore((state) => [
+    //     state.backfillDataFlow,
+    // ]);
 
     const labelId = buttonLabelId
         ? buttonLabelId
@@ -40,8 +38,18 @@ function EntityCreateSave({
 
     return (
         <Button
-            onClick={async (event) => {
-                event.preventDefault();
+            onClick={async () => {
+                // TODO (reset dataflow)
+                // if (!dryRun && backfillDataflow) {
+                //     showDataFlowResetPrompt((data) => {
+                //         if (data) {
+                //             console.log('YES', { data });
+                //         } else {
+                //             console.log('NO', { data });
+                //         }
+                //     });
+                //     return;
+                // }
                 await save(draftId);
             }}
             disabled={disabled || isSaving || formActive}
