@@ -20,7 +20,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
-import BackfillNotSupportedWarning from './BackfillNotSupportedWarning';
+import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -174,7 +174,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
 
                 <Typography component="div">{description}</Typography>
 
-                {!backfillSupported ? <BackfillNotSupportedWarning /> : null}
+                {!backfillSupported ? <BackfillNotSupportedAlert /> : null}
             </Stack>
 
             <Stack direction="row" spacing={2}>

@@ -10,7 +10,7 @@ function BackfillNotSupportedWarning() {
     return (
         <Box sx={{ mt: 3, maxWidth: 'fit-content' }}>
             <AlertBox
-                severity="warning"
+                severity="info"
                 short
                 title={intl.formatMessage(
                     {
