@@ -114,7 +114,13 @@ export function useLiveSpecsExt_related(selected: string[]) {
     const { data, error, isValidating } = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select('catalog_name')
+            .select(
+                `
+                catalog_name, 
+                logo_url:connector_logo_url->>en-US::text,
+                id
+            `
+            )
             .eq('spec_type', 'materialization')
             .overlaps('reads_from', selected)
     );

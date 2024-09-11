@@ -4,7 +4,13 @@ import { useIntl } from 'react-intl';
 import { ChipListProps } from './types';
 import ChipWrapper from './Wrapper';
 
-function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
+function ChipList({
+    values,
+    disabled,
+    maxChips,
+    stripPath,
+    onClick,
+}: ChipListProps) {
     const intl = useIntl();
 
     // Format data coming in so we can still pass in a list of strings
@@ -58,6 +64,7 @@ function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
                         key={`chipList_${val.display}-${index}`}
                         disabled={disabled}
                         stripPath={stripPath ?? true}
+                        onClick={onClick}
                     />
                 );
             })}

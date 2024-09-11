@@ -1,11 +1,11 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
-import ChipList from 'components/shared/ChipList';
 import Error from 'components/shared/Error';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
+import RelatedMaterializationSelector from './RelatedMaterializationSelector';
 import { BindingReviewProps } from './types';
 
 function RelatedMaterializations({ selected }: BindingReviewProps) {
@@ -38,10 +38,7 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
             {error ? <Error error={error} condensed /> : null}
 
             {!error && foundData ? (
-                <ChipList
-                    values={related.map((datum) => datum.catalog_name)}
-                    maxChips={10}
-                />
+                <RelatedMaterializationSelector keys={related} value={null} />
             ) : (
                 <Box>
                     {intl.formatMessage({

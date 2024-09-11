@@ -332,4 +332,6 @@ export const Workflows: Record<string, string> = {
     // Reset Data Flow
     'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
     'resetDataFlow.materializations.empty': `No related materializations`,
+    'resetDataFlow.materializations.selector.label': `Materialization to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) materialization`,
 };
