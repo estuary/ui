@@ -244,7 +244,7 @@ const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
 > => ({
     backfillAllBindings: false,
-    backfillDataFlow: false,
+    backfillDataFlow: true,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     disabledCollections: new Set(),

@@ -109,3 +109,19 @@ export function useLiveSpecsExtWithOutSpec(
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
 }
+
+export function useLiveSpecsExt_related(selected: string[]) {
+    const { data, error, isValidating } = useQuery(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select('catalog_name')
+            .eq('spec_type', 'materialization')
+            .overlaps('reads_from', selected)
+    );
+
+    return {
+        related: data ?? [],
+        error,
+        isValidating,
+    };
+}

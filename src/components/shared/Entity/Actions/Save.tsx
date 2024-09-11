@@ -5,8 +5,11 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import useDataFlowResetPrompt from '../hooks/useDataFlowResetPrompt';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
@@ -24,11 +27,11 @@ function EntityCreateSave({
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
-    // TODO (reset dataflow)
-    // const showDataFlowResetPrompt = useDataFlowResetPrompt();
-    // const [backfillDataflow] = useBindingStore((state) => [
-    //     state.backfillDataFlow,
-    // ]);
+    const showDataFlowResetPrompt = useDataFlowResetPrompt();
+    const [backfillDataflow] = useBindingStore((state) => [
+        state.backfillDataFlow,
+    ]);
+    const needsBackfilled = useBinding_backfilledBindings_count();
 
     const labelId = buttonLabelId
         ? buttonLabelId
@@ -40,16 +43,16 @@ function EntityCreateSave({
         <Button
             onClick={async () => {
                 // TODO (reset dataflow)
-                // if (!dryRun && backfillDataflow) {
-                //     showDataFlowResetPrompt((data) => {
-                //         if (data) {
-                //             console.log('YES', { data });
-                //         } else {
-                //             console.log('NO', { data });
-                //         }
-                //     });
-                //     return;
-                // }
+                if (!dryRun && backfillDataflow && needsBackfilled) {
+                    showDataFlowResetPrompt((data) => {
+                        if (data) {
+                            console.log('YES', { data });
+                        } else {
+                            console.log('NO', { data });
+                        }
+                    });
+                    return;
+                }
                 await save(draftId);
             }}
             disabled={disabled || isSaving || formActive}

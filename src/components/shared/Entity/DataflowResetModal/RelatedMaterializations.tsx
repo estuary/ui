@@ -1,30 +1,23 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import ChipList from 'components/shared/ChipList';
 import Error from 'components/shared/Error';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { supabaseClient } from 'context/GlobalProviders';
+import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { TABLES } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import { BindingReviewProps } from './types';
 
 function RelatedMaterializations({ selected }: BindingReviewProps) {
     const intl = useIntl();
 
-    const { data, error, isValidating } = useQuery(
-        supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select('catalog_name')
-            .eq('spec_type', 'materialization')
-            .overlaps('reads_from', selected),
-        {}
-    );
+    const { related, error, isValidating } = useLiveSpecsExt_related(selected);
 
     const confirmationModal = useConfirmationModalContext();
 
-    const foundData = useMemo(() => hasLength(data), [data]);
+    console.log('data', related);
+
+    const foundData = useMemo(() => hasLength(related), [related]);
 
     useEffect(() => {
         if (!isValidating && !foundData) {
@@ -46,7 +39,7 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
 
             {!error && foundData ? (
                 <ChipList
-                    values={data ? data.map((datum) => datum.catalog_name) : []}
+                    values={related.map((datum) => datum.catalog_name)}
                     maxChips={10}
                 />
             ) : (
