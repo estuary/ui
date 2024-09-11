@@ -64,7 +64,7 @@ function useSave(
         (state) => state.details.data.description
     );
     const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.data_plane_name
+        (state) => state.details.data.dataPlane?.dataPlaneName
     );
 
     const setIncompatibleCollections =

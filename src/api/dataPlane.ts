@@ -6,7 +6,7 @@ import {
     TABLES,
 } from 'services/supabase';
 
-export interface DataPlaneOption {
+export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
 }
@@ -18,7 +18,7 @@ const getDataPlaneOptions = async () => {
                 .from(TABLES.DATA_PLANES)
                 .select('data_plane_name,id'),
         'getDataPlaneOptions'
-    ).then(handleSuccess<DataPlaneOption[]>, handleFailure);
+    ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
 
     return data;
 };
@@ -32,7 +32,7 @@ const getDataPlaneById = async (dataPlaneId: string) => {
                 .eq('id', dataPlaneId)
                 .limit(1),
         'getDataPlaneOptions'
-    ).then(handleSuccess<DataPlaneOption[]>, handleFailure);
+    ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
 
     return data;
 };

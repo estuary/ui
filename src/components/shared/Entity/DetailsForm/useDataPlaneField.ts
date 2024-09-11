@@ -1,13 +1,14 @@
-import { DataPlaneOption, getDataPlaneOptions } from 'api/dataPlane';
+import { getDataPlaneOptions } from 'api/dataPlane';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
+import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
+import { getDataPlaneScope } from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 export default function useDataPlaneField(
@@ -54,7 +55,15 @@ export default function useDataPlaneField(
                         }
 
                         if (response.data) {
-                            setOptions(response.data);
+                            const formattedData = response.data.map(
+                                ({ data_plane_name, id }) => ({
+                                    dataPlaneName: data_plane_name,
+                                    id,
+                                    scope: getDataPlaneScope(data_plane_name),
+                                })
+                            );
+
+                            setOptions(formattedData);
                         }
                     },
                     (error) => {
@@ -70,16 +79,16 @@ export default function useDataPlaneField(
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf = [
             {
-                const: { data_plane_name: '', id: '' },
+                const: { dataPlaneName: '', id: '', scope: 'public' },
                 title: intl.formatMessage({ id: 'common.default' }),
             },
-        ] as { title: string; const: Object }[];
+        ] as { const: Object; title: string }[];
 
         if (options.length > 0) {
             options.forEach((option) => {
                 dataPlanesOneOf.push({
                     const: option,
-                    title: option.data_plane_name,
+                    title: option.dataPlaneName,
                 });
             });
         }

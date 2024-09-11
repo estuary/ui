@@ -59,7 +59,7 @@ function useDiscoverCapture(
         (state) => state.errorsExist
     );
     const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.data_plane_name
+        (state) => state.details.data.dataPlane?.dataPlaneName
     );
 
     // Endpoint Config Store

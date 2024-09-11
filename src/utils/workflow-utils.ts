@@ -17,6 +17,7 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
+import { DataPlaneOption } from 'stores/DetailsForm/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
@@ -397,3 +398,9 @@ export function evaluateConnectorVersions(
         b.image_tag.localeCompare(a.image_tag)
     )[0];
 }
+
+export const getDataPlaneScope = (
+    dataPlaneName: string
+): DataPlaneOption['scope'] => {
+    return dataPlaneName.startsWith('ops/dp/public') ? 'public' : 'private';
+};

@@ -1,8 +1,13 @@
 import { JsonFormsCore } from '@jsonforms/core';
-import { DataPlaneOption } from 'api/dataPlane';
 import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { EntityWorkflow } from 'types';
+
+export interface DataPlaneOption {
+    dataPlaneName: string;
+    id: string;
+    scope: 'public' | 'private';
+}
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {

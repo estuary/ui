@@ -22,6 +22,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
+    getDataPlaneScope,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { StoreApi, create } from 'zustand';
@@ -65,12 +66,18 @@ const getDataPlane = async (
             const { data, error } = await getDataPlaneById(dataPlaneId);
 
             if (!error && data && data.length > 0) {
-                return data[0];
+                const { data_plane_name, id } = data[0];
+
+                return {
+                    dataPlaneName: data_plane_name,
+                    id,
+                    scope: getDataPlaneScope(data_plane_name),
+                };
             }
 
             return null;
         } else {
-            return { data_plane_name: '', id: '' };
+            return { dataPlaneName: '', id: '', scope: 'public' };
         }
     }
 

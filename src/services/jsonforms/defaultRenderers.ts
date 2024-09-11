@@ -8,6 +8,7 @@ import {
     collapsibleGroupTester,
 } from 'forms/renderers/CollapsibleGroup';
 import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
+import { DataPlane, dataPlaneTester } from 'forms/renderers/DataPlanes';
 import { MissingType, missingTypeTester } from 'forms/renderers/MissingType';
 import {
     MultiLineSecret,
@@ -63,6 +64,7 @@ const defaultRenderers = [
     { renderer: MissingType, tester: missingTypeTester },
     { renderer: ConnectorType, tester: connectorTypeTester },
     { renderer: CatalogName, tester: catalogNameTypeTester },
+    { renderer: DataPlane, tester: dataPlaneTester },
     { renderer: MultiLineSecret, tester: multiLineSecretTester },
     { renderer: NullableArrayControl, tester: nullableArrayTester },
     { renderer: NullableControl, tester: nullableControlTester },
