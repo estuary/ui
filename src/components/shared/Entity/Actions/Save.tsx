@@ -41,6 +41,8 @@ function EntityCreateSave({
 
     return (
         <Button
+            disabled={disabled || isSaving || formActive}
+            sx={buttonSx}
             onClick={async () => {
                 // TODO (reset dataflow)
                 if (!dryRun && backfillDataflow && needsBackfilled) {
@@ -55,8 +57,6 @@ function EntityCreateSave({
                 }
                 await save(draftId);
             }}
-            disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
         >
             <FormattedMessage id={labelId} />
         </Button>

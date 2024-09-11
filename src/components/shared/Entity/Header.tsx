@@ -43,8 +43,6 @@ function EntityToolbar({
     // Editor Store
     const draftId = useEditorStore_id();
 
-    console.log('draftId', draftId);
-
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
