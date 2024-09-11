@@ -120,10 +120,7 @@ export default function useConnectorField(
     };
 
     const evaluateConnector = useCallback(
-        (
-            details: Details,
-            selectedDataPlaneId: string | undefined
-        ): boolean => {
+        (details: Details, selectedDataPlaneId: string | undefined) => {
             const selectedConnectorId = details.data.connectorImage.connectorId;
 
             if (
@@ -142,12 +139,8 @@ export default function useConnectorField(
                         true,
                         selectedDataPlaneId ?? null
                     );
-
-                    return true;
                 }
             }
-
-            return false;
         },
         [
             connectorId,

@@ -140,21 +140,10 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     }, [connectorUISchema, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
-        let updateCompleted = false;
-
         const selectedDataPlaneId = details.data.dataPlane?.id;
 
-        updateCompleted = evaluateDataPlane(details, selectedDataPlaneId);
-
-        if (updateCompleted) {
-            return;
-        }
-
-        updateCompleted = evaluateConnector(details, selectedDataPlaneId);
-
-        if (updateCompleted) {
-            return;
-        }
+        evaluateDataPlane(details, selectedDataPlaneId);
+        evaluateConnector(details, selectedDataPlaneId);
 
         setDetails(details);
 

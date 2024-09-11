@@ -110,10 +110,7 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, intl]);
 
     const evaluateDataPlane = useCallback(
-        (
-            details: Details,
-            selectedDataPlaneId: string | undefined
-        ): boolean => {
+        (details: Details, selectedDataPlaneId: string | undefined) => {
             if (
                 dataPlaneOption === 'show_option' &&
                 selectedDataPlaneId !== storedDataPlaneId
@@ -138,12 +135,8 @@ export default function useDataPlaneField(
                         true,
                         selectedDataPlaneId ?? null
                     );
-
-                    return true;
                 }
             }
-
-            return false;
         },
         [
             dataPlaneIdInURL,
