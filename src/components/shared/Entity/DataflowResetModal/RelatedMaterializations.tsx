@@ -4,6 +4,7 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
 import RelatedMaterializationSelector from './RelatedMaterializationSelector';
 import { BindingReviewProps } from './types';
@@ -15,15 +16,17 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
 
     const confirmationModal = useConfirmationModalContext();
 
-    console.log('data', related);
-
     const foundData = useMemo(() => hasLength(related), [related]);
 
+    const [backfillDataFlowTarget] = useBindingStore((state) => [
+        state.backfillDataFlowTarget,
+    ]);
+
     useEffect(() => {
-        if (!isValidating && !foundData) {
-            confirmationModal?.setContinueAllowed(true);
-        }
-    }, [foundData, isValidating, confirmationModal]);
+        confirmationModal?.setContinueAllowed(
+            Boolean((!isValidating && !foundData) || backfillDataFlowTarget)
+        );
+    }, [foundData, isValidating, confirmationModal, backfillDataFlowTarget]);
 
     return (
         <Box>

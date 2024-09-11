@@ -1,7 +1,8 @@
 import { Autocomplete, Grid, TextField } from '@mui/material';
-import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
+import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useBindingStore } from 'stores/Binding/Store';
 import { RelatedMaterializationSelectorProps } from './types';
 import MaterializationSelectorOption from './MaterializationSelectorOption';
 
@@ -12,10 +13,15 @@ function RelatedMaterializationSelector({
     keys,
 }: RelatedMaterializationSelectorProps) {
     const intl = useIntl();
-    const [localCopyValue] = useState<string[]>([]);
+
     const [inputValue, setInputValue] = useState('');
 
-    console.log('keys', keys);
+    const [backfillDataFlowTarget, setBackfillDataFlowTarget] = useBindingStore(
+        (state) => [
+            state.backfillDataFlowTarget,
+            state.setBackfillDataFlowTarget,
+        ]
+    );
 
     if (keys.length === 0) {
         return null;
@@ -24,37 +30,19 @@ function RelatedMaterializationSelector({
     return (
         <Grid item xs={12}>
             <Autocomplete
-                {...autoCompleteDefaults_Virtual_Multiple}
+                {...autoCompleteDefaults_Virtual}
                 disabled={disabled}
                 getOptionLabel={getValue}
-                groupBy={(option) => option.exists}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.catalog_name === optionValue;
+                    return option.catalog_name === optionValue.catalog_name;
                 }}
                 options={keys}
-                value={localCopyValue}
-                onChange={async (event, newValues, reason) => {
-                    console.log('object', {
-                        event,
-                        newValues,
-                        reason,
-                    });
-                    // if (changeHandler) {
-                    //     await changeHandler(
-                    //         event,
-                    //         newValues.map((newValue) => {
-                    //             if (typeof newValue === 'string') {
-                    //                 return newValue;
-                    //             } else {
-                    //                 return getValue(newValue);
-                    //             }
-                    //         }),
-                    //         reason
-                    //     );
-                    // }
+                value={backfillDataFlowTarget}
+                onChange={(_event, newValue) => {
+                    setBackfillDataFlowTarget(newValue);
                 }}
-                onInputChange={(event, newInputValue) => {
+                onInputChange={(_event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
                 renderInput={(params) => {
