@@ -1,6 +1,7 @@
 import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
+import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { EntityWithCreateWorkflow } from 'types';
@@ -20,20 +21,25 @@ export default function useEntityCreateNavigate() {
             advanceToForm?: boolean,
             dataPlaneId?: string | null
         ) => {
-            let newSearchParams: URLSearchParams | null = null;
+            const searchParamConfig: { [param: string]: any } = {};
+
             if (hasLength(id)) {
-                newSearchParams = appendSearchParams({
-                    [GlobalSearchParams.CONNECTOR_ID]: id,
-                });
+                searchParamConfig[GlobalSearchParams.CONNECTOR_ID] = id;
             }
 
             if (typeof dataPlaneId !== 'undefined') {
-                newSearchParams = appendSearchParams({
-                    [GlobalSearchParams.DATA_PLANE_ID]: hasLength(dataPlaneId)
-                        ? dataPlaneId
-                        : undefined,
-                });
+                searchParamConfig[GlobalSearchParams.DATA_PLANE_ID] = hasLength(
+                    dataPlaneId
+                )
+                    ? dataPlaneId
+                    : undefined;
             }
+
+            const newSearchParams: URLSearchParams | null = !isEmpty(
+                searchParamConfig
+            )
+                ? appendSearchParams(searchParamConfig)
+                : null;
 
             let newPath: string | null = null;
             if (entity === 'capture') {

@@ -118,13 +118,17 @@ export default function useDataPlaneField(
                 dataPlaneOption === 'show_option' &&
                 selectedDataPlaneId !== storedDataPlaneId
             ) {
-                if (selectedDataPlaneId === dataPlaneIdInURL) {
-                    const selectedOption = options.find(
-                        (option) => option.id === selectedDataPlaneId
-                    );
+                const selectedOption = options.find(
+                    (option) => option.id === (selectedDataPlaneId ?? '')
+                );
 
-                    setDetails_dataPlane(selectedOption);
-                } else {
+                setDetails_dataPlane(selectedOption);
+
+                const evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
+                    ? selectedDataPlaneId
+                    : null;
+
+                if (evaluatedDataPlaneId !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
                     navigateToCreate(

@@ -1,4 +1,5 @@
 import { getConnectors_detailsForm } from 'api/connectors';
+import { getDataPlaneById } from 'api/dataPlane';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -53,6 +54,27 @@ const getConnectorImage = async (
     }
 
     return null;
+};
+
+const getDataPlane = async (
+    dataPlaneOption: string | null,
+    dataPlaneId: string | null
+): Promise<Details['data']['dataPlane'] | null> => {
+    if (dataPlaneOption === 'show_option') {
+        if (dataPlaneId) {
+            const { data, error } = await getDataPlaneById(dataPlaneId);
+
+            if (!error && data && data.length > 0) {
+                return data[0];
+            }
+
+            return null;
+        } else {
+            return { data_plane_name: '', id: '' };
+        }
+    }
+
+    return undefined;
 };
 
 const initialDetails: Details = {
@@ -242,6 +264,7 @@ export const getInitialState = (
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const dataPlaneOption = searchParams.get(GlobalSearchParams.DATA_PLANE);
+        const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
         const createWorkflow =
@@ -253,9 +276,17 @@ export const getInitialState = (
 
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(connectorId);
+                const dataPlane = await getDataPlane(
+                    dataPlaneOption,
+                    dataPlaneId
+                );
 
-                if (connectorImage) {
-                    const { setDetails_connector, setPreviousDetails } = get();
+                if (connectorImage && dataPlane !== null) {
+                    const {
+                        setDetails_connector,
+                        setDetails_dataPlane,
+                        setPreviousDetails,
+                    } = get();
 
                     setDetails_connector(connectorImage);
 
@@ -264,11 +295,7 @@ export const getInitialState = (
                         errors,
                     } = initialDetails;
 
-                    const dataPlane =
-                        dataPlaneOption === 'show_option'
-                            ? { data_plane_name: '', id: '' }
-                            : undefined;
-
+                    setDetails_dataPlane(dataPlane);
                     setPreviousDetails({
                         data: { entityName, connectorImage, dataPlane },
                         errors,

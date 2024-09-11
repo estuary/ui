@@ -4,32 +4,23 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
-import {
-    ConnectorVersionEvaluationOptions,
-    evaluateConnectorVersions,
-} from 'utils/workflow-utils';
-import { MAC_ADDR_RE } from 'validation';
+import { evaluateConnectorVersions } from 'utils/workflow-utils';
+import useConnectorField from './useConnectorField';
 import useDataPlaneField from './useDataPlaneField';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
@@ -51,22 +42,11 @@ export const getConnectorImageDetails = (
 
 function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const intl = useIntl();
-    const navigateToCreate = useEntityCreateNavigate();
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     // Details Form Store
     const formData = useDetailsFormStore((state) => state.details.data);
-    const { connectorImage: originalConnectorImage } = formData;
-
-    const connectorImagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
-    );
-    const connectorIdChanged = useDetailsForm_changed_connectorId();
 
     const setDetails = useDetailsFormStore((state) => state.setDetails);
-    const setDetails_connector = useDetailsFormStore(
-        (state) => state.setDetails_connector
-    );
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
@@ -84,61 +64,8 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
 
-    useEffect(() => {
-        if (connectorId && hasLength(connectorTags) && connectorIdChanged) {
-            connectorTags.find((connector) => {
-                const connectorTag = evaluateConnectorVersions(connector);
-
-                const connectorLocated =
-                    connectorTag.connector_id === connectorId;
-
-                if (connectorLocated) {
-                    setDetails_connector(getConnectorImageDetails(connector));
-                }
-
-                return connectorLocated;
-            });
-        }
-    }, [setDetails_connector, connectorId, connectorIdChanged, connectorTags]);
-
-    const versionEvaluationOptions:
-        | ConnectorVersionEvaluationOptions
-        | undefined = useMemo(() => {
-        // This is rare but can happen so being safe.
-        // If you remove the connector id from the create URL
-        if (!connectorImagePath) {
-            return undefined;
-        }
-
-        const imageTagStartIndex = connectorImagePath.indexOf(':');
-        return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
-            ? {
-                  connectorId,
-                  existingImageTag: connectorImagePath.substring(
-                      imageTagStartIndex,
-                      connectorImagePath.length
-                  ),
-              }
-            : undefined;
-    }, [connectorId, connectorImagePath, isEdit]);
-
-    const connectorsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
-
-        if (connectorTags.length > 0) {
-            connectorTags.forEach((connector) => {
-                response.push({
-                    const: getConnectorImageDetails(
-                        connector,
-                        versionEvaluationOptions
-                    ),
-                    title: connector.title,
-                });
-            });
-        }
-
-        return response;
-    }, [connectorTags, versionEvaluationOptions]);
+    const { connectorSchema, connectorUISchema, evaluateConnector } =
+        useConnectorField(connectorTags, entityType);
 
     const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
         useDataPlaneField(entityType);
@@ -146,13 +73,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const schema = useMemo(() => {
         const baseProperties = {
             [CATALOG_NAME_SCOPE]: { type: 'string' },
-            [CONNECTOR_IMAGE_SCOPE]: {
-                description: intl.formatMessage({
-                    id: 'connector.description',
-                }),
-                oneOf: connectorsOneOf,
-                type: 'object',
-            },
+            [CONNECTOR_IMAGE_SCOPE]: connectorSchema,
             description: {
                 description: intl.formatMessage({
                     id: 'description.description',
@@ -177,45 +98,46 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                   required: baseRequirements,
                   type: 'object',
               };
-    }, [connectorsOneOf, dataPlaneSchema, intl]);
+    }, [connectorSchema, dataPlaneSchema, intl]);
 
     const uiSchema = useMemo(() => {
-        const baseHorizontalElements = [
-            {
-                label: intl.formatMessage({
-                    id: 'entityCreate.connector.label',
-                }),
-                scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
-                type: 'Control',
-            },
-            {
-                label: intl.formatMessage({
-                    id: 'entityName.label',
-                }),
-                scope: `#/properties/${CATALOG_NAME_SCOPE}`,
-                type: 'Control',
-            },
-            {
-                label: intl.formatMessage({
-                    id: 'description.label',
-                }),
-                scope: '#/properties/description',
-                type: 'Control',
-            },
-        ];
+        const catalogNameUISchema = {
+            label: intl.formatMessage({
+                id: 'entityName.label',
+            }),
+            scope: `#/properties/${CATALOG_NAME_SCOPE}`,
+            type: 'Control',
+        };
+
+        const descriptionUISchema = {
+            label: intl.formatMessage({
+                id: 'description.label',
+            }),
+            scope: '#/properties/description',
+            type: 'Control',
+        };
 
         return {
             elements: [
                 {
                     elements: dataPlaneUISchema
-                        ? baseHorizontalElements.concat(dataPlaneUISchema)
-                        : baseHorizontalElements,
+                        ? [
+                              connectorUISchema,
+                              catalogNameUISchema,
+                              dataPlaneUISchema,
+                              descriptionUISchema,
+                          ]
+                        : [
+                              connectorUISchema,
+                              catalogNameUISchema,
+                              descriptionUISchema,
+                          ],
                     type: 'HorizontalLayout',
                 },
             ],
             type: 'VerticalLayout',
         };
-    }, [dataPlaneUISchema, intl]);
+    }, [connectorUISchema, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
         let updateCompleted = false;
@@ -228,37 +150,23 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
             return;
         }
 
-        if (
-            MAC_ADDR_RE.test(details.data.connectorImage.connectorId) &&
-            details.data.connectorImage.connectorId !==
-                originalConnectorImage.connectorId
-        ) {
-            if (details.data.connectorImage.connectorId === connectorId) {
-                setDetails_connector(details.data.connectorImage);
-            } else {
-                setEntityNameChanged(details.data.entityName);
+        updateCompleted = evaluateConnector(details, selectedDataPlaneId);
 
-                navigateToCreate(
-                    entityType,
-                    details.data.connectorImage.connectorId,
-                    true,
-                    true,
-                    selectedDataPlaneId ?? null
-                );
-            }
+        if (updateCompleted) {
+            return;
+        }
+
+        setDetails(details);
+
+        // For edit we can set the Drafted Entity Name because the store sets the name
+        //  and then set the entityNameChanged flag to false. Then we can reference
+        //  the previous version to not lose settings (ex: bindings for Materialization)
+        // For create we set the entity name changed flag so we can keep an eye
+        //  on if the name has changed and we need to run "generate" again
+        if (isEdit) {
+            setDraftedEntityName(details.data.entityName);
         } else {
-            setDetails(details);
-
-            // For edit we can set the Drafted Entity Name because the store sets the name
-            //  and then set the entityNameChanged flag to false. Then we can reference
-            //  the previous version to not lose settings (ex: bindings for Materialization)
-            // For create we set the entity name changed flag so we can keep an eye
-            //  on if the name has changed and we need to run "generate" again
-            if (isEdit) {
-                setDraftedEntityName(details.data.entityName);
-            } else {
-                setEntityNameChanged(details.data.entityName);
-            }
+            setEntityNameChanged(details.data.entityName);
         }
     };
 
