@@ -9,6 +9,7 @@ import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import useDataFlowResetHandler from '../hooks/useDataFlowResetHandler';
 import useDataFlowResetPrompt from '../hooks/useDataFlowResetPrompt';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
@@ -28,6 +29,8 @@ function EntityCreateSave({
     const draftId = useEditorStore_id();
 
     const showDataFlowResetPrompt = useDataFlowResetPrompt();
+    const handler = useDataFlowResetHandler();
+
     const [backfillDataflow] = useBindingStore((state) => [
         state.backfillDataFlow,
     ]);
@@ -48,9 +51,10 @@ function EntityCreateSave({
                 if (!dryRun && backfillDataflow && needsBackfilled) {
                     showDataFlowResetPrompt((data) => {
                         if (data) {
-                            console.log('YES', { data });
+                            console.log('YES');
+                            handler();
                         } else {
-                            console.log('NO', { data });
+                            console.log('NO');
                         }
                     });
                     return;

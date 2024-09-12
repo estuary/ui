@@ -16,10 +16,6 @@ function useDataFlowResetPrompt() {
         })
     );
 
-    const backfillDataFlowTarget = useBindingStore(
-        (state) => state.backfillDataFlowTarget
-    );
-
     return useCallback(
         (callback: (data: any) => void) => {
             confirmationModalContext
@@ -34,18 +30,14 @@ function useDataFlowResetPrompt() {
                     },
                     false
                 )
-                .then((data) => {
-                    callback(data ? backfillDataFlowTarget : null);
+                .then((accepted) => {
+                    callback(accepted);
                 })
                 .catch((err) => {
                     console.log('catch', err);
                 });
         },
-        [
-            backfillDataFlowTarget,
-            collectionsBeingBackfilled,
-            confirmationModalContext,
-        ]
+        [collectionsBeingBackfilled, confirmationModalContext]
     );
 }
 
