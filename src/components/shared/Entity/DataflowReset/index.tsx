@@ -1,10 +1,12 @@
 import {
-    Box,
     Button,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
     IconButton,
+    LinearProgress,
+    Stack,
     Step,
     StepContent,
     StepLabel,
@@ -39,12 +41,15 @@ function DataflowReset() {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
 
     const handleBack = () => {
+        if (activeStep === 0) {
+            return closeDialog();
+        }
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
     return (
         <Dialog
-            maxWidth="lg"
+            maxWidth={activeStep === 0 ? 'lg' : 'md'}
             fullWidth
             open={showChangeReview}
             onClose={closeDialog}
@@ -56,7 +61,7 @@ function DataflowReset() {
                     justifyContent: 'space-between',
                 }}
             >
-                Foo
+                Please review your changes
                 <IconButton disabled={activeStep > 1} onClick={closeDialog}>
                     <Xmark
                         aria-label={intl.formatMessage({ id: 'cta.close' })}
@@ -73,44 +78,57 @@ function DataflowReset() {
                         <StepLabel>Review your changes</StepLabel>
                         <StepContent>
                             <ChangeReview />
-                            <Box>
-                                <Button onClick={closeDialog}>Cancel</Button>
-
-                                <Button onClick={handleNext}>Continue</Button>
-                            </Box>
                         </StepContent>
                     </Step>
                     <Step>
-                        <StepLabel>Select Materialization</StepLabel>
+                        <StepLabel>
+                            Select materialization for data flow reset
+                        </StepLabel>
                         <StepContent>
                             <BindingReview />
-                            <Box>
-                                <Button onClick={handleBack}>Back</Button>
-
-                                <Button onClick={handleNext}>Continue</Button>
-                            </Box>
                         </StepContent>
                     </Step>
                     <Step>
-                        <StepLabel>Disable Capture</StepLabel>
-                        <StepContent>Logs</StepContent>
+                        <StepLabel>Disable capture</StepLabel>
+                        <StepContent>
+                            <LinearProgress />
+                            Logs
+                        </StepContent>
                     </Step>
                     <Step>
-                        <StepLabel>Mark Materialization notBefore</StepLabel>
+                        <StepLabel>Wait for capture data to stop</StepLabel>
+                        <StepContent>
+                            <LinearProgress />
+                            Logs
+                        </StepContent>
+                    </Step>
+                    <Step>
+                        <StepLabel>Mark materialization notBefore</StepLabel>
                         <StepContent>describe what we're doing</StepContent>
                     </Step>
                     <Step>
-                        <StepLabel>Enable Capture</StepLabel>
+                        <StepLabel>Enable capture</StepLabel>
                         <StepContent>Logs</StepContent>
                     </Step>
                     <Step>
                         <StepLabel>
-                            Publish Capture and Materialization
+                            Publish capture and materialization
                         </StepLabel>
                         <StepContent>Logs</StepContent>
                     </Step>
                 </Stepper>
             </DialogContent>
+            <DialogActions>
+                <Stack direction="row" spacing={2}>
+                    <Button onClick={handleBack} variant="text">
+                        Back
+                    </Button>
+
+                    <Button onClick={handleNext} variant="outlined">
+                        Continue
+                    </Button>
+                </Stack>
+            </DialogActions>
         </Dialog>
     );
 }
