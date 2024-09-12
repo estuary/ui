@@ -119,8 +119,17 @@ export const DataPlaneAutoComplete = (
                     />
                 );
             }}
+            slotProps={{
+                popper: {
+                    sx: {
+                        '& .MuiAutocomplete-groupLabel': {
+                            textTransform: 'capitalize',
+                        },
+                    },
+                },
+            }}
             sx={{
-                marginTop: 2,
+                mt: 2,
             }}
             options={options ?? []}
             value={currentOption}
