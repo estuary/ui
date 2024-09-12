@@ -30,9 +30,12 @@ import {
     Autocomplete,
     AutocompleteRenderOptionState,
     FilterOptionsState,
+    MenuList,
+    Typography,
 } from '@mui/material';
 import merge from 'lodash/merge';
 import React, { ReactNode, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import DataPlaneInput from './Input';
 import Option from './Option';
 
@@ -53,22 +56,20 @@ const areOptionsEqual = (option?: any, value?: any) => {
     return value?.id && value.id.length > 0 && option.id === value.id;
 };
 
-export const DataPlaneAutoComplete = (
-    props: EnumCellProps & WithClassname & WithOptionLabel
-) => {
-    const {
-        data,
-        className,
-        id,
-        enabled,
-        uischema,
-        path,
-        options,
-        config,
-        handleChange,
-        getOptionLabel,
-        filterOptions,
-    } = props;
+export const DataPlaneAutoComplete = ({
+    data,
+    className,
+    id,
+    enabled,
+    uischema,
+    path,
+    options,
+    config,
+    handleChange,
+    getOptionLabel,
+    filterOptions,
+}: EnumCellProps & WithClassname & WithOptionLabel) => {
+    const intl = useIntl();
 
     const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
@@ -99,6 +100,25 @@ export const DataPlaneAutoComplete = (
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
+            renderGroup={({ group, children }) => (
+                <li>
+                    <Typography
+                        color="primary"
+                        sx={{
+                            backgroundColor: (theme) =>
+                                theme.palette.background.paper,
+                            fontWeight: 500,
+                            pl: 1,
+                            py: 1,
+                            textTransform: 'capitalize',
+                        }}
+                    >
+                        {intl.formatMessage({ id: `common.${group}` })}
+                    </Typography>
+
+                    <MenuList style={{ padding: 0 }}>{children}</MenuList>
+                </li>
+            )}
             renderInput={({ inputProps, InputProps }) => {
                 return (
                     <DataPlaneInput
@@ -122,8 +142,8 @@ export const DataPlaneAutoComplete = (
             slotProps={{
                 popper: {
                     sx: {
-                        '& .MuiAutocomplete-groupLabel': {
-                            textTransform: 'capitalize',
+                        '& .MuiAutocomplete-listbox': {
+                            p: 0,
                         },
                     },
                 },
