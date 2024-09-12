@@ -13,6 +13,8 @@ import {
     Stepper,
     useTheme,
 } from '@mui/material';
+import Logs from 'components/logs';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { Xmark } from 'iconoir-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -34,7 +36,6 @@ function DataflowReset() {
 
     const closeDialog = () => {
         setActiveStep(0);
-
         setShowChangeReview(false);
     };
     const handleNext = () =>
@@ -75,7 +76,7 @@ function DataflowReset() {
             <DialogContent>
                 <Stepper orientation="vertical" activeStep={activeStep}>
                     <Step>
-                        <StepLabel>Review your changes</StepLabel>
+                        <StepLabel>How the spec is changing</StepLabel>
                         <StepContent>
                             <ChangeReview />
                         </StepContent>
@@ -85,36 +86,71 @@ function DataflowReset() {
                             Select materialization for data flow reset
                         </StepLabel>
                         <StepContent>
-                            <BindingReview />
+                            <ErrorBoundryWrapper>
+                                <BindingReview />
+                            </ErrorBoundryWrapper>
                         </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Disable capture</StepLabel>
                         <StepContent>
-                            <LinearProgress />
-                            Logs
+                            <ErrorBoundryWrapper>
+                                <Logs
+                                    token={null}
+                                    height={350}
+                                    loadingLineSeverity="info"
+                                    spinnerMessages={{
+                                        stoppedKey:
+                                            'dataflowReset.logs.spinner.stopped',
+                                        runningKey:
+                                            'dataflowReset.logs.spinner.running',
+                                    }}
+                                />
+                            </ErrorBoundryWrapper>
                         </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Wait for capture data to stop</StepLabel>
                         <StepContent>
-                            <LinearProgress />
-                            Logs
+                            <ErrorBoundryWrapper>
+                                <LinearProgress />
+                                No logs... but show something
+                            </ErrorBoundryWrapper>
                         </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Mark materialization notBefore</StepLabel>
-                        <StepContent>describe what we're doing</StepContent>
+                        <StepContent>
+                            <ErrorBoundryWrapper>
+                                describe what we're doing
+                            </ErrorBoundryWrapper>
+                        </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>Enable capture</StepLabel>
-                        <StepContent>Logs</StepContent>
+                        <StepContent>
+                            <ErrorBoundryWrapper>Logs</ErrorBoundryWrapper>
+                        </StepContent>
                     </Step>
                     <Step>
                         <StepLabel>
                             Publish capture and materialization
                         </StepLabel>
-                        <StepContent>Logs</StepContent>
+                        <StepContent>
+                            <ErrorBoundryWrapper>
+                                <Logs
+                                    token={null}
+                                    height={350}
+                                    loadingLineSeverity="info"
+                                    spinnerMessages={{
+                                        stoppedKey:
+                                            'dataflowReset.logs.spinner.stopped',
+                                        runningKey:
+                                            'dataflowReset.logs.spinner.running',
+                                    }}
+                                />
+                            </ErrorBoundryWrapper>
+                        </StepContent>
                     </Step>
                 </Stepper>
             </DialogContent>
