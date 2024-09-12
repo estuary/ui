@@ -16,7 +16,8 @@ const getDataPlaneOptions = async () => {
         () =>
             supabaseClient
                 .from(TABLES.DATA_PLANES)
-                .select('data_plane_name,id'),
+                .select('data_plane_name,id')
+                .order('data_plane_name'),
         'getDataPlaneOptions'
     ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
 

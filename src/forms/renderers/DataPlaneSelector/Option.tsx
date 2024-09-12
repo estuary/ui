@@ -1,5 +1,5 @@
 import { EnumOption } from '@jsonforms/core';
-import { Box, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { DataPlaneOption } from 'stores/DetailsForm/types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -27,20 +27,30 @@ const parseDataPlaneName = (
                 ? truncatedName
                 : truncatedName.substring(slashIndex + 1);
 
-        const [provider, rest] = suffix.split('-', 2);
+        const firstHyphenIndex = suffix.indexOf('-');
 
-        const hyphenIndex = rest.lastIndexOf('-');
+        let provider = '';
+        let region = '';
+        let cluster = '';
 
-        const region =
-            hyphenIndex === -1 ? rest : rest.substring(0, hyphenIndex);
+        if (firstHyphenIndex > -1) {
+            provider = suffix.substring(0, firstHyphenIndex);
 
-        const cluster =
-            hyphenIndex === -1 ? '' : rest.substring(hyphenIndex + 1);
+            const lastHyphenIndex = suffix.lastIndexOf('-');
+            const regionOnly =
+                lastHyphenIndex === -1 || lastHyphenIndex === firstHyphenIndex;
+
+            region = regionOnly
+                ? suffix.substring(firstHyphenIndex + 1)
+                : suffix.substring(firstHyphenIndex + 1, lastHyphenIndex);
+
+            cluster = regionOnly ? '' : suffix.substring(lastHyphenIndex + 1);
+        }
 
         return { cluster, prefix, provider, region };
     }
 
-    return { cluster: '', prefix: dataPlaneName, provider: '', region: '' };
+    return { cluster: '', prefix: '', provider: '', region: '' };
 };
 
 function Option({ renderOptionProps, option }: Props) {
@@ -51,15 +61,24 @@ function Option({ renderOptionProps, option }: Props) {
         value.scope
     );
 
-    const evaluatedLabel =
-        region || cluster
-            ? `${prefix}${provider}: ${region} ${cluster}`
-            : prefix;
+    const formattedLabel = hasLength(provider)
+        ? `${provider}: ${region} ${cluster}`
+        : label;
 
     return (
-        <Box component="li" {...renderOptionProps}>
-            <Typography>{evaluatedLabel}</Typography>
-        </Box>
+        <Stack
+            {...renderOptionProps}
+            component="li"
+            style={{ alignItems: 'flex-start' }}
+        >
+            {hasLength(prefix) ? (
+                <Typography variant="caption" style={{ fontSize: 10 }}>
+                    {prefix}
+                </Typography>
+            ) : null}
+
+            <Typography>{formattedLabel}</Typography>
+        </Stack>
     );
 }
 

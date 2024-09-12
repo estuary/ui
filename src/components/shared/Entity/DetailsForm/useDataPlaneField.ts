@@ -11,6 +11,11 @@ import { hasLength } from 'utils/misc-utils';
 import { getDataPlaneScope } from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
+interface OneOfElement {
+    const: Object;
+    title: string;
+}
+
 export default function useDataPlaneField(
     entityType: EntityWithCreateWorkflow
 ) {
@@ -77,20 +82,39 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, setLoading, setOptions]);
 
     const dataPlaneSchema = useMemo(() => {
-        const dataPlanesOneOf = [
-            {
-                const: { dataPlaneName: '', id: '', scope: 'public' },
-                title: intl.formatMessage({ id: 'common.default' }),
-            },
-        ] as { const: Object; title: string }[];
+        let dataPlanesOneOf: OneOfElement[] = [];
 
         if (options.length > 0) {
+            const privateOptions: OneOfElement[] = [];
+            const publicOptions: OneOfElement[] = [
+                {
+                    const: { dataPlaneName: '', id: '', scope: 'public' },
+                    title: intl.formatMessage({ id: 'common.default' }),
+                },
+            ];
+
             options.forEach((option) => {
                 dataPlanesOneOf.push({
                     const: option,
                     title: option.dataPlaneName,
                 });
+
+                if (option.scope === 'public') {
+                    publicOptions.push({
+                        const: option,
+                        title: option.dataPlaneName,
+                    });
+
+                    return;
+                }
+
+                privateOptions.push({
+                    const: option,
+                    title: option.dataPlaneName,
+                });
             });
+
+            dataPlanesOneOf = privateOptions.concat(publicOptions);
         }
 
         return dataPlaneOption === 'show_option' && hasLength(dataPlanesOneOf)
