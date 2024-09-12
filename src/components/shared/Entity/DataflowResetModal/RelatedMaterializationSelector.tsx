@@ -6,7 +6,8 @@ import { useBindingStore } from 'stores/Binding/Store';
 import { RelatedMaterializationSelectorProps } from './types';
 import MaterializationSelectorOption from './MaterializationSelectorOption';
 
-const getValue = (option: any) => option.catalog_name;
+const getValue = (option: any) =>
+    typeof option === 'string' ? option : option?.catalog_name;
 
 function RelatedMaterializationSelector({
     disabled,
@@ -35,12 +36,14 @@ function RelatedMaterializationSelector({
                 getOptionLabel={getValue}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.catalog_name === optionValue.catalog_name;
+                    return option.catalog_name === optionValue;
                 }}
                 options={keys}
                 value={backfillDataFlowTarget}
                 onChange={(_event, newValue) => {
-                    setBackfillDataFlowTarget(newValue);
+                    setBackfillDataFlowTarget(
+                        newValue ? newValue.catalog_name : null
+                    );
                 }}
                 onInputChange={(_event, newInputValue) => {
                     setInputValue(newInputValue);
