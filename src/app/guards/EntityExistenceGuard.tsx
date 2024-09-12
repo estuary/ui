@@ -5,12 +5,14 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
 import EntityNotFound from 'pages/error/EntityNotFound';
+import { useFormStateStore_setLiveSpec } from 'stores/FormState/hooks';
 import { BaseComponentProps } from 'types';
 
 function EntityExistenceGuard({ children }: BaseComponentProps) {
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
     const entityType = useEntityType();
+    const setLiveSpec = useFormStateStore_setLiveSpec();
 
     const { liveSpecs, isValidating: checkingEntityExistence } =
         useLiveSpecsExtWithSpec(liveSpecId, entityType);
@@ -20,6 +22,7 @@ function EntityExistenceGuard({ children }: BaseComponentProps) {
     } else if (liveSpecs.length === 0) {
         return <EntityNotFound />;
     } else {
+        setLiveSpec(liveSpecs[0].spec);
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
     }

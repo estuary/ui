@@ -138,3 +138,39 @@ export const useFormStateStore_messagePrefix = () => {
         (state) => state.messagePrefix
     );
 };
+
+export const useFormStateStore_showChangeReview = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['showChangeReview']
+    >(storeName(workflow), (state) => state.showChangeReview);
+};
+
+export const useFormStateStore_setShowChangeReview = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['setShowChangeReview']
+    >(storeName(workflow), (state) => state.setShowChangeReview);
+};
+
+export const useFormStateStore_liveSpec = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['liveSpec']>(
+        storeName(workflow),
+        (state) => state.liveSpec
+    );
+};
+
+export const useFormStateStore_setLiveSpec = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['setLiveSpec']>(
+        storeName(workflow),
+        (state) => state.setLiveSpec
+    );
+};

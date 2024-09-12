@@ -4,13 +4,14 @@ import {
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import useDataFlowResetHandler from '../hooks/useDataFlowResetHandler';
-import useDataFlowResetPrompt from '../hooks/useDataFlowResetPrompt';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setShowChangeReview,
+} from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
@@ -22,47 +23,38 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
+    const intl = useIntl();
+
     const save = useSave(logEvent, onFailure, dryRun);
 
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
-    const showDataFlowResetPrompt = useDataFlowResetPrompt();
-    const handler = useDataFlowResetHandler();
+    const setShowChangeReview = useFormStateStore_setShowChangeReview();
 
-    const [backfillDataflow] = useBindingStore((state) => [
-        state.backfillDataFlow,
-    ]);
+    const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
     const needsBackfilled = useBinding_backfilledBindings_count();
-
-    const labelId = buttonLabelId
-        ? buttonLabelId
-        : dryRun === true
-        ? `cta.testConfig${loading ? '.active' : ''}`
-        : `cta.saveEntity${loading ? '.active' : ''}`;
 
     return (
         <Button
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
             onClick={async () => {
-                // TODO (reset dataflow)
                 if (!dryRun && backfillDataflow && needsBackfilled) {
-                    showDataFlowResetPrompt((data) => {
-                        if (data) {
-                            console.log('YES');
-                            handler();
-                        } else {
-                            console.log('NO');
-                        }
-                    });
-                    return;
+                    setShowChangeReview(true);
+                } else {
+                    await save(draftId);
                 }
-                await save(draftId);
             }}
         >
-            <FormattedMessage id={labelId} />
+            {intl.formatMessage({
+                id: buttonLabelId
+                    ? buttonLabelId
+                    : dryRun === true
+                    ? `cta.testConfig${loading ? '.active' : ''}`
+                    : `cta.saveEntity${loading ? '.active' : ''}`,
+            })}
         </Button>
     );
 }

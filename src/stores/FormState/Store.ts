@@ -83,12 +83,20 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    'formState' | 'isIdle' | 'isActive' | 'messagePrefix'
+    | 'formState'
+    | 'isIdle'
+    | 'isActive'
+    | 'messagePrefix'
+    | 'showChangeReview'
+    | 'liveSpec'
 > => ({
     formState: initialFormState,
 
     isIdle: true,
     isActive: false,
+
+    liveSpec: null,
+    showChangeReview: false,
 
     messagePrefix,
 });
@@ -167,6 +175,26 @@ const getInitialState = (
             }),
             false,
             'Form Status Updated'
+        );
+    },
+
+    setShowChangeReview: (newVal) => {
+        set(
+            produce((state: EntityFormState) => {
+                state.showChangeReview = newVal;
+            }),
+            false,
+            'Show Change Review Updated'
+        );
+    },
+
+    setLiveSpec: (newVal) => {
+        set(
+            produce((state: EntityFormState) => {
+                state.liveSpec = newVal;
+            }),
+            false,
+            'Live Spec Updated'
         );
     },
 

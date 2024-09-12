@@ -38,6 +38,7 @@ import AlertBox from '../../AlertBox';
 import IncompatibleCollections from '../IncompatibleCollections';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
+import DataflowReset from '../DataflowReset';
 
 interface Props {
     title: string;
@@ -212,6 +213,8 @@ function EntityEdit({
                     <CatalogEditor
                         messageId={`${messagePrefix}.finalReview.instructions`}
                     />
+
+                    <DataflowReset />
                 </DraftSpecEditorHydrator>
             )}
         </>

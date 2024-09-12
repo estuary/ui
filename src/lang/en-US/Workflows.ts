@@ -87,6 +87,10 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
+    'dataflowReset.warning.title': `This cannot be undone or stopped`,
+    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please ontact support immedietly as we may need to assist you in  recovery.`,
+    'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
+
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
     'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,

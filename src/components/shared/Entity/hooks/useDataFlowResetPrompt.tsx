@@ -1,20 +1,9 @@
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useCallback } from 'react';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useShallow } from 'zustand/react/shallow';
-import BindingReview from '../DataflowResetModal/BindingReview';
+import BindingReview from '../DataflowReset/BindingReview';
 
 function useDataFlowResetPrompt() {
     const confirmationModalContext = useConfirmationModalContext();
-
-    const collectionsBeingBackfilled = useBindingStore(
-        useShallow((state) => {
-            return state.backfilledBindings.map((backfilledBinding) => {
-                return state.resourceConfigs[backfilledBinding].meta
-                    .collectionName;
-            });
-        })
-    );
 
     return useCallback(
         (callback: (data: any) => void) => {
@@ -23,7 +12,7 @@ function useDataFlowResetPrompt() {
                     {
                         message: (
                             <BindingReview
-                                selected={collectionsBeingBackfilled}
+                            // selected={collectionsBeingBackfilled}
                             />
                         ),
                         title: 'workflows.save.review.header',
@@ -37,7 +26,7 @@ function useDataFlowResetPrompt() {
                     console.log('catch', err);
                 });
         },
-        [collectionsBeingBackfilled, confirmationModalContext]
+        [confirmationModalContext]
     );
 }
 
