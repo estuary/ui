@@ -133,6 +133,9 @@ export const Workflows: Record<string, string> = {
     'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please ontact support immedietly as we may need to assist you in  recovery.`,
     'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
 
+    'dataflowReset.editor.warning.title': `Editing disabled`,
+    'dataflowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
+
     'dataflowReset.logs.spinner.stopped': `done`,
     'dataflowReset.logs.spinner.running': `loading...`,
 
