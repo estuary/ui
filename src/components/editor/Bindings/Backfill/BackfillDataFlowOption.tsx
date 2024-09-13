@@ -28,8 +28,9 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     }
 
     return (
-        <Box sx={{ mt: 3, maxWidth: 'fit-content' }}>
+        <Box sx={{ mt: 3 }}>
             <AlertBox
+                fitWidth
                 severity="info"
                 short
                 title={intl.formatMessage({
