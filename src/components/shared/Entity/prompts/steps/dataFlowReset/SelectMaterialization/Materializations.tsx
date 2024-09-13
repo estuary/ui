@@ -6,10 +6,10 @@ import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
-import RelatedMaterializationSelector from './RelatedMaterializationSelector';
+import Selector from './Selector';
 import { BindingReviewProps } from './types';
 
-function RelatedMaterializations({ selected }: BindingReviewProps) {
+function Materializations({ selected }: BindingReviewProps) {
     const intl = useIntl();
 
     const { related, error, isValidating } = useLiveSpecsExt_related(selected);
@@ -41,7 +41,7 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
             {error ? <Error error={error} condensed /> : null}
 
             {!error && foundData ? (
-                <RelatedMaterializationSelector keys={related} value={null} />
+                <Selector keys={related} value={null} />
             ) : (
                 <Box>
                     {intl.formatMessage({
@@ -53,4 +53,4 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
     );
 }
 
-export default RelatedMaterializations;
+export default Materializations;

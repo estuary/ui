@@ -139,22 +139,22 @@ export const useFormStateStore_messagePrefix = () => {
     );
 };
 
-export const useFormStateStore_showChangeReview = () => {
+export const useFormStateStore_showPreSavePrompt = () => {
     const workflow = useEntityWorkflow();
 
     return useZustandStore<
         EntityFormState,
-        EntityFormState['showChangeReview']
-    >(storeName(workflow), (state) => state.showChangeReview);
+        EntityFormState['showPreSavePrompt']
+    >(storeName(workflow), (state) => state.showPreSavePrompt);
 };
 
-export const useFormStateStore_setShowChangeReview = () => {
+export const useFormStateStore_setShowPreSavePrompt = () => {
     const workflow = useEntityWorkflow();
 
     return useZustandStore<
         EntityFormState,
-        EntityFormState['setShowChangeReview']
-    >(storeName(workflow), (state) => state.setShowChangeReview);
+        EntityFormState['setShowPreSavePrompt']
+    >(storeName(workflow), (state) => state.setShowPreSavePrompt);
 };
 
 export const useFormStateStore_liveSpec = () => {

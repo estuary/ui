@@ -3,9 +3,7 @@ import ChipList from 'components/shared/ChipList';
 import { truncateTextSx } from 'context/Theme';
 import { MaterializationSelectorOptionProps } from './types';
 
-function MaterializationSelectorOption({
-    option,
-}: MaterializationSelectorOptionProps) {
+function SelectorOption({ option }: MaterializationSelectorOptionProps) {
     const { catalog_name, reads_from } = option;
 
     return (
@@ -24,4 +22,4 @@ function MaterializationSelectorOption({
     );
 }
 
-export default MaterializationSelectorOption;
+export default SelectorOption;

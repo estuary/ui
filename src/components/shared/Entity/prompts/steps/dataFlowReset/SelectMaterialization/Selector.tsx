@@ -4,15 +4,12 @@ import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { RelatedMaterializationSelectorProps } from './types';
-import MaterializationSelectorOption from './MaterializationSelectorOption';
+import SelectorOption from './SelectorOption';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;
 
-function RelatedMaterializationSelector({
-    disabled,
-    keys,
-}: RelatedMaterializationSelectorProps) {
+function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
@@ -65,7 +62,7 @@ function RelatedMaterializationSelector({
                 }}
                 renderOption={(renderOptionProps, option, state) => {
                     const RowContent = (
-                        <MaterializationSelectorOption
+                        <SelectorOption
                             option={option}
                             x-react-window-item-height={75}
                         />
@@ -82,4 +79,4 @@ function RelatedMaterializationSelector({
     );
 }
 
-export default RelatedMaterializationSelector;
+export default Selector;

@@ -4,7 +4,7 @@ import ChipList from 'components/shared/ChipList';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useShallow } from 'zustand/react/shallow';
-import RelatedMaterializations from './RelatedMaterializations';
+import Materializations from './Materializations';
 
 function BindingReview() {
     const intl = useIntl();
@@ -39,7 +39,7 @@ function BindingReview() {
             </Typography>
             <ChipList values={collectionsBeingBackfilled} maxChips={10} />
 
-            <RelatedMaterializations selected={collectionsBeingBackfilled} />
+            <Materializations selected={collectionsBeingBackfilled} />
         </Stack>
     );
 }

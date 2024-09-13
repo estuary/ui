@@ -9,7 +9,7 @@ import { useFormStateStore_liveSpec } from 'stores/FormState/hooks';
 
 const HEIGHT = 400;
 
-function ChangeReview() {
+function DiffViewer() {
     const theme = useTheme();
 
     const entityName = useDetailsFormStore((state) => state.draftedEntityName);
@@ -29,4 +29,4 @@ function ChangeReview() {
     );
 }
 
-export default ChangeReview;
+export default DiffViewer;
