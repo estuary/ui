@@ -1,24 +1,25 @@
 import { Stack, Typography } from '@mui/material';
-import ConnectorIcon from 'components/connectors/ConnectorIcon';
+import ChipList from 'components/shared/ChipList';
 import { truncateTextSx } from 'context/Theme';
 import { MaterializationSelectorOptionProps } from './types';
 
 function MaterializationSelectorOption({
-    name,
-    logo,
+    option,
 }: MaterializationSelectorOptionProps) {
-    return (
-        <Stack component="span" direction="row" spacing={1}>
-            <ConnectorIcon iconPath={logo} />
+    const { catalog_name, reads_from } = option;
 
+    return (
+        <Stack component="span" direction="column" spacing={1}>
             <Typography
                 component="span"
                 sx={{
                     ...truncateTextSx,
                 }}
             >
-                {name}
+                {catalog_name}
             </Typography>
+
+            <ChipList values={reads_from} maxChips={3} />
         </Stack>
     );
 }

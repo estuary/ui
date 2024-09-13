@@ -64,12 +64,10 @@ function RelatedMaterializationSelector({
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { catalog_name, logo_url } = option;
-
                     const RowContent = (
                         <MaterializationSelectorOption
-                            name={catalog_name}
-                            logo={logo_url}
+                            option={option}
+                            x-react-window-item-height={75}
                         />
                     );
 

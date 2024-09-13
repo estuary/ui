@@ -1,10 +1,12 @@
+import { LiveSpecsExt_Related } from 'hooks/useLiveSpecsExt';
+
 export interface BindingReviewProps {
     selected: string[];
 }
 
 export interface RelatedMaterializationSelectorProps {
-    keys: any[];
-    value: any;
+    keys: LiveSpecsExt_Related[];
+    value: string | null;
     disabled?: boolean;
     onChange?: (
         event: any,
@@ -14,6 +16,5 @@ export interface RelatedMaterializationSelectorProps {
 }
 
 export interface MaterializationSelectorOptionProps {
-    name: string;
-    logo: string;
+    option: LiveSpecsExt_Related;
 }

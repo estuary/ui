@@ -110,19 +110,21 @@ export function useLiveSpecsExtWithOutSpec(
     return useLiveSpecsExt(draftId, specType, false);
 }
 
+const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
+const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
+export interface LiveSpecsExt_Related {
+    catalog_name: string;
+    reads_from: string[];
+    id: string;
+}
 export function useLiveSpecsExt_related(selected: string[]) {
     const { data, error, isValidating } = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select(
-                `
-                catalog_name, 
-                logo_url:connector_logo_url->>en-US::text,
-                id
-            `
-            )
+            .select(liveSpecsExtRelatedQuery)
             .eq('spec_type', 'materialization')
             .overlaps('reads_from', selected)
+            .returns<LiveSpecsExt_Related[]>()
     );
 
     return {
