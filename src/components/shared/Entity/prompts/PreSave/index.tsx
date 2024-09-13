@@ -10,8 +10,6 @@ function PreSave() {
 
     const showPreSavePrompt = useFormStateStore_showPreSavePrompt();
 
-    console.log('PreSave activeStep', activeStep);
-
     return (
         <Dialog
             maxWidth={activeStep === 0 ? 'lg' : 'md'}
