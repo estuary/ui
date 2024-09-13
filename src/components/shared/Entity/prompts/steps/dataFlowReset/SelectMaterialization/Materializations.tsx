@@ -23,6 +23,9 @@ function Materializations({ selected }: BindingReviewProps) {
     ]);
 
     useEffect(() => {
+        // TODO (data flow reset)
+        // This needs to get worked into the steps somehow.... the steps need to be able to say
+        //  they are "allowed to continue"
         confirmationModal?.setContinueAllowed(
             Boolean((!isValidating && !foundData) || backfillDataFlowTarget)
         );
