@@ -4,8 +4,9 @@ import { createGlobalState } from 'react-use';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { DataFlowResetSteps } from '../dataFlowReset/shared';
-import ChangeReviewStep from './ChangeReviewStep';
-import PublishStep from './PublishStep';
+import ChangeReviewStep from './ChangeReview';
+import Done from './Done';
+import Publish from './Publish';
 
 // TODO (data flow reset) this stuff should go into a store
 //  also we probably need to keep if a step is done within the step itself
@@ -26,7 +27,7 @@ function usePreSavePromptSteps() {
             response.push(...DataFlowResetSteps);
         }
 
-        response.push(PublishStep);
+        response.push(Publish, Done);
 
         return response;
     }, [backfillDataflow, needsBackfilled]);

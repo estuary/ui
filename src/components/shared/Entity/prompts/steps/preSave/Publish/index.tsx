@@ -1,6 +1,6 @@
 import { StepContent, StepLabel } from '@mui/material';
 
-function PublishStep() {
+function Publish() {
     return (
         <>
             <StepLabel>Publishing</StepLabel>
@@ -9,4 +9,4 @@ function PublishStep() {
     );
 }
 
-export default PublishStep;
+export default Publish;
