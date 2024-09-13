@@ -4,15 +4,16 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledBindings_count,
-    useBinding_resourceConfigs_count,
+    useBinding_collections_count,
 } from 'stores/Binding/hooks';
+import { BackfillCountProps } from './types';
 
-function BackfillCount() {
+function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();
     const entityType = useEntityType();
 
     const backfillCount = useBinding_backfilledBindings_count();
-    const bindingsTotal = useBinding_resourceConfigs_count();
+    const bindingsTotal = useBinding_collections_count();
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noBackfill, itemType_backfill, itemType_bindings] = useMemo(() => {
@@ -43,10 +44,19 @@ function BackfillCount() {
             aria-label={intl.formatMessage({
                 id: 'workflows.collectionSelector.manualBackfill.count.aria',
             })}
-            color={noBackfill ? 'info' : 'success'}
+            color={noBackfill || disabled ? 'info' : 'success'}
             variant="outlined"
             label={
-                noBackfill
+                disabled
+                    ? intl.formatMessage(
+                          {
+                              id: 'workflows.collectionSelector.manualBackfill.count.disabled',
+                          },
+                          {
+                              itemType: itemType_bindings,
+                          }
+                      )
+                    : noBackfill
                     ? intl.formatMessage(
                           {
                               id: 'workflows.collectionSelector.manualBackfill.count.empty',
