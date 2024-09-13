@@ -2,19 +2,19 @@ import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
 
 interface Props {
+    appliedUiSchemaOptions: any;
+    currentOption: any | null;
+    enabled: any;
     inputProps: any;
     InputProps: any;
-    currentOption: any | null;
-    appliedUiSchemaOptions: any;
-    enabled: any;
 }
 
 export default function DataPlaneInput({
+    appliedUiSchemaOptions,
+    currentOption,
+    enabled,
     inputProps,
     InputProps,
-    currentOption,
-    appliedUiSchemaOptions,
-    enabled,
 }: Props) {
     console.log(currentOption);
     return (

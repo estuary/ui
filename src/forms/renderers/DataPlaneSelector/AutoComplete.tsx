@@ -101,7 +101,7 @@ export const DataPlaneAutoComplete = ({
                 setInputValue(newInputValue);
             }}
             renderGroup={({ group, children }) => (
-                <li>
+                <li key={group}>
                     <Typography
                         color="primary"
                         sx={{

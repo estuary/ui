@@ -23,6 +23,7 @@ import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
     getDataPlaneScope,
+    parseDataPlaneName,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { StoreApi, create } from 'zustand';
@@ -68,16 +69,37 @@ const getDataPlane = async (
             if (!error && data && data.length > 0) {
                 const { data_plane_name, id } = data[0];
 
+                const scope = getDataPlaneScope(data_plane_name);
+
+                const { cluster, prefix, provider, region } =
+                    parseDataPlaneName(data_plane_name, scope);
+
                 return {
-                    dataPlaneName: data_plane_name,
+                    dataPlaneName: {
+                        cluster,
+                        prefix,
+                        provider,
+                        region,
+                        whole: data_plane_name,
+                    },
                     id,
-                    scope: getDataPlaneScope(data_plane_name),
+                    scope,
                 };
             }
 
             return null;
         } else {
-            return { dataPlaneName: '', id: '', scope: 'public' };
+            return {
+                dataPlaneName: {
+                    cluster: '',
+                    prefix: '',
+                    provider: '',
+                    region: '',
+                    whole: '',
+                },
+                id: '',
+                scope: 'public',
+            };
         }
     }
 

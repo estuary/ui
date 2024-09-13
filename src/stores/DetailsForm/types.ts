@@ -3,8 +3,16 @@ import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { EntityWorkflow } from 'types';
 
+export interface DataPlaneName {
+    cluster: string;
+    prefix: string;
+    provider: string;
+    region: string;
+    whole: string;
+}
+
 export interface DataPlaneOption {
-    dataPlaneName: string;
+    dataPlaneName: DataPlaneName;
     id: string;
     scope: 'public' | 'private';
 }

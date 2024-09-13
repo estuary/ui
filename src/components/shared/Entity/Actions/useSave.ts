@@ -264,7 +264,7 @@ function useSave(
                 draftId,
                 dryRun ?? false,
                 entityDescription,
-                dataPlaneName
+                dataPlaneName?.whole
             );
             if (response.error) {
                 onFailure({

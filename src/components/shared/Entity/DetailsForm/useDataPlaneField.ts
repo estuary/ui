@@ -8,11 +8,15 @@ import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { getDataPlaneScope } from 'utils/workflow-utils';
+import {
+    formatDataPlaneName,
+    getDataPlaneScope,
+    parseDataPlaneName,
+} from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 interface OneOfElement {
-    const: Object;
+    const: DataPlaneOption;
     title: string;
 }
 
@@ -61,11 +65,32 @@ export default function useDataPlaneField(
 
                         if (response.data) {
                             const formattedData = response.data.map(
-                                ({ data_plane_name, id }) => ({
-                                    dataPlaneName: data_plane_name,
-                                    id,
-                                    scope: getDataPlaneScope(data_plane_name),
-                                })
+                                ({ data_plane_name, id }) => {
+                                    const scope =
+                                        getDataPlaneScope(data_plane_name);
+
+                                    const {
+                                        cluster,
+                                        prefix,
+                                        provider,
+                                        region,
+                                    } = parseDataPlaneName(
+                                        data_plane_name,
+                                        scope
+                                    );
+
+                                    return {
+                                        dataPlaneName: {
+                                            cluster,
+                                            prefix,
+                                            provider,
+                                            region,
+                                            whole: data_plane_name,
+                                        },
+                                        id,
+                                        scope,
+                                    };
+                                }
                             );
 
                             setOptions(formattedData);
@@ -88,30 +113,43 @@ export default function useDataPlaneField(
             const privateOptions: OneOfElement[] = [];
             const publicOptions: OneOfElement[] = [
                 {
-                    const: { dataPlaneName: '', id: '', scope: 'public' },
+                    const: {
+                        dataPlaneName: {
+                            cluster: '',
+                            prefix: '',
+                            provider: '',
+                            region: '',
+                            whole: '',
+                        },
+                        id: '',
+                        scope: 'public',
+                    },
                     title: intl.formatMessage({ id: 'common.default' }),
                 },
             ];
 
             options.forEach((option) => {
-                dataPlanesOneOf.push({
-                    const: option,
-                    title: option.dataPlaneName,
-                });
+                const {
+                    cluster,
+                    provider,
+                    region,
+                    whole: wholeName,
+                } = option.dataPlaneName;
+
+                const title = formatDataPlaneName(
+                    cluster,
+                    provider,
+                    region,
+                    wholeName
+                );
 
                 if (option.scope === 'public') {
-                    publicOptions.push({
-                        const: option,
-                        title: option.dataPlaneName,
-                    });
+                    publicOptions.push({ const: option, title });
 
                     return;
                 }
 
-                privateOptions.push({
-                    const: option,
-                    title: option.dataPlaneName,
-                });
+                privateOptions.push({ const: option, title });
             });
 
             dataPlanesOneOf = privateOptions.concat(publicOptions);

@@ -121,7 +121,7 @@ function useDiscoverCapture(
                     encryptedEndpointConfig.data,
                     options.initiateRediscovery,
                     options.updateOnly,
-                    dataPlaneName
+                    dataPlaneName?.whole
                 );
 
                 return discoveryStartSuccess;
