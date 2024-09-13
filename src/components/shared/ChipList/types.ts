@@ -17,5 +17,4 @@ export interface ChipListProps {
     disabled?: boolean;
     maxChips?: number;
     stripPath?: boolean;
-    onClick?: any;
 }
