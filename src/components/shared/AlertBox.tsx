@@ -18,10 +18,11 @@ import { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     severity: AlertColor;
-    short?: boolean;
+    fitWidth?: boolean;
     hideIcon?: boolean;
-    title?: string | ReactNode;
     onClose?: () => void;
+    short?: boolean;
+    title?: string | ReactNode;
 }
 
 const SHARED_STYLING = {
@@ -38,7 +39,7 @@ const HEADER_MESSAGE = {
 };
 
 const AlertBox = forwardRef<any, Props>(function NavLinkRef(
-    { short, severity, hideIcon, title, children, onClose },
+    { short, severity, hideIcon, title, children, onClose, fitWidth },
     ref
 ) {
     const theme = useTheme();
@@ -92,6 +93,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 'color': alertTextPrimary[theme.palette.mode],
                 'borderColor': theme.palette[severity][theme.palette.mode],
                 'padding': 0,
+                'maxWidth': fitWidth ? 'fit-content' : undefined,
                 'pl': hideIcon ? 2 : undefined,
                 '& > .MuiAlert-message': {
                     p: 1,
