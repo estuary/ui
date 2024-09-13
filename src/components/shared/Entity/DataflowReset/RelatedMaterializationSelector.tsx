@@ -32,7 +32,6 @@ function RelatedMaterializationSelector({
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual}
-                blurOnSelect={true}
                 disabled={disabled}
                 getOptionLabel={getValue}
                 inputValue={inputValue}

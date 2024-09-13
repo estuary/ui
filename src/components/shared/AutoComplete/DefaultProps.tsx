@@ -22,7 +22,6 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
 > = {
     ListboxComponent,
     PopperComponent,
-    blurOnSelect: false,
     disableCloseOnSelect: true,
     options: [], // You MUST provide these yourself
     size: 'small',
@@ -42,4 +41,5 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
 > = {
     ...autoCompleteDefaults_Virtual,
     multiple: true,
+    blurOnSelect: false,
 };
