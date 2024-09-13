@@ -12,6 +12,14 @@ import Publish from './Publish';
 //  also we probably need to keep if a step is done within the step itself
 //  that way a user could go back and view the outcome of a state while
 //  other states are running.
+
+// step data sketch
+// label - string or node
+// content - react node
+// done - boolean
+// errors - array of issues (cannot continue until gone)
+// status? - maybe... need to know if it is running or not?
+// action? - maybe... storing off the functions/hooks/whatevs that will run on this step
 export const useGlobalValue = createGlobalState<number>(0);
 
 function usePreSavePromptSteps() {
