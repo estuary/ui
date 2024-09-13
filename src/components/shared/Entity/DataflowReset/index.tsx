@@ -53,7 +53,6 @@ function DataflowReset() {
             maxWidth={activeStep === 0 ? 'lg' : 'md'}
             fullWidth
             open={showChangeReview}
-            onClose={closeDialog}
         >
             <DialogTitle
                 style={{
