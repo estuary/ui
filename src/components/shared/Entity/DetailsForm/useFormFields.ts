@@ -51,7 +51,7 @@ export default function useFormFields(
                       ...baseProperties,
                       ...dataPlaneSchema,
                   },
-                  required: baseRequirements.concat('dataPlane'),
+                  required: baseRequirements,
                   type: 'object',
               }
             : {
