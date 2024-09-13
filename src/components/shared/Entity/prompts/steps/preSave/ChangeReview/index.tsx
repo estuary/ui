@@ -1,4 +1,5 @@
 import { StepContent, StepLabel } from '@mui/material';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import DiffViewer from './DiffViewer';
 
 function ChangeReview() {
@@ -6,7 +7,9 @@ function ChangeReview() {
         <>
             <StepLabel>How the spec is changing</StepLabel>
             <StepContent>
-                <DiffViewer />
+                <ErrorBoundryWrapper>
+                    <DiffViewer />
+                </ErrorBoundryWrapper>
             </StepContent>
         </>
     );

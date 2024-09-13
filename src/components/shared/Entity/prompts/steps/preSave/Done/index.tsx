@@ -1,10 +1,15 @@
 import { StepContent, StepLabel } from '@mui/material';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 
 function Done() {
     return (
         <>
             <StepLabel>Done</StepLabel>
-            <StepContent>Congrats you are done!</StepContent>
+            <StepContent>
+                <ErrorBoundryWrapper>
+                    Congrats you are done!
+                </ErrorBoundryWrapper>
+            </StepContent>
         </>
     );
 }
