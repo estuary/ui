@@ -42,6 +42,8 @@ export const addKeywords = (ajv: Ajv) => {
     ajv.addKeyword('x-collection-name'); // Used to default name in resource configs
     ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
     ajv.addKeyword('x-infer-schema'); // Indicates that schema inference should be enabled in the UI
+    ajv.addKeyword('x-delta-updates'); // Backend only
+    ajv.addKeyword('x-schema-name'); // Backend only
     return ajv;
 };
 

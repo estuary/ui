@@ -20,6 +20,11 @@ function CatalogEditor({ messageId }: Props) {
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
+    // TODO (data flow reset)
+    // const intl = useIntl();
+    // const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
+    // const needsBackfilled = useBinding_backfilledBindings_count();
+
     if (draftId && formStatus !== FormStatus.INIT) {
         return (
             <WrapperWithHeader
@@ -35,6 +40,22 @@ function CatalogEditor({ messageId }: Props) {
                     <Typography sx={{ mb: 2 }}>
                         <FormattedMessage id={messageId} />
                     </Typography>
+
+                    {/*TODO (data flow reset) - also make sure editor is disabled*/}
+                    {/*                    {backfillDataFlow && needsBackfilled ? (
+                        <AlertBox
+                            fitWidth
+                            short
+                            severity="warning"
+                            title={intl.formatMessage({
+                                id: 'dataflowReset.editor.warning.title',
+                            })}
+                        >
+                            {intl.formatMessage({
+                                id: 'dataflowReset.editor.warning.message',
+                            })}
+                        </AlertBox>
+                    ) : null}*/}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor

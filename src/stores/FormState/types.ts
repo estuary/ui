@@ -1,6 +1,6 @@
 import { AlertColor } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { MessagePrefixes } from 'types';
+import { MessagePrefixes, Schema } from 'types';
 
 export interface FormState {
     displayValidation: boolean;
@@ -49,6 +49,12 @@ export interface EntityFormState {
     // Form Status
     isIdle: boolean;
     isActive: boolean;
+
+    showPreSavePrompt: boolean;
+    setShowPreSavePrompt: (data: EntityFormState['showPreSavePrompt']) => void;
+
+    liveSpec: Schema | null;
+    setLiveSpec: (data: EntityFormState['liveSpec']) => void;
 
     updateStatus: (status: FormStatus, background?: boolean) => void;
 

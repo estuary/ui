@@ -138,3 +138,39 @@ export const useFormStateStore_messagePrefix = () => {
         (state) => state.messagePrefix
     );
 };
+
+export const useFormStateStore_showPreSavePrompt = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['showPreSavePrompt']
+    >(storeName(workflow), (state) => state.showPreSavePrompt);
+};
+
+export const useFormStateStore_setShowPreSavePrompt = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['setShowPreSavePrompt']
+    >(storeName(workflow), (state) => state.setShowPreSavePrompt);
+};
+
+export const useFormStateStore_liveSpec = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['liveSpec']>(
+        storeName(workflow),
+        (state) => state.liveSpec
+    );
+};
+
+export const useFormStateStore_setLiveSpec = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['setLiveSpec']>(
+        storeName(workflow),
+        (state) => state.setLiveSpec
+    );
+};

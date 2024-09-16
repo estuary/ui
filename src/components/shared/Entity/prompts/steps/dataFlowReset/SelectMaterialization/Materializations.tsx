@@ -1,36 +1,35 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import ChipList from 'components/shared/ChipList';
 import Error from 'components/shared/Error';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { supabaseClient } from 'context/GlobalProviders';
+import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { TABLES } from 'services/supabase';
+import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
+import Selector from './Selector';
 import { BindingReviewProps } from './types';
 
-function RelatedMaterializations({ selected }: BindingReviewProps) {
+function Materializations({ selected }: BindingReviewProps) {
     const intl = useIntl();
 
-    const { data, error, isValidating } = useQuery(
-        supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select('catalog_name')
-            .eq('spec_type', 'materialization')
-            .overlaps('reads_from', selected),
-        {}
-    );
+    const { related, error, isValidating } = useLiveSpecsExt_related(selected);
 
     const confirmationModal = useConfirmationModalContext();
 
-    const foundData = useMemo(() => hasLength(data), [data]);
+    const foundData = useMemo(() => hasLength(related), [related]);
+
+    const [backfillDataFlowTarget] = useBindingStore((state) => [
+        state.backfillDataFlowTarget,
+    ]);
 
     useEffect(() => {
-        if (!isValidating && !foundData) {
-            confirmationModal?.setContinueAllowed(true);
-        }
-    }, [foundData, isValidating, confirmationModal]);
+        // TODO (data flow reset)
+        // This needs to get worked into the steps somehow.... the steps need to be able to say
+        //  they are "allowed to continue"
+        confirmationModal?.setContinueAllowed(
+            Boolean((!isValidating && !foundData) || backfillDataFlowTarget)
+        );
+    }, [foundData, isValidating, confirmationModal, backfillDataFlowTarget]);
 
     return (
         <Box>
@@ -45,10 +44,7 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
             {error ? <Error error={error} condensed /> : null}
 
             {!error && foundData ? (
-                <ChipList
-                    values={data ? data.map((datum) => datum.catalog_name) : []}
-                    maxChips={10}
-                />
+                <Selector keys={related} value={null} />
             ) : (
                 <Box>
                     {intl.formatMessage({
@@ -60,4 +56,4 @@ function RelatedMaterializations({ selected }: BindingReviewProps) {
     );
 }
 
-export default RelatedMaterializations;
+export default Materializations;

@@ -30,7 +30,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const intl = useIntl();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
-    // TODO (reset dataflow)
+    // TODO (data flow reset)
     // const workflow = useEntityWorkflow();
 
     // Binding Store
@@ -199,11 +199,10 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 ) : null}
             </Stack>
 
-            {/* // TODO (reset dataflow)
-            {bindingIndex === -1 && workflow === 'capture_edit' ? (
+            {/*TODO (data flow reset)*/}
+            {/*            {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
-            ) : null}
-            */}
+            ) : null}*/}
         </Box>
     );
 }

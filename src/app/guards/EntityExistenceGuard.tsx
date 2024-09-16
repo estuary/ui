@@ -12,6 +12,9 @@ function EntityExistenceGuard({ children }: BaseComponentProps) {
 
     const entityType = useEntityType();
 
+    // TODO (data flow reset)
+    // const setLiveSpec = useFormStateStore_setLiveSpec();
+
     const { liveSpecs, isValidating: checkingEntityExistence } =
         useLiveSpecsExtWithSpec(liveSpecId, entityType);
 
@@ -20,6 +23,9 @@ function EntityExistenceGuard({ children }: BaseComponentProps) {
     } else if (liveSpecs.length === 0) {
         return <EntityNotFound />;
     } else {
+        // TODO (data flow reset)
+        // setLiveSpec(liveSpecs[0].spec);
+
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
     }
