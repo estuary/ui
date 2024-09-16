@@ -1,14 +1,16 @@
-import { StepContent, StepLabel } from '@mui/material';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import Logs from 'components/logs';
 
 function Publish() {
     return (
-        <>
-            <StepLabel>Publishing</StepLabel>
-            <StepContent>
-                <ErrorBoundryWrapper>Logs</ErrorBoundryWrapper>
-            </StepContent>
-        </>
+        <Logs
+            token={null}
+            height={350}
+            loadingLineSeverity="info"
+            spinnerMessages={{
+                stoppedKey: 'preSavePrompt.logs.spinner.stopped',
+                runningKey: 'preSavePrompt.logs.spinner.running',
+            }}
+        />
     );
 }
 

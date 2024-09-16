@@ -127,20 +127,29 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
+    //  PreSave prompts
+    'preSavePrompt.changeReview.title': `How the spec is changing`,
+    'preSavePrompt.publish.title': `Save and publish`,
+    'preSavePrompt.logs.spinner.stopped': `done`,
+    'preSavePrompt.logs.spinner.running': `loading...`,
+
+    'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
+    'dataFlowReset.disableCapture.title': `Disable capture`,
+    'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
+    'dataFlowReset.markMaterialization.title': `Update Materialization`,
+    'dataFlowReset.enableCapture.title': `Enable capture`,
+
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
-    'dataflowReset.warning.title': `This cannot be undone or stopped`,
-    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
-    'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
+    'dataFlowReset.warning.title': `This cannot be undone or stopped`,
+    'dataFlowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
+    'dataFlowReset.step1.message': `The {entityCount} collections to be backfilled`,
 
-    'dataflowReset.editor.warning.title': `Editing disabled`,
-    'dataflowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
-
-    'dataflowReset.logs.spinner.stopped': `done`,
-    'dataflowReset.logs.spinner.running': `loading...`,
+    'dataFlowReset.editor.warning.title': `Editing disabled`,
+    'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     // Field Selection
     'fieldSelection.header': `Field Selection`,

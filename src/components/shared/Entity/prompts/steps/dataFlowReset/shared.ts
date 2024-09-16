@@ -9,6 +9,7 @@ import WaitForCaptureStop from './WaitForCaptureStop';
 export const DataFlowResetSteps: PromptStep[] = [
     {
         StepComponent: SelectMaterialization,
+        stepLabelMessageId: 'dataFlowReset.selectMaterialization.title',
         state: {
             ...defaultStepState,
             valid: false,
@@ -16,18 +17,22 @@ export const DataFlowResetSteps: PromptStep[] = [
     },
     {
         StepComponent: DisableCapture,
+        stepLabelMessageId: 'dataFlowReset.disableCapture.title',
         state: defaultStepState,
     },
     {
         StepComponent: WaitForCaptureStop,
+        stepLabelMessageId: 'dataFlowReset.waitForCapture.title',
         state: defaultStepState,
     },
     {
         StepComponent: MarkMaterialization,
+        stepLabelMessageId: 'dataFlowReset.markMaterialization.title',
         state: defaultStepState,
     },
     {
         StepComponent: EnableCapture,
+        stepLabelMessageId: 'dataFlowReset.enableCapture.title',
         state: defaultStepState,
     },
 ];

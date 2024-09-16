@@ -21,5 +21,6 @@ export interface PromptStepState {
 
 export interface PromptStep {
     StepComponent: () => EmotionJSX.Element;
+    stepLabelMessageId: string;
     state: PromptStepState;
 }

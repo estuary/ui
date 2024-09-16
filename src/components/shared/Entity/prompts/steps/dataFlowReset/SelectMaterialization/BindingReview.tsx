@@ -23,15 +23,15 @@ function BindingReview() {
                 short
                 severity="warning"
                 title={intl.formatMessage({
-                    id: 'dataflowReset.warning.title',
+                    id: 'dataFlowReset.warning.title',
                 })}
             >
-                {intl.formatMessage({ id: 'dataflowReset.warning.message' })}
+                {intl.formatMessage({ id: 'dataFlowReset.warning.message' })}
             </AlertBox>
 
             <Typography>
                 {intl.formatMessage(
-                    { id: 'dataflowReset.step1.message' },
+                    { id: 'dataFlowReset.step1.message' },
                     {
                         entityCount: collectionsBeingBackfilled.length,
                     }

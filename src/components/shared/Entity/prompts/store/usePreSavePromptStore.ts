@@ -48,6 +48,8 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         const newSteps: PromptStep[] = [
                             {
                                 StepComponent: ChangeReview,
+                                stepLabelMessageId:
+                                    'preSavePrompt.changeReview.title',
                                 state: {
                                     ...defaultStepState,
                                     valid: true,
@@ -61,6 +63,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
 
                         newSteps.push({
                             StepComponent: Publish,
+                            stepLabelMessageId: 'preSavePrompt.publish.title',
                             state: defaultStepState,
                         });
                         state.steps = newSteps;

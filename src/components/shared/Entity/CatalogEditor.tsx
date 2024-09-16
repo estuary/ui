@@ -51,11 +51,11 @@ function CatalogEditor({ messageId }: Props) {
                             short
                             severity="warning"
                             title={intl.formatMessage({
-                                id: 'dataflowReset.editor.warning.title',
+                                id: 'dataFlowReset.editor.warning.title',
                             })}
                         >
                             {intl.formatMessage({
-                                id: 'dataflowReset.editor.warning.message',
+                                id: 'dataFlowReset.editor.warning.message',
                             })}
                         </AlertBox>
                     ) : null}

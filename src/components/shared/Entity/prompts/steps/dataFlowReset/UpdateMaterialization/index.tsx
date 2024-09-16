@@ -1,17 +1,5 @@
-import { StepContent, StepLabel } from '@mui/material';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-
 function MarkMaterialization() {
-    return (
-        <>
-            <StepLabel>Mark materialization notBefore</StepLabel>
-            <StepContent>
-                <ErrorBoundryWrapper>
-                    describe what we're doing
-                </ErrorBoundryWrapper>
-            </StepContent>
-        </>
-    );
+    return <>describe what we're doing</>;
 }
 
 export default MarkMaterialization;
