@@ -10,6 +10,8 @@ Run the following command in your flow root directory.
 supabase db reset --db-url postgresql://postgres:postgres@localhost:5432/postgres
 ```
 
+After doing this you will need to also clear out `/tests/.auth/`
+
 ## Queries to find all users related to tests
 
 ```

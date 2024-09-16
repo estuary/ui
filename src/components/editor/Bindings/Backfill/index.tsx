@@ -11,6 +11,7 @@ import {
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
     useBinding_collections_count,
+    useBinding_backfillSupported,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
@@ -19,6 +20,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
+import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -40,6 +42,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const backfillAllBindings = useBinding_backfillAllBindings();
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
+    const backfillSupported = useBinding_backfillSupported();
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -47,6 +50,12 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
+
+    const disabled =
+        formActive ||
+        collectionsCount < 1 ||
+        allBindingsDisabled ||
+        !backfillSupported;
 
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
@@ -147,7 +156,10 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         ]
     );
 
-    const disabled = formActive || collectionsCount < 1 || allBindingsDisabled;
+    // Do not want to overload the user with "this is not supported" so only showing message on the "backfill all" toggle.
+    if (!backfillSupported && bindingIndex !== -1) {
+        return null;
+    }
 
     return (
         <Box sx={{ mt: 3 }}>
@@ -161,6 +173,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 </Typography>
 
                 <Typography component="div">{description}</Typography>
+
+                {!backfillSupported ? <BackfillNotSupportedAlert /> : null}
             </Stack>
 
             <Stack direction="row" spacing={2}>
@@ -180,7 +194,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     })}
                 </BooleanToggleButton>
 
-                {bindingIndex === -1 ? (
+                {backfillSupported && bindingIndex === -1 ? (
                     <BackfillCount disabled={disabled} />
                 ) : null}
             </Stack>

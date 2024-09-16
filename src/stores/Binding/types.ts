@@ -101,6 +101,10 @@ export interface BindingState
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => Promise<void>;
 
+    // Control if backfill is allowed in the UI for a connector
+    backfillSupported: boolean;
+    setBackfillSupported: (val: BindingState['backfillSupported']) => void;
+
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
 
