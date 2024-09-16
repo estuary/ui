@@ -405,6 +405,8 @@ export const getDataPlaneScope = (
     return dataPlaneName.startsWith('ops/dp/public') ? 'public' : 'private';
 };
 
+// TODO (data-plane): move function into data plane utils.
+// TODO (data-plane): add unit tests for function.
 export const parseDataPlaneName = (
     dataPlaneName: string,
     scope: DataPlaneOption['scope']

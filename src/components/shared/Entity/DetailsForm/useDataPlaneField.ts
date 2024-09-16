@@ -199,6 +199,7 @@ export default function useDataPlaneField(
                 if (evaluatedDataPlaneId !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
+                    // TODO (data-plane): Set search param of interest instead of using navigate function.
                     navigateToCreate(
                         entityType,
                         details.data.connectorImage.connectorId,

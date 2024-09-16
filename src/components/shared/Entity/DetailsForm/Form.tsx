@@ -51,6 +51,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     const isActive = useFormStateStore_isActive();
 
+    // TODO: Create a new component to render the form.
     const { schema, uiSchema, updateDetails } = useFormFields(
         connectorTags,
         entityType

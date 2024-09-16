@@ -132,6 +132,7 @@ export default function useConnectorField(
                 } else {
                     setEntityNameChanged(details.data.entityName);
 
+                    // TODO (data-plane): Set search param of interest instead of using navigate function.
                     navigateToCreate(
                         entityType,
                         selectedConnectorId,
