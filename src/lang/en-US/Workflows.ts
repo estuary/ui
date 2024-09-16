@@ -133,7 +133,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
     'dataflowReset.warning.title': `This cannot be undone or stopped`,
-    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please ontact support immedietly as we may need to assist you in  recovery.`,
+    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
     'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
 
     'dataflowReset.editor.warning.title': `Editing disabled`,
