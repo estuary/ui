@@ -74,6 +74,8 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.collectionSelector.manualBackfill.header': `Backfill`,
+    'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn’t support backfills.`,
+    'workflows.collectionSelector.manualBackfill.notSupported.message': `To backfill, disable each binding, save and then re-enable and save.`,
     'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
     'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
