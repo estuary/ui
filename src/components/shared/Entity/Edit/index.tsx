@@ -38,6 +38,7 @@ import AlertBox from '../../AlertBox';
 import IncompatibleCollections from '../IncompatibleCollections';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
+import PreSavePrompt from '../prompts/PreSave';
 
 interface Props {
     title: string;
@@ -214,7 +215,7 @@ function EntityEdit({
                     />
 
                     {/*TODO (data flow reset)*/}
-                    {/*<PreSavePrompt />*/}
+                    <PreSavePrompt />
                 </DraftSpecEditorHydrator>
             )}
         </>

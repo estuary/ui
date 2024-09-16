@@ -5,7 +5,7 @@ import Actions from './Actions';
 import Content from './Content';
 import Title from './Title';
 
-function PreSave() {
+function PreSavePrompt() {
     const { activeStep } = usePreSavePromptSteps();
 
     const showPreSavePrompt = useFormStateStore_showPreSavePrompt();
@@ -23,4 +23,4 @@ function PreSave() {
     );
 }
 
-export default PreSave;
+export default PreSavePrompt;

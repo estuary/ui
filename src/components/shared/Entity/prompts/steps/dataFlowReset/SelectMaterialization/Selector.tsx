@@ -21,6 +21,8 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
         ]
     );
 
+    console.log('keys', keys);
+
     if (keys.length === 0) {
         return null;
     }

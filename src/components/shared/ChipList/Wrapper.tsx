@@ -80,7 +80,15 @@ function ChipWrapper({
                 size="small"
                 variant="outlined"
                 disabled={disabled}
-                onClick={onClick}
+                onClick={
+                    onClick
+                        ? (event) => {
+                              event.stopPropagation();
+                              event.preventDefault();
+                              onClick();
+                          }
+                        : undefined
+                }
                 sx={chipSX}
             />
         );
