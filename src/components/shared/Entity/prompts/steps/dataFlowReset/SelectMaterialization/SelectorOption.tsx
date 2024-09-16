@@ -8,12 +8,7 @@ function SelectorOption({ option }: MaterializationSelectorOptionProps) {
 
     return (
         <Stack component="span" direction="column" spacing={1}>
-            <Typography
-                component="span"
-                sx={{
-                    ...truncateTextSx,
-                }}
-            >
+            <Typography component="span" sx={truncateTextSx}>
                 {catalog_name}
             </Typography>
 
