@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import {
     usePreSavePromptStore,
     usePreSavePromptStore_activeStepValid,
+    usePreSavePromptStore_onFirstStep,
 } from '../store/usePreSavePromptStore';
 
 function Actions() {
@@ -14,11 +15,16 @@ function Actions() {
     ]);
 
     const continueEnabled = usePreSavePromptStore_activeStepValid();
+    const onFirstStep = usePreSavePromptStore_onFirstStep();
 
     return (
         <DialogActions>
             <Stack direction="row" spacing={2}>
-                <Button onClick={previousStep} variant="text">
+                <Button
+                    onClick={previousStep}
+                    variant="text"
+                    disabled={onFirstStep}
+                >
                     {intl.formatMessage({ id: 'cta.back' })}
                 </Button>
 

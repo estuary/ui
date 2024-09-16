@@ -143,3 +143,11 @@ export const usePreSavePromptStore_activeStepValid = () => {
         })
     );
 };
+
+export const usePreSavePromptStore_onFirstStep = () => {
+    return usePreSavePromptStore(
+        useShallow((state) => {
+            return state.activeStep === 0;
+        })
+    );
+};
