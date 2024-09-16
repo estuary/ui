@@ -16,7 +16,7 @@ import { Entity } from 'types';
 //  These APIs are truly general purpose. Perhaps break them out by supabase table.
 type ConnectorTagResourceData = Pick<
     ConnectorTag,
-    'connector_id' | 'resource_spec_schema'
+    'connector_id' | 'resource_spec_schema' | 'disable_backfill'
 >;
 
 type ConnectorTagEndpointData = Pick<
@@ -43,7 +43,7 @@ export const getSchema_Resource = async (connectorTagId: string | null) => {
         () =>
             supabaseClient
                 .from(TABLES.CONNECTOR_TAGS)
-                .select(`resource_spec_schema`)
+                .select(`resource_spec_schema, disable_backfill`)
                 .eq('id', connectorTagId)
                 .single(),
         'getSchema_Resource'

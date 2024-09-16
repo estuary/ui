@@ -26,7 +26,7 @@ test.describe.serial('Collections:', () => {
     test.beforeAll(async ({ browser }) => {
         page = await browser.newPage();
         authProps = await defaultPageSetup(page, test, USERS.collections);
-        collectionName = `${authProps.name}/${uuid}/events`;
+        collectionName = `${authProps.tenant}/${uuid}/events`;
 
         await discover_HelloWorld(page, uuid);
         await saveAndPublish(page);
