@@ -1,11 +1,11 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
 import Error from 'components/shared/Error';
-import { useConfirmationModalContext } from 'context/Confirmation';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import Selector from './Selector';
 import { BindingReviewProps } from './types';
 
@@ -14,7 +14,7 @@ function Materializations({ selected }: BindingReviewProps) {
 
     const { related, error, isValidating } = useLiveSpecsExt_related(selected);
 
-    const confirmationModal = useConfirmationModalContext();
+    const updateStep = usePreSavePromptStore((state) => state.updateStep);
 
     const foundData = useMemo(() => hasLength(related), [related]);
 
@@ -23,13 +23,12 @@ function Materializations({ selected }: BindingReviewProps) {
     ]);
 
     useEffect(() => {
-        // TODO (data flow reset)
-        // This needs to get worked into the steps somehow.... the steps need to be able to say
-        //  they are "allowed to continue"
-        confirmationModal?.setContinueAllowed(
-            Boolean((!isValidating && !foundData) || backfillDataFlowTarget)
-        );
-    }, [foundData, isValidating, confirmationModal, backfillDataFlowTarget]);
+        updateStep({
+            valid: Boolean(
+                (!isValidating && !foundData) || backfillDataFlowTarget
+            ),
+        });
+    }, [backfillDataFlowTarget, foundData, isValidating, updateStep]);
 
     return (
         <Box>

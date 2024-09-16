@@ -1,19 +1,19 @@
 import { DialogTitle, IconButton, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_setShowPreSavePrompt } from 'stores/FormState/hooks';
-import usePreSavePromptSteps from '../steps/preSave/usePreSavePromptSteps';
+import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
-    const { activeStep, setActiveStep } = usePreSavePromptSteps();
-    const setShowPreSavePrompt = useFormStateStore_setShowPreSavePrompt();
+    const [activeStep, setActiveStep, setShow] = usePreSavePromptStore(
+        (state) => [state.activeStep, state.setActiveStep, state.setShow]
+    );
 
     const closeDialog = () => {
         setActiveStep(0);
-        setShowPreSavePrompt(false);
+        setShow(false);
     };
 
     return (

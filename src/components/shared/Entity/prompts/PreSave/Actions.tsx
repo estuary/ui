@@ -1,17 +1,30 @@
 import { Button, DialogActions, Stack } from '@mui/material';
-import usePreSavePromptSteps from '../steps/preSave/usePreSavePromptSteps';
+import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function Actions() {
-    const { handleBack, handleNext } = usePreSavePromptSteps();
+    const [nextStep, previousStep] = usePreSavePromptStore((state) => [
+        state.nextStep,
+        state.previousStep,
+    ]);
+
+    const continueEnabled = usePreSavePromptStore((state) => {
+        return state.steps?.[state.activeStep]?.state.valid;
+    });
+
+    console.log('continueEnabled', continueEnabled);
 
     return (
         <DialogActions>
             <Stack direction="row" spacing={2}>
-                <Button onClick={handleBack} variant="text">
+                <Button onClick={previousStep} variant="text">
                     Back
                 </Button>
 
-                <Button onClick={handleNext} variant="outlined">
+                <Button
+                    onClick={nextStep}
+                    variant="outlined"
+                    disabled={!continueEnabled}
+                >
                     Continue
                 </Button>
             </Stack>

@@ -83,12 +83,7 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    | 'formState'
-    | 'isIdle'
-    | 'isActive'
-    | 'messagePrefix'
-    | 'showPreSavePrompt'
-    | 'liveSpec'
+    'formState' | 'isIdle' | 'isActive' | 'messagePrefix' | 'liveSpec'
 > => ({
     formState: initialFormState,
 
@@ -96,7 +91,6 @@ const getInitialStateData = (
     isActive: false,
 
     liveSpec: null,
-    showPreSavePrompt: false,
 
     messagePrefix,
 });
@@ -175,16 +169,6 @@ const getInitialState = (
             }),
             false,
             'Form Status Updated'
-        );
-    },
-
-    setShowPreSavePrompt: (newVal) => {
-        set(
-            produce((state: EntityFormState) => {
-                state.showPreSavePrompt = newVal;
-            }),
-            false,
-            'Show Change Review Updated'
         );
     },
 

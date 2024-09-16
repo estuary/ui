@@ -50,9 +50,6 @@ export interface EntityFormState {
     isIdle: boolean;
     isActive: boolean;
 
-    showPreSavePrompt: boolean;
-    setShowPreSavePrompt: (data: EntityFormState['showPreSavePrompt']) => void;
-
     liveSpec: Schema | null;
     setLiveSpec: (data: EntityFormState['liveSpec']) => void;
 

@@ -39,6 +39,7 @@ import IncompatibleCollections from '../IncompatibleCollections';
 import ValidationErrorSummary from '../ValidationErrorSummary';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import PreSavePrompt from '../prompts/PreSave';
+import PromptsHydrator from '../prompts/store/Hydrator';
 
 interface Props {
     title: string;
@@ -148,74 +149,78 @@ function EntityEdit({
                     entityType={entityType}
                     entityName={entityName}
                 >
-                    <Collapse in={formSubmitError !== null}>
-                        {formSubmitError ? (
-                            <EntityError
-                                title={formSubmitError.title}
-                                error={formSubmitError.error}
-                                logToken={logToken}
-                                draftId={persistedDraftId}
-                            />
+                    <PromptsHydrator>
+                        <Collapse in={formSubmitError !== null}>
+                            {formSubmitError ? (
+                                <EntityError
+                                    title={formSubmitError.title}
+                                    error={formSubmitError.error}
+                                    logToken={logToken}
+                                    draftId={persistedDraftId}
+                                />
+                            ) : null}
+                        </Collapse>
+
+                        <IncompatibleCollections />
+
+                        {draftInitializationError ? (
+                            <Box sx={{ mb: 2 }}>
+                                <AlertBox
+                                    severity={draftInitializationError.severity}
+                                >
+                                    <FormattedMessage
+                                        id={draftInitializationError.messageId}
+                                    />
+                                </AlertBox>
+                            </Box>
                         ) : null}
-                    </Collapse>
 
-                    <IncompatibleCollections />
-
-                    {draftInitializationError ? (
-                        <Box sx={{ mb: 2 }}>
-                            <AlertBox
-                                severity={draftInitializationError.severity}
-                            >
+                        {!isValidating && connectorTags.length === 0 ? (
+                            <AlertBox severity="warning" short>
                                 <FormattedMessage
-                                    id={draftInitializationError.messageId}
+                                    id={`${messagePrefix}.missingConnectors`}
                                 />
                             </AlertBox>
-                        </Box>
-                    ) : null}
+                        ) : connectorTags.length > 0 ? (
+                            <ErrorBoundryWrapper>
+                                <DetailsForm
+                                    connectorTags={connectorTags}
+                                    readOnly={readOnly.detailsForm}
+                                    entityType={entityType}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
 
-                    {!isValidating && connectorTags.length === 0 ? (
-                        <AlertBox severity="warning" short>
-                            <FormattedMessage
-                                id={`${messagePrefix}.missingConnectors`}
-                            />
-                        </AlertBox>
-                    ) : connectorTags.length > 0 ? (
-                        <ErrorBoundryWrapper>
-                            <DetailsForm
-                                connectorTags={connectorTags}
-                                readOnly={readOnly.detailsForm}
-                                entityType={entityType}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                        {imageTag.connectorId ? (
+                            <ErrorBoundryWrapper>
+                                <EndpointConfig
+                                    connectorImage={imageTag.id}
+                                    readOnly={readOnly.endpointConfigForm}
+                                    hideBorder={
+                                        !hasLength(imageTag.connectorId)
+                                    }
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
 
-                    {imageTag.connectorId ? (
-                        <ErrorBoundryWrapper>
-                            <EndpointConfig
-                                connectorImage={imageTag.id}
-                                readOnly={readOnly.endpointConfigForm}
-                                hideBorder={!hasLength(imageTag.connectorId)}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                        {hasLength(imageTag.connectorId) ? (
+                            <ErrorBoundryWrapper>
+                                <CollectionConfig
+                                    draftSpecs={taskDraftSpec}
+                                    readOnly={readOnly.resourceConfigForm}
+                                    hideBorder={!draftId}
+                                    RediscoverButton={RediscoverButton}
+                                />
+                            </ErrorBoundryWrapper>
+                        ) : null}
 
-                    {hasLength(imageTag.connectorId) ? (
-                        <ErrorBoundryWrapper>
-                            <CollectionConfig
-                                draftSpecs={taskDraftSpec}
-                                readOnly={readOnly.resourceConfigForm}
-                                hideBorder={!draftId}
-                                RediscoverButton={RediscoverButton}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
+                        <CatalogEditor
+                            messageId={`${messagePrefix}.finalReview.instructions`}
+                        />
 
-                    <CatalogEditor
-                        messageId={`${messagePrefix}.finalReview.instructions`}
-                    />
-
-                    {/*TODO (data flow reset)*/}
-                    <PreSavePrompt />
+                        {/*TODO (data flow reset)*/}
+                        <PreSavePrompt />
+                    </PromptsHydrator>
                 </DraftSpecEditorHydrator>
             )}
         </>

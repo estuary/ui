@@ -1,19 +1,26 @@
-import { DialogContent, Step, Stepper } from '@mui/material';
+import { DialogContent, LinearProgress, Step, Stepper } from '@mui/material';
 import { useMemo } from 'react';
-import usePreSavePromptSteps from '../steps/preSave/usePreSavePromptSteps';
+import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function Content() {
-    const { activeStep, steps } = usePreSavePromptSteps();
+    const [activeStep, steps] = usePreSavePromptStore((state) => [
+        state.activeStep,
+        state.steps,
+    ]);
 
     const renderedSteps = useMemo(
         () =>
-            steps.map((StepComponent, index) => {
-                return (
-                    <Step key={`PreSave-step-${index}`}>
-                        <StepComponent />
-                    </Step>
-                );
-            }),
+            steps ? (
+                steps.map(({ StepComponent }, index) => {
+                    return (
+                        <Step key={`PreSave-step-${index}`}>
+                            <StepComponent />
+                        </Step>
+                    );
+                })
+            ) : (
+                <LinearProgress />
+            ),
         [steps]
     );
 

@@ -1,9 +1,10 @@
+import { BaseComponentProps } from 'types';
 import { useEffect } from 'react';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
-import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
+import { usePreSavePromptStore } from './usePreSavePromptStore';
 
-function usePreSavePromptSteps() {
+function PromptsHydrator({ children }: BaseComponentProps) {
     const [resetState, initializeSteps] = usePreSavePromptStore((state) => [
         state.resetState,
         state.initializeSteps,
@@ -19,6 +20,9 @@ function usePreSavePromptSteps() {
             resetState();
         };
     }, [backfillDataflow, initializeSteps, needsBackfilled, resetState]);
+
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 }
 
-export default usePreSavePromptSteps;
+export default PromptsHydrator;
