@@ -1,10 +1,4 @@
-import {
-    Alert,
-    AlertColor,
-    AlertTitle,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
 import {
     CheckCircle,
@@ -12,18 +6,9 @@ import {
     WarningCircle,
     XmarkCircle,
 } from 'iconoir-react';
-import { forwardRef, ReactNode, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
-
-interface Props extends BaseComponentProps {
-    severity: AlertColor;
-    fitWidth?: boolean;
-    hideIcon?: boolean;
-    onClose?: () => void;
-    short?: boolean;
-    title?: string | ReactNode;
-}
+import { AlertBoxProps } from './types';
 
 const SHARED_STYLING = {
     borderRadius: 2,
@@ -38,7 +23,7 @@ const HEADER_MESSAGE = {
     error: 'alert.error',
 };
 
-const AlertBox = forwardRef<any, Props>(function NavLinkRef(
+const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
     { short, severity, hideIcon, title, children, onClose, fitWidth },
     ref
 ) {
