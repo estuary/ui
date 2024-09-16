@@ -5,10 +5,15 @@ export interface PromptStepState {
 
     // Both server and client side error
     errors: any[] | null;
+
+    // Shows if it is actively running
     running: boolean;
 
     // Store whatever you want in here
     settings?: any;
+
+    // Stores if we have ever tried _once_
+    started: boolean;
 
     // Controls if the user can continue on from this step
     valid: boolean;

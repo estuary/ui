@@ -2,6 +2,7 @@ import produce from 'immer';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
+import { useShallow } from 'zustand/react/shallow';
 import { PromptStep, PromptStepState } from '../types';
 import ChangeReview from '../steps/preSave/ChangeReview';
 import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
@@ -10,8 +11,8 @@ import { defaultStepState } from './shared';
 
 interface PreSavePromptStore {
     steps: PromptStep[] | null;
-    initializeSteps: (backfillEnabled: boolean) => void;
     updateStep: (settings: Partial<PromptStepState>, step?: number) => void;
+    initializeSteps: (backfillEnabled: boolean) => void;
 
     activeStep: number;
     setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
@@ -132,8 +133,10 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
     }, devtoolsOptions(name))
 );
 
-export const usePreSavePromptStore_activeStep_state = () => {
+export const usePreSavePromptStore_activeStepValid = () => {
     return usePreSavePromptStore(
-        (state) => state.steps?.[state.activeStep].state
+        useShallow((state) => {
+            return state.steps?.[state.activeStep]?.state.valid;
+        })
     );
 };
