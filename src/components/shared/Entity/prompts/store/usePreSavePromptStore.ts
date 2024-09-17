@@ -5,17 +5,23 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { PromptStep, PromptStepState } from '../types';
-import ChangeReview from '../steps/preSave/ChangeReview';
-import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
-import Publish from '../steps/preSave/Publish';
-import { defaultStepState } from './shared';
+import {
+    DataFlowResetSteps,
+    DataFlowSteps,
+} from '../steps/dataFlowReset/shared';
+import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
+import { PublishStep } from '../steps/preSave/Publish/definition';
 
 interface PreSavePromptStore {
     steps: PromptStep[] | null;
-    updateStep: (settings: Partial<PromptStepState>, step?: number) => void;
+    machine: any;
+    updateMachine: (key: string, settings: Partial<PromptStep>) => void;
+
+    updateStep: (step: number, settings: Partial<PromptStepState>) => void;
     initializeSteps: (backfillEnabled: boolean) => void;
 
     activeStep: number;
+    activeMachine: string;
     setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
     nextStep: () => void;
     previousStep: () => void;
@@ -28,11 +34,13 @@ interface PreSavePromptStore {
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
-    'activeStep' | 'steps' | 'show'
+    'activeStep' | 'activeMachine' | 'steps' | 'show' | 'machine'
 > => ({
     activeStep: 0,
+    activeMachine: 'changeReview',
     show: false,
     steps: null,
+    machine: {},
 });
 
 const name = 'estuary.presave-prompt-store';
@@ -46,41 +54,38 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             initializeSteps: (backfillEnabled) =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        const newSteps: PromptStep[] = [
-                            {
-                                StepComponent: ChangeReview,
-                                stepLabelMessageId:
-                                    'preSavePrompt.changeReview.title',
-                                state: {
-                                    ...defaultStepState,
-                                    valid: true,
-                                },
-                            },
-                        ];
+                        const newSteps: PromptStep[] = [ChangeReviewStep];
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
                         }
 
-                        newSteps.push({
-                            StepComponent: Publish,
-                            stepLabelMessageId: 'preSavePrompt.publish.title',
-                            state: defaultStepState,
-                        });
+                        newSteps.push(PublishStep);
                         state.steps = newSteps;
+
+                        if (backfillEnabled) {
+                            state.machine = {
+                                changeReview: ChangeReviewStep,
+                                ...DataFlowSteps,
+                                saveAndPublish: PublishStep,
+                            };
+                        } else {
+                            state.machine = {
+                                changeReview: ChangeReviewStep,
+                                saveAndPublish: PublishStep,
+                            };
+                        }
                     }),
                     false,
                     'initializeSteps'
                 ),
 
-            updateStep: (settings, step) =>
+            updateStep: (stepToUpdate, settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
                         if (!state.steps) {
                             return;
                         }
-
-                        const stepToUpdate = step ?? state.activeStep;
 
                         state.steps[stepToUpdate].state = {
                             ...state.steps[stepToUpdate].state,
@@ -89,6 +94,22 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     }),
                     false,
                     'setActiveStep'
+                ),
+
+            updateMachine: (machineToUpdate, settings) =>
+                set(
+                    produce((state: PreSavePromptStore) => {
+                        if (!state.machine) {
+                            return;
+                        }
+
+                        state.machine[machineToUpdate] = {
+                            ...state.machine[machineToUpdate],
+                            ...settings,
+                        };
+                    }),
+                    false,
+                    'updateMachine'
                 ),
 
             setActiveStep: (value) =>
@@ -130,6 +151,10 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                 set(
                     produce((state: PreSavePromptStore) => {
                         state.show = val;
+
+                        if (!val) {
+                            state.resetState();
+                        }
                     }),
                     false,
                     'setShow'
