@@ -23,8 +23,9 @@ export interface StepComponentProps {
     stepIndex: number;
 }
 
-export interface PromptStep {
+export interface PromptStep<T = any> {
     StepComponent: (props: StepComponentProps) => EmotionJSX.Element;
     stepLabelMessageId: string;
     state: PromptStepState;
+    context: T;
 }
