@@ -310,10 +310,10 @@ export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
     );
 }
 
-export const insertSupabase = (
+export const insertSupabase = <T = any>(
     table: TABLES,
     data: any
-): PromiseLike<CallSupabaseResponse<any>> => {
+): PromiseLike<CallSupabaseResponse<T>> => {
     return supabaseRetry(
         () =>
             supabaseClient
@@ -321,7 +321,7 @@ export const insertSupabase = (
                 .insert(Array.isArray(data) ? data : [data])
                 .select(),
         'insert'
-    ).then(handleSuccess, handleFailure);
+    ).then(handleSuccess<T>, handleFailure);
 };
 
 // Makes update calls. Mainly consumed in the src/api folder

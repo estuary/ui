@@ -2,7 +2,7 @@ import { Button, DialogActions, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 import {
     usePreSavePromptStore,
-    usePreSavePromptStore_activeStepValid,
+    usePreSavePromptStore_activeStep,
     usePreSavePromptStore_onFirstStep,
 } from '../store/usePreSavePromptStore';
 
@@ -14,7 +14,7 @@ function Actions() {
         state.previousStep,
     ]);
 
-    const continueEnabled = usePreSavePromptStore_activeStepValid();
+    const activeStep = usePreSavePromptStore_activeStep();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
 
     return (
@@ -31,7 +31,7 @@ function Actions() {
                 <Button
                     onClick={nextStep}
                     variant="outlined"
-                    disabled={!continueEnabled}
+                    disabled={!Boolean(activeStep?.valid)}
                 >
                     {intl.formatMessage({ id: 'cta.continue' })}
                 </Button>

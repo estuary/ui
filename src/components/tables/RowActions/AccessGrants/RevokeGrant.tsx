@@ -1,6 +1,6 @@
 import { deleteRoleGrant } from 'api/roleGrants';
 import { deleteUserGrant } from 'api/userGrants';
-import { ProgressStates } from 'components/tables/RowActions/Shared/Progress';
+import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useMount } from 'react-use';

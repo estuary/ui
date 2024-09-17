@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
+import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { PromptStep, PromptStepState } from '../types';
 import ChangeReview from '../steps/preSave/ChangeReview';
 import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
@@ -107,7 +108,8 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         }
 
                         if (state.steps[state.activeStep].state.valid) {
-                            state.steps[state.activeStep].state.done = true;
+                            state.steps[state.activeStep].state.progress =
+                                ProgressStates.SUCCESS;
                             state.activeStep = state.activeStep + 1;
                         }
                     }),
@@ -136,10 +138,10 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
     }, devtoolsOptions(name))
 );
 
-export const usePreSavePromptStore_activeStepValid = () => {
+export const usePreSavePromptStore_activeStep = () => {
     return usePreSavePromptStore(
         useShallow((state) => {
-            return state.steps?.[state.activeStep]?.state.valid;
+            return state.steps?.[state.activeStep]?.state;
         })
     );
 };

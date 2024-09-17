@@ -6,6 +6,8 @@ import SelectMaterialization from './SelectMaterialization';
 import MarkMaterialization from './UpdateMaterialization';
 import WaitForCaptureStop from './WaitForCaptureStop';
 
+// !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
+// We run through steps in order
 export const DataFlowResetSteps: PromptStep[] = [
     {
         StepComponent: SelectMaterialization,

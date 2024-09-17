@@ -7,6 +7,7 @@ import {
     Stepper,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
@@ -30,8 +31,11 @@ function Content() {
                             </StepLabel>
                             <StepContent>
                                 <ErrorBoundryWrapper>
-                                    {state.running ? <LinearProgress /> : null}
-                                    <StepComponent />
+                                    {state.progress ===
+                                    ProgressStates.RUNNING ? (
+                                        <LinearProgress />
+                                    ) : null}
+                                    <StepComponent stepIndex={index} />
                                 </ErrorBoundryWrapper>
                             </StepContent>
                         </Step>
