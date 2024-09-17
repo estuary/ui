@@ -1,6 +1,7 @@
 import { EnumOption } from '@jsonforms/core';
 import { Stack, Typography } from '@mui/material';
 import { hasLength } from 'utils/misc-utils';
+import DataPlaneIcon from './DataPlaneIcon';
 
 interface Props {
     renderOptionProps: any;
@@ -14,15 +15,28 @@ function Option({ renderOptionProps, option }: Props) {
         <Stack
             {...renderOptionProps}
             component="li"
-            style={{ alignItems: 'flex-start' }}
+            direction="row"
+            spacing={1}
+            style={{ alignItems: 'center', justifyContent: 'start' }}
         >
-            {hasLength(value.dataPlaneName.prefix) ? (
-                <Typography variant="caption" style={{ fontSize: 10 }}>
-                    {value.dataPlaneName.prefix}
-                </Typography>
+            {value.dataPlaneName ? (
+                <DataPlaneIcon
+                    hideScopeIcon
+                    provider={value.dataPlaneName.provider}
+                    scope={value.scope}
+                    size={30}
+                />
             ) : null}
 
-            <Typography>{label}</Typography>
+            <Stack>
+                {hasLength(value.dataPlaneName.prefix) ? (
+                    <Typography variant="caption" style={{ fontSize: 10 }}>
+                        {value.dataPlaneName.prefix}
+                    </Typography>
+                ) : null}
+
+                <Typography>{label}</Typography>
+            </Stack>
         </Stack>
     );
 }

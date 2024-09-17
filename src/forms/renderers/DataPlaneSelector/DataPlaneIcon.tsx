@@ -1,34 +1,48 @@
-import { Avatar, Box } from '@mui/material';
-import { Language, Lock, QuestionMark } from 'iconoir-react';
+import { Avatar, Box, PaletteMode, useTheme } from '@mui/material';
+import { semiTransparentBackground_oneLayerElevated } from 'context/Theme';
+import { Lock, QuestionMark } from 'iconoir-react';
+import awsLogo from 'images/data-plane-providers/aws.png';
+import awsLogoWhite from 'images/data-plane-providers/aws_logo-white.png';
+import gcpLogo from 'images/data-plane-providers/google_cloud.png';
 import { DataPlaneOption } from 'stores/DetailsForm/types';
 
 interface Props {
     scope: DataPlaneOption['scope'];
-    iconPath?: string | null;
-    size?: number;
+    hideScopeIcon?: boolean;
+    provider?: string;
+    size?: 20 | 30;
 }
 
 const DEFAULT_AVATAR_SIZE = 20;
 
-const getScopeIcon = (scope: DataPlaneOption['scope']) => {
-    if (scope === 'private') {
-        return Lock;
+const getProviderIconPath = (
+    provider: string | undefined,
+    colorMode: PaletteMode
+) => {
+    if (provider === 'aws') {
+        return colorMode === 'light' ? awsLogo : awsLogoWhite;
     }
 
-    return Language;
+    if (provider === 'gcp') {
+        return gcpLogo;
+    }
+
+    return null;
 };
 
 export default function DataPlaneIcon({
-    iconPath,
+    hideScopeIcon,
+    provider,
     scope,
     size = DEFAULT_AVATAR_SIZE,
 }: Props) {
-    const scopeIconSize = scope === 'private' ? 10 : 9;
-    const ScopeIcon = getScopeIcon(scope);
+    const theme = useTheme();
+
+    const providerIconPath = getProviderIconPath(provider, theme.palette.mode);
 
     return (
-        <Box style={{ height: size, width: size }}>
-            {iconPath ? (
+        <Box style={{ height: size, position: 'relative', width: size }}>
+            {providerIconPath ? (
                 <Avatar
                     variant="rounded"
                     sx={{
@@ -40,7 +54,7 @@ export default function DataPlaneIcon({
                     <img
                         width={size - 1}
                         height={size - 1}
-                        src={iconPath}
+                        src={providerIconPath}
                         loading="lazy"
                         alt=""
                     />
@@ -54,20 +68,27 @@ export default function DataPlaneIcon({
                 />
             )}
 
-            <Box
-                sx={{
-                    position: 'absolute',
-                    right: -2,
-                    top: 4,
-                }}
-            >
-                <ScopeIcon
-                    style={{
-                        height: scopeIconSize,
-                        width: scopeIconSize,
+            {!hideScopeIcon && scope === 'private' ? (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        right: -2,
+                        top: size === DEFAULT_AVATAR_SIZE ? 4 : 12,
                     }}
-                />
-            </Box>
+                >
+                    <Lock
+                        style={{
+                            backgroundColor:
+                                semiTransparentBackground_oneLayerElevated[
+                                    theme.palette.mode
+                                ],
+                            borderRadius: '100%',
+                            height: size === DEFAULT_AVATAR_SIZE ? 10 : 12,
+                            width: size === DEFAULT_AVATAR_SIZE ? 10 : 12,
+                        }}
+                    />
+                </Box>
+            ) : null}
         </Box>
     );
 }

@@ -84,7 +84,6 @@ export const DataPlaneAutoComplete = ({
     return (
         <Autocomplete
             autoComplete
-            autoHighlight
             className={className}
             clearOnBlur
             disabled={!enabled}

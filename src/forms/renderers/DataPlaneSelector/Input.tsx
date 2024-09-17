@@ -29,13 +29,13 @@ export default function DataPlaneInput({
             {currentOption ? (
                 <Box
                     sx={{
-                        position: 'absolute',
                         left: 0,
+                        position: 'absolute',
                         top: 22,
                     }}
                 >
                     <DataPlaneIcon
-                        iconPath={currentOption.value.iconPath}
+                        provider={currentOption.value.dataPlaneName.provider}
                         scope={currentOption.value.scope}
                     />
                 </Box>
