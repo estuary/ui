@@ -28,8 +28,12 @@ export default function useFormFields(
     const { connectorSchema, connectorUISchema, evaluateConnector } =
         useConnectorField(connectorTags, entityType);
 
-    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
-        useDataPlaneField(entityType);
+    const {
+        dataPlaneError,
+        dataPlaneSchema,
+        dataPlaneUISchema,
+        evaluateDataPlane,
+    } = useDataPlaneField(entityType);
 
     const schema = useMemo(() => {
         const baseProperties = {
@@ -45,7 +49,7 @@ export default function useFormFields(
 
         const baseRequirements = [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE];
 
-        return dataPlaneSchema
+        return dataPlaneSchema && !dataPlaneError
             ? {
                   properties: {
                       ...baseProperties,
@@ -59,7 +63,7 @@ export default function useFormFields(
                   required: baseRequirements,
                   type: 'object',
               };
-    }, [connectorSchema, dataPlaneSchema, intl]);
+    }, [connectorSchema, dataPlaneError, dataPlaneSchema, intl]);
 
     const uiSchema = useMemo(() => {
         const catalogNameUISchema = {
@@ -81,24 +85,25 @@ export default function useFormFields(
         return {
             elements: [
                 {
-                    elements: dataPlaneUISchema
-                        ? [
-                              connectorUISchema,
-                              catalogNameUISchema,
-                              dataPlaneUISchema,
-                              descriptionUISchema,
-                          ]
-                        : [
-                              connectorUISchema,
-                              catalogNameUISchema,
-                              descriptionUISchema,
-                          ],
+                    elements:
+                        dataPlaneUISchema && !dataPlaneError
+                            ? [
+                                  connectorUISchema,
+                                  catalogNameUISchema,
+                                  dataPlaneUISchema,
+                                  descriptionUISchema,
+                              ]
+                            : [
+                                  connectorUISchema,
+                                  catalogNameUISchema,
+                                  descriptionUISchema,
+                              ],
                     type: 'HorizontalLayout',
                 },
             ],
             type: 'VerticalLayout',
         };
-    }, [connectorUISchema, dataPlaneUISchema, intl]);
+    }, [connectorUISchema, dataPlaneError, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
         const selectedDataPlaneId = details.data.dataPlane?.id;
@@ -120,5 +125,5 @@ export default function useFormFields(
         }
     };
 
-    return { schema, uiSchema, updateDetails };
+    return { dataPlaneError, schema, uiSchema, updateDetails };
 }

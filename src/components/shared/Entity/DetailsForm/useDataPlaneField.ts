@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { getDataPlaneOptions } from 'api/dataPlane';
 import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
@@ -36,6 +37,7 @@ export default function useDataPlaneField(
     const navigateToCreate = useEntityCreateNavigate();
 
     const [loading, setLoading] = useState(false);
+    const [serverError, setServerError] = useState<PostgrestError | null>(null);
     const [options, setOptions] = useState<DataPlaneOption[]>([]);
 
     const storedDataPlaneId = useDetailsFormStore(
@@ -56,10 +58,7 @@ export default function useDataPlaneField(
                 .then(
                     (response) => {
                         if (response.error) {
-                            console.log(
-                                'data plane option response.error',
-                                response.error
-                            );
+                            setServerError(response.error);
 
                             return;
                         }
@@ -98,7 +97,7 @@ export default function useDataPlaneField(
                         }
                     },
                     (error) => {
-                        console.log('data plane option error', error);
+                        setServerError(error);
                     }
                 )
                 .finally(() => {
@@ -198,6 +197,7 @@ export default function useDataPlaneField(
     );
 
     return {
+        dataPlaneError: serverError,
         dataPlaneSchema,
         dataPlaneUISchema,
         evaluateDataPlane,
