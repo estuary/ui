@@ -7,9 +7,14 @@ import {
     Stepper,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import {
+    ProgressFinished,
+    ProgressStates,
+} from 'components/tables/RowActions/Shared/types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import Error from 'components/shared/Error';
+import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function Content() {
@@ -22,25 +27,57 @@ function Content() {
     const renderedSteps = useMemo(
         () =>
             steps ? (
-                steps.map((step, index) => {
-                    const { StepComponent, stepLabelMessageId, state } = step;
-                    return (
-                        <Step key={`PreSave-step-${index}`}>
-                            <StepLabel>
-                                {intl.formatMessage({ id: stepLabelMessageId })}
-                            </StepLabel>
-                            <StepContent>
-                                <ErrorBoundryWrapper>
-                                    {state.progress ===
-                                    ProgressStates.RUNNING ? (
-                                        <LinearProgress />
-                                    ) : null}
-                                    <StepComponent stepIndex={index} />
-                                </ErrorBoundryWrapper>
-                            </StepContent>
-                        </Step>
-                    );
-                })
+                steps.map(
+                    (
+                        {
+                            StepComponent,
+                            stepLabelMessageId,
+                            state: { error, progress, logsToken },
+                        },
+                        index
+                    ) => {
+                        return (
+                            <Step
+                                key={`PreSave-step-${index}`}
+                                completed={progress >= ProgressFinished}
+                            >
+                                <StepLabel error={Boolean(error)}>
+                                    {intl.formatMessage({
+                                        id: stepLabelMessageId,
+                                    })}
+                                </StepLabel>
+                                <StepContent>
+                                    <ErrorBoundryWrapper>
+                                        {progress === ProgressStates.RUNNING ? (
+                                            <LinearProgress />
+                                        ) : null}
+
+                                        <Error
+                                            severity="error"
+                                            error={error}
+                                            condensed
+                                            hideTitle
+                                        />
+
+                                        <ErrorLogs
+                                            defaultOpen
+                                            logToken={
+                                                Boolean(error)
+                                                    ? logsToken
+                                                    : null
+                                            }
+                                            logProps={{
+                                                fetchAll: true,
+                                            }}
+                                        />
+
+                                        <StepComponent stepIndex={index} />
+                                    </ErrorBoundryWrapper>
+                                </StepContent>
+                            </Step>
+                        );
+                    }
+                )
             ) : (
                 <LinearProgress />
             ),
@@ -49,7 +86,7 @@ function Content() {
 
     return (
         <DialogContent>
-            <Stepper orientation="vertical" activeStep={activeStep}>
+            <Stepper orientation="vertical" activeStep={activeStep} nonLinear>
                 {renderedSteps}
             </Stepper>
         </DialogContent>

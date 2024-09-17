@@ -40,7 +40,10 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                 );
 
                 if (updateResponse.error) {
-                    console.log('uh oh');
+                    updateStep({
+                        error: updateResponse.error,
+                        progress: ProgressStates.FAILED,
+                    });
                     return;
                 }
 
@@ -48,7 +51,10 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                 const publishResponse = await createPublication(draftId, false);
 
                 if (publishResponse.error || !publishResponse.data) {
-                    console.log('uh oh');
+                    updateStep({
+                        error: publishResponse.error,
+                        progress: ProgressStates.FAILED,
+                    });
                     return;
                 }
 
@@ -68,7 +74,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                     },
                     async (error: any) => {
                         updateStep({
-                            errors: error,
+                            error,
                             progress: ProgressStates.FAILED,
                             valid: false,
                         });
@@ -82,7 +88,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
     });
 
     return (
-        <>explain what we're doing</>
+        <>explain what is happening</>
         // <Logs
         //     token={logsToken}
         //     height={350}
