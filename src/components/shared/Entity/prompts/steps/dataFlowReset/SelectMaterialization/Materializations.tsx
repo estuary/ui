@@ -23,7 +23,7 @@ function Materializations({ selected }: BindingReviewProps) {
     ]);
 
     useEffect(() => {
-        updateStep({
+        updateStep(1, {
             valid: Boolean(
                 (!isValidating && !foundData) || backfillDataFlowTarget
             ),

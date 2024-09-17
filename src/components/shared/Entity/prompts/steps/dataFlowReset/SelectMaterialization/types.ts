@@ -4,6 +4,8 @@ export interface BindingReviewProps {
     selected: string[];
 }
 
+export type MaterializationsProps = BindingReviewProps;
+
 export interface RelatedMaterializationSelectorProps {
     keys: LiveSpecsExt_Related[];
     value: string | null;
