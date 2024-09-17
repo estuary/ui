@@ -212,6 +212,9 @@ function EntityEdit({
                     <CatalogEditor
                         messageId={`${messagePrefix}.finalReview.instructions`}
                     />
+
+                    {/*TODO (data flow reset)*/}
+                    {/*<PreSavePrompt />*/}
                 </DraftSpecEditorHydrator>
             )}
         </>

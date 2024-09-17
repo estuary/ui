@@ -1,10 +1,4 @@
-import {
-    Alert,
-    AlertColor,
-    AlertTitle,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
 import {
     CheckCircle,
@@ -12,17 +6,9 @@ import {
     WarningCircle,
     XmarkCircle,
 } from 'iconoir-react';
-import { forwardRef, ReactNode, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
-
-interface Props extends BaseComponentProps {
-    severity: AlertColor;
-    short?: boolean;
-    hideIcon?: boolean;
-    title?: string | ReactNode;
-    onClose?: () => void;
-}
+import { AlertBoxProps } from './types';
 
 const SHARED_STYLING = {
     borderRadius: 2,
@@ -37,8 +23,8 @@ const HEADER_MESSAGE = {
     error: 'alert.error',
 };
 
-const AlertBox = forwardRef<any, Props>(function NavLinkRef(
-    { short, severity, hideIcon, title, children, onClose },
+const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
+    { short, severity, hideIcon, title, children, onClose, fitWidth },
     ref
 ) {
     const theme = useTheme();
@@ -92,6 +78,7 @@ const AlertBox = forwardRef<any, Props>(function NavLinkRef(
                 'color': alertTextPrimary[theme.palette.mode],
                 'borderColor': theme.palette[severity][theme.palette.mode],
                 'padding': 0,
+                'maxWidth': fitWidth ? 'fit-content' : undefined,
                 'pl': hideIcon ? 2 : undefined,
                 '& > .MuiAlert-message': {
                     p: 1,

@@ -109,3 +109,27 @@ export function useLiveSpecsExtWithOutSpec(
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
 }
+
+const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
+const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
+export interface LiveSpecsExt_Related {
+    catalog_name: string;
+    reads_from: string[];
+    id: string;
+}
+export function useLiveSpecsExt_related(selected: string[]) {
+    const { data, error, isValidating } = useQuery(
+        supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(liveSpecsExtRelatedQuery)
+            .eq('spec_type', 'materialization')
+            .overlaps('reads_from', selected)
+            .returns<LiveSpecsExt_Related[]>()
+    );
+
+    return {
+        related: data ?? [],
+        error,
+        isValidating,
+    };
+}

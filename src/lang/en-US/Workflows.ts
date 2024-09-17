@@ -86,10 +86,6 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
 
-    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
-
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
     'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,
@@ -130,6 +126,21 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.title': `Enable {entityType}`,
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
+
+    // Dataflow reset
+    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
+
+    'dataflowReset.warning.title': `This cannot be undone or stopped`,
+    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
+    'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
+
+    'dataflowReset.editor.warning.title': `Editing disabled`,
+    'dataflowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
+
+    'dataflowReset.logs.spinner.stopped': `done`,
+    'dataflowReset.logs.spinner.running': `loading...`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -338,4 +349,6 @@ export const Workflows: Record<string, string> = {
     // Reset Data Flow
     'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
     'resetDataFlow.materializations.empty': `No related materializations`,
+    'resetDataFlow.materializations.selector.label': `Materialization to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) materialization`,
 };

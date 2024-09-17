@@ -4,7 +4,7 @@ import {
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
@@ -18,44 +18,41 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
+    const intl = useIntl();
+
     const save = useSave(logEvent, onFailure, dryRun);
 
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
-    // TODO (reset dataflow)
-    // const showDataFlowResetPrompt = useDataFlowResetPrompt();
-    // const [backfillDataflow] = useBindingStore((state) => [
-    //     state.backfillDataFlow,
-    // ]);
-
-    const labelId = buttonLabelId
-        ? buttonLabelId
-        : dryRun === true
-        ? `cta.testConfig${loading ? '.active' : ''}`
-        : `cta.saveEntity${loading ? '.active' : ''}`;
+    // TODO (data flow reset)
+    // const setShowPreSavePrompt = useFormStateStore_setShowPreSavePrompt();
+    // const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
+    // const needsBackfilled = useBinding_backfilledBindings_count();
 
     return (
         <Button
-            onClick={async () => {
-                // TODO (reset dataflow)
-                // if (!dryRun && backfillDataflow) {
-                //     showDataFlowResetPrompt((data) => {
-                //         if (data) {
-                //             console.log('YES', { data });
-                //         } else {
-                //             console.log('NO', { data });
-                //         }
-                //     });
-                //     return;
-                // }
-                await save(draftId);
-            }}
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
+            onClick={async () => {
+                // TODO (data flow reset)
+                // if (!dryRun && backfillDataflow && needsBackfilled) {
+                //     setShowPreSavePrompt(true);
+                // } else {
+                //     await save(draftId);
+                // }
+
+                await save(draftId);
+            }}
         >
-            <FormattedMessage id={labelId} />
+            {intl.formatMessage({
+                id: buttonLabelId
+                    ? buttonLabelId
+                    : dryRun === true
+                    ? `cta.testConfig${loading ? '.active' : ''}`
+                    : `cta.saveEntity${loading ? '.active' : ''}`,
+            })}
         </Button>
     );
 }

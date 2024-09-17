@@ -232,6 +232,7 @@ const getInitialMiscData = (): Pick<
     | 'backfilledBindings'
     | 'backfillAllBindings'
     | 'backfillDataFlow'
+    | 'backfillDataFlowTarget'
     | 'backfillSupported'
     | 'collectionsRequiringRediscovery'
     | 'disabledCollections'
@@ -245,7 +246,8 @@ const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
 > => ({
     backfillAllBindings: false,
-    backfillDataFlow: false,
+    backfillDataFlowTarget: null,
+    backfillDataFlow: true,
     backfillSupported: true,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
@@ -1024,13 +1026,23 @@ const getInitialState = (
         );
     },
 
+    setBackfillDataFlowTarget: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfillDataFlowTarget = value;
+            }),
+            false,
+            'Backfill data flow target changed'
+        );
+    },
+
     setBackfillSupported: (value) => {
         set(
             produce((state: BindingState) => {
                 state.backfillSupported = value;
             }),
             false,
-            'Backfill Disabled Changed'
+            'Backfill supported changed'
         );
     },
 

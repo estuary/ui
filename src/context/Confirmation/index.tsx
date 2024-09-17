@@ -87,7 +87,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                     </Box>
                 </DialogContent>
 
-                <DialogActions sx={{ p: '16px 24px' }}>
+                <DialogActions style={{ padding: '16px 24px' }}>
                     <Button variant="text" onClick={handlers.dismiss}>
                         <FormattedMessage id={settings.cancelText} />
                     </Button>

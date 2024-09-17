@@ -1,15 +1,9 @@
 import DisableEnableConfirmation from 'components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import produce from 'immer';
 import { SelectTableStoreNames } from 'stores/names';
-import { specContainsDerivation } from 'utils/misc-utils';
+import { generateDisabledSpec } from 'utils/entity-utils';
 import { DisableEnableButtonProps } from './types';
-
-const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
-    draftSpec.shards ??= {};
-    draftSpec.shards.disable = !enabling;
-};
 
 function DisableEnableButton({
     enabling,
@@ -43,41 +37,9 @@ function DisableEnableButton({
                     skippedMessageID={messages.skipped}
                     successMessageID={messages.success}
                     runningMessageID={messages.running}
-                    generateNewSpec={(spec) => {
-                        // Make sure we have a spec to update
-                        if (spec) {
-                            // Check if we need to place the settings deeper (collections)
-                            if (shardsAreNested) {
-                                const { isDerivation, derivationKey } =
-                                    specContainsDerivation(spec);
-
-                                // Check if there is a derivation key we can update (derivations)
-                                //  if the collection is not a derivation then we cannot enable/disable
-                                if (isDerivation) {
-                                    return produce<typeof spec>(
-                                        spec,
-                                        (draftSpec) => {
-                                            updateShardDisabled(
-                                                draftSpec[derivationKey],
-                                                enabling
-                                            );
-                                        }
-                                    );
-                                }
-                            } else {
-                                // Not nested so we can update the root (captures and materializations)
-                                return produce<typeof spec>(
-                                    spec,
-                                    (draftSpec) => {
-                                        updateShardDisabled(
-                                            draftSpec,
-                                            enabling
-                                        );
-                                    }
-                                );
-                            }
-                        }
-                    }}
+                    generateNewSpec={(spec) =>
+                        generateDisabledSpec(spec, enabling, shardsAreNested)
+                    }
                     generateNewSpecType={(entity) => entity.spec_type}
                     selectableStoreName={selectableTableStoreName}
                 />
