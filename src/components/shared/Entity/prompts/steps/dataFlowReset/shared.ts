@@ -1,40 +1,17 @@
-import { defaultStepState } from '../../store/shared';
-import { PromptStep } from '../../types';
-import DisableCapture from './DisableCapture';
-import EnableCapture from './EnableCapture';
-import SelectMaterialization from './SelectMaterialization';
-import MarkMaterialization from './UpdateMaterialization';
-import WaitForCaptureStop from './WaitForCaptureStop';
+import { DisableCaptureStep } from './DisableCapture/definition';
+import { EnableCaptureStep } from './EnableCapture/definition';
+import { SelectMaterializationStep } from './SelectMaterialization/definition';
+import { UpdateMaterializationStep } from './UpdateMaterialization/definition';
+import { WaitForCaptureStep } from './WaitForCaptureStop/definition';
+
+export const DataFlowSteps = {
+    selectMaterialization: SelectMaterializationStep,
+    disableCapture: DisableCaptureStep,
+    waitForCapture: WaitForCaptureStep,
+    updateMaterialization: UpdateMaterializationStep,
+    enableCapture: EnableCaptureStep,
+};
 
 // !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
 // We run through steps in order
-export const DataFlowResetSteps: PromptStep[] = [
-    {
-        StepComponent: SelectMaterialization,
-        stepLabelMessageId: 'dataFlowReset.selectMaterialization.title',
-        state: {
-            ...defaultStepState,
-            valid: false,
-        },
-    },
-    {
-        StepComponent: DisableCapture,
-        stepLabelMessageId: 'dataFlowReset.disableCapture.title',
-        state: defaultStepState,
-    },
-    {
-        StepComponent: WaitForCaptureStop,
-        stepLabelMessageId: 'dataFlowReset.waitForCapture.title',
-        state: defaultStepState,
-    },
-    {
-        StepComponent: MarkMaterialization,
-        stepLabelMessageId: 'dataFlowReset.markMaterialization.title',
-        state: defaultStepState,
-    },
-    {
-        StepComponent: EnableCapture,
-        stepLabelMessageId: 'dataFlowReset.enableCapture.title',
-        state: defaultStepState,
-    },
-];
+export const DataFlowResetSteps = Object.values(DataFlowSteps);
