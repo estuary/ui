@@ -18,6 +18,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
@@ -149,6 +150,11 @@ export const getInitialState = (
 
                 // Update the details
                 state.details = val;
+
+                // Remove data plane-related state entirely when the data plane id is unset.
+                if (!hasLength(val.data.dataPlane?.id)) {
+                    state.details.data.dataPlane = undefined;
+                }
 
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically
