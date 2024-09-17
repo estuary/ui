@@ -17,6 +17,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
     const { jobStatusPoller } = useJobStatusPoller();
 
     const thisStep = usePreSavePromptStore((state) => state.steps?.[stepIndex]);
+
     const [updateStep, nextStep] = usePreSavePromptStore((state) => [
         state.updateStep,
         state.nextStep,
@@ -24,7 +25,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
 
     useMount(() => {
         if (thisStep?.state.progress === ProgressStates.IDLE) {
-            updateStep({
+            updateStep(stepIndex, {
                 progress: ProgressStates.RUNNING,
             });
 
@@ -40,7 +41,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                 );
 
                 if (updateResponse.error) {
-                    updateStep({
+                    updateStep(stepIndex, {
                         error: updateResponse.error,
                         progress: ProgressStates.FAILED,
                     });
@@ -51,21 +52,21 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                 const publishResponse = await createPublication(draftId, false);
 
                 if (publishResponse.error || !publishResponse.data) {
-                    updateStep({
+                    updateStep(stepIndex, {
                         error: publishResponse.error,
                         progress: ProgressStates.FAILED,
                     });
                     return;
                 }
 
-                updateStep({
+                updateStep(stepIndex, {
                     logsToken: publishResponse.data[0].logs_token,
                 });
 
                 jobStatusPoller(
                     getPublicationByIdQuery(publishResponse.data[0].id),
                     async () => {
-                        updateStep({
+                        updateStep(stepIndex, {
                             progress: ProgressStates.SUCCESS,
                             valid: true,
                         });
@@ -73,7 +74,7 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                         nextStep();
                     },
                     async (error: any) => {
-                        updateStep({
+                        updateStep(stepIndex, {
                             error,
                             progress: ProgressStates.FAILED,
                             valid: false,
