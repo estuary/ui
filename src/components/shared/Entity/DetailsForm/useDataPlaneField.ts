@@ -1,4 +1,5 @@
 import { getDataPlaneOptions } from 'api/dataPlane';
+import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -107,27 +108,9 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, setLoading, setOptions]);
 
     const dataPlaneSchema = useMemo(() => {
-        let dataPlanesOneOf: OneOfElement[] = [];
+        const dataPlanesOneOf: OneOfElement[] = [];
 
         if (options.length > 0) {
-            const privateOptions: OneOfElement[] = [];
-            const publicOptions: OneOfElement[] = [
-                {
-                    const: {
-                        dataPlaneName: {
-                            cluster: '',
-                            prefix: '',
-                            provider: '',
-                            region: '',
-                            whole: '',
-                        },
-                        id: '',
-                        scope: 'public',
-                    },
-                    title: intl.formatMessage({ id: 'common.default' }),
-                },
-            ];
-
             options.forEach((option) => {
                 const {
                     cluster,
@@ -143,21 +126,13 @@ export default function useDataPlaneField(
                     wholeName
                 );
 
-                if (option.scope === 'public') {
-                    publicOptions.push({ const: option, title });
-
-                    return;
-                }
-
-                privateOptions.push({ const: option, title });
+                dataPlanesOneOf.push({ const: option, title });
             });
-
-            dataPlanesOneOf = privateOptions.concat(publicOptions);
         }
 
         return dataPlaneOption === 'show_option' && hasLength(dataPlanesOneOf)
             ? {
-                  dataPlane: {
+                  [DATA_PLANE_SCOPE]: {
                       description: intl.formatMessage({
                           id: 'workflows.dataPlane.description',
                       }),
@@ -169,16 +144,16 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, intl, options]);
 
     const dataPlaneUISchema = useMemo(() => {
-        return dataPlaneOption === 'show_option'
+        return dataPlaneOption === 'show_option' && !loading
             ? {
                   label: intl.formatMessage({
                       id: 'workflows.dataPlane.label',
                   }),
-                  scope: `#/properties/dataPlane`,
+                  scope: `#/properties/${DATA_PLANE_SCOPE}`,
                   type: 'Control',
               }
             : null;
-    }, [dataPlaneOption, intl]);
+    }, [dataPlaneOption, intl, loading]);
 
     const evaluateDataPlane = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
@@ -225,7 +200,6 @@ export default function useDataPlaneField(
     return {
         dataPlaneSchema,
         dataPlaneUISchema,
-        loading,
         evaluateDataPlane,
     };
 }

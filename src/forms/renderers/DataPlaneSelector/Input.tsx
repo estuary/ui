@@ -17,7 +17,6 @@ export default function DataPlaneInput({
     inputProps,
     InputProps,
 }: Props) {
-    console.log(currentOption);
     return (
         <Box
             sx={{

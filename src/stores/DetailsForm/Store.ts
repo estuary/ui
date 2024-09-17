@@ -62,45 +62,33 @@ const getDataPlane = async (
     dataPlaneOption: string | null,
     dataPlaneId: string | null
 ): Promise<Details['data']['dataPlane'] | null> => {
-    if (dataPlaneOption === 'show_option') {
-        if (dataPlaneId) {
-            const { data, error } = await getDataPlaneById(dataPlaneId);
+    if (dataPlaneOption === 'show_option' && dataPlaneId) {
+        const { data, error } = await getDataPlaneById(dataPlaneId);
 
-            if (!error && data && data.length > 0) {
-                const { data_plane_name, id } = data[0];
+        if (!error && data && data.length > 0) {
+            const { data_plane_name, id } = data[0];
 
-                const scope = getDataPlaneScope(data_plane_name);
+            const scope = getDataPlaneScope(data_plane_name);
 
-                const { cluster, prefix, provider, region } =
-                    parseDataPlaneName(data_plane_name, scope);
+            const { cluster, prefix, provider, region } = parseDataPlaneName(
+                data_plane_name,
+                scope
+            );
 
-                return {
-                    dataPlaneName: {
-                        cluster,
-                        prefix,
-                        provider,
-                        region,
-                        whole: data_plane_name,
-                    },
-                    id,
-                    scope,
-                };
-            }
-
-            return null;
-        } else {
             return {
                 dataPlaneName: {
-                    cluster: '',
-                    prefix: '',
-                    provider: '',
-                    region: '',
-                    whole: '',
+                    cluster,
+                    prefix,
+                    provider,
+                    region,
+                    whole: data_plane_name,
                 },
-                id: '',
-                scope: 'public',
+                id,
+                scope,
             };
         }
+
+        return null;
     }
 
     return undefined;
