@@ -369,6 +369,14 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     return data;
 };
 
+const getLiveSpecSpec = (liveSpecId: string) => {
+    return supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(`spec`)
+        .eq('id', liveSpecId)
+        .single();
+};
+
 const getLiveSpecShards = (tenant: string, entityType: Entity) => {
     return supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
@@ -389,4 +397,5 @@ export {
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
     getLiveSpecShards,
+    getLiveSpecSpec,
 };
