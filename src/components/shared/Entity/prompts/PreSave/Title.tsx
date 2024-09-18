@@ -7,14 +7,10 @@ function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [activeStep, setActiveStep, setShow] = usePreSavePromptStore(
-        (state) => [state.activeStep, state.setActiveStep, state.setShow]
-    );
-
-    const closeDialog = () => {
-        setActiveStep(0);
-        setShow(false);
-    };
+    const [activeStep, setShow] = usePreSavePromptStore((state) => [
+        state.activeStep,
+        state.setShow,
+    ]);
 
     return (
         <DialogTitle
@@ -25,7 +21,12 @@ function Title() {
             }}
         >
             Please review your changes
-            <IconButton disabled={activeStep > 2} onClick={closeDialog}>
+            <IconButton
+                disabled={activeStep > 2}
+                onClick={() => {
+                    setShow(false);
+                }}
+            >
                 <Xmark
                     aria-label={intl.formatMessage({ id: 'cta.close' })}
                     style={{

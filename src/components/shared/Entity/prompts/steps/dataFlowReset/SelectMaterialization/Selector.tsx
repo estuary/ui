@@ -2,7 +2,9 @@ import { Autocomplete, Grid, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useBindingStore } from 'stores/Binding/Store';
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
 
@@ -12,6 +14,13 @@ const getValue = (option: any) =>
 function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
     const intl = useIntl();
 
+    const stepIndex = useLoopIndex();
+
+    const [updateStep, updateContext] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+    ]);
+
     const [inputValue, setInputValue] = useState('');
 
     const [backfillDataFlowTarget, setBackfillDataFlowTarget] = useBindingStore(
@@ -20,8 +29,6 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
             state.setBackfillDataFlowTarget,
         ]
     );
-
-    console.log('keys', keys);
 
     if (keys.length === 0) {
         return null;
@@ -40,9 +47,20 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
                 options={keys}
                 value={backfillDataFlowTarget}
                 onChange={(_event, newValue) => {
-                    setBackfillDataFlowTarget(
-                        newValue ? newValue.catalog_name : null
-                    );
+                    const backfillTarget = newValue
+                        ? newValue.catalog_name
+                        : null;
+
+                    // Need to save the data somewhere better
+                    setBackfillDataFlowTarget(backfillTarget);
+
+                    updateStep(stepIndex, {
+                        valid: Boolean(backfillTarget),
+                    });
+
+                    updateContext({
+                        backfillTarget,
+                    });
                 }}
                 onInputChange={(_event, newInputValue) => {
                     setInputValue(newInputValue);

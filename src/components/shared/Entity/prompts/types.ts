@@ -19,13 +19,9 @@ export interface PromptStepState {
     logsToken?: string;
 }
 
-export interface StepComponentProps {
-    stepIndex: number;
-}
-
-export interface PromptStep<T = any> {
-    StepComponent: (props: StepComponentProps) => EmotionJSX.Element;
+// TODO (dataflow typing) should try to get typing working with the context
+export interface PromptStep {
+    StepComponent: () => EmotionJSX.Element;
     stepLabelMessageId: string;
     state: PromptStepState;
-    context: T;
 }

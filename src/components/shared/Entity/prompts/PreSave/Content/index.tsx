@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import Error from 'components/shared/Error';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
+import { LoopIndexContextProvider } from 'context/LoopIndex';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function Content() {
@@ -26,28 +27,28 @@ function Content() {
 
     const renderedSteps = useMemo(
         () =>
-            steps ? (
-                steps.map(
-                    (
-                        {
-                            StepComponent,
-                            stepLabelMessageId,
-                            state: { error, progress, logsToken },
-                        },
-                        index
-                    ) => {
-                        return (
-                            <Step
-                                key={`PreSave-step-${index}`}
-                                completed={progress >= ProgressFinished}
-                            >
-                                <StepLabel error={Boolean(error)}>
-                                    {intl.formatMessage({
-                                        id: stepLabelMessageId,
-                                    })}
-                                </StepLabel>
-                                <StepContent>
-                                    <ErrorBoundryWrapper>
+            steps.map(
+                (
+                    {
+                        StepComponent,
+                        stepLabelMessageId,
+                        state: { error, progress, logsToken },
+                    },
+                    index
+                ) => {
+                    return (
+                        <Step
+                            key={`PreSave-step-${index}`}
+                            completed={progress >= ProgressFinished}
+                        >
+                            <StepLabel error={Boolean(error)}>
+                                {intl.formatMessage({
+                                    id: stepLabelMessageId,
+                                })}
+                            </StepLabel>
+                            <StepContent>
+                                <ErrorBoundryWrapper>
+                                    <LoopIndexContextProvider value={index}>
                                         {progress === ProgressStates.RUNNING ? (
                                             <LinearProgress />
                                         ) : null}
@@ -71,15 +72,13 @@ function Content() {
                                             }}
                                         />
 
-                                        <StepComponent stepIndex={index} />
-                                    </ErrorBoundryWrapper>
-                                </StepContent>
-                            </Step>
-                        );
-                    }
-                )
-            ) : (
-                <LinearProgress />
+                                        <StepComponent />
+                                    </LoopIndexContextProvider>
+                                </ErrorBoundryWrapper>
+                            </StepContent>
+                        </Step>
+                    );
+                }
             ),
         [intl, steps]
     );

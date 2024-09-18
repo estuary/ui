@@ -5,31 +5,40 @@ import {
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useMount } from 'react-use';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { StepComponentProps } from '../../../types';
 
-function DisableCapture({ stepIndex }: StepComponentProps) {
+function DisableCapture() {
     const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const { jobStatusPoller } = useJobStatusPoller();
 
-    const thisStep = usePreSavePromptStore((state) => state.steps?.[stepIndex]);
+    const stepIndex = useLoopIndex();
+    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, nextStep] = usePreSavePromptStore((state) => [
-        state.updateStep,
-        state.nextStep,
-    ]);
+    const [updateStep, updateContext, nextStep] = usePreSavePromptStore(
+        (state) => [state.updateStep, state.updateContext, state.nextStep]
+    );
+
+    const setFormState = useFormStateStore_setFormState();
 
     useMount(() => {
-        if (thisStep?.state.progress === ProgressStates.IDLE) {
+        if (thisStep.state.progress === ProgressStates.IDLE) {
+            setFormState({
+                status: FormStatus.LOCKED,
+                exitWhenLogsClose: true,
+            });
+
             updateStep(stepIndex, {
                 progress: ProgressStates.RUNNING,
             });
 
-            const foo = async () => {
+            const disableCaptureAndPublish = async () => {
                 // Update the Capture to be disabled
                 const updateResponse = await modifyDraftSpec(
                     generateDisabledSpec(draftSpecs[0].spec, false, false),
@@ -59,7 +68,8 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                     return;
                 }
 
-                updateStep(stepIndex, {
+                updateContext({
+                    pubId: publishResponse.data[0].id,
                     logsToken: publishResponse.data[0].logs_token,
                 });
 
@@ -84,7 +94,9 @@ function DisableCapture({ stepIndex }: StepComponentProps) {
                 );
             };
 
-            void foo();
+            void disableCaptureAndPublish();
+        } else {
+            console.log('TODO: need to handle showing previous state?');
         }
     });
 

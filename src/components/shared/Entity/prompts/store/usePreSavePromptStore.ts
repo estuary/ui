@@ -4,52 +4,27 @@ import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { PromptStep, PromptStepState } from '../types';
-import {
-    DataFlowResetSteps,
-    DataFlowSteps,
-} from '../steps/dataFlowReset/shared';
+import { PromptStep } from '../types';
+import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
 import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
 import { PublishStep } from '../steps/preSave/Publish/definition';
-
-interface PreSavePromptStore {
-    steps: PromptStep[] | null;
-    machine: any;
-    updateMachine: (key: string, settings: Partial<PromptStep>) => void;
-
-    updateStep: (step: number, settings: Partial<PromptStepState>) => void;
-    initializeSteps: (backfillEnabled: boolean) => void;
-
-    activeStep: number;
-    activeMachine: string;
-    setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
-    nextStep: () => void;
-    previousStep: () => void;
-
-    show: boolean;
-    setShow: (data: PreSavePromptStore['show']) => void;
-
-    resetState: () => void;
-}
+import { PreSavePromptStore } from './types';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
-    'activeStep' | 'activeMachine' | 'steps' | 'show' | 'machine'
+    'activeStep' | 'steps' | 'show' | 'context'
 > => ({
     activeStep: 0,
-    activeMachine: 'changeReview',
     show: false,
-    steps: null,
-    machine: {},
+    steps: [],
+    context: {},
 });
-
-const name = 'estuary.presave-prompt-store';
 
 export const usePreSavePromptStore = create<PreSavePromptStore>()(
     devtools((set) => {
         return {
             ...getInitialState(),
-            resetState: () => set(getInitialState(), false, 'state reset'),
+            resetState: () => set(getInitialState(), false, 'resetState'),
 
             initializeSteps: (backfillEnabled) =>
                 set(
@@ -61,20 +36,8 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         }
 
                         newSteps.push(PublishStep);
-                        state.steps = newSteps;
 
-                        if (backfillEnabled) {
-                            state.machine = {
-                                changeReview: ChangeReviewStep,
-                                ...DataFlowSteps,
-                                saveAndPublish: PublishStep,
-                            };
-                        } else {
-                            state.machine = {
-                                changeReview: ChangeReviewStep,
-                                saveAndPublish: PublishStep,
-                            };
-                        }
+                        state.steps = newSteps;
                     }),
                     false,
                     'initializeSteps'
@@ -83,10 +46,6 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             updateStep: (stepToUpdate, settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        if (!state.steps) {
-                            return;
-                        }
-
                         state.steps[stepToUpdate].state = {
                             ...state.steps[stepToUpdate].state,
                             ...settings,
@@ -96,20 +55,16 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     'setActiveStep'
                 ),
 
-            updateMachine: (machineToUpdate, settings) =>
+            updateContext: (settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        if (!state.machine) {
-                            return;
-                        }
-
-                        state.machine[machineToUpdate] = {
-                            ...state.machine[machineToUpdate],
+                        state.context = {
+                            ...state.context,
                             ...settings,
                         };
                     }),
                     false,
-                    'updateMachine'
+                    'updateContext'
                 ),
 
             setActiveStep: (value) =>
@@ -124,10 +79,6 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             nextStep: () =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        if (!state.steps) {
-                            return;
-                        }
-
                         if (state.steps[state.activeStep].state.valid) {
                             state.steps[state.activeStep].state.progress =
                                 ProgressStates.SUCCESS;
@@ -141,10 +92,16 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             previousStep: () =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        state.activeStep = state.activeStep - 1;
+                        const newVal = state.activeStep - 1;
+                        state.activeStep = newVal >= 0 ? newVal : 0;
+
+                        // TODO - why did this not work?
+                        // if (state.activeStep === 0) {
+                        //     state.setShow(false);
+                        // }
                     }),
                     false,
-                    'nextStep'
+                    'previousStep'
                 ),
 
             setShow: (val) =>
@@ -160,14 +117,20 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     'setShow'
                 ),
         };
-    }, devtoolsOptions(name))
+    }, devtoolsOptions('estuary.presave-prompt-store'))
 );
 
 export const usePreSavePromptStore_activeStep = () => {
     return usePreSavePromptStore(
         useShallow((state) => {
-            return state.steps?.[state.activeStep]?.state;
+            return state.steps[state.activeStep]?.state;
         })
+    );
+};
+
+export const usePreSavePromptStore_stepValid = () => {
+    return usePreSavePromptStore(
+        useShallow((state) => state.steps[state.activeStep].state.valid)
     );
 };
 

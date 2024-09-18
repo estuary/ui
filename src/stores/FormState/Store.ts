@@ -2,6 +2,7 @@ import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { MessagePrefixes } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -17,7 +18,10 @@ const formActive = (status: FormStatus) => {
         status === FormStatus.UPDATING ||
         // TODO (workflow stores) need to manage form state better
         //  This is crappy - sorry. But if we have saved we want to disable everything and this is quickest way
-        status === FormStatus.SAVED
+        status === FormStatus.SAVED ||
+        // This is like 'saved' but a bit different. With PreSavePrompt we need a way to make sure the user
+        //  never is able to get back out of that ever
+        status === FormStatus.LOCKED
     );
 };
 
@@ -130,6 +134,19 @@ const getInitialState = (
                     //  test for field selection was still running.
                     logRocketConsole(CustomEvents.FORM_STATE_PREVENTED, {
                         type: 'background',
+                    });
+                    return;
+                }
+
+                if (
+                    formState.status === FormStatus.LOCKED &&
+                    hasLength(newState.status)
+                ) {
+                    // If we are here this means somehow the user is trying to take an action
+                    //  AFTER we have locked it and that should not happen ever. It does not matter
+                    //  what state it wants to go do - after being 'locked' it cannot go back.
+                    logRocketConsole(CustomEvents.FORM_STATE_PREVENTED, {
+                        type: 'locked',
                     });
                     return;
                 }

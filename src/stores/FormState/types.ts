@@ -39,6 +39,9 @@ export enum FormStatus {
     UPDATED = 'UPDATED',
 
     FAILED = 'FAILED',
+
+    // USE WITH CAUTION - only for prompts right now (Q3 2024)
+    LOCKED = 'LOCKED',
 }
 
 export interface EntityFormState {
