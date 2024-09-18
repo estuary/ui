@@ -50,6 +50,7 @@ function EnableCapture() {
 
                 updateStep(stepIndex, {
                     progress: ProgressStates.SUCCESS,
+                    valid: true,
                 });
                 nextStep();
 

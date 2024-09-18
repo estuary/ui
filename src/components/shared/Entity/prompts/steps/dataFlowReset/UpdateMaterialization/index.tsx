@@ -99,6 +99,7 @@ function MarkMaterialization() {
 
                 updateStep(stepIndex, {
                     progress: ProgressStates.SUCCESS,
+                    valid: true,
                 });
 
                 nextStep();
