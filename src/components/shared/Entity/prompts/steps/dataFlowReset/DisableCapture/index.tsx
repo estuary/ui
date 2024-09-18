@@ -39,14 +39,25 @@ function DisableCapture() {
             });
 
             const disableCaptureAndPublish = async () => {
+                const newSpec = generateDisabledSpec(
+                    draftSpecs[0].spec,
+                    false,
+                    false
+                );
+
+                const captureName = draftSpecs[0].catalog_name;
+
                 // Update the Capture to be disabled
                 const updateResponse = await modifyDraftSpec(
-                    generateDisabledSpec(draftSpecs[0].spec, false, false),
+                    newSpec,
                     {
                         draft_id: draftId,
-                        catalog_name: draftSpecs[0].catalog_name,
+                        catalog_name: captureName,
                         spec_type: 'capture',
-                    }
+                    },
+                    undefined,
+                    undefined,
+                    `data flow backfill : ${captureName} : disable : someKeyGoesHere`
                 );
 
                 if (updateResponse.error) {
@@ -69,6 +80,8 @@ function DisableCapture() {
                 }
 
                 updateContext({
+                    captureName,
+                    captureSpec: newSpec,
                     pubId: publishResponse.data[0].id,
                     logsToken: publishResponse.data[0].logs_token,
                 });

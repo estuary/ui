@@ -18,7 +18,7 @@ function Actions() {
         ]
     );
 
-    const canContinue = usePreSavePromptStore_stepValid;
+    const canContinue = usePreSavePromptStore_stepValid();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
 
     return (

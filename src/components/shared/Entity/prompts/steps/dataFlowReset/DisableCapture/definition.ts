@@ -4,6 +4,8 @@ import DisableCapture from '.';
 
 // interface DisableCaptureStepContext {
 //     pubId: string | null;
+//     captureSpec: JSON | null;
+//  captureName: string | null;
 //     logsToken: string | null;
 // }
 export const DisableCaptureStep: PromptStep = {

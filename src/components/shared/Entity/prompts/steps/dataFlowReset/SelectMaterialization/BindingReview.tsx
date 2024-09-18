@@ -2,21 +2,14 @@ import { Stack, Typography } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import ChipList from 'components/shared/ChipList';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useShallow } from 'zustand/react/shallow';
+import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import Materializations from './Materializations';
 
 function BindingReview() {
     const intl = useIntl();
 
-    const collectionsBeingBackfilled = useBindingStore(
-        useShallow((state) => {
-            return state.backfilledBindings.map((backfilledBinding) => {
-                return state.resourceConfigs[backfilledBinding].meta
-                    .collectionName;
-            });
-        })
-    );
+    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
+
     return (
         <Stack direction="column" spacing={2}>
             <AlertBox

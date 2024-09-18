@@ -3,7 +3,8 @@ import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/Def
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useShallow } from 'zustand/react/shallow';
+import { LiveSpecsExt_Related } from 'hooks/useLiveSpecsExt';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
@@ -21,14 +22,13 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
         state.updateContext,
     ]);
 
-    const [inputValue, setInputValue] = useState('');
-
-    const [backfillDataFlowTarget, setBackfillDataFlowTarget] = useBindingStore(
-        (state) => [
-            state.backfillDataFlowTarget,
-            state.setBackfillDataFlowTarget,
-        ]
+    const backfillTarget = usePreSavePromptStore(
+        useShallow((state) => {
+            state.context.backfillTarget;
+        })
     );
+
+    const [inputValue, setInputValue] = useState('');
 
     if (keys.length === 0) {
         return null;
@@ -42,24 +42,19 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
                 getOptionLabel={getValue}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.catalog_name === optionValue;
+                    return option.catalog_name === optionValue.catalog_name;
                 }}
                 options={keys}
-                value={backfillDataFlowTarget}
-                onChange={(_event, newValue) => {
-                    const backfillTarget = newValue
-                        ? newValue.catalog_name
-                        : null;
-
-                    // Need to save the data somewhere better
-                    setBackfillDataFlowTarget(backfillTarget);
+                value={backfillTarget}
+                onChange={(_event, newValue: LiveSpecsExt_Related | null) => {
+                    const newBackfillTarget = newValue ? newValue : null;
 
                     updateStep(stepIndex, {
-                        valid: Boolean(backfillTarget),
+                        valid: Boolean(newBackfillTarget),
                     });
 
                     updateContext({
-                        backfillTarget,
+                        backfillTarget: newBackfillTarget,
                     });
                 }}
                 onInputChange={(_event, newInputValue) => {

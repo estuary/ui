@@ -3,7 +3,7 @@ import { PromptStep } from '../../../types';
 import SelectMaterialization from '.';
 
 // interface SelectMaterializationStepContext {
-//     backfillTarget: string | null;
+//     backfillTarget: LiveSpecsExt_Related | null;
 // }
 
 export const SelectMaterializationStep: PromptStep = {

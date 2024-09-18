@@ -320,3 +320,13 @@ export const useBinding_backfillSupported = () =>
     useBindingStore((state) => {
         return state.backfillSupported;
     });
+
+export const useBinding_collectionsBeingBackfilled = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return state.backfilledBindings.map((backfilledBinding) => {
+                return state.resourceConfigs[backfilledBinding].meta
+                    .collectionName;
+            });
+        })
+    );

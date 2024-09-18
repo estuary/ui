@@ -50,12 +50,11 @@ function WaitForCaptureStop() {
                     timeStopped: '01/01/2024',
                 });
 
-                updateStep(stepIndex, {
-                    valid: true,
-                });
-
                 // Fake timeout to make it feel more async
                 setTimeout(() => {
+                    updateStep(stepIndex, {
+                        valid: true,
+                    });
                     nextStep();
                 }, 1000);
             };

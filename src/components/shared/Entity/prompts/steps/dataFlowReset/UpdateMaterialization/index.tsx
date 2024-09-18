@@ -1,15 +1,22 @@
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecsByLiveSpecId } from 'api/liveSpecsExt';
+import { modifyDraftSpec } from 'api/draftSpecs';
+import { getLiveSpecSpec } from 'api/liveSpecsExt';
 
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
+import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
+import {
+    getBindingAsFullSource,
+    getCollectionName,
+} from 'utils/workflow-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function MarkMaterialization() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+
+    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
     const [updateStep, updateContext, nextStep, context] =
         usePreSavePromptStore((state) => [
@@ -26,13 +33,11 @@ function MarkMaterialization() {
             });
 
             const updateMaterializationTimestamp = async () => {
-                const liveSpecResponse = await getLiveSpecsByLiveSpecId(
-                    context.liveSpecId
+                const liveSpecResponse = await getLiveSpecSpec(
+                    context.backfillTarget.id
                 );
 
-                const catalogName = liveSpecResponse.data?.[0].catalog_name;
-
-                if (liveSpecResponse.error || !catalogName) {
+                if (liveSpecResponse.error) {
                     updateStep(stepIndex, {
                         error: liveSpecResponse.error,
                         progress: ProgressStates.FAILED,
@@ -40,7 +45,9 @@ function MarkMaterialization() {
                     return;
                 }
 
-                const draftsResponse = await createEntityDraft(catalogName);
+                const draftsResponse = await createEntityDraft(
+                    `data flow backfill : ${context.backfillTarget.catalog_name} : create : someKeyGoesHere`
+                );
                 const backfilledDraftId = draftsResponse.data?.[0].id;
 
                 if (draftsResponse.error || !backfilledDraftId) {
@@ -57,14 +64,29 @@ function MarkMaterialization() {
 
                 // Update the spec here
                 const updatedSpec = {
-                    ...liveSpecResponse.data?.[0].spec,
+                    ...liveSpecResponse.data.spec,
                 };
+                updatedSpec.bindings.forEach((binding: any) => {
+                    if (
+                        collectionsBeingBackfilled.includes(
+                            getCollectionName(binding)
+                        )
+                    ) {
+                        binding.source = getBindingAsFullSource(binding);
+                        binding.source.notBefore = context.timeStopped;
+                    }
+                });
 
-                const draftedMaterialization = await createDraftSpec(
-                    backfilledDraftId,
-                    catalogName,
+                const draftedMaterialization = await modifyDraftSpec(
                     updatedSpec,
-                    'materialization'
+                    {
+                        catalog_name: context.backfillTarget.catalog_name,
+                        draft_id: backfilledDraftId,
+                        spec_type: 'materialization',
+                    },
+                    undefined,
+                    undefined,
+                    `data flow backfill : ${context.backfillTarget.catalog_name} : update : someKeyGoesHere`
                 );
 
                 if (draftedMaterialization.error) {
@@ -74,6 +96,10 @@ function MarkMaterialization() {
                     });
                     return;
                 }
+
+                updateStep(stepIndex, {
+                    progress: ProgressStates.SUCCESS,
+                });
 
                 nextStep();
             };
