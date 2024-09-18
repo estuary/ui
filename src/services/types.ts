@@ -2,6 +2,7 @@ import { PostgrestResponse } from '@supabase/postgrest-js';
 
 export enum CustomEvents {
     AUTH_SIGNOUT = 'Auth_Signout',
+    BACKFILL_DATAFLOW = 'Backfill_Dataflow',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
     BINDINGS_RESOURCE_CONFIG_MISSING = 'Bindings_Resource_Config_Missing',
     CAPTURE_CREATE = 'Capture_Create',
