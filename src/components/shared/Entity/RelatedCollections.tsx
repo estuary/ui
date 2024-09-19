@@ -5,9 +5,10 @@ import { useIntl } from 'react-intl';
 
 interface Props {
     collections: string[] | null;
+    newWindow?: boolean;
 }
 
-function RelatedCollections({ collections }: Props) {
+function RelatedCollections({ collections, newWindow }: Props) {
     const intl = useIntl();
 
     const { generatePath } = useDetailsNavigator(
@@ -24,6 +25,7 @@ function RelatedCollections({ collections }: Props) {
             link: generatePath({
                 catalog_name: collection,
             }),
+            newWindow,
             title: intl.formatMessage(
                 {
                     id: 'detailsPanel.details.linkToCollection',

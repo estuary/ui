@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useShallow } from 'zustand/react/shallow';
-import { LiveSpecsExt_Related } from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';

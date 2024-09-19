@@ -360,8 +360,8 @@ export const Workflows: Record<string, string> = {
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
 
     // Reset Data Flow
-    'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
-    'resetDataFlow.materializations.empty': `No related materializations`,
-    'resetDataFlow.materializations.selector.label': `Materialization to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) materialization`,
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via their Source Capture.`,
+    'resetDataFlow.materializations.empty': `No related ${CommonMessages['terms.sources']}`,
+    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
 };

@@ -8,8 +8,8 @@ import {
     TableRow,
 } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import ChipList from 'components/shared/ChipList';
 import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
+import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
@@ -46,7 +46,12 @@ function ReviewTable() {
         },
         {
             entityType: 'collection',
-            cell: <ChipList values={collectionsBeingBackfilled} maxChips={9} />,
+            cell: (
+                <RelatedCollections
+                    collections={collectionsBeingBackfilled}
+                    newWindow
+                />
+            ),
             count: collectionsBeingBackfilled.length,
         },
         {

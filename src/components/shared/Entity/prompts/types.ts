@@ -15,9 +15,6 @@ export interface PromptStepState {
     // Controls if the user can continue on from this step
     valid: boolean;
 
-    // Used to show logging
-    logsToken?: string;
-
     publicationStatus?: PublicationJobStatus;
 }
 

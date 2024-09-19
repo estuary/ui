@@ -39,7 +39,7 @@ function Content() {
                 ) => {
                     return (
                         <Step
-                            key={`PreSave-step-${index}`}
+                            key={`PreSave-step-${stepLabelMessageId}-${index}`}
                             completed={progress >= ProgressFinished}
                         >
                             <StepLabel error={Boolean(error)}>

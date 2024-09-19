@@ -1,25 +1,34 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
+import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import Error from 'components/shared/Error';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import Selector from './Selector';
-import { BindingReviewProps } from './types';
 
-function Materializations({ selected }: BindingReviewProps) {
+function Materializations() {
     const intl = useIntl();
 
-    const { related, error, isValidating } = useLiveSpecsExt_related(selected);
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+
+    const { related, error, isValidating } = useLiveSpecsExt_related(
+        draftSpecs[0].catalog_name
+    );
 
     const foundData = useMemo(() => hasLength(related), [related]);
 
     return (
         <Box>
             <Typography>
-                {intl.formatMessage({
-                    id: 'resetDataFlow.materializations.header',
-                })}
+                {intl.formatMessage(
+                    {
+                        id: 'resetDataFlow.materializations.header',
+                    },
+                    {
+                        captureName: draftSpecs[0].catalog_name,
+                    }
+                )}
             </Typography>
 
             {isValidating ? <LinearProgress /> : null}

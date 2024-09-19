@@ -2,14 +2,15 @@ import { ReactNode } from 'react';
 
 export const ProgressFinished = 200;
 
+// Making these high numbers so we have room to put extras between
 export enum ProgressStates {
-    IDLE = -1, // new for steps
-    PAUSED = 0, // Not used
-    RUNNING = 1,
-    SKIPPED = 2,
+    IDLE = -100, // new for steps
+    PAUSED = 0, // Not used right now
+    RUNNING = 100,
 
-    // Making these high numbers so we have room to put extras between
-    SUCCESS = 200,
+    // Here and above is considered finished
+    SKIPPED = 200,
+    SUCCESS = 300,
     FAILED = 400,
 }
 

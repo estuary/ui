@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import ChipList from 'components/shared/ChipList';
+import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import Materializations from './Materializations';
@@ -19,9 +19,12 @@ function BindingReview() {
                     }
                 )}
             </Typography>
-            <ChipList values={collectionsBeingBackfilled} maxChips={10} />
+            <RelatedCollections
+                collections={collectionsBeingBackfilled}
+                newWindow
+            />
 
-            <Materializations selected={collectionsBeingBackfilled} />
+            <Materializations />
         </Stack>
     );
 }

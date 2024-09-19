@@ -8,6 +8,9 @@ import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
 import produce from 'immer';
 import { specContainsDerivation } from 'utils/misc-utils';
 
+// Eventually we'll probably move this out of here as it feels it is beyond the scope
+//  of "utils". Also, we'll probably end up nesting message keys together and stuff like that
+//  to keep it a bit easier to visual skim.
 export const ENTITY_SETTINGS = {
     collection: {
         Icon: DatabaseScript,
