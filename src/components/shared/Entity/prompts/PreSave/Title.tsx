@@ -7,9 +7,10 @@ function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [activeStep, setShow] = usePreSavePromptStore((state) => [
+    const [activeStep, setShow, resetState] = usePreSavePromptStore((state) => [
         state.activeStep,
         state.setShow,
+        state.resetState,
     ]);
 
     return (
@@ -24,6 +25,7 @@ function Title() {
             <IconButton
                 disabled={activeStep > 3}
                 onClick={() => {
+                    resetState();
                     setShow(false);
                 }}
             >
