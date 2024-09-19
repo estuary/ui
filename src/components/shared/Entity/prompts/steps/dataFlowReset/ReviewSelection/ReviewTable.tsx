@@ -17,11 +17,11 @@ import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 function ReviewTable() {
     const intl = useIntl();
 
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
     const [materializationName] = usePreSavePromptStore((state) => [
         state.context?.backfillTarget?.catalog_name,
     ]);
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
     const tableRows = [
         {
@@ -53,8 +53,6 @@ function ReviewTable() {
                                 <TableCell
                                     sx={{
                                         minHeight: 45,
-                                        minWidth: 'fit-content',
-                                        maxWidth: 'fit-content',
                                         background: (theme) =>
                                             theme.palette.background.default,
                                     }}
