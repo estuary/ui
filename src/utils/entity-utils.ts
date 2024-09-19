@@ -1,5 +1,36 @@
+import { authenticatedRoutes } from 'app/routes';
+import {
+    semiTransparentBackground_blue,
+    semiTransparentBackground_purple,
+    semiTransparentBackground_teal,
+} from 'context/Theme';
+import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
 import produce from 'immer';
 import { specContainsDerivation } from 'utils/misc-utils';
+
+export const ENTITY_SETTINGS = {
+    collection: {
+        Icon: DatabaseScript,
+        background: semiTransparentBackground_blue,
+        pluralId: 'terms.collections.plural',
+        route: authenticatedRoutes.collections.fullPath,
+        termId: 'terms.collections',
+    },
+    capture: {
+        Icon: CloudUpload,
+        background: semiTransparentBackground_teal,
+        pluralId: 'terms.sources.plural',
+        route: authenticatedRoutes.captures.fullPath,
+        termId: 'terms.sources',
+    },
+    materialization: {
+        Icon: CloudDownload,
+        background: semiTransparentBackground_purple,
+        pluralId: 'terms.destinations.plural',
+        route: authenticatedRoutes.materializations.fullPath,
+        termId: 'terms.destinations',
+    },
+};
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
