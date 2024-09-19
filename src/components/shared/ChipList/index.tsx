@@ -49,7 +49,7 @@ function ChipList({
     //   sure the user knows that the list is scrollable
     useEffect(() => {
         if (maxRender === valueLength) {
-            listScroller.current.scrollTo(undefined, 10);
+            listScroller.current?.scrollTo(undefined, 10);
         }
     }, [maxRender, valueLength]);
 
