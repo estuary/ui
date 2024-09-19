@@ -1,9 +1,8 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { createDraftSpec } from 'api/draftSpecs';
 
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
-import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function EnableCapture() {
@@ -26,17 +25,25 @@ function EnableCapture() {
 
             const enableCapture = async () => {
                 // Update the Capture to be disabled
-                const updateResponse = await modifyDraftSpec(
-                    generateDisabledSpec(context.captureSpec, true, false),
-                    {
-                        draft_id: context.backfilledDraftId,
-                        catalog_name: context.captureName,
-                        spec_type: 'capture',
-                    },
+                const updateResponse = await createDraftSpec(
+                    context.backfilledDraftId,
+                    context.captureName,
+                    context.captureSpec,
+                    'capture',
                     undefined,
-                    undefined,
-                    `data flow backfill : ${context.captureName} : enable : someKeyGoesHere`
+                    false
                 );
+                // const updateResponse = await modifyDraftSpec(
+                //     generateDisabledSpec(context.captureSpec, true, false),
+                //     {
+                //         draft_id: context.backfilledDraftId,
+                //         catalog_name: context.captureName,
+                //         spec_type: 'capture',
+                //     },
+                //     undefined,
+                //     undefined,
+                //     `data flow backfill : ${context.captureName} : enable : someKeyGoesHere`
+                // );
 
                 if (updateResponse.error) {
                     updateStep(stepIndex, {

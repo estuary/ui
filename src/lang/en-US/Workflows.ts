@@ -134,6 +134,7 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.logs.spinner.running': `loading...`,
 
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
+    'dataFlowReset.reviewSelection.title': `Review your selections`,
     'dataFlowReset.disableCapture.title': `Disable capture`,
     'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
     'dataFlowReset.updateMaterialization.title': `Update Materialization`,

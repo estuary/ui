@@ -1,5 +1,5 @@
 import { createEntityDraft } from 'api/drafts';
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { createDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecSpec } from 'api/liveSpecsExt';
 
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
@@ -77,17 +77,25 @@ function MarkMaterialization() {
                     }
                 });
 
-                const draftedMaterialization = await modifyDraftSpec(
+                const draftedMaterialization = await createDraftSpec(
+                    backfilledDraftId,
+                    context.backfillTarget.catalog_name,
                     updatedSpec,
-                    {
-                        catalog_name: context.backfillTarget.catalog_name,
-                        draft_id: backfilledDraftId,
-                        spec_type: 'materialization',
-                    },
+                    'materialization',
                     undefined,
-                    undefined,
-                    `data flow backfill : ${context.backfillTarget.catalog_name} : update : someKeyGoesHere`
+                    false
                 );
+                // const draftedMaterialization = await modifyDraftSpec(
+                //     updatedSpec,
+                //     {
+                //         catalog_name: context.backfillTarget.catalog_name,
+                //         draft_id: backfilledDraftId,
+                //         spec_type: 'materialization',
+                //     },
+                //     undefined,
+                //     undefined,
+                //     `data flow backfill : ${context.backfillTarget.catalog_name} : update : someKeyGoesHere`
+                // );
 
                 if (draftedMaterialization.error) {
                     updateStep(stepIndex, {

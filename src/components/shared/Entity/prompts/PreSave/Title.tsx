@@ -22,7 +22,7 @@ function Title() {
         >
             Please review your changes
             <IconButton
-                disabled={activeStep > 2}
+                disabled={activeStep > 3}
                 onClick={() => {
                     setShow(false);
                 }}

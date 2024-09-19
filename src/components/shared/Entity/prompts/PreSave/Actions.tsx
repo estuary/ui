@@ -25,7 +25,7 @@ function Actions() {
         <DialogActions>
             <Stack direction="row" spacing={2}>
                 <Button
-                    disabled={activeStep > 2}
+                    disabled={activeStep > 3}
                     onClick={onFirstStep ? () => setShow(false) : previousStep}
                     variant="text"
                 >

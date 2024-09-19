@@ -1,5 +1,9 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { createPublication, getPublicationByIdQuery } from 'api/publications';
+import {
+    createPublication,
+    getPublicationByIdQuery,
+    PublicationJobStatus,
+} from 'api/publications';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
@@ -88,17 +92,23 @@ function DisableCapture() {
 
                 jobStatusPoller(
                     getPublicationByIdQuery(publishResponse.data[0].id),
-                    async () => {
+                    async (successResponse: PublicationJobStatus) => {
                         updateStep(stepIndex, {
+                            publicationStatus: successResponse,
                             progress: ProgressStates.SUCCESS,
                             valid: true,
                         });
 
                         nextStep();
                     },
-                    async (error: any) => {
+                    async (
+                        errorResponse: any //PublicationJobStatus | PostgrestError
+                    ) => {
                         updateStep(stepIndex, {
-                            error,
+                            error: errorResponse,
+                            publicationStatus: errorResponse.logs_token
+                                ? errorResponse
+                                : null,
                             progress: ProgressStates.FAILED,
                             valid: false,
                         });

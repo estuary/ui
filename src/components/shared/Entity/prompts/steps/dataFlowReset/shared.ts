@@ -1,11 +1,13 @@
 import { DisableCaptureStep } from './DisableCapture/definition';
 import { EnableCaptureStep } from './EnableCapture/definition';
+import { ReviewSelectionStep } from './ReviewSelection/definition';
 import { SelectMaterializationStep } from './SelectMaterialization/definition';
 import { UpdateMaterializationStep } from './UpdateMaterialization/definition';
 import { WaitForCaptureStep } from './WaitForCaptureStop/definition';
 
 export const DataFlowSteps = {
     selectMaterialization: SelectMaterializationStep,
+    reviewSelection: ReviewSelectionStep,
     disableCapture: DisableCaptureStep,
     waitForCapture: WaitForCaptureStep,
     updateMaterialization: UpdateMaterializationStep,
