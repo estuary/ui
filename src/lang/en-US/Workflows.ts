@@ -145,8 +145,11 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
-    'dataFlowReset.warning.title': `This cannot be undone or stopped`,
-    'dataFlowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
+    'dataFlowReset.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
+    'dataFlowReset.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
+    'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
+    'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
+    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
     'dataFlowReset.step1.message': `The {entityCount} collections to be backfilled`,
 
     'dataFlowReset.editor.warning.title': `Editing disabled`,
