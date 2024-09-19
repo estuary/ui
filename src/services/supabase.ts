@@ -458,9 +458,10 @@ export const DEFAULT_POLLER_ERROR = {
 
 export const JOB_TYPE_EMPTY = 'emptyDraft';
 export const JOB_TYPE_FAILURE = 'buildFailed';
-export const JOB_TYPE_SUCCESS = 'emptyDraft';
+export const JOB_TYPE_SUCCESS = 'success';
 
 // These columns are not always what you want... but okay for a "default" constant
+export const JOB_STATUS_FAILURE = [JOB_TYPE_FAILURE];
 export const JOB_STATUS_SUCCESS = [JOB_TYPE_EMPTY, JOB_TYPE_SUCCESS];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 // END: Poller

@@ -5,8 +5,7 @@ import DisableCapture from '.';
 // interface DisableCaptureStepContext {
 //     pubId: string | null;
 //     captureSpec: JSON | null;
-//  captureName: string | null;
-//     logsToken: string | null;
+//     captureName: string | null;
 // }
 export const DisableCaptureStep: PromptStep = {
     StepComponent: DisableCapture,

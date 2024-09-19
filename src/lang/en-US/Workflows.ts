@@ -140,6 +140,8 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.updateMaterialization.title': `Update Materialization`,
     'dataFlowReset.enableCapture.title': `Enable capture`,
 
+    'dataFlowReset.errors.publishFailed': `There was a "build failure" on the server`,
+
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
@@ -352,6 +354,7 @@ export const Workflows: Record<string, string> = {
     // Logs Dialog
     'logs.default': ` `,
     'logs.paused': `paused`,
+    'logs.noLogs': `no logs were found`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,

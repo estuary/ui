@@ -4,6 +4,7 @@ import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { PromptStep } from '../types';
 import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
 import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
@@ -45,10 +46,29 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             updateStep: (stepToUpdate, settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        state.steps[stepToUpdate].state = {
-                            ...state.steps[stepToUpdate].state,
+                        const updating = state.steps[stepToUpdate];
+
+                        updating.state = {
+                            ...updating.state,
                             ...settings,
                         };
+
+                        const newStatus =
+                            settings.publicationStatus?.job_status.type;
+                        if (newStatus) {
+                            if (JOB_STATUS_SUCCESS.includes(newStatus)) {
+                                updating.state.progress =
+                                    ProgressStates.SUCCESS;
+                                updating.state.valid = true;
+                            } else if (JOB_STATUS_FAILURE.includes(newStatus)) {
+                                updating.state.progress = ProgressStates.FAILED;
+                                updating.state.valid = false;
+                                updating.state.error = {
+                                    message:
+                                        'dataFlowReset.errors.publishFailed',
+                                };
+                            }
+                        }
                     }),
                     false,
                     'setActiveStep'

@@ -1,11 +1,10 @@
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-import { PostgrestError } from '@supabase/postgrest-js';
 import { PublicationJobStatus } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 
 export interface PromptStepState {
     // Both server and client side error
-    error: PostgrestError | null;
+    error: any | null; // PostgrestError
 
     // Stores what the step is currently doing
     progress: ProgressStates;

@@ -71,18 +71,8 @@ function EnableCapture() {
         }
     });
 
-    return (
-        <>explain what is happening</>
-        // <Logs
-        //     token={logsToken}
-        //     height={350}
-        //     loadingLineSeverity="info"
-        //     spinnerMessages={{
-        //         stoppedKey: 'preSavePrompt.logs.spinner.stopped',
-        //         runningKey: 'preSavePrompt.logs.spinner.running',
-        //     }}
-        // />
-    );
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
 }
 
 export default EnableCapture;

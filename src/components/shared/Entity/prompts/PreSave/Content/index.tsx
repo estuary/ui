@@ -1,4 +1,5 @@
 import {
+    Box,
     DialogContent,
     LinearProgress,
     Step,
@@ -32,7 +33,7 @@ function Content() {
                     {
                         StepComponent,
                         stepLabelMessageId,
-                        state: { error, progress, logsToken },
+                        state: { error, progress, publicationStatus },
                     },
                     index
                 ) => {
@@ -53,24 +54,35 @@ function Content() {
                                             <LinearProgress />
                                         ) : null}
 
-                                        <Error
-                                            severity="error"
-                                            error={error}
-                                            condensed
-                                            hideTitle
-                                        />
-
-                                        <ErrorLogs
-                                            defaultOpen
-                                            logToken={
-                                                Boolean(error)
-                                                    ? logsToken
-                                                    : null
-                                            }
-                                            logProps={{
-                                                fetchAll: true,
-                                            }}
-                                        />
+                                        {progress === ProgressStates.FAILED ? (
+                                            <>
+                                                <Error
+                                                    severity="error"
+                                                    error={error}
+                                                    condensed
+                                                    hideTitle
+                                                />
+                                                <Box>
+                                                    <ErrorLogs
+                                                        defaultOpen
+                                                        logToken={
+                                                            Boolean(error)
+                                                                ? publicationStatus?.logs_token
+                                                                : null
+                                                        }
+                                                        logProps={{
+                                                            fetchAll: true,
+                                                            spinnerMessages: {
+                                                                runningKey:
+                                                                    'logs.default',
+                                                                stoppedKey:
+                                                                    'logs.noLogs',
+                                                            },
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </>
+                                        ) : null}
 
                                         <StepComponent />
                                     </LoopIndexContextProvider>

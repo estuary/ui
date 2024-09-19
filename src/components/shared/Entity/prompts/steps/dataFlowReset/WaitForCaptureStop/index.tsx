@@ -65,9 +65,8 @@ function WaitForCaptureStop() {
         }
     });
 
-    return (
-        <>explain what is happening context.liveSpecId = {context.liveSpecId}</>
-    );
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
 }
 
 export default WaitForCaptureStop;
