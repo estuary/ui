@@ -60,6 +60,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                                 updating.state.progress =
                                     ProgressStates.SUCCESS;
                                 updating.state.valid = true;
+                                updating.state.error = null;
                             } else if (JOB_STATUS_FAILURE.includes(newStatus)) {
                                 updating.state.progress = ProgressStates.FAILED;
                                 updating.state.valid = false;
