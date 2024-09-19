@@ -1,3 +1,5 @@
+import { SxProps, Theme } from '@mui/material';
+
 export interface ChipDisplay {
     display: string;
     link?: string;
@@ -17,4 +19,5 @@ export interface ChipListProps {
     disabled?: boolean;
     maxChips?: number;
     stripPath?: boolean;
+    sx?: SxProps<Theme>;
 }
