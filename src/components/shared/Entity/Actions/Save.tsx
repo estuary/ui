@@ -8,8 +8,10 @@ import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setShowSavePrompt,
+} from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
@@ -26,11 +28,12 @@ function EntityCreateSave({
     const save = useSave(logEvent, onFailure, dryRun);
 
     const isSaving = useEditorStore_isSaving();
-    const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
+    const formActive = useFormStateStore_isActive();
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
+
     // TODO (data flow reset)
-    const [setShow] = usePreSavePromptStore((state) => [state.setShow]);
     const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
     const needsBackfilled = useBinding_backfilledBindings_count();
 
@@ -41,7 +44,7 @@ function EntityCreateSave({
             onClick={async () => {
                 // TODO (data flow reset)
                 if (!dryRun && backfillDataflow && needsBackfilled) {
-                    setShow(true);
+                    setShowSavePrompt(true);
                 } else {
                     await save(draftId);
                 }

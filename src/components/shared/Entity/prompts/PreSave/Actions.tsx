@@ -1,5 +1,6 @@
 import { Button, DialogActions, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
+import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
 import {
     usePreSavePromptStore,
     usePreSavePromptStore_onFirstStep,
@@ -9,13 +10,10 @@ import {
 function Actions() {
     const intl = useIntl();
 
-    const [activeStep, nextStep, previousStep, setShow] = usePreSavePromptStore(
-        (state) => [
-            state.activeStep,
-            state.nextStep,
-            state.previousStep,
-            state.setShow,
-        ]
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
+
+    const [activeStep, nextStep, previousStep] = usePreSavePromptStore(
+        (state) => [state.activeStep, state.nextStep, state.previousStep]
     );
 
     const canContinue = usePreSavePromptStore_stepValid();
@@ -26,7 +24,11 @@ function Actions() {
             <Stack direction="row" spacing={2}>
                 <Button
                     disabled={activeStep > 3}
-                    onClick={onFirstStep ? () => setShow(false) : previousStep}
+                    onClick={
+                        onFirstStep
+                            ? () => setShowSavePrompt(false)
+                            : previousStep
+                    }
                     variant="text"
                 >
                     {intl.formatMessage({

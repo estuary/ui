@@ -26,7 +26,7 @@ export default function StatOverview({
     const intl = useIntl();
 
     const {
-        route,
+        routes: { viewAll },
         termId: titleId,
         background,
         Icon,
@@ -63,7 +63,7 @@ export default function StatOverview({
                     </Typography>
                 </Stack>
 
-                <LinkWrapper link={route}>
+                <LinkWrapper link={viewAll}>
                     <FormattedMessage id="cta.goToAll" />
                 </LinkWrapper>
             </Stack>

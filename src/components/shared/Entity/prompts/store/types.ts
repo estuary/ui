@@ -16,8 +16,5 @@ export interface PreSavePromptStore<T = any> {
     nextStep: () => void;
     previousStep: () => void;
 
-    show: boolean;
-    setShow: (data: PreSavePromptStore['show']) => void;
-
     resetState: () => void;
 }

@@ -12,10 +12,9 @@ import { PreSavePromptStore } from './types';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
-    'activeStep' | 'steps' | 'show' | 'context'
+    'activeStep' | 'steps' | 'context'
 > => ({
     activeStep: 0,
-    show: false,
     steps: [],
     context: {},
 });
@@ -102,19 +101,6 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     }),
                     false,
                     'previousStep'
-                ),
-
-            setShow: (val) =>
-                set(
-                    produce((state: PreSavePromptStore) => {
-                        state.show = val;
-
-                        if (!val) {
-                            state.resetState();
-                        }
-                    }),
-                    false,
-                    'setShow'
                 ),
         };
     }, devtoolsOptions('estuary.presave-prompt-store'))

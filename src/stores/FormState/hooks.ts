@@ -156,3 +156,21 @@ export const useFormStateStore_setLiveSpec = () => {
         (state) => state.setLiveSpec
     );
 };
+
+export const useFormStateStore_showSavePrompt = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<EntityFormState, EntityFormState['showSavePrompt']>(
+        storeName(workflow),
+        (state) => state.showSavePrompt
+    );
+};
+
+export const useFormStateStore_setShowSavePrompt = () => {
+    const workflow = useEntityWorkflow();
+
+    return useZustandStore<
+        EntityFormState,
+        EntityFormState['setShowSavePrompt']
+    >(storeName(workflow), (state) => state.setShowSavePrompt);
+};

@@ -13,21 +13,31 @@ export const ENTITY_SETTINGS = {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
         pluralId: 'terms.collections.plural',
-        route: authenticatedRoutes.collections.fullPath,
+        routes: {
+            details: authenticatedRoutes.collections.details.overview.fullPath,
+            viewAll: authenticatedRoutes.collections.fullPath,
+        },
         termId: 'terms.collections',
     },
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
         pluralId: 'terms.sources.plural',
-        route: authenticatedRoutes.captures.fullPath,
+        routes: {
+            details: authenticatedRoutes.captures.details.overview.fullPath,
+            viewAll: authenticatedRoutes.captures.fullPath,
+        },
         termId: 'terms.sources',
     },
     materialization: {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
         pluralId: 'terms.destinations.plural',
-        route: authenticatedRoutes.materializations.fullPath,
+        routes: {
+            details:
+                authenticatedRoutes.materializations.details.overview.fullPath,
+            viewAll: authenticatedRoutes.materializations.fullPath,
+        },
         termId: 'terms.destinations',
     },
 };

@@ -9,6 +9,8 @@ import {
 } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ChipList from 'components/shared/ChipList';
+import LinkWrapper from 'components/shared/LinkWrapper';
+import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import { ENTITY_SETTINGS } from 'utils/entity-utils';
@@ -16,6 +18,8 @@ import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ReviewTable() {
     const intl = useIntl();
+
+    const { generatePath } = useDetailsNavigator('');
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
@@ -26,7 +30,23 @@ function ReviewTable() {
     const tableRows = [
         {
             entityType: 'capture',
-            cell: draftSpecs[0].catalog_name,
+            cell: (
+                <LinkWrapper
+                    newWindow
+                    ariaLabel={intl.formatMessage(
+                        { id: 'entityTable.viewDetails.aria' },
+                        { name: draftSpecs[0].catalog_name }
+                    )}
+                    link={generatePath(
+                        {
+                            catalog_name: draftSpecs[0].catalog_name,
+                        },
+                        ENTITY_SETTINGS.capture.routes.details
+                    )}
+                >
+                    {draftSpecs[0].catalog_name}
+                </LinkWrapper>
+            ),
             count: 1,
         },
         {
@@ -36,7 +56,23 @@ function ReviewTable() {
         },
         {
             entityType: 'materialization',
-            cell: materializationName,
+            cell: (
+                <LinkWrapper
+                    newWindow
+                    ariaLabel={intl.formatMessage(
+                        { id: 'entityTable.viewDetails.aria' },
+                        { name: materializationName }
+                    )}
+                    link={generatePath(
+                        {
+                            catalog_name: materializationName,
+                        },
+                        ENTITY_SETTINGS.materialization.routes.details
+                    )}
+                >
+                    {materializationName}
+                </LinkWrapper>
+            ),
             count: 1,
         },
     ];

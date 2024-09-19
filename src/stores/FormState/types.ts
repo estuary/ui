@@ -56,6 +56,9 @@ export interface EntityFormState {
     liveSpec: Schema | null;
     setLiveSpec: (data: EntityFormState['liveSpec']) => void;
 
+    showSavePrompt: boolean;
+    setShowSavePrompt: (data: EntityFormState['showSavePrompt']) => void;
+
     updateStatus: (status: FormStatus, background?: boolean) => void;
 
     // Misc.

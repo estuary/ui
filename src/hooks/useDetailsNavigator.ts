@@ -11,8 +11,8 @@ function useDetailsNavigator(path: string) {
     const navigate = useNavigate();
 
     const generatePath = useCallback(
-        (data: Data) => {
-            return getPathWithParams(path, {
+        (data: Data, pathOverride?: string) => {
+            return getPathWithParams(pathOverride ?? path, {
                 [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
             });
         },
@@ -20,9 +20,9 @@ function useDetailsNavigator(path: string) {
     );
 
     const navigateToPath = useCallback(
-        (data: Data) => {
+        (data: Data, pathOverride?: string) => {
             navigate(
-                getPathWithParams(path, {
+                getPathWithParams(pathOverride ?? path, {
                     [GlobalSearchParams.CATALOG_NAME]: data.catalog_name,
                 })
             );
