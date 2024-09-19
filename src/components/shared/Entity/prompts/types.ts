@@ -1,5 +1,6 @@
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { PostgrestError } from '@supabase/postgrest-js';
+import { PublicationJobStatus } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 
 export interface PromptStepState {
@@ -17,6 +18,8 @@ export interface PromptStepState {
 
     // Used to show logging
     logsToken?: string;
+
+    publicationStatus?: PublicationJobStatus;
 }
 
 // TODO (dataflow typing) should try to get typing working with the context
