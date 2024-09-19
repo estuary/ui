@@ -1,4 +1,5 @@
 import { Dialog } from '@mui/material';
+import PromptsHydrator from '../store/Hydrator';
 import {
     usePreSavePromptStore,
     usePreSavePromptStore_onFirstStep,
@@ -13,9 +14,11 @@ function PreSavePrompt() {
 
     return (
         <Dialog maxWidth={onFirstStep ? 'lg' : 'md'} fullWidth open={show}>
-            <Title />
-            <Content />
-            <Actions />
+            <PromptsHydrator>
+                <Title />
+                <Content />
+                <Actions />
+            </PromptsHydrator>
         </Dialog>
     );
 }
