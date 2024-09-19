@@ -116,7 +116,7 @@ export const usePreSavePromptStore_activeStep = () => {
 
 export const usePreSavePromptStore_stepValid = () => {
     return usePreSavePromptStore(
-        useShallow((state) => state.steps[state.activeStep].state.valid)
+        useShallow((state) => state.steps[state.activeStep]?.state.valid)
     );
 };
 

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import ChipList from 'components/shared/ChipList';
-import LinkWrapper from 'components/shared/LinkWrapper';
+import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
@@ -31,21 +31,16 @@ function ReviewTable() {
         {
             entityType: 'capture',
             cell: (
-                <LinkWrapper
+                <EntityNameDetailsLink
                     newWindow
-                    ariaLabel={intl.formatMessage(
-                        { id: 'entityTable.viewDetails.aria' },
-                        { name: draftSpecs[0].catalog_name }
-                    )}
-                    link={generatePath(
+                    name={draftSpecs[0].catalog_name}
+                    path={generatePath(
                         {
                             catalog_name: draftSpecs[0].catalog_name,
                         },
                         ENTITY_SETTINGS.capture.routes.details
                     )}
-                >
-                    {draftSpecs[0].catalog_name}
-                </LinkWrapper>
+                />
             ),
             count: 1,
         },
@@ -57,21 +52,16 @@ function ReviewTable() {
         {
             entityType: 'materialization',
             cell: (
-                <LinkWrapper
+                <EntityNameDetailsLink
                     newWindow
-                    ariaLabel={intl.formatMessage(
-                        { id: 'entityTable.viewDetails.aria' },
-                        { name: materializationName }
-                    )}
-                    link={generatePath(
+                    name={materializationName}
+                    path={generatePath(
                         {
                             catalog_name: materializationName,
                         },
                         ENTITY_SETTINGS.materialization.routes.details
                     )}
-                >
-                    {materializationName}
-                </LinkWrapper>
+                />
             ),
             count: 1,
         },
@@ -85,10 +75,14 @@ function ReviewTable() {
                         const { pluralId, Icon } = ENTITY_SETTINGS[entityType];
 
                         return (
-                            <TableRow key={`review-table-row-${pluralId}`}>
+                            <TableRow
+                                key={`review-table-row-${pluralId}`}
+                                sx={{ height: 50 }}
+                            >
                                 <TableCell
                                     sx={{
-                                        minHeight: 45,
+                                        minWidth: 'fit-content',
+                                        width: 0,
                                         background: (theme) =>
                                             theme.palette.background.default,
                                     }}
