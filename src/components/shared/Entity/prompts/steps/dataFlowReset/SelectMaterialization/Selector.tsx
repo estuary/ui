@@ -79,7 +79,7 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
                     const RowContent = (
                         <SelectorOption
                             option={option}
-                            x-react-window-item-height={75}
+                            x-react-window-item-height={100}
                         />
                     );
 
