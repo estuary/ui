@@ -1,19 +1,63 @@
 import { singleCallSettings } from 'context/SWR';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
+import {
+    ProtocolLabelSelector,
+    ProtocolListResponse,
+} from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import useGatewayAuthToken from 'hooks/gatewayAuthToken/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
 import useSWR from 'swr';
-import {
-    dataPlaneFetcher_list,
-    MAX_DOCUMENT_SIZE,
-    shouldRefreshToken,
-} from 'utils/dataPlane-utils';
-import { useUserStore } from 'context/User/useUserContextStore';
+import { MAX_DOCUMENT_SIZE, shouldRefreshToken } from 'utils/dataPlane-utils';
+import { getCollectionAuthorizationSettings } from 'utils/env-utils';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
+
+interface CollectionAuthorizationResponse {
+    brokerAddress: string;
+    brokerToken: string;
+    opsLogsJournal: string;
+    opsStatsJournal: string;
+    reactorAddress: string;
+    reactorToken: string;
+    retryMillis: number;
+    shardIdPrefix: string;
+}
+
+const { collectionAuthorizationEndpoint } =
+    getCollectionAuthorizationSettings();
+
+const authorizeCollection = async (
+    accessToken: string | undefined,
+    catalogName: string
+): Promise<CollectionAuthorizationResponse> =>
+    fetch(collectionAuthorizationEndpoint, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            collection: catalogName,
+        }),
+    }).then((response) => response.json());
+
+const getJournals = async (
+    brokerAddress: string,
+    brokerToken: string,
+    selector: ProtocolLabelSelector
+): Promise<{ result: ProtocolListResponse }> =>
+    fetch(`${brokerAddress}/v1/journals/list`, {
+        headers: {
+            'Authorization': `Bearer ${brokerToken}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({ selector }),
+    }).then((response) => response.json());
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const session = useUserStore((state) => state.session);
@@ -21,54 +65,76 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);
 
-    const { data: gatewayConfig, refresh: refreshAuthToken } =
-        useGatewayAuthToken(collectionName ? [collectionName] : []);
+    const [brokerAddress, setBrokerAddress] = useState<string | undefined>(
+        undefined
+    );
+    const [brokerToken, setBrokerToken] = useState<string | undefined>(
+        undefined
+    );
+
+    useEffect(() => {
+        if (session?.access_token && collectionName) {
+            authorizeCollection(session.access_token, collectionName).then(
+                (response) => {
+                    setBrokerAddress(response.brokerAddress);
+                    setBrokerToken(response.brokerToken);
+                },
+                () => {}
+            );
+        }
+    }, [collectionName, session?.access_token, setBrokerAddress]);
 
     const journalClient = useMemo(() => {
-        if (gatewayConfig?.gateway_url && gatewayConfig.token) {
-            const authToken = gatewayConfig.token;
-            const baseUrl = new URL(gatewayConfig.gateway_url);
+        if (brokerAddress && brokerToken) {
+            const baseUrl = new URL(brokerAddress);
 
-            return new JournalClient(baseUrl, authToken);
+            return new JournalClient(baseUrl, brokerToken);
         } else {
             return null;
         }
-    }, [gatewayConfig]);
+    }, [brokerAddress, brokerToken]);
 
     const fetcher = useCallback(
         async (_url: string) => {
-            if (journalClient && collectionName) {
+            if (
+                journalClient &&
+                collectionName &&
+                brokerAddress &&
+                brokerToken
+            ) {
                 const journalSelector = new JournalSelector().collection(
                     collectionName
                 );
 
-                const dataPlaneListResponse = await dataPlaneFetcher_list(
-                    journalClient,
-                    journalSelector,
-                    'JournalData'
+                const dataPlaneListResponse = await getJournals(
+                    brokerAddress,
+                    brokerToken,
+                    {
+                        include: journalSelector.toLabelSet(),
+                    }
                 );
 
-                if (!Array.isArray(dataPlaneListResponse)) {
+                if (!Array.isArray(dataPlaneListResponse.result.journals)) {
                     return Promise.reject(dataPlaneListResponse);
                 }
 
                 return {
                     journals:
-                        dataPlaneListResponse.length > 0
-                            ? dataPlaneListResponse
+                        dataPlaneListResponse.result.journals.length > 0
+                            ? dataPlaneListResponse.result.journals
                             : [],
                 };
             } else {
                 return null;
             }
         },
-        [collectionName, journalClient]
+        [brokerAddress, brokerToken, collectionName, journalClient]
     );
 
     const response = useSWR(
-        collectionName
+        collectionName && brokerToken
             ? `journals-${collectionName}-${
-                  gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
+                  brokerAddress ?? '__missing_broker_address__'
               }`
             : null,
         fetcher,
@@ -82,7 +148,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                 incAttempts();
 
                 if (session && shouldRefreshToken(`${error}`)) {
-                    await refreshAuthToken();
+                    // await refreshAuthToken();
                     resetAttempts();
                 }
 

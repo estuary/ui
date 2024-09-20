@@ -163,6 +163,19 @@ export const getTaskAuthorizationSettings = () => {
     }
 };
 
+export const getCollectionAuthorizationSettings = () => {
+    const collectionAuthorizationEndpoint = import.meta.env
+        .VITE_COLLECTION_AUTHORIZATION_URL;
+
+    if (collectionAuthorizationEndpoint) {
+        return { collectionAuthorizationEndpoint };
+    } else {
+        throw new Error(
+            'Missing endpoint to access data plane information for collections: VITE_COLLECTION_AUTHORIZATION_URL'
+        );
+    }
+};
+
 export const getSupabaseAnonymousKey = () => {
     const supabaseAnonymousKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
