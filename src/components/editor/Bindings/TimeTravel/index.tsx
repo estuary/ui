@@ -23,10 +23,12 @@ function TimeTravel({ bindingUUID, collectionName }: Props) {
                     </Typography>
                 </Stack>
 
-                <TimeTravelForm
-                    bindingUUID={bindingUUID}
-                    collectionName={collectionName}
-                />
+                <Box sx={{ maxWidth: 'fit-content' }}>
+                    <TimeTravelForm
+                        bindingUUID={bindingUUID}
+                        collectionName={collectionName}
+                    />
+                </Box>
             </Stack>
         </Box>
     );
