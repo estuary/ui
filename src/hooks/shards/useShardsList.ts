@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
 import { dataPlaneFetcher_list } from 'utils/dataPlane-utils';
+import { getTaskAuthorizationSettings } from 'utils/env-utils';
 
 interface TaskAuthorizationResponse {
     brokerAddress: string;
@@ -17,11 +18,13 @@ interface TaskAuthorizationResponse {
     shardIdPrefix: string;
 }
 
+const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
+
 const authorizeTask = async (
     accessToken: string | undefined,
     catalogName: string
 ): Promise<TaskAuthorizationResponse> =>
-    fetch(`http://localhost:8675/authorize/user/task`, {
+    fetch(taskAuthorizationEndpoint, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
