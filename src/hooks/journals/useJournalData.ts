@@ -1,63 +1,20 @@
 import { singleCallSettings } from 'context/SWR';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
-import {
-    ProtocolLabelSelector,
-    ProtocolListResponse,
-} from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import useGatewayAuthToken from 'hooks/gatewayAuthToken/useGatewayAuthToken';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
 import useSWR from 'swr';
-import { MAX_DOCUMENT_SIZE, shouldRefreshToken } from 'utils/dataPlane-utils';
-import { getCollectionAuthorizationSettings } from 'utils/env-utils';
+import {
+    authorizeCollection,
+    authorizeTask,
+    getJournals,
+    MAX_DOCUMENT_SIZE,
+    shouldRefreshToken,
+} from 'utils/dataPlane-utils';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
-
-interface CollectionAuthorizationResponse {
-    brokerAddress: string;
-    brokerToken: string;
-    opsLogsJournal: string;
-    opsStatsJournal: string;
-    reactorAddress: string;
-    reactorToken: string;
-    retryMillis: number;
-    shardIdPrefix: string;
-}
-
-const { collectionAuthorizationEndpoint } =
-    getCollectionAuthorizationSettings();
-
-const authorizeCollection = async (
-    accessToken: string | undefined,
-    catalogName: string
-): Promise<CollectionAuthorizationResponse> =>
-    fetch(collectionAuthorizationEndpoint, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-            collection: catalogName,
-        }),
-    }).then((response) => response.json());
-
-const getJournals = async (
-    brokerAddress: string,
-    brokerToken: string,
-    selector: ProtocolLabelSelector
-): Promise<{ result: ProtocolListResponse }> =>
-    fetch(`${brokerAddress}/v1/journals/list`, {
-        headers: {
-            'Authorization': `Bearer ${brokerToken}`,
-            'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({ selector }),
-    }).then((response) => response.json());
 
 const useJournalsForCollection = (collectionName: string | undefined) => {
     const session = useUserStore((state) => state.session);
@@ -181,20 +138,38 @@ const useJournalData = (
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
-    const { data: gatewayConfig } = useGatewayAuthToken(
-        collectionName ? [collectionName] : null
+    const session = useUserStore((state) => state.session);
+
+    const [brokerAddress, setBrokerAddress] = useState<string | undefined>(
+        undefined
     );
+    const [brokerToken, setBrokerToken] = useState<string | undefined>(
+        undefined
+    );
+    const [opsName, setOpsName] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (session?.access_token && collectionName) {
+            authorizeTask(session.access_token, collectionName).then(
+                (response) => {
+                    setBrokerAddress(response.brokerAddress);
+                    setBrokerToken(response.brokerToken);
+                    setOpsName(response.opsLogsJournal);
+                },
+                () => {}
+            );
+        }
+    }, [collectionName, session?.access_token, setBrokerAddress, setOpsName]);
 
     const journalClient = useMemo(() => {
-        if (journalName && gatewayConfig?.gateway_url && gatewayConfig.token) {
-            const authToken = gatewayConfig.token;
-            const baseUrl = new URL(gatewayConfig.gateway_url);
+        if (opsName && brokerAddress && brokerToken) {
+            const baseUrl = new URL(brokerAddress);
 
-            return new JournalClient(baseUrl, authToken);
+            return new JournalClient(baseUrl, brokerToken);
         } else {
             return undefined;
         }
-    }, [gatewayConfig, journalName]);
+    }, [brokerAddress, brokerToken, opsName]);
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -212,7 +187,7 @@ const useJournalData = (
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
-                        journalName,
+                        journalName: opsName,
                         client: journalClient,
                         documentCount: settings?.desiredCount,
                         maxBytes: settings?.maxBytes ?? MAX_DOCUMENT_SIZE,
@@ -231,6 +206,7 @@ const useJournalData = (
             journalClient,
             journalName,
             loading,
+            opsName,
             settings?.desiredCount,
             settings?.maxBytes,
         ]

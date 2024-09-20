@@ -4,36 +4,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-import { dataPlaneFetcher_list } from 'utils/dataPlane-utils';
-import { getTaskAuthorizationSettings } from 'utils/env-utils';
-
-interface TaskAuthorizationResponse {
-    brokerAddress: string;
-    brokerToken: string;
-    opsLogsJournal: string;
-    opsStatsJournal: string;
-    reactorAddress: string;
-    reactorToken: string;
-    retryMillis: number;
-    shardIdPrefix: string;
-}
-
-const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
-
-const authorizeTask = async (
-    accessToken: string | undefined,
-    catalogName: string
-): Promise<TaskAuthorizationResponse> =>
-    fetch(taskAuthorizationEndpoint, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-            task: catalogName,
-        }),
-    }).then((response) => response.json());
+import { authorizeTask, dataPlaneFetcher_list } from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
@@ -54,6 +25,7 @@ const useShardsList = (catalogNames: string[]) => {
             );
             const reactorURL = new URL(reactorAddress);
 
+            // Pass the shard client to the respective function directly.
             const shardClient = new ShardClient(reactorURL, reactorToken);
             const taskSelector = new ShardSelector().task(name);
 

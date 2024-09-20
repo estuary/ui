@@ -5,9 +5,17 @@ import {
     ShardClient,
     ShardSelector,
 } from 'data-plane-gateway';
+import {
+    ProtocolLabelSelector,
+    ProtocolListResponse,
+} from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { logRocketConsole } from 'services/shared';
+import {
+    getCollectionAuthorizationSettings,
+    getTaskAuthorizationSettings,
+} from './env-utils';
 
 export enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
@@ -65,6 +73,73 @@ export async function dataPlaneFetcher_list(
         return Promise.reject(error);
     }
 }
+
+interface TaskAuthorizationResponse {
+    brokerAddress: string;
+    brokerToken: string;
+    opsLogsJournal: string;
+    opsStatsJournal: string;
+    reactorAddress: string;
+    reactorToken: string;
+    retryMillis: number;
+    shardIdPrefix: string;
+}
+
+const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
+
+export const authorizeTask = async (
+    accessToken: string | undefined,
+    catalogName: string
+): Promise<TaskAuthorizationResponse> =>
+    fetch(taskAuthorizationEndpoint, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            task: catalogName,
+        }),
+    }).then((response) => response.json());
+
+interface CollectionAuthorizationResponse {
+    brokerAddress: string;
+    brokerToken: string;
+    journalNamePrefix: string;
+    retryMillis: number;
+}
+
+const { collectionAuthorizationEndpoint } =
+    getCollectionAuthorizationSettings();
+
+export const authorizeCollection = async (
+    accessToken: string | undefined,
+    catalogName: string
+): Promise<CollectionAuthorizationResponse> =>
+    fetch(collectionAuthorizationEndpoint, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            collection: catalogName,
+        }),
+    }).then((response) => response.json());
+
+export const getJournals = async (
+    brokerAddress: string,
+    brokerToken: string,
+    selector: ProtocolLabelSelector
+): Promise<{ result: ProtocolListResponse }> =>
+    fetch(`${brokerAddress}/v1/journals/list`, {
+        headers: {
+            'Authorization': `Bearer ${brokerToken}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({ selector }),
+    }).then((response) => response.json());
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
