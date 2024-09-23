@@ -40,7 +40,6 @@ import {
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import keys from 'lodash/keys';
 import startCase from 'lodash/startCase';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -573,10 +572,6 @@ const generateUISchema = (
         addLabel(layout, label);
 
         schemaElements.push(layout);
-
-        if (jsonSchema.properties && keys(jsonSchema.properties).length > 1) {
-            addLabel(layout, schemaName);
-        }
 
         if (!isEmpty(jsonSchema.properties)) {
             // traverse properties
