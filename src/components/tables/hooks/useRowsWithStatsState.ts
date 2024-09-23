@@ -23,7 +23,10 @@ function useRowsWithStatsState(
     data: Data
 ) {
     const catalogNames = useMemo(
-        () => data.map((datum) => datum.catalog_name),
+        () =>
+            data
+                .filter((datum) => datum.shard_template_id)
+                .map((datum) => datum.catalog_name),
         [data]
     );
 

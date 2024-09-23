@@ -37,6 +37,7 @@ const commonColumns = baseColumns.concat([
     'connector_image_tag',
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
+    'shard_template_id',
 ]);
 
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
