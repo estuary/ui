@@ -13,18 +13,31 @@ export interface JournalState {
         isCollection?: boolean
     ) => Promise<void>;
     opsLogsJournal: string;
+    resetState: () => void;
     taskBrokerAddress: string;
     taskBrokerToken: string;
 }
 
+const getInitialState = (): Pick<
+    JournalState,
+    | 'collectionBrokerAddress'
+    | 'collectionBrokerToken'
+    | 'opsLogsJournal'
+    | 'taskBrokerAddress'
+    | 'taskBrokerToken'
+> => ({
+    collectionBrokerAddress: '',
+    collectionBrokerToken: '',
+    opsLogsJournal: '',
+    taskBrokerAddress: '',
+    taskBrokerToken: '',
+});
+
 const useJournalStore = create<JournalState>()(
     devtools((set) => {
         return {
-            collectionBrokerAddress: '',
-            collectionBrokerToken: '',
-            opsLogsJournal: '',
-            taskBrokerAddress: '',
-            taskBrokerToken: '',
+            ...getInitialState(),
+
             getAuthToken: async (accessToken, catalogName, isCollection) => {
                 if (isCollection) {
                     const response = await authorizeCollection(
@@ -57,6 +70,10 @@ const useJournalStore = create<JournalState>()(
                     false,
                     'getTaskAuthToken'
                 );
+            },
+
+            resetState: () => {
+                set(getInitialState(), false, 'resetState');
             },
         };
     }, devtoolsOptions('journal'))

@@ -1,6 +1,7 @@
 import { singleCallSettings } from 'context/SWR';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
 import useJournalStore from 'stores/JournalData/Store';
@@ -58,12 +59,13 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                     }
                 );
 
-                if (!Array.isArray(dataPlaneListResponse.result.journals)) {
+                if (isEmpty(dataPlaneListResponse)) {
                     return Promise.reject(dataPlaneListResponse);
                 }
 
                 return {
                     journals:
+                        dataPlaneListResponse.result.journals &&
                         dataPlaneListResponse.result.journals.length > 0
                             ? dataPlaneListResponse.result.journals
                             : [],

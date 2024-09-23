@@ -79,7 +79,7 @@ function Overview({ name }: Props) {
                 <Grid item xs={12}>
                     <JournalHydrator
                         catalogName={entityName}
-                        isCollection={taskTypes.length === 0}
+                        isCollection={isCollection}
                     >
                         <DataPreview collectionName={entityName} />
                     </JournalHydrator>

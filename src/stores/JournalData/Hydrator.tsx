@@ -9,11 +9,17 @@ export default function JournalHydrator({
     isCollection,
 }: HydratorProps) {
     const accessToken = useUserStore((state) => state.session?.access_token);
+
+    const resetState = useJournalStore((state) => state.resetState);
     const getAuthToken = useJournalStore((state) => state.getAuthToken);
 
     useEffect(() => {
+        return resetState();
+    }, [resetState]);
+
+    useEffect(() => {
         if (accessToken) {
-            void getAuthToken(accessToken, catalogName, isCollection);
+            getAuthToken(accessToken, catalogName, isCollection);
         }
     }, [accessToken, catalogName, getAuthToken, isCollection]);
 
