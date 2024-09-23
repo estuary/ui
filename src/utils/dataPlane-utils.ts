@@ -5,6 +5,7 @@ import {
 } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
+import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
 import {
     getCollectionAuthorizationSettings,
@@ -29,14 +30,14 @@ export const shouldRefreshToken = (errorMessage?: string | null) => {
 };
 
 export async function dataPlaneFetcher_list(
-    client: ShardClient,
+    shardClient: ShardClient,
     selector: ShardSelector,
     key: 'ShardsList'
 ): Promise<Shard[] | ResponseError['body']> {
     // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
     // TODO (typing)
     // I hate this but I need to get the bug finished
-    const result = await client.list(selector as any);
+    const result = await shardClient.list(selector as any);
 
     // Check for an error
     if (result.err()) {
@@ -74,16 +75,15 @@ export const authorizeTask = async (
     accessToken: string | undefined,
     catalogName: string
 ): Promise<TaskAuthorizationResponse> =>
-    fetch(taskAuthorizationEndpoint, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+    client(
+        taskAuthorizationEndpoint,
+        {
+            data: {
+                task: catalogName,
+            },
         },
-        method: 'POST',
-        body: JSON.stringify({
-            task: catalogName,
-        }),
-    }).then((response) => response.json());
+        accessToken
+    );
 
 interface CollectionAuthorizationResponse {
     brokerAddress: string;
@@ -99,30 +99,26 @@ export const authorizeCollection = async (
     accessToken: string | undefined,
     catalogName: string
 ): Promise<CollectionAuthorizationResponse> =>
-    fetch(collectionAuthorizationEndpoint, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+    client(
+        collectionAuthorizationEndpoint,
+        {
+            data: {
+                collection: catalogName,
+            },
         },
-        method: 'POST',
-        body: JSON.stringify({
-            collection: catalogName,
-        }),
-    }).then((response) => response.json());
+        accessToken
+    );
 
 export const getJournals = async (
     brokerAddress: string,
     brokerToken: string,
     selector: ProtocolLabelSelector
 ): Promise<{ result: ProtocolListResponse }> =>
-    fetch(`${brokerAddress}/v1/journals/list`, {
-        headers: {
-            'Authorization': `Bearer ${brokerToken}`,
-            'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({ selector }),
-    }).then((response) => response.json());
+    client(
+        `${brokerAddress}/v1/journals/list`,
+        { data: { selector } },
+        brokerToken
+    );
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
