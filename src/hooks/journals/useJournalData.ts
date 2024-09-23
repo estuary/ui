@@ -3,14 +3,14 @@ import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
+import useJournalStore from 'stores/JournalData/Store';
 import useSWR from 'swr';
 import {
-    authorizeCollection,
-    authorizeTask,
     getJournals,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
+import { hasLength } from 'utils/misc-utils';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
@@ -22,24 +22,10 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);
 
-    const [brokerAddress, setBrokerAddress] = useState<string | undefined>(
-        undefined
+    const brokerAddress = useJournalStore(
+        (state) => state.collectionBrokerAddress
     );
-    const [brokerToken, setBrokerToken] = useState<string | undefined>(
-        undefined
-    );
-
-    useEffect(() => {
-        if (session?.access_token && collectionName) {
-            authorizeCollection(session.access_token, collectionName).then(
-                (response) => {
-                    setBrokerAddress(response.brokerAddress);
-                    setBrokerToken(response.brokerToken);
-                },
-                () => {}
-            );
-        }
-    }, [collectionName, session?.access_token, setBrokerAddress]);
+    const brokerToken = useJournalStore((state) => state.collectionBrokerToken);
 
     const journalClient = useMemo(() => {
         if (brokerAddress && brokerToken) {
@@ -91,7 +77,9 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     const response = useSWR(
         collectionName && brokerToken
             ? `journals-${collectionName}-${
-                  brokerAddress ?? '__missing_broker_address__'
+                  hasLength(brokerAddress)
+                      ? brokerAddress
+                      : '__missing_broker_address__'
               }`
             : null,
         fetcher,
@@ -130,46 +118,34 @@ interface UseJournalDataSettings {
     desiredCount?: number;
     maxBytes?: number;
 }
+
 const useJournalData = (
     journalName?: string,
-    collectionName?: string,
-    settings?: UseJournalDataSettings
+    settings?: UseJournalDataSettings,
+    opsJournalTarget?: boolean
 ) => {
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
-    const session = useUserStore((state) => state.session);
-
-    const [brokerAddress, setBrokerAddress] = useState<string | undefined>(
-        undefined
+    const brokerAddress = useJournalStore((state) =>
+        opsJournalTarget
+            ? state.taskBrokerAddress
+            : state.collectionBrokerAddress
     );
-    const [brokerToken, setBrokerToken] = useState<string | undefined>(
-        undefined
-    );
-    const [opsName, setOpsName] = useState<string | undefined>(undefined);
 
-    useEffect(() => {
-        if (session?.access_token && collectionName) {
-            authorizeTask(session.access_token, collectionName).then(
-                (response) => {
-                    setBrokerAddress(response.brokerAddress);
-                    setBrokerToken(response.brokerToken);
-                    setOpsName(response.opsLogsJournal);
-                },
-                () => {}
-            );
-        }
-    }, [collectionName, session?.access_token, setBrokerAddress, setOpsName]);
+    const brokerToken = useJournalStore((state) =>
+        opsJournalTarget ? state.taskBrokerToken : state.collectionBrokerToken
+    );
 
     const journalClient = useMemo(() => {
-        if (opsName && brokerAddress && brokerToken) {
+        if (brokerAddress && brokerToken) {
             const baseUrl = new URL(brokerAddress);
 
             return new JournalClient(baseUrl, brokerToken);
         } else {
             return undefined;
         }
-    }, [brokerAddress, brokerToken, opsName]);
+    }, [brokerAddress, brokerToken]);
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
@@ -187,7 +163,7 @@ const useJournalData = (
                 try {
                     setLoading(true);
                     const docs = await loadDocuments({
-                        journalName: opsName,
+                        journalName,
                         client: journalClient,
                         documentCount: settings?.desiredCount,
                         maxBytes: settings?.maxBytes ?? MAX_DOCUMENT_SIZE,
@@ -206,7 +182,6 @@ const useJournalData = (
             journalClient,
             journalName,
             loading,
-            opsName,
             settings?.desiredCount,
             settings?.maxBytes,
         ]
