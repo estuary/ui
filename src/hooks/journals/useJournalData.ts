@@ -22,6 +22,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);
 
+    const refreshAuthToken = useJournalStore((state) => state.getAuthToken);
     const brokerAddress = useJournalStore(
         (state) => state.collectionBrokerAddress
     );
@@ -92,8 +93,16 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
             onError: async (error) => {
                 incAttempts();
 
-                if (session && shouldRefreshToken(`${error}`)) {
-                    // await refreshAuthToken();
+                if (
+                    session &&
+                    shouldRefreshToken(`${error}`) &&
+                    collectionName
+                ) {
+                    await refreshAuthToken(
+                        session.access_token,
+                        collectionName,
+                        true
+                    );
                     resetAttempts();
                 }
 

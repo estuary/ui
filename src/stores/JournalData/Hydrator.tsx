@@ -13,7 +13,7 @@ export default function JournalHydrator({
 
     useEffect(() => {
         if (accessToken) {
-            getAuthToken(accessToken, catalogName, isCollection);
+            void getAuthToken(accessToken, catalogName, isCollection);
         }
     }, [accessToken, catalogName, getAuthToken, isCollection]);
 

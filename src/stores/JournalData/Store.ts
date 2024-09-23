@@ -11,7 +11,7 @@ export interface JournalState {
         accessToken: string,
         catalogName: string,
         isCollection?: boolean
-    ) => void;
+    ) => Promise<void>;
     opsLogsJournal: string;
     taskBrokerAddress: string;
     taskBrokerToken: string;
