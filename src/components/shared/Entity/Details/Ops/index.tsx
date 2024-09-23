@@ -10,7 +10,6 @@ import { BASE_ERROR } from 'services/supabase';
 import JournalHydrator from 'stores/JournalData/Hydrator';
 import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import { isProduction } from 'utils/env-utils';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 
@@ -41,30 +40,20 @@ function Ops() {
                 <Stack spacing={2}>
                     <Box>
                         {hydrationError ? (
-                            <>
-                                {isProduction ? null : (
-                                    <AlertBox severity="warning" short>
-                                        With V2 of Control Plane logs in the UI
-                                        will not work due to an issue with the
-                                        selector.
-                                    </AlertBox>
-                                )}
-
-                                <AlertBox
-                                    severity="error"
-                                    title={
-                                        <FormattedMessage id="ops.logsTable.hydrationError" />
-                                    }
-                                    short
-                                >
-                                    <Message
-                                        error={{
-                                            ...BASE_ERROR,
-                                            message: hydrationError,
-                                        }}
-                                    />
-                                </AlertBox>
-                            </>
+                            <AlertBox
+                                severity="error"
+                                title={
+                                    <FormattedMessage id="ops.logsTable.hydrationError" />
+                                }
+                                short
+                            >
+                                <Message
+                                    error={{
+                                        ...BASE_ERROR,
+                                        message: hydrationError,
+                                    }}
+                                />
+                            </AlertBox>
                         ) : (
                             <LogsTable />
                         )}
