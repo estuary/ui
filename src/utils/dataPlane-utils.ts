@@ -1,10 +1,4 @@
-import {
-    broker,
-    JournalClient,
-    JournalSelector,
-    ShardClient,
-    ShardSelector,
-} from 'data-plane-gateway';
+import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
     ProtocolLabelSelector,
     ProtocolListResponse,
@@ -34,22 +28,11 @@ export const shouldRefreshToken = (errorMessage?: string | null) => {
     );
 };
 
-type AllowedKeys = 'ShardsList' | 'JournalData';
-export function dataPlaneFetcher_list(
+export async function dataPlaneFetcher_list(
     client: ShardClient,
     selector: ShardSelector,
     key: 'ShardsList'
-): Promise<Shard[] | ResponseError['body']>;
-export function dataPlaneFetcher_list(
-    client: JournalClient,
-    selector: JournalSelector,
-    key: 'JournalData'
-): Promise<broker.ProtocolJournalSpec[] | ResponseError['body']>;
-export async function dataPlaneFetcher_list(
-    client: ShardClient | JournalClient,
-    selector: ShardSelector | JournalSelector,
-    key: AllowedKeys
-): Promise<Shard[] | broker.ProtocolJournalSpec[] | ResponseError['body']> {
+): Promise<Shard[] | ResponseError['body']> {
     // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
     // TODO (typing)
     // I hate this but I need to get the bug finished
