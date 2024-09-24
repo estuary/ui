@@ -2,7 +2,7 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import Error from 'components/shared/Error';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import Selector from './Selector';
@@ -17,6 +17,12 @@ function Materializations() {
     );
 
     const foundData = useMemo(() => hasLength(related), [related]);
+
+    useEffect(() => {
+        if (!isValidating || !foundData) {
+            console.log('we need to skip');
+        }
+    }, [foundData, isValidating]);
 
     return (
         <Box>
