@@ -418,6 +418,11 @@ const getInitialState = (
             ({ meta }) => meta.collectionName
         ),
 
+    getEnabledCollections: () =>
+        Object.values(get().resourceConfigs)
+            .filter(({ meta }) => !meta.disable)
+            .map(({ meta }) => meta.collectionName),
+
     hydrateState: async (
         editWorkflow,
         entityType,
