@@ -3,10 +3,22 @@ import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { EntityWorkflow } from 'types';
 
+export interface DataPlaneName {
+    cluster: string;
+    prefix: string;
+    provider: string;
+    region: string;
+    whole: string;
+}
+
+export interface DataPlaneOption {
+    dataPlaneName: DataPlaneName;
+    id: string;
+    scope: 'public' | 'private';
+}
+
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
-        description?: string;
-        entityName: string;
         connectorImage: {
             id: string;
             iconPath: string;
@@ -14,6 +26,9 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
             imagePath: string;
             connectorId: string;
         };
+        entityName: string;
+        dataPlane?: DataPlaneOption;
+        description?: string;
     };
 }
 
@@ -26,6 +41,7 @@ export interface DetailsFormState
     setDetails_connector: (
         connector: Details['data']['connectorImage']
     ) => void;
+    setDetails_dataPlane: (value: Details['data']['dataPlane']) => void;
 
     errorsExist: boolean;
 

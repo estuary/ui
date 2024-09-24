@@ -62,6 +62,7 @@ export enum TABLES {
     COMBINED_GRANTS_EXT = 'combined_grants_ext',
     CONNECTOR_TAGS = 'connector_tags',
     CONNECTORS = 'connectors',
+    DATA_PLANES = 'data_planes',
     DISCOVERS = 'discovers',
     DIRECTIVES = 'directives',
     DRAFT_ERRORS = 'draft_errors',

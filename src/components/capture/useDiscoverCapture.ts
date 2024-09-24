@@ -58,6 +58,9 @@ function useDiscoverCapture(
     const detailsFormsHasErrors = useDetailsFormStore(
         (state) => state.errorsExist
     );
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName
+    );
 
     // Endpoint Config Store
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
@@ -117,7 +120,8 @@ function useDiscoverCapture(
                     processedEntityName,
                     encryptedEndpointConfig.data,
                     options.initiateRediscovery,
-                    options.updateOnly
+                    options.updateOnly,
+                    dataPlaneName?.whole
                 );
 
                 return discoveryStartSuccess;
@@ -138,6 +142,7 @@ function useDiscoverCapture(
         },
         [
             configEncrypt,
+            dataPlaneName?.whole,
             detailsFormsHasErrors,
             draftUpdate,
             endpointConfigData,

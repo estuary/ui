@@ -156,6 +156,9 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.editor.warning.title': `Editing disabled`,
     'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
+    'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
+    'workflows.dataPlane.label': `Data Plane`,
+
     // Field Selection
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.table.label': `Field Selection Editor`,
