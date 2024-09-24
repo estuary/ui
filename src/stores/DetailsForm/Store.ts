@@ -1,4 +1,5 @@
 import { getConnectors_detailsForm } from 'api/connectors';
+import { getDataPlaneById } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
@@ -17,10 +18,13 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
+    getDataPlaneScope,
+    parseDataPlaneName,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { StoreApi, create } from 'zustand';
@@ -53,6 +57,42 @@ const getConnectorImage = async (
     }
 
     return null;
+};
+
+const getDataPlane = async (
+    dataPlaneOption: string | null,
+    dataPlaneId: string | null
+): Promise<Details['data']['dataPlane'] | null> => {
+    if (dataPlaneOption === 'show_option' && dataPlaneId) {
+        const { data, error } = await getDataPlaneById(dataPlaneId);
+
+        if (!error && data && data.length > 0) {
+            const { data_plane_name, id } = data[0];
+
+            const scope = getDataPlaneScope(data_plane_name);
+
+            const { cluster, prefix, provider, region } = parseDataPlaneName(
+                data_plane_name,
+                scope
+            );
+
+            return {
+                dataPlaneName: {
+                    cluster,
+                    prefix,
+                    provider,
+                    region,
+                    whole: data_plane_name,
+                },
+                id,
+                scope,
+            };
+        }
+
+        return null;
+    }
+
+    return undefined;
 };
 
 const initialDetails: Details = {
@@ -111,6 +151,11 @@ export const getInitialState = (
                 // Update the details
                 state.details = val;
 
+                // Remove data plane-related state entirely when the data plane id is unset.
+                if (!hasLength(val.data.dataPlane?.id)) {
+                    state.details.data.dataPlane = undefined;
+                }
+
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically
                 //  make two near identical calls to the store and that causes problems.
@@ -163,6 +208,16 @@ export const getInitialState = (
             }),
             false,
             'Details Connector Changed'
+        );
+    },
+
+    setDetails_dataPlane: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.details.data.dataPlane = value;
+            }),
+            false,
+            'Details Data Plane Changed'
         );
     },
 
@@ -231,6 +286,8 @@ export const getInitialState = (
     hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
+        const dataPlaneOption = searchParams.get(GlobalSearchParams.DATA_PLANE);
+        const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
         const createWorkflow =
@@ -242,9 +299,17 @@ export const getInitialState = (
 
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(connectorId);
+                const dataPlane = await getDataPlane(
+                    dataPlaneOption,
+                    dataPlaneId
+                );
 
-                if (connectorImage) {
-                    const { setDetails_connector, setPreviousDetails } = get();
+                if (connectorImage && dataPlane !== null) {
+                    const {
+                        setDetails_connector,
+                        setDetails_dataPlane,
+                        setPreviousDetails,
+                    } = get();
 
                     setDetails_connector(connectorImage);
 
@@ -253,8 +318,9 @@ export const getInitialState = (
                         errors,
                     } = initialDetails;
 
+                    setDetails_dataPlane(dataPlane);
                     setPreviousDetails({
-                        data: { entityName, connectorImage },
+                        data: { entityName, connectorImage, dataPlane },
                         errors,
                     });
                 } else {
@@ -270,6 +336,7 @@ export const getInitialState = (
                         catalog_name,
                         connector_image_tag,
                         connector_tag_id,
+                        data_plane_id,
                         detail,
                     } = data[0];
 
@@ -278,7 +345,12 @@ export const getInitialState = (
                         connector_image_tag
                     );
 
-                    if (connectorImage) {
+                    const dataPlane = await getDataPlane(
+                        dataPlaneOption,
+                        data_plane_id
+                    );
+
+                    if (connectorImage && dataPlane !== null) {
                         const {
                             setDetails,
                             setPreviousDetails,
@@ -289,6 +361,7 @@ export const getInitialState = (
                             data: {
                                 entityName: catalog_name,
                                 connectorImage,
+                                dataPlane,
                                 description: detail ?? '',
                             },
                         };
