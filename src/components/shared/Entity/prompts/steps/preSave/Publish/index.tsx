@@ -1,25 +1,23 @@
-import { createPublication, getPublicationByIdQuery } from 'api/publications';
-import Logs from 'components/logs';
-
+import {
+    createPublication,
+    getPublicationByIdQuery,
+    PublicationJobStatus,
+} from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useState } from 'react';
 import { useMount } from 'react-use';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function Publish() {
-    const [logsToken, setLogsToken] = useState(null);
-
     const { jobStatusPoller } = useJobStatusPoller();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, context] = usePreSavePromptStore((state) => [
-        state.updateStep,
-        state.context,
-    ]);
+    const [updateStep, context, updateContext] = usePreSavePromptStore(
+        (state) => [state.updateStep, state.context, state.updateContext]
+    );
 
     useMount(() => {
         if (thisStep.state.progress === ProgressStates.IDLE) {
@@ -42,21 +40,27 @@ function Publish() {
                     return;
                 }
 
-                setLogsToken(publishResponse.data[0].logs_token);
+                updateContext({
+                    pubId: publishResponse.data[0].id,
+                });
 
                 jobStatusPoller(
                     getPublicationByIdQuery(publishResponse.data[0].id),
-                    async () => {
+                    async (successResponse: PublicationJobStatus) => {
                         updateStep(stepIndex, {
-                            progress: ProgressStates.SUCCESS,
-                            valid: true,
+                            publicationStatus: successResponse,
                         });
 
                         // nextStep();
                     },
-                    async (error: any) => {
+                    async (
+                        failedResponse: any //PublicationJobStatus | PostgrestError
+                    ) => {
                         updateStep(stepIndex, {
-                            error,
+                            error: failedResponse.error ? failedResponse : null,
+                            publicationStatus: !failedResponse.error
+                                ? failedResponse
+                                : null,
                             progress: ProgressStates.FAILED,
                             valid: false,
                         });
@@ -71,20 +75,13 @@ function Publish() {
         }
     });
 
-    return (
-        <>
-            explain what is happening
-            <Logs
-                token={logsToken}
-                height={350}
-                loadingLineSeverity="info"
-                spinnerMessages={{
-                    stoppedKey: 'preSavePrompt.logs.spinner.stopped',
-                    runningKey: 'preSavePrompt.logs.spinner.running',
-                }}
-            />
-        </>
-    );
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
+    // <LogDialogContent
+    //     spinnerMessageId="preSavePrompt.logs.spinner"
+    //     severity="info"
+    //     token={logsToken}
+    // />
 }
 
 export default Publish;

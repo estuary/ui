@@ -17,6 +17,7 @@ import { useIntl } from 'react-intl';
 import Error from 'components/shared/Error';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
+import { XmarkCircle } from 'iconoir-react';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function Content() {
@@ -37,12 +38,24 @@ function Content() {
                     },
                     index
                 ) => {
+                    const hasError = Boolean(error);
+                    const stepCompleted = progress >= ProgressFinished;
+
                     return (
                         <Step
                             key={`PreSave-step-${stepLabelMessageId}-${index}`}
-                            completed={progress >= ProgressFinished}
+                            completed={stepCompleted}
                         >
-                            <StepLabel error={Boolean(error)}>
+                            <StepLabel
+                                error={hasError}
+                                StepIconProps={
+                                    hasError
+                                        ? {
+                                              icon: <XmarkCircle />,
+                                          }
+                                        : undefined
+                                }
+                            >
                                 {intl.formatMessage({
                                     id: stepLabelMessageId,
                                 })}
@@ -66,7 +79,7 @@ function Content() {
                                                     <ErrorLogs
                                                         defaultOpen
                                                         logToken={
-                                                            Boolean(error)
+                                                            hasError
                                                                 ? publicationStatus?.logs_token
                                                                 : null
                                                         }
