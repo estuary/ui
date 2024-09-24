@@ -2,17 +2,11 @@ import { Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { useEntityType } from 'context/EntityContext';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+
 import ShardsDisableForm from './Form';
 import ShardsDisableWarning from './Warning';
 
 function ShardsDisable() {
-    const forcedToEnable = useGlobalSearchParams(
-        GlobalSearchParams.FORCED_SHARD_ENABLE
-    );
-
     const entityType = useEntityType();
 
     const draftId = useEditorStore_persistedDraftId();
@@ -23,7 +17,7 @@ function ShardsDisable() {
 
     return (
         <>
-            {forcedToEnable ? <ShardsDisableWarning /> : null}
+            <ShardsDisableWarning />
 
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="formSectionHeader">
