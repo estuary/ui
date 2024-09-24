@@ -122,9 +122,6 @@ export const useBinding_collections = () => {
     return useBindingStore(useShallow((state) => state.getCollections()));
 };
 
-export const useBinding_collections_count = () =>
-    useBindingStore(useShallow((state) => state.getCollections().length));
-
 export const useBinding_enabledCollections_count = () =>
     useBindingStore(
         useShallow((state) => state.getEnabledCollections().length)
