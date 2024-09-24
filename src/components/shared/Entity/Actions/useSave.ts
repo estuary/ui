@@ -285,7 +285,7 @@ function useSave(
         },
         [
             collections,
-            dataPlaneName,
+            dataPlaneName?.whole,
             disabledBindings,
             dryRun,
             entityDescription,

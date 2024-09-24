@@ -142,7 +142,7 @@ function useDiscoverCapture(
         },
         [
             configEncrypt,
-            dataPlaneName,
+            dataPlaneName?.whole,
             detailsFormsHasErrors,
             draftUpdate,
             endpointConfigData,
