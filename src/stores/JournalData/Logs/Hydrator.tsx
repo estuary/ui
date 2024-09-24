@@ -5,21 +5,12 @@ import { BaseComponentProps } from 'types';
 
 import { useJournalDataLogsStore } from './Store';
 
-interface Props extends BaseComponentProps {
-    name: string;
-    collectionName: string;
-}
-
-export const JournalDataLogsHydrator = ({
-    name,
-    collectionName,
-    children,
-}: Props) => {
+export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
     const [resetState, setActive, hydrate] = useJournalDataLogsStore(
         (state) => [state.resetState, state.setActive, state.hydrate]
     );
 
-    const { docs, error, loading, refresh } = useOpsLogs(name, collectionName);
+    const { docs, error, loading, refresh } = useOpsLogs();
 
     // More mount/unmount for store
     useEffect(() => {

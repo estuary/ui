@@ -29,6 +29,7 @@ const baseColumns = [
     'spec_type',
     'updated_at',
     'last_pub_id',
+    'shard_template_id',
 ];
 
 const commonColumns = baseColumns.concat([

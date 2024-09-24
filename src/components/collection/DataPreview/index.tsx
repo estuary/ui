@@ -59,8 +59,8 @@ export function DataPreview({ collectionName }: Props) {
 
     // TODO (typing) we need to fix typing
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const journal = useMemo(() => journalsData?.journals?.[0], [journalsData]);
-    const journalData = useJournalData(journal?.name, collectionName, {
+    const journal = useMemo(() => journalsData?.journals[0], [journalsData]);
+    const journalData = useJournalData(journal?.spec?.name, {
         desiredCount: 20,
     });
 

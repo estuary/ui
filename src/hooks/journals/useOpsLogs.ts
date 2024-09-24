@@ -1,22 +1,25 @@
 import { useJournalData } from 'hooks/journals/useJournalData';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { OpsLogFlowDocument } from 'types';
 import { maxBytes } from 'components/tables/Logs/shared';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import useJournalStore from 'stores/JournalData/Store';
+import { OpsLogFlowDocument } from 'types';
 import { LoadDocumentsOffsets, UseOpsLogsDocs } from './types';
 
-function useOpsLogs(name: string, collectionName: string) {
+function useOpsLogs() {
+    const journalName = useJournalStore((state) => state.opsLogsJournal);
+
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [oldestParsed, setOldestParsed] = useState<number>(-1);
     const [newestParsed, setNewestParsed] = useState<number>(-1);
     const [docs, setDocs] = useState<UseOpsLogsDocs>([[-1, -1], null]);
 
     const { data, error, loading, refresh } = useJournalData(
-        name,
-        collectionName,
+        journalName,
         {
             maxBytes,
-        }
+        },
+        true
     );
 
     const documents = useMemo<OpsLogFlowDocument[] | null>(() => {
