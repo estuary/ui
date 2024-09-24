@@ -349,6 +349,11 @@ export const semiTransparentBackground = {
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
+export const semiTransparentBackground_oneLayerElevated = {
+    light: 'white',
+    dark: '#1D2837',
+};
+
 // Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
 export const semiTransparentBackgroundIntensified = {
     light: 'rgba(11, 19, 30, 0.02)',

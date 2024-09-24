@@ -5,17 +5,32 @@ import {
     JOB_STATUS_COLUMNS,
     TABLES,
 } from 'services/supabase';
+import { hasLength } from 'utils/misc-utils';
+
+interface PublicationRequest {
+    draft_id: string;
+    dry_run: boolean;
+    data_plane_name?: string;
+    detail?: string | null;
+}
 
 export const createPublication = (
     draftId: string | null,
     dryRun: boolean,
-    entityDescription?: string
+    entityDescription?: string,
+    dataPlaneName?: string
 ) => {
-    return insertSupabase(TABLES.PUBLICATIONS, {
+    const data: PublicationRequest = {
         draft_id: draftId ?? DEFAULT_FILTER,
         dry_run: dryRun,
         detail: entityDescription ?? null,
-    });
+    };
+
+    if (hasLength(dataPlaneName)) {
+        data.data_plane_name = dataPlaneName;
+    }
+
+    return insertSupabase(TABLES.PUBLICATIONS, data);
 };
 
 export interface PublicationJobStatus {

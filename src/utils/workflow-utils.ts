@@ -17,6 +17,7 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
+import { DataPlaneOption } from 'stores/DetailsForm/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
@@ -397,3 +398,67 @@ export function evaluateConnectorVersions(
         b.image_tag.localeCompare(a.image_tag)
     )[0];
 }
+
+export const getDataPlaneScope = (
+    dataPlaneName: string
+): DataPlaneOption['scope'] => {
+    return dataPlaneName.startsWith('ops/dp/public') ? 'public' : 'private';
+};
+
+// TODO (data-plane): move function into data plane utils.
+// TODO (data-plane): add unit tests for function.
+export const parseDataPlaneName = (
+    dataPlaneName: string,
+    scope: DataPlaneOption['scope']
+) => {
+    const basePrefix = `ops/dp/${scope}/`;
+
+    if (dataPlaneName.startsWith(basePrefix)) {
+        const truncatedName = dataPlaneName.substring(basePrefix.length);
+
+        const slashIndex = truncatedName.lastIndexOf('/');
+
+        const prefix =
+            slashIndex === -1 ? '' : truncatedName.substring(0, slashIndex + 1);
+
+        const suffix =
+            slashIndex === -1
+                ? truncatedName
+                : truncatedName.substring(slashIndex + 1);
+
+        const firstHyphenIndex = suffix.indexOf('-');
+
+        let provider = '';
+        let region = '';
+        let cluster = '';
+
+        if (firstHyphenIndex > -1) {
+            provider = suffix.substring(0, firstHyphenIndex);
+
+            const lastHyphenIndex = suffix.lastIndexOf('-');
+            const regionOnly =
+                lastHyphenIndex === -1 || lastHyphenIndex === firstHyphenIndex;
+
+            region = regionOnly
+                ? suffix.substring(firstHyphenIndex + 1)
+                : suffix.substring(firstHyphenIndex + 1, lastHyphenIndex);
+
+            cluster = regionOnly ? '' : suffix.substring(lastHyphenIndex + 1);
+        }
+
+        return { cluster, prefix, provider, region };
+    }
+
+    return { cluster: '', prefix: '', provider: '', region: '' };
+};
+
+export const formatDataPlaneName = (
+    cluster: string,
+    provider: string,
+    region: string,
+    fallbackName: string
+) => {
+    return hasLength(provider)
+        ? `${provider}: ${region} ${cluster}`
+        : fallbackName;
+};

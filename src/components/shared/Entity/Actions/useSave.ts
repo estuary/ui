@@ -9,6 +9,7 @@ import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -31,7 +32,6 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
 import { hasLength } from 'utils/misc-utils';
-import { useEntityType } from 'context/EntityContext';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {
@@ -62,6 +62,9 @@ function useSave(
 
     const entityDescription = useDetailsFormStore(
         (state) => state.details.data.description
+    );
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName
     );
 
     const setIncompatibleCollections =
@@ -260,7 +263,8 @@ function useSave(
             const response = await createPublication(
                 draftId,
                 dryRun ?? false,
-                entityDescription
+                entityDescription,
+                dataPlaneName?.whole
             );
             if (response.error) {
                 onFailure({
@@ -281,6 +285,7 @@ function useSave(
         },
         [
             collections,
+            dataPlaneName?.whole,
             disabledBindings,
             dryRun,
             entityDescription,

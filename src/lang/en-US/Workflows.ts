@@ -142,6 +142,9 @@ export const Workflows: Record<string, string> = {
     'dataflowReset.logs.spinner.stopped': `done`,
     'dataflowReset.logs.spinner.running': `loading...`,
 
+    'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
+    'workflows.dataPlane.label': `Data Plane`,
+
     // Field Selection
     'fieldSelection.header': `Field Selection`,
     'fieldSelection.table.label': `Field Selection Editor`,
