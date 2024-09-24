@@ -4,6 +4,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
 import { ShardDetailStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -87,7 +88,7 @@ const getEverythingForDictionary = (
         warnings: [],
     };
 
-    if (status.length > 0) {
+    if (hasLength(status)) {
         const statusCodes: (ReplicaStatusCode | undefined)[] = status.map(
             ({ code }) => code
         );
