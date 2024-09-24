@@ -4,6 +4,8 @@ import SelectMaterialization from '.';
 
 // interface SelectMaterializationStepContext {
 //     backfillTarget: LiveSpecsExt_Related | null;
+//     noMaterializations: boolean | null;
+//     relatedMaterializations: LiveSpecsExt_Related[] | null;
 // }
 
 export const SelectMaterializationStep: PromptStep = {

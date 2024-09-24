@@ -73,11 +73,9 @@ function Content() {
                                                     severity="error"
                                                     error={error}
                                                     condensed
-                                                    hideTitle
                                                 />
                                                 <Box>
                                                     <ErrorLogs
-                                                        defaultOpen
                                                         logToken={
                                                             hasError
                                                                 ? publicationStatus?.logs_token

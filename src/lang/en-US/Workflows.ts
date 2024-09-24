@@ -140,7 +140,7 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.updateMaterialization.title': `Update Materialization`,
     'dataFlowReset.enableCapture.title': `Enable capture`,
 
-    'dataFlowReset.errors.publishFailed': `There was a "build failure" on the server`,
+    'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
 
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
@@ -152,7 +152,6 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
     'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
-    'dataFlowReset.step1.message': `The {entityCount} collections to be backfilled`,
 
     'dataFlowReset.editor.warning.title': `Editing disabled`,
     'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
@@ -360,7 +359,7 @@ export const Workflows: Record<string, string> = {
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
 
     // Reset Data Flow
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via their Source Capture.`,
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
     'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
