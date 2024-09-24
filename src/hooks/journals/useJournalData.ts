@@ -8,6 +8,7 @@ import useJournalStore from 'stores/JournalData/Store';
 import useSWR from 'swr';
 import {
     getJournals,
+    isNestedProtocolListResponse,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
@@ -63,12 +64,14 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                     return Promise.reject(dataPlaneListResponse);
                 }
 
+                const journals = isNestedProtocolListResponse(
+                    dataPlaneListResponse
+                )
+                    ? dataPlaneListResponse.result.journals
+                    : dataPlaneListResponse.journals;
+
                 return {
-                    journals:
-                        dataPlaneListResponse.result.journals &&
-                        dataPlaneListResponse.result.journals.length > 0
-                            ? dataPlaneListResponse.result.journals
-                            : [],
+                    journals: journals ?? [],
                 };
             } else {
                 return null;

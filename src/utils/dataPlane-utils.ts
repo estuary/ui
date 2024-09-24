@@ -121,11 +121,18 @@ export const authorizeCollection = async (
         accessToken
     );
 
+// Streaming RPC responses going through grpc-gateway have a `result` vs `error` top-level property added,
+// which wraps the actual response. The old data-plane gateway returns unary RPC responses from the /list APIs,
+// which don't have a top-level `result` property.
+export const isNestedProtocolListResponse = (
+    response: { result: ProtocolListResponse } | ProtocolListResponse
+): response is { result: ProtocolListResponse } => 'result' in response;
+
 export const getJournals = async (
     brokerAddress: string,
     brokerToken: string,
     selector: ProtocolLabelSelector
-): Promise<{ result: ProtocolListResponse }> =>
+): Promise<{ result: ProtocolListResponse } | ProtocolListResponse> =>
     client(
         `${brokerAddress}/v1/journals/list`,
         { data: { selector } },
