@@ -1,5 +1,6 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
 import { useEffect, useMemo } from 'react';
@@ -44,11 +45,17 @@ function Materializations() {
             {!error && foundData ? (
                 <Selector keys={related} value={null} />
             ) : (
-                <Box>
-                    {intl.formatMessage({
-                        id: 'resetDataFlow.materializations.empty',
+                <AlertBox
+                    severity="info"
+                    short
+                    title={intl.formatMessage({
+                        id: 'resetDataFlow.materializations.empty.header',
                     })}
-                </Box>
+                >
+                    {intl.formatMessage({
+                        id: 'resetDataFlow.materializations.empty.message',
+                    })}
+                </AlertBox>
             )}
         </Box>
     );

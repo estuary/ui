@@ -361,7 +361,8 @@ export const Workflows: Record<string, string> = {
 
     // Reset Data Flow
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via their Source Capture.`,
-    'resetDataFlow.materializations.empty': `No related ${CommonMessages['terms.sources']}`,
+    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
+    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
 };
