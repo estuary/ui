@@ -1,15 +1,17 @@
 import { singleCallSettings } from 'context/SWR';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
-import useGatewayAuthToken from 'hooks/gatewayAuthToken/useGatewayAuthToken';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
+import useJournalStore from 'stores/JournalData/Store';
 import useSWR from 'swr';
 import {
-    dataPlaneFetcher_list,
+    getJournals,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'utils/dataPlane-utils';
-import { useUserStore } from 'context/User/useUserContextStore';
+import { hasLength } from 'utils/misc-utils';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 
@@ -21,54 +23,66 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
     const [attempts, { inc: incAttempts, reset: resetAttempts }] =
         useCounter(0);
 
-    const { data: gatewayConfig, refresh: refreshAuthToken } =
-        useGatewayAuthToken(collectionName ? [collectionName] : []);
+    const refreshAuthToken = useJournalStore((state) => state.getAuthToken);
+    const brokerAddress = useJournalStore(
+        (state) => state.collectionBrokerAddress
+    );
+    const brokerToken = useJournalStore((state) => state.collectionBrokerToken);
 
     const journalClient = useMemo(() => {
-        if (gatewayConfig?.gateway_url && gatewayConfig.token) {
-            const authToken = gatewayConfig.token;
-            const baseUrl = new URL(gatewayConfig.gateway_url);
+        if (brokerAddress && brokerToken) {
+            const baseUrl = new URL(brokerAddress);
 
-            return new JournalClient(baseUrl, authToken);
+            return new JournalClient(baseUrl, brokerToken);
         } else {
             return null;
         }
-    }, [gatewayConfig]);
+    }, [brokerAddress, brokerToken]);
 
     const fetcher = useCallback(
         async (_url: string) => {
-            if (journalClient && collectionName) {
+            if (
+                journalClient &&
+                collectionName &&
+                brokerAddress &&
+                brokerToken
+            ) {
                 const journalSelector = new JournalSelector().collection(
                     collectionName
                 );
 
-                const dataPlaneListResponse = await dataPlaneFetcher_list(
-                    journalClient,
-                    journalSelector,
-                    'JournalData'
+                const dataPlaneListResponse = await getJournals(
+                    brokerAddress,
+                    brokerToken,
+                    {
+                        include: journalSelector.toLabelSet(),
+                    }
                 );
 
-                if (!Array.isArray(dataPlaneListResponse)) {
+                if (isEmpty(dataPlaneListResponse)) {
                     return Promise.reject(dataPlaneListResponse);
                 }
 
                 return {
                     journals:
-                        dataPlaneListResponse.length > 0
-                            ? dataPlaneListResponse
+                        dataPlaneListResponse.result.journals &&
+                        dataPlaneListResponse.result.journals.length > 0
+                            ? dataPlaneListResponse.result.journals
                             : [],
                 };
             } else {
                 return null;
             }
         },
-        [collectionName, journalClient]
+        [brokerAddress, brokerToken, collectionName, journalClient]
     );
 
     const response = useSWR(
-        collectionName
+        collectionName && brokerToken
             ? `journals-${collectionName}-${
-                  gatewayConfig?.gateway_url ?? '__missing_gateway_url__'
+                  hasLength(brokerAddress)
+                      ? brokerAddress
+                      : '__missing_broker_address__'
               }`
             : null,
         fetcher,
@@ -81,8 +95,16 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
             onError: async (error) => {
                 incAttempts();
 
-                if (session && shouldRefreshToken(`${error}`)) {
-                    await refreshAuthToken();
+                if (
+                    session &&
+                    shouldRefreshToken(`${error}`) &&
+                    collectionName
+                ) {
+                    await refreshAuthToken(
+                        session.access_token,
+                        collectionName,
+                        true
+                    );
                     resetAttempts();
                 }
 
@@ -107,28 +129,30 @@ interface UseJournalDataSettings {
     desiredCount?: number;
     maxBytes?: number;
 }
+
 const useJournalData = (
     journalName?: string,
-    collectionName?: string,
-    settings?: UseJournalDataSettings
+    settings?: UseJournalDataSettings,
+    opsJournalTarget?: boolean
 ) => {
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
-    const { data: gatewayConfig } = useGatewayAuthToken(
-        collectionName ? [collectionName] : null
+    const [brokerAddress, brokerToken] = useJournalStore((state) =>
+        opsJournalTarget
+            ? [state.taskBrokerAddress, state.taskBrokerToken]
+            : [state.collectionBrokerAddress, state.collectionBrokerToken]
     );
 
     const journalClient = useMemo(() => {
-        if (journalName && gatewayConfig?.gateway_url && gatewayConfig.token) {
-            const authToken = gatewayConfig.token;
-            const baseUrl = new URL(gatewayConfig.gateway_url);
+        if (brokerAddress && brokerToken) {
+            const baseUrl = new URL(brokerAddress);
 
-            return new JournalClient(baseUrl, authToken);
+            return new JournalClient(baseUrl, brokerToken);
         } else {
             return undefined;
         }
-    }, [gatewayConfig, journalName]);
+    }, [brokerAddress, brokerToken]);
 
     const [data, setData] =
         useState<Awaited<ReturnType<typeof loadDocuments>>>();

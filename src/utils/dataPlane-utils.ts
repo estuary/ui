@@ -1,13 +1,16 @@
+import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
-    broker,
-    JournalClient,
-    JournalSelector,
-    ShardClient,
-    ShardSelector,
-} from 'data-plane-gateway';
+    ProtocolLabelSelector,
+    ProtocolListResponse,
+} from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
+import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
+import {
+    getCollectionAuthorizationSettings,
+    getTaskAuthorizationSettings,
+} from './env-utils';
 
 export enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
@@ -26,26 +29,15 @@ export const shouldRefreshToken = (errorMessage?: string | null) => {
     );
 };
 
-type AllowedKeys = 'ShardsList' | 'JournalData';
-export function dataPlaneFetcher_list(
-    client: ShardClient,
+export async function dataPlaneFetcher_list(
+    shardClient: ShardClient,
     selector: ShardSelector,
     key: 'ShardsList'
-): Promise<Shard[] | ResponseError['body']>;
-export function dataPlaneFetcher_list(
-    client: JournalClient,
-    selector: JournalSelector,
-    key: 'JournalData'
-): Promise<broker.ProtocolJournalSpec[] | ResponseError['body']>;
-export async function dataPlaneFetcher_list(
-    client: ShardClient | JournalClient,
-    selector: ShardSelector | JournalSelector,
-    key: AllowedKeys
-): Promise<Shard[] | broker.ProtocolJournalSpec[] | ResponseError['body']> {
+): Promise<Shard[] | ResponseError['body']> {
     // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
     // TODO (typing)
     // I hate this but I need to get the bug finished
-    const result = await client.list(selector as any);
+    const result = await shardClient.list(selector as any);
 
     // Check for an error
     if (result.err()) {
@@ -65,6 +57,80 @@ export async function dataPlaneFetcher_list(
         return Promise.reject(error);
     }
 }
+
+// Shard ID prefixes take the form: ${entity_type}/${catalog_name}/${pub_id_of_creation}/
+// The pub_id_of_creation suffix distinguishes versions of entities that may be deleted
+// and then re-created. They cannot be used to match a Gazette label nor an ID directly.
+interface TaskAuthorizationResponse {
+    brokerAddress: string; // Base URL for journal endpoints
+    brokerToken: string; // Authentication token for journal endpoints
+    opsLogsJournal: string;
+    opsStatsJournal: string;
+    reactorAddress: string; // Base URL for shard endpoints
+    reactorToken: string; // Authentication token for shard enpoints
+    retryMillis: number;
+    shardIdPrefix: string;
+}
+
+const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
+
+// The broker authorization that comes back from /authorize/user/task is only good
+// for reading the ops stats or logs journals of a specific task. Collection
+// data cannot be read with it.
+export const authorizeTask = async (
+    accessToken: string | undefined,
+    catalogName: string
+): Promise<TaskAuthorizationResponse> =>
+    client(
+        taskAuthorizationEndpoint,
+        {
+            data: {
+                task: catalogName,
+            },
+        },
+        accessToken
+    );
+
+// Journal name prefixes take the form: ${catalog_name}/${pub_id_of_creation}/
+// The pub_id_of_creation suffix distinguishes versions of entities
+// that may be deleted and then re-created. They cannot be used to match
+// a Gazette label nor an ID directly.
+interface CollectionAuthorizationResponse {
+    brokerAddress: string; // Base URL for journal endpoints
+    brokerToken: string; // Authentication token for journal endpoints
+    journalNamePrefix: string;
+    retryMillis: number;
+}
+
+const { collectionAuthorizationEndpoint } =
+    getCollectionAuthorizationSettings();
+
+// The broker authorization that comes back from /authorize/user/collection is only good
+// for reading the ops logs journals of a specific collection.
+export const authorizeCollection = async (
+    accessToken: string | undefined,
+    catalogName: string
+): Promise<CollectionAuthorizationResponse> =>
+    client(
+        collectionAuthorizationEndpoint,
+        {
+            data: {
+                collection: catalogName,
+            },
+        },
+        accessToken
+    );
+
+export const getJournals = async (
+    brokerAddress: string,
+    brokerToken: string,
+    selector: ProtocolLabelSelector
+): Promise<{ result: ProtocolListResponse }> =>
+    client(
+        `${brokerAddress}/v1/journals/list`,
+        { data: { selector } },
+        brokerToken
+    );
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
