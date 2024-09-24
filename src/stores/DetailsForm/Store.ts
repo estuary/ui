@@ -336,6 +336,7 @@ export const getInitialState = (
                         catalog_name,
                         connector_image_tag,
                         connector_tag_id,
+                        data_plane_id,
                         detail,
                     } = data[0];
 
@@ -344,7 +345,12 @@ export const getInitialState = (
                         connector_image_tag
                     );
 
-                    if (connectorImage) {
+                    const dataPlane = await getDataPlane(
+                        dataPlaneOption,
+                        data_plane_id
+                    );
+
+                    if (connectorImage && dataPlane !== null) {
                         const {
                             setDetails,
                             setPreviousDetails,
@@ -355,6 +361,7 @@ export const getInitialState = (
                             data: {
                                 entityName: catalog_name,
                                 connectorImage,
+                                dataPlane,
                                 description: detail ?? '',
                             },
                         };
