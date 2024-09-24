@@ -1,5 +1,5 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { getDataPlaneOptions } from 'api/dataPlane';
+import { getDataPlaneOptions } from 'api/dataPlanes';
 import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
     GlobalSearchParams,

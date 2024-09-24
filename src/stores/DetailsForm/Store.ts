@@ -1,5 +1,5 @@
 import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneById } from 'api/dataPlane';
+import { getDataPlaneById } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
