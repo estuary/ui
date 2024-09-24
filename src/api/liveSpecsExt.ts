@@ -29,6 +29,7 @@ const baseColumns = [
     'spec_type',
     'updated_at',
     'last_pub_id',
+    'shard_template_id',
 ];
 
 const commonColumns = baseColumns.concat([
@@ -37,7 +38,6 @@ const commonColumns = baseColumns.concat([
     'connector_image_tag',
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
-    'shard_template_id',
 ]);
 
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
