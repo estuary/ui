@@ -138,14 +138,10 @@ const useJournalData = (
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
-    const brokerAddress = useJournalStore((state) =>
+    const [brokerAddress, brokerToken] = useJournalStore((state) =>
         opsJournalTarget
-            ? state.taskBrokerAddress
-            : state.collectionBrokerAddress
-    );
-
-    const brokerToken = useJournalStore((state) =>
-        opsJournalTarget ? state.taskBrokerToken : state.collectionBrokerToken
+            ? [state.taskBrokerAddress, state.taskBrokerToken]
+            : [state.collectionBrokerAddress, state.collectionBrokerToken]
     );
 
     const journalClient = useMemo(() => {
