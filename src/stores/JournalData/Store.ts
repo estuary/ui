@@ -4,6 +4,8 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+// TODO: Remove the action, getAuthToken, from the store. Store actions
+//   should be limited to simple functions that set or manipulate state.
 export interface JournalState {
     collectionBrokerAddress: string;
     collectionBrokerToken: string;

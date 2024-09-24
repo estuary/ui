@@ -13,6 +13,8 @@ import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 
+// TODO: Display the logs table in a loading state until the initial journal
+//   data can be fetched.
 function Ops() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const taskTypes = useDetailsEntityTaskTypes();

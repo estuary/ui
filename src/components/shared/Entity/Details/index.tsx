@@ -15,6 +15,8 @@ import { useMemo } from 'react';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
 
+// TODO: Hydrate the journal store in a single location that satisfies
+//   the needs of components dependent on its state.
 function EntityDetails() {
     useBrowserTitle('routeTitle.details');
 

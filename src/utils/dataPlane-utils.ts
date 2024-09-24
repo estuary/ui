@@ -58,19 +58,25 @@ export async function dataPlaneFetcher_list(
     }
 }
 
+// Shard ID prefixes take the form: ${entity_type}/${catalog_name}/${pub_id_of_creation}/
+// The pub_id_of_creation suffix distinguishes versions of entities that may be deleted
+// and then re-created. They cannot be used to match a Gazette label nor an ID directly.
 interface TaskAuthorizationResponse {
-    brokerAddress: string;
-    brokerToken: string;
+    brokerAddress: string; // Base URL for journal endpoints
+    brokerToken: string; // Authentication token for journal endpoints
     opsLogsJournal: string;
     opsStatsJournal: string;
-    reactorAddress: string;
-    reactorToken: string;
+    reactorAddress: string; // Base URL for shard endpoints
+    reactorToken: string; // Authentication token for shard enpoints
     retryMillis: number;
     shardIdPrefix: string;
 }
 
 const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
 
+// The broker authorization that comes back from /authorize/user/task is only good
+// for reading the ops stats or logs journals of a specific task. Collection
+// data cannot be read with it.
 export const authorizeTask = async (
     accessToken: string | undefined,
     catalogName: string
@@ -85,9 +91,13 @@ export const authorizeTask = async (
         accessToken
     );
 
+// Journal name prefixes take the form: ${catalog_name}/${pub_id_of_creation}/
+// The pub_id_of_creation suffix distinguishes versions of entities
+// that may be deleted and then re-created. They cannot be used to match
+// a Gazette label nor an ID directly.
 interface CollectionAuthorizationResponse {
-    brokerAddress: string;
-    brokerToken: string;
+    brokerAddress: string; // Base URL for journal endpoints
+    brokerToken: string; // Authentication token for journal endpoints
     journalNamePrefix: string;
     retryMillis: number;
 }
@@ -95,6 +105,8 @@ interface CollectionAuthorizationResponse {
 const { collectionAuthorizationEndpoint } =
     getCollectionAuthorizationSettings();
 
+// The broker authorization that comes back from /authorize/user/collection is only good
+// for reading the ops logs journals of a specific collection.
 export const authorizeCollection = async (
     accessToken: string | undefined,
     catalogName: string

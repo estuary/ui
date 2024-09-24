@@ -66,6 +66,8 @@ const useShardsList = (catalogNames: string[]) => {
         [session, catalogNames]
     );
 
+    // TODO: Terminate the poller when shard-related information for a given task
+    //   is no longer needed.
     return useSWR(swrKey, fetcher, {
         errorRetryCount: 3,
         errorRetryInterval: INTERVAL / 2,
