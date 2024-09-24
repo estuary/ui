@@ -1,26 +1,23 @@
 import { Box, Stack } from '@mui/material';
-import useJournalNameForLogs from 'hooks/journals/useJournalNameForLogs';
+import AlertBox from 'components/shared/AlertBox';
+import Message from 'components/shared/Error/Message';
+import LogsTable from 'components/tables/Logs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import LogsTable from 'components/tables/Logs';
-import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
-import AlertBox from 'components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
-import Message from 'components/shared/Error/Message';
 import { BASE_ERROR } from 'services/supabase';
+import JournalHydrator from 'stores/JournalData/Hydrator';
+import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import { isProduction } from 'utils/env-utils';
-import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
+import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 
+// TODO: Display the logs table in a loading state until the initial journal
+//   data can be fetched.
 function Ops() {
-    const taskTypes = useDetailsEntityTaskTypes();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const [name, collectionName] = useJournalNameForLogs(
-        catalogName,
-        taskTypes
-    );
+    const taskTypes = useDetailsEntityTaskTypes();
 
     const hydrationError = useJournalDataLogsStore(
         (state) => state.hydrationError
@@ -37,18 +34,14 @@ function Ops() {
     }
 
     return (
-        <JournalDataLogsHydrator name={name} collectionName={collectionName}>
-            <Stack spacing={2}>
-                <Box>
-                    {hydrationError ? (
-                        <>
-                            {isProduction ? null : (
-                                <AlertBox severity="warning" short>
-                                    With V2 of Control Plane logs in the UI will
-                                    not work due to an issue with the selector.
-                                </AlertBox>
-                            )}
-
+        <JournalHydrator
+            catalogName={catalogName}
+            isCollection={taskTypes.length === 0}
+        >
+            <JournalDataLogsHydrator>
+                <Stack spacing={2}>
+                    <Box>
+                        {hydrationError ? (
                             <AlertBox
                                 severity="error"
                                 title={
@@ -63,13 +56,13 @@ function Ops() {
                                     }}
                                 />
                             </AlertBox>
-                        </>
-                    ) : (
-                        <LogsTable />
-                    )}
-                </Box>
-            </Stack>
-        </JournalDataLogsHydrator>
+                        ) : (
+                            <LogsTable />
+                        )}
+                    </Box>
+                </Stack>
+            </JournalDataLogsHydrator>
+        </JournalHydrator>
     );
 }
 

@@ -9,6 +9,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
+import JournalHydrator from 'stores/JournalData/Hydrator';
 import { hasLength } from 'utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
@@ -76,7 +77,12 @@ function Overview({ name }: Props) {
 
             {isCollection && entityName ? (
                 <Grid item xs={12}>
-                    <DataPreview collectionName={entityName} />
+                    <JournalHydrator
+                        catalogName={entityName}
+                        isCollection={isCollection}
+                    >
+                        <DataPreview collectionName={entityName} />
+                    </JournalHydrator>
                 </Grid>
             ) : null}
         </Grid>

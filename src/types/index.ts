@@ -293,6 +293,7 @@ export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     title: string;
     last_pub_id: string;
     updated_at: string;
+    shard_template_id: string | null;
 
     // Used ONLY for filtering
     spec: any;
