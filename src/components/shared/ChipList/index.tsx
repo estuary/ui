@@ -62,6 +62,7 @@ function ChipList({
                 display: 'flex',
                 flexWrap: 'wrap',
                 listStyle: 'none',
+                alignItems: 'center',
                 p: 0,
                 m: 0,
                 minWidth: 100,
