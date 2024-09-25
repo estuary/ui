@@ -65,7 +65,7 @@ function DisableCapture() {
                     },
                     undefined,
                     undefined,
-                    `data flow backfill : ${captureName} : disable : ${initUUID}`
+                    `data flow backfill : disable : ${initUUID}`
                 );
 
                 if (updateResponse.error) {

@@ -47,7 +47,7 @@ function MarkMaterialization() {
                 }
 
                 const draftsResponse = await createEntityDraft(
-                    `data flow backfill : ${context.backfillTarget.catalog_name} : create : ${initUUID}`
+                    `data flow backfill : update : ${initUUID}`
                 );
                 const backfilledDraftId = draftsResponse.data?.[0].id;
 

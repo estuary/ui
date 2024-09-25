@@ -40,7 +40,7 @@ function Publish() {
                 const publishResponse = await createPublication(
                     context.backfilledDraftId,
                     false,
-                    `data flow backfill : ${context.backfillTarget.catalog_name} : publish : ${initUUID}`,
+                    `data flow backfill : publish : ${initUUID}`,
                     dataPlaneName?.whole
                 );
 
