@@ -12,6 +12,7 @@ import { Box, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { isReactElement } from 'utils/misc-utils';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
 import { PickerProps } from './types';
 import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
@@ -38,15 +39,7 @@ export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
     const { shortcuts, toolbar, tabs, content } = usePickerLayout(props);
 
     let currentStep = '';
-    if (
-        content &&
-        typeof content === 'object' &&
-        // @ts-expect-error How we call this we should get a react node
-        content.props &&
-        // @ts-expect-error We check if the thing exists so we should be okay
-        typeof content.props === 'object'
-    ) {
-        // @ts-expect-error being pretty safe up above
+    if (isReactElement(content)) {
         currentStep = content.props.focusedView ?? content.props.view ?? '';
     }
 
