@@ -28,7 +28,7 @@ function Selector({
     ]);
 
     const backfillTarget = usePreSavePromptStore((state) => {
-        state.context.backfillTarget;
+        return state.context.backfillTarget;
     });
 
     useEffect(() => {
@@ -64,22 +64,20 @@ function Selector({
                 disabled={disabled}
                 getOptionLabel={getValue}
                 inputValue={inputValue}
+                options={keys}
+                value={backfillTarget ?? null}
                 isOptionEqualToValue={(option, optionValue) => {
                     return option.catalog_name === optionValue.catalog_name;
                 }}
-                options={keys}
-                value={backfillTarget}
                 onChange={(_event, newValue: LiveSpecsExt_Related | null) => {
                     const newBackfillTarget = newValue ? newValue : null;
 
-                    console.log('newBackfillTarget', newBackfillTarget);
+                    updateContext({
+                        backfillTarget: newBackfillTarget,
+                    });
 
                     updateStep(stepIndex, {
                         valid: Boolean(newBackfillTarget),
-                    });
-
-                    updateContext({
-                        backfillTarget: newBackfillTarget,
                     });
                 }}
                 onInputChange={(_event, newInputValue) => {
