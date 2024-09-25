@@ -45,10 +45,8 @@ function EnableCapture() {
                     progress: ProgressStates.SUCCESS,
                     valid: true,
                 });
-                nextStep();
 
-                // // Start publishing it
-                // This needs to be the next step
+                nextStep();
             };
 
             void enableCapture();

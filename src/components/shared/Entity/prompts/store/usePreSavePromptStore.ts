@@ -44,7 +44,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         state.steps = newSteps;
                         state.initUUID = initUUID;
                         logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
-                            initializedSteps: true,
+                            step: 'init',
                             initUUID,
                         });
                     }),
@@ -79,6 +79,11 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                                 };
                             }
                         }
+
+                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                            step: updating.StepComponent.name,
+                            progress: updating.state.progress,
+                        });
                     }),
                     false,
                     'setActiveStep'
