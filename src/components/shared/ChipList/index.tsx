@@ -13,7 +13,7 @@ function ChipList({
 }: ChipListProps) {
     const intl = useIntl();
 
-    const listScroller = useRef<any>(null);
+    const listScroller = useRef<HTMLDivElement>(null);
 
     // Format data coming in so we can still pass in a list of strings
     const formattedValues = useMemo(() => {
@@ -48,9 +48,11 @@ function ChipList({
     // When all chips are shown scroll down just a hair to try to make
     //   sure the user knows that the list is scrollable
     useEffect(() => {
-        if (maxRender === valueLength) {
-            listScroller.current?.scrollTo(undefined, 10);
+        if (!listScroller.current || maxRender !== valueLength) {
+            return;
         }
+
+        listScroller.current.scrollTop += 20;
     }, [maxRender, valueLength]);
 
     return (
