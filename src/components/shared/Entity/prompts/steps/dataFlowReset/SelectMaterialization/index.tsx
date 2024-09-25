@@ -10,6 +10,8 @@ function SelectMaterialization() {
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
+    // TODO (data flow backfill)
+    // Go ahead and work this into the hydration of the store... I think
     const { related, error, isValidating } = useLiveSpecsExt_related(
         draftSpecs[0].catalog_name
     );
