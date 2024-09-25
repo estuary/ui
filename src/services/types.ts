@@ -16,6 +16,7 @@ export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
+    DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
     DIRECTIVE_GUARD_STATE = 'Directive:Guard:State',

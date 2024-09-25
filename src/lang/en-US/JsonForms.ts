@@ -5,6 +5,7 @@ export const JsonForms: Record<string, string> = {
 
     // Custom Renderers
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
+    'dateTimePicker.picker.currentStep': `Selecting: {currentStep}`,
     'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'informational.sshEndpoint.title': `All Estuary traffic comes from a group of IPs that can be whitelisted:`,
