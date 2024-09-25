@@ -1,6 +1,6 @@
 import { disableDirective } from 'api/directives';
 import Progress from 'components/tables/RowActions/AccessLinks/Progress';
-import { ProgressStates } from 'components/tables/RowActions/Shared/Progress';
+import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';

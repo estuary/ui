@@ -8,10 +8,6 @@ import { createPublication } from 'api/publications';
 import AlertBox from 'components/shared/AlertBox';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
-import SharedProgress, {
-    ProgressStates,
-    SharedProgressProps,
-} from 'components/tables/RowActions/Shared/Progress';
 import { useZustandStore } from 'context/Zustand/provider';
 import {
     LiveSpecsExtQueryWithSpec,
@@ -26,6 +22,8 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { Entity } from 'types';
+import SharedProgress from './Progress';
+import { ProgressStates, SharedProgressProps } from './types';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;

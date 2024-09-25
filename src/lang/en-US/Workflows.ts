@@ -77,9 +77,9 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn’t support backfills.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message': `To backfill, disable each binding, save and then re-enable and save.`,
     'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
-    'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published.`,
+    'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published.`,
+    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
     'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} marked for backfill`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
@@ -127,20 +127,37 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
+    //  PreSave prompts
+    'preSavePrompt.changeReview.title': `How the spec is changing`,
+    'preSavePrompt.publish.title': `Save and publish`,
+    'preSavePrompt.logs.spinner.stopped': `done`,
+    'preSavePrompt.logs.spinner.running': `loading...`,
+
+    'preSavePrompt.draftErrors.title': `Draft Errors`,
+    'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
+
+    'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
+    'dataFlowReset.reviewSelection.title': `Review your selections`,
+    'dataFlowReset.disableCapture.title': `Disable capture`,
+    'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
+    'dataFlowReset.updateMaterialization.title': `Update Materialization`,
+    'dataFlowReset.enableCapture.title': `Enable capture`,
+
+    'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
+
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
-    'dataflowReset.warning.title': `This cannot be undone or stopped`,
-    'dataflowReset.warning.message': `Once this process is started you must stay on this page. Do not click away or reload the page. If you have any issues please contact support immediately as we may need to assist you in recovery.`,
-    'dataflowReset.step1.message': `The {entityCount} collections to be backfilled`,
+    'dataFlowReset.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
+    'dataFlowReset.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
+    'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
+    'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
+    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
 
-    'dataflowReset.editor.warning.title': `Editing disabled`,
-    'dataflowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
-
-    'dataflowReset.logs.spinner.stopped': `done`,
-    'dataflowReset.logs.spinner.running': `loading...`,
+    'dataFlowReset.editor.warning.title': `Editing disabled`,
+    'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -342,13 +359,15 @@ export const Workflows: Record<string, string> = {
     // Logs Dialog
     'logs.default': ` `,
     'logs.paused': `paused`,
+    'logs.noLogs': `no logs were found`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
 
     // Reset Data Flow
-    'resetDataFlow.materializations.header': `Select which materialization you want backfilled`,
-    'resetDataFlow.materializations.empty': `No related materializations`,
-    'resetDataFlow.materializations.selector.label': `Materialization to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) materialization`,
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
+    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
+    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization.`,
+    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
 };

@@ -311,18 +311,35 @@ export function invokeSupabase<T>(fn: FUNCTIONS, body: any) {
     );
 }
 
-export const insertSupabase = (
+export const insertSupabase = <T = any>(
+    table: TABLES,
+    data: any,
+    noResponse?: boolean
+): PromiseLike<CallSupabaseResponse<T>> => {
+    return supabaseRetry(() => {
+        const query = supabaseClient
+            .from(table)
+            .insert(Array.isArray(data) ? data : [data]);
+
+        if (!noResponse) {
+            return query.select();
+        }
+
+        return query;
+    }, 'insert').then(handleSuccess<T>, handleFailure);
+};
+
+export const insertSupabase_noResponse = <T = any>(
     table: TABLES,
     data: any
-): PromiseLike<CallSupabaseResponse<any>> => {
+): PromiseLike<CallSupabaseResponse<T>> => {
     return supabaseRetry(
         () =>
             supabaseClient
                 .from(table)
-                .insert(Array.isArray(data) ? data : [data])
-                .select(),
+                .insert(Array.isArray(data) ? data : [data]),
         'insert'
-    ).then(handleSuccess, handleFailure);
+    ).then(handleSuccess<T>, handleFailure);
 };
 
 // Makes update calls. Mainly consumed in the src/api folder
@@ -440,7 +457,12 @@ export const DEFAULT_POLLER_ERROR = {
     },
 };
 
+export const JOB_TYPE_EMPTY = 'emptyDraft';
+export const JOB_TYPE_FAILURE = 'buildFailed';
+export const JOB_TYPE_SUCCESS = 'success';
+
 // These columns are not always what you want... but okay for a "default" constant
-export const JOB_STATUS_SUCCESS = ['emptyDraft', 'success'];
+export const JOB_STATUS_FAILURE = [JOB_TYPE_FAILURE];
+export const JOB_STATUS_SUCCESS = [JOB_TYPE_EMPTY, JOB_TYPE_SUCCESS];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 // END: Poller

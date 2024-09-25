@@ -143,6 +143,7 @@ export interface BindingState
 
     // Computed Values
     getCollections: () => string[];
+    getEnabledCollections: () => string[];
 
     // Misc.
     hydrateState: (

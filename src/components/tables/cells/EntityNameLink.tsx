@@ -1,7 +1,6 @@
-import { Box, Stack, TableCell, Tooltip } from '@mui/material';
-import LinkWrapper from 'components/shared/LinkWrapper';
+import { Stack, TableCell } from '@mui/material';
+import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
 import EntityStatus from 'components/tables/cells/EntityStatus';
-import { useIntl } from 'react-intl';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
@@ -17,8 +16,6 @@ function EntityNameLink({
     entityStatusTypes,
     showEntityStatus,
 }: Props) {
-    const intl = useIntl();
-
     return (
         <TableCell
             sx={{
@@ -36,23 +33,7 @@ function EntityNameLink({
                     <EntityStatus name={name} taskTypes={entityStatusTypes} />
                 ) : null}
 
-                <Tooltip
-                    title={intl.formatMessage({
-                        id: 'entityTable.detailsLink',
-                    })}
-                >
-                    <Box>
-                        <LinkWrapper
-                            ariaLabel={intl.formatMessage(
-                                { id: 'entityTable.viewDetails.aria' },
-                                { name }
-                            )}
-                            link={detailsLink}
-                        >
-                            {name}
-                        </LinkWrapper>
-                    </Box>
-                </Tooltip>
+                <EntityNameDetailsLink name={name} path={detailsLink} />
             </Stack>
         </TableCell>
     );

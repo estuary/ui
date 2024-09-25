@@ -5,7 +5,6 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useIntl } from 'react-intl';
-
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
@@ -23,11 +22,12 @@ function EntityCreateSave({
     const save = useSave(logEvent, onFailure, dryRun);
 
     const isSaving = useEditorStore_isSaving();
-    const formActive = useFormStateStore_isActive();
     const draftId = useEditorStore_id();
 
+    const formActive = useFormStateStore_isActive();
+
     // TODO (data flow reset)
-    // const setShowPreSavePrompt = useFormStateStore_setShowPreSavePrompt();
+    // const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
     // const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
     // const needsBackfilled = useBinding_backfilledBindings_count();
 
@@ -38,7 +38,7 @@ function EntityCreateSave({
             onClick={async () => {
                 // TODO (data flow reset)
                 // if (!dryRun && backfillDataflow && needsBackfilled) {
-                //     setShowPreSavePrompt(true);
+                //     setShowSavePrompt(true);
                 // } else {
                 //     await save(draftId);
                 // }

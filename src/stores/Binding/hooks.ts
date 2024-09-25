@@ -125,6 +125,11 @@ export const useBinding_collections = () => {
 export const useBinding_collections_count = () =>
     useBindingStore(useShallow((state) => state.getCollections().length));
 
+export const useBinding_enabledCollections_count = () =>
+    useBindingStore(
+        useShallow((state) => state.getEnabledCollections().length)
+    );
+
 export const useBinding_toggleDisable = () => {
     return useBindingStore((state) => state.toggleDisable);
 };
@@ -320,3 +325,13 @@ export const useBinding_backfillSupported = () =>
     useBindingStore((state) => {
         return state.backfillSupported;
     });
+
+export const useBinding_collectionsBeingBackfilled = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return state.backfilledBindings.map((backfilledBinding) => {
+                return state.resourceConfigs[backfilledBinding].meta
+                    .collectionName;
+            });
+        })
+    );

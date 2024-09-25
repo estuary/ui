@@ -22,7 +22,7 @@ function CatalogEditor({ messageId }: Props) {
 
     // TODO (data flow reset)
     // const intl = useIntl();
-    // const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
+    // const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
     // const needsBackfilled = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
@@ -41,21 +41,22 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {/*TODO (data flow reset) - also make sure editor is disabled*/}
-                    {/*                    {backfillDataFlow && needsBackfilled ? (
+                    {/*TODO (data flow reset) - also make sure editor is disabled
+                    {backfillDataFlow && needsBackfilled ? (
                         <AlertBox
                             fitWidth
                             short
                             severity="warning"
                             title={intl.formatMessage({
-                                id: 'dataflowReset.editor.warning.title',
+                                id: 'dataFlowReset.editor.warning.title',
                             })}
                         >
                             {intl.formatMessage({
-                                id: 'dataflowReset.editor.warning.message',
+                                id: 'dataFlowReset.editor.warning.message',
                             })}
                         </AlertBox>
-                    ) : null}*/}
+                    ) : null}
+                    */}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor

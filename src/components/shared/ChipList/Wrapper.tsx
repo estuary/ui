@@ -80,7 +80,15 @@ function ChipWrapper({
                 size="small"
                 variant="outlined"
                 disabled={disabled}
-                onClick={onClick}
+                onClick={
+                    onClick
+                        ? (event) => {
+                              event.stopPropagation();
+                              event.preventDefault();
+                              onClick();
+                          }
+                        : undefined
+                }
                 sx={chipSX}
             />
         );
@@ -88,10 +96,14 @@ function ChipWrapper({
 
     const wrappedChip = useMemo(() => {
         if (val.link) {
-            return <LinkWrapper link={val.link}>{chip}</LinkWrapper>;
+            return (
+                <LinkWrapper link={val.link} newWindow={val.newWindow}>
+                    {chip}
+                </LinkWrapper>
+            );
         }
         return chip;
-    }, [chip, val.link]);
+    }, [chip, val.link, val.newWindow]);
 
     return (
         <ListItem>

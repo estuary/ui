@@ -206,7 +206,6 @@ export interface LiveSpecsExtQuery_DetailsForm {
     spec_type: Entity;
     spec: any;
     data_plane_id: string;
-    detail: string | null;
     connector_tag_id: string;
     connector_image_name: string;
     connector_image_tag: string;
@@ -219,7 +218,6 @@ const DETAILS_FORM_QUERY = `
     spec_type,
     spec,
     data_plane_id,
-    detail,
     connector_tag_id,
     connector_image_name,
     connector_image_tag,
@@ -372,6 +370,14 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
     return data;
 };
 
+const getLiveSpecSpec = (liveSpecId: string) => {
+    return supabaseClient
+        .from(TABLES.LIVE_SPECS_EXT)
+        .select(`spec`)
+        .eq('id', liveSpecId)
+        .single();
+};
+
 const getLiveSpecShards = (tenant: string, entityType: Entity) => {
     return supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
@@ -379,6 +385,44 @@ const getLiveSpecShards = (tenant: string, entityType: Entity) => {
         .like('catalog_name', `${tenant}%`)
         .eq('spec_type', entityType);
 };
+
+const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
+export const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
+export interface LiveSpecsExt_Related {
+    catalog_name: string;
+    reads_from: string[];
+    id: string;
+}
+// const getLiveSpecsRelatedToMaterialization = async (
+//     collectionNames: string[]
+// ) => {
+//     const limiter = pLimit(3);
+//     const promises = [];
+//     let index = 0;
+
+//     // TODO (retry) promise generator
+//     const promiseGenerator = (idx: number) => {
+//         return supabaseClient
+//             .from(TABLES.LIVE_SPECS_EXT)
+//             .select(liveSpecsExtRelatedQuery)
+//             .eq('spec_type', 'materialization')
+//             .overlaps(
+//                 'reads_from',
+//                 collectionNames.slice(idx, idx + CHUNK_SIZE)
+//             )
+//             .returns<LiveSpecsExt_Related[]>();
+//     };
+
+//     while (index < collectionNames.length) {
+//         const prom = promiseGenerator(index);
+//         promises.push(limiter(() => prom));
+//         index = index + CHUNK_SIZE;
+//     }
+
+//     const response = await Promise.all(promises);
+//     const errors = response.filter((r) => r.error);
+//     return errors[0] ?? response[0];
+// };
 
 export {
     getLiveSpecs_captures,
@@ -392,4 +436,5 @@ export {
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
     getLiveSpecShards,
+    getLiveSpecSpec,
 };

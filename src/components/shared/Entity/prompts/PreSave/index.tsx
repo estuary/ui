@@ -1,26 +1,28 @@
 import { Dialog } from '@mui/material';
-import { useFormStateStore_showPreSavePrompt } from 'stores/FormState/hooks';
-import usePreSavePromptSteps from '../steps/preSave/usePreSavePromptSteps';
+import { useFormStateStore_showSavePrompt } from 'stores/FormState/hooks';
+import PromptsHydrator from '../store/Hydrator';
+import { usePreSavePromptStore_onFirstStep } from '../store/usePreSavePromptStore';
 import Actions from './Actions';
 import Content from './Content';
 import Title from './Title';
 
-function PreSave() {
-    const { activeStep } = usePreSavePromptSteps();
-
-    const showPreSavePrompt = useFormStateStore_showPreSavePrompt();
+function PreSavePrompt() {
+    const showSavePrompt = useFormStateStore_showSavePrompt();
+    const onFirstStep = usePreSavePromptStore_onFirstStep();
 
     return (
         <Dialog
-            maxWidth={activeStep === 0 ? 'lg' : 'md'}
+            maxWidth={onFirstStep ? 'lg' : 'md'}
             fullWidth
-            open={showPreSavePrompt}
+            open={showSavePrompt}
         >
-            <Title />
-            <Content />
-            <Actions />
+            <PromptsHydrator>
+                <Title />
+                <Content />
+                <Actions />
+            </PromptsHydrator>
         </Dialog>
     );
 }
 
-export default PreSave;
+export default PreSavePrompt;

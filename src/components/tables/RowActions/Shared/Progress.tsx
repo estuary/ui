@@ -9,27 +9,8 @@ import {
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-
-export enum ProgressStates {
-    RUNNING = 1,
-    SKIPPED = 2,
-    FAILED = 3,
-    SUCCESS = 4,
-}
-
-export interface SharedProgressProps {
-    name: string;
-    error: any | null;
-    logToken?: string | null;
-    renderError?: (error: any, progressState: ProgressStates) => ReactNode;
-    renderLogs?: Function | boolean;
-    skippedMessageID?: string;
-    runningMessageID: string;
-    successMessageID: string;
-    state: ProgressStates;
-}
+import { ProgressStates, SharedProgressProps } from './types';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 

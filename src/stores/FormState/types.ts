@@ -39,6 +39,9 @@ export enum FormStatus {
     UPDATED = 'UPDATED',
 
     FAILED = 'FAILED',
+
+    // USE WITH CAUTION - only for prompts right now (Q3 2024)
+    LOCKED = 'LOCKED',
 }
 
 export interface EntityFormState {
@@ -50,11 +53,11 @@ export interface EntityFormState {
     isIdle: boolean;
     isActive: boolean;
 
-    showPreSavePrompt: boolean;
-    setShowPreSavePrompt: (data: EntityFormState['showPreSavePrompt']) => void;
-
     liveSpec: Schema | null;
     setLiveSpec: (data: EntityFormState['liveSpec']) => void;
+
+    showSavePrompt: boolean;
+    setShowSavePrompt: (data: EntityFormState['showSavePrompt']) => void;
 
     updateStatus: (status: FormStatus, background?: boolean) => void;
 

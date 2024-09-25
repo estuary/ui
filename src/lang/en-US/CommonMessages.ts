@@ -63,7 +63,9 @@ export const CommonMessages: Record<string, string> = {
     'terms.documentation': `Docs`,
     'terms.entity': `Entity`,
     'terms.dataFlow': `Data Flow`,
+    'terms.source': `Source`,
     'terms.sources': `Sources`,
+    'terms.destination': `Destination`,
     'terms.destinations': `Destinations`,
 
     // Terms V2
@@ -72,6 +74,8 @@ export const CommonMessages: Record<string, string> = {
     //  is just how react-intl handles it and we might end up rolling our own.
     'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
+    'terms.destinations.plural': `{count, plural, one {destination} other {destinations}}`,
+    'terms.sources.plural': `{count, plural, one {source} other {sources}}`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,

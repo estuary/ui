@@ -1,11 +1,19 @@
 import { Box } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { ChipListProps } from './types';
 import ChipWrapper from './Wrapper';
 
-function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
+function ChipList({
+    values,
+    disabled,
+    maxChips,
+    stripPath,
+    sx,
+}: ChipListProps) {
     const intl = useIntl();
+
+    const listScroller = useRef<HTMLDivElement>(null);
 
     // Format data coming in so we can still pass in a list of strings
     const formattedValues = useMemo(() => {
@@ -37,17 +45,30 @@ function ChipList({ values, disabled, maxChips, stripPath }: ChipListProps) {
         setMaxRender(valueLength);
     };
 
+    // When all chips are shown scroll down just a hair to try to make
+    //   sure the user knows that the list is scrollable
+    useEffect(() => {
+        if (!listScroller.current || maxRender !== valueLength) {
+            return;
+        }
+
+        listScroller.current.scrollTop += 20;
+    }, [maxRender, valueLength]);
+
     return (
         <Box
+            ref={listScroller}
             sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 listStyle: 'none',
+                alignItems: 'center',
                 p: 0,
                 m: 0,
                 minWidth: 100,
-                overflow: 'auto',
                 maxHeight: 100,
+                overflow: 'auto',
+                ...sx,
             }}
             component="ul"
         >

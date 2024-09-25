@@ -10,8 +10,8 @@ import {
     useBinding_currentCollection,
     useBinding_currentBindingUUID,
     useBinding_setBackfilledBindings,
-    useBinding_collections_count,
     useBinding_backfillSupported,
+    useBinding_enabledCollections_count,
 } from 'stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
@@ -36,7 +36,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     // Binding Store
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
-    const collectionsCount = useBinding_collections_count();
+    const collectionsCount = useBinding_enabledCollections_count();
     const allBindingsDisabled = useBinding_allBindingsDisabled();
 
     const backfillAllBindings = useBinding_backfillAllBindings();
@@ -199,10 +199,11 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 ) : null}
             </Stack>
 
-            {/*TODO (data flow reset)*/}
-            {/*            {bindingIndex === -1 && workflow === 'capture_edit' ? (
+            {/*TODO (data flow reset)
+            {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
-            ) : null}*/}
+            ) : null}
+            */}
         </Box>
     );
 }

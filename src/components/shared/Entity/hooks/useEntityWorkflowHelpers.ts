@@ -70,6 +70,12 @@ function useEntityWorkflowHelpers() {
     // Transformation Create Store
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
+    // TODO (data flow reset)
+    // PreSave Prompt Store
+    // const resetPreSavePrompt = usePreSavePromptStore(
+    //     (state) => state.resetState
+    // );
+
     const resetState = useCallback(() => {
         resetFormState();
         resetEndpointConfigState();
@@ -80,6 +86,7 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
+        // resetPreSavePrompt();
     }, [
         resetBindingState,
         resetBindingsEditorStore,

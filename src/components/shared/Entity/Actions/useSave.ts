@@ -60,9 +60,6 @@ function useSave(
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const entityDescription = useDetailsFormStore(
-        (state) => state.details.data.description
-    );
     const dataPlaneName = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.dataPlaneName
     );
@@ -263,7 +260,7 @@ function useSave(
             const response = await createPublication(
                 draftId,
                 dryRun ?? false,
-                entityDescription,
+                undefined,
                 dataPlaneName?.whole
             );
             if (response.error) {
@@ -288,7 +285,6 @@ function useSave(
             dataPlaneName?.whole,
             disabledBindings,
             dryRun,
-            entityDescription,
             fullSourceErrorsExist,
             intl,
             messagePrefix,

@@ -1,28 +1,60 @@
-import { Autocomplete, Grid, TextField } from '@mui/material';
+import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
+import AlertBox from 'components/shared/AlertBox';
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;
 
-function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
+function Selector({
+    disabled,
+    keys,
+    loading,
+}: RelatedMaterializationSelectorProps) {
     const intl = useIntl();
+    const stepIndex = useLoopIndex();
 
     const [inputValue, setInputValue] = useState('');
 
-    const [backfillDataFlowTarget, setBackfillDataFlowTarget] = useBindingStore(
-        (state) => [
-            state.backfillDataFlowTarget,
-            state.setBackfillDataFlowTarget,
-        ]
-    );
+    const [updateStep, updateContext] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+    ]);
+
+    const backfillTarget = usePreSavePromptStore((state) => {
+        state.context.backfillTarget;
+    });
+
+    useEffect(() => {
+        updateContext({
+            noMaterializations: Boolean(!loading && keys.length === 0),
+        });
+    }, [keys.length, loading, updateContext]);
+
+    if (loading) {
+        return <Skeleton />;
+    }
 
     if (keys.length === 0) {
-        return null;
+        return (
+            <AlertBox
+                severity="info"
+                short
+                title={intl.formatMessage({
+                    id: 'resetDataFlow.materializations.empty.header',
+                })}
+            >
+                {intl.formatMessage({
+                    id: 'resetDataFlow.materializations.empty.message',
+                })}
+            </AlertBox>
+        );
     }
 
     return (
@@ -33,14 +65,22 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
                 getOptionLabel={getValue}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.catalog_name === optionValue;
+                    return option.catalog_name === optionValue.catalog_name;
                 }}
                 options={keys}
-                value={backfillDataFlowTarget}
-                onChange={(_event, newValue) => {
-                    setBackfillDataFlowTarget(
-                        newValue ? newValue.catalog_name : null
-                    );
+                value={backfillTarget}
+                onChange={(_event, newValue: LiveSpecsExt_Related | null) => {
+                    const newBackfillTarget = newValue ? newValue : null;
+
+                    console.log('newBackfillTarget', newBackfillTarget);
+
+                    updateStep(stepIndex, {
+                        valid: Boolean(newBackfillTarget),
+                    });
+
+                    updateContext({
+                        backfillTarget: newBackfillTarget,
+                    });
                 }}
                 onInputChange={(_event, newInputValue) => {
                     setInputValue(newInputValue);
@@ -64,7 +104,7 @@ function Selector({ disabled, keys }: RelatedMaterializationSelectorProps) {
                     const RowContent = (
                         <SelectorOption
                             option={option}
-                            x-react-window-item-height={75}
+                            x-react-window-item-height={100}
                         />
                     );
 

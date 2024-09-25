@@ -42,7 +42,8 @@ export const createDraftSpec = (
     catalogName: string,
     draftSpec: any,
     specType?: Entity | null,
-    lastPubId?: string | null
+    lastPubId?: string | null,
+    noResponse?: boolean
 ) => {
     let matchData: CreateMatchData = {
         draft_id: draftId,
@@ -55,7 +56,7 @@ export const createDraftSpec = (
         matchData = { ...matchData, expect_pub_id: lastPubId };
     }
 
-    return insertSupabase(TABLES.DRAFT_SPECS, matchData);
+    return insertSupabase(TABLES.DRAFT_SPECS, matchData, noResponse);
 };
 
 export const modifyDraftSpec = (

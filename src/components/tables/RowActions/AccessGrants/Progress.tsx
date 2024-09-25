@@ -8,7 +8,7 @@ import {
 import Error from 'components/shared/Error';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressStates } from '../Shared/Progress';
+import { ProgressStates } from '../Shared/types';
 
 interface Props {
     error: any | null;

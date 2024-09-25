@@ -1,14 +1,19 @@
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import DisableCapture from './DisableCapture';
-import EnableCapture from './EnableCapture';
-import SelectMaterialization from './SelectMaterialization';
-import MarkMaterialization from './UpdateMaterialization';
-import WaitForCaptureStop from './WaitForCaptureStop';
+import { DisableCaptureStep } from './DisableCapture/definition';
+import { EnableCaptureStep } from './EnableCapture/definition';
+import { ReviewSelectionStep } from './ReviewSelection/definition';
+import { SelectMaterializationStep } from './SelectMaterialization/definition';
+import { UpdateMaterializationStep } from './UpdateMaterialization/definition';
+import { WaitForCaptureStep } from './WaitForCaptureStop/definition';
 
-export const DataFlowResetSteps: (() => ReactJSXElement)[] = [
-    SelectMaterialization,
-    DisableCapture,
-    WaitForCaptureStop,
-    MarkMaterialization,
-    EnableCapture,
-];
+export const DataFlowSteps = {
+    selectMaterialization: SelectMaterializationStep,
+    reviewSelection: ReviewSelectionStep,
+    disableCapture: DisableCaptureStep,
+    waitForCapture: WaitForCaptureStep,
+    updateMaterialization: UpdateMaterializationStep,
+    enableCapture: EnableCaptureStep,
+};
+
+// !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
+// We run through steps in order
+export const DataFlowResetSteps = Object.values(DataFlowSteps);

@@ -1,5 +1,9 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError } from '@supabase/postgrest-js';
+import {
+    liveSpecsExtRelatedQuery,
+    LiveSpecsExt_Related,
+} from 'api/liveSpecsExt';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
@@ -110,21 +114,15 @@ export function useLiveSpecsExtWithOutSpec(
     return useLiveSpecsExt(draftId, specType, false);
 }
 
-const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
-const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
-export interface LiveSpecsExt_Related {
-    catalog_name: string;
-    reads_from: string[];
-    id: string;
-}
-export function useLiveSpecsExt_related(selected: string[]) {
+export function useLiveSpecsExt_related(captureName: string) {
     const { data, error, isValidating } = useQuery(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(liveSpecsExtRelatedQuery)
             .eq('spec_type', 'materialization')
-            .overlaps('reads_from', selected)
+            .or(`spec->>sourceCapture.eq.${captureName}`)
             .returns<LiveSpecsExt_Related[]>()
+        // getLiveSpecsRelatedToMaterialization(collectionName)
     );
 
     return {

@@ -147,6 +147,9 @@ function EntityEdit({
                     entityType={entityType}
                     entityName={entityName}
                 >
+                    {/*TODO (data flow reset)
+                    <PromptsHydrator>
+                    */}
                     <Collapse in={formSubmitError !== null}>
                         {formSubmitError ? (
                             <EntityError
@@ -213,8 +216,10 @@ function EntityEdit({
                         messageId={`${messagePrefix}.finalReview.instructions`}
                     />
 
-                    {/*TODO (data flow reset)*/}
-                    {/*<PreSavePrompt />*/}
+                    {/*TODO (data flow reset)
+                        <PreSavePrompt />
+                    </PromptsHydrator>
+                        */}
                 </DraftSpecEditorHydrator>
             )}
         </>

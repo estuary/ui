@@ -28,7 +28,6 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
         };
         entityName: string;
         dataPlane?: DataPlaneOption;
-        description?: string;
     };
 }
 

@@ -48,6 +48,7 @@ function EntityToolbar({
     const formStatus = useFormStateStore_status();
     const discovering = !draftId && formStatus === FormStatus.GENERATING;
     const saved = formStatus === FormStatus.SAVED;
+    const locked = formStatus === FormStatus.LOCKED;
 
     const PrimaryButton = PrimaryButtonComponent ?? EntitySaveButton;
     const SecondaryButton = SecondaryButtonComponent ?? EntityTestButton;
@@ -90,7 +91,7 @@ function EntityToolbar({
                 }}
             >
                 <Fade
-                    in={Boolean(formActive && !saved)}
+                    in={Boolean(formActive && !saved && !locked)}
                     mountOnEnter
                     unmountOnExit
                 >

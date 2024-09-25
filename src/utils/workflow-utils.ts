@@ -38,6 +38,17 @@ export const getSourceOrTarget = (binding: any) => {
         : binding;
 };
 
+export const getBindingAsFullSource = (binding: any) => {
+    const response = getSourceOrTarget(binding);
+    if (typeof response === 'string') {
+        return {
+            name: response,
+        };
+    }
+
+    return getSourceOrTarget(binding);
+};
+
 export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
 };

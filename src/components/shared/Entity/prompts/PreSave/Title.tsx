@@ -1,20 +1,19 @@
 import { DialogTitle, IconButton, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_setShowPreSavePrompt } from 'stores/FormState/hooks';
-import usePreSavePromptSteps from '../steps/preSave/usePreSavePromptSteps';
+import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
+import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
-    const { activeStep, setActiveStep } = usePreSavePromptSteps();
-    const setShowPreSavePrompt = useFormStateStore_setShowPreSavePrompt();
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
-    const closeDialog = () => {
-        setActiveStep(0);
-        setShowPreSavePrompt(false);
-    };
+    const [activeStep, resetState] = usePreSavePromptStore((state) => [
+        state.activeStep,
+        state.resetState,
+    ]);
 
     return (
         <DialogTitle
@@ -25,7 +24,13 @@ function Title() {
             }}
         >
             Please review your changes
-            <IconButton disabled={activeStep > 2} onClick={closeDialog}>
+            <IconButton
+                disabled={activeStep > 3}
+                onClick={() => {
+                    resetState();
+                    setShowSavePrompt(false);
+                }}
+            >
                 <Xmark
                     aria-label={intl.formatMessage({ id: 'cta.close' })}
                     style={{
