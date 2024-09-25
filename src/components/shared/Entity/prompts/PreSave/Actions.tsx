@@ -1,9 +1,11 @@
 import { Button, DialogActions, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
+import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
 import {
     usePreSavePromptStore,
     usePreSavePromptStore_onFirstStep,
+    usePreSavePromptStore_onLastStep,
     usePreSavePromptStore_stepValid,
 } from '../store/usePreSavePromptStore';
 
@@ -18,6 +20,9 @@ function Actions() {
 
     const canContinue = usePreSavePromptStore_stepValid();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
+    const onLastStep = usePreSavePromptStore_onLastStep();
+
+    const { exit } = useEntityWorkflowHelpers();
 
     return (
         <DialogActions>
@@ -37,7 +42,7 @@ function Actions() {
                 </Button>
 
                 <Button
-                    onClick={nextStep}
+                    onClick={onLastStep ? () => exit() : nextStep}
                     variant="outlined"
                     disabled={!canContinue}
                 >

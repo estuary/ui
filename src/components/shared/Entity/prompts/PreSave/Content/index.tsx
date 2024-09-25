@@ -7,7 +7,6 @@ import {
     StepContent,
     StepLabel,
     Stepper,
-    Typography,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -20,7 +19,6 @@ import Error from 'components/shared/Error';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import AlertBox from 'components/shared/AlertBox';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function Content() {
@@ -67,6 +65,11 @@ function Content() {
                                             ) : null}
 
                                             {backfilledDraftId ? (
+                                                <DraftErrors
+                                                    draftId={backfilledDraftId}
+                                                />
+                                            ) : null}
+                                            {/* TODO (data flow reset)
                                                 <AlertBox
                                                     short
                                                     hideIcon
@@ -87,7 +90,7 @@ function Content() {
                                                         }
                                                     />
                                                 </AlertBox>
-                                            ) : null}
+                                            */}
 
                                             {progress ===
                                             ProgressStates.FAILED ? (

@@ -161,7 +161,7 @@ export const usePreSavePromptStore_onFirstStep = () => {
 export const usePreSavePromptStore_onLastStep = () => {
     return usePreSavePromptStore(
         useShallow((state) => {
-            return state.activeStep === state.steps.length;
+            return state.activeStep === state.steps.length - 1;
         })
     );
 };

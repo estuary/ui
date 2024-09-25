@@ -3,6 +3,7 @@ import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
+import { DateTime } from 'luxon';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForCaptureStop() {
@@ -45,9 +46,13 @@ function WaitForCaptureStop() {
                 // Start calling for shards
                 // Loop over it until we see nothing is coming
                 // Snag time
+
+                const timeStopped = DateTime.utc().toFormat(
+                    `yyyy-MM-dd'T'HH:mm:ss'Z'`
+                );
                 updateContext({
                     liveSpecId,
-                    timeStopped: '01/01/2024',
+                    timeStopped,
                 });
 
                 // Fake timeout to make it feel more async
