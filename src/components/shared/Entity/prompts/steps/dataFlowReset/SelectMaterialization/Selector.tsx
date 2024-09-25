@@ -1,4 +1,12 @@
-import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    Button,
+    Grid,
+    Skeleton,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -8,6 +16,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
+import ManualSelection from './ManualSelection';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;
@@ -50,9 +59,19 @@ function Selector({
                     id: 'resetDataFlow.materializations.empty.header',
                 })}
             >
-                {intl.formatMessage({
-                    id: 'resetDataFlow.materializations.empty.message',
-                })}
+                <Stack spacing={2}>
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'resetDataFlow.materializations.empty.message',
+                        })}
+                    </Typography>
+
+                    <Stack direction="row" spacing={2}>
+                        <ManualSelection />
+
+                        <Button>Continue</Button>
+                    </Stack>
+                </Stack>
             </AlertBox>
         );
     }
