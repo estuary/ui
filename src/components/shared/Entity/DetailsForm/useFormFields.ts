@@ -39,12 +39,6 @@ export default function useFormFields(
         const baseProperties = {
             [CATALOG_NAME_SCOPE]: { type: 'string' },
             [CONNECTOR_IMAGE_SCOPE]: connectorSchema,
-            description: {
-                description: intl.formatMessage({
-                    id: 'description.description',
-                }),
-                type: 'string',
-            },
         };
 
         const baseRequirements = [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE];
@@ -63,7 +57,7 @@ export default function useFormFields(
                   required: baseRequirements,
                   type: 'object',
               };
-    }, [connectorSchema, dataPlaneError, dataPlaneSchema, intl]);
+    }, [connectorSchema, dataPlaneError, dataPlaneSchema]);
 
     const uiSchema = useMemo(() => {
         const catalogNameUISchema = {
@@ -71,14 +65,6 @@ export default function useFormFields(
                 id: 'entityName.label',
             }),
             scope: `#/properties/${CATALOG_NAME_SCOPE}`,
-            type: 'Control',
-        };
-
-        const descriptionUISchema = {
-            label: intl.formatMessage({
-                id: 'description.label',
-            }),
-            scope: '#/properties/description',
             type: 'Control',
         };
 
@@ -91,13 +77,8 @@ export default function useFormFields(
                                   connectorUISchema,
                                   catalogNameUISchema,
                                   dataPlaneUISchema,
-                                  descriptionUISchema,
                               ]
-                            : [
-                                  connectorUISchema,
-                                  catalogNameUISchema,
-                                  descriptionUISchema,
-                              ],
+                            : [connectorUISchema, catalogNameUISchema],
                     type: 'HorizontalLayout',
                 },
             ],

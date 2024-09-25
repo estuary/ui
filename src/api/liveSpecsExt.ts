@@ -206,7 +206,6 @@ export interface LiveSpecsExtQuery_DetailsForm {
     spec_type: Entity;
     spec: any;
     data_plane_id: string;
-    detail: string | null;
     connector_tag_id: string;
     connector_image_name: string;
     connector_image_tag: string;
@@ -219,7 +218,6 @@ const DETAILS_FORM_QUERY = `
     spec_type,
     spec,
     data_plane_id,
-    detail,
     connector_tag_id,
     connector_image_name,
     connector_image_tag,

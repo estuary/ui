@@ -337,7 +337,6 @@ export const getInitialState = (
                         connector_image_tag,
                         connector_tag_id,
                         data_plane_id,
-                        detail,
                     } = data[0];
 
                     const connectorImage = await getConnectorImage(
@@ -362,7 +361,6 @@ export const getInitialState = (
                                 entityName: catalog_name,
                                 connectorImage,
                                 dataPlane,
-                                description: detail ?? '',
                             },
                         };
 
