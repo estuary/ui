@@ -5,6 +5,8 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { PromptStep } from '../types';
 import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
 import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
@@ -30,6 +32,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             initializeSteps: (backfillEnabled) =>
                 set(
                     produce((state: PreSavePromptStore) => {
+                        const initUUID = crypto.randomUUID();
                         const newSteps: PromptStep[] = [ChangeReviewStep];
 
                         if (backfillEnabled) {
@@ -39,7 +42,11 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         newSteps.push(PublishStep);
 
                         state.steps = newSteps;
-                        state.initUUID = crypto.randomUUID();
+                        state.initUUID = initUUID;
+                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                            initializedSteps: true,
+                            initUUID,
+                        });
                     }),
                     false,
                     'initializeSteps'
