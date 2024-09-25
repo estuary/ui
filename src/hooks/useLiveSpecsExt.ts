@@ -123,7 +123,6 @@ export function useLiveSpecsExt_related(captureName: string) {
             .or(`spec->>sourceCapture.eq.${captureName}`)
             .returns<LiveSpecsExt_Related[]>()
         // getLiveSpecsRelatedToMaterialization(collectionName)
-        // getLiveSpecsWithRelatedSourceCapture(captureName)
     );
 
     return {

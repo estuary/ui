@@ -431,15 +431,6 @@ const getLiveSpecsRelatedToMaterialization = async (
         .returns<LiveSpecsExt_Related[]>();
 };
 
-const getLiveSpecsWithRelatedSourceCapture = async (captureName: string) => {
-    return supabaseClient
-        .from(TABLES.LIVE_SPECS_EXT)
-        .select(liveSpecsExtRelatedQuery)
-        .eq('spec_type', 'materialization')
-        .or(`spec->>sourceCapture.eq.${captureName}`)
-        .returns<LiveSpecsExt_Related[]>();
-};
-
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
@@ -454,5 +445,4 @@ export {
     getLiveSpecShards,
     getLiveSpecSpec,
     getLiveSpecsRelatedToMaterialization,
-    getLiveSpecsWithRelatedSourceCapture,
 };
