@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
-import { useEntityWorkflow } from 'context/Workflow';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -21,7 +20,6 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
-import BackfillDataFlowOption from './BackfillDataFlowOption';
 import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
@@ -33,7 +31,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     // TODO (data flow reset)
-    const workflow = useEntityWorkflow();
+    // const workflow = useEntityWorkflow();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();
@@ -201,10 +199,11 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 ) : null}
             </Stack>
 
-            {/*TODO (data flow reset)*/}
+            {/*TODO (data flow reset)
             {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
             ) : null}
+            */}
         </Box>
     );
 }
