@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledBindings_count,
-    useBinding_enabledCollections_count,
+    useBinding_collections_count,
 } from 'stores/Binding/hooks';
 import { BackfillCountProps } from './types';
 
@@ -13,7 +13,7 @@ function BackfillCount({ disabled }: BackfillCountProps) {
     const entityType = useEntityType();
 
     const backfillCount = useBinding_backfilledBindings_count();
-    const bindingsTotal = useBinding_enabledCollections_count();
+    const bindingsTotal = useBinding_collections_count();
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noBackfill, itemType_backfill, itemType_bindings] = useMemo(() => {
