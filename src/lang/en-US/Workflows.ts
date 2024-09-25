@@ -133,6 +133,9 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.logs.spinner.stopped': `done`,
     'preSavePrompt.logs.spinner.running': `loading...`,
 
+    'preSavePrompt.draftErrors.title': `Draft Errors`,
+    'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
+
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
     'dataFlowReset.reviewSelection.title': `Review your selections`,
     'dataFlowReset.disableCapture.title': `Disable capture`,

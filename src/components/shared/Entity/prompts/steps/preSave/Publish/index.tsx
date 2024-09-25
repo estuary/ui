@@ -86,11 +86,6 @@ function Publish() {
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
-    // <LogDialogContent
-    //     spinnerMessageId="preSavePrompt.logs.spinner"
-    //     severity="info"
-    //     token={logsToken}
-    // />
 }
 
 export default Publish;

@@ -2,10 +2,12 @@ import {
     Box,
     DialogContent,
     LinearProgress,
+    Stack,
     Step,
     StepContent,
     StepLabel,
     Stepper,
+    Typography,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import {
@@ -17,15 +19,19 @@ import { useIntl } from 'react-intl';
 import Error from 'components/shared/Error';
 import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
-import { XmarkCircle } from 'iconoir-react';
+import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
+import AlertBox from 'components/shared/AlertBox';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function Content() {
     const intl = useIntl();
-    const [activeStep, steps] = usePreSavePromptStore((state) => [
-        state.activeStep,
-        state.steps,
-    ]);
+    const [activeStep, steps, backfilledDraftId] = usePreSavePromptStore(
+        (state) => [
+            state.activeStep,
+            state.steps,
+            state.context?.backfilledDraftId,
+        ]
+    );
 
     const renderedSteps = useMemo(
         () =>
@@ -46,16 +52,7 @@ function Content() {
                             key={`PreSave-step-${stepLabelMessageId}-${index}`}
                             completed={stepCompleted}
                         >
-                            <StepLabel
-                                error={hasError}
-                                StepIconProps={
-                                    hasError
-                                        ? {
-                                              icon: <XmarkCircle />,
-                                          }
-                                        : undefined
-                                }
-                            >
+                            <StepLabel error={hasError}>
                                 {intl.formatMessage({
                                     id: stepLabelMessageId,
                                 })}
@@ -63,37 +60,64 @@ function Content() {
                             <StepContent>
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
-                                        {progress === ProgressStates.RUNNING ? (
-                                            <LinearProgress />
-                                        ) : null}
+                                        <Stack spacing={2}>
+                                            {progress ===
+                                            ProgressStates.RUNNING ? (
+                                                <LinearProgress />
+                                            ) : null}
 
-                                        {progress === ProgressStates.FAILED ? (
-                                            <>
-                                                <Error
+                                            {backfilledDraftId ? (
+                                                <AlertBox
+                                                    short
+                                                    hideIcon
                                                     severity="error"
-                                                    error={error}
-                                                    condensed
-                                                />
-                                                <Box>
-                                                    <ErrorLogs
-                                                        logToken={
-                                                            hasError
-                                                                ? publicationStatus?.logs_token
-                                                                : null
+                                                    title={intl.formatMessage({
+                                                        id: 'preSavePrompt.draftErrors.title',
+                                                    })}
+                                                >
+                                                    <Typography>
+                                                        {intl.formatMessage({
+                                                            id: 'preSavePrompt.draftErrors.message',
+                                                        })}
+                                                    </Typography>
+
+                                                    <DraftErrors
+                                                        draftId={
+                                                            backfilledDraftId
                                                         }
-                                                        logProps={{
-                                                            fetchAll: true,
-                                                            spinnerMessages: {
-                                                                runningKey:
-                                                                    'logs.default',
-                                                                stoppedKey:
-                                                                    'logs.noLogs',
-                                                            },
-                                                        }}
                                                     />
-                                                </Box>
-                                            </>
-                                        ) : null}
+                                                </AlertBox>
+                                            ) : null}
+
+                                            {progress ===
+                                            ProgressStates.FAILED ? (
+                                                <Stack spacing={2}>
+                                                    <Error
+                                                        severity="error"
+                                                        error={error}
+                                                        condensed
+                                                    />
+                                                    <Box>
+                                                        <ErrorLogs
+                                                            logToken={
+                                                                hasError
+                                                                    ? publicationStatus?.logs_token
+                                                                    : null
+                                                            }
+                                                            logProps={{
+                                                                spinnerMessages:
+                                                                    {
+                                                                        runningKey:
+                                                                            'logs.default',
+                                                                        stoppedKey:
+                                                                            'logs.noLogs',
+                                                                    },
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                </Stack>
+                                            ) : null}
+                                        </Stack>
 
                                         <StepComponent />
                                     </LoopIndexContextProvider>
@@ -103,7 +127,7 @@ function Content() {
                     );
                 }
             ),
-        [intl, steps]
+        [backfilledDraftId, intl, steps]
     );
 
     return (
