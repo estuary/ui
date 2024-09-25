@@ -25,9 +25,13 @@ function DisableCapture() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, updateContext, nextStep] = usePreSavePromptStore(
-        (state) => [state.updateStep, state.updateContext, state.nextStep]
-    );
+    const [updateStep, updateContext, nextStep, initUUID] =
+        usePreSavePromptStore((state) => [
+            state.updateStep,
+            state.updateContext,
+            state.nextStep,
+            state.initUUID,
+        ]);
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -61,7 +65,7 @@ function DisableCapture() {
                     },
                     undefined,
                     undefined,
-                    `data flow backfill : ${captureName} : disable : someKeyGoesHere`
+                    `data flow backfill : ${captureName} : disable : ${initUUID}`
                 );
 
                 if (updateResponse.error) {

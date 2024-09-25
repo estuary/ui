@@ -13,9 +13,10 @@ import { PreSavePromptStore } from './types';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
-    'activeStep' | 'steps' | 'context'
+    'activeStep' | 'steps' | 'context' | 'initUUID'
 > => ({
     activeStep: 0,
+    initUUID: null,
     steps: [],
     context: {},
 });
@@ -38,6 +39,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         newSteps.push(PublishStep);
 
                         state.steps = newSteps;
+                        state.initUUID = crypto.randomUUID();
                     }),
                     false,
                     'initializeSteps'

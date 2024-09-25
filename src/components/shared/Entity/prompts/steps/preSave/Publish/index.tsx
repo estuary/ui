@@ -7,6 +7,7 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useMount } from 'react-use';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function Publish() {
@@ -15,8 +16,17 @@ function Publish() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, context, updateContext] = usePreSavePromptStore(
-        (state) => [state.updateStep, state.context, state.updateContext]
+    const [updateStep, context, updateContext, initUUID] =
+        usePreSavePromptStore((state) => [
+            state.updateStep,
+            state.context,
+            state.updateContext,
+            state.initUUID,
+        ]);
+
+    // TODO (data flow reset) need to plumb this through correctly
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName
     );
 
     useMount(() => {
@@ -29,7 +39,9 @@ function Publish() {
                 // Start publishing it
                 const publishResponse = await createPublication(
                     context.backfilledDraftId,
-                    false
+                    false,
+                    `data flow backfill : ${context.backfillTarget.catalog_name} : publish : ${initUUID}`,
+                    dataPlaneName?.whole
                 );
 
                 if (publishResponse.error || !publishResponse.data) {
@@ -50,8 +62,6 @@ function Publish() {
                         updateStep(stepIndex, {
                             publicationStatus: successResponse,
                         });
-
-                        // nextStep();
                     },
                     async (
                         failedResponse: any //PublicationJobStatus | PostgrestError
@@ -64,7 +74,6 @@ function Publish() {
                             progress: ProgressStates.FAILED,
                             valid: false,
                         });
-                        // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
                     }
                 );
             };

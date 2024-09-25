@@ -18,12 +18,13 @@ function MarkMaterialization() {
 
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
-    const [updateStep, updateContext, nextStep, context] =
+    const [updateStep, updateContext, nextStep, context, initUUID] =
         usePreSavePromptStore((state) => [
             state.updateStep,
             state.updateContext,
             state.nextStep,
             state.context,
+            state.initUUID,
         ]);
 
     useMount(() => {
@@ -46,7 +47,7 @@ function MarkMaterialization() {
                 }
 
                 const draftsResponse = await createEntityDraft(
-                    `data flow backfill : ${context.backfillTarget.catalog_name} : create : someKeyGoesHere`
+                    `data flow backfill : ${context.backfillTarget.catalog_name} : create : ${initUUID}`
                 );
                 const backfilledDraftId = draftsResponse.data?.[0].id;
 
@@ -77,6 +78,7 @@ function MarkMaterialization() {
                     }
                 });
 
+                // Add to the draft
                 const draftedMaterialization = await createDraftSpec(
                     backfilledDraftId,
                     context.backfillTarget.catalog_name,
@@ -85,17 +87,6 @@ function MarkMaterialization() {
                     undefined,
                     false
                 );
-                // const draftedMaterialization = await modifyDraftSpec(
-                //     updatedSpec,
-                //     {
-                //         catalog_name: context.backfillTarget.catalog_name,
-                //         draft_id: backfilledDraftId,
-                //         spec_type: 'materialization',
-                //     },
-                //     undefined,
-                //     undefined,
-                //     `data flow backfill : ${context.backfillTarget.catalog_name} : update : someKeyGoesHere`
-                // );
 
                 if (draftedMaterialization.error) {
                     updateStep(stepIndex, {

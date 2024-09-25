@@ -10,6 +10,7 @@ export interface PreSavePromptStore<T = any> {
 
     updateStep: (step: number, settings: Partial<PromptStepState>) => void;
     initializeSteps: (backfillEnabled: boolean) => void;
+    initUUID: string | null;
 
     activeStep: number;
     setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
