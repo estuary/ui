@@ -62,7 +62,10 @@ function CatalogEditor({ messageId }: Props) {
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
-                            disabled={formActive}
+                            disabled={Boolean(
+                                formActive ||
+                                    (backfillDataFlow && needsBackfilled)
+                            )}
                             monitorCurrentCatalog
                         />
                     </Paper>
