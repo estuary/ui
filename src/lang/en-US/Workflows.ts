@@ -147,7 +147,7 @@ export const Workflows: Record<string, string> = {
 
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
+    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
 
     'dataFlowReset.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
