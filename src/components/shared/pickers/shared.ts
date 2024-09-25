@@ -8,11 +8,11 @@ export const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
 
 export const DEFAULT_ANCHOR_ORIGIN: PopoverOrigin = {
     vertical: 'center',
-    horizontal: 'left',
+    horizontal: 'right',
 };
 export const DEFAULT_TRANSFORM_ORIGIN: PopoverOrigin = {
     vertical: 'center',
-    horizontal: 'right',
+    horizontal: 'left',
 };
 
 // TODO (time travel)

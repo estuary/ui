@@ -8,8 +8,11 @@ import {
 import { formatRFC3339, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { useMemo } from 'react';
-import { Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+import { Box, Typography } from '@mui/material';
+import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
+import { isReactElement } from 'utils/misc-utils';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
 import { PickerProps } from './types';
 import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
@@ -32,7 +35,14 @@ const formatDate = (formatValue: Date) => {
 };
 
 export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
+    const intl = useIntl();
     const { shortcuts, toolbar, tabs, content } = usePickerLayout(props);
+
+    let currentStep = '';
+    if (isReactElement(content)) {
+        currentStep = content.props.focusedView ?? content.props.view ?? '';
+    }
+
     return (
         <PickersLayoutRoot
             ownerState={{
@@ -44,16 +54,31 @@ export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
             <PickersLayoutContentWrapper>
                 {tabs}
                 {content}
-                <Typography
+                <Box
                     sx={{
-                        textAlign: 'right',
-                        marginRight: 2,
-                        marginBottom: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: 2,
+                        marginX: 1,
+                        textTransform: 'capitalize',
                     }}
-                    variant="caption"
                 >
-                    <FormattedMessage id="dateTimePicker.picker.footer" />
-                </Typography>
+                    <Typography variant="caption">
+                        {intl.formatMessage(
+                            {
+                                id: 'dateTimePicker.picker.currentStep',
+                            },
+                            { currentStep }
+                        )}
+                    </Typography>
+
+                    <Typography variant="caption">
+                        {intl.formatMessage({
+                            id: 'dateTimePicker.picker.footer',
+                        })}
+                    </Typography>
+                </Box>
             </PickersLayoutContentWrapper>
         </PickersLayoutRoot>
     );
@@ -90,6 +115,7 @@ function DateTimePickerCTA(props: PickerProps) {
                 disabled={!enabled}
                 displayStaticWrapperAs="desktop"
                 openTo="day"
+                views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
                 defaultValue={parseISO(cleanedValue)}
                 slots={{
                     layout: CustomLayout,
@@ -99,6 +125,13 @@ function DateTimePickerCTA(props: PickerProps) {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
                         if (formattedValue && formattedValue !== INVALID_DATE) {
+                            logRocketEvent(
+                                CustomEvents.DATE_TIME_PICKER_CHANGE,
+                                {
+                                    formattedValue,
+                                    onChangeValue,
+                                }
+                            );
                             return onChange(formattedValue, onChangeValue);
                         }
                     }

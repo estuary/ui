@@ -1,5 +1,6 @@
 import { SortDirection } from '@mui/material';
-import { isEmpty } from 'lodash';
+import { isEmpty, isObject } from 'lodash';
+import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 
@@ -188,3 +189,6 @@ export const getDereffedSchema = async (val: any) => {
 export const configCanBeEmpty = (schema: any) => {
     return Boolean(!schema?.properties || isEmpty(schema?.properties));
 };
+
+export const isReactElement = (value: ReactNode): value is ReactElement =>
+    isObject(value) && 'props' in value;
