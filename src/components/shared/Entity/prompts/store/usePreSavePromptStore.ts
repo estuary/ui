@@ -128,11 +128,6 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     produce((state: PreSavePromptStore) => {
                         const newVal = state.activeStep - 1;
                         state.activeStep = newVal >= 0 ? newVal : 0;
-
-                        // TODO - why did this not work?
-                        // if (state.activeStep === 0) {
-                        //     state.setShow(false);
-                        // }
                     }),
                     false,
                     'previousStep'
