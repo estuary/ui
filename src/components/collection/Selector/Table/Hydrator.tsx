@@ -14,7 +14,7 @@ import Rows from './Rows';
 import { EVERYTHING, publishedColumn } from './shared';
 import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
 
-const selectableTableStoreName = SelectTableStoreNames.COLLECTION_SELECTOR;
+const selectableTableStoreName = SelectTableStoreNames.ENTITY_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
 function Hydrator({
@@ -54,7 +54,7 @@ function Hydrator({
     }, [columnToSort, entity, pagination, searchQuery, sortDirection]);
 
     const setDisabledRows = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return state.setDisabledRows;
         }

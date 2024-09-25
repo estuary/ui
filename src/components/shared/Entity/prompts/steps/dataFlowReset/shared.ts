@@ -1,3 +1,4 @@
+import { PublishStep } from './Publish/definition';
 import { DisableCaptureStep } from './DisableCapture/definition';
 import { EnableCaptureStep } from './EnableCapture/definition';
 import { ReviewSelectionStep } from './ReviewSelection/definition';
@@ -12,6 +13,7 @@ export const DataFlowSteps = {
     waitForCapture: WaitForCaptureStep,
     updateMaterialization: UpdateMaterializationStep,
     enableCapture: EnableCaptureStep,
+    publishStep: PublishStep,
 };
 
 // !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!

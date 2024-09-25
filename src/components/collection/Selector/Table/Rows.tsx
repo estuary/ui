@@ -7,6 +7,7 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo } from 'react';
 
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import { catalogNameColumn, publishedColumn } from './shared';
 
 interface RowProps {
@@ -22,17 +23,17 @@ function Row({ row, setRow }: RowProps) {
     const theme = useTheme();
 
     const disabled = useStore(
-        invariableStores['Collections-Selector-Table'],
-        (state) => {
+        invariableStores['Entity-Selector-Table'],
+        useShallow((state) => {
             return state.disabledRows.includes(row[catalogNameColumn]);
-        }
+        })
     );
 
     const isSelected = useStore(
-        invariableStores['Collections-Selector-Table'],
-        (state) => {
+        invariableStores['Entity-Selector-Table'],
+        useShallow((state) => {
             return state.selected.has(row.id);
-        }
+        })
     );
 
     return (
@@ -66,7 +67,7 @@ function Row({ row, setRow }: RowProps) {
 
 function Rows({ data }: RowsProps) {
     const setRow = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return state.setSelected;
         }

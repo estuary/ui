@@ -1,37 +1,42 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
+import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useStore } from 'zustand';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
-    const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+    const stepIndex = useLoopIndex();
+
+    const [selected, resetSelected] = useStore(
+        invariableStores['Entity-Selector-Table'],
         (state) => {
-            return [state.selected];
+            return [state.selected, state.resetSelected];
         }
     );
 
-    const updateContext = usePreSavePromptStore((state) => {
-        return state.updateContext;
+    const [updateStep, updateContext] = usePreSavePromptStore((state) => {
+        return [state.updateStep, state.updateContext];
     });
 
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
         const newCatalog = selectedRow ? selectedRow.catalog_name : null;
+        const newId = selectedRow ? selectedRow.id : null;
 
-        // Only fire updates if a change happened. Since single select table can allow the user
-        //   to deselect a row and then select it again
-        // if (newCatalog && sourceCapture !== newCatalog) {
-        // setBackfillTarget(newCatalog)
-        // }
-
+        // TODO (data flow reset)
+        // need to update the context properly
         updateContext({
             backfillTarget: {
                 catalog_name: newCatalog,
+                id: newId,
             },
         });
+        updateStep(stepIndex, {
+            valid: Boolean(newCatalog),
+        });
+        resetSelected();
         toggle(false);
     };
 

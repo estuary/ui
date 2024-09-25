@@ -137,7 +137,7 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
 
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
-    'dataFlowReset.reviewSelection.title': `Review your selections`,
+    'dataFlowReset.reviewSelection.title': `Review changes`,
     'dataFlowReset.disableCapture.title': `Disable capture`,
     'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
     'dataFlowReset.updateMaterialization.title': `Update Materialization`,
@@ -367,7 +367,7 @@ export const Workflows: Record<string, string> = {
     // Reset Data Flow
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization.`,
+    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
 };

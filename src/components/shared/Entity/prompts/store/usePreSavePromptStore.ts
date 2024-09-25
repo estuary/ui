@@ -33,13 +33,14 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                 set(
                     produce((state: PreSavePromptStore) => {
                         const initUUID = crypto.randomUUID();
-                        const newSteps: PromptStep[] = [ChangeReviewStep];
+                        const newSteps: PromptStep[] = [];
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
+                        } else {
+                            newSteps.push(ChangeReviewStep);
+                            newSteps.push(PublishStep);
                         }
-
-                        newSteps.push(PublishStep);
 
                         state.steps = newSteps;
                         state.initUUID = initUUID;

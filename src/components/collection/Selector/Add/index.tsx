@@ -25,7 +25,7 @@ function BindingsEditorAdd({
     const [open, setOpen] = useState<boolean>(false);
 
     const resetSelected = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return state.resetSelected;
         }

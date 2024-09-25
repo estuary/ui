@@ -20,7 +20,7 @@ function ConfigHeader({ entityNameError }: Props) {
     const catalogName = useTransformationCreate_catalogName();
 
     const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return [state.selected];
         }

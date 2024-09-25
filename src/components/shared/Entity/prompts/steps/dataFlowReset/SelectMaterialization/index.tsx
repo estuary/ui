@@ -17,7 +17,7 @@ function SelectMaterialization() {
     );
 
     return (
-        <Box>
+        <Box style={{ maxWidth: 'fit-content' }}>
             <Typography>
                 {intl.formatMessage(
                     {

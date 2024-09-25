@@ -9,7 +9,7 @@ interface RowActionConfirmationProps {
     selectableTableStoreName?:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.COLLECTION_SELECTOR
+        | SelectTableStoreNames.ENTITY_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
     settings?: SettingMetadata[];
 }
