@@ -4,9 +4,13 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
 import { DateTime } from 'luxon';
+import { useUserStore } from 'context/User/useUserContextStore';
+import { fetchShardList } from 'utils/dataPlane-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForCaptureStop() {
+    const session = useUserStore((state) => state.session);
+
     const catalogName = useEditorStore_catalogName();
 
     const stepIndex = useLoopIndex();
@@ -34,13 +38,17 @@ function WaitForCaptureStop() {
 
                 const liveSpecId = liveSpecResponse.data?.[0].live_spec_id;
 
-                if (liveSpecResponse.error || !liveSpecId) {
+                if (liveSpecResponse.error || !liveSpecId || !session) {
                     updateStep(stepIndex, {
                         error: liveSpecResponse.error,
                         progress: ProgressStates.FAILED,
                     });
                     return;
                 }
+
+                const foo = await fetchShardList(catalogName, session);
+
+                console.log('fetchShardList', foo);
 
                 // TODO (data flow) this needs to actually fetch the time for this
                 // Start calling for shards

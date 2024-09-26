@@ -1,3 +1,7 @@
+import {
+    PostgrestFilterBuilder,
+    PostgrestTransformBuilder,
+} from '@supabase/postgrest-js';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { logRocketConsole, retryAfterFailure } from 'services/shared';
@@ -10,32 +14,37 @@ import {
 import { incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 import { checkIfPublishIsDone } from 'utils/publication-utils';
 
-function useJobStatusPoller() {
+export function useQueryPoller<T = any>(
+    key: string,
+    checkIfDone: (response: T) => [boolean | null, T]
+) {
     const interval = useRef(DEFAULT_POLLING_INTERVAL);
     const [pollerTimeout, setPollerTimeout] =
         useState<PollerTimeout>(undefined);
 
     const jobStatusPoller = useCallback(
         (
-            query: any,
+            query:
+                | PostgrestFilterBuilder<any, any, T, any, any>
+                | PostgrestTransformBuilder<any, any, T, any, any>,
             success: Function,
             failure: Function,
             initWait?: number
         ) => {
             let attempts = 0;
             const makeApiCall = () => {
-                logRocketConsole('Poller : start ', { pollerTimeout });
+                logRocketConsole(`Poller : ${key} : start `, { pollerTimeout });
 
                 return query.throwOnError().then(
                     (payload: any) => {
-                        logRocketConsole('Poller : response');
+                        logRocketConsole(`Poller : ${key} : response `);
                         timeoutCleanUp(pollerTimeout);
 
                         if (payload.error) {
                             failure(handleFailure(payload.error));
                         } else {
                             const [publicationOutcome, publicationResponse] =
-                                checkIfPublishIsDone(payload);
+                                checkIfDone(payload);
 
                             if (publicationOutcome === null) {
                                 interval.current = incrementInterval(
@@ -55,14 +64,16 @@ function useJobStatusPoller() {
                         }
                     },
                     (error: any) => {
-                        logRocketConsole('Poller : error : ', error);
+                        logRocketConsole(`Poller : ${key} : error `, error);
 
                         if (
                             attempts === 0 &&
                             typeof error?.message === 'string' &&
                             retryAfterFailure(error.message)
                         ) {
-                            logRocketConsole('Poller : error : trying again');
+                            logRocketConsole(
+                                `Poller : ${key} : error : trying again `
+                            );
                             attempts += 1;
 
                             // We do not update the interval here like we do up above
@@ -75,7 +86,7 @@ function useJobStatusPoller() {
                             );
                         } else {
                             logRocketConsole(
-                                'Poller : error : returning failure'
+                                `Poller : ${key} : error : returning failure `
                             );
                             timeoutCleanUp(pollerTimeout);
                             failure(handleFailure(JOB_STATUS_POLLER_ERROR));
@@ -84,7 +95,7 @@ function useJobStatusPoller() {
                 );
             };
 
-            logRocketConsole('Poller : init ');
+            logRocketConsole(`Poller : ${key} : init `);
 
             setPollerTimeout(
                 window.setTimeout(
@@ -93,15 +104,19 @@ function useJobStatusPoller() {
                 )
             );
         },
-        [pollerTimeout]
+        [checkIfDone, key, pollerTimeout]
     );
 
     useUnmount(() => {
-        logRocketConsole('clean up pollerTimeout = ', pollerTimeout);
+        logRocketConsole(`Poller : ${key} : poller : clean up`, pollerTimeout);
         timeoutCleanUp(pollerTimeout);
     });
 
     return useMemo(() => ({ jobStatusPoller }), [jobStatusPoller]);
+}
+
+function useJobStatusPoller<T = any>() {
+    return useQueryPoller<T>('JobStatus', checkIfPublishIsDone);
 }
 
 export default useJobStatusPoller;
