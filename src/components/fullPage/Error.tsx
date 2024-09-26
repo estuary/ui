@@ -39,7 +39,7 @@ function FullPageError({
 
     return (
         <FullPageWrapper>
-            <Stack spacing={2}>
+            <Stack>
                 <Typography variant="h5">
                     {title ? (
                         title

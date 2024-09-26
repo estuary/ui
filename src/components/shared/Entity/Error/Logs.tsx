@@ -30,7 +30,7 @@ function ErrorLogs({
 
     if (logToken) {
         return (
-            <Stack spacing={2}>
+            <Stack>
                 <Button
                     variant="text"
                     sx={{ ...linkButtonSx, width: 'max-content' }}

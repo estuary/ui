@@ -32,7 +32,7 @@ function Logs({
                 disableIntervalFetching={disableIntervalFetching}
                 fetchAll={fetchAll}
             >
-                <Stack spacing={2}>
+                <Stack>
                     {!fetchAll && !disableIntervalFetching ? (
                         <StoppedAlert />
                     ) : null}

@@ -58,7 +58,7 @@ function Content() {
                             <StepContent>
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
-                                        <Stack spacing={2}>
+                                        <Stack>
                                             {progress ===
                                             ProgressStates.RUNNING ? (
                                                 <LinearProgress />
@@ -94,7 +94,7 @@ function Content() {
 
                                             {progress ===
                                             ProgressStates.FAILED ? (
-                                                <Stack spacing={2}>
+                                                <Stack>
                                                     <Error
                                                         severity="error"
                                                         error={error}

@@ -8,7 +8,7 @@ const NoGrants = () => {
 
     return (
         <FullPageWrapper>
-            <Stack spacing={2}>
+            <Stack>
                 <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
                     <FormattedMessage id="noGrants.main.title" />
                 </Typography>
