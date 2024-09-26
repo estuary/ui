@@ -22,11 +22,11 @@ function SelectedChip() {
             label={
                 backfillTarget?.catalog_name ??
                 intl.formatMessage({
-                    id: 'workflows.sourceCapture.selected.none',
+                    id: 'resetDataFlow.materializations.chip.empty',
                 })
             }
             variant="outlined"
-            style={{ maxWidth: '50%' }}
+            style={{ maxWidth: '60%', textTransform: 'lowercase' }}
             onDelete={
                 backfillTarget
                     ? async () => {

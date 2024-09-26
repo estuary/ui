@@ -60,6 +60,9 @@ function Row({ row, setRow }: RowProps) {
             {row.writes_to ? (
                 <ChipListCell values={row.writes_to} maxChips={5} />
             ) : undefined}
+            {row.reads_from ? (
+                <ChipListCell values={row.reads_from} maxChips={5} />
+            ) : undefined}
             <TimeStamp time={row[publishedColumn]} />
         </TableRow>
     );

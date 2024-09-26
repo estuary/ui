@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import AlertBox from 'components/shared/AlertBox';
 import ManualSelection from '../ManualSelection';
@@ -7,7 +7,7 @@ function NoMaterializationsFound() {
     const intl = useIntl();
 
     return (
-        <Stack spacing={2}>
+        <Stack>
             <AlertBox
                 severity="info"
                 short
@@ -15,28 +15,32 @@ function NoMaterializationsFound() {
                     id: 'resetDataFlow.materializations.empty.header',
                 })}
             >
-                <Stack spacing={2}>
+                <Stack>
                     <Typography>
                         {intl.formatMessage({
                             id: 'resetDataFlow.materializations.empty.message',
                         })}
                     </Typography>
+
+                    <Stack>
+                        <Typography>
+                            You can either manually select a materialization you
+                            want to have updated or skip this step.
+                        </Typography>
+                        <Typography>
+                            Skipping this step will only publish your changes to
+                            the Capture and not do a full data flow backfill.
+                        </Typography>
+                        <Stack
+                            direction="row"
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <ManualSelection />
+                            <Button variant="text">Skip</Button>
+                        </Stack>
+                    </Stack>
                 </Stack>
             </AlertBox>
-            <Box>
-                <Typography>
-                    You can either manually select a materialization you want to
-                    have updated or skip this step.
-                </Typography>
-                <Typography>
-                    If you skip this step we will only publish your changes to
-                    the Capture itself and not do a full data flow backfill.
-                </Typography>
-                <Stack direction="row" spacing={2}>
-                    <ManualSelection />
-                    <Button>Skip</Button>
-                </Stack>
-            </Box>
         </Stack>
     );
 }

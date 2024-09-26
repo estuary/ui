@@ -1,4 +1,4 @@
-import { getLiveSpecs_collectionsSelector } from 'api/liveSpecsExt';
+import { getLiveSpecs_entitySelector } from 'api/liveSpecsExt';
 import { TableHydratorProps } from 'components/shared/Entity/types';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
@@ -23,7 +23,15 @@ function Hydrator({
     selectedCollections,
 }: TableHydratorProps) {
     const selectingCaptures = entity === 'capture';
-    const tableColumns = useCollectionsSelectorColumns(selectingCaptures);
+    const selectingMaterializations = entity === 'materialization';
+
+    const tableColumns = useCollectionsSelectorColumns(
+        selectingMaterializations
+            ? 'readsFrom'
+            : selectingCaptures
+            ? 'writesTo'
+            : undefined
+    );
 
     const {
         reset,
@@ -37,10 +45,10 @@ function Hydrator({
         setSortDirection,
         columnToSort,
         setColumnToSort,
-    } = useTableState('csl', publishedColumn, 'desc', tableRowsPerPage[0]);
+    } = useTableState('esl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
-        return getLiveSpecs_collectionsSelector(
+        return getLiveSpecs_entitySelector(
             pagination,
             entity ?? 'collection',
             searchQuery,
@@ -73,7 +81,7 @@ function Hydrator({
             disableQueryParamHack={disableQueryParamHack}
             query={query}
             selectableTableStoreName={selectableTableStoreName}
-            disableMultiSelect={selectingCaptures}
+            disableMultiSelect={selectingCaptures || selectingMaterializations}
         >
             <EntityTable
                 noExistingDataContentIds={{

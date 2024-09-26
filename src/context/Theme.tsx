@@ -982,6 +982,11 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                         },
                     },
                 },
+                MuiStack: {
+                    defaultProps: {
+                        spacing: 2,
+                    },
+                },
                 MuiTableCell: {
                     styleOverrides: {
                         root: {
