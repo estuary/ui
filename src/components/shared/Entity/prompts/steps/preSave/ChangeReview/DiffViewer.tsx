@@ -24,31 +24,10 @@ function DiffViewer() {
             original={liveSpec ? stringifyJSON(liveSpec) : 'loading...'}
             modified={isValidating ? 'loading...' : draftSpec}
             theme={monacoEditorComponentBackground[theme.palette.mode]}
-            options={{ readOnly: true }}
+            options={{
+                readOnly: true,
+            }}
         />
-        // <Accordion>
-        //     <AccordionSummary
-        //         expandIcon={
-        //             <NavArrowDown
-        //                 style={{
-        //                     color: theme.palette.text.primary,
-        //                 }}
-        //             />
-        //         }
-        //     >
-        //         <Typography>View spec diff</Typography>
-        //     </AccordionSummary>
-
-        //     <AccordionDetails>
-        //         <DiffEditor
-        //             height={`${HEIGHT}px`}
-        //             original={liveSpec ? stringifyJSON(liveSpec) : 'loading...'}
-        //             modified={isValidating ? 'loading...' : draftSpec}
-        //             theme={monacoEditorComponentBackground[theme.palette.mode]}
-        //             options={{ readOnly: true }}
-        //         />
-        //     </AccordionDetails>
-        // </Accordion>
     );
 }
 
