@@ -53,4 +53,5 @@ export const CTAs: Record<string, string> = {
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
+    'cta.manualSelect': `Manually Select`,
 };

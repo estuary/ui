@@ -1,10 +1,10 @@
 import { Button } from '@mui/material';
+import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useStore } from 'zustand';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
     const stepIndex = useLoopIndex();

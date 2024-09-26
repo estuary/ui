@@ -1,9 +1,10 @@
-import { Button, Tooltip } from '@mui/material';
+import { Button, Stack, Tooltip } from '@mui/material';
 import AddDialog from 'components/shared/Entity/AddDialog';
+import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import ManualSelectionButton from './ManualSelectionButton';
+import ManualSelectionButton from './Button';
+import SelectedChip from './SelectedChip';
 
 const DIALOG_ID = 'add-materialization-search-dialog';
 
@@ -37,18 +38,20 @@ function ManualSelection() {
 
     return (
         <>
-            <Tooltip placement="top" title={tooltip}>
-                <Button
-                    aria-controls={open ? DIALOG_ID : undefined}
-                    aria-expanded={open ? 'true' : undefined}
-                    aria-haspopup="true"
-                    onClick={toggleDialog}
-                    sx={{ borderRadius: 0 }}
-                    variant="text"
-                >
-                    Manually Select
-                </Button>
-            </Tooltip>
+            <Stack direction="row" spacing={2}>
+                <Tooltip placement="top" title={tooltip}>
+                    <Button
+                        aria-controls={open ? DIALOG_ID : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={toggleDialog}
+                        sx={{ borderRadius: 0 }}
+                    >
+                        {intl.formatMessage({ id: 'cta.manualSelect' })}
+                    </Button>
+                </Tooltip>
+                <SelectedChip />
+            </Stack>
             <AddDialog
                 entity="materialization"
                 id={DIALOG_ID}

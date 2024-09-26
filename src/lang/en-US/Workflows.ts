@@ -156,6 +156,8 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
     'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
 
+    'dataFlowReset.selectMaterialization.selected.none': `no materialization selected`,
+
     'dataFlowReset.editor.warning.title': `Editing disabled`,
     'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 

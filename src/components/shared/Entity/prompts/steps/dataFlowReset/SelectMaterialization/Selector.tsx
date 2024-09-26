@@ -1,22 +1,13 @@
-import {
-    Autocomplete,
-    Button,
-    Grid,
-    Skeleton,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
-import AlertBox from 'components/shared/AlertBox';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
-import ManualSelection from './ManualSelection';
+import NoMaterializationsFound from './NoMaterializationsFound';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;
@@ -51,29 +42,7 @@ function Selector({
     }
 
     if (keys.length === 0) {
-        return (
-            <AlertBox
-                severity="info"
-                short
-                title={intl.formatMessage({
-                    id: 'resetDataFlow.materializations.empty.header',
-                })}
-            >
-                <Stack spacing={2}>
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'resetDataFlow.materializations.empty.message',
-                        })}
-                    </Typography>
-
-                    <Stack direction="row" spacing={2}>
-                        <ManualSelection />
-
-                        <Button>Continue</Button>
-                    </Stack>
-                </Stack>
-            </AlertBox>
-        );
+        return <NoMaterializationsFound />;
     }
 
     return (
