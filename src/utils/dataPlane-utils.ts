@@ -139,6 +139,11 @@ export const getJournals = async (
         brokerToken
     );
 
+export enum DefaultDataPlaneSuffix {
+    LOCAL = 'local-cluster',
+    PRODUCTION = 'gcp-us-central1-c1',
+}
+
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
 export const INCREMENT = 1024 * 1024;

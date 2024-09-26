@@ -42,6 +42,9 @@ export interface DetailsFormState
     ) => void;
     setDetails_dataPlane: (value: Details['data']['dataPlane']) => void;
 
+    dataPlaneOptions: DataPlaneOption[];
+    setDataPlaneOptions: (value: DetailsFormState['dataPlaneOptions']) => void;
+
     errorsExist: boolean;
 
     // Connectors

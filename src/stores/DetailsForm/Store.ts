@@ -1,12 +1,17 @@
 import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneById } from 'api/dataPlanes';
+import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { logRocketEvent } from 'services/shared';
+import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { Details, DetailsFormState } from 'stores/DetailsForm/types';
+import {
+    DataPlaneOption,
+    Details,
+    DetailsFormState,
+} from 'stores/DetailsForm/types';
 import {
     fetchErrors,
     filterErrors,
@@ -18,6 +23,8 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import { DefaultDataPlaneSuffix } from 'utils/dataPlane-utils';
+import { isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -59,37 +66,34 @@ const getConnectorImage = async (
     return null;
 };
 
-const getDataPlane = async (
-    dataPlaneOption: string | null,
+const getDataPlane = (
+    dataPlaneOptions: DataPlaneOption[],
     dataPlaneId: string | null
-): Promise<Details['data']['dataPlane'] | null> => {
-    if (dataPlaneOption === 'show_option' && dataPlaneId) {
-        const { data, error } = await getDataPlaneById(dataPlaneId);
+): Details['data']['dataPlane'] | null => {
+    if (hasLength(dataPlaneOptions) && dataPlaneId) {
+        const selectedOption = dataPlaneOptions.find(
+            ({ id }) => id === dataPlaneId
+        );
 
-        if (!error && data && data.length > 0) {
-            const { data_plane_name, id } = data[0];
-
-            const scope = getDataPlaneScope(data_plane_name);
-
-            const { cluster, prefix, provider, region } = parseDataPlaneName(
-                data_plane_name,
-                scope
-            );
-
-            return {
-                dataPlaneName: {
-                    cluster,
-                    prefix,
-                    provider,
-                    region,
-                    whole: data_plane_name,
-                },
-                id,
-                scope,
-            };
+        if (selectedOption) {
+            return selectedOption;
         }
 
-        return null;
+        const defaultDataPlaneSuffix = isProduction
+            ? DefaultDataPlaneSuffix.PRODUCTION
+            : DefaultDataPlaneSuffix.LOCAL;
+
+        const defaultOption = dataPlaneOptions.find(
+            ({ dataPlaneName }) =>
+                dataPlaneName.whole ===
+                `ops/dp/public/${defaultDataPlaneSuffix}`
+        );
+
+        // TODO (data-planes): Narrow the type annotation for Details['data']['dataPlane']
+        //   when the data-plane feature flag is removed. A `null` response from this function
+        //   indicates that the field _should_ appear but was not defaulted properly, resulting
+        //   in a store hydration error.
+        return defaultOption ?? null;
     }
 
     return undefined;
@@ -112,6 +116,7 @@ const initialDetails: Details = {
 const getInitialStateData = (): Pick<
     DetailsFormState,
     | 'connectors'
+    | 'dataPlaneOptions'
     | 'details'
     | 'errorsExist'
     | 'draftedEntityName'
@@ -120,6 +125,8 @@ const getInitialStateData = (): Pick<
     | 'unsupportedConnectorVersion'
 > => ({
     connectors: [],
+
+    dataPlaneOptions: [],
 
     details: initialDetails,
     errorsExist: true,
@@ -261,6 +268,16 @@ export const getInitialState = (
         );
     },
 
+    setDataPlaneOptions: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.dataPlaneOptions = value;
+            }),
+            false,
+            'Data Plane Options Set'
+        );
+    },
+
     setEntityNameChanged: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -286,7 +303,9 @@ export const getInitialState = (
     hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const dataPlaneOption = searchParams.get(GlobalSearchParams.DATA_PLANE);
+        const dataPlaneFeatureFlag = searchParams.get(
+            GlobalSearchParams.DATA_PLANE
+        );
         const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -295,14 +314,54 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         if (connectorId) {
-            const { setHydrationErrorsExist } = get();
+            const { setDataPlaneOptions, setHydrationErrorsExist } = get();
+
+            let dataPlaneOptions: DataPlaneOption[] = [];
+
+            if (dataPlaneFeatureFlag === 'show_option') {
+                const dataPlaneResponse = await getDataPlaneOptions();
+
+                if (
+                    dataPlaneResponse.error ||
+                    dataPlaneResponse.data === null ||
+                    dataPlaneResponse.data.length === 0
+                ) {
+                    const reason = dataPlaneResponse.error ?? {
+                        ...BASE_ERROR,
+                        message:
+                            'No data_planes rows were returned by getDataPlaneOptions',
+                    };
+
+                    return Promise.reject(reason);
+                }
+
+                dataPlaneOptions = dataPlaneResponse.data.map(
+                    ({ data_plane_name, id }) => {
+                        const scope = getDataPlaneScope(data_plane_name);
+
+                        const { cluster, prefix, provider, region } =
+                            parseDataPlaneName(data_plane_name, scope);
+
+                        return {
+                            dataPlaneName: {
+                                cluster,
+                                prefix,
+                                provider,
+                                region,
+                                whole: data_plane_name,
+                            },
+                            id,
+                            scope,
+                        };
+                    }
+                );
+
+                setDataPlaneOptions(dataPlaneOptions);
+            }
 
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(connectorId);
-                const dataPlane = await getDataPlane(
-                    dataPlaneOption,
-                    dataPlaneId
-                );
+                const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (connectorImage && dataPlane !== null) {
                     const {
@@ -344,8 +403,8 @@ export const getInitialState = (
                         connector_image_tag
                     );
 
-                    const dataPlane = await getDataPlane(
-                        dataPlaneOption,
+                    const dataPlane = getDataPlane(
+                        dataPlaneOptions,
                         data_plane_id
                     );
 

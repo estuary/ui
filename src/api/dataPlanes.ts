@@ -24,6 +24,8 @@ const getDataPlaneOptions = async () => {
     return data;
 };
 
+// TODO (data-planes): Keep an eye on whether this function gets used in the future.
+//   Leaving in as it _likely_ will be needed.
 const getDataPlaneById = async (dataPlaneId: string) => {
     const data = await supabaseRetry(
         () =>

@@ -42,6 +42,9 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     // Details Form Store
     const formData = useDetailsFormStore((state) => state.details.data);
+    const detailsHydrationError = useDetailsFormStore(
+        (state) => state.hydrationError
+    );
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -53,7 +56,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isActive = useFormStateStore_isActive();
 
     // TODO: Create a new component to render the form.
-    const { dataPlaneError, schema, uiSchema, updateDetails } = useFormFields(
+    const { schema, uiSchema, updateDetails } = useFormFields(
         connectorTags,
         entityType
     );
@@ -70,9 +73,13 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                 </Box>
             ) : null}
 
-            {dataPlaneError ? (
+            {detailsHydrationError ? (
                 <Box sx={{ mb: 2 }}>
-                    <Error condensed error={dataPlaneError} severity="error" />
+                    <Error
+                        condensed
+                        error={detailsHydrationError}
+                        severity="error"
+                    />
                 </Box>
             ) : null}
 

@@ -1,20 +1,14 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { getDataPlaneOptions } from 'api/dataPlanes';
 import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import {
-    formatDataPlaneName,
-    getDataPlaneScope,
-    parseDataPlaneName,
-} from 'utils/workflow-utils';
+import { formatDataPlaneName } from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 interface OneOfElement {
@@ -36,10 +30,8 @@ export default function useDataPlaneField(
 
     const navigateToCreate = useEntityCreateNavigate();
 
-    const [loading, setLoading] = useState(false);
-    const [serverError, setServerError] = useState<PostgrestError | null>(null);
-    const [options, setOptions] = useState<DataPlaneOption[]>([]);
-
+    const detailsHydrated = useDetailsFormStore((state) => state.hydrated);
+    const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
     );
@@ -49,62 +41,6 @@ export default function useDataPlaneField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
-
-    useEffect(() => {
-        if (dataPlaneOption === 'show_option') {
-            setLoading(true);
-
-            getDataPlaneOptions()
-                .then(
-                    (response) => {
-                        if (response.error) {
-                            setServerError(response.error);
-
-                            return;
-                        }
-
-                        if (response.data) {
-                            const formattedData = response.data.map(
-                                ({ data_plane_name, id }) => {
-                                    const scope =
-                                        getDataPlaneScope(data_plane_name);
-
-                                    const {
-                                        cluster,
-                                        prefix,
-                                        provider,
-                                        region,
-                                    } = parseDataPlaneName(
-                                        data_plane_name,
-                                        scope
-                                    );
-
-                                    return {
-                                        dataPlaneName: {
-                                            cluster,
-                                            prefix,
-                                            provider,
-                                            region,
-                                            whole: data_plane_name,
-                                        },
-                                        id,
-                                        scope,
-                                    };
-                                }
-                            );
-
-                            setOptions(formattedData);
-                        }
-                    },
-                    (error) => {
-                        setServerError(error);
-                    }
-                )
-                .finally(() => {
-                    setLoading(false);
-                });
-        }
-    }, [dataPlaneOption, setLoading, setOptions]);
 
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
@@ -143,7 +79,7 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, intl, options]);
 
     const dataPlaneUISchema = useMemo(() => {
-        return dataPlaneOption === 'show_option' && !loading
+        return dataPlaneOption === 'show_option' && detailsHydrated
             ? {
                   label: intl.formatMessage({
                       id: 'workflows.dataPlane.label',
@@ -152,7 +88,7 @@ export default function useDataPlaneField(
                   type: 'Control',
               }
             : null;
-    }, [dataPlaneOption, intl, loading]);
+    }, [dataPlaneOption, detailsHydrated, intl]);
 
     const evaluateDataPlane = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
@@ -197,7 +133,6 @@ export default function useDataPlaneField(
     );
 
     return {
-        dataPlaneError: serverError,
         dataPlaneSchema,
         dataPlaneUISchema,
         evaluateDataPlane,
