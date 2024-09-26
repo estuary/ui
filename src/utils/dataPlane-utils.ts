@@ -145,10 +145,14 @@ export enum DefaultDataPlaneSuffix {
     PRODUCTION = 'gcp-us-central1-c1',
 }
 
+export const PUBLIC_DATA_PLANE_PREFIX = 'ops/dp/public/';
+
 export const getDataPlaneScope = (
     dataPlaneName: string
 ): DataPlaneOption['scope'] => {
-    return dataPlaneName.startsWith('ops/dp/public') ? 'public' : 'private';
+    return dataPlaneName.startsWith(PUBLIC_DATA_PLANE_PREFIX)
+        ? 'public'
+        : 'private';
 };
 
 // TODO (data-plane): add unit tests for function.

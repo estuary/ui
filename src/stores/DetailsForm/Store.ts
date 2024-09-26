@@ -27,6 +27,7 @@ import {
     DefaultDataPlaneSuffix,
     getDataPlaneScope,
     parseDataPlaneName,
+    PUBLIC_DATA_PLANE_PREFIX,
 } from 'utils/dataPlane-utils';
 import { isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -36,8 +37,8 @@ import {
     evaluateConnectorVersions,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
 
@@ -88,7 +89,7 @@ const getDataPlane = (
         const defaultOption = dataPlaneOptions.find(
             ({ dataPlaneName }) =>
                 dataPlaneName.whole ===
-                `ops/dp/public/${defaultDataPlaneSuffix}`
+                `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
         );
 
         // TODO (data-planes): Narrow the type annotation for Details['data']['dataPlane']
