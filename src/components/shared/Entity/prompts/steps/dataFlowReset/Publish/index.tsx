@@ -7,6 +7,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
@@ -15,18 +16,25 @@ import {
 } from '../../../store/usePreSavePromptStore';
 
 function PublishStepDataFlowReset() {
+    const intl = useIntl();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, context, updateContext, initUUID] =
-        usePreSavePromptStore((state) => [
-            state.updateStep,
-            state.context,
-            state.updateContext,
-            state.initUUID,
-        ]);
+    const [
+        updateStep,
+        updateContext,
+        initUUID,
+        dataFlowResetDraftId,
+        timeStopped,
+    ] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+        state.initUUID,
+        state.context.dataFlowResetDraftId,
+        state.context.timeStopped,
+    ]);
 
     const canContinue = usePreSavePromptStore_stepValid();
 
@@ -44,7 +52,7 @@ function PublishStepDataFlowReset() {
             const saveAndPublish = async () => {
                 // Start publishing it
                 const publishResponse = await createPublication(
-                    context.backfilledDraftId,
+                    dataFlowResetDraftId,
                     false,
                     `data flow backfill : publish : ${initUUID}`,
                     dataPlaneName?.whole
@@ -59,7 +67,7 @@ function PublishStepDataFlowReset() {
                 }
 
                 updateContext({
-                    pubId: publishResponse.data[0].id,
+                    saveAndPublishID: publishResponse.data[0].id,
                 });
 
                 jobStatusPoller(
@@ -92,8 +100,13 @@ function PublishStepDataFlowReset() {
 
     if (canContinue) {
         return (
-            <AlertBox severity="success" short>
-                Summary of changes
+            <AlertBox
+                fitWidth
+                short
+                severity="success"
+                title={intl.formatMessage({ id: 'common.success' })}
+            >
+                Materialization marked to not read data before {timeStopped}
             </AlertBox>
         );
     }

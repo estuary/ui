@@ -2,6 +2,12 @@ import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { PublicationJobStatus } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 
+export interface PromptStepMessageIds {
+    running: string;
+    skipped: string;
+    success: string;
+}
+
 export interface PromptStepState {
     // Both server and client side error
     error: any | null; // PostgrestError
@@ -23,4 +29,5 @@ export interface PromptStep {
     StepComponent: () => EmotionJSX.Element;
     stepLabelMessageId: string;
     state: PromptStepState;
+    // messageIds: PromptStepMessageIds;
 }

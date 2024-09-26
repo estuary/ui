@@ -1,4 +1,8 @@
 import { SortDirection } from '@mui/material';
+import {
+    PostgrestFilterBuilder,
+    PostgrestTransformBuilder,
+} from '@supabase/postgrest-js';
 import { isEmpty, isObject } from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
@@ -192,3 +196,13 @@ export const configCanBeEmpty = (schema: any) => {
 
 export const isReactElement = (value: ReactNode): value is ReactElement =>
     isObject(value) && 'props' in value;
+
+export const isPostgrestFetcher = (
+    value:
+        | PostgrestFilterBuilder<any, any, any, any, any>
+        | PostgrestTransformBuilder<any, any, any, any, any>
+        | Function
+): value is
+    | PostgrestFilterBuilder<any, any, any, any, any>
+    | PostgrestTransformBuilder<any, any, any, any, any> =>
+    isObject(value) && 'throwOnError' in value;

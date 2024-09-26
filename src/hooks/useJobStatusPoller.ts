@@ -11,22 +11,27 @@ import {
     JOB_STATUS_POLLER_ERROR,
     PollerTimeout,
 } from 'services/supabase';
-import { incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
+import {
+    incrementInterval,
+    isPostgrestFetcher,
+    timeoutCleanUp,
+} from 'utils/misc-utils';
 import { checkIfPublishIsDone } from 'utils/publication-utils';
 
 export function useQueryPoller<T = any>(
     key: string,
-    checkIfDone: (response: T) => [boolean | null, T]
+    checkIfDone: (response: T, attempts: number) => [boolean | null, T]
 ) {
     const interval = useRef(DEFAULT_POLLING_INTERVAL);
     const [pollerTimeout, setPollerTimeout] =
         useState<PollerTimeout>(undefined);
 
-    const jobStatusPoller = useCallback(
+    const queryPoller = useCallback(
         (
             query:
                 | PostgrestFilterBuilder<any, any, T, any, any>
-                | PostgrestTransformBuilder<any, any, T, any, any>,
+                | PostgrestTransformBuilder<any, any, T, any, any>
+                | Function,
             success: Function,
             failure: Function,
             initWait?: number
@@ -35,7 +40,9 @@ export function useQueryPoller<T = any>(
             const makeApiCall = () => {
                 logRocketConsole(`Poller : ${key} : start `, { pollerTimeout });
 
-                return query.throwOnError().then(
+                return (
+                    isPostgrestFetcher(query) ? query.throwOnError() : query()
+                ).then(
                     (payload: any) => {
                         logRocketConsole(`Poller : ${key} : response `);
                         timeoutCleanUp(pollerTimeout);
@@ -44,7 +51,7 @@ export function useQueryPoller<T = any>(
                             failure(handleFailure(payload.error));
                         } else {
                             const [publicationOutcome, publicationResponse] =
-                                checkIfDone(payload);
+                                checkIfDone(payload, attempts);
 
                             if (publicationOutcome === null) {
                                 interval.current = incrementInterval(
@@ -112,11 +119,15 @@ export function useQueryPoller<T = any>(
         timeoutCleanUp(pollerTimeout);
     });
 
-    return useMemo(() => ({ jobStatusPoller }), [jobStatusPoller]);
+    return queryPoller;
 }
 
 function useJobStatusPoller<T = any>() {
-    return useQueryPoller<T>('JobStatus', checkIfPublishIsDone);
+    const jobStatusPoller = useQueryPoller<T>(
+        'JobStatus',
+        checkIfPublishIsDone
+    );
+    return useMemo(() => ({ jobStatusPoller }), [jobStatusPoller]);
 }
 
 export default useJobStatusPoller;

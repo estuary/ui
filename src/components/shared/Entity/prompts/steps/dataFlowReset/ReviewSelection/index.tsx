@@ -27,6 +27,10 @@ function ReviewSelection() {
                 {showDiff ? 'Hide Diff' : 'Show Diff'}
             </Button>
 
+            <Collapse in={showDiff} unmountOnExit>
+                <DiffViewer />
+            </Collapse>
+
             <Collapse in={!showDiff}>
                 <Typography>
                     {intl.formatMessage({
@@ -35,10 +39,6 @@ function ReviewSelection() {
                 </Typography>
 
                 <ReviewTable />
-            </Collapse>
-
-            <Collapse in={showDiff}>
-                <DiffViewer />
             </Collapse>
         </Stack>
     );

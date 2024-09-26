@@ -16,10 +16,10 @@ function Publish() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, context, updateContext, initUUID] =
+    const [updateStep, dataFlowResetDraftId, updateContext, initUUID] =
         usePreSavePromptStore((state) => [
             state.updateStep,
-            state.context,
+            state.context.dataFlowResetDraftId,
             state.updateContext,
             state.initUUID,
         ]);
@@ -38,7 +38,7 @@ function Publish() {
             const saveAndPublish = async () => {
                 // Start publishing it
                 const publishResponse = await createPublication(
-                    context.backfilledDraftId,
+                    dataFlowResetDraftId,
                     false,
                     `data flow backfill : publish : ${initUUID}`,
                     dataPlaneName?.whole
@@ -53,7 +53,7 @@ function Publish() {
                 }
 
                 updateContext({
-                    pubId: publishResponse.data[0].id,
+                    initialPubId: publishResponse.data[0].id,
                 });
 
                 jobStatusPoller(

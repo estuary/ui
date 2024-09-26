@@ -139,9 +139,10 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
     'dataFlowReset.reviewSelection.title': `Review changes`,
     'dataFlowReset.disableCapture.title': `Disable capture`,
-    'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
-    'dataFlowReset.updateMaterialization.title': `Update Materialization`,
+    'dataFlowReset.waitForShardToIdle.title': `Wait for capture to fully stop`,
+    'dataFlowReset.updateMaterialization.title': `Update materialization`,
     'dataFlowReset.enableCapture.title': `Enable capture`,
+    'dataFlowReset.publish.title': `Publish data flow reset`,
 
     'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
 

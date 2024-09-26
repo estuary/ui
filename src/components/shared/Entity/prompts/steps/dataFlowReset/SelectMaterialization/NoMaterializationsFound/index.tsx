@@ -1,10 +1,15 @@
 import { Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import AlertBox from 'components/shared/AlertBox';
+import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import ManualSelection from '../ManualSelection';
 
 function NoMaterializationsFound() {
     const intl = useIntl();
+
+    const [nextStep] = usePreSavePromptStore((state) => {
+        return [state.nextStep];
+    });
 
     return (
         <Stack>
@@ -36,7 +41,14 @@ function NoMaterializationsFound() {
                             style={{ justifyContent: 'space-between' }}
                         >
                             <ManualSelection />
-                            <Button variant="text">Skip</Button>
+                            <Button
+                                variant="text"
+                                onClick={() => {
+                                    nextStep(true);
+                                }}
+                            >
+                                Skip
+                            </Button>
                         </Stack>
                     </Stack>
                 </Stack>

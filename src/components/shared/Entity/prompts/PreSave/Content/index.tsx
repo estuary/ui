@@ -1,7 +1,7 @@
 import {
     Box,
     DialogContent,
-    LinearProgress,
+    Divider,
     Stack,
     Step,
     StepContent,
@@ -20,16 +20,18 @@ import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
+import CustomStepIcon from './CustomStepIcon';
 
 function Content() {
     const intl = useIntl();
-    const [activeStep, steps, backfilledDraftId] = usePreSavePromptStore(
-        (state) => [
+
+    const [activeStep, steps, dataFlowResetDraftId, dataFlowResetPudId] =
+        usePreSavePromptStore((state) => [
             state.activeStep,
             state.steps,
-            state.context?.backfilledDraftId,
-        ]
-    );
+            state.context.dataFlowResetDraftId,
+            state.context.dataFlowResetPudId,
+        ]);
 
     const renderedSteps = useMemo(
         () =>
@@ -50,7 +52,14 @@ function Content() {
                             key={`PreSave-step-${stepLabelMessageId}-${index}`}
                             completed={stepCompleted}
                         >
-                            <StepLabel error={hasError}>
+                            <StepLabel
+                                error={hasError}
+                                StepIconComponent={
+                                    progress === ProgressStates.IDLE
+                                        ? undefined
+                                        : CustomStepIcon
+                                }
+                            >
                                 {intl.formatMessage({
                                     id: stepLabelMessageId,
                                 })}
@@ -59,53 +68,44 @@ function Content() {
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
                                         <Stack>
-                                            {progress ===
-                                            ProgressStates.RUNNING ? (
-                                                <LinearProgress />
-                                            ) : null}
-
-                                            {backfilledDraftId ? (
-                                                <DraftErrors
-                                                    draftId={backfilledDraftId}
-                                                />
-                                            ) : null}
-                                            {/* TODO (data flow reset)
-                                                <AlertBox
-                                                    short
-                                                    hideIcon
-                                                    severity="error"
-                                                    title={intl.formatMessage({
-                                                        id: 'preSavePrompt.draftErrors.title',
-                                                    })}
-                                                >
-                                                    <Typography>
-                                                        {intl.formatMessage({
-                                                            id: 'preSavePrompt.draftErrors.message',
-                                                        })}
-                                                    </Typography>
-
+                                            {dataFlowResetDraftId ? (
+                                                <>
                                                     <DraftErrors
                                                         draftId={
-                                                            backfilledDraftId
+                                                            dataFlowResetDraftId
                                                         }
                                                     />
-                                                </AlertBox>
-                                            */}
+                                                    <Divider />
+                                                </>
+                                            ) : null}
 
-                                            {progress ===
-                                            ProgressStates.FAILED ? (
-                                                <Stack>
+                                            <StepComponent />
+
+                                            <Divider />
+
+                                            <Stack>
+                                                {progress ===
+                                                ProgressStates.FAILED ? (
                                                     <Error
                                                         severity="error"
                                                         error={error}
                                                         condensed
                                                     />
+                                                ) : null}
+
+                                                {dataFlowResetPudId ||
+                                                progress ===
+                                                    ProgressStates.FAILED ? (
                                                     <Box>
                                                         <ErrorLogs
+                                                            defaultOpen={Boolean(
+                                                                dataFlowResetPudId
+                                                            )}
                                                             logToken={
-                                                                hasError
+                                                                dataFlowResetPudId ??
+                                                                (hasError
                                                                     ? publicationStatus?.logs_token
-                                                                    : null
+                                                                    : null)
                                                             }
                                                             logProps={{
                                                                 spinnerMessages:
@@ -118,11 +118,9 @@ function Content() {
                                                             }}
                                                         />
                                                     </Box>
-                                                </Stack>
-                                            ) : null}
+                                                ) : null}
+                                            </Stack>
                                         </Stack>
-
-                                        <StepComponent />
                                     </LoopIndexContextProvider>
                                 </ErrorBoundryWrapper>
                             </StepContent>
@@ -130,7 +128,7 @@ function Content() {
                     );
                 }
             ),
-        [backfilledDraftId, intl, steps]
+        [dataFlowResetDraftId, dataFlowResetPudId, intl, steps]
     );
 
     return (

@@ -42,7 +42,7 @@ function Actions() {
                 </Button>
 
                 <Button
-                    onClick={onLastStep ? () => exit() : nextStep}
+                    onClick={() => (onLastStep ? exit() : nextStep())}
                     variant="outlined"
                     disabled={!canContinue}
                 >
