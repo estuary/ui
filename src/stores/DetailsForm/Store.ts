@@ -70,10 +70,10 @@ const getDataPlane = (
     dataPlaneOptions: DataPlaneOption[],
     dataPlaneId: string | null
 ): Details['data']['dataPlane'] | null => {
-    if (hasLength(dataPlaneOptions) && dataPlaneId) {
-        const selectedOption = dataPlaneOptions.find(
-            ({ id }) => id === dataPlaneId
-        );
+    if (hasLength(dataPlaneOptions)) {
+        const selectedOption = dataPlaneId
+            ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
+            : undefined;
 
         if (selectedOption) {
             return selectedOption;
