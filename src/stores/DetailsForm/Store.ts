@@ -23,15 +23,17 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { DefaultDataPlaneSuffix } from 'utils/dataPlane-utils';
+import {
+    DefaultDataPlaneSuffix,
+    getDataPlaneScope,
+    parseDataPlaneName,
+} from 'utils/dataPlane-utils';
 import { isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
-    getDataPlaneScope,
-    parseDataPlaneName,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { StoreApi, create } from 'zustand';

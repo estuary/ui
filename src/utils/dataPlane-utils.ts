@@ -7,6 +7,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
+import { DataPlaneOption } from 'stores/DetailsForm/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
@@ -143,6 +144,58 @@ export enum DefaultDataPlaneSuffix {
     LOCAL = 'local-cluster',
     PRODUCTION = 'gcp-us-central1-c1',
 }
+
+export const getDataPlaneScope = (
+    dataPlaneName: string
+): DataPlaneOption['scope'] => {
+    return dataPlaneName.startsWith('ops/dp/public') ? 'public' : 'private';
+};
+
+// TODO (data-plane): add unit tests for function.
+export const parseDataPlaneName = (
+    dataPlaneName: string,
+    scope: DataPlaneOption['scope']
+) => {
+    const basePrefix = `ops/dp/${scope}/`;
+
+    if (dataPlaneName.startsWith(basePrefix)) {
+        const truncatedName = dataPlaneName.substring(basePrefix.length);
+
+        const slashIndex = truncatedName.lastIndexOf('/');
+
+        const prefix =
+            slashIndex === -1 ? '' : truncatedName.substring(0, slashIndex + 1);
+
+        const suffix =
+            slashIndex === -1
+                ? truncatedName
+                : truncatedName.substring(slashIndex + 1);
+
+        const firstHyphenIndex = suffix.indexOf('-');
+
+        let provider = '';
+        let region = '';
+        let cluster = '';
+
+        if (firstHyphenIndex > -1) {
+            provider = suffix.substring(0, firstHyphenIndex);
+
+            const lastHyphenIndex = suffix.lastIndexOf('-');
+            const regionOnly =
+                lastHyphenIndex === -1 || lastHyphenIndex === firstHyphenIndex;
+
+            region = regionOnly
+                ? suffix.substring(firstHyphenIndex + 1)
+                : suffix.substring(firstHyphenIndex + 1, lastHyphenIndex);
+
+            cluster = regionOnly ? '' : suffix.substring(lastHyphenIndex + 1);
+        }
+
+        return { cluster, prefix, provider, region };
+    }
+
+    return { cluster: '', prefix: '', provider: '', region: '' };
+};
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
