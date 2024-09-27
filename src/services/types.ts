@@ -16,7 +16,7 @@ export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
-    DATA_PLANE_SELECTOR_DEFAULTED = 'Data_Pane_Selector:Unexpectedly_Defaulted',
+    DATA_PLANE_SELECTOR = 'Data_Pane_Selector',
     DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',

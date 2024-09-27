@@ -87,7 +87,7 @@ const getDataPlane = (
         );
 
         if (dataPlaneId) {
-            logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR_DEFAULTED, {
+            logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                 targetDataPlaneId: dataPlaneId,
                 defaultDataPlaneId: defaultOption?.id,
             });
