@@ -5,7 +5,6 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { logRocketEvent } from 'services/shared';
-import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     DataPlaneOption,
@@ -69,10 +68,10 @@ const getConnectorImage = async (
 };
 
 const getDataPlane = (
-    dataPlaneOptions: DataPlaneOption[],
+    dataPlaneOptions: DataPlaneOption[] | null,
     dataPlaneId: string | null
 ): Details['data']['dataPlane'] | null => {
-    if (hasLength(dataPlaneOptions)) {
+    if (dataPlaneOptions) {
         const selectedOption = dataPlaneId
             ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
             : undefined;
@@ -321,49 +320,40 @@ export const getInitialState = (
         if (connectorId) {
             const { setDataPlaneOptions, setHydrationErrorsExist } = get();
 
-            let dataPlaneOptions: DataPlaneOption[] = [];
+            let dataPlaneOptions: DataPlaneOption[] | null =
+                dataPlaneFeatureFlag === 'show_option' ? [] : null;
 
-            if (dataPlaneFeatureFlag === 'show_option') {
+            if (dataPlaneOptions !== null) {
                 const dataPlaneResponse = await getDataPlaneOptions();
 
                 if (
-                    dataPlaneResponse.error ||
-                    dataPlaneResponse.data === null ||
-                    dataPlaneResponse.data.length === 0
+                    !dataPlaneResponse.error &&
+                    dataPlaneResponse.data &&
+                    dataPlaneResponse.data.length > 0
                 ) {
-                    const reason = dataPlaneResponse.error ?? {
-                        ...BASE_ERROR,
-                        message:
-                            'No data_planes rows were returned by getDataPlaneOptions',
-                    };
+                    dataPlaneOptions = dataPlaneResponse.data.map(
+                        ({ data_plane_name, id }) => {
+                            const scope = getDataPlaneScope(data_plane_name);
 
-                    // TODO (data-planes): Remove this return statement, throw the code below into
-                    //   an else block, and allow the remaining logic to set hydration errors.
-                    return Promise.reject(reason);
+                            const { cluster, prefix, provider, region } =
+                                parseDataPlaneName(data_plane_name, scope);
+
+                            return {
+                                dataPlaneName: {
+                                    cluster,
+                                    prefix,
+                                    provider,
+                                    region,
+                                    whole: data_plane_name,
+                                },
+                                id,
+                                scope,
+                            };
+                        }
+                    );
+
+                    setDataPlaneOptions(dataPlaneOptions);
                 }
-
-                dataPlaneOptions = dataPlaneResponse.data.map(
-                    ({ data_plane_name, id }) => {
-                        const scope = getDataPlaneScope(data_plane_name);
-
-                        const { cluster, prefix, provider, region } =
-                            parseDataPlaneName(data_plane_name, scope);
-
-                        return {
-                            dataPlaneName: {
-                                cluster,
-                                prefix,
-                                provider,
-                                region,
-                                whole: data_plane_name,
-                            },
-                            id,
-                            scope,
-                        };
-                    }
-                );
-
-                setDataPlaneOptions(dataPlaneOptions);
             }
 
             if (createWorkflow) {
