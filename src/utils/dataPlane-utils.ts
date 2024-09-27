@@ -7,7 +7,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
-import { DataPlaneOption } from 'stores/DetailsForm/types';
+import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
@@ -190,7 +190,7 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
 export const parseDataPlaneName = (
     dataPlaneName: string,
     scope: DataPlaneOption['scope']
-) => {
+): DataPlaneName => {
     let cluster = '';
     let prefix = '';
     let provider = '';
@@ -216,7 +216,7 @@ export const parseDataPlaneName = (
         }
     }
 
-    return { cluster, prefix, provider, region };
+    return { cluster, prefix, provider, region, whole: dataPlaneName };
 };
 
 // We increment the read window by this many bytes every time we get back

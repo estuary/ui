@@ -339,20 +339,12 @@ export const getInitialState = (
                         ({ data_plane_name, id }) => {
                             const scope = getDataPlaneScope(data_plane_name);
 
-                            const { cluster, prefix, provider, region } =
-                                parseDataPlaneName(data_plane_name, scope);
+                            const dataPlaneName = parseDataPlaneName(
+                                data_plane_name,
+                                scope
+                            );
 
-                            return {
-                                dataPlaneName: {
-                                    cluster,
-                                    prefix,
-                                    provider,
-                                    region,
-                                    whole: data_plane_name,
-                                },
-                                id,
-                                scope,
-                            };
+                            return { dataPlaneName, id, scope };
                         }
                     );
 

@@ -17,25 +17,30 @@ describe('getDataPlaneScope', () => {
 });
 
 describe('parseDataPlaneName', () => {
-    describe('returns no data plane name elements', () => {
-        const parsedName = {
-            cluster: '',
-            prefix: '',
-            provider: '',
-            region: '',
-        };
-
+    describe('returns only the whole data plane name', () => {
         test('when the data plane name prefix does not match the specified scope', () => {
             expect(
                 parseDataPlaneName(
                     'ops/dp/private/melk/aws-eu-west-1-c2',
                     'public'
                 )
-            ).toStrictEqual(parsedName);
+            ).toStrictEqual({
+                cluster: '',
+                prefix: '',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
+            });
 
             expect(
                 parseDataPlaneName('ops/dp/public/aws-eu-west-1-c2', 'private')
-            ).toStrictEqual(parsedName);
+            ).toStrictEqual({
+                cluster: '',
+                prefix: '',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/public/aws-eu-west-1-c2',
+            });
         });
 
         test('when the data plane name prefix is not formatted properly', () => {
@@ -44,14 +49,26 @@ describe('parseDataPlaneName', () => {
                     'ops/dp/some_fake_scope/melk/aws-eu-west-1-c2',
                     'private'
                 )
-            ).toStrictEqual(parsedName);
+            ).toStrictEqual({
+                cluster: '',
+                prefix: '',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/some_fake_scope/melk/aws-eu-west-1-c2',
+            });
 
             expect(
                 parseDataPlaneName(
                     'ops/dp/some_fake_scope/aws-eu-west-1-c2',
                     'public'
                 )
-            ).toStrictEqual(parsedName);
+            ).toStrictEqual({
+                cluster: '',
+                prefix: '',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/some_fake_scope/aws-eu-west-1-c2',
+            });
         });
     });
 
@@ -66,6 +83,7 @@ describe('parseDataPlaneName', () => {
             prefix: 'melk/',
             provider: 'aws',
             region: 'eu-west-1',
+            whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
         });
 
         expect(
@@ -75,6 +93,7 @@ describe('parseDataPlaneName', () => {
             prefix: 'melk/',
             provider: 'local',
             region: 'cluster',
+            whole: 'ops/dp/private/melk/local-cluster',
         });
     });
 
@@ -89,6 +108,7 @@ describe('parseDataPlaneName', () => {
             prefix: 'melk/',
             provider: 'aws',
             region: 'eu-west-1',
+            whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
         });
 
         expect(
@@ -98,6 +118,7 @@ describe('parseDataPlaneName', () => {
             prefix: '',
             provider: 'aws',
             region: 'eu-west-1',
+            whole: 'ops/dp/public/aws-eu-west-1-c2',
         });
 
         expect(
@@ -107,6 +128,7 @@ describe('parseDataPlaneName', () => {
             prefix: '',
             provider: 'gcp',
             region: 'us-central1',
+            whole: 'ops/dp/public/gcp-us-central1-c1',
         });
 
         expect(
@@ -116,6 +138,7 @@ describe('parseDataPlaneName', () => {
             prefix: '',
             provider: 'local',
             region: 'some_region',
+            whole: 'ops/dp/public/local-some_region-c1',
         });
     });
 });
