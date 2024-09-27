@@ -20,8 +20,18 @@ declare global {
 const ENABLED = 'true';
 
 export const isProduction = import.meta.env.PROD;
-export const defaultDataPlaneSuffix = import.meta.env
-    .VITE_DEFAULT_DATA_PLANE_SUFFIX;
+
+export const defaultDataPlaneSuffix = ((): string => {
+    const dataPlaneSuffix = import.meta.env.VITE_DEFAULT_DATA_PLANE_SUFFIX;
+
+    if (dataPlaneSuffix) {
+        return dataPlaneSuffix;
+    } else {
+        throw new Error(
+            'Missing default data-plane suffix: VITE_DEFAULT_DATA_PLANE_SUFFIX'
+        );
+    }
+})();
 
 export const getAuthPath = () => {
     return window.Estuary?.auth_url
