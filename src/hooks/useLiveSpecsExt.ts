@@ -12,11 +12,11 @@ import { Entity } from 'types';
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
     id: string;
-    spec: any;
-    reads_from: string[];
-    writes_to: string[];
-    spec_type: Entity;
     last_pub_id: string;
+    reads_from: string[];
+    spec: any;
+    spec_type: Entity;
+    writes_to: string[];
 }
 
 export interface LiveSpecsExt_MaterializeOrTransform {

@@ -3,40 +3,26 @@ import {
     getPublicationByIdQuery,
     PublicationJobStatus,
 } from 'api/publications';
-import AlertBox from 'components/shared/AlertBox';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import {
-    usePreSavePromptStore,
-    usePreSavePromptStore_stepValid,
-} from '../../../store/usePreSavePromptStore';
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function PublishStepDataFlowReset() {
-    const intl = useIntl();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [
-        updateStep,
-        updateContext,
-        initUUID,
-        dataFlowResetDraftId,
-        timeStopped,
-    ] = usePreSavePromptStore((state) => [
-        state.updateStep,
-        state.updateContext,
-        state.initUUID,
-        state.context.dataFlowResetDraftId,
-        state.context.timeStopped,
-    ]);
-
-    const canContinue = usePreSavePromptStore_stepValid();
+    const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
+        usePreSavePromptStore((state) => [
+            state.updateStep,
+            state.updateContext,
+            state.initUUID,
+            state.context.dataFlowResetDraftId,
+        ]);
 
     // TODO (data flow reset) need to plumb this through correctly
     const dataPlaneName = useDetailsFormStore(
@@ -67,7 +53,7 @@ function PublishStepDataFlowReset() {
                 }
 
                 updateContext({
-                    saveAndPublishID: publishResponse.data[0].id,
+                    dataFlowResetPudId: publishResponse.data[0].id,
                 });
 
                 jobStatusPoller(
@@ -97,19 +83,6 @@ function PublishStepDataFlowReset() {
             console.log('TODO: need to handle showing previous state?');
         }
     });
-
-    if (canContinue) {
-        return (
-            <AlertBox
-                fitWidth
-                short
-                severity="success"
-                title={intl.formatMessage({ id: 'common.success' })}
-            >
-                Materialization marked to not read data before {timeStopped}
-            </AlertBox>
-        );
-    }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;

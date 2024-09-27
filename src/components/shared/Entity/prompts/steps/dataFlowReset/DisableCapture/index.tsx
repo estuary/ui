@@ -66,7 +66,7 @@ function DisableCapture() {
                     },
                     undefined,
                     undefined,
-                    `data flow backfill : disable : ${initUUID}`
+                    `data flow backfill : disable capture : ${initUUID}`
                 );
 
                 if (updateResponse.error) {
@@ -78,7 +78,11 @@ function DisableCapture() {
                 }
 
                 // Start publishing it
-                const publishResponse = await createPublication(draftId, false);
+                const publishResponse = await createPublication(
+                    draftId,
+                    false,
+                    `data flow backfill : disable capture : ${initUUID}`
+                );
 
                 if (publishResponse.error || !publishResponse.data) {
                     updateStep(stepIndex, {

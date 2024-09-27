@@ -81,8 +81,6 @@ function Content() {
 
                                             <StepComponent />
 
-                                            <Divider />
-
                                             <Stack spacing={2}>
                                                 {progress ===
                                                 ProgressStates.FAILED ? (
@@ -102,10 +100,7 @@ function Content() {
                                                                 dataFlowResetPudId
                                                             )}
                                                             logToken={
-                                                                dataFlowResetPudId ??
-                                                                (hasError
-                                                                    ? publicationStatus?.logs_token
-                                                                    : null)
+                                                                publicationStatus?.logs_token
                                                             }
                                                             logProps={{
                                                                 spinnerMessages:

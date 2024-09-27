@@ -24,6 +24,7 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
         const newCatalog = selectedRow ? selectedRow.catalog_name : null;
         const newId = selectedRow ? selectedRow.id : null;
+        const newReadsFrom = selectedRow ? selectedRow.reads_from : null;
 
         // TODO (data flow reset)
         // need to update the context properly
@@ -31,6 +32,7 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
             backfillTarget: {
                 catalog_name: newCatalog,
                 id: newId,
+                reads_from: newReadsFrom,
             },
         });
         updateStep(stepIndex, {

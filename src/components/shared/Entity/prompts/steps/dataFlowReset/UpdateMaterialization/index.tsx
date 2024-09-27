@@ -46,9 +46,9 @@ function MarkMaterialization() {
                 const draftsResponse = await createEntityDraft(
                     `data flow backfill : update : ${initUUID}`
                 );
-                const backfilledDraftId = draftsResponse.data?.[0].id;
+                const dataFlowResetDraftId = draftsResponse.data?.[0].id;
 
-                if (draftsResponse.error || !backfilledDraftId) {
+                if (draftsResponse.error || !dataFlowResetDraftId) {
                     updateStep(stepIndex, {
                         error: draftsResponse.error,
                         progress: ProgressStates.FAILED,
@@ -57,7 +57,7 @@ function MarkMaterialization() {
                 }
 
                 updateContext({
-                    backfilledDraftId,
+                    dataFlowResetDraftId,
                 });
 
                 // Update the spec here if we have a target
@@ -100,7 +100,7 @@ function MarkMaterialization() {
                 if (!skipped && backfillTargetName && updatedSpec) {
                     // Add to the draft
                     const draftedMaterialization = await createDraftSpec(
-                        backfilledDraftId,
+                        dataFlowResetDraftId,
                         backfillTargetName,
                         updatedSpec,
                         'materialization',

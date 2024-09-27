@@ -123,7 +123,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                 set(
                     produce((state: PreSavePromptStore) => {
                         if (
-                            !force &&
+                            force ||
                             state.steps[state.activeStep].state.valid
                         ) {
                             state.steps[state.activeStep].state.progress =

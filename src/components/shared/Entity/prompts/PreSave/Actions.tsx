@@ -1,4 +1,5 @@
-import { Button, DialogActions, Stack } from '@mui/material';
+import { Box, Button, DialogActions, Stack, Typography } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
 import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
@@ -12,6 +13,8 @@ import {
 function Actions() {
     const intl = useIntl();
 
+    const { exit } = useEntityWorkflowHelpers();
+
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
     const [activeStep, nextStep, previousStep] = usePreSavePromptStore(
@@ -22,10 +25,20 @@ function Actions() {
     const onFirstStep = usePreSavePromptStore_onFirstStep();
     const onLastStep = usePreSavePromptStore_onLastStep();
 
-    const { exit } = useEntityWorkflowHelpers();
-
     return (
-        <DialogActions>
+        <DialogActions style={{ justifyContent: 'space-between' }}>
+            <Box>
+                {onLastStep && canContinue ? (
+                    <AlertBox fitWidth short severity="success">
+                        <Typography sx={{ mr: 1 }}>
+                            {intl.formatMessage({
+                                id: 'common.success',
+                            })}
+                        </Typography>
+                    </AlertBox>
+                ) : null}
+            </Box>
+
             <Stack direction="row" spacing={2}>
                 <Button
                     disabled={activeStep > 3}
