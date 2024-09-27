@@ -62,7 +62,10 @@ function Overview({ name }: Props) {
             {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (
                 <Grid item xs={12}>
-                    <TaskEndpoints taskName={catalogName} />
+                    <TaskEndpoints
+                        reactorAddress={latestLiveSpec?.reactor_address}
+                        taskName={catalogName}
+                    />
                 </Grid>
             ) : null}
 

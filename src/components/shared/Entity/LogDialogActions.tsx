@@ -25,6 +25,8 @@ function LogDialogActions({
 }: Props) {
     const formStatus = useFormStateStore_status();
 
+    // TODO (connector-endpoints): Pull the reactor address from the details form state.
+
     // Only show endpoints after a completed publication, since publishing can potentially
     // change the endpoints.
     let endpoints = null;
@@ -33,7 +35,11 @@ function LogDialogActions({
             <Box sx={{ pl: 2, display: 'flex', flexDirection: 'column' }}>
                 {taskNames
                     ? taskNames.map((task) => (
-                          <TaskEndpoint key={task} taskName={task} />
+                          <TaskEndpoint
+                              key={task}
+                              reactorAddress={undefined}
+                              taskName={task}
+                          />
                       ))
                     : null}
             </Box>
