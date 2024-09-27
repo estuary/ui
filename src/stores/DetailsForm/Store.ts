@@ -68,8 +68,6 @@ const getConnectorImage = async (
     return null;
 };
 
-// TODO (data-planes): Identify the desired data-plane option and the evaluated option
-//   on error to ease troubleshooting.
 const getDataPlane = (
     dataPlaneOptions: DataPlaneOption[],
     dataPlaneId: string | null
@@ -88,6 +86,13 @@ const getDataPlane = (
                 dataPlaneName.whole ===
                 `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
         );
+
+        if (dataPlaneId) {
+            logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR_DEFAULTED, {
+                targetDataPlaneId: dataPlaneId,
+                defaultDataPlaneId: defaultOption?.id,
+            });
+        }
 
         // TODO (data-planes): Narrow the type annotation for Details['data']['dataPlane']
         //   when the data-plane feature flag is removed. A `null` response from this function
