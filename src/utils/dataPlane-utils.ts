@@ -170,6 +170,7 @@ const splitTruncatedDataPlaneName = (
     return [prefix, suffix];
 };
 
+// TODO (data-planes): Consider using a regex to parse the data plane suffix.
 const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
     const provider = suffix.substring(0, firstHyphenIndex);
 
