@@ -3,7 +3,6 @@ import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
-import SchemaInferenceButton from 'components/editor/Bindings/SchemaInference/Button';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationAlert,
@@ -138,8 +137,6 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     </Typography>
 
                                     <Stack direction="row" spacing={1}>
-                                        <SchemaInferenceButton />
-
                                         <SchemaEditCLIButton />
 
                                         <SchemaEditToggle />
