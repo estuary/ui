@@ -140,8 +140,8 @@ export const getJournals = async (
         brokerToken
     );
 
-// TODO (data-planes): Move /ops/dp/ into a constant of its own.
-export const PUBLIC_DATA_PLANE_PREFIX = 'ops/dp/public/';
+export const DATA_PLANE_PREFIX = 'ops/dp/';
+export const PUBLIC_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}public/`;
 
 export const getDataPlaneScope = (
     dataPlaneName: string
@@ -196,7 +196,7 @@ export const parseDataPlaneName = (
     let provider = '';
     let region = '';
 
-    const basePrefix = `ops/dp/${scope}/`;
+    const basePrefix = `${DATA_PLANE_PREFIX}${scope}/`;
 
     if (dataPlaneName.startsWith(basePrefix)) {
         let suffix = '';
