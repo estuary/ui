@@ -49,7 +49,7 @@ function Content() {
 
                     return (
                         <Step
-                            key={`PreSave-step-${stepLabelMessageId}-${index}`}
+                            key={`PreSave-${stepLabelMessageId}-${index}`}
                             completed={stepCompleted}
                         >
                             <StepLabel
