@@ -12,7 +12,7 @@ function ReviewSelection() {
     const [showDiff, setShowDiff] = useState(false);
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             <AlertBox
                 short
                 severity="warning"

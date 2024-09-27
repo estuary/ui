@@ -71,7 +71,7 @@ function MarketplaceVerification() {
 
     return (
         <FullPageWrapper>
-            <Stack>
+            <Stack spacing={2}>
                 {serverError ? (
                     <Error
                         error={{ ...BASE_ERROR, message: serverError.message }}

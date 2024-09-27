@@ -104,7 +104,7 @@ function AcceptGrant({
     };
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             {serverError ? (
                 <AlertBox
                     severity="error"

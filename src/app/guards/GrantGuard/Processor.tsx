@@ -100,7 +100,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
             //      to give them access and do not see a previous submiting
             return (
                 <FullPageWrapper>
-                    <Stack>
+                    <Stack spacing={2}>
                         <Typography variant="h5" align="center">
                             <FormattedMessage id="tenant.grantDirective.error.header" />
                         </Typography>
@@ -125,7 +125,7 @@ function GrantGuardProcessor({ grantToken }: Props) {
                             grantedCapability={capability}
                         />
                     ) : (
-                        <Stack>
+                        <Stack spacing={2}>
                             <Typography variant="h5" align="center">
                                 <FormattedMessage id="tenant.grantDirective.error.header" />
                             </Typography>

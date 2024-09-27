@@ -97,7 +97,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                             refreshRequired={refreshRequired}
                         />
                     ) : collectionData || collectionData === null ? (
-                        <Stack>
+                        <Stack spacing={2}>
                             {schemaUpdateErrored ? (
                                 <AlertBox severity="warning" short>
                                     <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />

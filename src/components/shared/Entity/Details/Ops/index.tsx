@@ -39,7 +39,7 @@ function Ops() {
             isCollection={taskTypes.length === 0}
         >
             <JournalDataLogsHydrator>
-                <Stack>
+                <Stack spacing={2}>
                     <Box>
                         {hydrationError ? (
                             <AlertBox

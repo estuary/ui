@@ -12,7 +12,7 @@ function NoMaterializationsFound() {
     });
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             <AlertBox
                 severity="info"
                 short
@@ -20,14 +20,14 @@ function NoMaterializationsFound() {
                     id: 'resetDataFlow.materializations.empty.header',
                 })}
             >
-                <Stack>
+                <Stack spacing={2}>
                     <Typography>
                         {intl.formatMessage({
                             id: 'resetDataFlow.materializations.empty.message',
                         })}
                     </Typography>
 
-                    <Stack>
+                    <Stack spacing={2}>
                         <Typography>
                             You can either manually select a materialization you
                             want to have updated or skip this step.
@@ -37,6 +37,7 @@ function NoMaterializationsFound() {
                             the Capture and not do a full data flow backfill.
                         </Typography>
                         <Stack
+                            spacing={2}
                             direction="row"
                             style={{ justifyContent: 'space-between' }}
                         >

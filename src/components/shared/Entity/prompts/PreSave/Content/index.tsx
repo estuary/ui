@@ -67,7 +67,7 @@ function Content() {
                             <StepContent>
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
-                                        <Stack>
+                                        <Stack spacing={2}>
                                             {dataFlowResetDraftId ? (
                                                 <>
                                                     <DraftErrors
@@ -83,7 +83,7 @@ function Content() {
 
                                             <Divider />
 
-                                            <Stack>
+                                            <Stack spacing={2}>
                                                 {progress ===
                                                 ProgressStates.FAILED ? (
                                                     <Error
