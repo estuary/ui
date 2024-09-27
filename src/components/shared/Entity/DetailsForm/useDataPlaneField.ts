@@ -30,7 +30,6 @@ export default function useDataPlaneField(
 
     const navigateToCreate = useEntityCreateNavigate();
 
-    const detailsHydrated = useDetailsFormStore((state) => state.hydrated);
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
@@ -79,7 +78,7 @@ export default function useDataPlaneField(
     }, [dataPlaneOption, intl, options]);
 
     const dataPlaneUISchema = useMemo(() => {
-        return dataPlaneOption === 'show_option' && detailsHydrated
+        return dataPlaneOption === 'show_option'
             ? {
                   label: intl.formatMessage({
                       id: 'workflows.dataPlane.label',
@@ -88,7 +87,7 @@ export default function useDataPlaneField(
                   type: 'Control',
               }
             : null;
-    }, [dataPlaneOption, detailsHydrated, intl]);
+    }, [dataPlaneOption, intl]);
 
     const evaluateDataPlane = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
