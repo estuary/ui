@@ -24,12 +24,11 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import {
-    DefaultDataPlaneSuffix,
     getDataPlaneScope,
     parseDataPlaneName,
     PUBLIC_DATA_PLANE_PREFIX,
 } from 'utils/dataPlane-utils';
-import { isProduction } from 'utils/env-utils';
+import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -69,6 +68,8 @@ const getConnectorImage = async (
     return null;
 };
 
+// TODO (data-planes): Identify the desired data-plane option and the evaluated option
+//   on error to ease troubleshooting.
 const getDataPlane = (
     dataPlaneOptions: DataPlaneOption[],
     dataPlaneId: string | null
@@ -81,10 +82,6 @@ const getDataPlane = (
         if (selectedOption) {
             return selectedOption;
         }
-
-        const defaultDataPlaneSuffix = isProduction
-            ? DefaultDataPlaneSuffix.PRODUCTION
-            : DefaultDataPlaneSuffix.LOCAL;
 
         const defaultOption = dataPlaneOptions.find(
             ({ dataPlaneName }) =>
@@ -335,6 +332,8 @@ export const getInitialState = (
                             'No data_planes rows were returned by getDataPlaneOptions',
                     };
 
+                    // TODO (data-planes): Remove this return statement, throw the code below into
+                    //   an else block, and allow the remaining logic to set hydration errors.
                     return Promise.reject(reason);
                 }
 

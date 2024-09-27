@@ -20,6 +20,8 @@ declare global {
 const ENABLED = 'true';
 
 export const isProduction = import.meta.env.PROD;
+export const defaultDataPlaneSuffix = import.meta.env
+    .VITE_DEFAULT_DATA_PLANE_SUFFIX;
 
 export const getAuthPath = () => {
     return window.Estuary?.auth_url

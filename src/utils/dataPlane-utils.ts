@@ -140,12 +140,6 @@ export const getJournals = async (
         brokerToken
     );
 
-// TODO (data-planes): Consider making this an environment variable.
-export enum DefaultDataPlaneSuffix {
-    LOCAL = 'local-cluster',
-    PRODUCTION = 'gcp-us-central1-c1',
-}
-
 // TODO (data-planes): Move /ops/dp/ into a constant of its own.
 export const PUBLIC_DATA_PLANE_PREFIX = 'ops/dp/public/';
 
