@@ -21,6 +21,7 @@ import useGlobalSearchParams, {
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { BASE_ERROR } from 'services/supabase';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
@@ -36,8 +37,8 @@ import {
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
-import ValidationErrorSummary from '../ValidationErrorSummary';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
+import ValidationErrorSummary from '../ValidationErrorSummary';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;
@@ -69,6 +70,9 @@ function EntityCreate({
     const bindingServerUpdateRequired = useBinding_serverUpdateRequired();
 
     // Details Form Store
+    const detailsHydrationError = useDetailsFormStore(
+        (state) => state.hydrationError
+    );
     const imageTag = useDetailsFormStore(
         (state) => state.details.data.connectorImage
     );
@@ -147,8 +151,16 @@ function EntityCreate({
 
     const storeHydrationComplete = useFormHydrationChecker();
 
-    return connectorTagsError ? (
-        <Error error={connectorTagsError} />
+    return connectorTagsError || detailsHydrationError ? (
+        <Error
+            condensed
+            error={
+                connectorTagsError ?? {
+                    ...BASE_ERROR,
+                    message: detailsHydrationError,
+                }
+            }
+        />
     ) : !storeHydrationComplete ? null : (
         <DraftSpecEditorHydrator
             entityType={entityType}

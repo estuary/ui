@@ -318,7 +318,11 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         if (connectorId) {
-            const { setDataPlaneOptions, setHydrationErrorsExist } = get();
+            const {
+                setDataPlaneOptions,
+                setHydrationError,
+                setHydrationErrorsExist,
+            } = get();
 
             let dataPlaneOptions: DataPlaneOption[] | null =
                 dataPlaneFeatureFlag === 'show_option' ? [] : null;
@@ -353,6 +357,11 @@ export const getInitialState = (
                     );
 
                     setDataPlaneOptions(dataPlaneOptions);
+                } else {
+                    setHydrationError(
+                        dataPlaneResponse.error?.message ??
+                            'An error was encountered initializing the details form. If the issue persists, please contact support.'
+                    );
                 }
             }
 

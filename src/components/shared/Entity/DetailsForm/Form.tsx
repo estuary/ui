@@ -4,7 +4,6 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
-import Error from 'components/shared/Error';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -42,9 +41,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
 
     // Details Form Store
     const formData = useDetailsFormStore((state) => state.details.data);
-    const detailsHydrationError = useDetailsFormStore(
-        (state) => state.hydrationError
-    );
 
     // Draft Editor Store
     const isSaving = useEditorStore_isSaving();
@@ -70,16 +66,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                             id: 'entityEdit.alert.detailsFormDisabled',
                         })}
                     </AlertBox>
-                </Box>
-            ) : null}
-
-            {detailsHydrationError ? (
-                <Box sx={{ mb: 2 }}>
-                    <Error
-                        condensed
-                        error={detailsHydrationError}
-                        severity="error"
-                    />
                 </Box>
             ) : null}
 
