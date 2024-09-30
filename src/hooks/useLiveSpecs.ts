@@ -45,6 +45,7 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
 }
 
 export interface LiveSpecsQuery_details extends LiveSpecsQuery {
+    'data_plane_name': string;
     'id': string;
     'spec': {
         schema: {
@@ -61,6 +62,7 @@ export interface LiveSpecsQuery_details extends LiveSpecsQuery {
 }
 const detailsQuery = queryColumns
     .concat([
+        'data_plane_name',
         'id',
         'last_pub_id',
         'writes_to',

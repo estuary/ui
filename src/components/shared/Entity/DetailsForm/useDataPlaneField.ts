@@ -46,19 +46,7 @@ export default function useDataPlaneField(
 
         if (options.length > 0) {
             options.forEach((option) => {
-                const {
-                    cluster,
-                    provider,
-                    region,
-                    whole: wholeName,
-                } = option.dataPlaneName;
-
-                const title = formatDataPlaneName(
-                    cluster,
-                    provider,
-                    region,
-                    wholeName
-                );
+                const title = formatDataPlaneName(option.dataPlaneName);
 
                 dataPlanesOneOf.push({ const: option, title });
             });

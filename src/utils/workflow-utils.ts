@@ -1,4 +1,4 @@
-import { ConnectorTag_Base, ConnectorsQuery_DetailsForm } from 'api/connectors';
+import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
@@ -17,6 +17,7 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
+import { DataPlaneName } from 'stores/DetailsForm/types';
 import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
@@ -409,13 +410,8 @@ export function evaluateConnectorVersions(
     )[0];
 }
 
-export const formatDataPlaneName = (
-    cluster: string,
-    provider: string,
-    region: string,
-    fallbackName: string
-) => {
-    return hasLength(provider)
-        ? `${provider}: ${region} ${cluster}`
-        : fallbackName;
+export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
+    const { cluster, provider, region, whole } = dataPlaneName;
+
+    return hasLength(provider) ? `${provider}: ${region} ${cluster}` : whole;
 };

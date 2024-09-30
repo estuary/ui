@@ -1,12 +1,15 @@
 import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
 import CardWrapper from 'components/admin/Billing/CardWrapper';
+import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
+import { getDataPlaneScope, parseDataPlaneName } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
+import { formatDataPlaneName } from 'utils/workflow-utils';
 
 interface Props {
     entityName: string;
@@ -65,6 +68,31 @@ function DetailsSection({ latestLiveSpec }: Props) {
             }),
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
+
+        if (hasLength(latestLiveSpec.data_plane_name)) {
+            const dataPlaneScope = getDataPlaneScope(
+                latestLiveSpec.data_plane_name
+            );
+
+            const dataPlaneName = parseDataPlaneName(
+                latestLiveSpec.data_plane_name,
+                dataPlaneScope
+            );
+
+            const formattedSuffix = formatDataPlaneName(dataPlaneName);
+
+            response.push({
+                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                val: (
+                    <DataPlane
+                        dataPlaneName={dataPlaneName}
+                        formattedSuffix={formattedSuffix}
+                        logoSize={20}
+                        scope={dataPlaneScope}
+                    />
+                ),
+            });
+        }
 
         if (latestLiveSpec.connectorName) {
             response.push({
