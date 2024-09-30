@@ -4,6 +4,8 @@ import {
     parseDataPlaneName,
 } from 'utils/dataPlane-utils';
 
+// Context regarding the structure of data-plane names can be found here:
+// https://github.com/estuary/flow/blob/master/ops-catalog/README.md#data-plane-names
 describe('formatDataPlaneName', () => {
     test('returns formatted name when data plane name includes a provider', () => {
         expect(
