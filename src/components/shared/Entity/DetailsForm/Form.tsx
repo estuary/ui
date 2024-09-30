@@ -4,7 +4,6 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
-import Error from 'components/shared/Error';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -53,7 +52,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isActive = useFormStateStore_isActive();
 
     // TODO: Create a new component to render the form.
-    const { dataPlaneError, schema, uiSchema, updateDetails } = useFormFields(
+    const { schema, uiSchema, updateDetails } = useFormFields(
         connectorTags,
         entityType
     );
@@ -67,12 +66,6 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
                             id: 'entityEdit.alert.detailsFormDisabled',
                         })}
                     </AlertBox>
-                </Box>
-            ) : null}
-
-            {dataPlaneError ? (
-                <Box sx={{ mb: 2 }}>
-                    <Error condensed error={dataPlaneError} severity="error" />
                 </Box>
             ) : null}
 
