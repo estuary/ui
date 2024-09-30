@@ -10,10 +10,18 @@ function EnableCapture() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, nextStep, context] = usePreSavePromptStore((state) => [
+    const [
+        updateStep,
+        nextStep,
+        captureSpec,
+        dataFlowResetDraftId,
+        captureName,
+    ] = usePreSavePromptStore((state) => [
         state.updateStep,
         state.nextStep,
-        state.context,
+        state.context.captureSpec,
+        state.context.dataFlowResetDraftId,
+        state.context.captureName,
     ]);
 
     useMount(() => {
@@ -25,9 +33,9 @@ function EnableCapture() {
             const enableCapture = async () => {
                 // Update the Capture to be disabled
                 const updateResponse = await createDraftSpec(
-                    context.backfilledDraftId,
-                    context.captureName,
-                    generateDisabledSpec(context.captureSpec, true, false),
+                    dataFlowResetDraftId,
+                    captureName,
+                    generateDisabledSpec(captureSpec, true, false),
                     'capture',
                     undefined,
                     false

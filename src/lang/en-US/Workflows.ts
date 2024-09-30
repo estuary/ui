@@ -137,24 +137,27 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
 
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
-    'dataFlowReset.reviewSelection.title': `Review your selections`,
+    'dataFlowReset.reviewSelection.title': `Review changes`,
     'dataFlowReset.disableCapture.title': `Disable capture`,
-    'dataFlowReset.waitForCapture.title': `Wait for capture to fully stop`,
-    'dataFlowReset.updateMaterialization.title': `Update Materialization`,
+    'dataFlowReset.waitForShardToIdle.title': `Wait for capture to fully stop`,
+    'dataFlowReset.updateMaterialization.title': `Update materialization`,
     'dataFlowReset.enableCapture.title': `Enable capture`,
+    'dataFlowReset.publish.title': `Publish data flow reset`,
 
     'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
 
     // Dataflow reset
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Capture`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in materialization.`,
+    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
 
     'dataFlowReset.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
     'dataFlowReset.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
     'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
     'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
+
+    'dataFlowReset.selectMaterialization.selected.none': `no materialization selected`,
 
     'dataFlowReset.editor.warning.title': `Editing disabled`,
     'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
@@ -367,7 +370,10 @@ export const Workflows: Record<string, string> = {
     // Reset Data Flow
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization.`,
+    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
+    'resetDataFlow.materializations.empty.instructions': `You can either manually select a materialization you want to have updated or skip this step.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
+    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
 };

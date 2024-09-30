@@ -8,6 +8,7 @@ import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
+import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
@@ -65,7 +66,7 @@ function DisableCapture() {
                     },
                     undefined,
                     undefined,
-                    `data flow backfill : disable : ${initUUID}`
+                    `data flow backfill : disable capture : ${initUUID}`
                 );
 
                 if (updateResponse.error) {
@@ -77,7 +78,11 @@ function DisableCapture() {
                 }
 
                 // Start publishing it
-                const publishResponse = await createPublication(draftId, false);
+                const publishResponse = await createPublication(
+                    draftId,
+                    false,
+                    `data flow backfill : disable capture : ${initUUID}`
+                );
 
                 if (publishResponse.error || !publishResponse.data) {
                     updateStep(stepIndex, {
@@ -90,7 +95,7 @@ function DisableCapture() {
                 updateContext({
                     captureName,
                     captureSpec: newSpec,
-                    pubId: publishResponse.data[0].id,
+                    initialPubId: publishResponse.data[0].id,
                 });
 
                 jobStatusPoller(
@@ -122,8 +127,7 @@ function DisableCapture() {
         }
     });
 
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <></>;
+    return <DraftErrors draftId={draftId} />;
 }
 
 export default DisableCapture;

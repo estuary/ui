@@ -36,7 +36,7 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
         SelectableTableStore,
         SelectableTableStore['selected']
     >(
-        SelectTableStoreNames.COLLECTION_SELECTOR,
+        SelectTableStoreNames.ENTITY_SELECTOR,
         selectableTableStoreSelectors.selected.get
     );
 

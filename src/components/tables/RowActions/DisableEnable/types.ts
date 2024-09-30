@@ -5,6 +5,6 @@ export interface DisableEnableButtonProps {
     selectableTableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION // never tested
-        | SelectTableStoreNames.COLLECTION_SELECTOR
+        | SelectTableStoreNames.ENTITY_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
 }

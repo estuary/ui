@@ -1,3 +1,4 @@
+import { Session } from '@supabase/supabase-js';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
     ProtocolLabelSelector,
@@ -228,3 +229,29 @@ export const MEGABYTE = 1 * 10 ** 6;
 
 // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
 export const MAX_DOCUMENT_SIZE = 16 * MEGABYTE;
+
+export const fetchShardList = async (name: string, session: Session) => {
+    const { reactorAddress, reactorToken } = await authorizeTask(
+        session.access_token,
+        name
+    );
+    const reactorURL = new URL(reactorAddress);
+
+    // Pass the shard client to the respective function directly.
+    const shardClient = new ShardClient(reactorURL, reactorToken);
+    const taskSelector = new ShardSelector().task(name);
+
+    const dataPlaneListResponse = await dataPlaneFetcher_list(
+        shardClient,
+        taskSelector,
+        'ShardsList'
+    );
+
+    if (!Array.isArray(dataPlaneListResponse)) {
+        return Promise.reject(dataPlaneListResponse);
+    }
+
+    return {
+        shards: dataPlaneListResponse.length > 0 ? dataPlaneListResponse : [],
+    };
+};

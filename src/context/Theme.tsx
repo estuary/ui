@@ -10,7 +10,7 @@ import {
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Square, XmarkCircle } from 'iconoir-react';
+import { Square, XmarkCircle, Check, Copy, WarningCircle } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
@@ -444,6 +444,23 @@ export const getEntityTableRowSx = (
         cursor: disabled ? 'default' : 'pointer',
         opacity: disabled ? 0.75 : undefined,
     };
+};
+
+export type TransientButtonState = 'success' | 'error' | undefined;
+export const getButtonIcon = (
+    theme: Theme,
+    buttonState: TransientButtonState
+): React.ReactNode => {
+    switch (buttonState) {
+        case 'success':
+            return <Check style={{ color: theme.palette.success.main }} />;
+        case 'error':
+            return (
+                <WarningCircle style={{ color: theme.palette.error.main }} />
+            );
+        default:
+            return <Copy style={{ color: theme.palette.primary.main }} />;
+    }
 };
 
 // Light is an RGB translation of #E1E9F4.

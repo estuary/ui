@@ -45,7 +45,7 @@ export enum SelectTableStoreNames {
     BILLING = 'Billing-Table',
     CAPTURE = 'Captures-Table',
     COLLECTION = 'Collections-Table',
-    COLLECTION_SELECTOR = 'Collections-Selector-Table',
+    ENTITY_SELECTOR = 'Entity-Selector-Table',
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',

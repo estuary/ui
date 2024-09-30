@@ -41,8 +41,8 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {/*TODO (data flow reset) - also make sure editor is disabled
-                    {backfillDataFlow && needsBackfilled ? (
+                    {/*TODO (data flow reset) - also make sure editor is disabled*/}
+                    {/*                    {backfillDataFlow && needsBackfilled ? (
                         <AlertBox
                             fitWidth
                             short
@@ -55,12 +55,15 @@ function CatalogEditor({ messageId }: Props) {
                                 id: 'dataFlowReset.editor.warning.message',
                             })}
                         </AlertBox>
-                    ) : null}
-                    */}
+                    ) : null}*/}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
-                            disabled={formActive}
+                            disabled={Boolean(
+                                formActive
+                                // TODO (data flow reset)
+                                // || (backfillDataFlow && needsBackfilled)
+                            )}
                             monitorCurrentCatalog
                         />
                     </Paper>

@@ -6,4 +6,5 @@ export const EnableCaptureStep: PromptStep = {
     StepComponent: EnableCapture,
     stepLabelMessageId: 'dataFlowReset.enableCapture.title',
     state: defaultStepState,
+    // messageIds: defaultStepMessageIds,
 };

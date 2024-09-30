@@ -18,14 +18,23 @@ function MarkMaterialization() {
 
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
-    const [updateStep, updateContext, nextStep, context, initUUID] =
-        usePreSavePromptStore((state) => [
-            state.updateStep,
-            state.updateContext,
-            state.nextStep,
-            state.context,
-            state.initUUID,
-        ]);
+    const [
+        updateStep,
+        updateContext,
+        nextStep,
+        initUUID,
+        backfillTargetId,
+        backfillTargetName,
+        timeStopped,
+    ] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+        state.nextStep,
+        state.initUUID,
+        state.context.backfillTarget?.id,
+        state.context.backfillTarget?.catalog_name,
+        state.context.timeStopped,
+    ]);
 
     useMount(() => {
         if (thisStep.state.progress === ProgressStates.IDLE) {
@@ -34,24 +43,12 @@ function MarkMaterialization() {
             });
 
             const updateMaterializationTimestamp = async () => {
-                const liveSpecResponse = await getLiveSpecSpec(
-                    context.backfillTarget.id
-                );
-
-                if (liveSpecResponse.error) {
-                    updateStep(stepIndex, {
-                        error: liveSpecResponse.error,
-                        progress: ProgressStates.FAILED,
-                    });
-                    return;
-                }
-
                 const draftsResponse = await createEntityDraft(
                     `data flow backfill : update : ${initUUID}`
                 );
-                const backfilledDraftId = draftsResponse.data?.[0].id;
+                const dataFlowResetDraftId = draftsResponse.data?.[0].id;
 
-                if (draftsResponse.error || !backfilledDraftId) {
+                if (draftsResponse.error || !dataFlowResetDraftId) {
                     updateStep(stepIndex, {
                         error: draftsResponse.error,
                         progress: ProgressStates.FAILED,
@@ -60,47 +57,73 @@ function MarkMaterialization() {
                 }
 
                 updateContext({
-                    backfilledDraftId,
+                    dataFlowResetDraftId,
                 });
 
-                // Update the spec here
-                const updatedSpec = {
-                    ...liveSpecResponse.data.spec,
-                };
-                updatedSpec.bindings.forEach((binding: any) => {
-                    if (
-                        collectionsBeingBackfilled.includes(
-                            getCollectionName(binding)
-                        )
-                    ) {
-                        binding.source = getBindingAsFullSource(binding);
-                        binding.source.notBefore = context.timeStopped;
+                // Update the spec here if we have a target
+                let updatedSpec = null;
+                let noMatchingBindings = true;
+                if (backfillTargetId) {
+                    const liveSpecResponse = await getLiveSpecSpec(
+                        backfillTargetId
+                    );
+
+                    if (liveSpecResponse.error) {
+                        updateStep(stepIndex, {
+                            error: liveSpecResponse.error,
+                            progress: ProgressStates.FAILED,
+                        });
+                        return;
                     }
-                });
 
-                // Add to the draft
-                const draftedMaterialization = await createDraftSpec(
-                    backfilledDraftId,
-                    context.backfillTarget.catalog_name,
-                    updatedSpec,
-                    'materialization',
-                    undefined,
-                    false
+                    updatedSpec = {
+                        ...liveSpecResponse.data.spec,
+                    };
+                    updatedSpec.bindings.forEach((binding: any) => {
+                        if (
+                            collectionsBeingBackfilled.includes(
+                                getCollectionName(binding)
+                            )
+                        ) {
+                            binding.source = getBindingAsFullSource(binding);
+                            binding.source.notBefore = timeStopped;
+                            noMatchingBindings = false;
+                        }
+                    });
+                }
+
+                const skipped = Boolean(
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    noMatchingBindings || !backfillTargetName || !updatedSpec
                 );
 
-                if (draftedMaterialization.error) {
-                    updateStep(stepIndex, {
-                        error: draftedMaterialization.error,
-                        progress: ProgressStates.FAILED,
-                    });
-                    return;
+                if (!skipped && backfillTargetName && updatedSpec) {
+                    // Add to the draft
+                    const draftedMaterialization = await createDraftSpec(
+                        dataFlowResetDraftId,
+                        backfillTargetName,
+                        updatedSpec,
+                        'materialization',
+                        undefined,
+                        false
+                    );
+
+                    if (draftedMaterialization.error) {
+                        updateStep(stepIndex, {
+                            error: draftedMaterialization.error,
+                            progress: ProgressStates.FAILED,
+                        });
+                        return;
+                    }
                 }
 
                 updateStep(stepIndex, {
-                    progress: ProgressStates.SUCCESS,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    progress: skipped
+                        ? ProgressStates.SKIPPED
+                        : ProgressStates.SUCCESS,
                     valid: true,
                 });
-
                 nextStep();
             };
 
