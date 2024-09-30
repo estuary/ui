@@ -82,14 +82,12 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 dataPlaneScope
             );
 
-            const formattedSuffix = formatDataPlaneName(dataPlaneName);
-
             response.push({
                 title: intl.formatMessage({ id: 'data.dataPlane' }),
                 val: (
                     <DataPlane
                         dataPlaneName={dataPlaneName}
-                        formattedSuffix={formattedSuffix}
+                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
                         logoSize={20}
                         scope={dataPlaneScope}
                     />
