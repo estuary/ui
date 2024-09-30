@@ -9,16 +9,16 @@ import {
 import EntityEdit from 'components/shared/Entity/Edit';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { CustomEvents } from 'services/types';
-import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
-import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
+import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 const entityType = 'capture';
 function CaptureEdit() {
@@ -47,14 +47,6 @@ function CaptureEdit() {
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
-    const taskNames = useMemo(
-        () =>
-            draftSpecsMetadata.draftSpecs
-                .filter((spec) => spec.spec_type === 'capture')
-                .map((spec) => spec.catalog_name),
-        [draftSpecsMetadata.draftSpecs]
-    );
-
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
@@ -65,7 +57,6 @@ function CaptureEdit() {
                     draftSpecMetadata={draftSpecsMetadata}
                     toolbar={
                         <EntityToolbar
-                            taskNames={taskNames}
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,
                             }}

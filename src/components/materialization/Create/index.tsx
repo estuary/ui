@@ -12,7 +12,7 @@ import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpe
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
@@ -50,14 +50,6 @@ function MaterializationCreate() {
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
-    const taskNames = useMemo(
-        () =>
-            draftSpecsMetadata.draftSpecs
-                .filter((spec) => spec.spec_type === 'materialization')
-                .map((spec) => spec.catalog_name),
-        [draftSpecsMetadata.draftSpecs]
-    );
-
     // Reset the catalog if the connector changes
     useEffect(() => {
         setDraftId(null);
@@ -71,7 +63,6 @@ function MaterializationCreate() {
                     draftSpecMetadata={draftSpecsMetadata}
                     toolbar={
                         <EntityToolbar
-                            taskNames={taskNames}
                             GenerateButton={
                                 <MaterializeGenerateButton
                                     disabled={!hasConnectors}

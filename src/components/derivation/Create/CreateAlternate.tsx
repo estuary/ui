@@ -63,11 +63,6 @@ function DerivationCreateAlternate() {
         >
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
-                    taskNames={
-                        typeof catalogName === 'string'
-                            ? [catalogName]
-                            : undefined
-                    }
                     GenerateButton={<PatchDraftButton />}
                     SecondaryButtonComponent={GitPodButton}
                     primaryButtonProps={{

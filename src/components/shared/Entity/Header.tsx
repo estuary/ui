@@ -20,7 +20,6 @@ interface Props {
     PrimaryButtonComponent?: any;
     SecondaryButtonComponent?: any;
     hideLogs?: boolean;
-    taskNames?: string[];
     waitTimes?: {
         generate?: number;
     };
@@ -35,7 +34,6 @@ function EntityToolbar({
     primaryButtonProps,
     secondaryButtonProps,
     hideLogs,
-    taskNames,
     waitTimes,
 }: Props) {
     const generateWaitTime = waitTimes?.generate;
@@ -103,7 +101,7 @@ function EntityToolbar({
                 </Fade>
             </Box>
 
-            {!hideLogs ? <HeaderLogs taskNames={taskNames} /> : null}
+            {!hideLogs ? <HeaderLogs /> : null}
         </Stack>
     );
 }
