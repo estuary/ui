@@ -11,6 +11,7 @@ import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store
 import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import { ENTITY_SETTINGS } from 'utils/entity-utils';
@@ -24,53 +25,65 @@ function ReviewTable() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
     const [materializationName] = usePreSavePromptStore((state) => [
-        state.context?.backfillTarget?.catalog_name,
+        state.context.backfillTarget?.catalog_name,
     ]);
 
-    const tableRows = [
-        {
-            entityType: 'capture',
-            cell: (
-                <EntityNameDetailsLink
-                    newWindow
-                    name={draftSpecs[0].catalog_name}
-                    path={generatePath(
-                        {
-                            catalog_name: draftSpecs[0].catalog_name,
-                        },
-                        ENTITY_SETTINGS.capture.routes.details
-                    )}
-                />
-            ),
-            count: 1,
-        },
-        {
-            entityType: 'collection',
-            cell: (
-                <RelatedCollections
-                    collections={collectionsBeingBackfilled}
-                    newWindow
-                />
-            ),
-            count: collectionsBeingBackfilled.length,
-        },
-        {
-            entityType: 'materialization',
-            cell: (
-                <EntityNameDetailsLink
-                    newWindow
-                    name={materializationName}
-                    path={generatePath(
-                        {
-                            catalog_name: materializationName,
-                        },
-                        ENTITY_SETTINGS.materialization.routes.details
-                    )}
-                />
-            ),
-            count: 1,
-        },
-    ];
+    const tableRows = useMemo(() => {
+        const response = [
+            {
+                entityType: 'capture',
+                cell: (
+                    <EntityNameDetailsLink
+                        newWindow
+                        name={draftSpecs[0].catalog_name}
+                        path={generatePath(
+                            {
+                                catalog_name: draftSpecs[0].catalog_name,
+                            },
+                            ENTITY_SETTINGS.capture.routes.details
+                        )}
+                    />
+                ),
+                count: 1,
+            },
+            {
+                entityType: 'collection',
+                cell: (
+                    <RelatedCollections
+                        collections={collectionsBeingBackfilled}
+                        newWindow
+                    />
+                ),
+                count: collectionsBeingBackfilled.length,
+            },
+        ];
+
+        if (materializationName) {
+            response.push({
+                entityType: 'materialization',
+                cell: (
+                    <EntityNameDetailsLink
+                        newWindow
+                        name={materializationName}
+                        path={generatePath(
+                            {
+                                catalog_name: materializationName,
+                            },
+                            ENTITY_SETTINGS.materialization.routes.details
+                        )}
+                    />
+                ),
+                count: 1,
+            });
+        }
+
+        return response;
+    }, [
+        collectionsBeingBackfilled,
+        draftSpecs,
+        generatePath,
+        materializationName,
+    ]);
 
     return (
         <TableContainer>

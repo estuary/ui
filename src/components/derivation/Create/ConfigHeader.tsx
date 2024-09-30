@@ -13,7 +13,7 @@ function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
     const language = useTransformationCreate_language();
 
     const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return [state.selected];
         }

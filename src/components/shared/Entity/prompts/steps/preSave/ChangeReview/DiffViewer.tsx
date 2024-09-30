@@ -24,7 +24,9 @@ function DiffViewer() {
             original={liveSpec ? stringifyJSON(liveSpec) : 'loading...'}
             modified={isValidating ? 'loading...' : draftSpec}
             theme={monacoEditorComponentBackground[theme.palette.mode]}
-            options={{ readOnly: true }}
+            options={{
+                readOnly: true,
+            }}
         />
     );
 }

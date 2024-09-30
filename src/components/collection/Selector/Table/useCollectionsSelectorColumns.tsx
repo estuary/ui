@@ -17,23 +17,30 @@ const defaultColumns: ColumnProps[] = [
     },
 ];
 
-const writesTo: ColumnProps = {
-    field: null,
-    headerIntlKey: 'entityTable.data.writesTo',
+const optionalColumns = {
+    writesTo: {
+        field: null,
+        headerIntlKey: 'entityTable.data.writesTo',
+    } as ColumnProps,
+
+    readsFrom: {
+        field: null,
+        headerIntlKey: 'entityTable.data.readsFrom',
+    } as ColumnProps,
 };
 
 const useCollectionsSelectorColumns = (
-    includeWritesTo: boolean
+    include?: keyof typeof optionalColumns
 ): ColumnProps[] => {
     return useMemo(() => {
-        if (includeWritesTo) {
+        if (include) {
             const response = [...defaultColumns];
-            response.splice(2, 0, writesTo);
+            response.splice(2, 0, optionalColumns[include]);
             return response;
         } else {
             return defaultColumns;
         }
-    }, [includeWritesTo]);
+    }, [include]);
 };
 
 export default useCollectionsSelectorColumns;

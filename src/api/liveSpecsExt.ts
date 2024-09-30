@@ -133,7 +133,13 @@ const getLiveSpecs_collections = (
 };
 
 const collectionsSelectorColumns = 'catalog_name, id, updated_at, spec_type';
-const collectionsSelectorColumns_capture = `${collectionsSelectorColumns}, writes_to`;
+
+// TODO (settings) need to figure a nice way to get queries into the entity-utils object
+const collectionsSelectors: Record<Entity, string> = {
+    collection: 'catalog_name, id, updated_at, spec_type',
+    capture: `${collectionsSelectorColumns}, writes_to`,
+    materialization: `${collectionsSelectorColumns}, reads_from`,
+};
 
 interface CollectionSelectorQuery {
     catalog_name: string;
@@ -141,9 +147,10 @@ interface CollectionSelectorQuery {
     spec_type: Entity;
     updated_at: string;
     writes_to?: string[];
+    reads_from?: string[];
 }
 
-const getLiveSpecs_collectionsSelector = (
+const getLiveSpecs_entitySelector = (
     pagination: any,
     specType: Entity,
     searchQuery: any,
@@ -152,14 +159,9 @@ const getLiveSpecs_collectionsSelector = (
     return defaultTableFilter<CollectionSelectorQuery[]>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
-            .select(
-                specType === 'capture'
-                    ? collectionsSelectorColumns_capture
-                    : collectionsSelectorColumns,
-                {
-                    count: 'exact',
-                }
-            )
+            .select(collectionsSelectors[specType], {
+                count: 'exact',
+            })
             .eq('spec_type', specType),
         ['catalog_name'],
         searchQuery,
@@ -427,7 +429,7 @@ export interface LiveSpecsExt_Related {
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
-    getLiveSpecs_collectionsSelector,
+    getLiveSpecs_entitySelector,
     getLiveSpecs_detailsForm,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,

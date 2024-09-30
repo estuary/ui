@@ -9,4 +9,5 @@ export const ReviewSelectionStep: PromptStep = {
         ...defaultStepState,
         valid: true,
     },
+    // messageIds: defaultStepMessageIds,
 };

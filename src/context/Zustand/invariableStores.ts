@@ -84,8 +84,8 @@ const invariableStores = {
     [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
         SelectTableStoreNames.COLLECTION
     ),
-    [SelectTableStoreNames.COLLECTION_SELECTOR]: createSelectableTableStore(
-        SelectTableStoreNames.COLLECTION_SELECTOR
+    [SelectTableStoreNames.ENTITY_SELECTOR]: createSelectableTableStore(
+        SelectTableStoreNames.ENTITY_SELECTOR
     ),
     [SelectTableStoreNames.CONNECTOR]: createSelectableTableStore(
         SelectTableStoreNames.CONNECTOR

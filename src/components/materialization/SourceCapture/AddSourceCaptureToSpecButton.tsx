@@ -11,7 +11,7 @@ import useSourceCapture from '../useSourceCapture';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return [state.selected];
         }

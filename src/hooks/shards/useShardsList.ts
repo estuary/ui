@@ -1,10 +1,9 @@
 import { useUserStore } from 'context/User/useUserContextStore';
-import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-import { authorizeTask, dataPlaneFetcher_list } from 'utils/dataPlane-utils';
+import { fetchShardList } from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
@@ -19,32 +18,7 @@ const useShardsList = (catalogNames: string[]) => {
         }
 
         const shardPromises = catalogNames.map(async (name) => {
-            const { reactorAddress, reactorToken } = await authorizeTask(
-                session.access_token,
-                name
-            );
-            const reactorURL = new URL(reactorAddress);
-
-            // Pass the shard client to the respective function directly.
-            const shardClient = new ShardClient(reactorURL, reactorToken);
-            const taskSelector = new ShardSelector().task(name);
-
-            const dataPlaneListResponse = await dataPlaneFetcher_list(
-                shardClient,
-                taskSelector,
-                'ShardsList'
-            );
-
-            if (!Array.isArray(dataPlaneListResponse)) {
-                return Promise.reject(dataPlaneListResponse);
-            }
-
-            return {
-                shards:
-                    dataPlaneListResponse.length > 0
-                        ? dataPlaneListResponse
-                        : [],
-            };
+            return fetchShardList(name, session);
         });
 
         const shardResponses = await Promise.all(shardPromises);

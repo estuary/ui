@@ -1,13 +1,20 @@
-import { Autocomplete, Grid, Skeleton, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    Grid,
+    Skeleton,
+    TextField,
+    Typography,
+} from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
 import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
-import AlertBox from 'components/shared/AlertBox';
+import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
+import NoMaterializationsFound from './NoMaterializationsFound';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;
@@ -22,13 +29,15 @@ function Selector({
 
     const [inputValue, setInputValue] = useState('');
 
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+
     const [updateStep, updateContext] = usePreSavePromptStore((state) => [
         state.updateStep,
         state.updateContext,
     ]);
 
     const backfillTarget = usePreSavePromptStore((state) => {
-        state.context.backfillTarget;
+        return state.context.backfillTarget;
     });
 
     useEffect(() => {
@@ -42,44 +51,41 @@ function Selector({
     }
 
     if (keys.length === 0) {
-        return (
-            <AlertBox
-                severity="info"
-                short
-                title={intl.formatMessage({
-                    id: 'resetDataFlow.materializations.empty.header',
-                })}
-            >
-                {intl.formatMessage({
-                    id: 'resetDataFlow.materializations.empty.message',
-                })}
-            </AlertBox>
-        );
+        return <NoMaterializationsFound />;
     }
 
     return (
         <Grid item xs={12}>
+            <Typography>
+                {intl.formatMessage(
+                    {
+                        id: 'resetDataFlow.materializations.header',
+                    },
+                    {
+                        captureName: draftSpecs[0].catalog_name,
+                    }
+                )}
+            </Typography>
+
             <Autocomplete
                 {...autoCompleteDefaults_Virtual}
                 disabled={disabled}
                 getOptionLabel={getValue}
                 inputValue={inputValue}
+                options={keys}
+                value={backfillTarget ?? null}
                 isOptionEqualToValue={(option, optionValue) => {
                     return option.catalog_name === optionValue.catalog_name;
                 }}
-                options={keys}
-                value={backfillTarget}
                 onChange={(_event, newValue: LiveSpecsExt_Related | null) => {
                     const newBackfillTarget = newValue ? newValue : null;
 
-                    console.log('newBackfillTarget', newBackfillTarget);
+                    updateContext({
+                        backfillTarget: newBackfillTarget,
+                    });
 
                     updateStep(stepIndex, {
                         valid: Boolean(newBackfillTarget),
-                    });
-
-                    updateContext({
-                        backfillTarget: newBackfillTarget,
                     });
                 }}
                 onInputChange={(_event, newInputValue) => {

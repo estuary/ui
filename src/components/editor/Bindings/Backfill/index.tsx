@@ -199,11 +199,10 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 ) : null}
             </Stack>
 
-            {/*TODO (data flow reset)
-            {bindingIndex === -1 && workflow === 'capture_edit' ? (
+            {/*TODO (data flow reset)*/}
+            {/*            {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
-            ) : null}
-            */}
+            ) : null}*/}
         </Box>
     );
 }

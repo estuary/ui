@@ -10,18 +10,18 @@ import { useMount } from 'react-use';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
-function Publish() {
+function PublishStepDataFlowReset() {
     const { jobStatusPoller } = useJobStatusPoller();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, dataFlowResetDraftId, updateContext, initUUID] =
+    const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
         usePreSavePromptStore((state) => [
             state.updateStep,
-            state.context.dataFlowResetDraftId,
             state.updateContext,
             state.initUUID,
+            state.context.dataFlowResetDraftId,
         ]);
 
     // TODO (data flow reset) need to plumb this through correctly
@@ -53,7 +53,7 @@ function Publish() {
                 }
 
                 updateContext({
-                    initialPubId: publishResponse.data[0].id,
+                    dataFlowResetPudId: publishResponse.data[0].id,
                 });
 
                 jobStatusPoller(
@@ -88,4 +88,4 @@ function Publish() {
     return <></>;
 }
 
-export default Publish;
+export default PublishStepDataFlowReset;

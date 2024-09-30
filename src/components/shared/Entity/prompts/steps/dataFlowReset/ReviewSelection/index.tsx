@@ -1,11 +1,15 @@
-import { Stack, Typography } from '@mui/material';
+import { Button, Collapse, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import DiffViewer from '../../preSave/ChangeReview/DiffViewer';
 import ReviewTable from './ReviewTable';
 
 function ReviewSelection() {
     const intl = useIntl();
+
+    const [showDiff, setShowDiff] = useState(false);
 
     return (
         <Stack spacing={2}>
@@ -19,13 +23,25 @@ function ReviewSelection() {
                 <MessageWithLink messageID="dataFlowReset.reviewSelection.warning.message" />
             </AlertBox>
 
-            <Typography>
+            <Button onClick={() => setShowDiff(!showDiff)}>
                 {intl.formatMessage({
-                    id: 'dataFlowReset.reviewSelection.instructions',
+                    id: showDiff ? 'cta.hideDiff' : 'cta.showDiff',
                 })}
-            </Typography>
+            </Button>
 
-            <ReviewTable />
+            <Collapse in={showDiff} unmountOnExit>
+                <DiffViewer />
+            </Collapse>
+
+            <Collapse in={!showDiff}>
+                <Typography>
+                    {intl.formatMessage({
+                        id: 'dataFlowReset.reviewSelection.instructions',
+                    })}
+                </Typography>
+
+                <ReviewTable />
+            </Collapse>
         </Stack>
     );
 }

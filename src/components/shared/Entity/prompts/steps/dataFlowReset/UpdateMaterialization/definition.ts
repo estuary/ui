@@ -2,9 +2,9 @@ import { defaultStepState } from '../../../store/shared';
 import { PromptStep } from '../../../types';
 import UpdateMaterialization from '.';
 
-// interface UpdateMaterializationStepContext {
-//     backfilledDraftId: string | null;
-// }
+export interface UpdateMaterializationStepContext {
+    backfilledDraftId: string | null;
+}
 
 export const UpdateMaterializationStep: PromptStep = {
     StepComponent: UpdateMaterialization,
@@ -12,4 +12,5 @@ export const UpdateMaterializationStep: PromptStep = {
     state: {
         ...defaultStepState,
     },
+    // messageIds: defaultStepMessageIds,
 };
