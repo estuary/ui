@@ -1,18 +1,12 @@
 import { extend_read_bundle, infer } from '@estuary/flow-web';
-import {
-    createDraftSpec,
-    getDraftSpecsByCatalogName,
-    modifyDraftSpec,
-} from 'api/draftSpecs';
+import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { fetchInferredSchema } from 'api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import { CollectionData } from 'components/editor/Bindings/types';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
-import { Dispatch, SetStateAction } from 'react';
 import { logRocketEvent } from 'services/shared';
-import { CallSupabaseResponse } from 'services/supabase';
 import { BindingsEditorStoreNames } from 'stores/names';
 import {
     InferSchemaPropertyForRender,
@@ -22,37 +16,8 @@ import {
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
-
-const processDraftSpecResponse = (
-    draftSpecResponse: CallSupabaseResponse<any>,
-    setOpen: Dispatch<SetStateAction<boolean>>,
-    get: StoreApi<BindingsEditorState>['getState']
-) => {
-    const {
-        inferredSchemaApplicationErrored,
-        setCollectionData,
-        setInferredSchemaApplicationErrored,
-    } = get();
-
-    if (draftSpecResponse.error) {
-        setInferredSchemaApplicationErrored(true);
-    } else if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
-        if (inferredSchemaApplicationErrored) {
-            setInferredSchemaApplicationErrored(false);
-        }
-
-        setCollectionData({
-            spec: draftSpecResponse.data[0].spec,
-            belongsToDraft: true,
-        });
-
-        setOpen(false);
-    } else {
-        setInferredSchemaApplicationErrored(true);
-    }
-};
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 
 const evaluateCollectionData = async (
     draftId: string | null,
@@ -151,11 +116,6 @@ const getInitialMiscData = (): Pick<
     | 'collectionData'
     | 'collectionInitializationAlert'
     | 'collectionInitializationDone'
-    | 'documentsRead'
-    | 'inferredSchemaApplicationErrored'
-    | 'inferredSpec'
-    | 'loadingInferredSchema'
-    | 'schemaInferenceDisabled'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
     | 'schemaUpdating'
@@ -171,11 +131,6 @@ const getInitialMiscData = (): Pick<
     collectionData: null,
     collectionInitializationAlert: null,
     collectionInitializationDone: false,
-    documentsRead: null,
-    inferredSchemaApplicationErrored: false,
-    inferredSpec: null,
-    loadingInferredSchema: false,
-    schemaInferenceDisabled: false,
     schemaUpdateErrored: false,
     schemaUpdated: true,
     schemaUpdating: false,
@@ -248,113 +203,6 @@ const getInitialState = (
             false,
             'Incompatible Collections List Set'
         );
-    },
-
-    setSchemaInferenceDisabled: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.schemaInferenceDisabled = value;
-            }),
-            false,
-            'Schema Inference Disabled Set'
-        );
-    },
-
-    setLoadingInferredSchema: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.loadingInferredSchema = value;
-            }),
-            false,
-            'Loading Inferred Schema Set'
-        );
-    },
-
-    setInferredSpec: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.inferredSpec = value;
-            }),
-            false,
-            'Inferred Schema Set'
-        );
-    },
-
-    setDocumentsRead: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.documentsRead = value;
-            }),
-            false,
-            'Documents Read Set'
-        );
-    },
-
-    setInferredSchemaApplicationErrored: (value) => {
-        set(
-            produce((state: BindingsEditorState) => {
-                state.inferredSchemaApplicationErrored = value;
-            }),
-            false,
-            'Inferred Schema Application Errored Set'
-        );
-    },
-
-    applyInferredSchema: async (
-        currentCollection,
-        persistedDraftId,
-        setOpen
-    ) => {
-        const {
-            collectionData,
-            inferredSpec,
-            setInferredSchemaApplicationErrored,
-            setLoadingInferredSchema,
-        } = get();
-
-        if (
-            currentCollection &&
-            persistedDraftId &&
-            inferredSpec &&
-            collectionData
-        ) {
-            setInferredSchemaApplicationErrored(false);
-            setLoadingInferredSchema(true);
-
-            if (collectionData.belongsToDraft) {
-                const draftSpecResponse = await modifyDraftSpec(inferredSpec, {
-                    draft_id: persistedDraftId,
-                    catalog_name: currentCollection,
-                });
-
-                processDraftSpecResponse(draftSpecResponse, setOpen, get);
-            } else {
-                const liveSpecsResponse = await getLiveSpecsByCatalogName(
-                    currentCollection,
-                    'collection'
-                );
-
-                if (liveSpecsResponse.error) {
-                    setInferredSchemaApplicationErrored(true);
-                } else if (liveSpecsResponse.data) {
-                    const { last_pub_id } = liveSpecsResponse.data[0];
-
-                    const draftSpecResponse = await createDraftSpec(
-                        persistedDraftId,
-                        currentCollection,
-                        inferredSpec,
-                        'collection',
-                        last_pub_id
-                    );
-
-                    processDraftSpecResponse(draftSpecResponse, setOpen, get);
-                }
-            }
-
-            setLoadingInferredSchema(false);
-        } else {
-            setInferredSchemaApplicationErrored(true);
-        }
     },
 
     setSchemaUpdateErrored: (value) => {

@@ -20,55 +20,6 @@ export const useBindingsEditorStore_setCollectionInitializationAlert = () => {
     );
 };
 
-export const useBindingsEditorStore_schemaInferenceDisabled = () => {
-    return useBindingsEditorStore((state) => state.schemaInferenceDisabled);
-};
-
-export const useBindingsEditorStore_setSchemaInferenceDisabled = () => {
-    return useBindingsEditorStore((state) => state.setSchemaInferenceDisabled);
-};
-
-export const useBindingsEditorStore_inferredSpec = () => {
-    return useBindingsEditorStore((state) => state.inferredSpec);
-};
-
-export const useBindingsEditorStore_setInferredSpec = () => {
-    return useBindingsEditorStore((state) => state.setInferredSpec);
-};
-
-export const useBindingsEditorStore_documentsRead = () => {
-    return useBindingsEditorStore((state) => state.documentsRead);
-};
-
-export const useBindingsEditorStore_setDocumentsRead = () => {
-    return useBindingsEditorStore((state) => state.setDocumentsRead);
-};
-
-export const useBindingsEditorStore_loadingInferredSchema = () => {
-    return useBindingsEditorStore((state) => state.loadingInferredSchema);
-};
-
-export const useBindingsEditorStore_setLoadingInferredSchema = () => {
-    return useBindingsEditorStore((state) => state.setLoadingInferredSchema);
-};
-
-export const useBindingsEditorStore_inferredSchemaApplicationErrored = () => {
-    return useBindingsEditorStore(
-        (state) => state.inferredSchemaApplicationErrored
-    );
-};
-
-export const useBindingsEditorStore_setInferredSchemaApplicationErrored =
-    () => {
-        return useBindingsEditorStore(
-            (state) => state.setInferredSchemaApplicationErrored
-        );
-    };
-
-export const useBindingsEditorStore_applyInferredSchema = () => {
-    return useBindingsEditorStore((state) => state.applyInferredSchema);
-};
-
 export const useBindingsEditorStore_updateSchema = () => {
     return useBindingsEditorStore((state) => state.updateSchema);
 };
