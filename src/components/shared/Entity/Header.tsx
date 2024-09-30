@@ -1,7 +1,6 @@
 import { Box, Fade, Stack, SxProps, Theme, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import LinearProgressTimed from 'components/progress/LinearProgressTimed';
-import { ReactNode } from 'react';
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
@@ -9,21 +8,9 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import EntitySaveButton from './Actions/SaveButton';
 import EntityTestButton from './Actions/TestButton';
-import { EntitySaveButtonProps, EntityTestButtonProps } from './Actions/types';
 import EntityViewDetails from './Actions/ViewDetails';
 import HeaderLogs from './HeaderLogs';
-
-interface Props {
-    GenerateButton: ReactNode;
-    primaryButtonProps: EntitySaveButtonProps | any;
-    secondaryButtonProps: EntityTestButtonProps | any;
-    PrimaryButtonComponent?: any;
-    SecondaryButtonComponent?: any;
-    hideLogs?: boolean;
-    waitTimes?: {
-        generate?: number;
-    };
-}
+import { EntityToolbarProps } from './types';
 
 export const buttonSx: SxProps<Theme> = { ml: 1 };
 
@@ -35,7 +22,7 @@ function EntityToolbar({
     secondaryButtonProps,
     hideLogs,
     waitTimes,
-}: Props) {
+}: EntityToolbarProps) {
     const generateWaitTime = waitTimes?.generate;
 
     // Editor Store
