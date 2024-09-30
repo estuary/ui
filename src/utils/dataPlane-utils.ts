@@ -7,6 +7,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
+import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
@@ -138,6 +139,86 @@ export const getJournals = async (
         { data: { selector } },
         brokerToken
     );
+
+export const DATA_PLANE_PREFIX = 'ops/dp/';
+export const PUBLIC_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}public/`;
+
+export const getDataPlaneScope = (
+    dataPlaneName: string
+): DataPlaneOption['scope'] => {
+    return dataPlaneName.startsWith(PUBLIC_DATA_PLANE_PREFIX)
+        ? 'public'
+        : 'private';
+};
+
+const splitTruncatedDataPlaneName = (
+    dataPlaneName: string,
+    basePrefix: string
+) => {
+    const truncatedName = dataPlaneName.substring(basePrefix.length);
+
+    const slashIndex = truncatedName.lastIndexOf('/');
+
+    const prefix =
+        slashIndex === -1 ? '' : truncatedName.substring(0, slashIndex + 1);
+
+    const suffix =
+        slashIndex === -1
+            ? truncatedName
+            : truncatedName.substring(slashIndex + 1);
+
+    return [prefix, suffix];
+};
+
+// TODO (data-planes): Consider using a regex to parse the data plane suffix.
+const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
+    const provider = suffix.substring(0, firstHyphenIndex);
+
+    const lastHyphenIndex = suffix.lastIndexOf('-');
+
+    const regionOnly =
+        lastHyphenIndex === -1 || lastHyphenIndex === firstHyphenIndex;
+
+    const region = regionOnly
+        ? suffix.substring(firstHyphenIndex + 1)
+        : suffix.substring(firstHyphenIndex + 1, lastHyphenIndex);
+
+    const cluster = regionOnly ? '' : suffix.substring(lastHyphenIndex + 1);
+
+    return [provider, region, cluster];
+};
+
+export const parseDataPlaneName = (
+    dataPlaneName: string,
+    scope: DataPlaneOption['scope']
+): DataPlaneName => {
+    let cluster = '';
+    let prefix = '';
+    let provider = '';
+    let region = '';
+
+    const basePrefix = `${DATA_PLANE_PREFIX}${scope}/`;
+
+    if (dataPlaneName.startsWith(basePrefix)) {
+        let suffix = '';
+
+        [prefix, suffix] = splitTruncatedDataPlaneName(
+            dataPlaneName,
+            basePrefix
+        );
+
+        const firstHyphenIndex = suffix.indexOf('-');
+
+        if (firstHyphenIndex > -1) {
+            [provider, region, cluster] = splitDataPlaneSuffix(
+                suffix,
+                firstHyphenIndex
+            );
+        }
+    }
+
+    return { cluster, prefix, provider, region, whole: dataPlaneName };
+};
 
 // We increment the read window by this many bytes every time we get back
 // fewer than the desired number of rows.
