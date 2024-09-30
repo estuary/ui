@@ -7,9 +7,12 @@ import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
-import { getDataPlaneScope, parseDataPlaneName } from 'utils/dataPlane-utils';
+import {
+    formatDataPlaneName,
+    getDataPlaneScope,
+    parseDataPlaneName,
+} from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
-import { formatDataPlaneName } from 'utils/workflow-utils';
 
 interface Props {
     entityName: string;

@@ -7,8 +7,8 @@ import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
+import { formatDataPlaneName } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
-import { formatDataPlaneName } from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 interface OneOfElement {
