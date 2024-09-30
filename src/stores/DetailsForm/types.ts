@@ -14,6 +14,7 @@ export interface DataPlaneName {
 export interface DataPlaneOption {
     dataPlaneName: DataPlaneName;
     id: string;
+    reactorAddress: string;
     scope: 'public' | 'private';
 }
 

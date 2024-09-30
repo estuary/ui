@@ -10,11 +10,7 @@ import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
 import LogDialog from './LogDialog';
 import LogDialogActions from './LogDialogActions';
 
-interface Props {
-    taskNames?: string[];
-}
-
-function HeaderLogs({ taskNames }: Props) {
+function HeaderLogs() {
     const { closeLogs } = useEntityWorkflowHelpers();
 
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -39,9 +35,7 @@ function HeaderLogs({ taskNames }: Props) {
                     }.waitMessage`}
                 />
             }
-            actionComponent={
-                <LogDialogActions close={closeLogs} taskNames={taskNames} />
-            }
+            actionComponent={<LogDialogActions close={closeLogs} />}
         />
     );
 }

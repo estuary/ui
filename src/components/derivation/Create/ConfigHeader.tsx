@@ -4,20 +4,13 @@ import InitializeDraftButton from 'components/transformation/create/InitializeDr
 import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo } from 'react';
 import { CustomEvents } from 'services/types';
-import {
-    useTransformationCreate_catalogName,
-    useTransformationCreate_language,
-} from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_language } from 'stores/TransformationCreate/hooks';
 
 import { useStore } from 'zustand';
+import { ConfigHeaderProps } from './types';
 
-interface Props {
-    entityNameError: string | null;
-}
-
-function ConfigHeader({ entityNameError }: Props) {
+function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
     const language = useTransformationCreate_language();
-    const catalogName = useTransformationCreate_catalogName();
 
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -37,9 +30,6 @@ function ConfigHeader({ entityNameError }: Props) {
     return (
         <EntityToolbar
             hideLogs
-            taskNames={
-                typeof catalogName === 'string' ? [catalogName] : undefined
-            }
             GenerateButton={
                 language === 'sql' ? (
                     <InitializeDraftButton

@@ -9,6 +9,7 @@ import {
 export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
+    reactor_address: string;
 }
 
 const getDataPlaneOptions = async () => {
@@ -16,7 +17,7 @@ const getDataPlaneOptions = async () => {
         () =>
             supabaseClient
                 .from(TABLES.DATA_PLANES)
-                .select('data_plane_name,id')
+                .select('data_plane_name,id,reactor_address')
                 .order('data_plane_name'),
         'getDataPlaneOptions'
     ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);

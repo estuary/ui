@@ -10,6 +10,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { Endpoint } from 'stores/ShardDetail/types';
 
 interface Props {
+    reactorAddress: string | undefined;
     taskName: string;
 }
 
@@ -89,12 +90,14 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
 //  didn't have a specific design language. I think now that the details page
 //  exists and has other lists we should work on getting this redesigned to
 //  make the experience better and consistent.
-export function TaskEndpoints({ taskName }: Props) {
+export function TaskEndpoints({ reactorAddress, taskName }: Props) {
     const entityType = useEntityType();
 
-    const { endpoints, gatewayHostname } = useShardEndpoints(taskName, [
-        entityType,
-    ]);
+    const { endpoints, gatewayHostname } = useShardEndpoints(
+        taskName,
+        [entityType],
+        reactorAddress
+    );
 
     return endpoints.length > 0 ? (
         <CardWrapper
@@ -136,17 +139,19 @@ export function TaskEndpoints({ taskName }: Props) {
 
 // Displays a short message, and possibly a link, if the task exposes any endpoints.
 // The intent is to keep it short so it can fit into a small space, so only a single endpoint
-// will be rendered. If the task exposes multiple endpionts, then it just shows a message
+// will be rendered. If the task exposes multiple endpoints, then it just shows a message
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
-export function TaskEndpoint({ taskName }: Props) {
+export function TaskEndpoint({ reactorAddress, taskName }: Props) {
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     useShardHydration([taskName]);
 
     const entityType = useEntityType();
-    const { endpoints, gatewayHostname } = useShardEndpoints(taskName, [
-        entityType,
-    ]);
+    const { endpoints, gatewayHostname } = useShardEndpoints(
+        taskName,
+        [entityType],
+        reactorAddress
+    );
 
     // Only one endpoint can be rendered due to space limitations, so we
     // generally expect that the task only has one. If multiple endpoints exist

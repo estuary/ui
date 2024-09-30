@@ -14,7 +14,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { CustomEvents } from 'services/types';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
 
@@ -45,14 +45,6 @@ function MaterializationEdit() {
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
-    const taskNames = useMemo(
-        () =>
-            draftSpecsMetadata.draftSpecs
-                .filter((spec) => spec.spec_type === 'materialization')
-                .map((spec) => spec.catalog_name),
-        [draftSpecsMetadata.draftSpecs]
-    );
-
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
@@ -63,7 +55,6 @@ function MaterializationEdit() {
                     draftSpecMetadata={draftSpecsMetadata}
                     toolbar={
                         <EntityToolbar
-                            taskNames={taskNames}
                             GenerateButton={
                                 <MaterializeGenerateButton
                                     disabled={!hasConnectors}

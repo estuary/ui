@@ -1,25 +1,29 @@
-import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
 import { useMemo } from 'react';
+import { logRocketConsole } from 'services/shared';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { hasLength } from 'utils/misc-utils';
 
 export const useShardEndpoints = (
     taskName: string,
-    taskTypes: ShardEntityTypes[]
+    taskTypes: ShardEntityTypes[],
+    reactorAddress: string | undefined
 ) => {
     const dictionaryVal = useShardDetail_readDictionary(taskName, taskTypes);
 
-    const gateway = useScopedGatewayAuthToken(taskName);
     const gatewayHostname = useMemo(() => {
-        if (gateway.data?.gateway_url) {
-            // Even though `gateway_url` is already a `URL` object, the
-            // `host` property returns `null` for some $jsReason
-            const url = new URL(gateway.data.gateway_url.toString());
-            return url.host;
+        if (typeof reactorAddress === 'string' && hasLength(reactorAddress)) {
+            try {
+                const url = new URL(reactorAddress);
+
+                return url.host;
+            } catch (error: any) {
+                logRocketConsole('ShardEndpoint : error', { error });
+            }
         }
 
         return null;
-    }, [gateway.data?.gateway_url]);
+    }, [reactorAddress]);
 
     const endpoints = useMemo(() => {
         const response: any[] = [];
