@@ -58,7 +58,7 @@ function Message({ error, linkOptions }: Props) {
     }
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             <Instructions message={message} linkOptions={linkOptions} />
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>

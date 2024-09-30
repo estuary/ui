@@ -8,7 +8,7 @@ function OauthWindowOpenerMissing() {
     return (
         <ErrorDialog
             body={
-                <Stack>
+                <Stack spacing={2}>
                     <Typography>
                         <FormattedMessage id="oauth.windowOpener.error.message1" />
                     </Typography>
