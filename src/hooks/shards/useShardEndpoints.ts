@@ -17,7 +17,7 @@ export const useShardEndpoints = (
                 const url = new URL(reactorAddress);
 
                 return url.host;
-            } catch (error) {
+            } catch (error: any) {
                 logRocketConsole('ShardEndpoint : error', { error });
             }
         }
