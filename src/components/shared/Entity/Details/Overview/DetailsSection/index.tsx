@@ -1,4 +1,5 @@
-import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
+import { CircularProgress, Skeleton, Stack } from '@mui/material';
+import ConnectorName from 'components/connectors/ConnectorName';
 import CardWrapper from 'components/shared/CardWrapper';
 import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
@@ -108,7 +109,13 @@ function DetailsSection({ latestLiveSpec }: Props) {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography>{latestLiveSpec.connectorName}</Typography>
+                        <ConnectorName
+                            iconPath={latestLiveSpec.connector_logo_url}
+                            iconSize={20}
+                            marginRight={1}
+                            title={latestLiveSpec.connectorName}
+                        />
+
                         {latestLiveSpec.connector_tag_documentation_url ? (
                             <ExternalLink
                                 link={

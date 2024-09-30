@@ -56,6 +56,7 @@ export interface LiveSpecsQuery_details extends LiveSpecsQuery {
     };
     'writes_to': string[] | null;
     'created_at': string;
+    'connector_logo_url': string;
     'connectorName:connector_title->>en-US::text': string;
     'connector_tag_documentation_url': string;
     'reactor_address': string;
@@ -69,6 +70,7 @@ const detailsQuery = queryColumns
         'writes_to',
         'updated_at',
         'created_at',
+        'connector_logo_url:connector_logo_url->>en-US::text',
         'connectorName:connector_title->>en-US::text',
         'connector_tag_documentation_url',
         'reactor_address',
