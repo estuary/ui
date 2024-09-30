@@ -4,6 +4,7 @@ import { TaskEndpoint } from 'components/shared/TaskEndpoints';
 import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -24,8 +25,9 @@ function LogDialogActions({
     materialize,
 }: Props) {
     const formStatus = useFormStateStore_status();
-
-    // TODO (connector-endpoints): Pull the reactor address from the details form state.
+    const reactorAddress = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.reactorAddress
+    );
 
     // Only show endpoints after a completed publication, since publishing can potentially
     // change the endpoints.
@@ -37,7 +39,7 @@ function LogDialogActions({
                     ? taskNames.map((task) => (
                           <TaskEndpoint
                               key={task}
-                              reactorAddress={undefined}
+                              reactorAddress={reactorAddress}
                               taskName={task}
                           />
                       ))

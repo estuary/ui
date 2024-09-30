@@ -139,7 +139,7 @@ export function TaskEndpoints({ reactorAddress, taskName }: Props) {
 
 // Displays a short message, and possibly a link, if the task exposes any endpoints.
 // The intent is to keep it short so it can fit into a small space, so only a single endpoint
-// will be rendered. If the task exposes multiple endpionts, then it just shows a message
+// will be rendered. If the task exposes multiple endpoints, then it just shows a message
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ reactorAddress, taskName }: Props) {

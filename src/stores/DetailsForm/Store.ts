@@ -336,7 +336,7 @@ export const getInitialState = (
                     dataPlaneResponse.data.length > 0
                 ) {
                     dataPlaneOptions = dataPlaneResponse.data.map(
-                        ({ data_plane_name, id }) => {
+                        ({ data_plane_name, id, reactor_address }) => {
                             const scope = getDataPlaneScope(data_plane_name);
 
                             const dataPlaneName = parseDataPlaneName(
@@ -344,7 +344,12 @@ export const getInitialState = (
                                 scope
                             );
 
-                            return { dataPlaneName, id, scope };
+                            return {
+                                dataPlaneName,
+                                id,
+                                reactorAddress: reactor_address,
+                                scope,
+                            };
                         }
                     );
 
