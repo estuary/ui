@@ -2,15 +2,12 @@ import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import AlertBox from '../AlertBox';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
@@ -24,9 +21,9 @@ function CatalogEditor({ messageId }: Props) {
     const formActive = useFormStateStore_isActive();
 
     // TODO (data flow reset)
-    const intl = useIntl();
-    const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
-    const needsBackfilled = useBinding_backfilledBindings_count();
+    // const intl = useIntl();
+    // const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
+    // const needsBackfilled = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
         return (
@@ -45,7 +42,7 @@ function CatalogEditor({ messageId }: Props) {
                     </Typography>
 
                     {/*TODO (data flow reset) - also make sure editor is disabled*/}
-                    {backfillDataFlow && needsBackfilled ? (
+                    {/*                    {backfillDataFlow && needsBackfilled ? (
                         <AlertBox
                             fitWidth
                             short
@@ -58,13 +55,14 @@ function CatalogEditor({ messageId }: Props) {
                                 id: 'dataFlowReset.editor.warning.message',
                             })}
                         </AlertBox>
-                    ) : null}
+                    ) : null}*/}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
                             disabled={Boolean(
-                                formActive ||
-                                    (backfillDataFlow && needsBackfilled)
+                                formActive
+                                // TODO (data flow reset)
+                                // || (backfillDataFlow && needsBackfilled)
                             )}
                             monitorCurrentCatalog
                         />
