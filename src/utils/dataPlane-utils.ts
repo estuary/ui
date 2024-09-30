@@ -224,7 +224,11 @@ export const parseDataPlaneName = (
 export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     const { cluster, provider, region, whole } = dataPlaneName;
 
-    return hasLength(provider) ? `${provider}: ${region} ${cluster}` : whole;
+    const formattedName = hasLength(provider)
+        ? `${provider}: ${region} ${cluster}`
+        : whole;
+
+    return formattedName.trim();
 };
 
 // We increment the read window by this many bytes every time we get back
