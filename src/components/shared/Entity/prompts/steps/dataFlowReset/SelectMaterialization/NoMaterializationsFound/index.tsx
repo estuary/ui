@@ -7,8 +7,8 @@ import ManualSelection from '../ManualSelection';
 function NoMaterializationsFound() {
     const intl = useIntl();
 
-    const [nextStep] = usePreSavePromptStore((state) => {
-        return [state.nextStep];
+    const [nextStep, updateContext] = usePreSavePromptStore((state) => {
+        return [state.nextStep, state.updateContext];
     });
 
     return (
@@ -47,6 +47,9 @@ function NoMaterializationsFound() {
                             <Button
                                 variant="text"
                                 onClick={() => {
+                                    updateContext({
+                                        backfillTarget: null,
+                                    });
                                     nextStep(true);
                                 }}
                             >
