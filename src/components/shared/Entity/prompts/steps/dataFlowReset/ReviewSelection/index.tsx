@@ -24,7 +24,9 @@ function ReviewSelection() {
             </AlertBox>
 
             <Button onClick={() => setShowDiff(!showDiff)}>
-                {showDiff ? 'Hide Diff' : 'Show Diff'}
+                {intl.formatMessage({
+                    id: showDiff ? 'cta.hideDiff' : 'cta.showDiff',
+                })}
             </Button>
 
             <Collapse in={showDiff} unmountOnExit>
