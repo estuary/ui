@@ -1,10 +1,10 @@
 import { Stack } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
 import HourlyRangeFilter from 'components/filters/HourRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import StatTypeSelector from 'components/graphs/DataByHourGraph/StatTypeSelector';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
+import CardWrapper from 'components/shared/CardWrapper';
 import Error from 'components/shared/Error';
 import useDetailsStats from 'hooks/useDetailsStats';
 import { FormattedMessage } from 'react-intl';

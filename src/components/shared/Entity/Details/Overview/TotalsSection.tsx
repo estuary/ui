@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getStatsForDetails } from 'api/stats';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
+import CardWrapper from 'components/shared/CardWrapper';
 import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
 import { useEntityType } from 'context/EntityContext';
 import prettyBytes from 'pretty-bytes';
@@ -13,7 +13,7 @@ interface Props {
     entityName: string;
 }
 
-// TODO (details) want to make some kidn of summary of totals and potentially
+// TODO (details) want to make some kind of summary of totals and potentially
 //  include the cost. Leaving here as this can be used lated when we add this section
 function TotalsSection({ entityName }: Props) {
     const intl = useIntl();

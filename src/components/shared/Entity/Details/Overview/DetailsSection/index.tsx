@@ -1,5 +1,5 @@
 import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
+import CardWrapper from 'components/shared/CardWrapper';
 import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
