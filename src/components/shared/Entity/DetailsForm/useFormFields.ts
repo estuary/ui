@@ -17,6 +17,9 @@ export default function useFormFields(
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
+    const detailsHydrationErrorsExist = useDetailsFormStore(
+        (state) => state.hydrationErrorsExist
+    );
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
@@ -28,12 +31,8 @@ export default function useFormFields(
     const { connectorSchema, connectorUISchema, evaluateConnector } =
         useConnectorField(connectorTags, entityType);
 
-    const {
-        dataPlaneError,
-        dataPlaneSchema,
-        dataPlaneUISchema,
-        evaluateDataPlane,
-    } = useDataPlaneField(entityType);
+    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
+        useDataPlaneField(entityType);
 
     const schema = useMemo(() => {
         const baseProperties = {
@@ -43,7 +42,7 @@ export default function useFormFields(
 
         const baseRequirements = [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE];
 
-        return dataPlaneSchema && !dataPlaneError
+        return dataPlaneSchema && !detailsHydrationErrorsExist
             ? {
                   properties: {
                       ...baseProperties,
@@ -57,7 +56,7 @@ export default function useFormFields(
                   required: baseRequirements,
                   type: 'object',
               };
-    }, [connectorSchema, dataPlaneError, dataPlaneSchema]);
+    }, [connectorSchema, dataPlaneSchema, detailsHydrationErrorsExist]);
 
     const uiSchema = useMemo(() => {
         const catalogNameUISchema = {
@@ -72,7 +71,7 @@ export default function useFormFields(
             elements: [
                 {
                     elements:
-                        dataPlaneUISchema && !dataPlaneError
+                        dataPlaneUISchema && !detailsHydrationErrorsExist
                             ? [
                                   connectorUISchema,
                                   catalogNameUISchema,
@@ -84,7 +83,12 @@ export default function useFormFields(
             ],
             type: 'VerticalLayout',
         };
-    }, [connectorUISchema, dataPlaneError, dataPlaneUISchema, intl]);
+    }, [
+        connectorUISchema,
+        dataPlaneUISchema,
+        detailsHydrationErrorsExist,
+        intl,
+    ]);
 
     const updateDetails = (details: Details) => {
         const selectedDataPlaneId = details.data.dataPlane?.id;
@@ -106,5 +110,5 @@ export default function useFormFields(
         }
     };
 
-    return { dataPlaneError, schema, uiSchema, updateDetails };
+    return { schema, uiSchema, updateDetails };
 }

@@ -1,12 +1,16 @@
 import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneById } from 'api/dataPlanes';
+import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty, isEqual } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { Details, DetailsFormState } from 'stores/DetailsForm/types';
+import {
+    DataPlaneOption,
+    Details,
+    DetailsFormState,
+} from 'stores/DetailsForm/types';
 import {
     fetchErrors,
     filterErrors,
@@ -18,17 +22,21 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import {
+    getDataPlaneScope,
+    parseDataPlaneName,
+    PUBLIC_DATA_PLANE_PREFIX,
+} from 'utils/dataPlane-utils';
+import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
-    getDataPlaneScope,
-    parseDataPlaneName,
 } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
 
@@ -59,37 +67,37 @@ const getConnectorImage = async (
     return null;
 };
 
-const getDataPlane = async (
-    dataPlaneOption: string | null,
+const getDataPlane = (
+    dataPlaneOptions: DataPlaneOption[] | null,
     dataPlaneId: string | null
-): Promise<Details['data']['dataPlane'] | null> => {
-    if (dataPlaneOption === 'show_option' && dataPlaneId) {
-        const { data, error } = await getDataPlaneById(dataPlaneId);
+): Details['data']['dataPlane'] | null => {
+    if (dataPlaneOptions) {
+        const selectedOption = dataPlaneId
+            ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
+            : undefined;
 
-        if (!error && data && data.length > 0) {
-            const { data_plane_name, id } = data[0];
-
-            const scope = getDataPlaneScope(data_plane_name);
-
-            const { cluster, prefix, provider, region } = parseDataPlaneName(
-                data_plane_name,
-                scope
-            );
-
-            return {
-                dataPlaneName: {
-                    cluster,
-                    prefix,
-                    provider,
-                    region,
-                    whole: data_plane_name,
-                },
-                id,
-                scope,
-            };
+        if (selectedOption) {
+            return selectedOption;
         }
 
-        return null;
+        const defaultOption = dataPlaneOptions.find(
+            ({ dataPlaneName }) =>
+                dataPlaneName.whole ===
+                `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
+        );
+
+        if (dataPlaneId) {
+            logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+                targetDataPlaneId: dataPlaneId,
+                defaultDataPlaneId: defaultOption?.id,
+            });
+        }
+
+        // TODO (data-planes): Narrow the type annotation for Details['data']['dataPlane']
+        //   when the data-plane feature flag is removed. A `null` response from this function
+        //   indicates that the field _should_ appear but was not defaulted properly, resulting
+        //   in a store hydration error.
+        return defaultOption ?? null;
     }
 
     return undefined;
@@ -112,6 +120,7 @@ const initialDetails: Details = {
 const getInitialStateData = (): Pick<
     DetailsFormState,
     | 'connectors'
+    | 'dataPlaneOptions'
     | 'details'
     | 'errorsExist'
     | 'draftedEntityName'
@@ -120,6 +129,8 @@ const getInitialStateData = (): Pick<
     | 'unsupportedConnectorVersion'
 > => ({
     connectors: [],
+
+    dataPlaneOptions: [],
 
     details: initialDetails,
     errorsExist: true,
@@ -261,6 +272,16 @@ export const getInitialState = (
         );
     },
 
+    setDataPlaneOptions: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.dataPlaneOptions = value;
+            }),
+            false,
+            'Data Plane Options Set'
+        );
+    },
+
     setEntityNameChanged: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -286,7 +307,9 @@ export const getInitialState = (
     hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const dataPlaneOption = searchParams.get(GlobalSearchParams.DATA_PLANE);
+        const dataPlaneFeatureFlag = searchParams.get(
+            GlobalSearchParams.DATA_PLANE
+        );
         const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -295,14 +318,48 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         if (connectorId) {
-            const { setHydrationErrorsExist } = get();
+            const {
+                setDataPlaneOptions,
+                setHydrationError,
+                setHydrationErrorsExist,
+            } = get();
+
+            let dataPlaneOptions: DataPlaneOption[] | null =
+                dataPlaneFeatureFlag === 'show_option' ? [] : null;
+
+            if (dataPlaneOptions !== null) {
+                const dataPlaneResponse = await getDataPlaneOptions();
+
+                if (
+                    !dataPlaneResponse.error &&
+                    dataPlaneResponse.data &&
+                    dataPlaneResponse.data.length > 0
+                ) {
+                    dataPlaneOptions = dataPlaneResponse.data.map(
+                        ({ data_plane_name, id }) => {
+                            const scope = getDataPlaneScope(data_plane_name);
+
+                            const dataPlaneName = parseDataPlaneName(
+                                data_plane_name,
+                                scope
+                            );
+
+                            return { dataPlaneName, id, scope };
+                        }
+                    );
+
+                    setDataPlaneOptions(dataPlaneOptions);
+                } else {
+                    setHydrationError(
+                        dataPlaneResponse.error?.message ??
+                            'An error was encountered initializing the details form. If the issue persists, please contact support.'
+                    );
+                }
+            }
 
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(connectorId);
-                const dataPlane = await getDataPlane(
-                    dataPlaneOption,
-                    dataPlaneId
-                );
+                const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (connectorImage && dataPlane !== null) {
                     const {
@@ -344,8 +401,8 @@ export const getInitialState = (
                         connector_image_tag
                     );
 
-                    const dataPlane = await getDataPlane(
-                        dataPlaneOption,
+                    const dataPlane = getDataPlane(
+                        dataPlaneOptions,
                         data_plane_id
                     );
 
