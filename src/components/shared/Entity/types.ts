@@ -1,5 +1,7 @@
+import { ReactNode } from 'react';
 import { DataPlaneOption } from 'stores/DetailsForm/types';
 import { Entity } from 'types';
+import { EntitySaveButtonProps, EntityTestButtonProps } from './Actions/types';
 
 export interface AddCollectionDialogCTAProps {
     entity?: Entity;
@@ -19,6 +21,27 @@ export interface DataPlaneProps {
     dataPlaneName?: DataPlaneOption['dataPlaneName'];
     hideScopeIcon?: DataPlaneIconProps['hideScopeIcon'];
     logoSize?: DataPlaneIconProps['size'];
+}
+
+export interface EntityToolbarProps {
+    GenerateButton: ReactNode;
+    primaryButtonProps: EntitySaveButtonProps | any;
+    secondaryButtonProps: EntityTestButtonProps | any;
+    PrimaryButtonComponent?: any;
+    SecondaryButtonComponent?: any;
+    hideLogs?: boolean;
+    waitTimes?: {
+        generate?: number;
+    };
+}
+
+export interface LogDialogActionsProps {
+    close: any;
+    closeCtaKey?: string;
+    materialize?: {
+        action: () => Promise<void>;
+        title: string;
+    };
 }
 
 export interface TableHydratorProps {

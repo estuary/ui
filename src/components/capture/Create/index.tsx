@@ -13,7 +13,7 @@ import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpe
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'hooks/useDraftSpecs';
 import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
@@ -73,14 +73,6 @@ function CaptureCreate() {
         }
     }, [entityNameChanged]);
 
-    const taskNames = useMemo(
-        () =>
-            draftSpecsMetadata.draftSpecs
-                .filter((spec) => spec.spec_type === 'capture')
-                .map((spec) => spec.catalog_name),
-        [draftSpecsMetadata.draftSpecs]
-    );
-
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
@@ -89,7 +81,6 @@ function CaptureCreate() {
                     draftSpecMetadata={draftSpecsMetadata}
                     toolbar={
                         <EntityToolbar
-                            taskNames={taskNames}
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,
                             }}
