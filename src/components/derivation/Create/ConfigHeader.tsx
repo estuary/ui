@@ -7,12 +7,9 @@ import { CustomEvents } from 'services/types';
 import { useTransformationCreate_language } from 'stores/TransformationCreate/hooks';
 
 import { useStore } from 'zustand';
+import { ConfigHeaderProps } from './types';
 
-interface Props {
-    entityNameError: string | null;
-}
-
-function ConfigHeader({ entityNameError }: Props) {
+function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
     const language = useTransformationCreate_language();
 
     const [selected] = useStore(
