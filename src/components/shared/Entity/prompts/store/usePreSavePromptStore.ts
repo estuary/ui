@@ -8,7 +8,10 @@ import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { PromptStep } from '../types';
-import { DataFlowResetSteps } from '../steps/dataFlowReset/shared';
+import {
+    DataFlowResetSteps,
+    getInitialDataFlowResetContext,
+} from '../steps/dataFlowReset/shared';
 import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
 import { PublishStep } from '../steps/preSave/Publish/definition';
 import { PreSavePromptStore } from './types';
@@ -20,7 +23,7 @@ const getInitialState = (): Pick<
     activeStep: 0,
     initUUID: null,
     steps: [],
-    context: {},
+    context: getInitialDataFlowResetContext(),
 });
 
 export const usePreSavePromptStore = create<PreSavePromptStore>()(
@@ -33,13 +36,14 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                 set(
                     produce((state: PreSavePromptStore) => {
                         const initUUID = crypto.randomUUID();
-                        const newSteps: PromptStep[] = [ChangeReviewStep];
+                        const newSteps: PromptStep[] = [];
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
+                        } else {
+                            newSteps.push(ChangeReviewStep);
+                            newSteps.push(PublishStep);
                         }
-
-                        newSteps.push(PublishStep);
 
                         state.steps = newSteps;
                         state.initUUID = initUUID;
@@ -96,6 +100,11 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             ...state.context,
                             ...settings,
                         };
+
+                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                            contextUpdate: true,
+                            ...settings,
+                        });
                     }),
                     false,
                     'updateContext'
@@ -110,12 +119,19 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     'setActiveStep'
                 ),
 
-            nextStep: () =>
+            nextStep: (force) =>
                 set(
                     produce((state: PreSavePromptStore) => {
+                        // TODO (data flow reset)
+                        // Want to think more about allowing this
+                        if (force) {
+                            state.steps[state.activeStep].state.valid = true;
+                        }
+
                         if (state.steps[state.activeStep].state.valid) {
-                            state.steps[state.activeStep].state.progress =
-                                ProgressStates.SUCCESS;
+                            state.steps[state.activeStep].state.progress = force
+                                ? ProgressStates.SKIPPED
+                                : ProgressStates.SUCCESS;
                             state.activeStep = state.activeStep + 1;
                         }
                     }),

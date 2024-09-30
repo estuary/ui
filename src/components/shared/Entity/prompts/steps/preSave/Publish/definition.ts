@@ -6,4 +6,5 @@ export const PublishStep: PromptStep = {
     StepComponent: Publish,
     stepLabelMessageId: 'preSavePrompt.publish.title',
     state: defaultStepState,
+    // messageIds: defaultStepMessageIds,
 };

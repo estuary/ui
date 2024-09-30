@@ -1,14 +1,6 @@
-import {
-    Box,
-    Button,
-    Theme,
-    Tooltip,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import { codeBackground } from 'context/Theme';
-import { Check, Copy, WarningCircle } from 'iconoir-react';
-import { ReactNode, useState } from 'react';
+import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
+import { codeBackground, getButtonIcon } from 'context/Theme';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -19,22 +11,6 @@ interface Props {
 type TransientButtonState = 'success' | 'error' | undefined;
 
 const borderRadius = 3;
-
-const getButtonIcon = (
-    theme: Theme,
-    buttonState: TransientButtonState
-): ReactNode => {
-    switch (buttonState) {
-        case 'success':
-            return <Check style={{ color: theme.palette.success.main }} />;
-        case 'error':
-            return (
-                <WarningCircle style={{ color: theme.palette.error.main }} />
-            );
-        default:
-            return <Copy style={{ color: theme.palette.primary.main }} />;
-    }
-};
 
 function SingleLineCode({ value, subsequentCommandExists }: Props) {
     const intl = useIntl();

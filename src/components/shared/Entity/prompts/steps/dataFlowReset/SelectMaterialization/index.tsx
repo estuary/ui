@@ -1,13 +1,10 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import Error from 'components/shared/Error';
 import { useLiveSpecsExt_related } from 'hooks/useLiveSpecsExt';
-import { useIntl } from 'react-intl';
 import Selector from './Selector';
 
 function SelectMaterialization() {
-    const intl = useIntl();
-
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     // TODO (data flow backfill)
@@ -17,18 +14,7 @@ function SelectMaterialization() {
     );
 
     return (
-        <Box>
-            <Typography>
-                {intl.formatMessage(
-                    {
-                        id: 'resetDataFlow.materializations.header',
-                    },
-                    {
-                        captureName: draftSpecs[0].catalog_name,
-                    }
-                )}
-            </Typography>
-
+        <Box style={{ maxWidth: 'fit-content' }}>
             {error ? (
                 <Error error={error} condensed />
             ) : (

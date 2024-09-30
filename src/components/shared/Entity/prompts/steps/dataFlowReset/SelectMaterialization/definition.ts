@@ -1,12 +1,13 @@
+import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
 import { defaultStepState } from '../../../store/shared';
 import { PromptStep } from '../../../types';
 import SelectMaterialization from '.';
 
-// interface SelectMaterializationStepContext {
-//     backfillTarget: LiveSpecsExt_Related | null;
-//     noMaterializations: boolean | null;
-//     relatedMaterializations: LiveSpecsExt_Related[] | null;
-// }
+export interface SelectMaterializationStepContext {
+    backfillTarget: LiveSpecsExt_Related | null;
+    noMaterializations: boolean | null;
+    relatedMaterializations: LiveSpecsExt_Related[] | null;
+}
 
 export const SelectMaterializationStep: PromptStep = {
     StepComponent: SelectMaterialization,
@@ -15,4 +16,5 @@ export const SelectMaterializationStep: PromptStep = {
         ...defaultStepState,
         valid: false,
     },
+    // messageIds: defaultStepMessageIds,
 };

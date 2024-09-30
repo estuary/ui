@@ -14,7 +14,7 @@ import { useStore } from 'zustand';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [selected] = useStore(
-        invariableStores['Collections-Selector-Table'],
+        invariableStores['Entity-Selector-Table'],
         (state) => {
             return [state.selected];
         }
