@@ -11,17 +11,13 @@ import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
+import { LogDialogActionsProps } from './types';
 
-interface Props {
-    close: any;
-    closeCtaKey?: string;
-    materialize?: {
-        action: () => Promise<void>;
-        title: string;
-    };
-}
-
-function LogDialogActions({ close, closeCtaKey, materialize }: Props) {
+function LogDialogActions({
+    close,
+    closeCtaKey,
+    materialize,
+}: LogDialogActionsProps) {
     const entityType = useEntityType();
 
     const formStatus = useFormStateStore_status();
