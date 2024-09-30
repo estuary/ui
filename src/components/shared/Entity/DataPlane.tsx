@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import DataPlaneIcon from 'forms/renderers/DataPlaneSelector/DataPlaneIcon';
+import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
 import { hasLength } from 'utils/misc-utils';
 import { DataPlaneProps } from './types';
 
