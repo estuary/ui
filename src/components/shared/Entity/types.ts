@@ -7,12 +7,6 @@ export interface AddCollectionDialogCTAProps {
     toggle: (show: boolean) => void;
 }
 
-export interface TableHydratorProps {
-    disableQueryParamHack?: boolean;
-    entity?: Entity;
-    selectedCollections: string[];
-}
-
 export interface EntityToolbarProps {
     GenerateButton: ReactNode;
     primaryButtonProps: EntitySaveButtonProps | any;
@@ -23,4 +17,19 @@ export interface EntityToolbarProps {
     waitTimes?: {
         generate?: number;
     };
+}
+
+export interface LogDialogActionsProps {
+    close: any;
+    closeCtaKey?: string;
+    materialize?: {
+        action: () => Promise<void>;
+        title: string;
+    };
+}
+
+export interface TableHydratorProps {
+    disableQueryParamHack?: boolean;
+    entity?: Entity;
+    selectedCollections: string[];
 }
