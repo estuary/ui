@@ -15,14 +15,9 @@ import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import DetailsSection from './DetailsSection';
+import { DetailsOverviewProps } from './types';
 
-// TODO (details page)
-// Temporary - allow to pass in the name
-interface Props {
-    name?: string;
-}
-
-function Overview({ name }: Props) {
+function Overview({ name }: DetailsOverviewProps) {
     const entityType = useEntityType();
     const isCollection = entityType === 'collection';
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
