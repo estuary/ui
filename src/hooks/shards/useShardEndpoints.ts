@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { logRocketConsole } from 'services/shared';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { hasLength } from 'utils/misc-utils';
@@ -12,9 +13,13 @@ export const useShardEndpoints = (
 
     const gatewayHostname = useMemo(() => {
         if (typeof reactorAddress === 'string' && hasLength(reactorAddress)) {
-            const url = new URL(reactorAddress);
+            try {
+                const url = new URL(reactorAddress);
 
-            return url.host;
+                return url.host;
+            } catch (error) {
+                logRocketConsole('ShardEndpoint : error', { error });
+            }
         }
 
         return null;
