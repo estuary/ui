@@ -142,38 +142,6 @@ function useInitializeCollectionDraft() {
                                 'workflows.collectionSelector.error.message.invalidPubId',
                         });
                     }
-
-                    // TODO (optimization): When a diff editor with merge capabilities is available in the UI, present
-                    //   the user with an option to review the "live" collection specification, merge in the desired
-                    //   modifications, and update the expected pub ID of the draft to reflect the latest publication.
-
-                    // if (!lastPubId || expectedPubId === lastPubId) {
-                    //     setCollectionData({
-                    //         spec: draftSpecResponse.data[0].spec,
-                    //         belongsToDraft: true,
-                    //     });
-                    // } else {
-                    //     const updatedDraftSpecResponse = await modifyDraftSpec(
-                    //         draftSpecResponse.data[0].spec,
-                    //         { draft_id: draftId, catalog_name: collectionName }
-                    //     );
-
-                    //     if (
-                    //         updatedDraftSpecResponse.data &&
-                    //         updatedDraftSpecResponse.data.length > 0
-                    //     ) {
-                    //         setCollectionData({
-                    //             spec: updatedDraftSpecResponse.data[0].spec,
-                    //             belongsToDraft: true,
-                    //         });
-
-                    //         setCollectionInitializationAlert({
-                    //             severity: 'warning',
-                    //             messageId:
-                    //                 'workflows.collectionSelector.error.message.invalidPubId',
-                    //         });
-                    //     }
-                    // }
                 } else if (liveSpec) {
                     // The draft of a collection that has been published could not be found.
                     await createCollectionDraftSpec(
