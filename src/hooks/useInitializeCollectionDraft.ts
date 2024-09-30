@@ -9,18 +9,13 @@ import {
     useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
     useBindingsEditorStore_setCollectionInitializationAlert,
-    useBindingsEditorStore_setSchemaInferenceDisabled,
 } from 'components/editor/Bindings/Store/hooks';
-import { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
-import { Annotations } from 'types/jsonforms';
-import { getProperSchemaScope } from 'utils/schema-utils';
 
 const specType = 'collection';
 
@@ -56,9 +51,6 @@ function useInitializeCollectionDraft() {
     const setCollectionInitializationAlert =
         useBindingsEditorStore_setCollectionInitializationAlert();
 
-    const setSchemaInferenceDisabled =
-        useBindingsEditorStore_setSchemaInferenceDisabled();
-
     const resetBindingsEditorState = useBindingsEditorStore_resetState();
 
     // Global Draft Editor Store
@@ -69,24 +61,6 @@ function useInitializeCollectionDraft() {
 
     // Local Draft Editor Store
     const setLocalDraftId = useEditorStore_setId({ localScope: true });
-
-    const updateBindingsEditorState = useCallback(
-        (data: BindingsEditorState['collectionData']): void => {
-            setCollectionData(data);
-
-            if (data && !isEmpty(data.spec)) {
-                const [writeSchemaKey] = getProperSchemaScope(data.spec);
-
-                const inferenceAnnotationValue =
-                    !data.spec[writeSchemaKey][Annotations.inferSchema];
-
-                setSchemaInferenceDisabled(inferenceAnnotationValue);
-            } else {
-                setSchemaInferenceDisabled(true);
-            }
-        },
-        [setCollectionData, setSchemaInferenceDisabled]
-    );
 
     const createCollectionDraftSpec = useCallback(
         async (
@@ -107,14 +81,14 @@ function useInitializeCollectionDraft() {
                 newDraftSpecResponse.data &&
                 newDraftSpecResponse.data.length > 0
             ) {
-                updateBindingsEditorState({
+                setCollectionData({
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
                 });
 
                 setCollectionInitializationDone(true);
             } else {
-                updateBindingsEditorState({
+                setCollectionData({
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
@@ -128,9 +102,9 @@ function useInitializeCollectionDraft() {
             }
         },
         [
+            setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
-            updateBindingsEditorState,
         ]
     );
 
@@ -155,7 +129,7 @@ function useInitializeCollectionDraft() {
                     const expectedPubId =
                         draftSpecResponse.data[0].expect_pub_id;
 
-                    updateBindingsEditorState({
+                    setCollectionData({
                         spec: draftSpecResponse.data[0].spec,
                         belongsToDraft: true,
                     });
@@ -168,38 +142,6 @@ function useInitializeCollectionDraft() {
                                 'workflows.collectionSelector.error.message.invalidPubId',
                         });
                     }
-
-                    // TODO (optimization): When a diff editor with merge capabilities is available in the UI, present
-                    //   the user with an option to review the "live" collection specification, merge in the desired
-                    //   modifications, and update the expected pub ID of the draft to reflect the latest publication.
-
-                    // if (!lastPubId || expectedPubId === lastPubId) {
-                    //     updateBindingsEditorState({
-                    //         spec: draftSpecResponse.data[0].spec,
-                    //         belongsToDraft: true,
-                    //     });
-                    // } else {
-                    //     const updatedDraftSpecResponse = await modifyDraftSpec(
-                    //         draftSpecResponse.data[0].spec,
-                    //         { draft_id: draftId, catalog_name: collectionName }
-                    //     );
-
-                    //     if (
-                    //         updatedDraftSpecResponse.data &&
-                    //         updatedDraftSpecResponse.data.length > 0
-                    //     ) {
-                    //         updateBindingsEditorState({
-                    //             spec: updatedDraftSpecResponse.data[0].spec,
-                    //             belongsToDraft: true,
-                    //         });
-
-                    //         setCollectionInitializationAlert({
-                    //             severity: 'warning',
-                    //             messageId:
-                    //                 'workflows.collectionSelector.error.message.invalidPubId',
-                    //         });
-                    //     }
-                    // }
                 } else if (liveSpec) {
                     // The draft of a collection that has been published could not be found.
                     await createCollectionDraftSpec(
@@ -210,7 +152,7 @@ function useInitializeCollectionDraft() {
                     );
                 } else {
                     // The draft of a collection that has never been published could not be found.
-                    updateBindingsEditorState(undefined);
+                    setCollectionData(undefined);
                 }
 
                 setLocalDraftId(existingDraftId);
@@ -237,12 +179,12 @@ function useInitializeCollectionDraft() {
         },
         [
             createCollectionDraftSpec,
+            setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
             setDraftId,
             setLocalDraftId,
             setPersistedDraftId,
-            updateBindingsEditorState,
         ]
     );
 
