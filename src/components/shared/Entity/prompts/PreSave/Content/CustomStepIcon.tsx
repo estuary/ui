@@ -4,6 +4,8 @@ import { CheckCircle, WarningCircle } from 'iconoir-react';
 const size = 24;
 const pixelSize = `${size}px`;
 
+// TODO (progress icons)
+// We have a few ways of doing this. We should get these all aligned.
 function CustomStepIcon({ active, completed, error }: StepIconProps) {
     const theme = useTheme();
 
