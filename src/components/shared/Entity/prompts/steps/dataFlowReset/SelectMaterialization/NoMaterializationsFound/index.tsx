@@ -29,12 +29,14 @@ function NoMaterializationsFound() {
 
                     <Stack spacing={2}>
                         <Typography>
-                            You can either manually select a materialization you
-                            want to have updated or skip this step.
+                            {intl.formatMessage({
+                                id: 'resetDataFlow.materializations.empty.instructions',
+                            })}
                         </Typography>
                         <Typography>
-                            Skipping this step will only publish your changes to
-                            the Capture and not do a full data flow backfill.
+                            {intl.formatMessage({
+                                id: 'resetDataFlow.materializations.empty.warning',
+                            })}
                         </Typography>
                         <Stack
                             spacing={2}

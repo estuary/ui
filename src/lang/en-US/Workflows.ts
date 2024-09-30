@@ -371,6 +371,8 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
     'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
+    'resetDataFlow.materializations.empty.instructions': `You can either manually select a materialization you want to have updated or skip this step.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
     'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
