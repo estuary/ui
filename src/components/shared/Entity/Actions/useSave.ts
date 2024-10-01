@@ -18,12 +18,10 @@ import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
-    useBinding_backfilledBindings_count,
     useBinding_collections,
     useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
@@ -84,8 +82,6 @@ function useSave(
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
-    const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
-    const needsBackfilled = useBinding_backfilledBindings_count();
 
     const entityType = useEntityType();
 
@@ -94,14 +90,8 @@ function useSave(
     const disabledBindings = useBinding_disabledBindings(entityType);
 
     const runningDataFlowBackfill = useMemo(
-        () =>
-            Boolean(
-                dataFlowResetEnabled &&
-                    !dryRun &&
-                    backfillDataflow &&
-                    needsBackfilled
-            ),
-        [backfillDataflow, dataFlowResetEnabled, dryRun, needsBackfilled]
+        () => Boolean(dataFlowResetEnabled && !dryRun),
+        [dataFlowResetEnabled, dryRun]
     );
 
     const waitForPublishToFinish = useCallback(

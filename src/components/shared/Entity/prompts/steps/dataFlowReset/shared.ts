@@ -1,4 +1,5 @@
 import { DEFAULT_FILTER } from 'services/supabase';
+import { ReviewSelectionStep } from '../preSave/ReviewSelection/definition';
 import {
     PublishStep,
     UpdateMaterializationStepContext,
@@ -8,7 +9,6 @@ import {
     DisableCaptureStepContext,
 } from './DisableCapture/definition';
 import { EnableCaptureStep } from './EnableCapture/definition';
-import { ReviewSelectionStep } from './ReviewSelection/definition';
 import {
     SelectMaterializationStep,
     SelectMaterializationStepContext,

@@ -129,7 +129,7 @@ export const Workflows: Record<string, string> = {
 
     //  PreSave prompts
     'preSavePrompt.dialog.title': `Data Flow Reset`,
-    'preSavePrompt.changeReview.title': `How the spec is changing`,
+    'preSavePrompt.reviewSelection.title': `Review changes`,
     'preSavePrompt.publish.title': `Save and publish`,
     'preSavePrompt.logs.spinner.stopped': `done`,
     'preSavePrompt.logs.spinner.running': `loading...`,
@@ -156,8 +156,10 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
     'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
-    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
     'dataFlowReset.reviewSelection.header': `Change Summary`,
+
+    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
+    'preSavePrompt.reviewSelection.instructions': `The following entities will be updated:`,
 
     'cta.dataFlowReset.hideDiff': `Hide spec changes`,
     'cta.dataFlowReset.showDiff': `See spec changes`,

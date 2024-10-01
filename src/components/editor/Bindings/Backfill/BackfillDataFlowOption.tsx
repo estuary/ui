@@ -6,6 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
+import { useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -16,12 +17,21 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
+    const defaulted = useRef(false);
+
     const [backfillDataflow, setBackfillDataflow] = useBindingStore((state) => [
         state.backfillDataFlow,
         state.setBackfillDataFlow,
     ]);
 
     const backfillCount = useBinding_backfilledBindings_count();
+
+    useEffect(() => {
+        if (!defaulted.current && backfillCount > 0) {
+            defaulted.current = true;
+            setBackfillDataflow(true);
+        }
+    }, [backfillCount, setBackfillDataflow]);
 
     if (backfillCount < 1) {
         return null;

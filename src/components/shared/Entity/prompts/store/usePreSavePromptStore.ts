@@ -12,8 +12,8 @@ import {
     DataFlowResetSteps,
     getInitialDataFlowResetContext,
 } from '../steps/dataFlowReset/shared';
-import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
 import { PublishStep } from '../steps/preSave/Publish/definition';
+import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
 import { PreSavePromptStore } from './types';
 
 const getInitialState = (): Pick<
@@ -41,7 +41,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
                         } else {
-                            newSteps.push(ChangeReviewStep);
+                            newSteps.push(ReviewSelectionStep);
                             newSteps.push(PublishStep);
                         }
 

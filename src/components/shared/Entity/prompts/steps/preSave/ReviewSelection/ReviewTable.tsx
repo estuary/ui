@@ -46,7 +46,10 @@ function ReviewTable() {
                 ),
                 count: 1,
             },
-            {
+        ];
+
+        if (collectionsBeingBackfilled.length > 0) {
+            response.push({
                 entityType: 'collection',
                 cell: (
                     <RelatedCollections
@@ -55,8 +58,8 @@ function ReviewTable() {
                     />
                 ),
                 count: collectionsBeingBackfilled.length,
-            },
-        ];
+            });
+        }
 
         if (materializationName) {
             response.push({

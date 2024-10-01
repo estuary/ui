@@ -2,13 +2,18 @@ import { Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import AlertBox from 'components/shared/AlertBox';
 import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useBindingStore } from 'stores/Binding/Store';
 import ManualSelection from '../ManualSelection';
 
 function NoMaterializationsFound() {
     const intl = useIntl();
 
-    const [nextStep, updateContext] = usePreSavePromptStore((state) => {
-        return [state.nextStep, state.updateContext];
+    const [setBackfillDataflow] = useBindingStore((state) => [
+        state.setBackfillDataFlow,
+    ]);
+
+    const [updateContext] = usePreSavePromptStore((state) => {
+        return [state.updateContext];
     });
 
     return (
@@ -47,10 +52,10 @@ function NoMaterializationsFound() {
                             <Button
                                 variant="text"
                                 onClick={() => {
+                                    setBackfillDataflow(false);
                                     updateContext({
                                         backfillTarget: null,
                                     });
-                                    nextStep(true);
                                 }}
                             >
                                 Skip

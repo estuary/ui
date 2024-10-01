@@ -4,13 +4,16 @@ import AlertBox from 'components/shared/AlertBox';
 import CardWrapper from 'components/shared/CardWrapper';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import DiffViewer from '../../preSave/ChangeReview/DiffViewer';
+import { useBindingStore } from 'stores/Binding/Store';
+import DiffViewer from './DiffViewer';
 import ReviewTable from './ReviewTable';
 
 function ReviewSelection() {
     const intl = useIntl();
 
     const [showDiff, setShowDiff] = useState(false);
+
+    const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
 
     return (
         <Stack spacing={2}>
@@ -39,7 +42,9 @@ function ReviewSelection() {
             <Collapse in={!showDiff}>
                 <CardWrapper
                     message={intl.formatMessage({
-                        id: 'dataFlowReset.reviewSelection.instructions',
+                        id: backfillDataflow
+                            ? 'dataFlowReset.reviewSelection.instructions'
+                            : 'preSavePrompt.reviewSelection.instructions',
                     })}
                 >
                     <ReviewTable />

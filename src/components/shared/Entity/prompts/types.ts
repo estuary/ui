@@ -15,6 +15,9 @@ export interface PromptStepState {
     // Stores what the step is currently doing
     progress: ProgressStates;
 
+    // If true we will display the step as skippable and then each component can handle that
+    skippable: boolean;
+
     // Stores if we have ever tried _once_
     started: boolean;
 

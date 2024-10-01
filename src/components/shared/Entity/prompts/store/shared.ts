@@ -4,6 +4,7 @@ import { PromptStepMessageIds, PromptStepState } from '../types';
 export const defaultStepState: PromptStepState = {
     error: null,
     progress: ProgressStates.IDLE,
+    skippable: false,
     started: false,
     valid: false,
 };
