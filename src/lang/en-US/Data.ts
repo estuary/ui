@@ -25,4 +25,5 @@ export const Data: Record<string, string> = {
     'data.details': `Details`,
     'data.actions': `Actions`,
     'data.active': `Active`,
+    'data.dataPlane': `Data Plane`,
 };

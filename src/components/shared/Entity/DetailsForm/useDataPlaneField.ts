@@ -7,8 +7,8 @@ import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
+import { formatDataPlaneName } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
-import { formatDataPlaneName } from 'utils/workflow-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 interface OneOfElement {
@@ -46,19 +46,7 @@ export default function useDataPlaneField(
 
         if (options.length > 0) {
             options.forEach((option) => {
-                const {
-                    cluster,
-                    provider,
-                    region,
-                    whole: wholeName,
-                } = option.dataPlaneName;
-
-                const title = formatDataPlaneName(
-                    cluster,
-                    provider,
-                    region,
-                    wholeName
-                );
+                const title = formatDataPlaneName(option.dataPlaneName);
 
                 dataPlanesOneOf.push({ const: option, title });
             });

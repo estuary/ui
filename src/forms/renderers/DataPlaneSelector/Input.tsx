@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
-import DataPlaneIcon from './DataPlaneIcon';
+import DataPlaneIcon from '../../../components/shared/Entity/DataPlaneIcon';
 
 interface Props {
     appliedUiSchemaOptions: any;

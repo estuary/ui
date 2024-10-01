@@ -1,17 +1,10 @@
 import { Avatar, Box, PaletteMode, useTheme } from '@mui/material';
+import { DataPlaneIconProps } from 'components/shared/Entity/types';
 import { semiTransparentBackground_oneLayerElevated } from 'context/Theme';
 import { Lock, QuestionMark } from 'iconoir-react';
 import awsLogo from 'images/data-plane-providers/aws.png';
 import awsLogoWhite from 'images/data-plane-providers/aws_logo-white.png';
 import gcpLogo from 'images/data-plane-providers/google_cloud.png';
-import { DataPlaneOption } from 'stores/DetailsForm/types';
-
-interface Props {
-    scope: DataPlaneOption['scope'];
-    hideScopeIcon?: boolean;
-    provider?: string;
-    size?: 20 | 30;
-}
 
 const DEFAULT_AVATAR_SIZE = 20;
 
@@ -35,7 +28,7 @@ export default function DataPlaneIcon({
     provider,
     scope,
     size = DEFAULT_AVATAR_SIZE,
-}: Props) {
+}: DataPlaneIconProps) {
     const theme = useTheme();
 
     const providerIconPath = getProviderIconPath(provider, theme.palette.mode);
