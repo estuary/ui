@@ -6,9 +6,10 @@ interface Props {
     title: string | null;
     iconPath?: string | null;
     iconSize?: number;
+    marginRight?: number;
 }
 
-function ConnectorName({ title, iconPath, iconSize }: Props) {
+function ConnectorName({ title, iconPath, iconSize, marginRight }: Props) {
     const connectorName = useConstant(() => title ?? '');
 
     const connectorIcon = useConstant(() => {
@@ -26,7 +27,7 @@ function ConnectorName({ title, iconPath, iconSize }: Props) {
                 'alignItems': 'center',
                 'justifyContent': 'flex-start',
                 '& > div    ': {
-                    mr: 2,
+                    mr: marginRight ?? 2,
                     flexShrink: 0,
                 },
             }}

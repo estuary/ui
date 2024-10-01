@@ -1,11 +1,18 @@
-import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
+import { CircularProgress, Skeleton, Stack } from '@mui/material';
+import ConnectorName from 'components/connectors/ConnectorName';
+import CardWrapper from 'components/shared/CardWrapper';
+import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
 import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
+import {
+    formatDataPlaneName,
+    getDataPlaneScope,
+    parseDataPlaneName,
+} from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {
@@ -66,6 +73,29 @@ function DetailsSection({ latestLiveSpec }: Props) {
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
 
+        if (hasLength(latestLiveSpec.data_plane_name)) {
+            const dataPlaneScope = getDataPlaneScope(
+                latestLiveSpec.data_plane_name
+            );
+
+            const dataPlaneName = parseDataPlaneName(
+                latestLiveSpec.data_plane_name,
+                dataPlaneScope
+            );
+
+            response.push({
+                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                val: (
+                    <DataPlane
+                        dataPlaneName={dataPlaneName}
+                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
+                        logoSize={20}
+                        scope={dataPlaneScope}
+                    />
+                ),
+            });
+        }
+
         if (latestLiveSpec.connectorName) {
             response.push({
                 title: intl.formatMessage({
@@ -79,7 +109,13 @@ function DetailsSection({ latestLiveSpec }: Props) {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography>{latestLiveSpec.connectorName}</Typography>
+                        <ConnectorName
+                            iconPath={latestLiveSpec.connector_logo_url}
+                            iconSize={20}
+                            marginRight={1}
+                            title={latestLiveSpec.connectorName}
+                        />
+
                         {latestLiveSpec.connector_tag_documentation_url ? (
                             <ExternalLink
                                 link={

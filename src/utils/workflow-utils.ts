@@ -1,4 +1,4 @@
-import { ConnectorTag_Base, ConnectorsQuery_DetailsForm } from 'api/connectors';
+import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
@@ -408,14 +408,3 @@ export function evaluateConnectorVersions(
         b.image_tag.localeCompare(a.image_tag)
     )[0];
 }
-
-export const formatDataPlaneName = (
-    cluster: string,
-    provider: string,
-    region: string,
-    fallbackName: string
-) => {
-    return hasLength(provider)
-        ? `${provider}: ${region} ${cluster}`
-        : fallbackName;
-};
