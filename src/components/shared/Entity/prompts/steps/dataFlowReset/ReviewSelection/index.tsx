@@ -1,6 +1,7 @@
-import { Button, Collapse, Stack, Typography } from '@mui/material';
+import { Button, Collapse, Stack } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
+import CardWrapper from 'components/shared/CardWrapper';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import DiffViewer from '../../preSave/ChangeReview/DiffViewer';
@@ -36,13 +37,13 @@ function ReviewSelection() {
             </Collapse>
 
             <Collapse in={!showDiff}>
-                <Typography>
-                    {intl.formatMessage({
+                <CardWrapper
+                    message={intl.formatMessage({
                         id: 'dataFlowReset.reviewSelection.instructions',
                     })}
-                </Typography>
-
-                <ReviewTable />
+                >
+                    <ReviewTable />
+                </CardWrapper>
             </Collapse>
         </Stack>
     );
