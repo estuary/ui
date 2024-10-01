@@ -17,15 +17,17 @@ function ReviewSelection() {
 
     return (
         <Stack spacing={2}>
-            <AlertBox
-                short
-                severity="warning"
-                title={intl.formatMessage({
-                    id: 'dataFlowReset.reviewSelection.warning.title',
-                })}
-            >
-                <MessageWithLink messageID="dataFlowReset.reviewSelection.warning.message" />
-            </AlertBox>
+            {backfillDataflow ? (
+                <AlertBox
+                    short
+                    severity="warning"
+                    title={intl.formatMessage({
+                        id: 'dataFlowReset.reviewSelection.warning.title',
+                    })}
+                >
+                    <MessageWithLink messageID="dataFlowReset.reviewSelection.warning.message" />
+                </AlertBox>
+            ) : null}
 
             <Button variant="text" onClick={() => setShowDiff(!showDiff)}>
                 {intl.formatMessage({
