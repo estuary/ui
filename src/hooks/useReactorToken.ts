@@ -24,7 +24,7 @@ const fetcher = async ({
 
     const parsed = decodeJwt(reactorToken);
 
-    // TODO (optimization): create and use URL formatting util.
+    // TODO (url-util): create and use URL formatting util.
     return {
         token: reactorToken,
         gateway_url: new URL(reactorAddress),
@@ -80,7 +80,11 @@ const useReactorToken = (prefix: string | null) => {
         console.error('fetching scoped data-plane access token: ', error);
     }
 
-    return { data, error };
+    return {
+        gatewayAuthToken: data?.token,
+        gatewayUrl: data?.gateway_url,
+        error,
+    };
 };
 
 export default useReactorToken;

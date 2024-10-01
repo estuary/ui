@@ -1,17 +1,12 @@
-import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
+import { Box, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import usePageTitle from 'hooks/usePageTitle';
 import useReactorToken from 'hooks/useReactorToken';
 import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { logRocketConsole } from 'services/shared';
-
-const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
-    padding: 2,
-};
 
 interface RedirectResult {
     targetUrl?: string;
@@ -24,14 +19,17 @@ const DataPlaneAuthReq = () => {
         headerLink: 'https://docs.estuary.dev/concepts/#captures',
     });
 
+    const intl = useIntl();
+
     const [searchParams] = useSearchParams();
     const catalogPrefix = searchParams.get('prefix');
     const originalUrl = searchParams.get('orig_url');
 
-    const gatewayAuth = useReactorToken(catalogPrefix);
-    const gatewayAuthError = gatewayAuth.error;
-    const gatewayUrl = gatewayAuth.data?.gateway_url.toString();
-    const gatewayAuthToken = gatewayAuth.data?.token;
+    const {
+        gatewayAuthToken,
+        gatewayUrl,
+        error: gatewayAuthError,
+    } = useReactorToken(catalogPrefix);
 
     const [redirectResult, setRedirectResult] = useState<RedirectResult>({});
 
@@ -50,8 +48,11 @@ const DataPlaneAuthReq = () => {
             // but doing so will require that control-plane be aware of those subdomains, which
             // won't be the case until we implement pet-names.
             try {
-                const gatewayHost = new URL(gatewayUrl).hostname;
+                const gatewayHost = gatewayUrl.hostname;
+
+                // TODO (url-util): create and use URL formatting util.
                 const origUrlHostname = new URL(originalUrl).hostname;
+
                 if (!origUrlHostname.endsWith(`.${gatewayHost}`)) {
                     error = 'invalid `orig_url` parameter has invalid hostname';
                 }
@@ -62,6 +63,7 @@ const DataPlaneAuthReq = () => {
             }
 
             if (error === null) {
+                // TODO (url-util): create and use URL formatting util.
                 const newUrl = new URL('/auth-redirect', originalUrl);
                 newUrl.searchParams.append('token', gatewayAuthToken);
                 newUrl.searchParams.append('orig_url', originalUrl);
@@ -79,35 +81,13 @@ const DataPlaneAuthReq = () => {
             setRedirectResult({ error });
         }
     }, [
-        gatewayAuthError,
-        gatewayUrl,
-        gatewayAuthToken,
-        setRedirectResult,
         catalogPrefix,
+        gatewayAuthError,
+        gatewayAuthToken,
+        gatewayUrl,
         originalUrl,
+        setRedirectResult,
     ]);
-
-    let elem = null;
-    if (redirectResult.error) {
-        elem = (
-            <AlertBox short severity="error">
-                <FormattedMessage
-                    id="dataPlaneAuthReq.error.message"
-                    values={{ catalogPrefix, error: redirectResult.error }}
-                />
-            </AlertBox>
-        );
-    } else {
-        // We're still waiting on the response from the fetching the access token
-        elem = (
-            <Typography>
-                <FormattedMessage
-                    id="dataPlaneAuthReq.waiting.message"
-                    values={{ catalogPrefix, originalUrl }}
-                />
-            </Typography>
-        );
-    }
 
     return (
         <>
@@ -119,7 +99,25 @@ const DataPlaneAuthReq = () => {
                 }}
             />
 
-            <Box sx={boxStyling}>{elem}</Box>
+            <Box style={{ marginBottom: 2, padding: 2 }}>
+                {redirectResult.error ? (
+                    <AlertBox short severity="error">
+                        <Typography>
+                            {intl.formatMessage(
+                                { id: 'dataPlaneAuthReq.error.message' },
+                                { catalogPrefix, error: redirectResult.error }
+                            )}
+                        </Typography>
+                    </AlertBox>
+                ) : (
+                    <Typography>
+                        {intl.formatMessage(
+                            { id: 'dataPlaneAuthReq.waiting.message' },
+                            { catalogPrefix, originalUrl }
+                        )}
+                    </Typography>
+                )}
+            </Box>
         </>
     );
 };
