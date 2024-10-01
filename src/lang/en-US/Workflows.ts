@@ -128,6 +128,7 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
     //  PreSave prompts
+    'preSavePrompt.dialog.title': `Data Flow Reset`,
     'preSavePrompt.changeReview.title': `How the spec is changing`,
     'preSavePrompt.publish.title': `Save and publish`,
     'preSavePrompt.logs.spinner.stopped': `done`,
@@ -156,6 +157,10 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
     'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
+    'dataFlowReset.reviewSelection.header': `Change Summary`,
+
+    'cta.dataFlowReset.hideDiff': `Hide spec changes`,
+    'cta.dataFlowReset.showDiff': `See spec changes`,
 
     'dataFlowReset.selectMaterialization.selected.none': `no materialization selected`,
 
@@ -362,7 +367,7 @@ export const Workflows: Record<string, string> = {
     // Logs Dialog
     'logs.default': ` `,
     'logs.paused': `paused`,
-    'logs.noLogs': `no logs were found`,
+    'logs.noLogs': `no logs found`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,

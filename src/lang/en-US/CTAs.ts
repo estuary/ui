@@ -54,6 +54,4 @@ export const CTAs: Record<string, string> = {
     'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
     'cta.manualSelect': `Manually Select`,
-    'cta.showDiff': `Show Diff`,
-    'cta.hideDiff': `Hide Diff`,
 };

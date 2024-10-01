@@ -16,9 +16,9 @@ import {
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import Error from 'components/shared/Error';
-import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
+import Logs from 'components/logs';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 import CustomStepIcon from './CustomStepIcon';
 
@@ -74,6 +74,10 @@ function Content() {
                                                         draftId={
                                                             dataFlowResetDraftId
                                                         }
+                                                        enablePolling={
+                                                            progress ===
+                                                            ProgressStates.FAILED
+                                                        }
                                                     />
                                                     <Divider />
                                                 </>
@@ -95,21 +99,26 @@ function Content() {
                                                 progress ===
                                                     ProgressStates.FAILED ? (
                                                     <Box>
-                                                        <ErrorLogs
-                                                            defaultOpen={Boolean(
-                                                                dataFlowResetPudId
-                                                            )}
-                                                            logToken={
-                                                                publicationStatus?.logs_token
+                                                        <Logs
+                                                            token={
+                                                                publicationStatus?.logs_token ??
+                                                                null
                                                             }
-                                                            logProps={{
-                                                                spinnerMessages:
-                                                                    {
-                                                                        runningKey:
-                                                                            'logs.default',
-                                                                        stoppedKey:
-                                                                            'logs.noLogs',
-                                                                    },
+                                                            height={350}
+                                                            loadingLineSeverity={
+                                                                progress ===
+                                                                ProgressStates.FAILED
+                                                                    ? 'error'
+                                                                    : 'success'
+                                                            }
+                                                            spinnerMessages={{
+                                                                runningKey:
+                                                                    'logs.default',
+                                                                stoppedKey:
+                                                                    progress ===
+                                                                    ProgressStates.SUCCESS
+                                                                        ? 'common.success'
+                                                                        : 'logs.noLogs',
                                                             }}
                                                         />
                                                     </Box>
