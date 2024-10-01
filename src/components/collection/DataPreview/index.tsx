@@ -1,10 +1,10 @@
 /* eslint-disable complexity */
 import { Button, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
 import ListView from 'components/collection/DataPreview/ListView';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import JournalAlerts from 'components/journals/Alerts';
 import AlertBox from 'components/shared/AlertBox';
+import CardWrapper from 'components/shared/CardWrapper';
 import Error from 'components/shared/Error';
 import {
     useJournalData,

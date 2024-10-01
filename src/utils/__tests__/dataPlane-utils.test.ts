@@ -1,4 +1,66 @@
-import { getDataPlaneScope, parseDataPlaneName } from 'utils/dataPlane-utils';
+import {
+    formatDataPlaneName,
+    getDataPlaneScope,
+    parseDataPlaneName,
+} from 'utils/dataPlane-utils';
+
+// Context regarding the structure of data-plane names can be found here:
+// https://github.com/estuary/flow/blob/master/ops-catalog/README.md#data-plane-names
+describe('formatDataPlaneName', () => {
+    test('returns formatted name when data plane name includes a provider', () => {
+        expect(
+            formatDataPlaneName({
+                cluster: '',
+                prefix: '',
+                provider: 'local',
+                region: 'cluster',
+                whole: 'ops/dp/public/local-cluster',
+            })
+        ).toBe('local: cluster');
+
+        expect(
+            formatDataPlaneName({
+                cluster: 'c1',
+                prefix: '',
+                provider: 'gcp',
+                region: 'us-central1',
+                whole: 'ops/dp/public/gcp-us-central1-c1',
+            })
+        ).toBe('gcp: us-central1 c1');
+
+        expect(
+            formatDataPlaneName({
+                cluster: 'c2',
+                prefix: 'melk/',
+                provider: 'aws',
+                region: 'eu-west-1',
+                whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
+            })
+        ).toBe('aws: eu-west-1 c2');
+    });
+
+    test('returns unformatted name when data plane name does not include a provider', () => {
+        expect(
+            formatDataPlaneName({
+                cluster: '',
+                prefix: 'melk/',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/private/melk/',
+            })
+        ).toBe('ops/dp/private/melk/');
+
+        expect(
+            formatDataPlaneName({
+                cluster: '',
+                prefix: '',
+                provider: '',
+                region: '',
+                whole: 'ops/dp/public/',
+            })
+        ).toBe('ops/dp/public/');
+    });
+});
 
 describe('getDataPlaneScope', () => {
     test(`returns 'public' when a data plane name starts with 'ops/dp/public/'`, () => {

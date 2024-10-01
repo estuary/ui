@@ -1,5 +1,5 @@
 import { Box, Tooltip, Typography } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
+import CardWrapper from 'components/shared/CardWrapper';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useEntityType } from 'context/EntityContext';
 import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';

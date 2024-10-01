@@ -13,6 +13,7 @@ import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
 } from './env-utils';
+import { hasLength } from './misc-utils';
 
 export enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
@@ -219,6 +220,16 @@ export const parseDataPlaneName = (
     }
 
     return { cluster, prefix, provider, region, whole: dataPlaneName };
+};
+
+export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
+    const { cluster, provider, region, whole } = dataPlaneName;
+
+    const formattedName = hasLength(provider)
+        ? `${provider}: ${region} ${cluster}`
+        : whole;
+
+    return formattedName.trim();
 };
 
 // We increment the read window by this many bytes every time we get back

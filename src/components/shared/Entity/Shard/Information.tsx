@@ -1,13 +1,13 @@
 import { Grid, Stack, Table, TableContainer } from '@mui/material';
-import CardWrapper from 'components/admin/Billing/CardWrapper';
 import AlertBox from 'components/shared/AlertBox';
+import CardWrapper from 'components/shared/CardWrapper';
+import Message from 'components/shared/Error/Message';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useShardDetail_error } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { TableColumns } from 'types';
-import Message from 'components/shared/Error/Message';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 import InformationTableFooter from './TableFooter';
