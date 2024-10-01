@@ -3,6 +3,7 @@ import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { useLocalStorage } from 'react-use';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
@@ -10,6 +11,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 import AlertBox from '../AlertBox';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
@@ -20,10 +22,13 @@ interface Props {
 function CatalogEditor({ messageId }: Props) {
     const draftId = useEditorStore_id();
 
+    const [dataFlowResetEnabled] = useLocalStorage(
+        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
+    );
+
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    // TODO (data flow reset)
     const intl = useIntl();
     const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
     const needsBackfilled = useBinding_backfilledBindings_count();
@@ -44,8 +49,9 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {/*TODO (data flow reset) - also make sure editor is disabled*/}
-                    {backfillDataFlow && needsBackfilled ? (
+                    {dataFlowResetEnabled &&
+                    backfillDataFlow &&
+                    needsBackfilled ? (
                         <AlertBox
                             fitWidth
                             short
@@ -64,8 +70,9 @@ function CatalogEditor({ messageId }: Props) {
                         <DraftSpecEditor
                             disabled={Boolean(
                                 formActive ||
-                                    // TODO (data flow reset)
-                                    (backfillDataFlow && needsBackfilled)
+                                    (dataFlowResetEnabled &&
+                                        backfillDataFlow &&
+                                        needsBackfilled)
                             )}
                             monitorCurrentCatalog
                         />
