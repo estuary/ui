@@ -23,9 +23,11 @@ function ReviewSelection() {
                 <MessageWithLink messageID="dataFlowReset.reviewSelection.warning.message" />
             </AlertBox>
 
-            <Button onClick={() => setShowDiff(!showDiff)}>
+            <Button variant="text" onClick={() => setShowDiff(!showDiff)}>
                 {intl.formatMessage({
-                    id: showDiff ? 'cta.hideDiff' : 'cta.showDiff',
+                    id: showDiff
+                        ? 'cta.dataFlowReset.hideDiff'
+                        : 'cta.dataFlowReset.showDiff',
                 })}
             </Button>
 
