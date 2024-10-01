@@ -2,12 +2,12 @@ import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
 import useSWR from 'swr';
 import { authorizeTask } from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+import { getURL, hasLength } from 'utils/misc-utils';
 
 interface Token {
-    token: string;
-    gateway_url: URL;
+    gateway_url: URL | null;
     parsed: JWTPayload;
+    token: string;
 }
 
 type FetcherArgs = [string, string, string | undefined];
@@ -27,10 +27,12 @@ const fetcher = async ({
 
     const parsed = decodeJwt(reactorToken);
 
-    // TODO (url-util): create and use URL formatting util.
     return {
         token: reactorToken,
-        gateway_url: new URL(reactorAddress),
+        gateway_url: getURL(
+            reactorAddress,
+            `useReactorToken : 'reactor_address' cannot be parsed as a URL`
+        ),
         parsed,
     };
 };

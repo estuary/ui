@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import { logRocketConsole } from 'services/shared';
 import { SHARD_LABELS } from 'utils/dataPlane-utils';
+import { getURL } from 'utils/misc-utils';
 
 interface RedirectResult {
     targetUrl?: string;
@@ -41,12 +42,8 @@ const DataPlaneAuthReq = () => {
             setRedirectResult({
                 error: 'Invalid URL parameters. Please contact support for assistance.',
             });
-
-            
         } else if (gatewayAuthError) {
             setRedirectResult({ error: gatewayAuthError.toString() });
-
-            
         } else if (gatewayUrl && gatewayAuthToken) {
             getLiveSpecs_dataPlaneAuthReq(catalogPrefix).then(
                 (response) => {
@@ -63,30 +60,14 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    try {
-                        const gatewayHost = gatewayUrl.hostname;
+                    const gatewayHost = gatewayUrl.hostname;
 
-                        // TODO (url-util): create and use URL formatting util.
-                        const origUrlHostname = new URL(originalUrl).hostname;
+                    const origUrlHostname = getURL(
+                        originalUrl,
+                        'DataPlaneAuthReq : invalid `orig_url` parameter cannot be parsed as a URL'
+                    )?.hostname;
 
-                        // Validate that the hostname in the orig_url is a subdomain of the gateway_url.
-                        // This is necessary in order to prevent malicious links using an `orig_url` parameter
-                        // that sends a user's auth token to a 3rd party.
-
-                        // Validate that the hostname in the orig_url subdomain matches that of the task subdomain.
-                        if (
-                            !origUrlHostname.startsWith(hostnameLabelValue) ||
-                            !origUrlHostname.endsWith(`.${gatewayHost}`)
-                        ) {
-                            setRedirectResult({
-                                error: 'invalid `orig_url` parameter has invalid hostname',
-                            });
-
-                            return;
-                        }
-                    } catch (e: unknown) {
-                        console.error('invalid orig_url url parameter', e);
-
+                    if (!origUrlHostname) {
                         setRedirectResult({
                             error: 'invalid `orig_url` parameter cannot be parsed as a URL',
                         });
@@ -94,8 +75,36 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    // TODO (url-util): create and use URL formatting util.
-                    const newUrl = new URL('/auth-redirect', originalUrl);
+                    // Validate that the hostname in the orig_url is a subdomain of the gateway_url.
+                    // This is necessary in order to prevent malicious links using an `orig_url` parameter
+                    // that sends a user's auth token to a 3rd party.
+
+                    // Validate that the hostname in the orig_url subdomain matches that of the task subdomain.
+                    if (
+                        !origUrlHostname.startsWith(hostnameLabelValue) ||
+                        !origUrlHostname.endsWith(`.${gatewayHost}`)
+                    ) {
+                        setRedirectResult({
+                            error: 'invalid `orig_url` parameter has invalid hostname',
+                        });
+
+                        return;
+                    }
+
+                    const newUrl = getURL(
+                        '/auth-redirect',
+                        `DataPlaneAuthReq : failed to compose /auth-redirect URL using 'orig_url' parameter`,
+                        originalUrl
+                    );
+
+                    if (!newUrl) {
+                        setRedirectResult({
+                            error: `failed to compose /auth-redirect URL using 'orig_url' parameter`,
+                        });
+
+                        return;
+                    }
+
                     newUrl.searchParams.append('token', gatewayAuthToken);
                     newUrl.searchParams.append('orig_url', originalUrl);
 
