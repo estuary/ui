@@ -17,7 +17,10 @@ const fetcher = async ({
 }: FetcherArgs): Promise<Token> => {
     const response = await authorizeTask(sessionKey, catalogName);
 
-    if (!hasLength(response.reactorToken)) {
+    if (
+        !hasLength(response.reactorToken) ||
+        !hasLength(response.reactorAddress)
+    ) {
         throw new Error('data-plane auth token response was empty');
     }
     const { reactorAddress, reactorToken } = response;

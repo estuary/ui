@@ -15,6 +15,10 @@ import {
 } from './env-utils';
 import { hasLength } from './misc-utils';
 
+export enum SHARD_LABELS {
+    HOSTNAME = 'estuary.dev/hostname',
+}
+
 export enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
     OPERATION_INVALID = 'Unauthorized',

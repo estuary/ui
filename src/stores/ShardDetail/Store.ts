@@ -4,6 +4,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
 import { ShardDetailStoreNames } from 'stores/names';
+import { SHARD_LABELS } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
@@ -142,7 +143,7 @@ const getEverythingForDictionary = (
             case 'estuary.dev/expose-port':
                 response.exposePort = label.value;
                 break;
-            case 'estuary.dev/hostname':
+            case SHARD_LABELS.HOSTNAME:
                 response.hostname = label.value;
                 break;
             default:
