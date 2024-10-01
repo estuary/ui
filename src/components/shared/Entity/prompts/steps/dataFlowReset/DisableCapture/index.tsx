@@ -4,6 +4,7 @@ import {
     getPublicationByIdQuery,
     PublicationJobStatus,
 } from 'api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
@@ -13,18 +14,26 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useMount } from 'react-use';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_setFormState,
+    useFormStateStore_setShowSavePrompt,
+} from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { generateDisabledSpec } from 'utils/entity-utils';
+import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function DisableCapture() {
     const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const { jobStatusPoller } = useJobStatusPoller();
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
     const [updateStep, updateContext, nextStep, initUUID] =
         usePreSavePromptStore((state) => [
@@ -39,12 +48,16 @@ function DisableCapture() {
     useMount(() => {
         if (thisStep.state.progress === ProgressStates.IDLE) {
             setFormState({
-                status: FormStatus.LOCKED,
+                status: FormStatus.SAVING,
                 exitWhenLogsClose: true,
             });
 
             updateStep(stepIndex, {
                 progress: ProgressStates.RUNNING,
+            });
+
+            updateContext({
+                disableClose: true,
             });
 
             const disableCaptureAndPublish = async () => {
@@ -105,11 +118,33 @@ function DisableCapture() {
                             publicationStatus: successResponse,
                         });
 
+                        setFormState({
+                            status: FormStatus.LOCKED,
+                        });
+
                         nextStep();
                     },
                     async (
                         failedResponse: any //PublicationJobStatus | PostgrestError
                     ) => {
+                        setFormState({
+                            status: FormStatus.FAILED,
+                        });
+
+                        updateContext({
+                            disableClose: false,
+                        });
+
+                        const incompatibleCollections =
+                            failedResponse?.job_status
+                                ?.incompatible_collections;
+
+                        if (hasLength(incompatibleCollections)) {
+                            setIncompatibleCollections(incompatibleCollections);
+                            setShowSavePrompt(false);
+                            return;
+                        }
+
                         updateStep(stepIndex, {
                             error: failedResponse.error ? failedResponse : null,
                             publicationStatus: !failedResponse.error

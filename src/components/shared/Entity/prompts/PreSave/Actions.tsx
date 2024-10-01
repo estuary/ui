@@ -5,8 +5,8 @@ import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
 import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
 import {
     usePreSavePromptStore,
+    usePreSavePromptStore_done,
     usePreSavePromptStore_onFirstStep,
-    usePreSavePromptStore_onLastStep,
     usePreSavePromptStore_stepValid,
 } from '../store/usePreSavePromptStore';
 
@@ -23,12 +23,12 @@ function Actions() {
 
     const canContinue = usePreSavePromptStore_stepValid();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
-    const onLastStep = usePreSavePromptStore_onLastStep();
+    const done = usePreSavePromptStore_done();
 
     return (
         <DialogActions style={{ justifyContent: 'space-between' }}>
             <Box>
-                {onLastStep && canContinue ? (
+                {done ? (
                     <AlertBox fitWidth short severity="success">
                         <Typography sx={{ mr: 1 }}>
                             {intl.formatMessage({
@@ -55,7 +55,7 @@ function Actions() {
                 </Button>
 
                 <Button
-                    onClick={() => (onLastStep ? exit() : nextStep())}
+                    onClick={() => (done ? exit() : nextStep())}
                     variant="outlined"
                     disabled={!canContinue}
                 >

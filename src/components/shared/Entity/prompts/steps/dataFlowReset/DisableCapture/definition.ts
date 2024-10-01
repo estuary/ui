@@ -5,6 +5,7 @@ import DisableCapture from '.';
 export interface DisableCaptureStepContext {
     captureName: string;
     captureSpec: JSON | null;
+    disableClose: boolean;
     initialPubId: string | null;
 }
 export const DisableCaptureStep: PromptStep = {

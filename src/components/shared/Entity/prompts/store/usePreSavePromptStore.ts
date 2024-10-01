@@ -174,10 +174,13 @@ export const usePreSavePromptStore_onFirstStep = () => {
     );
 };
 
-export const usePreSavePromptStore_onLastStep = () => {
+export const usePreSavePromptStore_done = () => {
     return usePreSavePromptStore(
         useShallow((state) => {
-            return state.activeStep === state.steps.length - 1;
+            return (
+                state.activeStep === state.steps.length - 1 &&
+                state.steps[state.activeStep]?.state.valid
+            );
         })
     );
 };

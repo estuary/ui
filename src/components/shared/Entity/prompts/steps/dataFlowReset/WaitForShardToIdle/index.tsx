@@ -42,7 +42,7 @@ function WaitForShardToIdle() {
             }
 
             console.log('[status, response]', [status, response]);
-            return [attempts > 5 ? false : status, response];
+            return [attempts > 10 ? false : status, response];
         }
     );
 
@@ -115,7 +115,8 @@ function WaitForShardToIdle() {
                                 : null,
                         });
                         // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
-                    }
+                    },
+                    2500
                 );
             };
 

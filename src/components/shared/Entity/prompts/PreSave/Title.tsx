@@ -2,17 +2,24 @@ import { DialogTitle, IconButton, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
-import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
+import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
+import {
+    usePreSavePromptStore,
+    usePreSavePromptStore_done,
+} from '../store/usePreSavePromptStore';
 
 function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
+    const { exit } = useEntityWorkflowHelpers();
+
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
-    const [activeStep, resetState] = usePreSavePromptStore((state) => [
-        state.activeStep,
+    const done = usePreSavePromptStore_done();
+    const [resetState, disableClose] = usePreSavePromptStore((state) => [
         state.resetState,
+        state.context.disableClose,
     ]);
 
     return (
@@ -23,10 +30,14 @@ function Title() {
                 justifyContent: 'space-between',
             }}
         >
-            Please review your changes
+            {intl.formatMessage({ id: 'preSavePrompt.dialog.title' })}
             <IconButton
-                disabled={activeStep > 3}
+                disabled={Boolean(disableClose && !done)}
                 onClick={() => {
+                    if (done) {
+                        exit();
+                        return;
+                    }
                     resetState();
                     setShowSavePrompt(false);
                 }}

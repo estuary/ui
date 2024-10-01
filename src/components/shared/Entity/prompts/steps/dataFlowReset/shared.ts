@@ -31,6 +31,7 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     captureSpec: null,
     dataFlowResetDraftId: null,
     dataFlowResetPudId: null,
+    disableClose: false,
     initialPubId: null,
     liveSpecId: null,
     noMaterializations: null,
