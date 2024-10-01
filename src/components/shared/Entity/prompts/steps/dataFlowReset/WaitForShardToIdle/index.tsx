@@ -23,15 +23,16 @@ function WaitForShardToIdle() {
                 // We have shards so we need to look through all the statuses
                 //  and check if they are IDLE. Otherwise leave the status as
                 //  null so the poller keeps running
+
+                // TODO (data flow backfill)
+                //  Add support for showing status to user so they understand
+                //      why they might be sitting around and waiting.
                 const allShardsIdle = response.shards.every((shard) => {
                     return Boolean(
                         shard.status.length === 0 ||
                             shard.status
                                 .map(({ code }) => code)
-                                .every(
-                                    (code) =>
-                                        code === 'IDLE' || code === 'STANDBY'
-                                )
+                                .every((code) => code === 'IDLE')
                     );
                 });
 
