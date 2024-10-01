@@ -2,7 +2,7 @@ import { Box, SxProps, Theme, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import usePageTitle from 'hooks/usePageTitle';
-import useScopedGatewayAuthToken from 'hooks/useScopedGatewayAuthToken';
+import useReactorToken from 'hooks/useReactorToken';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
@@ -28,7 +28,7 @@ const DataPlaneAuthReq = () => {
     const catalogPrefix = searchParams.get('prefix');
     const originalUrl = searchParams.get('orig_url');
 
-    const gatewayAuth = useScopedGatewayAuthToken(catalogPrefix);
+    const gatewayAuth = useReactorToken(catalogPrefix);
     const gatewayAuthError = gatewayAuth.error;
     const gatewayUrl = gatewayAuth.data?.gateway_url.toString();
     const gatewayAuthToken = gatewayAuth.data?.token;

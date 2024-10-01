@@ -1,54 +1,33 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
-import { client } from 'services/client';
 import useSWR from 'swr';
-import { GatewayAuthTokenResponse } from 'types';
-import {
-    getGatewayAuthTokenSettings,
-    getSupabaseAnonymousKey,
-} from 'utils/env-utils';
+import { authorizeTask } from 'utils/dataPlane-utils';
+import { hasLength } from 'utils/misc-utils';
 
-const { gatewayAuthTokenEndpoint } = getGatewayAuthTokenSettings();
-
-export interface Token {
+interface Token {
     token: string;
     gateway_url: URL;
     parsed: JWTPayload;
 }
 
-// The request body for this API is a string array corresponding to the prefixes a user has access to.
-const { supabaseAnonymousKey } = getSupabaseAnonymousKey();
 type FetcherArgs = [string, string, string | undefined];
 const fetcher = async ({
-    0: endpoint,
-    1: prefix,
-    2: sessionKey,
+    0: catalogName,
+    1: sessionKey,
 }: FetcherArgs): Promise<Token> => {
-    const headers: HeadersInit = {
-        'apikey': supabaseAnonymousKey,
-        'Authorization': `Bearer ${sessionKey}`,
-        'Content-Type': 'application/json',
-    };
+    const response = await authorizeTask(sessionKey, catalogName);
 
-    const response: GatewayAuthTokenResponse[] = await client(endpoint, {
-        data: { prefixes: [prefix] },
-        headers,
-    });
-
-    if (response.length === 0) {
+    if (!hasLength(response.reactorToken)) {
         throw new Error('data-plane auth token response was empty');
     }
-    const data = response[0];
+    const { reactorAddress, reactorToken } = response;
 
-    const parsed = decodeJwt(data.token);
-    // If the user doesn't have access to the requested scopes, then they won't be present.
-    // Since we know we're only requesting a single scope, prefixes.length should always be 1
-    if (!Array.isArray(parsed.prefixes) || parsed.prefixes.length !== 1) {
-        throw new Error('you are not authorized to the requested scopes');
-    }
+    const parsed = decodeJwt(reactorToken);
+
+    // TODO (optimization): create and use URL formatting util.
     return {
-        token: data.token,
-        gateway_url: data.gateway_url,
+        token: reactorToken,
+        gateway_url: new URL(reactorAddress),
         parsed,
     };
 };
@@ -63,7 +42,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
 
     try {
         if (!token.parsed.exp) {
-            throw new Error('data plane JWT is missing exp');
+            throw new Error('data-plane JWT is missing exp');
         }
         // JWT date is in seconds, while Date.now and SWR use millis.
         const exp = token.parsed.exp * 1000;
@@ -87,14 +66,13 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
     }
 };
 
-// Returns an auth token for accessing the provided `prefixes` scopes in the data plane.
+// Returns an auth token for accessing the provided `prefix` scope in the data plane.
 // This token is not stored in local storage.
-const useScopedGatewayAuthToken = (prefix: string | null) => {
+const useReactorToken = (prefix: string | null) => {
     const session = useUserStore((state) => state.session);
+
     const { data, error } = useSWR(
-        prefix === null
-            ? null
-            : [gatewayAuthTokenEndpoint, prefix, session?.access_token],
+        prefix === null ? null : [prefix, session?.access_token],
         fetcher,
         { refreshInterval: getTokenRefreshInterval }
     );
@@ -105,4 +83,4 @@ const useScopedGatewayAuthToken = (prefix: string | null) => {
     return { data, error };
 };
 
-export default useScopedGatewayAuthToken;
+export default useReactorToken;
