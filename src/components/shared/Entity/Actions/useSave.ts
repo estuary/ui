@@ -11,26 +11,31 @@ import {
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useLocalStorage } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
+    useBinding_backfilledBindings_count,
     useBinding_collections,
     useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
+    useFormStateStore_setShowSavePrompt,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { hasLength } from 'utils/misc-utils';
 
 const trackEvent = (logEvent: any, payload: any) => {
@@ -54,6 +59,11 @@ function useSave(
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
+    const [dataFlowResetEnabled] = useLocalStorage(
+        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
+    );
+
     // Draft Editor Store
     const setPubId = useEditorStore_setPubId();
 
@@ -74,6 +84,8 @@ function useSave(
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
+    const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
+    const needsBackfilled = useBinding_backfilledBindings_count();
 
     const entityType = useEntityType();
 
@@ -81,10 +93,20 @@ function useSave(
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
     const disabledBindings = useBinding_disabledBindings(entityType);
 
+    const runningDataFlowBackfill = useMemo(
+        () =>
+            Boolean(
+                dataFlowResetEnabled &&
+                    !dryRun &&
+                    backfillDataflow &&
+                    needsBackfilled
+            ),
+        [backfillDataflow, dataFlowResetEnabled, dryRun, needsBackfilled]
+    );
+
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
             updateFormStatus(status, hideNotification);
-            setIncompatibleCollections([]);
 
             jobStatusPoller(
                 getPublicationByIdQuery(publicationId),
@@ -105,6 +127,7 @@ function useSave(
                     //         { replace: true }
                     //     );
                     // }
+
                     setPubId(payload.id);
                     setFormState({
                         status: formStatus,
@@ -203,8 +226,10 @@ function useSave(
                 return;
             }
 
-            // All the validation is done and we can start saving
-            updateFormStatus(status, hideLogs);
+            if (!runningDataFlowBackfill) {
+                // All the validation is done and we can start saving
+                updateFormStatus(status, hideLogs);
+            }
 
             // If there are bound collections then we need to potentially handle clean up
             if (collections.length > 0) {
@@ -257,6 +282,13 @@ function useSave(
                 }
             }
 
+            // todo (data flow reset) - start
+            if (runningDataFlowBackfill) {
+                setIncompatibleCollections([]);
+                setShowSavePrompt(true);
+                return;
+            }
+
             const response = await createPublication(
                 draftId,
                 dryRun ?? false,
@@ -274,6 +306,7 @@ function useSave(
                 return;
             }
 
+            setIncompatibleCollections([]);
             waitForPublishToFinish(response.data[0].id, hideLogs);
             setFormState({
                 logToken: response.data[0].logs_token,
@@ -289,8 +322,11 @@ function useSave(
             intl,
             messagePrefix,
             onFailure,
+            runningDataFlowBackfill,
             setDiscoveredDraftId,
             setFormState,
+            setIncompatibleCollections,
+            setShowSavePrompt,
             status,
             updateFormStatus,
             waitForPublishToFinish,

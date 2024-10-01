@@ -5,14 +5,7 @@ import {
 } from 'components/editor/Store/hooks';
 import { buttonSx } from 'components/shared/Entity/Header';
 import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
-import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setShowSavePrompt,
-} from 'stores/FormState/hooks';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
@@ -33,28 +26,12 @@ function EntityCreateSave({
 
     const formActive = useFormStateStore_isActive();
 
-    const [dataFlowResetEnabled] = useLocalStorage(
-        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
-    );
-    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
-    const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
-    const needsBackfilled = useBinding_backfilledBindings_count();
-
     return (
         <Button
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
             onClick={async () => {
-                if (
-                    dataFlowResetEnabled &&
-                    !dryRun &&
-                    backfillDataflow &&
-                    needsBackfilled
-                ) {
-                    setShowSavePrompt(true);
-                } else {
-                    await save(draftId);
-                }
+                await save(draftId);
             }}
         >
             {intl.formatMessage({
