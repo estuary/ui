@@ -77,6 +77,7 @@ function useEntityWorkflowHelpers() {
     );
 
     const resetState = useCallback(() => {
+        resetPreSavePrompt();
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
@@ -86,7 +87,6 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
-        resetPreSavePrompt();
     }, [
         resetBindingState,
         resetBindingsEditorStore,

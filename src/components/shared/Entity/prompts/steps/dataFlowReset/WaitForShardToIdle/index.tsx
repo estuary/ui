@@ -15,7 +15,7 @@ function WaitForShardToIdle() {
 
     const queryPoller = useQueryPoller(
         'WaitForShardToIdle',
-        (response: { shards?: Shard[] }, attempts) => {
+        (response: { shards?: Shard[] }) => {
             // default to `null` so the poller will keep checking
             let status = null;
 
@@ -41,8 +41,7 @@ function WaitForShardToIdle() {
                 }
             }
 
-            console.log('[status, response]', [status, response]);
-            return [attempts > 10 ? false : status, response];
+            return [status, response];
         }
     );
 
