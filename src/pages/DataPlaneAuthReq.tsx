@@ -75,11 +75,10 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    // Validate that the hostname in the orig_url is a subdomain of the gateway_url.
-                    // This is necessary in order to prevent malicious links using an `orig_url` parameter
-                    // that sends a user's auth token to a 3rd party.
-
-                    // Validate that the hostname in the orig_url subdomain matches that of the task subdomain.
+                    // Validate that the hostname in the orig_url is a subdomain of the gateway_url and
+                    // that its subdomain matches that of the task subdomain. This is necessary in order
+                    // to prevent malicious links using an `orig_url` parameter that sends
+                    // a user's auth token to a 3rd party.
                     if (
                         !origUrlHostname.startsWith(hostnameLabelValue) ||
                         !origUrlHostname.endsWith(`.${gatewayHost}`)
