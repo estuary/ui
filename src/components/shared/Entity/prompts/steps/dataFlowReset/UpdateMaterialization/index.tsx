@@ -8,6 +8,7 @@ import { useMount } from 'react-use';
 import { CustomEvents } from 'services/types';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import {
+    getBackfillCounter,
     getBindingAsFullSource,
     getCollectionName,
 } from 'utils/workflow-utils';
@@ -86,6 +87,7 @@ function MarkMaterialization() {
                                 getCollectionName(binding)
                             )
                         ) {
+                            binding = getBackfillCounter(binding) + 1;
                             binding.source = getBindingAsFullSource(binding);
                             binding.source.notBefore = timeStopped;
                             noMatchingBindings = false;
