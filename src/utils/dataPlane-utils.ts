@@ -64,7 +64,7 @@ export async function dataPlaneFetcher_list(
 // Shard ID prefixes take the form: ${entity_type}/${catalog_name}/${pub_id_of_creation}/
 // The pub_id_of_creation suffix distinguishes versions of entities that may be deleted
 // and then re-created. They cannot be used to match a Gazette label nor an ID directly.
-interface TaskAuthorizationResponse {
+export interface TaskAuthorizationResponse {
     brokerAddress: string; // Base URL for journal endpoints
     brokerToken: string; // Authentication token for journal endpoints
     opsLogsJournal: string;
