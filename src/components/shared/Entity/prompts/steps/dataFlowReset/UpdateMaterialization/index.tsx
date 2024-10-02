@@ -87,7 +87,7 @@ function MarkMaterialization() {
                                 getCollectionName(binding)
                             )
                         ) {
-                            binding = getBackfillCounter(binding) + 1;
+                            binding.backfill = getBackfillCounter(binding) + 1;
                             binding.source = getBindingAsFullSource(binding);
                             binding.source.notBefore = timeStopped;
                             noMatchingBindings = false;
