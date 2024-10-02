@@ -58,7 +58,9 @@ function NoMaterializationsFound() {
                                     });
                                 }}
                             >
-                                Skip
+                                {intl.formatMessage({
+                                    id: 'resetDataFlow.materializations.empty.skip',
+                                })}
                             </Button>
                         </Stack>
                     </Stack>

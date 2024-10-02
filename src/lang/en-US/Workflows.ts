@@ -128,7 +128,7 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
     //  PreSave prompts
-    'preSavePrompt.dialog.title': `Data Flow Reset`,
+    'preSavePrompt.dialog.title': `Save and Publish`,
     'preSavePrompt.reviewSelection.title': `Review changes`,
     'preSavePrompt.publish.title': `Save and publish`,
     'preSavePrompt.logs.spinner.stopped': `done`,
@@ -137,6 +137,8 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.draftErrors.title': `Draft Errors`,
     'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
 
+    // Reset Data Flow
+    'dataFlowReset.dialog.title': `Data Flow Reset`,
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
     'dataFlowReset.reviewSelection.title': `Review changes`,
     'dataFlowReset.disableCapture.title': `Disable capture`,
@@ -147,7 +149,16 @@ export const Workflows: Record<string, string> = {
 
     'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
 
-    // Dataflow reset
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
+    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
+    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
+    'resetDataFlow.materializations.empty.instructions': `You can either manually select a materialization you want to have updated or skip this step.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
+    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
+    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
+    'resetDataFlow.materializations.empty.skip': `Skip data flow reset`,
+
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
@@ -373,14 +384,4 @@ export const Workflows: Record<string, string> = {
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
-
-    // Reset Data Flow
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
-    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
-    'resetDataFlow.materializations.empty.instructions': `You can either manually select a materialization you want to have updated or skip this step.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
-    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
-    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
 };

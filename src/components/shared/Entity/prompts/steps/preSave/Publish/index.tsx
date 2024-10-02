@@ -1,17 +1,15 @@
-import {
-    createPublication,
-    getPublicationByIdQuery,
-    PublicationJobStatus,
-} from 'api/publications';
+import { createPublication } from 'api/publications';
+import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useMount } from 'react-use';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import usePublicationHandler from '../../usePublicationHandler';
 
 function Publish() {
-    const { jobStatusPoller } = useJobStatusPoller();
+    const publicationHandler = usePublicationHandler();
+    const draftId = useEditorStore_id();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
@@ -38,7 +36,7 @@ function Publish() {
             const saveAndPublish = async () => {
                 // Start publishing it
                 const publishResponse = await createPublication(
-                    dataFlowResetDraftId,
+                    dataFlowResetDraftId ?? draftId,
                     false,
                     `data flow backfill : publish : ${initUUID}`,
                     dataPlaneName?.whole
@@ -53,29 +51,11 @@ function Publish() {
                 }
 
                 updateContext({
-                    initialPubId: publishResponse.data[0].id,
+                    dataFlowResetDraftId: draftId,
+                    dataFlowResetPudId: publishResponse.data[0].id,
                 });
 
-                jobStatusPoller(
-                    getPublicationByIdQuery(publishResponse.data[0].id),
-                    async (successResponse: PublicationJobStatus) => {
-                        updateStep(stepIndex, {
-                            publicationStatus: successResponse,
-                        });
-                    },
-                    async (
-                        failedResponse: any //PublicationJobStatus | PostgrestError
-                    ) => {
-                        updateStep(stepIndex, {
-                            error: failedResponse.error ? failedResponse : null,
-                            publicationStatus: !failedResponse.error
-                                ? failedResponse
-                                : null,
-                            progress: ProgressStates.FAILED,
-                            valid: false,
-                        });
-                    }
-                );
+                publicationHandler(publishResponse.data[0].id);
             };
 
             void saveAndPublish();

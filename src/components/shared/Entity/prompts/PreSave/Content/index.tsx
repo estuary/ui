@@ -46,6 +46,11 @@ function Content() {
                 ) => {
                     const hasError = Boolean(error);
                     const stepCompleted = progress >= ProgressFinished;
+                    const stepCanPublish = Boolean(publicationStatus);
+
+                    console.log('stepCanPublish', stepCanPublish);
+                    console.log('dataFlowResetPudId', dataFlowResetPudId);
+                    console.log('publicationStatus', publicationStatus);
 
                     return (
                         <Step
@@ -68,7 +73,8 @@ function Content() {
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
                                         <Stack spacing={2}>
-                                            {dataFlowResetDraftId ? (
+                                            {stepCanPublish &&
+                                            dataFlowResetDraftId ? (
                                                 <>
                                                     <DraftErrors
                                                         draftId={
@@ -95,9 +101,10 @@ function Content() {
                                                     />
                                                 ) : null}
 
-                                                {dataFlowResetPudId ||
-                                                progress ===
-                                                    ProgressStates.FAILED ? (
+                                                {stepCanPublish &&
+                                                (dataFlowResetPudId ||
+                                                    progress ===
+                                                        ProgressStates.FAILED) ? (
                                                     <Box>
                                                         <Logs
                                                             token={

@@ -7,6 +7,7 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useMemo } from 'react';
 import { PromptStep } from '../types';
 import {
     DataFlowResetSteps,
@@ -40,9 +41,13 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
+                            state.context.dialogMessageId =
+                                'dataFlowReset.dialog.title';
                         } else {
                             newSteps.push(ReviewSelectionStep);
                             newSteps.push(PublishStep);
+                            state.context.dialogMessageId =
+                                'preSavePrompt.dialog.title';
                         }
 
                         state.steps = newSteps;
@@ -174,13 +179,17 @@ export const usePreSavePromptStore_onFirstStep = () => {
     );
 };
 
-export const usePreSavePromptStore_done = () => {
+export const usePreSavePromptStore_onLastStep = () => {
     return usePreSavePromptStore(
         useShallow((state) => {
-            return (
-                state.activeStep === state.steps.length - 1 &&
-                state.steps[state.activeStep]?.state.valid
-            );
+            return state.activeStep === state.steps.length - 1;
         })
     );
+};
+
+export const usePreSavePromptStore_done = () => {
+    const last = usePreSavePromptStore_onLastStep();
+    const done = usePreSavePromptStore_stepValid();
+
+    return useMemo(() => last && done, [done, last]);
 };

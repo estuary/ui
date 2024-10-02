@@ -17,10 +17,13 @@ function Title() {
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
     const done = usePreSavePromptStore_done();
-    const [resetState, disableClose] = usePreSavePromptStore((state) => [
-        state.resetState,
-        state.context.disableClose,
-    ]);
+    const [resetState, disableClose, dialogMessageId] = usePreSavePromptStore(
+        (state) => [
+            state.resetState,
+            state.context.disableClose,
+            state.context.dialogMessageId,
+        ]
+    );
 
     return (
         <DialogTitle
@@ -30,7 +33,7 @@ function Title() {
                 justifyContent: 'space-between',
             }}
         >
-            {intl.formatMessage({ id: 'preSavePrompt.dialog.title' })}
+            {intl.formatMessage({ id: dialogMessageId })}
             <IconButton
                 disabled={Boolean(disableClose && !done)}
                 onClick={() => {

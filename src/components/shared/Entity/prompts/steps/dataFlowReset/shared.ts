@@ -23,7 +23,11 @@ export interface DataFlowResetContext
     extends DisableCaptureStepContext,
         SelectMaterializationStepContext,
         UpdateMaterializationStepContext,
-        WaitForShardToIdleStepContext {}
+        WaitForShardToIdleStepContext {
+    disableBack: boolean;
+    disableClose: boolean;
+    dialogMessageId: string;
+}
 
 export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     backfillTarget: null,
@@ -31,6 +35,8 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     captureSpec: null,
     dataFlowResetDraftId: null,
     dataFlowResetPudId: null,
+    dialogMessageId: 'preSavePrompt.dialog.title',
+    disableBack: false,
     disableClose: false,
     initialPubId: null,
     liveSpecId: null,

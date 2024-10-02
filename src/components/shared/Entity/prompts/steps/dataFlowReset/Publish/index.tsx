@@ -1,17 +1,13 @@
-import {
-    createPublication,
-    getPublicationByIdQuery,
-    PublicationJobStatus,
-} from 'api/publications';
+import { createPublication } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useMount } from 'react-use';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import usePublicationHandler from '../../usePublicationHandler';
 
 function PublishStepDataFlowReset() {
-    const { jobStatusPoller } = useJobStatusPoller();
+    const publicationHandler = usePublicationHandler();
 
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
@@ -56,26 +52,7 @@ function PublishStepDataFlowReset() {
                     dataFlowResetPudId: publishResponse.data[0].id,
                 });
 
-                jobStatusPoller(
-                    getPublicationByIdQuery(publishResponse.data[0].id),
-                    async (successResponse: PublicationJobStatus) => {
-                        updateStep(stepIndex, {
-                            publicationStatus: successResponse,
-                        });
-                    },
-                    async (
-                        failedResponse: any //PublicationJobStatus | PostgrestError
-                    ) => {
-                        updateStep(stepIndex, {
-                            error: failedResponse.error ? failedResponse : null,
-                            publicationStatus: !failedResponse.error
-                                ? failedResponse
-                                : null,
-                            progress: ProgressStates.FAILED,
-                            valid: false,
-                        });
-                    }
-                );
+                publicationHandler(publishResponse.data[0].id);
             };
 
             void saveAndPublish();
