@@ -10,6 +10,7 @@ import {
     useEditorStore_setPubId,
 } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
+import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -84,14 +85,15 @@ function useSave(
     );
 
     const entityType = useEntityType();
+    const isEdit = useEntityWorkflow_Editing();
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
     const disabledBindings = useBinding_disabledBindings(entityType);
 
-    const runningDataFlowBackfill = useMemo(
-        () => Boolean(dataFlowResetEnabled && !dryRun),
-        [dataFlowResetEnabled, dryRun]
+    const showPreSavePrompt = useMemo(
+        () => Boolean(isEdit && dataFlowResetEnabled && !dryRun),
+        [dataFlowResetEnabled, dryRun, isEdit]
     );
 
     const waitForPublishToFinish = useCallback(
@@ -216,7 +218,7 @@ function useSave(
                 return;
             }
 
-            if (!runningDataFlowBackfill) {
+            if (!showPreSavePrompt) {
                 // All the validation is done and we can start saving
                 updateFormStatus(status, hideLogs);
             }
@@ -273,7 +275,7 @@ function useSave(
             }
 
             // todo (data flow reset) - start
-            if (runningDataFlowBackfill) {
+            if (showPreSavePrompt) {
                 setIncompatibleCollections([]);
                 setShowSavePrompt(true);
                 return;
@@ -312,7 +314,7 @@ function useSave(
             intl,
             messagePrefix,
             onFailure,
-            runningDataFlowBackfill,
+            showPreSavePrompt,
             setDiscoveredDraftId,
             setFormState,
             setIncompatibleCollections,
