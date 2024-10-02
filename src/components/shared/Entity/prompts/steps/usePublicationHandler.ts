@@ -31,6 +31,11 @@ function usePublicationHandler() {
 
     return useCallback(
         (pubId: string, goToNext?: boolean) => {
+            updateContext({
+                disableBack: true,
+                disableClose: true,
+            });
+
             jobStatusPoller(
                 getPublicationByIdQuery(pubId),
                 async (successResponse: PublicationJobStatus) => {
@@ -40,10 +45,6 @@ function usePublicationHandler() {
 
                     setFormState({
                         status: FormStatus.LOCKED,
-                    });
-
-                    updateContext({
-                        disableBack: true,
                     });
 
                     if (goToNext) {
@@ -59,7 +60,7 @@ function usePublicationHandler() {
 
                     updateContext({
                         disableClose: false,
-                        disableBack: true,
+                        disableBack: false,
                     });
 
                     const incompatibleCollections =

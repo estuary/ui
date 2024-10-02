@@ -5,6 +5,7 @@ import { getLiveSpecSpec } from 'api/liveSpecsExt';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
+import { CustomEvents } from 'services/types';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import {
     getBindingAsFullSource,
@@ -44,7 +45,7 @@ function MarkMaterialization() {
 
             const updateMaterializationTimestamp = async () => {
                 const draftsResponse = await createEntityDraft(
-                    `data flow backfill : update : ${initUUID}`
+                    `${CustomEvents.DATA_FLOW_RESET} : updateTimestamp : ${initUUID}`
                 );
                 const dataFlowResetDraftId = draftsResponse.data?.[0].id;
 

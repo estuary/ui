@@ -25,6 +25,8 @@ function Title() {
         ]
     );
 
+    const cannotClose = Boolean(disableClose && !done);
+
     return (
         <DialogTitle
             style={{
@@ -34,25 +36,28 @@ function Title() {
             }}
         >
             {intl.formatMessage({ id: dialogMessageId })}
-            <IconButton
-                disabled={Boolean(disableClose && !done)}
-                onClick={() => {
-                    if (done) {
-                        exit();
-                        return;
-                    }
-                    resetState();
-                    setShowSavePrompt(false);
-                }}
-            >
-                <Xmark
-                    aria-label={intl.formatMessage({ id: 'cta.close' })}
-                    style={{
-                        fontSize: '1rem',
-                        color: theme.palette.text.primary,
+
+            {cannotClose ? null : (
+                <IconButton
+                    disabled={Boolean(disableClose && !done)}
+                    onClick={() => {
+                        if (done) {
+                            exit();
+                            return;
+                        }
+                        resetState();
+                        setShowSavePrompt(false);
                     }}
-                />
-            </IconButton>
+                >
+                    <Xmark
+                        aria-label={intl.formatMessage({ id: 'cta.close' })}
+                        style={{
+                            fontSize: '1rem',
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                </IconButton>
+            )}
         </DialogTitle>
     );
 }

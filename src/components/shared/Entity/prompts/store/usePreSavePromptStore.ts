@@ -41,18 +41,24 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
+
+                            state.context.loggingEvent =
+                                CustomEvents.DATA_FLOW_RESET;
                             state.context.dialogMessageId =
                                 'dataFlowReset.dialog.title';
                         } else {
                             newSteps.push(ReviewSelectionStep);
                             newSteps.push(PublishStep);
+
+                            state.context.loggingEvent =
+                                CustomEvents.ENTITY_SAVE;
                             state.context.dialogMessageId =
                                 'preSavePrompt.dialog.title';
                         }
 
                         state.steps = newSteps;
                         state.initUUID = initUUID;
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             step: 'init',
                             initUUID,
                         });
@@ -89,7 +95,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             }
                         }
 
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             step: updating.StepComponent.name,
                             progress: updating.state.progress,
                         });
@@ -106,7 +112,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             ...settings,
                         };
 
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             contextUpdate: true,
                             ...settings,
                         });

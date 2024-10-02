@@ -169,8 +169,8 @@ export const Workflows: Record<string, string> = {
     'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
     'dataFlowReset.reviewSelection.header': `Change Summary`,
 
-    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
-    'preSavePrompt.reviewSelection.instructions': `The following entities will be updated:`,
+    'dataFlowReset.reviewSelection.instructions': `The following data flow will be reset:`,
+    'preSavePrompt.reviewSelection.instructions': `The following entities will be impacted by this change:`,
 
     'cta.dataFlowReset.hideDiff': `Hide spec changes`,
     'cta.dataFlowReset.showDiff': `See spec changes`,

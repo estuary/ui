@@ -1,4 +1,5 @@
 import { DEFAULT_FILTER } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { ReviewSelectionStep } from '../preSave/ReviewSelection/definition';
 import {
     PublishStep,
@@ -27,6 +28,7 @@ export interface DataFlowResetContext
     disableBack: boolean;
     disableClose: boolean;
     dialogMessageId: string;
+    loggingEvent: CustomEvents;
 }
 
 export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
@@ -40,6 +42,7 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     disableClose: false,
     initialPubId: null,
     liveSpecId: null,
+    loggingEvent: CustomEvents.ENTITY_SAVE,
     noMaterializations: null,
     relatedMaterializations: null,
     timeStopped: null,

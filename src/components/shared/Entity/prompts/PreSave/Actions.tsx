@@ -1,5 +1,4 @@
-import { Box, Button, DialogActions, Stack, Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
+import { Button, DialogActions, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
 import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
@@ -30,8 +29,8 @@ function Actions() {
     const done = usePreSavePromptStore_done();
 
     return (
-        <DialogActions style={{ justifyContent: 'space-between' }}>
-            <Box>
+        <DialogActions sx={{ justifyContent: 'end' }}>
+            {/*            <Box sx={{ pl: 5 }}>
                 {done ? (
                     <AlertBox fitWidth short severity="success">
                         <Typography sx={{ mr: 1 }}>
@@ -41,7 +40,7 @@ function Actions() {
                         </Typography>
                     </AlertBox>
                 ) : null}
-            </Box>
+            </Box>*/}
 
             <Stack direction="row" spacing={2}>
                 <Button
@@ -63,7 +62,9 @@ function Actions() {
                     variant="outlined"
                     disabled={!canContinue}
                 >
-                    {intl.formatMessage({ id: 'cta.continue' })}
+                    {intl.formatMessage({
+                        id: done ? 'cta.goToDetails' : 'cta.continue',
+                    })}
                 </Button>
             </Stack>
         </DialogActions>

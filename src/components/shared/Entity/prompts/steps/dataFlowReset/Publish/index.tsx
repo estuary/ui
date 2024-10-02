@@ -2,6 +2,7 @@ import { createPublication } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
+import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
@@ -36,7 +37,7 @@ function PublishStepDataFlowReset() {
                 const publishResponse = await createPublication(
                     dataFlowResetDraftId,
                     false,
-                    `data flow backfill : publish : ${initUUID}`,
+                    `${CustomEvents.DATA_FLOW_RESET} : publish : ${initUUID}`,
                     dataPlaneName?.whole
                 );
 

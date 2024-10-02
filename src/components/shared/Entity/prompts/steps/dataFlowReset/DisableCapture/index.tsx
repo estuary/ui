@@ -8,6 +8,7 @@ import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useMount } from 'react-use';
+import { CustomEvents } from 'services/types';
 
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
@@ -55,7 +56,7 @@ function DisableCapture() {
                     },
                     undefined,
                     undefined,
-                    `data flow backfill : disable capture : ${initUUID}`
+                    `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
                 );
 
                 if (updateResponse.error) {
@@ -70,7 +71,7 @@ function DisableCapture() {
                 const publishResponse = await createPublication(
                     draftId,
                     false,
-                    `data flow backfill : disable capture : ${initUUID}`
+                    `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
                 );
 
                 if (publishResponse.error || !publishResponse.data) {

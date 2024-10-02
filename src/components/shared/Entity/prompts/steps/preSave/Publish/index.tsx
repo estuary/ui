@@ -14,13 +14,19 @@ function Publish() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, dataFlowResetDraftId, updateContext, initUUID] =
-        usePreSavePromptStore((state) => [
-            state.updateStep,
-            state.context.dataFlowResetDraftId,
-            state.updateContext,
-            state.initUUID,
-        ]);
+    const [
+        updateStep,
+        updateContext,
+        initUUID,
+        dataFlowResetDraftId,
+        loggingEvent,
+    ] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+        state.initUUID,
+        state.context.dataFlowResetDraftId,
+        state.context.loggingEvent,
+    ]);
 
     // TODO (data flow reset) need to plumb this through correctly
     const dataPlaneName = useDetailsFormStore(
@@ -38,7 +44,7 @@ function Publish() {
                 const publishResponse = await createPublication(
                     dataFlowResetDraftId ?? draftId,
                     false,
-                    `data flow backfill : publish : ${initUUID}`,
+                    `${loggingEvent} : publish : ${initUUID}`,
                     dataPlaneName?.whole
                 );
 
