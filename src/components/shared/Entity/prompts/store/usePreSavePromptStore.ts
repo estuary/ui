@@ -199,3 +199,14 @@ export const usePreSavePromptStore_done = () => {
 
     return useMemo(() => last && done, [done, last]);
 };
+
+// Might need this again... instead of manually disabling/enabling things
+// export const usePreSavePromptStore_anyStepRunning = () => {
+//     return usePreSavePromptStore(
+//         useShallow((state) =>
+//             state.steps.some(
+//                 (step) => step.state.progress === ProgressStates.RUNNING
+//             )
+//         )
+//     );
+// };

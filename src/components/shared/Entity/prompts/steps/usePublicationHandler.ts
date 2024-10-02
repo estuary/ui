@@ -56,6 +56,7 @@ function usePublicationHandler() {
                 ) => {
                     setFormState({
                         status: FormStatus.FAILED,
+                        exitWhenLogsClose: false,
                     });
 
                     updateContext({
