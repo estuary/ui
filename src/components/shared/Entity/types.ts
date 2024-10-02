@@ -39,10 +39,6 @@ export interface LogDialogActionsProps {
     close: any;
     closeCtaKey?: string;
     hideButtons?: boolean;
-    materialize?: {
-        action: () => Promise<void>;
-        title: string;
-    };
 }
 
 export interface TableHydratorProps {
