@@ -39,7 +39,6 @@ function Title() {
 
             {cannotClose ? null : (
                 <IconButton
-                    disabled={disableClose}
                     onClick={() => {
                         if (done) {
                             exit();
