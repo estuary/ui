@@ -386,9 +386,8 @@ export const Workflows: Record<string, string> = {
         'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
 
     // Logs Dialog
-    'logs.default': ` `,
     'logs.paused': `paused`,
-    'logs.noLogs': `no logs found`,
+    'logs.noLogs': `stopped checking for logs`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,

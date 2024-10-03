@@ -35,7 +35,7 @@ function StepLogs() {
                     height={350}
                     loadingLineSeverity={stepFailed ? 'error' : 'success'}
                     spinnerMessages={{
-                        runningKey: 'logs.default',
+                        runningKey: 'common.publishing',
                         stoppedKey: stepSucceeded
                             ? 'common.success'
                             : 'logs.noLogs',
