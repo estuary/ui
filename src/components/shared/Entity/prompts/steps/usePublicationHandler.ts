@@ -8,7 +8,6 @@ import { useCallback } from 'react';
 import { handlePollerError } from 'services/supabase';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function usePublicationHandler() {
@@ -24,7 +23,7 @@ function usePublicationHandler() {
     return useCallback(
         (
             pubId: string,
-            callback?: (response: PublicationJobStatus) => void
+            callback?: (response: PublicationJobStatus | any) => void
         ) => {
             // Once we start publishing we do not want the user clicking around
             updateContext({
@@ -70,24 +69,16 @@ function usePublicationHandler() {
                         disableBack: false,
                     });
 
-                    const hasIncompatibleCollections = hasLength(
-                        failedResponse?.job_status?.incompatible_collections
-                    );
-
                     updateStep(stepIndex, {
-                        allowRetry: hasIncompatibleCollections
-                            ? false
-                            : undefined,
-                        error: hasIncompatibleCollections
-                            ? {
-                                  message:
-                                      'resetDataFlow.errors.incompatibleCollections',
-                              }
-                            : handlePollerError(failedResponse),
+                        error: handlePollerError(failedResponse),
                         publicationStatus: !failedResponse.error
                             ? failedResponse
                             : null,
                     });
+
+                    if (callback) {
+                        callback(failedResponse);
+                    }
                 }
             );
         },

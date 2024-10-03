@@ -6,6 +6,7 @@ import {
     usePreSavePromptStore,
     usePreSavePromptStore_done,
     usePreSavePromptStore_onFirstStep,
+    usePreSavePromptStore_onLastStep,
     usePreSavePromptStore_stepValid,
 } from '../store/usePreSavePromptStore';
 
@@ -26,25 +27,20 @@ function Actions() {
 
     const canContinue = usePreSavePromptStore_stepValid();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
+    const onLastStep = usePreSavePromptStore_onLastStep();
     const done = usePreSavePromptStore_done();
 
     return (
         <DialogActions sx={{ justifyContent: 'end' }}>
-            {/*            <Box sx={{ pl: 5 }}>
-                {done ? (
-                    <AlertBox fitWidth short severity="success">
-                        <Typography sx={{ mr: 1 }}>
-                            {intl.formatMessage({
-                                id: 'common.success',
-                            })}
-                        </Typography>
-                    </AlertBox>
-                ) : null}
-            </Box>*/}
-
             <Stack direction="row" spacing={2}>
                 <Button
-                    disabled={onFirstStep ? disableClose : disableBack}
+                    disabled={
+                        onLastStep
+                            ? true
+                            : onFirstStep
+                            ? disableClose
+                            : disableBack
+                    }
                     onClick={
                         onFirstStep
                             ? () => setShowSavePrompt(false)

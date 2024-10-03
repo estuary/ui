@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import Error from 'components/shared/Error';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function StepError() {
     const intl = useIntl();

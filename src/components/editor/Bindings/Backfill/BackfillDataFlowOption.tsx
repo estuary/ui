@@ -27,10 +27,18 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const backfillCount = useBinding_backfilledBindings_count();
 
     useEffect(() => {
+        // When this option is viewed default the choice
         if (!defaulted.current && backfillCount > 0) {
             defaulted.current = true;
             setBackfillDataflow(true);
         }
+
+        return () => {
+            // When closing reset it
+            if (defaulted.current) {
+                setBackfillDataflow(false);
+            }
+        };
     }, [backfillCount, setBackfillDataflow]);
 
     if (backfillCount < 1) {

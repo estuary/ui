@@ -2,8 +2,10 @@ import { createPublication } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useEffect } from 'react';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
 import useStepIsIdle from '../../useStepIsIdle';
@@ -55,7 +57,26 @@ function PublishStepDataFlowReset() {
                 dataFlowResetPudId: publishResponse.data[0].id,
             });
 
-            publicationHandler(publishResponse.data[0].id);
+            publicationHandler(publishResponse.data[0].id, (response) => {
+                const hasIncompatibleCollections = hasLength(
+                    response?.job_status?.incompatible_collections
+                );
+
+                // If we hit this basically just stop everything and tell the user
+                if (hasIncompatibleCollections) {
+                    updateStep(stepIndex, {
+                        allowRetry: false,
+                        error: {
+                            message:
+                                'resetDataFlow.errors.incompatibleCollections',
+                        },
+                    });
+
+                    logRocketEvent(CustomEvents.DATA_FLOW_RESET, {
+                        incompatibleCollections: true,
+                    });
+                }
+            });
         };
 
         void saveAndPublish();

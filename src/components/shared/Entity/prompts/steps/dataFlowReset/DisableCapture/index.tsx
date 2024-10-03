@@ -36,7 +36,7 @@ function DisableCapture() {
         ]);
 
     useEffect(() => {
-        if (stepIsIdle) {
+        if (!stepIsIdle) {
             return;
         }
 

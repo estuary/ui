@@ -3,27 +3,19 @@ import {
     Stack,
     Step,
     StepContent,
-    StepLabel,
     Stepper,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    ProgressFinished,
-    ProgressStates,
-} from 'components/tables/RowActions/Shared/types';
+import { ProgressFinished } from 'components/tables/RowActions/Shared/types';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
-import StepError from '../../steps/dataFlowReset/DisableCapture/StepError';
-import StepDraftErrors from '../../steps/dataFlowReset/DisableCapture/StepDraftErrors';
-import StepLogs from '../../steps/dataFlowReset/DisableCapture/StepLogs';
-import CustomStepIcon from './CustomStepIcon';
-import SkippedStepIcon from './SkippedStepIcon';
+import StepDraftErrors from './StepDraftErrors';
+import StepError from './StepError';
+import StepLogs from './StepLogs';
+import StepLabelAndIcon from './StepLabelAndIcon';
 
 function Content() {
-    const intl = useIntl();
-
     const [activeStep, steps] = usePreSavePromptStore((state) => [
         state.activeStep,
         state.steps,
@@ -33,49 +25,18 @@ function Content() {
         () =>
             steps.map(
                 (
-                    {
-                        StepComponent,
-                        stepLabelMessageId,
-                        state: { error, progress, optionalLabel },
-                    },
+                    { StepComponent, stepLabelMessageId, state: { progress } },
                     index
                 ) => {
-                    const hasError = Boolean(error);
-
-                    const stepCompleted = progress >= ProgressFinished;
-                    const stepSkipped = progress === ProgressStates.SKIPPED;
-
                     return (
                         <Step
                             key={`PreSave-${stepLabelMessageId}-${index}`}
-                            completed={stepCompleted}
+                            completed={progress >= ProgressFinished}
                         >
-                            <StepLabel
-                                error={hasError}
-                                optional={
-                                    optionalLabel
-                                        ? optionalLabel
-                                        : stepSkipped
-                                        ? intl.formatMessage({
-                                              id: 'common.skipped',
-                                          })
-                                        : undefined
-                                }
-                                StepIconComponent={
-                                    stepSkipped
-                                        ? SkippedStepIcon
-                                        : progress === ProgressStates.IDLE
-                                        ? undefined
-                                        : CustomStepIcon
-                                }
-                            >
-                                {intl.formatMessage({
-                                    id: stepLabelMessageId,
-                                })}
-                            </StepLabel>
-                            <StepContent>
-                                <ErrorBoundryWrapper>
-                                    <LoopIndexContextProvider value={index}>
+                            <LoopIndexContextProvider value={index}>
+                                <StepLabelAndIcon />
+                                <StepContent>
+                                    <ErrorBoundryWrapper>
                                         <Stack spacing={2}>
                                             <StepDraftErrors />
 
@@ -87,14 +48,14 @@ function Content() {
                                                 <StepLogs />
                                             </Stack>
                                         </Stack>
-                                    </LoopIndexContextProvider>
-                                </ErrorBoundryWrapper>
-                            </StepContent>
+                                    </ErrorBoundryWrapper>
+                                </StepContent>
+                            </LoopIndexContextProvider>
                         </Step>
                     );
                 }
             ),
-        [intl, steps]
+        [steps]
     );
 
     return (

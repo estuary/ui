@@ -1,9 +1,12 @@
 import { createPublication } from 'api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useEffect } from 'react';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
+import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
 import useStepIsIdle from '../../useStepIsIdle';
@@ -14,6 +17,10 @@ function Publish() {
     const dataPlaneName = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.dataPlaneName
     );
+
+    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
 
     const stepIndex = useLoopIndex();
     const stepIsIdle = useStepIsIdle();
@@ -63,7 +70,16 @@ function Publish() {
                 dataFlowResetPudId: publishResponse.data[0].id,
             });
 
-            publicationHandler(publishResponse.data[0].id);
+            publicationHandler(publishResponse.data[0].id, (response) => {
+                const incompatibleCollections =
+                    response?.job_status?.incompatible_collections;
+
+                // We need to close the publish and allow the user to fix the issue
+                if (hasLength(incompatibleCollections)) {
+                    setIncompatibleCollections(incompatibleCollections);
+                    setShowSavePrompt(false);
+                }
+            });
         };
 
         void saveAndPublish();
@@ -74,6 +90,8 @@ function Publish() {
         initUUID,
         loggingEvent,
         publicationHandler,
+        setIncompatibleCollections,
+        setShowSavePrompt,
         stepIndex,
         stepIsIdle,
         updateContext,

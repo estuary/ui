@@ -3,7 +3,7 @@ import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useShallow } from 'zustand/react/shallow';
 import Logs from 'components/logs';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function StepLogs() {
     const stepIndex = useLoopIndex();
