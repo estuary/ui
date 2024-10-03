@@ -1,24 +1,42 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import useTaskAuthorization from 'hooks/gatewayAuthToken/useTaskAuthorization';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-import { fetchShardList } from 'utils/dataPlane-utils';
+import {
+    fetchShardList,
+    TaskAuthorizationResponse,
+} from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
 
 const useShardsList = (catalogNames: string[]) => {
     const session = useUserStore((state) => state.session);
+    const { data: taskAuthorizationData } = useTaskAuthorization(catalogNames);
 
-    const fetcher = async (_url: string) => {
+    const fetcher = async ([_url, taskAuthorizations]: [
+        string,
+        TaskAuthorizationResponse[],
+    ]) => {
         // We check this in the swrKey memo so this should never actually happen
         if (!session) {
             return { shards: [] };
         }
 
         const shardPromises = catalogNames.map(async (name) => {
-            return fetchShardList(name, session);
+            const reactorAuthorization = taskAuthorizations
+                .filter((authorization) =>
+                    authorization.shardIdPrefix.includes(name)
+                )
+                .map((authorization) => ({
+                    address: authorization.reactorAddress,
+                    token: authorization.reactorToken,
+                }))
+                .at(0);
+
+            return fetchShardList(name, session, reactorAuthorization);
         });
 
         const shardResponses = await Promise.all(shardPromises);
@@ -34,10 +52,10 @@ const useShardsList = (catalogNames: string[]) => {
 
     const swrKey = useMemo(
         () =>
-            session && catalogNames.length > 0
-                ? `shards-${catalogNames.join('-')}`
+            session && taskAuthorizationData?.length && catalogNames.length > 0
+                ? [`shards-${catalogNames.join('-')}`, taskAuthorizationData]
                 : null,
-        [session, catalogNames]
+        [session, catalogNames, taskAuthorizationData]
     );
 
     // TODO: Terminate the poller when shard-related information for a given task

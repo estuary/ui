@@ -241,11 +241,24 @@ export const MEGABYTE = 1 * 10 ** 6;
 // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
 export const MAX_DOCUMENT_SIZE = 16 * MEGABYTE;
 
-export const fetchShardList = async (name: string, session: Session) => {
-    const { reactorAddress, reactorToken } = await authorizeTask(
-        session.access_token,
-        name
-    );
+export const fetchShardList = async (
+    name: string,
+    session: Session,
+    existingAuthentication?: { address: string; token: string }
+) => {
+    let reactorAddress: string,
+     reactorToken: string;
+
+    if (existingAuthentication) {
+        reactorAddress = existingAuthentication.address;
+        reactorToken = existingAuthentication.token;
+    } else {
+        const response = await authorizeTask(session.access_token, name);
+
+        reactorAddress = response.reactorAddress;
+        reactorToken = response.reactorToken;
+    }
+
     const reactorURL = new URL(reactorAddress);
 
     // Pass the shard client to the respective function directly.
