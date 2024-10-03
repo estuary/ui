@@ -15,7 +15,7 @@ export const generateGitPodURL = (
         ? sourceCollections.length
         : sourceCollections.size;
 
-    return `https://gitpod.io/#FLOW_DRAFT_ID=${encodeURIComponent(
+    return `https://gitpod.io/#${GIT_REPO}?FLOW_DRAFT_ID=${encodeURIComponent(
         draftId
     )},FLOW_REFRESH_TOKEN=${encodeURIComponent(
         Buffer.from(JSON.stringify(token)).toString('base64')
