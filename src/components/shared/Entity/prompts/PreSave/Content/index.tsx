@@ -21,6 +21,7 @@ import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Logs from 'components/logs';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 import CustomStepIcon from './CustomStepIcon';
+import SkippedStepIcon from './SkippedStepIcon';
 
 function Content() {
     const intl = useIntl();
@@ -40,17 +41,21 @@ function Content() {
                     {
                         StepComponent,
                         stepLabelMessageId,
-                        state: { error, progress, publicationStatus },
+                        state: {
+                            error,
+                            progress,
+                            publicationStatus,
+                            optionalLabel,
+                        },
                     },
                     index
                 ) => {
                     const hasError = Boolean(error);
-                    const stepCompleted = progress >= ProgressFinished;
                     const stepCanPublish = Boolean(publicationStatus);
 
-                    console.log('stepCanPublish', stepCanPublish);
-                    console.log('dataFlowResetPudId', dataFlowResetPudId);
-                    console.log('publicationStatus', publicationStatus);
+                    const stepCompleted = progress >= ProgressFinished;
+                    const stepFailed = progress === ProgressStates.FAILED;
+                    const stepSkipped = progress === ProgressStates.SKIPPED;
 
                     return (
                         <Step
@@ -59,8 +64,19 @@ function Content() {
                         >
                             <StepLabel
                                 error={hasError}
+                                optional={
+                                    optionalLabel
+                                        ? optionalLabel
+                                        : stepSkipped
+                                        ? intl.formatMessage({
+                                              id: 'common.skipped',
+                                          })
+                                        : undefined
+                                }
                                 StepIconComponent={
-                                    progress === ProgressStates.IDLE
+                                    stepSkipped
+                                        ? SkippedStepIcon
+                                        : progress === ProgressStates.IDLE
                                         ? undefined
                                         : CustomStepIcon
                                 }
@@ -81,8 +97,7 @@ function Content() {
                                                             dataFlowResetDraftId
                                                         }
                                                         enablePolling={
-                                                            progress ===
-                                                            ProgressStates.FAILED
+                                                            stepFailed
                                                         }
                                                     />
                                                     <Divider />
@@ -92,8 +107,7 @@ function Content() {
                                             <StepComponent />
 
                                             <Stack spacing={2}>
-                                                {progress ===
-                                                ProgressStates.FAILED ? (
+                                                {stepFailed ? (
                                                     <Error
                                                         severity="error"
                                                         error={error}
@@ -103,8 +117,7 @@ function Content() {
 
                                                 {stepCanPublish &&
                                                 (dataFlowResetPudId ||
-                                                    progress ===
-                                                        ProgressStates.FAILED) ? (
+                                                    stepFailed) ? (
                                                     <Box>
                                                         <Logs
                                                             token={
@@ -113,8 +126,7 @@ function Content() {
                                                             }
                                                             height={350}
                                                             loadingLineSeverity={
-                                                                progress ===
-                                                                ProgressStates.FAILED
+                                                                stepFailed
                                                                     ? 'error'
                                                                     : 'success'
                                                             }

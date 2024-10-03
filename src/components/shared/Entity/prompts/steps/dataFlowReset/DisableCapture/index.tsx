@@ -7,6 +7,7 @@ import {
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { CustomEvents } from 'services/types';
 
@@ -15,6 +16,8 @@ import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
 
 function DisableCapture() {
+    const intl = useIntl();
+
     const publicationHandler = usePublicationHandler();
 
     const draftId = useEditorStore_id();
@@ -23,9 +26,13 @@ function DisableCapture() {
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
-    const [updateStep, updateContext, initUUID] = usePreSavePromptStore(
-        (state) => [state.updateStep, state.updateContext, state.initUUID]
-    );
+    const [updateStep, updateContext, initUUID, nextStep] =
+        usePreSavePromptStore((state) => [
+            state.updateStep,
+            state.updateContext,
+            state.initUUID,
+            state.nextStep,
+        ]);
 
     useMount(() => {
         if (thisStep.state.progress === ProgressStates.IDLE) {
@@ -88,7 +95,21 @@ function DisableCapture() {
                     initialPubId: publishResponse.data[0].id,
                 });
 
-                publicationHandler(publishResponse.data[0].id, true);
+                updateStep(stepIndex, {
+                    optionalLabel: intl.formatMessage({
+                        id: 'common.disabling',
+                    }),
+                });
+
+                publicationHandler(publishResponse.data[0].id, () => {
+                    updateStep(stepIndex, {
+                        optionalLabel: intl.formatMessage({
+                            id: 'common.disabled',
+                        }),
+                    });
+
+                    nextStep();
+                });
             };
 
             void disableCaptureAndPublish();

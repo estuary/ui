@@ -139,12 +139,21 @@ export const Workflows: Record<string, string> = {
 
     // Reset Data Flow
     'dataFlowReset.dialog.title': `Data Flow Reset`,
+
     'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
+
     'dataFlowReset.reviewSelection.title': `Review changes`,
+
     'dataFlowReset.disableCapture.title': `Disable capture`,
+
     'dataFlowReset.waitForShardToIdle.title': `Wait for capture to fully stop`,
+    'dataFlowReset.waitForShardToIdle.success': `Stopped at {timeStopped} (UTC)`,
+
     'dataFlowReset.updateMaterialization.title': `Update materialization`,
+    'dataFlowReset.updateMaterialization.skipped': `Skipped - no matching bindings`,
+
     'dataFlowReset.enableCapture.title': `Enable capture`,
+
     'dataFlowReset.publish.title': `Publish data flow reset`,
 
     'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,

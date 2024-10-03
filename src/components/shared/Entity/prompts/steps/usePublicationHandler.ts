@@ -23,14 +23,18 @@ function usePublicationHandler() {
 
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
-    const [updateStep, updateContext, nextStep] = usePreSavePromptStore(
-        (state) => [state.updateStep, state.updateContext, state.nextStep]
-    );
+    const [updateStep, updateContext] = usePreSavePromptStore((state) => [
+        state.updateStep,
+        state.updateContext,
+    ]);
 
     const setFormState = useFormStateStore_setFormState();
 
     return useCallback(
-        (pubId: string, goToNext?: boolean) => {
+        (
+            pubId: string,
+            callback?: (response: PublicationJobStatus) => void
+        ) => {
             updateContext({
                 disableBack: true,
                 disableClose: true,
@@ -47,8 +51,8 @@ function usePublicationHandler() {
                         status: FormStatus.LOCKED,
                     });
 
-                    if (goToNext) {
-                        nextStep();
+                    if (callback) {
+                        callback(successResponse);
                     }
                 },
                 async (
@@ -64,6 +68,7 @@ function usePublicationHandler() {
                         disableBack: false,
                     });
 
+                    // TODO (data flow reset) - should this be handled in the callback? Probably
                     const incompatibleCollections =
                         failedResponse?.job_status?.incompatible_collections;
 
@@ -85,7 +90,6 @@ function usePublicationHandler() {
         },
         [
             jobStatusPoller,
-            nextStep,
             setFormState,
             setIncompatibleCollections,
             setShowSavePrompt,

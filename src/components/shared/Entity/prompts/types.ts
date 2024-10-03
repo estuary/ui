@@ -24,6 +24,9 @@ export interface PromptStepState {
     // Controls if the user can continue on from this step
     valid: boolean;
 
+    // Shows under the label
+    optionalLabel?: string;
+
     publicationStatus?: PublicationJobStatus;
 }
 

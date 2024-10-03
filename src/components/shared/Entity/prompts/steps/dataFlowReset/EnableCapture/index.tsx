@@ -2,11 +2,13 @@ import { createDraftSpec } from 'api/draftSpecs';
 
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function EnableCapture() {
+    const intl = useIntl();
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
@@ -51,6 +53,9 @@ function EnableCapture() {
 
                 updateStep(stepIndex, {
                     progress: ProgressStates.SUCCESS,
+                    optionalLabel: intl.formatMessage({
+                        id: 'common.enabled',
+                    }),
                     valid: true,
                 });
 

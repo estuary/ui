@@ -8,9 +8,11 @@ import { useUserStore } from 'context/User/useUserContextStore';
 import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { useIntl } from 'react-intl';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
+    const intl = useIntl();
     const session = useUserStore((state) => state.session);
 
     const queryPoller = useQueryPoller(
@@ -84,10 +86,15 @@ function WaitForShardToIdle() {
                     liveSpecId,
                 });
 
+                updateStep(stepIndex, {
+                    optionalLabel: intl.formatMessage({ id: 'common.waiting' }),
+                });
+
                 queryPoller(
                     () => fetchShardList(catalogName, session),
                     async () => {
-                        const timeStopped = DateTime.utc().toFormat(
+                        const currentTimeUTC = DateTime.utc();
+                        const timeStopped = currentTimeUTC.toFormat(
                             `yyyy-MM-dd'T'HH:mm:ss'Z'`
                         );
 
@@ -97,6 +104,16 @@ function WaitForShardToIdle() {
 
                         updateStep(stepIndex, {
                             progress: ProgressStates.SUCCESS,
+                            optionalLabel: intl.formatMessage(
+                                {
+                                    id: 'dataFlowReset.waitForShardToIdle.success',
+                                },
+                                {
+                                    timeStopped: `${currentTimeUTC.toLocaleString(
+                                        DateTime.TIME_WITH_SECONDS
+                                    )}`,
+                                }
+                            ),
                             valid: true,
                         });
 
@@ -105,7 +122,6 @@ function WaitForShardToIdle() {
                     async (
                         failedResponse: any //PublicationJobStatus | PostgrestError
                     ) => {
-                        console.log('failedResponse', failedResponse);
                         updateStep(stepIndex, {
                             valid: false,
                             error: failedResponse.error ? failedResponse : null,

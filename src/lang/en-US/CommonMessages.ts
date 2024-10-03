@@ -12,6 +12,10 @@ export const CommonMessages: Record<string, string> = {
     'common.enabled': `Enabled`,
     'common.disabling': `Disabling...`,
     'common.disabled': `Disabled`,
+    'common.waiting': `Waiting...`,
+    'common.updating': `Updating...`,
+    'common.updated': `Updated`,
+
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,

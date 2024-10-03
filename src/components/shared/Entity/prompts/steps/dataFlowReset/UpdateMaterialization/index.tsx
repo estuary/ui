@@ -4,6 +4,7 @@ import { getLiveSpecSpec } from 'api/liveSpecsExt';
 
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { CustomEvents } from 'services/types';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
@@ -13,8 +14,10 @@ import {
     getCollectionName,
 } from 'utils/workflow-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { PromptStepState } from '../../../types';
 
 function MarkMaterialization() {
+    const intl = useIntl();
     const stepIndex = useLoopIndex();
     const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
@@ -42,6 +45,9 @@ function MarkMaterialization() {
         if (thisStep.state.progress === ProgressStates.IDLE) {
             updateStep(stepIndex, {
                 progress: ProgressStates.RUNNING,
+                optionalLabel: intl.formatMessage({
+                    id: 'common.updating',
+                }),
             });
 
             const updateMaterializationTimestamp = async () => {
@@ -64,7 +70,7 @@ function MarkMaterialization() {
 
                 // Update the spec here if we have a target
                 let updatedSpec = null;
-                let noMatchingBindings = true;
+                let updatedTotal = 0;
                 if (backfillTargetId) {
                     const liveSpecResponse = await getLiveSpecSpec(
                         backfillTargetId
@@ -90,14 +96,14 @@ function MarkMaterialization() {
                             binding.backfill = getBackfillCounter(binding) + 1;
                             binding.source = getBindingAsFullSource(binding);
                             binding.source.notBefore = timeStopped;
-                            noMatchingBindings = false;
+                            updatedTotal += 1;
                         }
                     });
                 }
 
                 const skipped = Boolean(
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    noMatchingBindings || !backfillTargetName || !updatedSpec
+                    updatedTotal === 0 || !backfillTargetName || !updatedSpec
                 );
 
                 if (!skipped && backfillTargetName && updatedSpec) {
@@ -120,13 +126,34 @@ function MarkMaterialization() {
                     }
                 }
 
-                updateStep(stepIndex, {
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                    progress: skipped
-                        ? ProgressStates.SKIPPED
-                        : ProgressStates.SUCCESS,
+                let newStepState: Partial<PromptStepState> = {
                     valid: true,
-                });
+                };
+
+                if (skipped) {
+                    newStepState = {
+                        ...newStepState,
+                        progress: ProgressStates.SKIPPED,
+                        optionalLabel: intl.formatMessage({
+                            id: 'dataFlowReset.updateMaterialization.skipped',
+                        }),
+                    };
+                } else {
+                    newStepState = {
+                        ...newStepState,
+                        progress: ProgressStates.SUCCESS,
+                        optionalLabel: intl.formatMessage(
+                            {
+                                id: 'common.updated',
+                            },
+                            {
+                                updatedTotal,
+                            }
+                        ),
+                    };
+                }
+
+                updateStep(stepIndex, newStepState);
                 nextStep(skipped);
             };
 
