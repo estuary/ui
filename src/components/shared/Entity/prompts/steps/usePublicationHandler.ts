@@ -26,6 +26,7 @@ function usePublicationHandler() {
             pubId: string,
             callback?: (response: PublicationJobStatus) => void
         ) => {
+            // Once we start publishing we do not want the user clicking around
             updateContext({
                 disableBack: true,
                 disableClose: true,
@@ -45,6 +46,9 @@ function usePublicationHandler() {
                         publicationStatus: successResponse,
                     });
 
+                    // Once we have published one lock the form down. This is because
+                    //  if we have disabled capture we used the user's draft to do that
+                    //  and they can not go back to the form and edit anything
                     setFormState({
                         status: FormStatus.LOCKED,
                     });
@@ -84,9 +88,7 @@ function usePublicationHandler() {
                             ? failedResponse
                             : null,
                     });
-                    // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
-                },
-                15000
+                }
             );
         },
         [jobStatusPoller, setFormState, stepIndex, updateContext, updateStep]
