@@ -13,15 +13,15 @@ function SelectMaterialization() {
         draftSpecs[0].catalog_name
     );
 
-    return (
-        <Box style={{ maxWidth: 'fit-content' }}>
-            {error ? (
+    if (error) {
+        return (
+            <Box style={{ maxWidth: 'fit-content' }}>
                 <Error error={error} condensed />
-            ) : (
-                <Selector keys={related} value={null} loading={isValidating} />
-            )}
-        </Box>
-    );
+            </Box>
+        );
+    }
+
+    return <Selector keys={related} value={null} loading={isValidating} />;
 }
 
 export default SelectMaterialization;

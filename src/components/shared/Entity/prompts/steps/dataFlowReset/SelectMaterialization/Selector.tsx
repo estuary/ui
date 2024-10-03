@@ -10,7 +10,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
@@ -28,8 +27,6 @@ function Selector({
     const stepIndex = useLoopIndex();
 
     const [inputValue, setInputValue] = useState('');
-
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const [updateStep, updateContext] = usePreSavePromptStore((state) => [
         state.updateStep,
@@ -57,14 +54,9 @@ function Selector({
     return (
         <Grid item xs={12}>
             <Typography>
-                {intl.formatMessage(
-                    {
-                        id: 'resetDataFlow.materializations.header',
-                    },
-                    {
-                        captureName: draftSpecs[0].catalog_name,
-                    }
-                )}
+                {intl.formatMessage({
+                    id: 'resetDataFlow.materializations.header',
+                })}
             </Typography>
 
             <Autocomplete
@@ -74,6 +66,10 @@ function Selector({
                 inputValue={inputValue}
                 options={keys}
                 value={backfillTarget ?? null}
+                sx={{
+                    minWidth: 'fit-content',
+                    maxWidth: '50%',
+                }}
                 isOptionEqualToValue={(option, optionValue) => {
                     return option.catalog_name === optionValue.catalog_name;
                 }}
