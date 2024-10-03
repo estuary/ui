@@ -22,18 +22,18 @@ function ReviewSelection() {
                     short
                     severity="warning"
                     title={intl.formatMessage({
-                        id: 'dataFlowReset.reviewSelection.warning.title',
+                        id: 'resetDataFlow.reviewSelection.warning.title',
                     })}
                 >
-                    <MessageWithLink messageID="dataFlowReset.reviewSelection.warning.message" />
+                    <MessageWithLink messageID="resetDataFlow.reviewSelection.warning.message" />
                 </AlertBox>
             ) : null}
 
             <Button variant="text" onClick={() => setShowDiff(!showDiff)}>
                 {intl.formatMessage({
                     id: showDiff
-                        ? 'cta.dataFlowReset.hideDiff'
-                        : 'cta.dataFlowReset.showDiff',
+                        ? 'cta.resetDataFlow.hideDiff'
+                        : 'cta.resetDataFlow.showDiff',
                 })}
             </Button>
 
@@ -45,7 +45,7 @@ function ReviewSelection() {
                 <CardWrapper
                     message={intl.formatMessage({
                         id: backfillDataflow
-                            ? 'dataFlowReset.reviewSelection.instructions'
+                            ? 'resetDataFlow.reviewSelection.instructions'
                             : 'preSavePrompt.reviewSelection.instructions',
                     })}
                 >

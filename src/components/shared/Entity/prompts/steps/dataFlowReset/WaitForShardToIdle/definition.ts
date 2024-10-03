@@ -9,9 +9,10 @@ export interface WaitForShardToIdleStepContext {
 
 export const WaitForShardToIdleStep: PromptStep = {
     StepComponent: WaitForShardToIdle,
-    stepLabelMessageId: 'dataFlowReset.waitForShardToIdle.title',
+    stepLabelMessageId: 'resetDataFlow.waitForShardToIdle.title',
     state: {
         ...defaultStepState,
     },
+    allowRetry: true,
     // messageIds: defaultStepMessageIds,
 };

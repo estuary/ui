@@ -11,7 +11,7 @@ export interface SelectMaterializationStepContext {
 
 export const SelectMaterializationStep: PromptStep = {
     StepComponent: SelectMaterialization,
-    stepLabelMessageId: 'dataFlowReset.selectMaterialization.title',
+    stepLabelMessageId: 'resetDataFlow.selectMaterialization.title',
     state: {
         ...defaultStepState,
         valid: false,

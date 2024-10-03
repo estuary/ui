@@ -9,7 +9,7 @@ export interface DisableCaptureStepContext {
 }
 export const DisableCaptureStep: PromptStep = {
     StepComponent: DisableCapture,
-    stepLabelMessageId: 'dataFlowReset.disableCapture.title',
+    stepLabelMessageId: 'resetDataFlow.disableCapture.title',
     state: defaultStepState,
     // messageIds: defaultStepMessageIds,
 };

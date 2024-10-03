@@ -9,7 +9,7 @@ export interface UpdateMaterializationStepContext {
 
 export const PublishStep: PromptStep = {
     StepComponent: PublishStepDataFlowReset,
-    stepLabelMessageId: 'dataFlowReset.publish.title',
+    stepLabelMessageId: 'resetDataFlow.publish.title',
     state: defaultStepState,
     // messageIds: defaultStepMessageIds,
 };
