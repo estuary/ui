@@ -21,7 +21,7 @@ const fetcher = async ({
         !hasLength(response.reactorToken) ||
         !hasLength(response.reactorAddress)
     ) {
-        throw new Error('data-plane auth token response was empty');
+        throw new Error('data plane auth token response was empty');
     }
     const { reactorAddress, reactorToken } = response;
 
@@ -47,13 +47,13 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
 
     try {
         if (!token.parsed.exp) {
-            throw new Error('data-plane JWT is missing exp');
+            throw new Error('data plane JWT is missing exp');
         }
         // JWT date is in seconds, while Date.now and SWR use millis.
         const exp = token.parsed.exp * 1000;
         const now = Date.now();
         if (now >= exp) {
-            console.error('data-plane JWT is expired', {
+            console.error('data plane JWT is expired', {
                 now,
                 token,
             });
@@ -65,7 +65,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
             return newInt;
         }
     } catch (e: unknown) {
-        console.error('failed to parse data-plane JWT', e);
+        console.error('failed to parse data plane JWT', e);
         // Try again in 10 seconds if the token appears invalid
         return 10000;
     }
@@ -82,7 +82,7 @@ const useReactorToken = (prefix: string | null) => {
         { refreshInterval: getTokenRefreshInterval }
     );
     if (error) {
-        console.error('fetching scoped data-plane access token: ', error);
+        console.error('fetching scoped data plane access token: ', error);
     }
 
     return {
