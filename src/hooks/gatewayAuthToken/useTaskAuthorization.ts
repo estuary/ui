@@ -25,28 +25,27 @@ const gatewayFetcher = async ({
     0: prefixes,
     1: accessToken,
 }: AuthorizationFetcherArgs): Promise<TaskAuthorizationFetcherResponse[]> => {
-    // The endpoint should stay the same so just using the prefix and the access token as the cache key.
-    const cacheKey = `${prefixes.join(',')}__${accessToken}`;
+    const fetcherPromises = prefixes.map(
+        async (prefix): Promise<TaskAuthorizationFetcherResponse> => {
+            // The endpoint should stay the same so just using the prefix and the access token as the cache key.
+            const cacheKey = `${prefix}__task-auth__${accessToken}`;
 
-    const gatewayConfig = getAuthorizationConfig(cacheKey);
-    const tokensExpired = evaluateJWTExpiration(gatewayConfig);
+            const gatewayConfig = getAuthorizationConfig(cacheKey);
+            const tokensExpired = evaluateJWTExpiration(gatewayConfig);
 
-    // If the token is still good and it contains a URL (mainly checking b/c typescript) then just
-    //  used the cached value.
-    if (!tokensExpired && gatewayConfig) {
-        return Promise.resolve([{ ...gatewayConfig, cached: true }]);
-    }
+            // If the token is still good and it contains a URL (mainly checking b/c typescript) then just
+            //  used the cached value.
+            if (!tokensExpired && gatewayConfig) {
+                return Promise.resolve({ ...gatewayConfig, cached: true });
+            }
 
-    const authorizationPromises = prefixes.map(async (prefix) =>
-        authorizeTask(accessToken, prefix)
+            const response = await authorizeTask(accessToken, prefix);
+
+            return { ...response, cacheKey };
+        }
     );
 
-    const authorizationResponses = await Promise.all(authorizationPromises);
-
-    return authorizationResponses.map((response) => ({
-        ...response,
-        cacheKey,
-    }));
+    return Promise.all(fetcherPromises);
 };
 
 const useTaskAuthorization = (prefixes: string[]) => {

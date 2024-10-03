@@ -34,15 +34,14 @@ export const evaluateJWTExpiration = (
     config: TaskAuthorizationResponse | undefined
 ) => {
     // Grab the data-plane token from local storage.
-    let brokerJWT: JWTPayload | undefined,
-     reactorJWT: JWTPayload | undefined;
+    let brokerJWT: JWTPayload | undefined, reactorJWT: JWTPayload | undefined;
 
     try {
-        brokerJWT = config?.brokerAddress
-            ? decodeJwt(config.brokerAddress)
+        brokerJWT = config?.brokerToken
+            ? decodeJwt(config.brokerToken)
             : undefined;
-        reactorJWT = config?.reactorAddress
-            ? decodeJwt(config.reactorAddress)
+        reactorJWT = config?.reactorToken
+            ? decodeJwt(config.reactorToken)
             : undefined;
     } catch {
         brokerJWT = undefined;
