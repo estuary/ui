@@ -68,39 +68,31 @@ const getConnectorImage = async (
 };
 
 const getDataPlane = (
-    dataPlaneOptions: DataPlaneOption[] | null,
+    dataPlaneOptions: DataPlaneOption[],
     dataPlaneId: string | null
 ): Details['data']['dataPlane'] | null => {
-    if (dataPlaneOptions) {
-        const selectedOption = dataPlaneId
-            ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
-            : undefined;
+    const selectedOption = dataPlaneId
+        ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
+        : undefined;
 
-        if (selectedOption) {
-            return selectedOption;
-        }
-
-        const defaultOption = dataPlaneOptions.find(
-            ({ dataPlaneName }) =>
-                dataPlaneName.whole ===
-                `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
-        );
-
-        if (dataPlaneId) {
-            logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
-                targetDataPlaneId: dataPlaneId,
-                defaultDataPlaneId: defaultOption?.id,
-            });
-        }
-
-        // TODO (data-planes): Narrow the type annotation for Details['data']['dataPlane']
-        //   when the data-plane feature flag is removed. A `null` response from this function
-        //   indicates that the field _should_ appear but was not defaulted properly, resulting
-        //   in a store hydration error.
-        return defaultOption ?? null;
+    if (selectedOption) {
+        return selectedOption;
     }
 
-    return undefined;
+    const defaultOption = dataPlaneOptions.find(
+        ({ dataPlaneName }) =>
+            dataPlaneName.whole ===
+            `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
+    );
+
+    if (dataPlaneId) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            targetDataPlaneId: dataPlaneId,
+            defaultDataPlaneId: defaultOption?.id,
+        });
+    }
+
+    return defaultOption ?? null;
 };
 
 const initialDetails: Details = {
@@ -307,9 +299,6 @@ export const getInitialState = (
     hydrateState: async (workflow): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-        const dataPlaneFeatureFlag = searchParams.get(
-            GlobalSearchParams.DATA_PLANE
-        );
         const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
         const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -324,42 +313,39 @@ export const getInitialState = (
                 setHydrationErrorsExist,
             } = get();
 
-            let dataPlaneOptions: DataPlaneOption[] | null =
-                dataPlaneFeatureFlag === 'show_option' ? [] : null;
+            let dataPlaneOptions: DataPlaneOption[] = [];
 
-            if (dataPlaneOptions !== null) {
-                const dataPlaneResponse = await getDataPlaneOptions();
+            const dataPlaneResponse = await getDataPlaneOptions();
 
-                if (
-                    !dataPlaneResponse.error &&
-                    dataPlaneResponse.data &&
-                    dataPlaneResponse.data.length > 0
-                ) {
-                    dataPlaneOptions = dataPlaneResponse.data.map(
-                        ({ data_plane_name, id, reactor_address }) => {
-                            const scope = getDataPlaneScope(data_plane_name);
+            if (
+                !dataPlaneResponse.error &&
+                dataPlaneResponse.data &&
+                dataPlaneResponse.data.length > 0
+            ) {
+                dataPlaneOptions = dataPlaneResponse.data.map(
+                    ({ data_plane_name, id, reactor_address }) => {
+                        const scope = getDataPlaneScope(data_plane_name);
 
-                            const dataPlaneName = parseDataPlaneName(
-                                data_plane_name,
-                                scope
-                            );
+                        const dataPlaneName = parseDataPlaneName(
+                            data_plane_name,
+                            scope
+                        );
 
-                            return {
-                                dataPlaneName,
-                                id,
-                                reactorAddress: reactor_address,
-                                scope,
-                            };
-                        }
-                    );
+                        return {
+                            dataPlaneName,
+                            id,
+                            reactorAddress: reactor_address,
+                            scope,
+                        };
+                    }
+                );
 
-                    setDataPlaneOptions(dataPlaneOptions);
-                } else {
-                    setHydrationError(
-                        dataPlaneResponse.error?.message ??
-                            'An error was encountered initializing the details form. If the issue persists, please contact support.'
-                    );
-                }
+                setDataPlaneOptions(dataPlaneOptions);
+            } else {
+                setHydrationError(
+                    dataPlaneResponse.error?.message ??
+                        'An error was encountered initializing the details form. If the issue persists, please contact support.'
+                );
             }
 
             if (createWorkflow) {
