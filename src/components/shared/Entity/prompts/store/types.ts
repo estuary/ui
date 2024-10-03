@@ -15,7 +15,7 @@ export interface PreSavePromptStore {
 
     activeStep: number;
     setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
-    nextStep: (force?: boolean) => void;
+    nextStep: (skipped?: boolean) => void;
     previousStep: () => void;
 
     resetState: () => void;

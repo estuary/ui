@@ -130,19 +130,20 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     'setActiveStep'
                 ),
 
-            nextStep: (force) =>
+            nextStep: (skipped) =>
                 set(
                     produce((state: PreSavePromptStore) => {
                         // TODO (data flow reset)
                         // Want to think more about allowing this
-                        if (force) {
+                        if (skipped) {
                             state.steps[state.activeStep].state.valid = true;
                         }
 
                         if (state.steps[state.activeStep].state.valid) {
-                            state.steps[state.activeStep].state.progress = force
-                                ? ProgressStates.SKIPPED
-                                : ProgressStates.SUCCESS;
+                            state.steps[state.activeStep].state.progress =
+                                skipped
+                                    ? ProgressStates.SKIPPED
+                                    : ProgressStates.SUCCESS;
                             state.activeStep = state.activeStep + 1;
                         }
                     }),
