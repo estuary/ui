@@ -58,8 +58,6 @@ function Content() {
                     },
                     index
                 ) => {
-                    let keyIncrementor = 0;
-                    const getKey = () => `stepper-content__${keyIncrementor}`;
                     const hasError = Boolean(error);
                     const stepCanPublish = Boolean(publicationStatus);
 
@@ -114,7 +112,7 @@ function Content() {
                                                 </>
                                             ) : null}
 
-                                            <StepComponent key={getKey()} />
+                                            <StepComponent />
 
                                             <Stack spacing={2}>
                                                 {stepFailed ? (
@@ -125,16 +123,16 @@ function Content() {
                                                         cta={
                                                             allowRetry ? (
                                                                 <Button
+                                                                    size="small"
                                                                     style={{
                                                                         maxWidth:
                                                                             'fit-content',
                                                                     }}
+                                                                    variant="text"
                                                                     onClick={() => {
                                                                         retryStep(
                                                                             index
                                                                         );
-
-                                                                        keyIncrementor += 1;
                                                                     }}
                                                                 >
                                                                     {intl.formatMessage(
