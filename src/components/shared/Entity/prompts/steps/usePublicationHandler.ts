@@ -2,28 +2,18 @@ import {
     getPublicationByIdQuery,
     PublicationJobStatus,
 } from 'api/publications';
-import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { handlePollerError } from 'services/supabase';
-import {
-    useFormStateStore_setFormState,
-    useFormStateStore_setShowSavePrompt,
-} from 'stores/FormState/hooks';
+import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function usePublicationHandler() {
     const { jobStatusPoller } = useJobStatusPoller();
-    const setIncompatibleCollections =
-        useBindingsEditorStore_setIncompatibleCollections();
-
     const stepIndex = useLoopIndex();
-
-    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
-
     const [updateStep, updateContext] = usePreSavePromptStore((state) => [
         state.updateStep,
         state.updateContext,
@@ -76,18 +66,20 @@ function usePublicationHandler() {
                         disableBack: false,
                     });
 
-                    // TODO (data flow reset) - should this be handled in the callback? Probably
-                    const incompatibleCollections =
-                        failedResponse?.job_status?.incompatible_collections;
-
-                    if (hasLength(incompatibleCollections)) {
-                        setIncompatibleCollections(incompatibleCollections);
-                        setShowSavePrompt(false);
-                        return;
-                    }
+                    const hasIncompatibleCollections = hasLength(
+                        failedResponse?.job_status?.incompatible_collections
+                    );
 
                     updateStep(stepIndex, {
-                        error: handlePollerError(failedResponse),
+                        allowRetry: hasIncompatibleCollections
+                            ? false
+                            : undefined,
+                        error: hasIncompatibleCollections
+                            ? {
+                                  message:
+                                      'resetDataFlow.errors.incompatibleCollections',
+                              }
+                            : handlePollerError(failedResponse),
                         publicationStatus: !failedResponse.error
                             ? failedResponse
                             : null,
@@ -96,15 +88,7 @@ function usePublicationHandler() {
                 }
             );
         },
-        [
-            jobStatusPoller,
-            setFormState,
-            setIncompatibleCollections,
-            setShowSavePrompt,
-            stepIndex,
-            updateContext,
-            updateStep,
-        ]
+        [jobStatusPoller, setFormState, stepIndex, updateContext, updateStep]
     );
 }
 

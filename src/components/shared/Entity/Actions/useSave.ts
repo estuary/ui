@@ -99,6 +99,7 @@ function useSave(
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
             updateFormStatus(status, hideNotification);
+            setIncompatibleCollections([]);
 
             jobStatusPoller(
                 getPublicationByIdQuery(publicationId),
@@ -276,7 +277,6 @@ function useSave(
 
             // todo (data flow reset) - start
             if (showPreSavePrompt) {
-                setIncompatibleCollections([]);
                 setShowSavePrompt(true);
                 return;
             }
@@ -298,7 +298,6 @@ function useSave(
                 return;
             }
 
-            setIncompatibleCollections([]);
             waitForPublishToFinish(response.data[0].id, hideLogs);
             setFormState({
                 logToken: response.data[0].logs_token,
@@ -314,11 +313,10 @@ function useSave(
             intl,
             messagePrefix,
             onFailure,
-            showPreSavePrompt,
             setDiscoveredDraftId,
             setFormState,
-            setIncompatibleCollections,
             setShowSavePrompt,
+            showPreSavePrompt,
             status,
             updateFormStatus,
             waitForPublishToFinish,

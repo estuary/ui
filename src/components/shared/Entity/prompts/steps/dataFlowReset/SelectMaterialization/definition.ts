@@ -16,5 +16,4 @@ export const SelectMaterializationStep: PromptStep = {
         ...defaultStepState,
         valid: false,
     },
-    // messageIds: defaultStepMessageIds,
 };

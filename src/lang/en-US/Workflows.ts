@@ -1,6 +1,8 @@
 import { CommonMessages, endpointConfigHeader } from './CommonMessages';
 import { CTAs } from './CTAs';
 
+const changesRejected = 'rejected due to incompatible collection updates';
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -156,7 +158,8 @@ export const Workflows: Record<string, string> = {
 
     'resetDataFlow.publish.title': `Publish data flow reset`,
 
-    'resetDataFlow.errors.publishFailed': `There was a build failure on the server.`,
+    'resetDataFlow.errors.publishFailed': `Publishing failed.`,
+    'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
@@ -284,7 +287,7 @@ export const Workflows: Record<string, string> = {
     // Entity Evolution
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
-    'entityEvolution.error.title': `Changes rejected due to incompatible collection updates`,
+    'entityEvolution.error.title': `Changes ${changesRejected}`,
     'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 

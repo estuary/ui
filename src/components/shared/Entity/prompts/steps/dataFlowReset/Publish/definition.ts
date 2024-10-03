@@ -11,5 +11,4 @@ export const PublishStep: PromptStep = {
     StepComponent: PublishStepDataFlowReset,
     stepLabelMessageId: 'resetDataFlow.publish.title',
     state: defaultStepState,
-    // messageIds: defaultStepMessageIds,
 };

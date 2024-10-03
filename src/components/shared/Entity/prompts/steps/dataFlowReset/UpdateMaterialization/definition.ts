@@ -13,5 +13,4 @@ export const UpdateMaterializationStep: PromptStep = {
         ...defaultStepState,
         allowRetry: true,
     },
-    // messageIds: defaultStepMessageIds,
 };

@@ -11,5 +11,4 @@ export const DisableCaptureStep: PromptStep = {
     StepComponent: DisableCapture,
     stepLabelMessageId: 'resetDataFlow.disableCapture.title',
     state: defaultStepState,
-    // messageIds: defaultStepMessageIds,
 };

@@ -14,5 +14,4 @@ export const WaitForShardToIdleStep: PromptStep = {
         ...defaultStepState,
         allowRetry: true,
     },
-    // messageIds: defaultStepMessageIds,
 };
