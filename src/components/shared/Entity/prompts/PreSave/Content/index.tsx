@@ -1,8 +1,5 @@
 import {
-    Box,
-    Button,
     DialogContent,
-    Divider,
     Stack,
     Step,
     StepContent,
@@ -16,29 +13,20 @@ import {
 } from 'components/tables/RowActions/Shared/types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import Error from 'components/shared/Error';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import Logs from 'components/logs';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
+import StepError from '../../steps/dataFlowReset/DisableCapture/StepError';
+import StepDraftErrors from '../../steps/dataFlowReset/DisableCapture/StepDraftErrors';
+import StepLogs from '../../steps/dataFlowReset/DisableCapture/StepLogs';
 import CustomStepIcon from './CustomStepIcon';
 import SkippedStepIcon from './SkippedStepIcon';
 
 function Content() {
     const intl = useIntl();
 
-    const [
-        activeStep,
-        steps,
-        retryStep,
-        dataFlowResetDraftId,
-        dataFlowResetPudId,
-    ] = usePreSavePromptStore((state) => [
+    const [activeStep, steps] = usePreSavePromptStore((state) => [
         state.activeStep,
         state.steps,
-        state.retryStep,
-        state.context.dataFlowResetDraftId,
-        state.context.dataFlowResetPudId,
     ]);
 
     const renderedSteps = useMemo(
@@ -48,21 +36,13 @@ function Content() {
                     {
                         StepComponent,
                         stepLabelMessageId,
-                        state: {
-                            allowRetry,
-                            error,
-                            progress,
-                            publicationStatus,
-                            optionalLabel,
-                        },
+                        state: { error, progress, optionalLabel },
                     },
                     index
                 ) => {
                     const hasError = Boolean(error);
-                    const stepCanPublish = Boolean(publicationStatus);
 
                     const stepCompleted = progress >= ProgressFinished;
-                    const stepFailed = progress === ProgressStates.FAILED;
                     const stepSkipped = progress === ProgressStates.SKIPPED;
 
                     return (
@@ -97,81 +77,14 @@ function Content() {
                                 <ErrorBoundryWrapper>
                                     <LoopIndexContextProvider value={index}>
                                         <Stack spacing={2}>
-                                            {stepCanPublish &&
-                                            dataFlowResetDraftId ? (
-                                                <>
-                                                    <DraftErrors
-                                                        draftId={
-                                                            dataFlowResetDraftId
-                                                        }
-                                                        enablePolling={
-                                                            stepFailed
-                                                        }
-                                                    />
-                                                    <Divider />
-                                                </>
-                                            ) : null}
+                                            <StepDraftErrors />
 
                                             <StepComponent />
 
                                             <Stack spacing={2}>
-                                                {stepFailed ? (
-                                                    <Error
-                                                        severity="error"
-                                                        error={error}
-                                                        condensed
-                                                        cta={
-                                                            allowRetry ? (
-                                                                <Button
-                                                                    size="small"
-                                                                    style={{
-                                                                        maxWidth:
-                                                                            'fit-content',
-                                                                    }}
-                                                                    onClick={() => {
-                                                                        retryStep(
-                                                                            index
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    {intl.formatMessage(
-                                                                        {
-                                                                            id: 'cta.resetDataFlow.retry',
-                                                                        }
-                                                                    )}
-                                                                </Button>
-                                                            ) : null
-                                                        }
-                                                    />
-                                                ) : null}
+                                                <StepError />
 
-                                                {stepCanPublish &&
-                                                (dataFlowResetPudId ||
-                                                    stepFailed) ? (
-                                                    <Box>
-                                                        <Logs
-                                                            token={
-                                                                publicationStatus?.logs_token ??
-                                                                null
-                                                            }
-                                                            height={350}
-                                                            loadingLineSeverity={
-                                                                stepFailed
-                                                                    ? 'error'
-                                                                    : 'success'
-                                                            }
-                                                            spinnerMessages={{
-                                                                runningKey:
-                                                                    'logs.default',
-                                                                stoppedKey:
-                                                                    progress ===
-                                                                    ProgressStates.SUCCESS
-                                                                        ? 'common.success'
-                                                                        : 'logs.noLogs',
-                                                            }}
-                                                        />
-                                                    </Box>
-                                                ) : null}
+                                                <StepLogs />
                                             </Stack>
                                         </Stack>
                                     </LoopIndexContextProvider>
@@ -181,7 +94,7 @@ function Content() {
                     );
                 }
             ),
-        [dataFlowResetDraftId, dataFlowResetPudId, intl, retryStep, steps]
+        [intl, steps]
     );
 
     return (
