@@ -48,8 +48,6 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     timeStopped: null,
 });
 
-// !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
-// We run through steps in order
 export const DataFlowSteps = {
     selectMaterialization: SelectMaterializationStep,
     reviewSelection: ReviewSelectionStep,
@@ -59,4 +57,15 @@ export const DataFlowSteps = {
     enableCapture: EnableCaptureStep,
     publishStep: PublishStep,
 };
-export const DataFlowResetSteps = Object.values(DataFlowSteps);
+
+// !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
+// We run through steps in order so hardcoding this to ensure 100% the order is right
+export const DataFlowResetSteps = [
+    DataFlowSteps.selectMaterialization,
+    DataFlowSteps.reviewSelection,
+    DataFlowSteps.disableCapture,
+    DataFlowSteps.waitForShardToIdle,
+    DataFlowSteps.updateMaterialization,
+    DataFlowSteps.enableCapture,
+    DataFlowSteps.publishStep,
+];

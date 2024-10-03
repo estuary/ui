@@ -6,6 +6,7 @@ import { useBindingsEditorStore_setIncompatibleCollections } from 'components/ed
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
+import { handlePollerError } from 'services/supabase';
 import {
     useFormStateStore_setFormState,
     useFormStateStore_setShowSavePrompt,
@@ -38,6 +39,13 @@ function usePublicationHandler() {
             updateContext({
                 disableBack: true,
                 disableClose: true,
+            });
+
+            // We want to stop retry while polling as a publish step only
+            //  wants to allow retrying if it failed to make the publication
+            //  not failed due to not getting the status
+            updateStep(stepIndex, {
+                allowRetry: false,
             });
 
             jobStatusPoller(
@@ -79,7 +87,7 @@ function usePublicationHandler() {
                     }
 
                     updateStep(stepIndex, {
-                        error: failedResponse.error ? failedResponse : null,
+                        error: handlePollerError(failedResponse),
                         publicationStatus: !failedResponse.error
                             ? failedResponse
                             : null,

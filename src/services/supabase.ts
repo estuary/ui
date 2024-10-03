@@ -457,6 +457,14 @@ export const DEFAULT_POLLER_ERROR = {
     },
 };
 
+export const handlePollerError = (failedResponse: any) => {
+    return failedResponse.error === JOB_STATUS_POLLER_ERROR
+        ? DEFAULT_POLLER_ERROR.error
+        : failedResponse.error
+        ? failedResponse
+        : null;
+};
+
 export const JOB_TYPE_EMPTY = 'emptyDraft';
 export const JOB_TYPE_FAILURE = 'buildFailed';
 export const JOB_TYPE_SUCCESS = 'success';

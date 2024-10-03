@@ -8,11 +8,8 @@ import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useIntl } from 'react-intl';
-import {
-    DEFAULT_POLLER_ERROR,
-    JOB_STATUS_POLLER_ERROR,
-} from 'services/supabase';
 import { useEffect } from 'react';
+import { handlePollerError } from 'services/supabase';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
@@ -129,15 +126,8 @@ function WaitForShardToIdle() {
                 async (
                     failedResponse: any //PublicationJobStatus | PostgrestError
                 ) => {
-                    const error =
-                        failedResponse.error === JOB_STATUS_POLLER_ERROR
-                            ? DEFAULT_POLLER_ERROR.error
-                            : failedResponse.error
-                            ? failedResponse
-                            : null;
-
                     updateStep(stepIndex, {
-                        error,
+                        error: handlePollerError(failedResponse),
                         valid: false,
                         optionalLabel: undefined,
                         progress: ProgressStates.FAILED,

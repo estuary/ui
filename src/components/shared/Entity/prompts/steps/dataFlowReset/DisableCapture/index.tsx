@@ -7,8 +7,8 @@ import {
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useMount } from 'react-use';
 import { CustomEvents } from 'services/types';
 
 import { generateDisabledSpec } from 'utils/entity-utils';
@@ -34,89 +34,99 @@ function DisableCapture() {
             state.nextStep,
         ]);
 
-    useMount(() => {
-        if (thisStep.state.progress === ProgressStates.IDLE) {
-            updateStep(stepIndex, {
-                progress: ProgressStates.RUNNING,
-            });
+    useEffect(() => {
+        if (thisStep.state.progress !== ProgressStates.IDLE) {
+            return;
+        }
+        updateStep(stepIndex, {
+            progress: ProgressStates.RUNNING,
+        });
+
+        updateContext({
+            disableClose: true,
+        });
+
+        const disableCaptureAndPublish = async () => {
+            const newSpec = generateDisabledSpec(
+                draftSpecs[0].spec,
+                false,
+                false
+            );
+
+            const captureName = draftSpecs[0].catalog_name;
+
+            // Update the Capture to be disabled
+            const updateResponse = await modifyDraftSpec(
+                newSpec,
+                {
+                    draft_id: draftId,
+                    catalog_name: captureName,
+                    spec_type: 'capture',
+                },
+                undefined,
+                undefined,
+                `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
+            );
+
+            if (updateResponse.error) {
+                updateStep(stepIndex, {
+                    error: updateResponse.error,
+                    progress: ProgressStates.FAILED,
+                });
+                return;
+            }
+
+            // Start publishing it
+            const publishResponse = await createPublication(
+                draftId,
+                false,
+                `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
+            );
+
+            if (publishResponse.error || !publishResponse.data) {
+                updateStep(stepIndex, {
+                    error: publishResponse.error,
+                    progress: ProgressStates.FAILED,
+                });
+                return;
+            }
 
             updateContext({
-                disableClose: true,
+                captureName,
+                captureSpec: newSpec,
+                initialPubId: publishResponse.data[0].id,
             });
 
-            const disableCaptureAndPublish = async () => {
-                const newSpec = generateDisabledSpec(
-                    draftSpecs[0].spec,
-                    false,
-                    false
-                );
+            updateStep(stepIndex, {
+                optionalLabel: intl.formatMessage({
+                    id: 'common.disabling',
+                }),
+            });
 
-                const captureName = draftSpecs[0].catalog_name;
-
-                // Update the Capture to be disabled
-                const updateResponse = await modifyDraftSpec(
-                    newSpec,
-                    {
-                        draft_id: draftId,
-                        catalog_name: captureName,
-                        spec_type: 'capture',
-                    },
-                    undefined,
-                    undefined,
-                    `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
-                );
-
-                if (updateResponse.error) {
-                    updateStep(stepIndex, {
-                        error: updateResponse.error,
-                        progress: ProgressStates.FAILED,
-                    });
-                    return;
-                }
-
-                // Start publishing it
-                const publishResponse = await createPublication(
-                    draftId,
-                    false,
-                    `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
-                );
-
-                if (publishResponse.error || !publishResponse.data) {
-                    updateStep(stepIndex, {
-                        error: publishResponse.error,
-                        progress: ProgressStates.FAILED,
-                    });
-                    return;
-                }
-
-                updateContext({
-                    captureName,
-                    captureSpec: newSpec,
-                    initialPubId: publishResponse.data[0].id,
-                });
-
+            publicationHandler(publishResponse.data[0].id, () => {
                 updateStep(stepIndex, {
                     optionalLabel: intl.formatMessage({
-                        id: 'common.disabling',
+                        id: 'common.disabled',
                     }),
                 });
 
-                publicationHandler(publishResponse.data[0].id, () => {
-                    updateStep(stepIndex, {
-                        optionalLabel: intl.formatMessage({
-                            id: 'common.disabled',
-                        }),
-                    });
+                nextStep();
+            });
+        };
 
-                    nextStep();
-                });
-            };
-
-            void disableCaptureAndPublish();
-        } else {
-            console.log('TODO: need to handle showing previous state?');
-        }
-    });
+        void disableCaptureAndPublish();
+    }, [
+        draftId,
+        draftSpecs,
+        initUUID,
+        intl,
+        nextStep,
+        publicationHandler,
+        stepIndex,
+        thisStep.state.progress,
+        updateContext,
+        updateStep,
+    ]);
 
     return <DraftErrors draftId={draftId} />;
 }

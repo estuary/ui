@@ -1,5 +1,6 @@
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { PublicationJobStatus } from 'api/publications';
+import { ErrorDetails } from 'components/shared/Error/types';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 
 export interface PromptStepMessageIds {
@@ -10,7 +11,7 @@ export interface PromptStepMessageIds {
 
 export interface PromptStepState {
     // Both server and client side error
-    error: any | null; // PostgrestError
+    error: ErrorDetails | null; // PostgrestError
 
     // Stores what the step is currently doing
     progress: ProgressStates;
