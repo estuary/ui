@@ -2,18 +2,35 @@ import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { useMount } from 'react-use';
 import { DateTime } from 'luxon';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useIntl } from 'react-intl';
+import {
+    DEFAULT_POLLER_ERROR,
+    JOB_STATUS_POLLER_ERROR,
+} from 'services/supabase';
+import { useEffect } from 'react';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
     const intl = useIntl();
     const session = useUserStore((state) => state.session);
+
+    const catalogName = useEditorStore_catalogName();
+
+    const stepIndex = useLoopIndex();
+    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+
+    const [context, updateStep, updateContext, nextStep] =
+        usePreSavePromptStore((state) => [
+            state.context,
+            state.updateStep,
+            state.updateContext,
+            state.nextStep,
+        ]);
 
     const queryPoller = useQueryPoller(
         'WaitForShardToIdle',
@@ -47,99 +64,106 @@ function WaitForShardToIdle() {
         }
     );
 
-    const catalogName = useEditorStore_catalogName();
+    useEffect(() => {
+        if (thisStep.state.progress !== ProgressStates.IDLE) {
+            return;
+        }
 
-    const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+        updateStep(stepIndex, {
+            progress: ProgressStates.RUNNING,
+        });
 
-    const [context, updateStep, updateContext, nextStep] =
-        usePreSavePromptStore((state) => [
-            state.context,
-            state.updateStep,
-            state.updateContext,
-            state.nextStep,
-        ]);
+        const waitForSpecToFullyStop = async () => {
+            const liveSpecResponse = await getLiveSpecIdByPublication(
+                context.initialPubId,
+                catalogName
+            );
 
-    useMount(() => {
-        if (thisStep.state.progress === ProgressStates.IDLE) {
-            updateStep(stepIndex, {
-                progress: ProgressStates.RUNNING,
+            const liveSpecId = liveSpecResponse.data?.[0].live_spec_id;
+
+            if (liveSpecResponse.error || !liveSpecId || !session) {
+                updateStep(stepIndex, {
+                    error: liveSpecResponse.error,
+                    progress: ProgressStates.FAILED,
+                });
+                return;
+            }
+
+            updateContext({
+                liveSpecId,
             });
 
-            const waitForSpecToFullyStop = async () => {
-                const liveSpecResponse = await getLiveSpecIdByPublication(
-                    context.initialPubId,
-                    catalogName
-                );
+            updateStep(stepIndex, {
+                optionalLabel: intl.formatMessage({ id: 'common.waiting' }),
+            });
 
-                const liveSpecId = liveSpecResponse.data?.[0].live_spec_id;
+            queryPoller(
+                () => fetchShardList(catalogName, session),
+                async () => {
+                    const currentTimeUTC = DateTime.utc();
+                    const timeStopped = currentTimeUTC.toFormat(
+                        `yyyy-MM-dd'T'HH:mm:ss'Z'`
+                    );
 
-                if (liveSpecResponse.error || !liveSpecId || !session) {
-                    updateStep(stepIndex, {
-                        error: liveSpecResponse.error,
-                        progress: ProgressStates.FAILED,
+                    updateContext({
+                        timeStopped,
                     });
-                    return;
-                }
 
-                updateContext({
-                    liveSpecId,
-                });
+                    updateStep(stepIndex, {
+                        progress: ProgressStates.SUCCESS,
+                        optionalLabel: intl.formatMessage(
+                            {
+                                id: 'resetDataFlow.waitForShardToIdle.success',
+                            },
+                            {
+                                timeStopped: `${currentTimeUTC.toLocaleString(
+                                    DateTime.TIME_WITH_SECONDS
+                                )}`,
+                            }
+                        ),
+                        valid: true,
+                    });
 
-                updateStep(stepIndex, {
-                    optionalLabel: intl.formatMessage({ id: 'common.waiting' }),
-                });
+                    nextStep();
+                },
+                async (
+                    failedResponse: any //PublicationJobStatus | PostgrestError
+                ) => {
+                    const error =
+                        failedResponse.error === JOB_STATUS_POLLER_ERROR
+                            ? DEFAULT_POLLER_ERROR.error
+                            : failedResponse.error
+                            ? failedResponse
+                            : null;
 
-                queryPoller(
-                    () => fetchShardList(catalogName, session),
-                    async () => {
-                        const currentTimeUTC = DateTime.utc();
-                        const timeStopped = currentTimeUTC.toFormat(
-                            `yyyy-MM-dd'T'HH:mm:ss'Z'`
-                        );
+                    updateStep(stepIndex, {
+                        error,
+                        valid: false,
+                        optionalLabel: undefined,
+                        progress: ProgressStates.FAILED,
+                        publicationStatus: !failedResponse.error
+                            ? failedResponse
+                            : null,
+                    });
+                    // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
+                },
+                2500
+            );
+        };
 
-                        updateContext({
-                            timeStopped,
-                        });
-
-                        updateStep(stepIndex, {
-                            progress: ProgressStates.SUCCESS,
-                            optionalLabel: intl.formatMessage(
-                                {
-                                    id: 'dataFlowReset.waitForShardToIdle.success',
-                                },
-                                {
-                                    timeStopped: `${currentTimeUTC.toLocaleString(
-                                        DateTime.TIME_WITH_SECONDS
-                                    )}`,
-                                }
-                            ),
-                            valid: true,
-                        });
-
-                        nextStep();
-                    },
-                    async (
-                        failedResponse: any //PublicationJobStatus | PostgrestError
-                    ) => {
-                        updateStep(stepIndex, {
-                            valid: false,
-                            error: failedResponse.error ? failedResponse : null,
-                            publicationStatus: !failedResponse.error
-                                ? failedResponse
-                                : null,
-                        });
-                        // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
-                    },
-                    2500
-                );
-            };
-
-            void waitForSpecToFullyStop();
-        } else {
-            console.log('TODO: need to handle showing previous state?');
-        }
-    });
+        void waitForSpecToFullyStop();
+    }, [
+        catalogName,
+        context.initialPubId,
+        intl,
+        nextStep,
+        queryPoller,
+        session,
+        stepIndex,
+        thisStep.state.progress,
+        updateContext,
+        updateStep,
+    ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;

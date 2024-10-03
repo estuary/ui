@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     DialogContent,
     Divider,
     Stack,
@@ -26,19 +27,26 @@ import SkippedStepIcon from './SkippedStepIcon';
 function Content() {
     const intl = useIntl();
 
-    const [activeStep, steps, dataFlowResetDraftId, dataFlowResetPudId] =
-        usePreSavePromptStore((state) => [
-            state.activeStep,
-            state.steps,
-            state.context.dataFlowResetDraftId,
-            state.context.dataFlowResetPudId,
-        ]);
+    const [
+        activeStep,
+        steps,
+        retryStep,
+        dataFlowResetDraftId,
+        dataFlowResetPudId,
+    ] = usePreSavePromptStore((state) => [
+        state.activeStep,
+        state.steps,
+        state.retryStep,
+        state.context.dataFlowResetDraftId,
+        state.context.dataFlowResetPudId,
+    ]);
 
     const renderedSteps = useMemo(
         () =>
             steps.map(
                 (
                     {
+                        allowRetry,
                         StepComponent,
                         stepLabelMessageId,
                         state: {
@@ -50,6 +58,8 @@ function Content() {
                     },
                     index
                 ) => {
+                    let keyIncrementor = 0;
+                    const getKey = () => `stepper-content__${keyIncrementor}`;
                     const hasError = Boolean(error);
                     const stepCanPublish = Boolean(publicationStatus);
 
@@ -104,15 +114,31 @@ function Content() {
                                                 </>
                                             ) : null}
 
-                                            <StepComponent />
+                                            <StepComponent key={getKey()} />
 
                                             <Stack spacing={2}>
                                                 {stepFailed ? (
-                                                    <Error
-                                                        severity="error"
-                                                        error={error}
-                                                        condensed
-                                                    />
+                                                    <Stack>
+                                                        <Error
+                                                            severity="error"
+                                                            error={error}
+                                                            condensed
+                                                        />
+
+                                                        {allowRetry ? (
+                                                            <Button
+                                                                onClick={() => {
+                                                                    retryStep(
+                                                                        index
+                                                                    );
+
+                                                                    keyIncrementor += 1;
+                                                                }}
+                                                            >
+                                                                Retry
+                                                            </Button>
+                                                        ) : null}
+                                                    </Stack>
                                                 ) : null}
 
                                                 {stepCanPublish &&
@@ -151,7 +177,7 @@ function Content() {
                     );
                 }
             ),
-        [dataFlowResetDraftId, dataFlowResetPudId, intl, steps]
+        [dataFlowResetDraftId, dataFlowResetPudId, intl, retryStep, steps]
     );
 
     return (

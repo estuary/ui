@@ -35,5 +35,6 @@ export interface PromptStep {
     StepComponent: () => EmotionJSX.Element;
     stepLabelMessageId: string;
     state: PromptStepState;
+    allowRetry?: boolean;
     // messageIds: PromptStepMessageIds;
 }

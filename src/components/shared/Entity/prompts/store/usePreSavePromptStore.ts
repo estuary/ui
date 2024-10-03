@@ -16,6 +16,7 @@ import {
 import { PublishStep } from '../steps/preSave/Publish/definition';
 import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
 import { PreSavePromptStore } from './types';
+import { defaultStepState } from './shared';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
@@ -45,7 +46,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             state.context.loggingEvent =
                                 CustomEvents.DATA_FLOW_RESET;
                             state.context.dialogMessageId =
-                                'dataFlowReset.dialog.title';
+                                'resetDataFlow.dialog.title';
                         } else {
                             newSteps.push(ReviewSelectionStep);
                             newSteps.push(PublishStep);
@@ -65,6 +66,23 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     }),
                     false,
                     'initializeSteps'
+                ),
+
+            retryStep: (stepToUpdate) =>
+                set(
+                    produce((state: PreSavePromptStore) => {
+                        const updating = state.steps[stepToUpdate];
+
+                        updating.state.progress = defaultStepState.progress;
+                        updating.state.error = defaultStepState.error;
+
+                        logRocketEvent(state.context.loggingEvent, {
+                            step: updating.StepComponent.name,
+                            retry: true,
+                        });
+                    }),
+                    false,
+                    'retryStep'
                 ),
 
             updateStep: (stepToUpdate, settings) =>
@@ -90,7 +108,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                                 updating.state.valid = false;
                                 updating.state.error = {
                                     message:
-                                        'dataFlowReset.errors.publishFailed',
+                                        'resetDataFlow.errors.publishFailed',
                                 };
                             }
                         }
