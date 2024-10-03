@@ -1,17 +1,18 @@
 import { ReactNode } from 'react';
 
-export const ProgressFinished = 200;
+export const ProgressFinished = 60;
 
-// Making these high numbers so we have room to put extras between
+// These go up by 20s so there is room to inject more states if needed
 export enum ProgressStates {
-    IDLE = -100, // new for steps
-    PAUSED = 0, // Not used right now
-    RUNNING = 100,
+    IDLE = -20, // Currently only used by Prompt Steps
+    PAUSED = 0, // Unused
+    RUNNING = 20,
+    RETRYING = 40, // Unused
 
-    // Here and above is considered finished
-    SKIPPED = 200,
-    SUCCESS = 300,
-    FAILED = 400,
+    // Make sure this stays in sync with ProgressFinished
+    SKIPPED = 60,
+    SUCCESS = 80,
+    FAILED = 100,
 }
 
 export interface SharedProgressProps {
