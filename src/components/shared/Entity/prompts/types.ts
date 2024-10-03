@@ -27,6 +27,9 @@ export interface PromptStepState {
     // Shows under the label
     optionalLabel?: string;
 
+    // Control if the step will show a `Retry` button on the error.
+    allowRetry?: boolean;
+
     publicationStatus?: PublicationJobStatus;
 }
 
@@ -35,6 +38,5 @@ export interface PromptStep {
     StepComponent: () => EmotionJSX.Element;
     stepLabelMessageId: string;
     state: PromptStepState;
-    allowRetry?: boolean;
     // messageIds: PromptStepMessageIds;
 }

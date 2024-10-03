@@ -46,10 +46,10 @@ function Content() {
             steps.map(
                 (
                     {
-                        allowRetry,
                         StepComponent,
                         stepLabelMessageId,
                         state: {
+                            allowRetry,
                             error,
                             progress,
                             publicationStatus,

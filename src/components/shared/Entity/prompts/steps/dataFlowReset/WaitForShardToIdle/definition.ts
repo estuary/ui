@@ -12,7 +12,7 @@ export const WaitForShardToIdleStep: PromptStep = {
     stepLabelMessageId: 'resetDataFlow.waitForShardToIdle.title',
     state: {
         ...defaultStepState,
+        allowRetry: true,
     },
-    allowRetry: true,
     // messageIds: defaultStepMessageIds,
 };

@@ -11,7 +11,7 @@ export const UpdateMaterializationStep: PromptStep = {
     stepLabelMessageId: 'resetDataFlow.updateMaterialization.title',
     state: {
         ...defaultStepState,
+        allowRetry: true,
     },
-    allowRetry: true,
     // messageIds: defaultStepMessageIds,
 };
