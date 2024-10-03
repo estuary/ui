@@ -35,11 +35,6 @@ function NoMaterializationsFound() {
                     <Stack spacing={2}>
                         <Typography>
                             {intl.formatMessage({
-                                id: 'resetDataFlow.materializations.empty.instructions',
-                            })}
-                        </Typography>
-                        <Typography>
-                            {intl.formatMessage({
                                 id: 'resetDataFlow.materializations.empty.warning',
                             })}
                         </Typography>
