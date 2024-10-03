@@ -56,4 +56,5 @@ export const CTAs: Record<string, string> = {
     'cta.manualSelect': `Manually Select`,
     'cta.resetDataFlow.hideDiff': `Hide spec changes`,
     'cta.resetDataFlow.showDiff': `See spec changes`,
+    'cta.resetDataFlow.retry': `Retry`,
 };

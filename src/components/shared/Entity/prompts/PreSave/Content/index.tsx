@@ -118,27 +118,34 @@ function Content() {
 
                                             <Stack spacing={2}>
                                                 {stepFailed ? (
-                                                    <Stack>
-                                                        <Error
-                                                            severity="error"
-                                                            error={error}
-                                                            condensed
-                                                        />
+                                                    <Error
+                                                        severity="error"
+                                                        error={error}
+                                                        condensed
+                                                        cta={
+                                                            allowRetry ? (
+                                                                <Button
+                                                                    style={{
+                                                                        maxWidth:
+                                                                            'fit-content',
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        retryStep(
+                                                                            index
+                                                                        );
 
-                                                        {allowRetry ? (
-                                                            <Button
-                                                                onClick={() => {
-                                                                    retryStep(
-                                                                        index
-                                                                    );
-
-                                                                    keyIncrementor += 1;
-                                                                }}
-                                                            >
-                                                                Retry
-                                                            </Button>
-                                                        ) : null}
-                                                    </Stack>
+                                                                        keyIncrementor += 1;
+                                                                    }}
+                                                                >
+                                                                    {intl.formatMessage(
+                                                                        {
+                                                                            id: 'cta.resetDataFlow.retry',
+                                                                        }
+                                                                    )}
+                                                                </Button>
+                                                            ) : null
+                                                        }
+                                                    />
                                                 ) : null}
 
                                                 {stepCanPublish &&

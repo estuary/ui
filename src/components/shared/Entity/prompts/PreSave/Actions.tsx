@@ -16,13 +16,13 @@ function Actions() {
 
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
-    const [nextStep, previousStep, disableBack] = usePreSavePromptStore(
-        (state) => [
+    const [nextStep, previousStep, disableBack, disableClose] =
+        usePreSavePromptStore((state) => [
             state.nextStep,
             state.previousStep,
             state.context.disableBack,
-        ]
-    );
+            state.context.disableClose,
+        ]);
 
     const canContinue = usePreSavePromptStore_stepValid();
     const onFirstStep = usePreSavePromptStore_onFirstStep();
@@ -44,7 +44,7 @@ function Actions() {
 
             <Stack direction="row" spacing={2}>
                 <Button
-                    disabled={disableBack}
+                    disabled={onFirstStep ? disableClose : disableBack}
                     onClick={
                         onFirstStep
                             ? () => setShowSavePrompt(false)
