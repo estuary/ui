@@ -127,7 +127,7 @@ function MarkMaterialization() {
                         : ProgressStates.SUCCESS,
                     valid: true,
                 });
-                nextStep();
+                nextStep(skipped);
             };
 
             void updateMaterializationTimestamp();
