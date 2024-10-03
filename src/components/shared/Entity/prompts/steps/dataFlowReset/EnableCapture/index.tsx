@@ -6,11 +6,12 @@ import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function EnableCapture() {
     const intl = useIntl();
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+    const stepIsIdle = useStepIsIdle();
 
     const [
         updateStep,
@@ -27,7 +28,7 @@ function EnableCapture() {
     ]);
 
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (!stepIsIdle) {
             return;
         }
 
@@ -73,7 +74,7 @@ function EnableCapture() {
         intl,
         nextStep,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         updateStep,
     ]);
 

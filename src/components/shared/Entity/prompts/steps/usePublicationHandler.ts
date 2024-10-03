@@ -85,7 +85,8 @@ function usePublicationHandler() {
                             : null,
                     });
                     // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
-                }
+                },
+                15000
             );
         },
         [jobStatusPoller, setFormState, stepIndex, updateContext, updateStep]

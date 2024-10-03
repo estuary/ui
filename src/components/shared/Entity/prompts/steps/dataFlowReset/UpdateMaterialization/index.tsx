@@ -15,14 +15,15 @@ import {
 } from 'utils/workflow-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { PromptStepState } from '../../../types';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function MarkMaterialization() {
     const intl = useIntl();
-    const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
 
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
+    const stepIndex = useLoopIndex();
+    const stepIsIdle = useStepIsIdle();
     const [
         updateStep,
         updateContext,
@@ -42,7 +43,7 @@ function MarkMaterialization() {
     ]);
 
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (!stepIsIdle) {
             return;
         }
 
@@ -169,7 +170,7 @@ function MarkMaterialization() {
         intl,
         nextStep,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         timeStopped,
         updateContext,
         updateStep,

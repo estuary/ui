@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl';
 import { useEffect } from 'react';
 import { handlePollerError } from 'services/supabase';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function WaitForShardToIdle() {
     const intl = useIntl();
@@ -19,7 +20,7 @@ function WaitForShardToIdle() {
     const catalogName = useEditorStore_catalogName();
 
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+    const stepIsIdle = useStepIsIdle();
 
     const [context, updateStep, updateContext, nextStep] =
         usePreSavePromptStore((state) => [
@@ -62,7 +63,7 @@ function WaitForShardToIdle() {
     );
 
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (!stepIsIdle) {
             return;
         }
 
@@ -150,7 +151,7 @@ function WaitForShardToIdle() {
         queryPoller,
         session,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         updateContext,
         updateStep,
     ]);

@@ -6,13 +6,17 @@ import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();
 
-    const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName
+    );
 
+    const stepIndex = useLoopIndex();
+    const stepIsIdle = useStepIsIdle();
     const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
         usePreSavePromptStore((state) => [
             state.updateStep,
@@ -21,13 +25,8 @@ function PublishStepDataFlowReset() {
             state.context.dataFlowResetDraftId,
         ]);
 
-    // TODO (data flow reset) need to plumb this through correctly
-    const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.dataPlaneName
-    );
-
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (!stepIsIdle) {
             return;
         }
         updateStep(stepIndex, {
@@ -66,7 +65,7 @@ function PublishStepDataFlowReset() {
         initUUID,
         publicationHandler,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         updateContext,
         updateStep,
     ]);

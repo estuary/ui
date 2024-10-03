@@ -6,14 +6,17 @@ import { useEffect } from 'react';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function Publish() {
     const publicationHandler = usePublicationHandler();
     const draftId = useEditorStore_id();
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName
+    );
 
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
-
+    const stepIsIdle = useStepIsIdle();
     const [
         updateStep,
         updateContext,
@@ -28,13 +31,8 @@ function Publish() {
         state.context.loggingEvent,
     ]);
 
-    // TODO (data flow reset) need to plumb this through correctly
-    const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.dataPlaneName
-    );
-
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (!stepIsIdle) {
             return;
         }
 
@@ -77,7 +75,7 @@ function Publish() {
         loggingEvent,
         publicationHandler,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         updateContext,
         updateStep,
     ]);

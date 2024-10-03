@@ -14,6 +14,7 @@ import { CustomEvents } from 'services/types';
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import usePublicationHandler from '../../usePublicationHandler';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function DisableCapture() {
     const intl = useIntl();
@@ -24,7 +25,7 @@ function DisableCapture() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+    const stepIsIdle = useStepIsIdle();
 
     const [updateStep, updateContext, initUUID, nextStep] =
         usePreSavePromptStore((state) => [
@@ -35,9 +36,10 @@ function DisableCapture() {
         ]);
 
     useEffect(() => {
-        if (thisStep.state.progress !== ProgressStates.IDLE) {
+        if (stepIsIdle) {
             return;
         }
+
         updateStep(stepIndex, {
             progress: ProgressStates.RUNNING,
         });
@@ -123,7 +125,7 @@ function DisableCapture() {
         nextStep,
         publicationHandler,
         stepIndex,
-        thisStep.state.progress,
+        stepIsIdle,
         updateContext,
         updateStep,
     ]);
