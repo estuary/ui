@@ -30,10 +30,8 @@ export const clearAuthorizationCache = (): void => {
     taskAuthorizationCache.clear();
 };
 
-export const evaluateJWTExpiration = (
-    config: TaskAuthorizationResponse | undefined
-) => {
-    // Grab the data-plane token from local storage.
+export const validateJWTs = (config: TaskAuthorizationResponse | undefined) => {
+    // Extract the data-plane tokens from the cache.
     let brokerJWT: JWTPayload | undefined, reactorJWT: JWTPayload | undefined;
 
     try {
@@ -48,7 +46,7 @@ export const evaluateJWTExpiration = (
         reactorJWT = undefined;
     }
 
-    // Check if the Gateway token is expired and we need to get a new one
+    // Check if the data-plane tokens are expired.
     let tokensExpired = true;
 
     if (brokerJWT?.exp && reactorJWT?.exp) {

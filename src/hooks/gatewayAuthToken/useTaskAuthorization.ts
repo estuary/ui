@@ -9,9 +9,9 @@ import {
 } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import {
-    evaluateJWTExpiration,
     getAuthorizationConfig,
     setAuthorizationConfig,
+    validateJWTs,
 } from './cache';
 
 interface TaskAuthorizationFetcherResponse extends TaskAuthorizationResponse {
@@ -31,10 +31,9 @@ const gatewayFetcher = async ({
             const cacheKey = `${prefix}__task-auth__${accessToken}`;
 
             const gatewayConfig = getAuthorizationConfig(cacheKey);
-            const tokensExpired = evaluateJWTExpiration(gatewayConfig);
+            const tokensExpired = validateJWTs(gatewayConfig);
 
-            // If the token is still good and it contains a URL (mainly checking b/c typescript) then just
-            //  used the cached value.
+            // If the token is valid and the cached configuration is defined, then return the cached value.
             if (!tokensExpired && gatewayConfig) {
                 return Promise.resolve({ ...gatewayConfig, cached: true });
             }
