@@ -54,8 +54,11 @@ function Error({
                 }
             >
                 <Message error={error} linkOptions={linkOptions} />
-
-                {cta ? <Box sx={{ mt: 2 }}>{cta}</Box> : null}
+                {cta ? (
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'end' }}>
+                        {cta}
+                    </Box>
+                ) : null}
             </AlertBox>
         </Box>
     );

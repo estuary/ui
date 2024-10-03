@@ -128,7 +128,6 @@ function Content() {
                                                                         maxWidth:
                                                                             'fit-content',
                                                                     }}
-                                                                    variant="text"
                                                                     onClick={() => {
                                                                         retryStep(
                                                                             index
