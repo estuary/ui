@@ -1,8 +1,8 @@
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
+import { TaskEndpoints } from 'components/shared/Endpoints/TaskEndpoints';
 import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
-import { TaskEndpoints } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,

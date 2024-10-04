@@ -9,6 +9,7 @@ import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
 import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
+import { Endpoint } from 'stores/ShardDetail/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
@@ -277,3 +278,16 @@ export const formatEndpointAddress = (reactorAddress: string) =>
     reactorAddress.includes('svc.cluster.local:')
         ? 'https://us-central1.v1.estuary-data.dev'
         : reactorAddress;
+
+// Task endpoint utils
+export const isHttp = (ep: Endpoint): boolean => {
+    if (ep.protocol) {
+        return ep.protocol == 'h2' || ep.protocol == 'http/1.1';
+    } else {
+        return true;
+    }
+};
+
+export const formatHttpUrl = (fullHostName: string): string => {
+    return `https://${fullHostName}/`;
+};
