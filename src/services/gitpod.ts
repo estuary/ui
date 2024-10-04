@@ -21,7 +21,5 @@ export const generateGitPodURL = (
         Buffer.from(JSON.stringify(token)).toString('base64')
     )},FLOW_TEMPLATE_TYPE=${derivationLanguage},FLOW_TEMPLATE_MODE=${
         sourceCollectionCount > 1 ? 'multi' : 'single'
-    },FLOW_COLLECTION_NAME=${encodeURIComponent(
-        computedEntityName
-    )}/${GIT_REPO}`;
+    },FLOW_COLLECTION_NAME=${encodeURIComponent(computedEntityName)}`;
 };
