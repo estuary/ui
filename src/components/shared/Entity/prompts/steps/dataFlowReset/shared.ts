@@ -41,7 +41,6 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     disableBack: false,
     disableClose: false,
     initialPubId: null,
-    liveSpecId: null,
     loggingEvent: CustomEvents.ENTITY_SAVE,
     noMaterializations: null,
     relatedMaterializations: null,

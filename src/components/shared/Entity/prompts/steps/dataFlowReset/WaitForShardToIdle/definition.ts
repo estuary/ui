@@ -3,7 +3,6 @@ import { PromptStep } from '../../../types';
 import WaitForShardToIdle from '.';
 
 export interface WaitForShardToIdleStepContext {
-    liveSpecId: string | null;
     timeStopped: string | null;
 }
 

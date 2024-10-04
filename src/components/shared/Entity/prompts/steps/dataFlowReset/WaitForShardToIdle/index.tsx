@@ -1,4 +1,3 @@
-import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
@@ -72,24 +71,15 @@ function WaitForShardToIdle() {
         });
 
         const waitForSpecToFullyStop = async () => {
-            const liveSpecResponse = await getLiveSpecIdByPublication(
-                context.initialPubId,
-                catalogName
-            );
-
-            const liveSpecId = liveSpecResponse.data?.[0].live_spec_id;
-
-            if (liveSpecResponse.error || !liveSpecId || !session) {
+            if (!session) {
                 updateStep(stepIndex, {
-                    error: liveSpecResponse.error,
+                    error: {
+                        message: 'resetDataFlow.errors.missingSession',
+                    },
                     progress: ProgressStates.FAILED,
                 });
                 return;
             }
-
-            updateContext({
-                liveSpecId,
-            });
 
             updateStep(stepIndex, {
                 optionalLabel: intl.formatMessage({ id: 'common.waiting' }),
