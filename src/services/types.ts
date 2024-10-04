@@ -59,6 +59,7 @@ export enum CustomEvents {
     SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',
     TRANSLATION_KEY_MISSING = 'Translation_Key_Missing',
+    URL_FORMAT_ERROR = 'URLFormatError',
 }
 
 export type CommonStatuses = 'success' | 'failed' | 'exception' | 'skipped';

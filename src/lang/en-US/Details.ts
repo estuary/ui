@@ -22,6 +22,8 @@ export const Details: Record<string, string> = {
     'details.spec.cta.formatted': `Table`,
     'details.spec.cta.raw': `Code`,
 
+    'details.taskEndpoints.error.message': `An issue was encountered formatting the connector endpoint(s) for this task. Reload the page and if the issue persists, please contact support.`,
+
     // Details Panel
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,

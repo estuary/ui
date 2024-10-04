@@ -28,6 +28,8 @@ export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 export const SHARDS_DISABLE = `spec->shards->disable`;
 export const TASK_STATS = `task_stats:flow_document->taskStats`;
 
+export const SHARD_LABELS = `shard_labels:built_spec->shardTemplate->labels->labels`;
+
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
     jwtInvalid: 'invalid JWT',

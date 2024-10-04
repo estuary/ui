@@ -9,11 +9,19 @@ import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
 import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
+import { Endpoint } from 'stores/ShardDetail/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
 } from './env-utils';
 import { hasLength } from './misc-utils';
+
+export enum SHARD_LABELS {
+    EXPOSE_PORT = 'estuary.dev/expose-port',
+    HOSTNAME = 'estuary.dev/hostname',
+    TASK_NAME = 'estuary.dev/task-name',
+    TASK_TYPE = 'estuary.dev/task-type',
+}
 
 export enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
@@ -265,4 +273,24 @@ export const fetchShardList = async (name: string, session: Session) => {
     return {
         shards: dataPlaneListResponse.length > 0 ? dataPlaneListResponse : [],
     };
+};
+
+// Support the legacy data-plane by re-writing its internal service
+// addresses to use the data-plane-gateway in external contexts.
+export const formatEndpointAddress = (reactorAddress: string) =>
+    reactorAddress.includes('svc.cluster.local:')
+        ? 'https://us-central1.v1.estuary-data.dev'
+        : reactorAddress;
+
+// Task endpoint utils
+export const isHttp = (ep: Endpoint): boolean => {
+    if (ep.protocol) {
+        return ep.protocol == 'h2' || ep.protocol == 'http/1.1';
+    } else {
+        return true;
+    }
+};
+
+export const formatHttpUrl = (fullHostName: string): string => {
+    return `https://${fullHostName}/`;
 };
