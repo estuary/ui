@@ -246,8 +246,7 @@ export const fetchShardList = async (
     session: Session,
     existingAuthentication?: { address: string; token: string }
 ) => {
-    let reactorAddress: string,
-     reactorToken: string;
+    let reactorAddress: string, reactorToken: string;
 
     if (existingAuthentication) {
         reactorAddress = existingAuthentication.address;
