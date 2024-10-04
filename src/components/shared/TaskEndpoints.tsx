@@ -1,14 +1,13 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import CardWrapper from 'components/shared/CardWrapper';
+import Error from 'components/shared/Error';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useEntityType } from 'context/EntityContext';
 import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
 import useShardHydration from 'hooks/shards/useShardHydration';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-
 import { Endpoint } from 'stores/ShardDetail/types';
-import AlertBox from './AlertBox';
 
 interface Props {
     reactorAddress: string | undefined;
@@ -111,13 +110,13 @@ export function TaskEndpoints({ reactorAddress, taskName }: Props) {
         >
             {typeof reactorAddress === 'string' &&
             typeof gatewayHostname !== 'string' ? (
-                <AlertBox severity="error" short>
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'details.taskEndpoints.error.message',
-                        })}
-                    </Typography>
-                </AlertBox>
+                <Error
+                    condensed
+                    error={{
+                        message: 'details.taskEndpoints.error.message',
+                    }}
+                    hideTitle
+                />
             ) : (
                 <Box
                     sx={{
