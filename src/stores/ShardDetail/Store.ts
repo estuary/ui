@@ -140,7 +140,7 @@ const getEverythingForDictionary = (
             case SHARD_LABELS.TASK_TYPE:
                 response.entityType = label.value as ShardEntityTypes;
                 break;
-            case SHARD_LABELS.EXPORT_PORT:
+            case SHARD_LABELS.EXPOSE_PORT:
                 response.exposePort = label.value;
                 break;
             case SHARD_LABELS.HOSTNAME:
