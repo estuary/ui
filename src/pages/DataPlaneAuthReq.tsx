@@ -18,10 +18,7 @@ interface RedirectResult {
 }
 
 const DataPlaneAuthReq = () => {
-    usePageTitle({
-        header: authenticatedRoutes.captures.title,
-        headerLink: 'https://docs.estuary.dev/concepts/#captures',
-    });
+    usePageTitle({ header: authenticatedRoutes.dataPlaneAuth.title });
 
     const intl = useIntl();
 
