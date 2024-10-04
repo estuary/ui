@@ -7,6 +7,8 @@ import { isEmpty, isObject } from 'lodash';
 import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
+import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -80,6 +82,16 @@ export const getPathWithParams = (
     }
 
     return `${baseURL}?${newSearchParams.toString()}`;
+};
+
+export const getURL = (address: string, baseURL?: string | URL) => {
+    try {
+        return new URL(address, baseURL);
+    } catch (error: unknown) {
+        logRocketConsole(CustomEvents.URL_FORMAT_ERROR, { error });
+
+        return null;
+    }
 };
 
 export const base64RemovePadding = (state: string | null) => {

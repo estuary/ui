@@ -1,6 +1,6 @@
 import { Box, Button, Stack } from '@mui/material';
+import { TaskEndpoint } from 'components/shared/Endpoints/TaskEndpoint';
 import Status from 'components/shared/Entity/Status';
-import { TaskEndpoint } from 'components/shared/TaskEndpoints';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';

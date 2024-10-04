@@ -16,7 +16,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.collections': `Collections`,
     'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
-    'routeTitle.dataPlaneAuthReq': `Data-plane authorization check`,
+    'routeTitle.dataPlaneAuthReq': `Data Plane Authorization Checkpoint`,
     'routeTitle.directives': `Directives`,
     'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
