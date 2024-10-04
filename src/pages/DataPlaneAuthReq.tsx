@@ -59,8 +59,6 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    const gatewayHost = reactorUrl.hostname;
-
                     const origUrlHostname = getURL(originalUrl)?.hostname;
 
                     if (!origUrlHostname) {
@@ -77,7 +75,7 @@ const DataPlaneAuthReq = () => {
                     // a user's auth token to a 3rd party.
                     if (
                         !origUrlHostname.startsWith(hostnameLabelValue) ||
-                        !origUrlHostname.endsWith(`.${gatewayHost}`)
+                        !origUrlHostname.endsWith(`.${reactorUrl.hostname}`)
                     ) {
                         setRedirectResult({
                             error: 'invalid `orig_url` parameter has invalid hostname',
