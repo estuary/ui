@@ -1,7 +1,7 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
 import useSWR from 'swr';
-import { authorizeTask } from 'utils/dataPlane-utils';
+import { authorizeTask, formatEndpointAddress } from 'utils/dataPlane-utils';
 import { getURL, hasLength } from 'utils/misc-utils';
 
 interface Token {
@@ -30,7 +30,7 @@ const fetcher = async ({
     return {
         token: reactorToken,
         url: getURL(
-            reactorAddress,
+            formatEndpointAddress(reactorAddress),
             `useReactorToken : 'reactor_address' cannot be parsed as a URL`
         ),
         parsed,

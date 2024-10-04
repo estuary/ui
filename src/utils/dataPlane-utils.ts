@@ -270,3 +270,10 @@ export const fetchShardList = async (name: string, session: Session) => {
         shards: dataPlaneListResponse.length > 0 ? dataPlaneListResponse : [],
     };
 };
+
+// Support the legacy data-plane by re-writing its internal service
+// addresses to use the data-plane-gateway in external contexts.
+export const formatEndpointAddress = (reactorAddress: string) =>
+    reactorAddress.includes('svc.cluster.local:')
+        ? 'https://us-central1.v1.estuary-data.dev'
+        : reactorAddress;

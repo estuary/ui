@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
 import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { formatEndpointAddress } from 'utils/dataPlane-utils';
 import { getURL, hasLength } from 'utils/misc-utils';
 
 export const useShardEndpoints = (
@@ -12,7 +13,10 @@ export const useShardEndpoints = (
 
     const gatewayHostname = useMemo<string | null>(() => {
         if (typeof reactorAddress === 'string' && hasLength(reactorAddress)) {
-            const url = getURL(reactorAddress, 'ShardEndpoint : error');
+            const url = getURL(
+                formatEndpointAddress(reactorAddress),
+                'ShardEndpoint : error'
+            );
 
             return url?.host ?? null;
         }
