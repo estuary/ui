@@ -13,10 +13,7 @@ export const useShardEndpoints = (
 
     const gatewayHostname = useMemo<string | null>(() => {
         if (typeof reactorAddress === 'string' && hasLength(reactorAddress)) {
-            const url = getURL(
-                formatEndpointAddress(reactorAddress),
-                'ShardEndpoint : error'
-            );
+            const url = getURL(formatEndpointAddress(reactorAddress));
 
             return url?.host ?? null;
         }

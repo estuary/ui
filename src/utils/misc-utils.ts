@@ -84,11 +84,7 @@ export const getPathWithParams = (
     return `${baseURL}?${newSearchParams.toString()}`;
 };
 
-export const getURL = (
-    address: string,
-    errorMessage: string,
-    baseURL?: string | URL
-) => {
+export const getURL = (address: string, baseURL?: string | URL) => {
     try {
         return new URL(address, baseURL);
     } catch (error: unknown) {

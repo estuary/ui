@@ -29,10 +29,7 @@ const fetcher = async ({
 
     return {
         token: reactorToken,
-        url: getURL(
-            formatEndpointAddress(reactorAddress),
-            `useReactorToken : 'reactor_address' cannot be parsed as a URL`
-        ),
+        url: getURL(formatEndpointAddress(reactorAddress)),
         parsed,
     };
 };

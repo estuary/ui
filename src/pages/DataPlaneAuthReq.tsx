@@ -64,10 +64,7 @@ const DataPlaneAuthReq = () => {
 
                     const gatewayHost = reactorUrl.hostname;
 
-                    const origUrlHostname = getURL(
-                        originalUrl,
-                        'DataPlaneAuthReq : invalid `orig_url` parameter cannot be parsed as a URL'
-                    )?.hostname;
+                    const origUrlHostname = getURL(originalUrl)?.hostname;
 
                     if (!origUrlHostname) {
                         setRedirectResult({
@@ -92,11 +89,7 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    const newUrl = getURL(
-                        '/auth-redirect',
-                        `DataPlaneAuthReq : failed to compose /auth-redirect URL using 'orig_url' parameter`,
-                        originalUrl
-                    );
+                    const newUrl = getURL('/auth-redirect', originalUrl);
 
                     if (!newUrl) {
                         setRedirectResult({
