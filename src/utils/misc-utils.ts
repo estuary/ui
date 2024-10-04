@@ -8,6 +8,7 @@ import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -89,11 +90,9 @@ export const getURL = (
     baseURL?: string | URL
 ) => {
     try {
-        const url = new URL(address, baseURL);
-
-        return url;
+        return new URL(address, baseURL);
     } catch (error: unknown) {
-        logRocketConsole(errorMessage, { error });
+        logRocketConsole(CustomEvents.URL_FORMAT_ERROR, { error });
 
         return null;
     }

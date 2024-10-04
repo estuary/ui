@@ -5,9 +5,10 @@ import { useEntityType } from 'context/EntityContext';
 import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
 import useShardHydration from 'hooks/shards/useShardHydration';
 import { useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { Endpoint } from 'stores/ShardDetail/types';
+import AlertBox from './AlertBox';
 
 interface Props {
     reactorAddress: string | undefined;
@@ -62,13 +63,15 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     } else {
         linky = (
             <Typography>
-                <FormattedMessage
-                    id="taskEndpoint.otherProtocol.message"
-                    values={{
+                {intl.formatMessage(
+                    {
+                        id: 'taskEndpoint.otherProtocol.message',
+                    },
+                    {
                         protocol: endpoint.protocol,
                         hostname: fullHostName,
-                    }}
-                />
+                    }
+                )}
             </Typography>
         );
     }
@@ -77,7 +80,9 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
         <Box sx={{ display: 'flex', justifyContent: 'left' }}>
             <Tooltip title={tooltip}>
                 <Typography>
-                    <FormattedMessage id={labelMessage} />
+                    {intl.formatMessage({
+                        id: labelMessage,
+                    })}
                 </Typography>
             </Tooltip>
             {linky}
@@ -91,6 +96,7 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
 //  exists and has other lists we should work on getting this redesigned to
 //  make the experience better and consistent.
 export function TaskEndpoints({ reactorAddress, taskName }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const { endpoints, gatewayHostname } = useShardEndpoints(
@@ -101,38 +107,49 @@ export function TaskEndpoints({ reactorAddress, taskName }: Props) {
 
     return endpoints.length > 0 ? (
         <CardWrapper
-            message={<FormattedMessage id="taskEndpoint.list.title" />}
+            message={intl.formatMessage({ id: 'taskEndpoint.list.title' })}
         >
-            <Box
-                sx={{
-                    gap: '10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexWrap: 'wrap',
-                    justifyContent: 'left',
-                    flexGrow: 1,
-                }}
-            >
-                {endpoints.map((ep, index) => {
-                    return (
-                        <Box
-                            key={`${ep.fullHostname}_${index}`}
-                            sx={{
-                                gap: '10px',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                justifyContent: 'left',
-                                flexGrow: 1,
-                            }}
-                        >
-                            <EndpointLink
-                                endpoint={ep}
-                                hostName={gatewayHostname}
-                            />
-                        </Box>
-                    );
-                })}
-            </Box>
+            {typeof reactorAddress === 'string' &&
+            typeof gatewayHostname !== 'string' ? (
+                <AlertBox severity="error" short>
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'details.taskEndpoints.error.message',
+                        })}
+                    </Typography>
+                </AlertBox>
+            ) : (
+                <Box
+                    sx={{
+                        gap: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flexWrap: 'wrap',
+                        justifyContent: 'left',
+                        flexGrow: 1,
+                    }}
+                >
+                    {endpoints.map((ep, index) => {
+                        return (
+                            <Box
+                                key={`${ep.fullHostname}_${index}`}
+                                sx={{
+                                    gap: '10px',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'left',
+                                    flexGrow: 1,
+                                }}
+                            >
+                                <EndpointLink
+                                    endpoint={ep}
+                                    hostName={gatewayHostname}
+                                />
+                            </Box>
+                        );
+                    })}
+                </Box>
+            )}
         </CardWrapper>
     ) : null;
 }
@@ -143,6 +160,8 @@ export function TaskEndpoints({ reactorAddress, taskName }: Props) {
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ reactorAddress, taskName }: Props) {
+    const intl = useIntl();
+
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     useShardHydration([taskName]);
 
@@ -168,7 +187,9 @@ export function TaskEndpoint({ reactorAddress, taskName }: Props) {
         // TODO (task endpoints) We really ought to link them to the details page here, but that page doesn't exist yet.
         message = (
             <Typography>
-                <FormattedMessage id="taskEndpoint.multipleEndpoints.message" />
+                {intl.formatMessage({
+                    id: 'taskEndpoint.multipleEndpoints.message',
+                })}
             </Typography>
         );
     }
