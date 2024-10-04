@@ -10,7 +10,7 @@ export const useShardEndpoints = (
 ) => {
     const dictionaryVal = useShardDetail_readDictionary(taskName, taskTypes);
 
-    const gatewayHostname = useMemo((): string | null => {
+    const gatewayHostname = useMemo<string | null>(() => {
         if (typeof reactorAddress === 'string' && hasLength(reactorAddress)) {
             const url = getURL(reactorAddress, 'ShardEndpoint : error');
 
