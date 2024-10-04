@@ -246,12 +246,10 @@ export const fetchShardList = async (
     session: Session,
     existingAuthentication?: { address: string; token: string }
 ) => {
-    let reactorAddress: string, reactorToken: string;
+    let reactorAddress = existingAuthentication?.address;
+    let reactorToken = existingAuthentication?.token;
 
-    if (existingAuthentication) {
-        reactorAddress = existingAuthentication.address;
-        reactorToken = existingAuthentication.token;
-    } else {
+    if (!reactorAddress || !reactorToken) {
         const response = await authorizeTask(session.access_token, name);
 
         reactorAddress = response.reactorAddress;
