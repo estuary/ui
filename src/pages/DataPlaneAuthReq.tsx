@@ -2,7 +2,7 @@ import { Box, Toolbar, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { getLiveSpecs_dataPlaneAuthReq } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
-import AlertBox from 'components/shared/AlertBox';
+import Error from 'components/shared/Error';
 import usePageTitle from 'hooks/usePageTitle';
 import useReactorToken from 'hooks/useReactorToken';
 import { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ import { getURL } from 'utils/misc-utils';
 
 interface RedirectResult {
     targetUrl?: string;
-    error?: string | null;
+    error?: PostgrestError | string | null;
 }
 
 const DataPlaneAuthReq = () => {
@@ -54,7 +54,9 @@ const DataPlaneAuthReq = () => {
 
                     if (response.error || !hostnameLabelValue) {
                         setRedirectResult({
-                            error: `Failed to validate 'orig_url' parameter.`,
+                            error:
+                                response.error ??
+                                `Failed to validate 'orig_url' parameter.`,
                         });
 
                         return;
@@ -114,10 +116,8 @@ const DataPlaneAuthReq = () => {
                     });
                     window.location.replace(newUrl.toString());
                 },
-                (errorResponse) => {
-                    setRedirectResult({
-                        error: (errorResponse as PostgrestError).message,
-                    });
+                (error: PostgrestError) => {
+                    setRedirectResult({ error });
                 }
             );
         }
@@ -142,14 +142,24 @@ const DataPlaneAuthReq = () => {
 
             <Box style={{ marginBottom: 2, padding: 2 }}>
                 {redirectResult.error ? (
-                    <AlertBox short severity="error">
-                        <Typography>
-                            {intl.formatMessage(
-                                { id: 'dataPlaneAuthReq.error.message' },
-                                { catalogPrefix, error: redirectResult.error }
-                            )}
-                        </Typography>
-                    </AlertBox>
+                    <Error
+                        condensed
+                        error={
+                            typeof redirectResult.error === 'string'
+                                ? {
+                                      message: intl.formatMessage(
+                                          {
+                                              id: 'dataPlaneAuthReq.error.message',
+                                          },
+                                          {
+                                              catalogPrefix,
+                                              error: redirectResult.error,
+                                          }
+                                      ),
+                                  }
+                                : redirectResult.error
+                        }
+                    />
                 ) : (
                     <Typography>
                         {intl.formatMessage(
