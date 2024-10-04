@@ -4,6 +4,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
 import { ShardDetailStoreNames } from 'stores/names';
+import { SHARD_LABELS } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
@@ -133,16 +134,16 @@ const getEverythingForDictionary = (
 
     spec.labels?.labels?.forEach((label) => {
         switch (label.name) {
-            case 'estuary.dev/task-name':
+            case SHARD_LABELS.TASK_NAME:
                 response.entityName = label.value;
                 break;
-            case 'estuary.dev/task-type':
+            case SHARD_LABELS.TASK_TYPE:
                 response.entityType = label.value as ShardEntityTypes;
                 break;
-            case 'estuary.dev/expose-port':
+            case SHARD_LABELS.EXPOSE_PORT:
                 response.exposePort = label.value;
                 break;
-            case 'estuary.dev/hostname':
+            case SHARD_LABELS.HOSTNAME:
                 response.hostname = label.value;
                 break;
             default:

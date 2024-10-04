@@ -1,5 +1,6 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/GlobalProviders';
+import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import pLimit from 'p-limit';
 import {
     CONNECTOR_IMAGE,
@@ -10,6 +11,7 @@ import {
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
     SHARDS_DISABLE,
+    SHARD_LABELS,
     SortingProps,
     supabaseRetry,
     TABLES,
@@ -239,6 +241,23 @@ const getLiveSpecs_detailsForm = async (liveSpecId: string) => {
     return data;
 };
 
+export interface LiveSpecsExtQuery_DataPlaneAuthReq {
+    shard_labels: ProtocolLabel[];
+}
+
+const getLiveSpecs_dataPlaneAuthReq = async (catalogName: string) => {
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(SHARD_LABELS)
+                .eq('catalog_name', catalogName),
+        'getLiveSpecs_dataPlaneAuthReq'
+    ).then(handleSuccess<LiveSpecsExtQuery_DataPlaneAuthReq[]>, handleFailure);
+
+    return data;
+};
+
 // Multipurpose queries
 export interface LiveSpecsExtQuery_ByCatalogName {
     id: string;
@@ -429,8 +448,9 @@ export interface LiveSpecsExt_Related {
 export {
     getLiveSpecs_captures,
     getLiveSpecs_collections,
-    getLiveSpecs_entitySelector,
+    getLiveSpecs_dataPlaneAuthReq,
     getLiveSpecs_detailsForm,
+    getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
     getLiveSpecsByCatalogName,
