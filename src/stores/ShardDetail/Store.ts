@@ -134,13 +134,13 @@ const getEverythingForDictionary = (
 
     spec.labels?.labels?.forEach((label) => {
         switch (label.name) {
-            case 'estuary.dev/task-name':
+            case SHARD_LABELS.TASK_NAME:
                 response.entityName = label.value;
                 break;
-            case 'estuary.dev/task-type':
+            case SHARD_LABELS.TASK_TYPE:
                 response.entityType = label.value as ShardEntityTypes;
                 break;
-            case 'estuary.dev/expose-port':
+            case SHARD_LABELS.EXPORT_PORT:
                 response.exposePort = label.value;
                 break;
             case SHARD_LABELS.HOSTNAME:

@@ -17,7 +17,10 @@ import {
 import { hasLength } from './misc-utils';
 
 export enum SHARD_LABELS {
+    EXPORT_PORT = 'estuary.dev/expose-port',
     HOSTNAME = 'estuary.dev/hostname',
+    TASK_NAME = 'estuary.dev/task-name',
+    TASK_TYPE = 'estuary.dev/task-type',
 }
 
 export enum ErrorFlags {
