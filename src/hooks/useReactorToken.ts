@@ -5,7 +5,7 @@ import { authorizeTask } from 'utils/dataPlane-utils';
 import { getURL, hasLength } from 'utils/misc-utils';
 
 interface Token {
-    gateway_url: URL | null;
+    url: URL | null;
     parsed: JWTPayload;
     token: string;
 }
@@ -29,7 +29,7 @@ const fetcher = async ({
 
     return {
         token: reactorToken,
-        gateway_url: getURL(
+        url: getURL(
             reactorAddress,
             `useReactorToken : 'reactor_address' cannot be parsed as a URL`
         ),
@@ -86,8 +86,8 @@ const useReactorToken = (prefix: string | null) => {
     }
 
     return {
-        gatewayAuthToken: data?.token,
-        gatewayUrl: data?.gateway_url,
+        reactorToken: data?.token,
+        reactorUrl: data?.url,
         error,
     };
 };

@@ -30,8 +30,8 @@ const DataPlaneAuthReq = () => {
     const originalUrl = searchParams.get('orig_url');
 
     const {
-        gatewayAuthToken,
-        gatewayUrl,
+        reactorToken,
+        reactorUrl,
         error: gatewayAuthError,
     } = useReactorToken(catalogPrefix);
 
@@ -44,7 +44,7 @@ const DataPlaneAuthReq = () => {
             });
         } else if (gatewayAuthError) {
             setRedirectResult({ error: gatewayAuthError.toString() });
-        } else if (gatewayUrl && gatewayAuthToken) {
+        } else if (reactorUrl && reactorToken) {
             getLiveSpecs_dataPlaneAuthReq(catalogPrefix).then(
                 (response) => {
                     const hostnameLabelValue =
@@ -60,7 +60,7 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    const gatewayHost = gatewayUrl.hostname;
+                    const gatewayHost = reactorUrl.hostname;
 
                     const origUrlHostname = getURL(
                         originalUrl,
@@ -104,12 +104,12 @@ const DataPlaneAuthReq = () => {
                         return;
                     }
 
-                    newUrl.searchParams.append('token', gatewayAuthToken);
+                    newUrl.searchParams.append('token', reactorToken);
                     newUrl.searchParams.append('orig_url', originalUrl);
 
                     logRocketConsole('redirecting after successful auth', {
                         newUrl,
-                        gatewayUrl,
+                        reactorUrl,
                         originalUrl,
                     });
                     window.location.replace(newUrl.toString());
@@ -124,9 +124,9 @@ const DataPlaneAuthReq = () => {
     }, [
         catalogPrefix,
         gatewayAuthError,
-        gatewayAuthToken,
-        gatewayUrl,
         originalUrl,
+        reactorToken,
+        reactorUrl,
         setRedirectResult,
     ]);
 
