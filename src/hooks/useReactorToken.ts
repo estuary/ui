@@ -1,5 +1,6 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
+import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
 import { authorizeTask, formatEndpointAddress } from 'utils/dataPlane-utils';
 import { getURL, hasLength } from 'utils/misc-utils';
@@ -50,7 +51,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
         const exp = token.parsed.exp * 1000;
         const now = Date.now();
         if (now >= exp) {
-            console.error('data plane JWT is expired', {
+            logRocketConsole('data plane JWT is expired', {
                 now,
                 token,
             });
