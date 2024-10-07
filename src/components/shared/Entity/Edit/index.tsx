@@ -19,7 +19,7 @@ import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetai
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -68,6 +68,8 @@ function EntityEdit({
     RediscoverButton,
 }: Props) {
     useBrowserTitle(title);
+
+    const intl = useIntl();
 
     const { resetState } = useEntityWorkflowHelpers();
 
@@ -180,18 +182,18 @@ function EntityEdit({
                                 <AlertBox
                                     severity={draftInitializationError.severity}
                                 >
-                                    <FormattedMessage
-                                        id={draftInitializationError.messageId}
-                                    />
+                                    {intl.formatMessage({
+                                        id: draftInitializationError.messageId,
+                                    })}
                                 </AlertBox>
                             </Box>
                         ) : null}
 
                         {!isValidating && connectorTags.length === 0 ? (
                             <AlertBox severity="warning" short>
-                                <FormattedMessage
-                                    id={`${messagePrefix}.missingConnectors`}
-                                />
+                                {intl.formatMessage({
+                                    id: `${messagePrefix}.missingConnectors`,
+                                })}
                             </AlertBox>
                         ) : connectorTags.length > 0 ? (
                             <ErrorBoundryWrapper>
