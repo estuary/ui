@@ -162,7 +162,7 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.errors.missingSession': `Cannot find user session.`,
     'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
 
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations']} that are linked to this capture.`,
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.destinations']}`,
     'resetDataFlow.materializations.empty.message': `We currently only support data flow resets on materializations with a source capture. You may choose a materialization manually or skip and save your changes.`,
     'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,

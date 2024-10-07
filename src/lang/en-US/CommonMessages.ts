@@ -71,6 +71,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.sources': `Sources`,
     'terms.destination': `Destination`,
     'terms.destinations': `Destinations`,
+    'terms.destinations.lowercase': `destinations`,
 
     // Terms V2
     // Not 100% sure on this approach yet. Like keeping all this together.

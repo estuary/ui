@@ -17,51 +17,49 @@ function NoMaterializationsFound() {
     });
 
     return (
-        <Stack spacing={2}>
-            <AlertBox
-                severity="info"
-                short
-                title={intl.formatMessage({
-                    id: 'resetDataFlow.materializations.empty.header',
-                })}
-            >
+        <AlertBox
+            severity="info"
+            short
+            title={intl.formatMessage({
+                id: 'resetDataFlow.materializations.empty.header',
+            })}
+        >
+            <Stack spacing={2}>
+                <Typography>
+                    {intl.formatMessage({
+                        id: 'resetDataFlow.materializations.empty.message',
+                    })}
+                </Typography>
+
                 <Stack spacing={2}>
                     <Typography>
                         {intl.formatMessage({
-                            id: 'resetDataFlow.materializations.empty.message',
+                            id: 'resetDataFlow.materializations.empty.warning',
                         })}
                     </Typography>
-
-                    <Stack spacing={2}>
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'resetDataFlow.materializations.empty.warning',
-                            })}
-                        </Typography>
-                        <Stack
-                            spacing={2}
-                            direction="row"
-                            style={{ justifyContent: 'space-between' }}
+                    <Stack
+                        spacing={2}
+                        direction="row"
+                        style={{ justifyContent: 'space-between' }}
+                    >
+                        <ManualSelection />
+                        <Button
+                            variant="text"
+                            onClick={() => {
+                                setBackfillDataflow(false);
+                                updateContext({
+                                    backfillTarget: null,
+                                });
+                            }}
                         >
-                            <ManualSelection />
-                            <Button
-                                variant="text"
-                                onClick={() => {
-                                    setBackfillDataflow(false);
-                                    updateContext({
-                                        backfillTarget: null,
-                                    });
-                                }}
-                            >
-                                {intl.formatMessage({
-                                    id: 'resetDataFlow.materializations.empty.skip',
-                                })}
-                            </Button>
-                        </Stack>
+                            {intl.formatMessage({
+                                id: 'resetDataFlow.materializations.empty.skip',
+                            })}
+                        </Button>
                     </Stack>
                 </Stack>
-            </AlertBox>
-        </Stack>
+            </Stack>
+        </AlertBox>
     );
 }
 

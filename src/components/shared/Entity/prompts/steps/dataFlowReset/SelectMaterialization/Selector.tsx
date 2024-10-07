@@ -53,7 +53,7 @@ function Selector({
 
     return (
         <Grid item xs={12}>
-            <Typography>
+            <Typography sx={{ mb: 2, textTransform: '' }}>
                 {intl.formatMessage({
                     id: 'resetDataFlow.materializations.header',
                 })}
