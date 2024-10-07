@@ -63,8 +63,8 @@ const useTaskAuthorization = (prefixes: string[]) => {
     }
 
     const { data, mutate } = useSWR(
-        hasLength(authorizedPrefixes)
-            ? [authorizedPrefixes, session?.access_token]
+        session?.access_token && hasLength(authorizedPrefixes)
+            ? [authorizedPrefixes, session.access_token]
             : null,
         gatewayFetcher,
         {
