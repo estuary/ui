@@ -31,7 +31,7 @@ function CatalogEditor({ messageId }: Props) {
 
     const intl = useIntl();
     const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
-    const needsBackfilled = useBinding_backfilledBindings_count();
+    const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
         return (
@@ -51,7 +51,7 @@ function CatalogEditor({ messageId }: Props) {
 
                     {dataFlowResetEnabled &&
                     backfillDataFlow &&
-                    needsBackfilled ? (
+                    backfillCount ? (
                         <AlertBox
                             fitWidth
                             short
@@ -72,7 +72,7 @@ function CatalogEditor({ messageId }: Props) {
                                 formActive ||
                                     (dataFlowResetEnabled &&
                                         backfillDataFlow &&
-                                        needsBackfilled)
+                                        backfillCount)
                             )}
                             monitorCurrentCatalog
                         />
