@@ -1,4 +1,4 @@
-import { StepLabel } from '@mui/material';
+import { StepLabel, useTheme } from '@mui/material';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useIntl } from 'react-intl';
@@ -9,6 +9,7 @@ import SkippedStepIcon from './SkippedStepIcon';
 
 function StepLabelAndIcon() {
     const intl = useIntl();
+    const theme = useTheme();
 
     const stepIndex = useLoopIndex();
     const [error, optionalLabel, progress, stepLabelMessageId] =
@@ -40,6 +41,11 @@ function StepLabelAndIcon() {
                       })
                     : undefined
             }
+            sx={{
+                '& .MuiStepLabel-label': {
+                    color: theme.palette.text.primary,
+                },
+            }}
             StepIconComponent={
                 stepSkipped
                     ? SkippedStepIcon
