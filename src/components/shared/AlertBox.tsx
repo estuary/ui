@@ -58,11 +58,9 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
         [severity, short]
     );
 
-    const iconProps = hideIcon ? { icon: false } : {};
-
     return (
         <Alert
-            {...iconProps}
+            {...(hideIcon ? { icon: false } : {})}
             ref={ref}
             severity={severity}
             variant="outlined"
