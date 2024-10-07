@@ -53,7 +53,9 @@ function CatalogEditor({ messageId }: Props) {
                     backfillDataFlow &&
                     backfillCount ? (
                         <AlertBox
-                            fitWidth
+                            sx={{
+                                maxWidth: 'fit-content',
+                            }}
                             short
                             severity="warning"
                             title={intl.formatMessage({

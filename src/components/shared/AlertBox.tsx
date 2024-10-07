@@ -24,7 +24,7 @@ const HEADER_MESSAGE = {
 };
 
 const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
-    { short, severity, hideIcon, title, children, onClose, fitWidth },
+    { short, severity, hideIcon, title, children, onClose, sx },
     ref
 ) {
     const theme = useTheme();
@@ -74,11 +74,11 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
             }}
             onClose={onClose}
             sx={{
+                ...(sx ?? {}),
                 'backgroundColor': alertBackground[theme.palette.mode],
                 'color': alertTextPrimary[theme.palette.mode],
                 'borderColor': theme.palette[severity][theme.palette.mode],
                 'padding': 0,
-                'maxWidth': fitWidth ? 'fit-content' : undefined,
                 'pl': hideIcon ? 2 : undefined,
                 '& > .MuiAlert-message': {
                     p: 1,

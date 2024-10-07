@@ -178,15 +178,16 @@ function EntityEdit({
                         <IncompatibleCollections />
 
                         {draftInitializationError ? (
-                            <Box sx={{ mb: 2 }}>
-                                <AlertBox
-                                    severity={draftInitializationError.severity}
-                                >
-                                    {intl.formatMessage({
-                                        id: draftInitializationError.messageId,
-                                    })}
-                                </AlertBox>
-                            </Box>
+                            <AlertBox
+                                severity={draftInitializationError.severity}
+                                sx={{
+                                    mb: 2,
+                                }}
+                            >
+                                {intl.formatMessage({
+                                    id: draftInitializationError.messageId,
+                                })}
+                            </AlertBox>
                         ) : null}
 
                         {!isValidating && connectorTags.length === 0 ? (
