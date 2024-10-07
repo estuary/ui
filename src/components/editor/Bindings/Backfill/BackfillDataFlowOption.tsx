@@ -37,6 +37,7 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
             // When closing reset it
             if (defaulted.current) {
                 setBackfillDataflow(false);
+                defaulted.current = false;
             }
         };
     }, [backfillCount, setBackfillDataflow]);
