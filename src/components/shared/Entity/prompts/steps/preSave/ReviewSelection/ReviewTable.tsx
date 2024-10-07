@@ -11,6 +11,7 @@ import {
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
+import { useEntityType } from 'context/EntityContext';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,6 +21,8 @@ import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ReviewTable() {
     const intl = useIntl();
+
+    const parentEntityType = useEntityType();
 
     const { generatePath } = useDetailsNavigator('');
 
@@ -32,7 +35,7 @@ function ReviewTable() {
     const tableRows = useMemo(() => {
         const response = [
             {
-                entityType: 'capture',
+                entityType: parentEntityType,
                 cell: (
                     <EntityNameDetailsLink
                         newWindow
@@ -62,7 +65,8 @@ function ReviewTable() {
             });
         }
 
-        if (materializationName) {
+        // Only captures allow data flow reset right now
+        if (parentEntityType === 'capture' && materializationName) {
             response.push({
                 entityType: 'materialization',
                 cell: (
@@ -85,6 +89,7 @@ function ReviewTable() {
     }, [
         collectionsBeingBackfilled,
         draftSpecs,
+        parentEntityType,
         generatePath,
         materializationName,
     ]);
