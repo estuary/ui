@@ -5,6 +5,7 @@ import {
     TableBody,
     TableCell,
     TableContainer,
+    TableHead,
     TableRow,
 } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
@@ -90,7 +91,12 @@ function ReviewTable() {
 
     return (
         <TableContainer>
-            <Table size="small">
+            <Table size="small" sx={{ border: 'red' }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell colSpan={2} />
+                    </TableRow>
+                </TableHead>
                 <TableBody>
                     {tableRows.map(({ cell, count, entityType }) => {
                         const { pluralId, Icon } = ENTITY_SETTINGS[entityType];
