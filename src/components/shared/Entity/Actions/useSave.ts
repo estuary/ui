@@ -19,6 +19,7 @@ import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
+    useBinding_backfilledBindings_count,
     useBinding_collections,
     useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
@@ -58,6 +59,7 @@ function useSave(
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
+    const backfillCount = useBinding_backfilledBindings_count();
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
     const [dataFlowResetEnabled] = useLocalStorage(
         LocalStorageKeys.ENABLE_DATA_FLOW_RESET
@@ -92,8 +94,9 @@ function useSave(
     const disabledBindings = useBinding_disabledBindings(entityType);
 
     const showPreSavePrompt = useMemo(
-        () => Boolean(isEdit && dataFlowResetEnabled && !dryRun),
-        [dataFlowResetEnabled, dryRun, isEdit]
+        () =>
+            Boolean(isEdit && dataFlowResetEnabled && !dryRun && backfillCount),
+        [backfillCount, dataFlowResetEnabled, dryRun, isEdit]
     );
 
     const waitForPublishToFinish = useCallback(
