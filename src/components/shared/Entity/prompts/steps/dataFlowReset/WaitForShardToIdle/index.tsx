@@ -126,7 +126,6 @@ function WaitForShardToIdle() {
                             ? failedResponse
                             : null,
                     });
-                    // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
                 },
                 2500
             );
