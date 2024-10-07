@@ -15,7 +15,6 @@ import {
 } from './cache';
 
 interface TaskAuthorizationFetcherResponse extends TaskAuthorizationResponse {
-    cached?: boolean;
     cacheKey?: string;
 }
 
@@ -35,7 +34,7 @@ const gatewayFetcher = async ({
 
             // If the token is valid and the cached configuration is defined, then return the cached value.
             if (!tokensExpired && gatewayConfig) {
-                return Promise.resolve({ ...gatewayConfig, cached: true });
+                return Promise.resolve({ ...gatewayConfig, cacheKey });
             }
 
             const response = await authorizeTask(accessToken, prefix);
@@ -75,8 +74,7 @@ const useTaskAuthorization = (prefixes: string[]) => {
                 }
 
                 configs.forEach((config) => {
-                    const { cacheKey, cached, ...taskAuthorizationResponse } =
-                        config;
+                    const { cacheKey, ...taskAuthorizationResponse } = config;
 
                     setAuthorizationConfig(cacheKey, taskAuthorizationResponse);
                 });
