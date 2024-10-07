@@ -1,6 +1,6 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { Shard } from 'data-plane-gateway/types/shard_client';
-import useTaskAuthorization from 'hooks/gatewayAuthToken/useTaskAuthorization';
+import useTaskAuthorization from 'hooks/gatewayAuth/useTaskAuthorization';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';

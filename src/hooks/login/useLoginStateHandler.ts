@@ -1,4 +1,4 @@
-import { clearAuthorizationCache } from 'hooks/gatewayAuthToken/cache';
+import { clearAuthorizationCache } from 'hooks/gatewayAuth/cache';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
