@@ -46,7 +46,7 @@ function Actions() {
                             ? () => setShowSavePrompt(false)
                             : previousStep
                     }
-                    variant="text"
+                    variant="outlined"
                 >
                     {intl.formatMessage({
                         id: onFirstStep ? 'cta.close' : 'cta.back',
@@ -55,7 +55,6 @@ function Actions() {
 
                 <Button
                     onClick={() => (done ? exit() : nextStep())}
-                    variant="outlined"
                     disabled={!canContinue}
                 >
                     {intl.formatMessage({
