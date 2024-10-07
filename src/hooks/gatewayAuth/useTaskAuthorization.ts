@@ -57,7 +57,7 @@ const useTaskAuthorization = (prefixes: string[]) => {
     );
 
     if (!hasLength(authorizedPrefixes)) {
-        logRocketEvent(CustomEvents.GATEWAY_TOKEN_INVALID_PREFIX, {
+        logRocketEvent(`${CustomEvents.AUTHORIZE_TASK} : InvalidPrefix`, {
             prefixes,
         });
     }
@@ -70,6 +70,8 @@ const useTaskAuthorization = (prefixes: string[]) => {
         {
             onSuccess: (configs) => {
                 if (!hasLength(configs)) {
+                    logRocketEvent(`${CustomEvents.AUTHORIZE_TASK} : Empty`);
+
                     return;
                 }
 
@@ -80,7 +82,7 @@ const useTaskAuthorization = (prefixes: string[]) => {
                 });
             },
             onError: (error, key, config) => {
-                logRocketEvent(CustomEvents.GATEWAY_TOKEN_FAILED, {
+                logRocketEvent(`${CustomEvents.AUTHORIZE_TASK} : CallFailed`, {
                     error,
                 });
 

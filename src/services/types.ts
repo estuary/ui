@@ -1,6 +1,7 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 
 export enum CustomEvents {
+    AUTHORIZE_TASK = 'AuthorizeTask',
     AUTH_SIGNOUT = 'Auth_Signout',
     BACKFILL_DATAFLOW = 'Backfill_Dataflow',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
@@ -30,8 +31,6 @@ export enum CustomEvents {
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
     FORM_STATE_PREVENTED = 'FormState:Prevented',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
-    GATEWAY_TOKEN_FAILED = 'Gateway_Auth_Token:CallFailed',
-    GATEWAY_TOKEN_INVALID_PREFIX = 'Gateway_Auth_Token:InvalidPrefix',
     LAZY_LOADING = 'Lazy Loading',
     LOGIN = 'Login',
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',
