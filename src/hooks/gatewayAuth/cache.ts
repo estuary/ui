@@ -3,8 +3,7 @@ import { decodeJwt, JWTPayload } from 'jose';
 import { LRUMap } from 'mnemonist';
 import { TaskAuthorizationResponse } from 'utils/dataPlane-utils';
 
-// The limit of 10 is totally arbitrary. Felt like an okay number so all 3 tables could have
-//  something in cache and allow someone some flexibility to search
+// The limit of 10 is arbitrary.
 const taskAuthorizationCache = new LRUMap<string, TaskAuthorizationResponse>(
     100
 );
