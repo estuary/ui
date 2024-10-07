@@ -14,7 +14,7 @@ function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();
 
     const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.dataPlaneName
+        (state) => state.details.data.dataPlane?.dataPlaneName.whole
     );
 
     const stepIndex = useLoopIndex();
@@ -41,7 +41,7 @@ function PublishStepDataFlowReset() {
                 dataFlowResetDraftId,
                 false,
                 `${CustomEvents.DATA_FLOW_RESET} : publish : ${initUUID}`,
-                dataPlaneName?.whole
+                dataPlaneName
             );
 
             if (publishResponse.error || !publishResponse.data) {
@@ -82,7 +82,7 @@ function PublishStepDataFlowReset() {
         void saveAndPublish();
     }, [
         dataFlowResetDraftId,
-        dataPlaneName?.whole,
+        dataPlaneName,
         initUUID,
         publicationHandler,
         stepIndex,

@@ -15,7 +15,7 @@ function Publish() {
     const publicationHandler = usePublicationHandler();
     const draftId = useEditorStore_id();
     const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.dataPlaneName
+        (state) => state.details.data.dataPlane?.dataPlaneName.whole
     );
 
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
@@ -53,7 +53,7 @@ function Publish() {
                 dataFlowResetDraftId ?? draftId,
                 false,
                 `${loggingEvent} : publish : ${initUUID}`,
-                dataPlaneName?.whole
+                dataPlaneName
             );
 
             if (publishResponse.error || !publishResponse.data) {
@@ -85,7 +85,7 @@ function Publish() {
         void saveAndPublish();
     }, [
         dataFlowResetDraftId,
-        dataPlaneName?.whole,
+        dataPlaneName,
         draftId,
         initUUID,
         loggingEvent,

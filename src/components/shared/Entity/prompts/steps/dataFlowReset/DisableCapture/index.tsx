@@ -10,6 +10,7 @@ import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { CustomEvents } from 'services/types';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
@@ -20,6 +21,10 @@ function DisableCapture() {
     const intl = useIntl();
 
     const publicationHandler = usePublicationHandler();
+
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName.whole
+    );
 
     const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -82,7 +87,8 @@ function DisableCapture() {
             const publishResponse = await createPublication(
                 draftId,
                 false,
-                `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
+                `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`,
+                dataPlaneName
             );
 
             if (publishResponse.error || !publishResponse.data) {
@@ -118,6 +124,7 @@ function DisableCapture() {
 
         void disableCaptureAndPublish();
     }, [
+        dataPlaneName,
         draftId,
         draftSpecs,
         initUUID,
