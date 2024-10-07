@@ -19,11 +19,11 @@ import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
-    useBinding_backfilledBindings_count,
     useBinding_collections,
     useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
@@ -59,8 +59,10 @@ function useSave(
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
-    const backfillCount = useBinding_backfilledBindings_count();
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
+    const [backfillDataflow] = useBindingStore((state) => [
+        state.backfillDataFlow,
+    ]);
     const [dataFlowResetEnabled] = useLocalStorage(
         LocalStorageKeys.ENABLE_DATA_FLOW_RESET
     );
@@ -95,8 +97,10 @@ function useSave(
 
     const showPreSavePrompt = useMemo(
         () =>
-            Boolean(isEdit && dataFlowResetEnabled && !dryRun && backfillCount),
-        [backfillCount, dataFlowResetEnabled, dryRun, isEdit]
+            Boolean(
+                isEdit && dataFlowResetEnabled && !dryRun && backfillDataflow
+            ),
+        [backfillDataflow, dataFlowResetEnabled, dryRun, isEdit]
     );
 
     const waitForPublishToFinish = useCallback(
