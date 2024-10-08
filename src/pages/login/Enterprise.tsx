@@ -4,12 +4,11 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import LoginWrapper from './Wrapper';
 
 const titleKey = 'routeTitle.login.sso';
-const prefixKey = `${titleKey}.prefix`;
 const ogDescriptionKey = `${titleKey}.description`;
 const metaTitleKey = `${titleKey}.ogTitle`;
 
 const EnterpriseLogin = () => {
-    useBrowserTitle(titleKey, prefixKey, {
+    useBrowserTitle('routeTitle.login', 'routeTitle.login.prefix', {
         ogDescriptionKey,
         ogTitleKey: metaTitleKey,
     });

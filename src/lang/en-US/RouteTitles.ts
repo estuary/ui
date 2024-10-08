@@ -39,8 +39,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
     'routeTitle.login.ogDescription': `${defaultDescription}`,
 
-    'routeTitle.login.sso': `Secure Access to Your Account`,
-    'routeTitle.login.sso.prefix': `${CommonMessages.productName} SSO Login`,
     'routeTitle.login.sso.ogTitle': `Estuary Flow SSO Login | Secure Access to Your Account`,
     'routeTitle.login.sso.ogDescription': `Log in securely to Estuary Flow using Single Sign-On (SSO) and manage your data pipelines with ease.`,
 

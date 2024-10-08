@@ -27,7 +27,7 @@ const BasicLogin = ({ showRegistration }: Props) => {
 
     const ogKeyPrefix = `routeTitle.${isRegister ? 'register' : 'login'}`;
 
-    useBrowserTitle('routeTitle.login', `routeTitle.login.prefix`, {
+    useBrowserTitle('routeTitle.login', 'routeTitle.login.prefix', {
         ogDescriptionKey: `${ogKeyPrefix}.ogDescription`,
         ogTitleKey: isRegister ? `${ogKeyPrefix}.ogTitle` : undefined,
     });
