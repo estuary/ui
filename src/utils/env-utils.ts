@@ -3,6 +3,7 @@ declare global {
         Estuary: {
             api_endpoint: string | null;
             auth_url: string | null;
+            enableDataFlowReset: boolean;
         } | null;
         monaco: any;
         __REDUX_DEVTOOLS_EXTENSION__: any;

@@ -9,13 +9,14 @@ export interface PreSavePromptStore {
     context: DataFlowResetContext;
     updateContext: (setting: Partial<PreSavePromptStore['context']>) => void;
 
+    retryStep: (step: number) => void;
     updateStep: (step: number, settings: Partial<PromptStepState>) => void;
     initializeSteps: (backfillEnabled: boolean) => void;
     initUUID: string | null;
 
     activeStep: number;
     setActiveStep: (val: PreSavePromptStore['activeStep']) => void;
-    nextStep: (force?: boolean) => void;
+    nextStep: (skipped?: boolean) => void;
     previousStep: () => void;
 
     resetState: () => void;

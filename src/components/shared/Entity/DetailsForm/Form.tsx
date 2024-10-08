@@ -61,7 +61,13 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
         <>
             {readOnly ? (
                 <Box sx={{ mb: 2 }}>
-                    <AlertBox fitWidth short severity="info">
+                    <AlertBox
+                        sx={{
+                            maxWidth: 'fit-content',
+                        }}
+                        short
+                        severity="info"
+                    >
                         {intl.formatMessage({
                             id: 'entityEdit.alert.detailsFormDisabled',
                         })}

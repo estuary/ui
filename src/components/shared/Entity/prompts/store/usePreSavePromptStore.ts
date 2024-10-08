@@ -7,14 +7,16 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { useMemo } from 'react';
 import { PromptStep } from '../types';
 import {
     DataFlowResetSteps,
     getInitialDataFlowResetContext,
 } from '../steps/dataFlowReset/shared';
-import { ChangeReviewStep } from '../steps/preSave/ChangeReview/definition';
 import { PublishStep } from '../steps/preSave/Publish/definition';
+import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
 import { PreSavePromptStore } from './types';
+import { defaultStepState } from './shared';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
@@ -40,20 +42,47 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
 
                         if (backfillEnabled) {
                             newSteps.push(...DataFlowResetSteps);
+
+                            state.context.loggingEvent =
+                                CustomEvents.DATA_FLOW_RESET;
+                            state.context.dialogMessageId =
+                                'resetDataFlow.dialog.title';
                         } else {
-                            newSteps.push(ChangeReviewStep);
+                            newSteps.push(ReviewSelectionStep);
                             newSteps.push(PublishStep);
+
+                            state.context.loggingEvent =
+                                CustomEvents.ENTITY_SAVE;
+                            state.context.dialogMessageId =
+                                'preSavePrompt.dialog.title';
                         }
 
                         state.steps = newSteps;
                         state.initUUID = initUUID;
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             step: 'init',
                             initUUID,
                         });
                     }),
                     false,
                     'initializeSteps'
+                ),
+
+            retryStep: (stepToUpdate) =>
+                set(
+                    produce((state: PreSavePromptStore) => {
+                        const updating = state.steps[stepToUpdate];
+
+                        updating.state.progress = defaultStepState.progress;
+                        updating.state.error = defaultStepState.error;
+
+                        logRocketEvent(state.context.loggingEvent, {
+                            step: updating.StepComponent.name,
+                            retry: true,
+                        });
+                    }),
+                    false,
+                    'retryStep'
                 ),
 
             updateStep: (stepToUpdate, settings) =>
@@ -79,12 +108,12 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                                 updating.state.valid = false;
                                 updating.state.error = {
                                     message:
-                                        'dataFlowReset.errors.publishFailed',
+                                        'resetDataFlow.errors.publishFailed',
                                 };
                             }
                         }
 
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             step: updating.StepComponent.name,
                             progress: updating.state.progress,
                         });
@@ -101,7 +130,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             ...settings,
                         };
 
-                        logRocketEvent(CustomEvents.BACKFILL_DATAFLOW, {
+                        logRocketEvent(state.context.loggingEvent, {
                             contextUpdate: true,
                             ...settings,
                         });
@@ -119,19 +148,20 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                     'setActiveStep'
                 ),
 
-            nextStep: (force) =>
+            nextStep: (skipped) =>
                 set(
                     produce((state: PreSavePromptStore) => {
                         // TODO (data flow reset)
                         // Want to think more about allowing this
-                        if (force) {
+                        if (skipped) {
                             state.steps[state.activeStep].state.valid = true;
                         }
 
                         if (state.steps[state.activeStep].state.valid) {
-                            state.steps[state.activeStep].state.progress = force
-                                ? ProgressStates.SKIPPED
-                                : ProgressStates.SUCCESS;
+                            state.steps[state.activeStep].state.progress =
+                                skipped
+                                    ? ProgressStates.SKIPPED
+                                    : ProgressStates.SUCCESS;
                             state.activeStep = state.activeStep + 1;
                         }
                     }),
@@ -180,4 +210,11 @@ export const usePreSavePromptStore_onLastStep = () => {
             return state.activeStep === state.steps.length - 1;
         })
     );
+};
+
+export const usePreSavePromptStore_done = () => {
+    const last = usePreSavePromptStore_onLastStep();
+    const done = usePreSavePromptStore_stepValid();
+
+    return useMemo(() => last && done, [done, last]);
 };

@@ -5,4 +5,5 @@ export enum LocalStorageKeys {
     NAVIGATION_SETTINGS = 'estuary.navigation-settings',
     SIDE_PANEL_DOCS = 'estuary.side-panel-docs',
     TABLE_SETTINGS = 'estuary.table-settings',
+    ENABLE_DATA_FLOW_RESET = 'estuary.enable-data-flow-reset',
 }
