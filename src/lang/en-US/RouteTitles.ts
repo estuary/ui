@@ -3,8 +3,6 @@ import { CommonMessages } from './CommonMessages';
 const defaultDescription =
     'Access the Estuary Flow dashboard to manage real-time data pipelines, integrations, and configurations in one place.';
 
-const defaultTitle = ``;
-
 export const RouteTitles: Record<string, string> = {
     'routeTitle.home': `Welcome`,
     'routeTitle.dashboard': `Dashboard`,
@@ -38,7 +36,6 @@ export const RouteTitles: Record<string, string> = {
     // The routes with custom prefix values
     'routeTitle.login': `Manage Your Data Pipelines`,
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
-    'routeTitle.login.metaTitle': `${defaultTitle}`,
     'routeTitle.login.description': `${defaultDescription}`,
 
     'routeTitle.login.sso': `Secure Access to Your Account`,
