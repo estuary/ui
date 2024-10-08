@@ -149,19 +149,6 @@ export const getMarketplaceSettings = () => {
     }
 };
 
-export const getGatewayAuthTokenSettings = () => {
-    const gatewayAuthTokenEndpoint = import.meta.env
-        .VITE_GATEWAY_AUTH_TOKEN_URL;
-
-    if (gatewayAuthTokenEndpoint) {
-        return { gatewayAuthTokenEndpoint };
-    } else {
-        throw new Error(
-            'Missing endpoint for creating gateway auth tokens: VITE_GATEWAY_AUTH_TOKEN_URL'
-        );
-    }
-};
-
 export const getTaskAuthorizationSettings = () => {
     const taskAuthorizationEndpoint = import.meta.env
         .VITE_TASK_AUTHORIZATION_URL;
