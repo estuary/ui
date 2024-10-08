@@ -34,10 +34,9 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.registration': `Registration`,
 
     // The routes with custom prefix values
-    //  The strings are generated in login/Basic.tsx
+    //  The some of these strings are generated in login/Basic and login/Enterprise
     'routeTitle.login': `Manage Your Data Pipelines`,
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
-    'routeTitle.login.ogDescription': `${defaultDescription}`,
 
     'routeTitle.login.sso.ogTitle': `Estuary Flow SSO Login | Secure Access to Your Account`,
     'routeTitle.login.sso.ogDescription': `Log in securely to Estuary Flow using Single Sign-On (SSO) and manage your data pipelines with ease.`,

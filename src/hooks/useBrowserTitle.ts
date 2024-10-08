@@ -18,20 +18,22 @@ function useBrowserTitle(
         useUpdateHelmet();
 
     useEffect(() => {
-        const newMetaTitle = metaSettings?.ogTitleKey
-            ? `${intl.formatMessage({
-                  id: metaSettings.ogTitleKey,
-              })}`
-            : undefined;
+        updateTitle(
+            `${intl.formatMessage({
+                id: prefixKey ?? 'common.browserTitle',
+            })} | ${intl.formatMessage({
+                id: titleKey,
+            })}`
+        );
 
-        const newTitle = `${intl.formatMessage({
-            id: prefixKey ?? 'common.browserTitle',
-        })} | ${intl.formatMessage({
-            id: titleKey,
-        })}`;
+        updateOgTitle(
+            metaSettings?.ogTitleKey
+                ? `${intl.formatMessage({
+                      id: metaSettings.ogTitleKey,
+                  })}`
+                : undefined
+        );
 
-        updateTitle(newTitle);
-        updateOgTitle(newMetaTitle);
         updateOgDescription(
             `${intl.formatMessage({
                 id:
