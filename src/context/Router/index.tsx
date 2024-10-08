@@ -9,7 +9,6 @@ import { DashboardWelcomeProvider } from 'context/DashboardWelcome';
 import { EntityContextProvider } from 'context/EntityContext';
 import { WorkflowContextProvider } from 'context/Workflow';
 import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
-import useBrowserTitle from 'hooks/useBrowserTitle';
 import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Collections from 'pages/Collections';
@@ -572,8 +571,6 @@ const router = createBrowserRouter(
 );
 
 const ApplicationRouter = () => {
-    useBrowserTitle('routeTitle.loginLoading');
-
     return <RouterProvider router={router} />;
 };
 

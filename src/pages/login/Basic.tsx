@@ -26,7 +26,10 @@ const BasicLogin = ({ showRegistration }: Props) => {
         useLoginStateHandler(showRegistration);
 
     const titleKey = `routeTitle.${isRegister ? 'register' : 'login'}`;
-    useBrowserTitle(titleKey, `${titleKey}.prefix`);
+    useBrowserTitle(titleKey, `${titleKey}.prefix`, {
+        descriptionKey: `${titleKey}.description`,
+        metaTitleKey: `${titleKey}.metaTitle`,
+    });
 
     return (
         <LoginWrapper

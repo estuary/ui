@@ -1,5 +1,10 @@
 import { CommonMessages } from './CommonMessages';
 
+const defaultDescription =
+    'Access the Estuary Flow dashboard to manage real-time data pipelines, integrations, and configurations in one place.';
+
+const defaultTitle = ``;
+
 export const RouteTitles: Record<string, string> = {
     'routeTitle.home': `Welcome`,
     'routeTitle.dashboard': `Dashboard`,
@@ -33,10 +38,18 @@ export const RouteTitles: Record<string, string> = {
     // The routes with custom prefix values
     'routeTitle.login': `Manage Your Data Pipelines`,
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
+    'routeTitle.login.metaTitle': `${defaultTitle}`,
+    'routeTitle.login.description': `${defaultDescription}`,
 
     'routeTitle.login.sso': `Secure Access to Your Account`,
     'routeTitle.login.sso.prefix': `${CommonMessages.productName} SSO Login`,
+    'routeTitle.login.sso.metaTitle': `Estuary Flow SSO Login | Secure Access to Your Account`,
+    'routeTitle.login.sso.description': `Log in securely to Estuary Flow using Single Sign-On (SSO) and manage your data pipelines with ease.`,
 
     'routeTitle.register': `Build Data Pipelines`,
     'routeTitle.register.prefix': `Register for ${CommonMessages.productName}`,
+    'routeTitle.register.metaTitle': `Register for Estuary Flow | Build Data Pipelines`,
+    'routeTitle.register.description': `Create your free Estuary Flow account and start building real-time data pipelines with ease. No credit card required, and enjoy a 30-day free trial`,
+
+    'routeTitle.default.description': `${defaultDescription}`,
 };
