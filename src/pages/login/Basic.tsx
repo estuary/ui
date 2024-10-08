@@ -25,10 +25,11 @@ const BasicLogin = ({ showRegistration }: Props) => {
     const { grantToken, isRegister, tabIndex, handleChange } =
         useLoginStateHandler(showRegistration);
 
-    const titleKey = `routeTitle.${isRegister ? 'register' : 'login'}`;
-    useBrowserTitle(titleKey, `${titleKey}.prefix`, {
-        ogDescriptionKey: `${titleKey}.ogDescription`,
-        ogTitleKey: isRegister ? `${titleKey}.ogTitle` : undefined,
+    const ogKeyPrefix = `routeTitle.${isRegister ? 'register' : 'login'}`;
+
+    useBrowserTitle('routeTitle.login', `routeTitle.login.prefix`, {
+        ogDescriptionKey: `${ogKeyPrefix}.ogDescription`,
+        ogTitleKey: isRegister ? `${ogKeyPrefix}.ogTitle` : undefined,
     });
 
     return (

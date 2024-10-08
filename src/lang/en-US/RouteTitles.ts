@@ -34,6 +34,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.registration': `Registration`,
 
     // The routes with custom prefix values
+    //  The strings are generated in login/Basic.tsx
     'routeTitle.login': `Manage Your Data Pipelines`,
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
     'routeTitle.login.ogDescription': `${defaultDescription}`,
