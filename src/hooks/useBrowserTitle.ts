@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 
 interface MetaSettings {
     ogDescriptionKey?: string;
-    metaTitleKey?: string;
+    ogTitleKey?: string;
 }
 
 function useBrowserTitle(
@@ -18,9 +18,9 @@ function useBrowserTitle(
         useUpdateHelmet();
 
     useEffect(() => {
-        const newMetaTitle = metaSettings?.metaTitleKey
+        const newMetaTitle = metaSettings?.ogTitleKey
             ? `${intl.formatMessage({
-                  id: metaSettings.metaTitleKey,
+                  id: metaSettings.ogTitleKey,
               })}`
             : undefined;
 
@@ -36,12 +36,12 @@ function useBrowserTitle(
             `${intl.formatMessage({
                 id:
                     metaSettings?.ogDescriptionKey ??
-                    'routeTitle.default.description',
+                    'routeTitle.default.ogDescription',
             })}`
         );
     }, [
         intl,
-        metaSettings?.metaTitleKey,
+        metaSettings?.ogTitleKey,
         metaSettings?.ogDescriptionKey,
         prefixKey,
         titleKey,
