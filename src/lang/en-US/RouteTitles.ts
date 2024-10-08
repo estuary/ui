@@ -21,8 +21,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
-    'routeTitle.login': `Login`,
-    'routeTitle.loginEnterprise': `Enterprise Login`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
@@ -31,4 +29,14 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `${CommonMessages['terms.destinations']}`,
     'routeTitle.registration': `Registration`,
+
+    // The routes with custom prefix values
+    'routeTitle.login': `Manage Your Data Pipelines`,
+    'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
+
+    'routeTitle.login.sso': `Secure Access to Your Account`,
+    'routeTitle.login.sso.prefix': `${CommonMessages.productName} SSO Login`,
+
+    'routeTitle.register': `Build Data Pipelines`,
+    'routeTitle.register.prefix': `Register for ${CommonMessages.productName}`,
 };

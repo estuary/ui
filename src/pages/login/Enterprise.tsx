@@ -3,8 +3,11 @@ import useLoginStateHandler from 'hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import LoginWrapper from './Wrapper';
 
+const titleKey = 'routeTitle.login.sso';
+const prefixKey = `${titleKey}.prefix`;
+
 const EnterpriseLogin = () => {
-    useBrowserTitle('routeTitle.login');
+    useBrowserTitle(titleKey, prefixKey);
 
     const { grantToken, isRegister, tabIndex } = useLoginStateHandler(false);
 

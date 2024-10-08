@@ -18,14 +18,15 @@ interface Props {
 }
 
 const BasicLogin = ({ showRegistration }: Props) => {
-    useBrowserTitle('routeTitle.login');
-
     const provider = useGlobalSearchParams<SupportedProvider | null>(
         GlobalSearchParams.PROVIDER
     );
 
     const { grantToken, isRegister, tabIndex, handleChange } =
         useLoginStateHandler(showRegistration);
+
+    const titleKey = `routeTitle.${isRegister ? 'register' : 'login'}`;
+    useBrowserTitle(titleKey, `${titleKey}.prefix`);
 
     return (
         <LoginWrapper
