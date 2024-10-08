@@ -2,18 +2,30 @@ import { DialogTitle, IconButton, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
-import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
+import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
+import {
+    usePreSavePromptStore,
+    usePreSavePromptStore_done,
+} from '../store/usePreSavePromptStore';
 
 function Title() {
     const intl = useIntl();
     const theme = useTheme();
 
+    const { exit } = useEntityWorkflowHelpers();
+
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
 
-    const [activeStep, resetState] = usePreSavePromptStore((state) => [
-        state.activeStep,
-        state.resetState,
-    ]);
+    const done = usePreSavePromptStore_done();
+    const [resetState, disableClose, dialogMessageId] = usePreSavePromptStore(
+        (state) => [
+            state.resetState,
+            state.context.disableClose,
+            state.context.dialogMessageId,
+        ]
+    );
+
+    const cannotClose = Boolean(disableClose && !done);
 
     return (
         <DialogTitle
@@ -23,22 +35,28 @@ function Title() {
                 justifyContent: 'space-between',
             }}
         >
-            Please review your changes
-            <IconButton
-                disabled={activeStep > 3}
-                onClick={() => {
-                    resetState();
-                    setShowSavePrompt(false);
-                }}
-            >
-                <Xmark
-                    aria-label={intl.formatMessage({ id: 'cta.close' })}
-                    style={{
-                        fontSize: '1rem',
-                        color: theme.palette.text.primary,
+            {intl.formatMessage({ id: dialogMessageId })}
+
+            {cannotClose ? null : (
+                <IconButton
+                    onClick={() => {
+                        if (done) {
+                            exit();
+                            return;
+                        }
+                        resetState();
+                        setShowSavePrompt(false);
                     }}
-                />
-            </IconButton>
+                >
+                    <Xmark
+                        aria-label={intl.formatMessage({ id: 'cta.close' })}
+                        style={{
+                            fontSize: '1rem',
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                </IconButton>
+            )}
         </DialogTitle>
     );
 }

@@ -12,6 +12,10 @@ export const CommonMessages: Record<string, string> = {
     'common.enabled': `Enabled`,
     'common.disabling': `Disabling...`,
     'common.disabled': `Disabled`,
+    'common.waiting': `Waiting...`,
+    'common.updating': `Updating...`,
+    'common.updated': `Updated`,
+
     'common.inProgress': `In Progress`,
     'common.done': `Done`,
     'common.testing': `Testing`,
@@ -67,6 +71,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.sources': `Sources`,
     'terms.destination': `Destination`,
     'terms.destinations': `Destinations`,
+    'terms.destinations.lowercase': `destinations`,
 
     // Terms V2
     // Not 100% sure on this approach yet. Like keeping all this together.

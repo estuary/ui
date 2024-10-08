@@ -155,6 +155,9 @@ const getInitialState = (
                     logRocketConsole(CustomEvents.FORM_STATE_PREVENTED, {
                         type: 'locked',
                     });
+
+                    // If we are locked then we should only ever want the user leaving the page
+                    state.formState.exitWhenLogsClose = true;
                     return;
                 }
 

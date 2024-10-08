@@ -1,11 +1,11 @@
-import { AlertColor } from '@mui/material';
+import { AlertColor, SxProps } from '@mui/material';
 
 import { ReactNode } from 'react';
 import { BaseComponentProps } from 'types';
 
 export interface AlertBoxProps extends BaseComponentProps {
     severity: AlertColor;
-    fitWidth?: boolean;
+    sx?: SxProps;
     hideIcon?: boolean;
     onClose?: () => void;
     short?: boolean;

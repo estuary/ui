@@ -29,6 +29,7 @@ import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'utils/misc-utils';
 import { snackbarSettings } from 'utils/notification-utils';
+import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
@@ -70,13 +71,13 @@ function useEntityWorkflowHelpers() {
     // Transformation Create Store
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
-    // TODO (data flow reset)
     // PreSave Prompt Store
-    // const resetPreSavePrompt = usePreSavePromptStore(
-    //     (state) => state.resetState
-    // );
+    const resetPreSavePrompt = usePreSavePromptStore(
+        (state) => state.resetState
+    );
 
     const resetState = useCallback(() => {
+        resetPreSavePrompt();
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
@@ -86,7 +87,6 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
-        // resetPreSavePrompt();
     }, [
         resetBindingState,
         resetBindingsEditorStore,
@@ -94,7 +94,7 @@ function useEntityWorkflowHelpers() {
         resetEditorStore,
         resetEndpointConfigState,
         resetFormState,
-        // resetPreSavePrompt,
+        resetPreSavePrompt,
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,

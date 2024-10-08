@@ -10,11 +10,11 @@ function PromptsHydrator({ children }: BaseComponentProps) {
     ]);
 
     const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
-    const needsBackfilled = useBinding_backfilledBindings_count();
+    const backfillCount = useBinding_backfilledBindings_count();
 
     useEffect(() => {
-        initializeSteps(Boolean(backfillDataflow && needsBackfilled));
-    }, [backfillDataflow, initializeSteps, needsBackfilled]);
+        initializeSteps(Boolean(backfillDataflow && backfillCount));
+    }, [backfillDataflow, initializeSteps, backfillCount]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

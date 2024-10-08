@@ -1,8 +1,6 @@
 import { CircularProgress, StepIconProps, useTheme } from '@mui/material';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
-
-const size = 24;
-const pixelSize = `${size}px`;
+import { pixelSize, size } from './shared';
 
 // TODO (progress icons)
 // We have a few ways of doing this. We should get these all aligned.

@@ -26,8 +26,6 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
         const newId = selectedRow ? selectedRow.id : null;
         const newReadsFrom = selectedRow ? selectedRow.reads_from : null;
 
-        // TODO (data flow reset)
-        // need to update the context properly
         updateContext({
             backfillTarget: {
                 catalog_name: newCatalog,

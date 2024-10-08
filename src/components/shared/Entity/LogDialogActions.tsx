@@ -4,8 +4,6 @@ import Status from 'components/shared/Entity/Status';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
@@ -13,11 +11,7 @@ import { useTransformationCreate_catalogName } from 'stores/TransformationCreate
 import { hasLength } from 'utils/misc-utils';
 import { LogDialogActionsProps } from './types';
 
-function LogDialogActions({
-    close,
-    closeCtaKey,
-    materialize,
-}: LogDialogActionsProps) {
+function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
     const entityType = useEntityType();
 
     const formStatus = useFormStateStore_status();
@@ -70,21 +64,6 @@ function LogDialogActions({
                 <Button onClick={close}>
                     <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
                 </Button>
-
-                {materialize ? (
-                    <Button
-                        disabled={formStatus !== FormStatus.SAVED}
-                        onClick={async () => {
-                            logRocketEvent(
-                                CustomEvents.CAPTURE_MATERIALIZE_ATTEMPT
-                            );
-
-                            await materialize.action();
-                        }}
-                    >
-                        <FormattedMessage id={materialize.title} />
-                    </Button>
-                ) : null}
             </Stack>
         </>
     );

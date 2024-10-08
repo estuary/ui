@@ -1,54 +1,25 @@
-import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
 import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { useMount } from 'react-use';
 import { DateTime } from 'luxon';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
 import { Shard } from 'data-plane-gateway/types/shard_client';
+import { useIntl } from 'react-intl';
+import { useEffect } from 'react';
+import { handlePollerError } from 'services/supabase';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function WaitForShardToIdle() {
+    const intl = useIntl();
     const session = useUserStore((state) => state.session);
-
-    const queryPoller = useQueryPoller(
-        'WaitForShardToIdle',
-        (response: { shards?: Shard[] }, attempts) => {
-            // default to `null` so the poller will keep checking
-            let status = null;
-
-            if (response.shards && response.shards.length > 0) {
-                // We have shards so we need to look through all the statuses
-                //  and check if they are IDLE. Otherwise leave the status as
-                //  null so the poller keeps running
-                const allShardsIdle = response.shards.every((shard) => {
-                    return Boolean(
-                        shard.status.length === 0 ||
-                            shard.status
-                                .map(({ code }) => code)
-                                .every(
-                                    (code) =>
-                                        code === 'IDLE' || code === 'STANDBY'
-                                )
-                    );
-                });
-
-                if (allShardsIdle) {
-                    status = true;
-                }
-            }
-
-            console.log('[status, response]', [status, response]);
-            return [attempts > 5 ? false : status, response];
-        }
-    );
 
     const catalogName = useEditorStore_catalogName();
 
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
+    const stepIsIdle = useStepIsIdle();
 
     const [context, updateStep, updateContext, nextStep] =
         usePreSavePromptStore((state) => [
@@ -58,71 +29,121 @@ function WaitForShardToIdle() {
             state.nextStep,
         ]);
 
-    useMount(() => {
-        if (thisStep.state.progress === ProgressStates.IDLE) {
-            updateStep(stepIndex, {
-                progress: ProgressStates.RUNNING,
-            });
+    const queryPoller = useQueryPoller(
+        'WaitForShardToIdle',
+        (response: { shards?: Shard[] }) => {
+            // default to `null` so the poller will keep checking
+            let status = null;
 
-            const waitForSpecToFullyStop = async () => {
-                const liveSpecResponse = await getLiveSpecIdByPublication(
-                    context.initialPubId,
-                    catalogName
-                );
+            if (response.shards && response.shards.length > 0) {
+                // We have shards so we need to look through all the statuses
+                //  and check if they are IDLE. Otherwise leave the status as
+                //  null so the poller keeps running
 
-                const liveSpecId = liveSpecResponse.data?.[0].live_spec_id;
-
-                if (liveSpecResponse.error || !liveSpecId || !session) {
-                    updateStep(stepIndex, {
-                        error: liveSpecResponse.error,
-                        progress: ProgressStates.FAILED,
-                    });
-                    return;
-                }
-
-                updateContext({
-                    liveSpecId,
+                // TODO (data flow backfill)
+                //  Add support for showing status to user so they understand
+                //      why they might be sitting around and waiting.
+                const allShardsIdle = response.shards.every((shard) => {
+                    return Boolean(
+                        shard.status.length === 0 ||
+                            shard.status
+                                .map(({ code }) => code)
+                                .every((code) => code === 'IDLE')
+                    );
                 });
 
-                queryPoller(
-                    () => fetchShardList(catalogName, session),
-                    async () => {
-                        const timeStopped = DateTime.utc().toFormat(
-                            `yyyy-MM-dd'T'HH:mm:ss'Z'`
-                        );
+                if (allShardsIdle) {
+                    status = true;
+                }
+            }
 
-                        updateContext({
-                            timeStopped,
-                        });
-
-                        updateStep(stepIndex, {
-                            progress: ProgressStates.SUCCESS,
-                            valid: true,
-                        });
-
-                        nextStep();
-                    },
-                    async (
-                        failedResponse: any //PublicationJobStatus | PostgrestError
-                    ) => {
-                        console.log('failedResponse', failedResponse);
-                        updateStep(stepIndex, {
-                            valid: false,
-                            error: failedResponse.error ? failedResponse : null,
-                            publicationStatus: !failedResponse.error
-                                ? failedResponse
-                                : null,
-                        });
-                        // logRocketEvent(CustomEvents.REPUBLISH_PREFIX_FAILED);
-                    }
-                );
-            };
-
-            void waitForSpecToFullyStop();
-        } else {
-            console.log('TODO: need to handle showing previous state?');
+            return [status, response];
         }
-    });
+    );
+
+    useEffect(() => {
+        if (!stepIsIdle) {
+            return;
+        }
+
+        updateStep(stepIndex, {
+            progress: ProgressStates.RUNNING,
+        });
+
+        const waitForSpecToFullyStop = async () => {
+            if (!session) {
+                updateStep(stepIndex, {
+                    error: {
+                        message: 'resetDataFlow.errors.missingSession',
+                    },
+                    progress: ProgressStates.FAILED,
+                });
+                return;
+            }
+
+            updateStep(stepIndex, {
+                optionalLabel: intl.formatMessage({ id: 'common.waiting' }),
+            });
+
+            queryPoller(
+                () => fetchShardList(catalogName, session),
+                async () => {
+                    const currentTimeUTC = DateTime.utc();
+                    const timeStopped = currentTimeUTC.toFormat(
+                        `yyyy-MM-dd'T'HH:mm:ss'Z'`
+                    );
+
+                    updateContext({
+                        timeStopped,
+                    });
+
+                    updateStep(stepIndex, {
+                        progress: ProgressStates.SUCCESS,
+                        optionalLabel: intl.formatMessage(
+                            {
+                                id: 'resetDataFlow.waitForShardToIdle.success',
+                            },
+                            {
+                                timeStopped: `${currentTimeUTC.toLocaleString(
+                                    DateTime.TIME_WITH_SECONDS
+                                )}`,
+                            }
+                        ),
+                        valid: true,
+                    });
+
+                    nextStep();
+                },
+                async (
+                    failedResponse: any //PublicationJobStatus | PostgrestError
+                ) => {
+                    updateStep(stepIndex, {
+                        error: handlePollerError(failedResponse),
+                        valid: false,
+                        optionalLabel: undefined,
+                        progress: ProgressStates.FAILED,
+                        publicationStatus: !failedResponse.error
+                            ? failedResponse
+                            : null,
+                    });
+                },
+                2500
+            );
+        };
+
+        void waitForSpecToFullyStop();
+    }, [
+        catalogName,
+        context.initialPubId,
+        intl,
+        nextStep,
+        queryPoller,
+        session,
+        stepIndex,
+        stepIsIdle,
+        updateContext,
+        updateStep,
+    ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;

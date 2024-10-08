@@ -247,7 +247,7 @@ const getInitialMiscData = (): Pick<
 > => ({
     backfillAllBindings: false,
     backfillDataFlowTarget: null,
-    backfillDataFlow: true,
+    backfillDataFlow: false,
     backfillSupported: true,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],

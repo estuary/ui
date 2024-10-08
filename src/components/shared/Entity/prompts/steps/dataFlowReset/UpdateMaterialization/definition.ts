@@ -8,9 +8,9 @@ export interface UpdateMaterializationStepContext {
 
 export const UpdateMaterializationStep: PromptStep = {
     StepComponent: UpdateMaterialization,
-    stepLabelMessageId: 'dataFlowReset.updateMaterialization.title',
+    stepLabelMessageId: 'resetDataFlow.updateMaterialization.title',
     state: {
         ...defaultStepState,
+        allowRetry: true,
     },
-    // messageIds: defaultStepMessageIds,
 };
