@@ -1,21 +1,24 @@
-import {
-    createPublication,
-    getPublicationByIdQuery,
-    PublicationJobStatus,
-} from 'api/publications';
+import { createPublication } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useMount } from 'react-use';
+import { useEffect } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import usePublicationHandler from '../../usePublicationHandler';
+import useStepIsIdle from '../../useStepIsIdle';
 
 function PublishStepDataFlowReset() {
-    const { jobStatusPoller } = useJobStatusPoller();
+    const publicationHandler = usePublicationHandler();
+
+    const dataPlaneName = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.dataPlaneName.whole
+    );
 
     const stepIndex = useLoopIndex();
-    const thisStep = usePreSavePromptStore((state) => state.steps[stepIndex]);
-
+    const stepIsIdle = useStepIsIdle();
     const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
         usePreSavePromptStore((state) => [
             state.updateStep,
@@ -24,65 +27,69 @@ function PublishStepDataFlowReset() {
             state.context.dataFlowResetDraftId,
         ]);
 
-    // TODO (data flow reset) need to plumb this through correctly
-    const dataPlaneName = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.dataPlaneName
-    );
+    useEffect(() => {
+        if (!stepIsIdle) {
+            return;
+        }
+        updateStep(stepIndex, {
+            progress: ProgressStates.RUNNING,
+        });
 
-    useMount(() => {
-        if (thisStep.state.progress === ProgressStates.IDLE) {
-            updateStep(stepIndex, {
-                progress: ProgressStates.RUNNING,
+        const saveAndPublish = async () => {
+            // Start publishing it
+            const publishResponse = await createPublication(
+                dataFlowResetDraftId,
+                false,
+                `${CustomEvents.DATA_FLOW_RESET} : publish : ${initUUID}`,
+                dataPlaneName
+            );
+
+            if (publishResponse.error || !publishResponse.data) {
+                updateStep(stepIndex, {
+                    error: publishResponse.error,
+                    progress: ProgressStates.FAILED,
+                    allowRetry: true,
+                });
+                return;
+            }
+
+            updateContext({
+                dataFlowResetPudId: publishResponse.data[0].id,
             });
 
-            const saveAndPublish = async () => {
-                // Start publishing it
-                const publishResponse = await createPublication(
-                    dataFlowResetDraftId,
-                    false,
-                    `data flow backfill : publish : ${initUUID}`,
-                    dataPlaneName?.whole
+            publicationHandler(publishResponse.data[0].id, (response) => {
+                const hasIncompatibleCollections = hasLength(
+                    response?.job_status?.incompatible_collections
                 );
 
-                if (publishResponse.error || !publishResponse.data) {
+                // If we hit this basically just stop everything and tell the user
+                if (hasIncompatibleCollections) {
                     updateStep(stepIndex, {
-                        error: publishResponse.error,
-                        progress: ProgressStates.FAILED,
+                        allowRetry: false,
+                        error: {
+                            message:
+                                'resetDataFlow.errors.incompatibleCollections',
+                        },
                     });
-                    return;
+
+                    logRocketEvent(CustomEvents.DATA_FLOW_RESET, {
+                        incompatibleCollections: true,
+                    });
                 }
+            });
+        };
 
-                updateContext({
-                    dataFlowResetPudId: publishResponse.data[0].id,
-                });
-
-                jobStatusPoller(
-                    getPublicationByIdQuery(publishResponse.data[0].id),
-                    async (successResponse: PublicationJobStatus) => {
-                        updateStep(stepIndex, {
-                            publicationStatus: successResponse,
-                        });
-                    },
-                    async (
-                        failedResponse: any //PublicationJobStatus | PostgrestError
-                    ) => {
-                        updateStep(stepIndex, {
-                            error: failedResponse.error ? failedResponse : null,
-                            publicationStatus: !failedResponse.error
-                                ? failedResponse
-                                : null,
-                            progress: ProgressStates.FAILED,
-                            valid: false,
-                        });
-                    }
-                );
-            };
-
-            void saveAndPublish();
-        } else {
-            console.log('TODO: need to handle showing previous state?');
-        }
-    });
+        void saveAndPublish();
+    }, [
+        dataFlowResetDraftId,
+        dataPlaneName,
+        initUUID,
+        publicationHandler,
+        stepIndex,
+        stepIsIdle,
+        updateContext,
+        updateStep,
+    ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;

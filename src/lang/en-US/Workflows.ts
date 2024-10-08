@@ -1,6 +1,8 @@
 import { CommonMessages, endpointConfigHeader } from './CommonMessages';
 import { CTAs } from './CTAs';
 
+const changesRejected = 'rejected due to incompatible collection updates';
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -128,7 +130,8 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
     //  PreSave prompts
-    'preSavePrompt.changeReview.title': `How the spec is changing`,
+    'preSavePrompt.dialog.title': `Save and Publish`,
+    'preSavePrompt.reviewSelection.title': `Review changes`,
     'preSavePrompt.publish.title': `Save and publish`,
     'preSavePrompt.logs.spinner.stopped': `done`,
     'preSavePrompt.logs.spinner.running': `loading...`,
@@ -136,31 +139,55 @@ export const Workflows: Record<string, string> = {
     'preSavePrompt.draftErrors.title': `Draft Errors`,
     'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
 
-    'dataFlowReset.selectMaterialization.title': `Select materialization for data flow reset`,
-    'dataFlowReset.reviewSelection.title': `Review changes`,
-    'dataFlowReset.disableCapture.title': `Disable capture`,
-    'dataFlowReset.waitForShardToIdle.title': `Wait for capture to fully stop`,
-    'dataFlowReset.updateMaterialization.title': `Update materialization`,
-    'dataFlowReset.enableCapture.title': `Enable capture`,
-    'dataFlowReset.publish.title': `Publish data flow reset`,
+    // Reset Data Flow
+    'resetDataFlow.dialog.title': `Data Flow Reset`,
 
-    'dataFlowReset.errors.publishFailed': `There was a build failure on the server.`,
+    'resetDataFlow.selectMaterialization.title': `Select materialization for data flow reset`,
 
-    // Dataflow reset
+    'resetDataFlow.reviewSelection.title': `Review changes`,
+
+    'resetDataFlow.disableCapture.title': `Disable capture`,
+
+    'resetDataFlow.waitForShardToIdle.title': `Wait for capture to fully stop`,
+    'resetDataFlow.waitForShardToIdle.success': `Stopped at {timeStopped} (UTC)`,
+
+    'resetDataFlow.updateMaterialization.title': `Update materialization`,
+    'resetDataFlow.updateMaterialization.skipped': `Skipped - no matching bindings`,
+
+    'resetDataFlow.enableCapture.title': `Enable capture`,
+
+    'resetDataFlow.publish.title': `Publish data flow reset`,
+
+    'resetDataFlow.errors.publishFailed': `Publishing failed.`,
+    'resetDataFlow.errors.missingSession': `Cannot find user session.`,
+    'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
+
+    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
+    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.destinations']}`,
+    'resetDataFlow.materializations.empty.message': `We currently only support data flow resets on materializations with a source capture. You may choose a materialization manually or skip and save your changes.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
+    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
+    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
+    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
+    'resetDataFlow.materializations.empty.skip': `Skip data flow reset`,
+
+    'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
+    'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
+    'resetDataFlow.reviewSelection.warning.message.docLink': `support@estuary.dev`,
+    'resetDataFlow.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
+    'resetDataFlow.reviewSelection.header': `Change Summary`,
+
+    'resetDataFlow.reviewSelection.instructions': `The following data flow will be reset:`,
+    'preSavePrompt.reviewSelection.instructions': `The following entities will be impacted by this change:`,
+
+    'resetDataFlow.selectMaterialization.selected.none': `no materialization selected`,
+
+    'resetDataFlow.editor.warning.title': `Editing disabled`,
+    'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
+
     'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
-
-    'dataFlowReset.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
-    'dataFlowReset.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
-    'dataFlowReset.reviewSelection.warning.message.docLink': `support@estuary.dev`,
-    'dataFlowReset.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
-    'dataFlowReset.reviewSelection.instructions': `Please confirm you’d like to reset this data flow:`,
-
-    'dataFlowReset.selectMaterialization.selected.none': `no materialization selected`,
-
-    'dataFlowReset.editor.warning.title': `Editing disabled`,
-    'dataFlowReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -261,7 +288,7 @@ export const Workflows: Record<string, string> = {
     // Entity Evolution
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
-    'entityEvolution.error.title': `Changes rejected due to incompatible collection updates`,
+    'entityEvolution.error.title': `Changes ${changesRejected}`,
     'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 
@@ -360,20 +387,9 @@ export const Workflows: Record<string, string> = {
         'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
 
     // Logs Dialog
-    'logs.default': ` `,
     'logs.paused': `paused`,
-    'logs.noLogs': `no logs were found`,
+    'logs.noLogs': `stopped checking for logs`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
-
-    // Reset Data Flow
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.sources']} that are linked to "{captureName}" via the Source Capture property.`,
-    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.sources']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support doing a data flow backfill on Capture and Materializations that are linked through the Source Capture property on the Materialization. You may choose a materialization manually or continue without updating a materialization.`,
-    'resetDataFlow.materializations.empty.instructions': `You can either manually select a materialization you want to have updated or skip this step.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
-    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
-    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
 };

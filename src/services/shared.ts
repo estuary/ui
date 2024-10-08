@@ -34,6 +34,7 @@ export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
 export const FETCH_DEFAULT_ERROR = 'Server Error';
 
 export const RETRY_REASONS = [
+    RESPONSE_JSON_NOT_FN, // We will retry mainly due to the new reactor endpoints sometimes return this
     FAILED_TO_FETCH,
     REQUEST_FAILED,
     STATEMENT_TIMEOUT,

@@ -2,12 +2,17 @@ import { Paper, Typography } from '@mui/material';
 import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useLocalStorage } from 'react-use';
+import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
+import AlertBox from '../AlertBox';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
@@ -17,13 +22,16 @@ interface Props {
 function CatalogEditor({ messageId }: Props) {
     const draftId = useEditorStore_id();
 
+    const [dataFlowResetEnabled] = useLocalStorage(
+        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
+    );
+
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    // TODO (data flow reset)
-    // const intl = useIntl();
-    // const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
-    // const needsBackfilled = useBinding_backfilledBindings_count();
+    const intl = useIntl();
+    const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
+    const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
         return (
@@ -41,28 +49,32 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {/*TODO (data flow reset) - also make sure editor is disabled*/}
-                    {/*                    {backfillDataFlow && needsBackfilled ? (
+                    {dataFlowResetEnabled &&
+                    backfillDataFlow &&
+                    backfillCount ? (
                         <AlertBox
-                            fitWidth
+                            sx={{
+                                maxWidth: 'fit-content',
+                            }}
                             short
                             severity="warning"
                             title={intl.formatMessage({
-                                id: 'dataFlowReset.editor.warning.title',
+                                id: 'resetDataFlow.editor.warning.title',
                             })}
                         >
                             {intl.formatMessage({
-                                id: 'dataFlowReset.editor.warning.message',
+                                id: 'resetDataFlow.editor.warning.message',
                             })}
                         </AlertBox>
-                    ) : null}*/}
+                    ) : null}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
                             disabled={Boolean(
-                                formActive
-                                // TODO (data flow reset)
-                                // || (backfillDataFlow && needsBackfilled)
+                                formActive ||
+                                    (dataFlowResetEnabled &&
+                                        backfillDataFlow &&
+                                        backfillCount)
                             )}
                             monitorCurrentCatalog
                         />

@@ -1,129 +1,61 @@
 import {
-    Box,
     DialogContent,
-    Divider,
     Stack,
     Step,
     StepContent,
-    StepLabel,
     Stepper,
 } from '@mui/material';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import {
-    ProgressFinished,
-    ProgressStates,
-} from 'components/tables/RowActions/Shared/types';
+import { ProgressFinished } from 'components/tables/RowActions/Shared/types';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import Error from 'components/shared/Error';
-import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import { LoopIndexContextProvider } from 'context/LoopIndex';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
-import CustomStepIcon from './CustomStepIcon';
+import StepDraftErrors from './StepDraftErrors';
+import StepError from './StepError';
+import StepLogs from './StepLogs';
+import StepLabelAndIcon from './StepLabelAndIcon';
 
 function Content() {
-    const intl = useIntl();
-
-    const [activeStep, steps, dataFlowResetDraftId, dataFlowResetPudId] =
-        usePreSavePromptStore((state) => [
-            state.activeStep,
-            state.steps,
-            state.context.dataFlowResetDraftId,
-            state.context.dataFlowResetPudId,
-        ]);
+    const [activeStep, steps] = usePreSavePromptStore((state) => [
+        state.activeStep,
+        state.steps,
+    ]);
 
     const renderedSteps = useMemo(
         () =>
             steps.map(
                 (
-                    {
-                        StepComponent,
-                        stepLabelMessageId,
-                        state: { error, progress, publicationStatus },
-                    },
+                    { StepComponent, stepLabelMessageId, state: { progress } },
                     index
                 ) => {
-                    const hasError = Boolean(error);
-                    const stepCompleted = progress >= ProgressFinished;
-
                     return (
                         <Step
                             key={`PreSave-${stepLabelMessageId}-${index}`}
-                            completed={stepCompleted}
+                            completed={progress >= ProgressFinished}
                         >
-                            <StepLabel
-                                error={hasError}
-                                StepIconComponent={
-                                    progress === ProgressStates.IDLE
-                                        ? undefined
-                                        : CustomStepIcon
-                                }
-                            >
-                                {intl.formatMessage({
-                                    id: stepLabelMessageId,
-                                })}
-                            </StepLabel>
-                            <StepContent>
-                                <ErrorBoundryWrapper>
-                                    <LoopIndexContextProvider value={index}>
+                            <LoopIndexContextProvider value={index}>
+                                <StepLabelAndIcon />
+                                <StepContent>
+                                    <ErrorBoundryWrapper>
                                         <Stack spacing={2}>
-                                            {dataFlowResetDraftId ? (
-                                                <>
-                                                    <DraftErrors
-                                                        draftId={
-                                                            dataFlowResetDraftId
-                                                        }
-                                                    />
-                                                    <Divider />
-                                                </>
-                                            ) : null}
+                                            <StepDraftErrors />
 
                                             <StepComponent />
 
                                             <Stack spacing={2}>
-                                                {progress ===
-                                                ProgressStates.FAILED ? (
-                                                    <Error
-                                                        severity="error"
-                                                        error={error}
-                                                        condensed
-                                                    />
-                                                ) : null}
+                                                <StepError />
 
-                                                {dataFlowResetPudId ||
-                                                progress ===
-                                                    ProgressStates.FAILED ? (
-                                                    <Box>
-                                                        <ErrorLogs
-                                                            defaultOpen={Boolean(
-                                                                dataFlowResetPudId
-                                                            )}
-                                                            logToken={
-                                                                publicationStatus?.logs_token
-                                                            }
-                                                            logProps={{
-                                                                spinnerMessages:
-                                                                    {
-                                                                        runningKey:
-                                                                            'logs.default',
-                                                                        stoppedKey:
-                                                                            'logs.noLogs',
-                                                                    },
-                                                            }}
-                                                        />
-                                                    </Box>
-                                                ) : null}
+                                                <StepLogs />
                                             </Stack>
                                         </Stack>
-                                    </LoopIndexContextProvider>
-                                </ErrorBoundryWrapper>
-                            </StepContent>
+                                    </ErrorBoundryWrapper>
+                                </StepContent>
+                            </LoopIndexContextProvider>
                         </Step>
                     );
                 }
             ),
-        [dataFlowResetDraftId, dataFlowResetPudId, intl, steps]
+        [steps]
     );
 
     return (

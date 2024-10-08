@@ -1,4 +1,5 @@
 import { AlertColor, AlertTitle, Box } from '@mui/material';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import AlertBox from '../AlertBox';
 import { ExternalLinkOptions } from '../ExternalLink';
@@ -13,6 +14,7 @@ export interface ErrorProps {
     linkOptions?: ExternalLinkOptions;
     noAlertBox?: boolean;
     severity?: AlertColor;
+    cta?: ReactNode;
 }
 
 function Error({
@@ -23,6 +25,7 @@ function Error({
     linkOptions,
     noAlertBox,
     severity,
+    cta,
 }: ErrorProps) {
     if (!error) {
         return null;
@@ -51,6 +54,11 @@ function Error({
                 }
             >
                 <Message error={error} linkOptions={linkOptions} />
+                {cta ? (
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'end' }}>
+                        {cta}
+                    </Box>
+                ) : null}
             </AlertBox>
         </Box>
     );

@@ -38,7 +38,13 @@ function ManualSelection() {
 
     return (
         <>
-            <Stack direction="row" spacing={2}>
+            <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                    alignItems: 'center',
+                }}
+            >
                 <Tooltip placement="top" title={tooltip}>
                     <Button
                         aria-controls={open ? DIALOG_ID : undefined}

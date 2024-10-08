@@ -26,23 +26,11 @@ function EntityCreateSave({
 
     const formActive = useFormStateStore_isActive();
 
-    // TODO (data flow reset)
-    // const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
-    // const backfillDataflow = useBindingStore((state) => state.backfillDataFlow);
-    // const needsBackfilled = useBinding_backfilledBindings_count();
-
     return (
         <Button
             disabled={disabled || isSaving || formActive}
             sx={buttonSx}
             onClick={async () => {
-                // TODO (data flow reset)
-                // if (!dryRun && backfillDataflow && needsBackfilled) {
-                //     setShowSavePrompt(true);
-                // } else {
-                //     await save(draftId);
-                // }
-
                 await save(draftId);
             }}
         >

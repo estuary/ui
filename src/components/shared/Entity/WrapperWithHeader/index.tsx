@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useState } from 'react';
 interface Props {
     header: ReactNode;
     children: ReactNode;
+    onChange?: (expanded: boolean) => void;
     forceClose?: boolean;
     forceOpen?: boolean;
     disableClose?: boolean;
@@ -36,6 +37,7 @@ function WrapperWithHeader({
     mountClosed,
     readOnly,
     hideBorder,
+    onChange,
 }: Props) {
     const theme = useTheme();
 
@@ -44,7 +46,10 @@ function WrapperWithHeader({
     );
     const handlers = {
         change: () => {
-            setExpanded(disableClose ?? !expanded);
+            const newVal = disableClose ?? !expanded;
+            setExpanded(newVal);
+
+            onChange?.(newVal);
         },
     };
 
