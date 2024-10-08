@@ -5,12 +5,12 @@ import LoginWrapper from './Wrapper';
 
 const titleKey = 'routeTitle.login.sso';
 const prefixKey = `${titleKey}.prefix`;
-const descriptionKey = `${titleKey}.description`;
+const ogDescriptionKey = `${titleKey}.description`;
 const metaTitleKey = `${titleKey}.metaTitle`;
 
 const EnterpriseLogin = () => {
     useBrowserTitle(titleKey, prefixKey, {
-        descriptionKey,
+        ogDescriptionKey,
         metaTitleKey,
     });
 
