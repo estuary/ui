@@ -1,4 +1,4 @@
-import { clearGatewayAuthTokenCache } from 'hooks/gatewayAuthToken/cache';
+import { clearAuthorizationCache } from 'hooks/gatewayAuth/cache';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -7,7 +7,7 @@ import { useEffectOnce } from 'react-use';
 
 function useLoginStateHandler(showRegistration?: boolean) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-    useEffectOnce(() => clearGatewayAuthTokenCache());
+    useEffectOnce(() => clearAuthorizationCache());
 
     const [tabIndex, setTabIndex] = useState(Boolean(showRegistration) ? 1 : 0);
     const handleChange = useCallback(
