@@ -72,7 +72,7 @@ export async function dataPlaneFetcher_list(
 // Shard ID prefixes take the form: ${entity_type}/${catalog_name}/${pub_id_of_creation}/
 // The pub_id_of_creation suffix distinguishes versions of entities that may be deleted
 // and then re-created. They cannot be used to match a Gazette label nor an ID directly.
-interface TaskAuthorizationResponse {
+export interface TaskAuthorizationResponse {
     brokerAddress: string; // Base URL for journal endpoints
     brokerToken: string; // Authentication token for journal endpoints
     opsLogsJournal: string;
@@ -249,11 +249,21 @@ export const MEGABYTE = 1 * 10 ** 6;
 // 16mb, which is the max document size, ensuring we'll always get at least 1 doc if it exists
 export const MAX_DOCUMENT_SIZE = 16 * MEGABYTE;
 
-export const fetchShardList = async (name: string, session: Session) => {
-    const { reactorAddress, reactorToken } = await authorizeTask(
-        session.access_token,
-        name
-    );
+export const fetchShardList = async (
+    name: string,
+    session: Session,
+    existingAuthentication?: { address: string; token: string }
+) => {
+    let reactorAddress = existingAuthentication?.address;
+    let reactorToken = existingAuthentication?.token;
+
+    if (!reactorAddress || !reactorToken) {
+        const response = await authorizeTask(session.access_token, name);
+
+        reactorAddress = response.reactorAddress;
+        reactorToken = response.reactorToken;
+    }
+
     const reactorURL = new URL(reactorAddress);
 
     // Pass the shard client to the respective function directly.
