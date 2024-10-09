@@ -30,6 +30,8 @@ export const TASK_STATS = `task_stats:flow_document->taskStats`;
 
 export const SHARD_LABELS = `shard_labels:built_spec->shardTemplate->labels->labels`;
 
+export const ENABLED_SHARDS = `spec->shards->disable.is.null`;
+
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
     jwtInvalid: 'invalid JWT',

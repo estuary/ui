@@ -9,29 +9,32 @@ import { SidePanelDocsProvider } from 'context/SidePanelDocs';
 import { TableSettingsProvider } from 'context/TableSettings';
 import { UserStoreProvider } from './User';
 import GlobalProviders from './GlobalProviders';
+import { UpdateHelmetProvider } from './UpdateHelmet';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <ContentProvider>
-            <ThemeProvider>
-                <IconoirProvider>
-                    <ErrorBoundryWrapper>
-                        <NotificationProvider>
-                            <SwrConfigProvider>
-                                <UserStoreProvider>
-                                    <GlobalProviders>
-                                        <SidePanelDocsProvider>
-                                            <TableSettingsProvider>
-                                                {children}
-                                            </TableSettingsProvider>
-                                        </SidePanelDocsProvider>
-                                    </GlobalProviders>
-                                </UserStoreProvider>
-                            </SwrConfigProvider>
-                        </NotificationProvider>
-                    </ErrorBoundryWrapper>
-                </IconoirProvider>
-            </ThemeProvider>
+            <UpdateHelmetProvider>
+                <ThemeProvider>
+                    <IconoirProvider>
+                        <ErrorBoundryWrapper>
+                            <NotificationProvider>
+                                <SwrConfigProvider>
+                                    <UserStoreProvider>
+                                        <GlobalProviders>
+                                            <SidePanelDocsProvider>
+                                                <TableSettingsProvider>
+                                                    {children}
+                                                </TableSettingsProvider>
+                                            </SidePanelDocsProvider>
+                                        </GlobalProviders>
+                                    </UserStoreProvider>
+                                </SwrConfigProvider>
+                            </NotificationProvider>
+                        </ErrorBoundryWrapper>
+                    </IconoirProvider>
+                </ThemeProvider>
+            </UpdateHelmetProvider>
         </ContentProvider>
     );
 };
