@@ -6,7 +6,11 @@ import {
 } from 'api/liveSpecsExt';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
-import { TABLES } from 'services/supabase';
+import {
+    ENABLED_SHARDS,
+    escapeReservedCharacters,
+    TABLES,
+} from 'services/supabase';
 import { Entity } from 'types';
 
 // TODO: Consider consolidating query interface instances.
@@ -120,7 +124,12 @@ export function useLiveSpecsExt_related(captureName: string) {
             .from(TABLES.LIVE_SPECS_EXT)
             .select(liveSpecsExtRelatedQuery)
             .eq('spec_type', 'materialization')
-            .or(`spec->>sourceCapture.eq.${captureName}`)
+            .or(ENABLED_SHARDS)
+            .or(
+                `spec->>sourceCapture.eq.${escapeReservedCharacters(
+                    captureName
+                )}`
+            )
             .returns<LiveSpecsExt_Related[]>()
         // getLiveSpecsRelatedToMaterialization(collectionName)
     );
