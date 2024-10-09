@@ -238,6 +238,24 @@ export const Workflows: Record<string, string> = {
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
 
+    // Incompatible Schema Change
+    'incompatibleSchemaChange.header': `Incompatible Schema Change`,
+    'incompatibleSchemaChange.message': `Determine the action to take when a schema change is rejected due to incompatibility with the target resource. By default, the binding will have its 'backfill' counter incremented, causing it to be re-materialized from the source collection.`,
+    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
+    'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
+
+    'incompatibleSchemaChange.options.abort.label': `Abort`,
+    'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
+
+    'incompatibleSchemaChange.options.backfill.label': `Backfill`,
+    'incompatibleSchemaChange.options.backfill.description': `Increment the backfill counter of the binding, causing it to start over from the beginning.`,
+
+    'incompatibleSchemaChange.options.disableBinding.label': `Disable Binding`,
+    'incompatibleSchemaChange.options.disableBinding.description': `Disable the binding, which will be effectively excluded from the task until it is re-enabled.`,
+
+    'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
+    'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
+
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,

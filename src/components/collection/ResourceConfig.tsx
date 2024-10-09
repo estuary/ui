@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
+import IncompatibleSchemaChange from 'components/editor/Bindings/IncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
@@ -86,6 +87,13 @@ function ResourceConfig({
 
             {entityType === 'materialization' ? (
                 <TimeTravel
+                    bindingUUID={bindingUUID}
+                    collectionName={collectionName}
+                />
+            ) : null}
+
+            {entityType === 'materialization' ? (
+                <IncompatibleSchemaChange
                     bindingUUID={bindingUUID}
                     collectionName={collectionName}
                 />
