@@ -2,8 +2,10 @@ import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
+import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
+import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
@@ -55,11 +57,13 @@ function ResourceConfig({
 
             <Box sx={{ width: '100%' }}>
                 {hydrated ? (
-                    <ResourceConfigForm
-                        bindingUUID={bindingUUID}
-                        collectionName={collectionName}
-                        readOnly={readOnly}
-                    />
+                    <ErrorBoundryWrapper>
+                        <ResourceConfigForm
+                            bindingUUID={bindingUUID}
+                            collectionName={collectionName}
+                            readOnly={readOnly}
+                        />
+                    </ErrorBoundryWrapper>
                 ) : (
                     <BindingsEditorConfigSkeleton />
                 )}
@@ -89,6 +93,14 @@ function ResourceConfig({
                     bindingUUID={bindingUUID}
                     collectionName={collectionName}
                 />
+            ) : null}
+
+            {entityType === 'materialization' ? (
+                <ErrorBoundryWrapper>
+                    <OnIncompatibleSchemaChange
+                        bindingIndex={draftedBindingIndex}
+                    />
+                </ErrorBoundryWrapper>
             ) : null}
         </>
     );

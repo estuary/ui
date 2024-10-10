@@ -495,6 +495,29 @@ export const useEditorStore_queryResponse_draftSpecs = (
     );
 };
 
+export const useEditorStore_queryResponse_draftSpecs_schemaProp = (
+    bindingIndex: number,
+    schemaProp: string,
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<EditorStoreState<DraftSpecQuery>, any>(
+        storeName(entityType, localScope),
+        useShallow((state) => {
+            return state.queryResponse.draftSpecs[0]?.spec.bindings[
+                bindingIndex
+            ][schemaProp];
+        })
+    );
+};
+
 export const useEditorStore_queryResponse_isValidating = (
     params?: SelectorParams | undefined
 ) => {
