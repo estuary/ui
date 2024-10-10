@@ -38,6 +38,7 @@ import {
 } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
+import { getAllCollectionNames } from './shared';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -282,7 +283,9 @@ const getInitialState = (
     addEmptyBindings: (data, rehydrating) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getAllCollectionNames(
+                    state.resourceConfigs
+                );
 
                 const emptyCollections: string[] =
                     rehydrating && hasLength(collections) ? collections : [];
@@ -412,16 +415,6 @@ const getInitialState = (
             'Discovered bindings evaluated'
         );
     },
-
-    getCollections: () =>
-        Object.values(get().resourceConfigs).map(
-            ({ meta }) => meta.collectionName
-        ),
-
-    getEnabledCollections: () =>
-        Object.values(get().resourceConfigs)
-            .filter(({ meta }) => !meta.disable)
-            .map(({ meta }) => meta.collectionName),
 
     hydrateState: async (
         editWorkflow,
@@ -598,7 +591,9 @@ const getInitialState = (
     prefillResourceConfigs: (targetCollections, disableOmit) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getAllCollectionNames(
+                    state.resourceConfigs
+                );
 
                 const [removedCollections, newCollections] = whatChanged(
                     state.bindings,
@@ -753,7 +748,9 @@ const getInitialState = (
     removeBindings: (targetUUIDs, workflow, taskName) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getAllCollectionNames(
+                    state.resourceConfigs
+                );
 
                 // Remove the selected bindings from the resource config dictionary.
                 const evaluatedResourceConfigs = omit(

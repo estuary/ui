@@ -1,14 +1,16 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
-import IncompatibleSchemaForm from './Form';
+import OnIncompatibleSchemaChangeForm from './Form';
+import { OnIncompatibleSchemaChangeFormProps } from './types';
 
-interface Props {
-    bindingUUID: string;
-    collectionName: string;
-}
-
-function IncompatibleSchemaChange({ bindingUUID, collectionName }: Props) {
+function OnIncompatibleSchemaChange({
+    bindingIndex = -1,
+}: OnIncompatibleSchemaChangeFormProps) {
     const intl = useIntl();
+
+    if (bindingIndex < 0) {
+        return null;
+    }
 
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
@@ -30,9 +32,8 @@ function IncompatibleSchemaChange({ bindingUUID, collectionName }: Props) {
                 </Stack>
 
                 <Box>
-                    <IncompatibleSchemaForm
-                        bindingUUID={bindingUUID}
-                        collectionName={collectionName}
+                    <OnIncompatibleSchemaChangeForm
+                        bindingIndex={bindingIndex}
                     />
                 </Box>
             </Stack>
@@ -40,4 +41,4 @@ function IncompatibleSchemaChange({ bindingUUID, collectionName }: Props) {
     );
 }
 
-export default IncompatibleSchemaChange;
+export default OnIncompatibleSchemaChange;

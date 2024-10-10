@@ -9,3 +9,7 @@ export interface AutoCompleteOption {
 export interface SelectorOptionProps {
     option: AutoCompleteOption;
 }
+
+export interface OnIncompatibleSchemaChangeFormProps {
+    bindingIndex?: number;
+}

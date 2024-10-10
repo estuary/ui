@@ -1,41 +1,39 @@
 import { Autocomplete, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { snackbarSettings } from 'utils/notification-utils';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_currentCollection,
+} from 'stores/Binding/hooks';
 import SelectorOption from './SelectorOption';
 import { autoCompleteDefaultProps } from './shared';
-import useIncompatibleSchemaChange from './useIncompatibleSchemaChange';
+import useUpdateOnIncompatibleSchemaChange, {
+    BindingMetadata,
+} from './useUpdateOnIncompatibleSchemaChange';
 import useSupportedOptions from './useSupportedOptions';
 
 interface Props {
-    bindingUUID: string;
-    collectionName: string;
+    bindingIndex: number;
 }
 
-function IncompatibleSchemaForm({ bindingUUID, collectionName }: Props) {
+function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
 
     const { enqueueSnackbar } = useSnackbar();
-    const updateIncompatibleSchemaChange = useIncompatibleSchemaChange(
-        bindingUUID,
-        collectionName
-    );
+    const { updateOnIncompatibleSchemaChange } =
+        useUpdateOnIncompatibleSchemaChange();
+
+    const currentCollection = useBinding_currentCollection();
+    const currentBindingUUID = useBinding_currentBindingUUID();
 
     const formActive = useFormStateStore_isActive();
 
     const options = useSupportedOptions();
-
-    const skipServer = useRef(false);
-    useEffect(() => {
-        skipServer.current = true;
-        // setLocalCopy(fullSource ?? {});
-        // When the binding UUID changes we want to basically do a mini-reset of the form state
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [bindingUUID]);
 
     return (
         <Autocomplete
@@ -54,7 +52,16 @@ function IncompatibleSchemaForm({ bindingUUID, collectionName }: Props) {
                 option.val === optionValue.val
             }
             onChange={async (_state, value) => {
-                updateIncompatibleSchemaChange(value?.val, skipServer.current)
+                const singleBindingUpdate =
+                    bindingIndex > -1 &&
+                    currentCollection &&
+                    currentBindingUUID;
+
+                const bindingMetadata: BindingMetadata[] = singleBindingUpdate
+                    ? [{ collection: currentCollection, bindingIndex }]
+                    : [];
+
+                updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
                     .then(() => {})
                     .catch((err) => {
                         enqueueSnackbar(
@@ -66,11 +73,6 @@ function IncompatibleSchemaForm({ bindingUUID, collectionName }: Props) {
                             }),
                             { ...snackbarSettings, variant: 'error' }
                         );
-                    })
-                    .finally(() => {
-                        if (skipServer.current) {
-                            skipServer.current = false;
-                        }
                     });
             }}
             onInputChange={(_event, newInputValue) => {
@@ -104,4 +106,4 @@ function IncompatibleSchemaForm({ bindingUUID, collectionName }: Props) {
     );
 }
 
-export default IncompatibleSchemaForm;
+export default OnIncompatibleSchemaChangeForm;
