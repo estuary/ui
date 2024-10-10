@@ -33,21 +33,20 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const [inputValue, setInputValue] = useState('');
     const [invalidSetting, setInvalidSetting] = useState(false);
 
-    const { updateOnIncompatibleSchemaChange } =
-        useUpdateOnIncompatibleSchemaChange();
-
-    const currentSetting = useEditorStore_queryResponse_draftSpecs_schemaProp(
-        bindingIndex,
-        'onIncompatibleSchemaChange'
-    );
-
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
 
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
+    const currentSetting = useEditorStore_queryResponse_draftSpecs_schemaProp(
+        bindingIndex,
+        'onIncompatibleSchemaChange'
+    );
+
     const options = useSupportedOptions();
+    const { updateOnIncompatibleSchemaChange } =
+        useUpdateOnIncompatibleSchemaChange();
 
     const currentValue = useMemo(() => {
         if (!currentSetting) {
@@ -117,7 +116,11 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     return (
         <>
             {invalidSetting ? (
-                <AlertBox severity="error" short>
+                <AlertBox
+                    severity="error"
+                    short
+                    sx={{ maxWidth: 'fit-content' }}
+                >
                     {intl.formatMessage({
                         id: 'incompatibleSchemaChange.input.error',
                     })}
@@ -158,9 +161,7 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                         <TextField
                             {...params}
                             disabled={formActive}
-                            helperText={intl.formatMessage({
-                                id: 'resetDataFlow.materializations.selector.helper',
-                            })}
+                            error={invalidSetting}
                             label={intl.formatMessage({
                                 id: 'incompatibleSchemaChange.input.label',
                             })}
