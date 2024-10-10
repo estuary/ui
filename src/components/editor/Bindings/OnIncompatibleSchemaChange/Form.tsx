@@ -1,6 +1,6 @@
 import { Autocomplete, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { snackbarSettings } from 'utils/notification-utils';
@@ -10,13 +10,13 @@ import {
 } from 'stores/Binding/hooks';
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import SelectorOption from './SelectorOption';
 import { autoCompleteDefaultProps } from './shared';
 import useUpdateOnIncompatibleSchemaChange, {
     BindingMetadata,
 } from './useUpdateOnIncompatibleSchemaChange';
 import useSupportedOptions from './useSupportedOptions';
 import { AutoCompleteOption } from './types';
+import SelectorOption from './SelectorOption';
 
 interface Props {
     bindingIndex: number;
@@ -25,7 +25,7 @@ interface Props {
 function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const intl = useIntl();
 
-    const [inputValue, setInputValue] = useState<string | undefined>();
+    const [inputValue, setInputValue] = useState('');
     const [invalidSetting, setInvalidSetting] = useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -48,7 +48,7 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
         if (!currentSetting) {
             return null;
         }
-        return options.find((option) => option.val === currentSetting);
+        return options.find((option) => option.val === currentSetting) ?? null;
     }, [currentSetting, options]);
 
     const bindingMetadata = useMemo<BindingMetadata[]>(() => {
@@ -68,8 +68,8 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                         intl.formatMessage({
                             id:
                                 err === 'no binding'
-                                    ? 'notBeforeNotAfter.update.error.noBinding'
-                                    : 'notBeforeNotAfter.update.error',
+                                    ? 'updateBinding.error.noBinding'
+                                    : 'incompatibleSchemaChange.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );
@@ -85,15 +85,16 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
 
     useEffect(() => {
         if (!currentSetting) {
-            setInputValue(undefined);
+            setInputValue('');
             return;
         }
 
         if (!currentValue) {
-            setInputValue(undefined);
+            setInputValue('');
             setInvalidSetting(true);
             return;
         }
+
         // We have a setting so we should try to use the associate value.
         //  However, if we were unable to find one then is probably an
         //  invalid option (they typoed in the editor) and so we clear things
@@ -112,19 +113,18 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
             ) : null}
             <Autocomplete
                 {...autoCompleteDefaultProps}
-                blurOnSelect
-                multiple={false}
                 disabled={formActive}
-                getOptionLabel={(option) => option.label}
                 inputValue={inputValue}
+                multiple={false}
                 options={options}
                 value={currentValue}
-                // sx={{
-                //     minWidth: 'fit-content',
-                //     maxWidth: '50%',
-                // }}
+                sx={{
+                    minWidth: 'fit-content',
+                    maxWidth: '50%',
+                }}
+                getOptionLabel={(option) => option.label}
                 isOptionEqualToValue={(option, optionValue) => {
-                    // If a user manually messes with the value need to support this
+                    // We force an undefined some times when we need to clear out the option
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                     if (!optionValue) {
                         return false;
@@ -156,14 +156,12 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                         />
                     );
                 }}
-                renderOption={(renderOptionProps, option, state) => {
-                    const RowContent = <SelectorOption option={option} />;
-
-                    return [
-                        renderOptionProps,
-                        RowContent,
-                        state.selected,
-                    ] as ReactNode;
+                renderOption={(renderOptionProps, option) => {
+                    return (
+                        <li {...renderOptionProps}>
+                            <SelectorOption option={option} />
+                        </li>
+                    );
                 }}
             />
         </>

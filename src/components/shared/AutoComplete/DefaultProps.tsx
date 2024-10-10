@@ -1,7 +1,6 @@
 import { autocompleteClasses, AutocompleteProps, Popper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
-import ListboxComponent from './VirtualizedList';
 
 const PopperComponent = styled(Popper)({
     [`& .${autocompleteClasses.listbox}`]: {
@@ -13,6 +12,16 @@ const PopperComponent = styled(Popper)({
     },
 }) as any;
 
+const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
+    // MUST provide
+    options: [],
+    renderInput: () => null,
+
+    // Can alter if you want
+    PopperComponent,
+    size: 'small',
+};
+
 export const autoCompleteDefaults_Virtual: AutocompleteProps<
     any,
     any,
@@ -20,12 +29,8 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     false,
     'div'
 > = {
-    ListboxComponent,
-    PopperComponent,
+    ...autoCompleteDefaults,
     disableCloseOnSelect: true,
-    options: [], // You MUST provide these yourself
-    size: 'small',
-    renderInput: () => null, // You MUST provide these yourself
     renderGroup: (params) => params as unknown as React.ReactNode,
     renderOption: (props, option, state) => {
         return [props, option, state.selected] as React.ReactNode;
@@ -44,10 +49,10 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     blurOnSelect: false,
 };
 
-export const getAutoCompleteDefaults = <T = any,>(): AutocompleteProps<
+export const getTypedAutoCompleteDefaults = <T = any,>(): AutocompleteProps<
     T,
     false,
     false,
     false,
     'div'
-> => autoCompleteDefaults_Virtual;
+> => autoCompleteDefaults;

@@ -1,4 +1,4 @@
-import { getAutoCompleteDefaults } from 'components/shared/AutoComplete/DefaultProps';
+import { getTypedAutoCompleteDefaults } from 'components/shared/AutoComplete/DefaultProps';
 import { AutoCompleteOption } from './types';
 
 export const choices = [
@@ -9,4 +9,4 @@ export const choices = [
 ] as const;
 
 export const autoCompleteDefaultProps =
-    getAutoCompleteDefaults<AutoCompleteOption>();
+    getTypedAutoCompleteDefaults<AutoCompleteOption>();

@@ -229,6 +229,9 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.unknown': `Unknown`,
     'fieldSelection.table.label.filter': `Filter fields`,
 
+    // Messages from binding editing
+    'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
+
     // Time Travel
     'notBeforeNotAfter.header': `Time Travel`,
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
