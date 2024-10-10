@@ -240,9 +240,10 @@ export const Workflows: Record<string, string> = {
 
     // Incompatible Schema Change
     'incompatibleSchemaChange.header': `Incompatible Schema Change`,
-    'incompatibleSchemaChange.message': `Determine the action to take when a schema change is rejected due to incompatibility with the target resource. By default, the binding will have its 'backfill' counter incremented, causing it to be re-materialized from the source collection.`,
+    'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
+    'incompatibleSchemaChange.input.error': `Invalid setting. Please update.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
     'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
