@@ -2,7 +2,10 @@ import { Autocomplete, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+} from 'stores/FormState/hooks';
 import { snackbarSettings } from 'utils/notification-utils';
 import {
     useBinding_currentBindingUUID,
@@ -10,6 +13,7 @@ import {
 } from 'stores/Binding/hooks';
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
+import { FormStatus } from 'stores/FormState/types';
 import { autoCompleteDefaultProps } from './shared';
 import useUpdateOnIncompatibleSchemaChange, {
     BindingMetadata,
@@ -24,11 +28,11 @@ interface Props {
 
 function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
 
     const [inputValue, setInputValue] = useState('');
     const [invalidSetting, setInvalidSetting] = useState(false);
 
-    const { enqueueSnackbar } = useSnackbar();
     const { updateOnIncompatibleSchemaChange } =
         useUpdateOnIncompatibleSchemaChange();
 
@@ -41,6 +45,7 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const currentBindingUUID = useBinding_currentBindingUUID();
 
     const formActive = useFormStateStore_isActive();
+    const setFormState = useFormStateStore_setFormState();
 
     const options = useSupportedOptions();
 
@@ -61,8 +66,12 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
 
     const updateServer = useCallback(
         async (value?: AutoCompleteOption | null) => {
+            setFormState({ status: FormStatus.UPDATING, error: null });
+
             updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
-                .then(() => {})
+                .then(() => {
+                    setFormState({ status: FormStatus.UPDATED });
+                })
                 .catch((err) => {
                     enqueueSnackbar(
                         intl.formatMessage({
@@ -73,12 +82,15 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );
+
+                    setFormState({ status: FormStatus.FAILED });
                 });
         },
         [
             bindingMetadata,
             enqueueSnackbar,
             intl,
+            setFormState,
             updateOnIncompatibleSchemaChange,
         ]
     );
