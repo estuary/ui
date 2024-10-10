@@ -299,11 +299,6 @@ export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     spec: any;
 }
 
-export interface GatewayAuthTokenResponse {
-    gateway_url: URL;
-    token: string;
-}
-
 export interface MarketPlaceVerifyResponse {
     data: any;
     error: any;
