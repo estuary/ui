@@ -1,4 +1,10 @@
-import { Autocomplete, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    Button,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -12,8 +18,8 @@ import {
     useBinding_currentCollection,
 } from 'stores/Binding/hooks';
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
 import { FormStatus } from 'stores/FormState/types';
+import AlertBox from 'components/shared/AlertBox';
 import { autoCompleteDefaultProps } from './shared';
 import useUpdateOnIncompatibleSchemaChange, {
     BindingMetadata,
@@ -95,35 +101,54 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     );
 
     useEffect(() => {
+        // No setting at all so we're good
         if (!currentSetting) {
             setInputValue('');
+            setInvalidSetting(false);
             return;
         }
 
+        // We have a setting but could not find a matching option
+        //  Set a flag to show an error and empty out the input
         if (!currentValue) {
             setInputValue('');
             setInvalidSetting(true);
             return;
         }
 
-        // We have a setting so we should try to use the associate value.
-        //  However, if we were unable to find one then is probably an
-        //  invalid option (they typoed in the editor) and so we clear things
         setInputValue(currentValue.label);
         setInvalidSetting(false);
     }, [currentSetting, currentValue]);
 
     return (
-        <>
+        <Stack spacing={2}>
             {invalidSetting ? (
                 <AlertBox
                     severity="error"
                     short
                     sx={{ maxWidth: 'fit-content' }}
                 >
-                    {intl.formatMessage({
-                        id: 'incompatibleSchemaChange.input.error',
-                    })}
+                    <Typography>
+                        {intl.formatMessage(
+                            {
+                                id: 'incompatibleSchemaChange.error.message',
+                            },
+                            {
+                                currentSetting,
+                            }
+                        )}
+                    </Typography>
+                    <Button
+                        disabled={formActive}
+                        size="small"
+                        sx={{ maxWidth: 'fit-content' }}
+                        variant="text"
+                        onClick={() => updateServer()}
+                    >
+                        {intl.formatMessage({
+                            id: 'incompatibleSchemaChange.error.cta',
+                        })}
+                    </Button>
                 </AlertBox>
             ) : null}
             <Autocomplete
@@ -162,6 +187,13 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                             {...params}
                             disabled={formActive}
                             error={invalidSetting}
+                            helperText={
+                                invalidSetting
+                                    ? intl.formatMessage({
+                                          id: 'incompatibleSchemaChange.error.message',
+                                      })
+                                    : undefined
+                            }
                             label={intl.formatMessage({
                                 id: 'incompatibleSchemaChange.input.label',
                             })}
@@ -177,7 +209,7 @@ function OnIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
                     );
                 }}
             />
-        </>
+        </Stack>
     );
 }
 

@@ -246,7 +246,10 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
-    'incompatibleSchemaChange.input.error': `Invalid setting. Please update.`,
+
+    'incompatibleSchemaChange.error.cta': `Remove Setting`,
+    'incompatibleSchemaChange.error.title': `Invalid setting`,
+    'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
     'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
