@@ -5,6 +5,7 @@ import {
 import { createPublication, getPublicationByIdQuery } from 'api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
@@ -20,7 +21,6 @@ import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
-    useBinding_disabledBindings,
     useBinding_fullSourceErrorsExist,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -37,6 +37,7 @@ import useNotificationStore, {
 } from 'stores/NotificationStore';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { hasLength } from 'utils/misc-utils';
+import { getCollectionName } from 'utils/workflow-utils';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {
@@ -71,6 +72,7 @@ function useSave(
     const setPubId = useEditorStore_setPubId();
 
     const setDiscoveredDraftId = useEditorStore_setDiscoveredDraftId();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const dataPlaneName = useDetailsFormStore(
@@ -93,7 +95,6 @@ function useSave(
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
-    const disabledBindings = useBinding_disabledBindings(entityType);
 
     const showPreSavePrompt = useMemo(
         () =>
@@ -259,9 +260,14 @@ function useSave(
 
                     // For a test we do not want to remove from draft - otherwise we would need
                     //  to add them back in after the test.
-                    const disabledCollections: string[] = dryRun
-                        ? []
-                        : disabledBindings;
+                    const disabledCollections: string[] =
+                        dryRun || entityType !== 'capture'
+                            ? []
+                            : draftSpecs[0].spec.bindings
+                                  .filter((binding: any) => binding.disable)
+                                  .map((binding: any) =>
+                                      getCollectionName(binding)
+                                  );
 
                     const deleteDraftSpecsResponse =
                         await deleteDraftSpecsByCatalogName(
@@ -313,8 +319,9 @@ function useSave(
         [
             collections,
             dataPlaneName?.whole,
-            disabledBindings,
+            draftSpecs,
             dryRun,
+            entityType,
             fullSourceErrorsExist,
             intl,
             messagePrefix,
