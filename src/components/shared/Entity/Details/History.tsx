@@ -27,6 +27,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
 import { getEditorTotalHeight } from 'utils/editor-utils';
 import { hasLength } from 'utils/misc-utils';
+import Error from 'components/shared/Error';
+import { BASE_ERROR } from 'services/supabase';
+import { useIntl } from 'react-intl';
 
 const HEIGHT = 400;
 const CARD_DATE_FORMAT = `EEEE, MMM do, yyyy 'at' hh:mm:ss aa`;
@@ -56,10 +59,11 @@ const formatDate = (date?: string) => {
 // };
 
 function History() {
+    const intl = useIntl();
     const theme = useTheme();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const { publications, isValidating } =
+    const { publications, isValidating, error } =
         usePublicationSpecsExt_History(catalogName);
 
     const [selectedPublication, setSelectedPublication] = useState<string>('');
@@ -93,8 +97,24 @@ function History() {
         }
     }, [publications, selectedPublication]);
 
-    if (isValidating || !publications) {
+    if (isValidating) {
         return <CircularProgress />;
+    }
+
+    if (error || !hasLength(publications)) {
+        return (
+            <Error
+                condensed
+                error={
+                    error ?? {
+                        ...BASE_ERROR,
+                        message: intl.formatMessage({
+                            id: 'details.history.noPublications',
+                        }),
+                    }
+                }
+            />
+        );
     }
 
     return (
@@ -109,7 +129,7 @@ function History() {
                             Publication History
                         </Typography>
                         <List>
-                            {publications.map((publication) => (
+                            {publications?.map((publication) => (
                                 <ListItemButton
                                     key={`history-timeline-${publication.pub_id}`}
                                     onClick={() =>
