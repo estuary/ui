@@ -104,6 +104,7 @@ function History() {
     if (error || !hasLength(publications)) {
         return (
             <Error
+                condensed
                 error={
                     error ?? {
                         ...BASE_ERROR,
