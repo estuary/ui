@@ -77,60 +77,40 @@ const getInitialState = (
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
     hydrate: async (docs, refresh, error) => {
-        const {
-            active,
-            addNewDocuments,
-            hydrated,
-            setHydrationError,
-            setHydrationErrorsExist,
-            setNetworkFailed,
-            setRefresh,
-        } = get();
-
-        if (!active) {
+        if (!get().active) {
             return;
         }
 
-        if (!hydrated) {
-            setHydrationErrorsExist(Boolean(error));
+        if (!get().hydrated) {
+            get().setHydrationErrorsExist(Boolean(error));
 
             if (error) {
-                setHydrationError(error.message);
-                setNetworkFailed(error.message);
-                addNewDocuments([[0, 0], []]);
+                get().setHydrationError(error.message);
+                get().setNetworkFailed(error.message);
+                get().addNewDocuments([[0, 0], []]);
                 return;
             }
         }
 
-        setRefresh(refresh);
-        addNewDocuments(docs, error);
+        get().setRefresh(refresh);
+        get().addNewDocuments(docs, error);
     },
 
     fetchMoreLogs: (option) => {
-        const {
-            allowFetchingMore,
-            fetchingMore,
-            newestParsed,
-            oldestParsed,
-            olderFinished,
-            refresh,
-            setFetchingMore,
-        } = get();
-
-        if (!allowFetchingMore || !refresh || fetchingMore) {
+        if (!get().allowFetchingMore || !get().refresh || get().fetchingMore) {
             return;
         }
 
-        if (option === 'old' && !olderFinished) {
-            setFetchingMore(true);
-            refresh({
+        if (option === 'old' && !get().olderFinished) {
+            get().setFetchingMore(true);
+            get().refresh?.({
                 offset: -1,
-                endOffset: oldestParsed,
+                endOffset: get().oldestParsed,
             });
         } else {
-            setFetchingMore(true);
-            refresh({
-                offset: newestParsed,
+            get().setFetchingMore(true);
+            get().refresh?.({
+                offset: get().newestParsed,
                 endOffset: -1,
             });
         }

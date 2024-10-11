@@ -3,7 +3,7 @@ import { intersection, omit } from 'lodash';
 import { TransformCreateStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     MigrationDictionary,
@@ -85,8 +85,8 @@ const getInitialStateData = (): Pick<
 });
 
 const getInitialState = (
-    set: NamedSet<TransformCreateState>,
-    get: StoreApi<TransformCreateState>['getState']
+    set: NamedSet<TransformCreateState>
+    // get: StoreApi<TransformCreateState>['getState']
 ): TransformCreateState => ({
     ...getInitialStateData(),
 
@@ -133,15 +133,13 @@ const getInitialState = (
     addTransformConfigs: (configs) => {
         set(
             produce((state: TransformCreateState) => {
-                const { transformCount, name } = get();
-
                 configs.forEach((config, index: number) => {
                     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                    const compositeIndex = transformCount + index;
+                    const compositeIndex = state.transformCount + index;
 
                     state.transformConfigs = {
                         ...state.transformConfigs,
-                        [`${name}.lambda.${compositeIndex}.sql`]: config,
+                        [`${state.name}.lambda.${compositeIndex}.sql`]: config,
                     };
                 });
 
@@ -162,10 +160,8 @@ const getInitialState = (
     updateTransformConfigs: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                const { sourceCollections, transformConfigs } = get();
-
                 const existingSourceCollections = Object.values(
-                    transformConfigs
+                    state.transformConfigs
                 ).map(({ collection }) => collection);
 
                 state.transformConfigs = value;
@@ -177,8 +173,10 @@ const getInitialState = (
 
                 state.transformCount +=
                     Object.keys(state.transformConfigs).length -
-                    intersection(existingSourceCollections, sourceCollections)
-                        .length;
+                    intersection(
+                        existingSourceCollections,
+                        state.sourceCollections
+                    ).length;
             }),
             false,
             'Transform Configs Updated'
@@ -188,15 +186,14 @@ const getInitialState = (
     addMigrations: (values) => {
         set(
             produce((state: TransformCreateState) => {
-                const { migrations, name } = get();
-
-                const originalKeyCount = Object.keys(migrations).length;
+                const originalKeyCount = Object.keys(state.migrations).length;
 
                 values.forEach((migration, index: number) => {
                     state.migrations = {
                         ...state.migrations,
-                        [`${name}.migration.${originalKeyCount + index}.sql`]:
-                            migration,
+                        [`${state.name}.migration.${
+                            originalKeyCount + index
+                        }.sql`]: migration,
                     };
                 });
 
@@ -213,23 +210,22 @@ const getInitialState = (
     removeAttribute: (removedAttribute) => {
         set(
             produce((state: TransformCreateState) => {
-                const { migrations, selectedAttribute, transformConfigs } =
-                    get();
-
-                if (Object.hasOwn(migrations, removedAttribute)) {
+                if (Object.hasOwn(state.migrations, removedAttribute)) {
                     const removedAttributeIndex = Object.keys(
-                        migrations
+                        state.migrations
                     ).findIndex((id) => id === removedAttribute);
 
-                    state.migrations = omit(migrations, removedAttribute);
+                    state.migrations = omit(state.migrations, removedAttribute);
 
                     const migrationIds = Object.keys(state.migrations);
-                    const transformConfigIds = Object.keys(transformConfigs);
+                    const transformConfigIds = Object.keys(
+                        state.transformConfigs
+                    );
 
                     state.selectedAttribute = evaluateSelectedAttribute(
                         removedAttribute,
                         removedAttributeIndex,
-                        selectedAttribute,
+                        state.selectedAttribute,
                         migrationIds,
                         transformConfigIds
                     );
@@ -237,13 +233,15 @@ const getInitialState = (
                     if (state.selectedAttribute.includes('lambda')) {
                         state.attributeType = 'transform';
                     }
-                } else if (Object.hasOwn(transformConfigs, removedAttribute)) {
+                } else if (
+                    Object.hasOwn(state.transformConfigs, removedAttribute)
+                ) {
                     const removedAttributeIndex = Object.keys(
-                        transformConfigs
+                        state.transformConfigs
                     ).findIndex((id) => id === removedAttribute);
 
                     const evaluatedTransformConfigs = omit(
-                        transformConfigs,
+                        state.transformConfigs,
                         removedAttribute
                     );
 
@@ -253,7 +251,7 @@ const getInitialState = (
                         evaluatedTransformConfigs
                     ).map(({ collection }) => collection);
 
-                    const migrationIds = Object.keys(migrations);
+                    const migrationIds = Object.keys(state.migrations);
                     const transformConfigIds = Object.keys(
                         state.transformConfigs
                     );
@@ -261,7 +259,7 @@ const getInitialState = (
                     state.selectedAttribute = evaluateSelectedAttribute(
                         removedAttribute,
                         removedAttributeIndex,
-                        selectedAttribute,
+                        state.selectedAttribute,
                         transformConfigIds,
                         migrationIds
                     );
@@ -294,12 +292,11 @@ const getInitialState = (
     patchSelectedAttribute: (value) => {
         set(
             produce((state: TransformCreateState) => {
-                const { attributeType, selectedAttribute } = get();
-
-                if (attributeType === 'transform') {
-                    state.transformConfigs[selectedAttribute].lambda = value;
+                if (state.attributeType === 'transform') {
+                    state.transformConfigs[state.selectedAttribute].lambda =
+                        value;
                 } else {
-                    state.migrations[selectedAttribute] = value;
+                    state.migrations[state.selectedAttribute] = value;
                 }
 
                 state.emptySQLExists = evaluateSQLStatementLength(
@@ -361,6 +358,6 @@ export const createTransformationCreateStore = (
     key: TransformCreateStoreNames
 ) => {
     return create<TransformCreateState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools((set) => getInitialState(set), devtoolsOptions(key))
     );
 };

@@ -216,6 +216,7 @@ export const getInitialState = (
                 produce(
                     ({
                         disabledRows,
+                        rows,
                         selected,
                         disableMultiSelect: singleSelect,
                     }: SelectableTableStore) => {
@@ -225,8 +226,6 @@ export const getInitialState = (
                         }
 
                         if (isSelected) {
-                            const { rows } = get();
-
                             rows.forEach((value, key) => {
                                 // TODO (setAllSelected) this is not a awesome solution and needs to be made awesome
                                 //  We should change the `valueProperty` to be an object that contains settings. That way
@@ -273,8 +272,7 @@ export const getInitialState = (
         },
 
         setStatsFilter: (val) => {
-            const { setStats, statsFilter } = get();
-            const filterChanged = statsFilter !== val;
+            const filterChanged = get().statsFilter !== val;
 
             if (filterChanged) {
                 set(
@@ -288,19 +286,12 @@ export const getInitialState = (
                 );
 
                 // Need to update stats if the filter changed
-                setStats();
+                get().setStats();
             }
         },
 
         setStats: async () => {
-            const {
-                query,
-                statsFilter,
-                setHydrationErrorsExist,
-                setStatsFailed,
-            } = get();
-
-            const { response } = query;
+            const { response } = get().query;
             const catalogNames = flatMap(response, (data) => {
                 return data.catalog_name;
             });
@@ -308,12 +299,12 @@ export const getInitialState = (
             if (response && response.length > 0) {
                 const { data, error } = await getStatsByName(
                     catalogNames,
-                    statsFilter
+                    get().statsFilter
                 );
 
                 if (error) {
-                    setHydrationErrorsExist(true);
-                    setStatsFailed(true);
+                    get().setHydrationErrorsExist(true);
+                    get().setStatsFailed(true);
                     // data is not always returned
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 } else if (data) {
@@ -358,7 +349,7 @@ export const getInitialState = (
                     }
                 }
             } else {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             }
         },
 

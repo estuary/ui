@@ -54,6 +54,5 @@ export interface EndpointConfigState
     ) => Promise<void>;
 
     // Misc.
-    stateChanged: () => boolean;
     resetState: () => void;
 }
