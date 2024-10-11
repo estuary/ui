@@ -235,7 +235,6 @@ const getInitialMiscData = (): Pick<
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
     | 'collectionsRequiringRediscovery'
-    | 'disabledCollections'
     | 'discoveredCollections'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
@@ -251,7 +250,6 @@ const getInitialMiscData = (): Pick<
     backfillSupported: true,
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
-    disabledCollections: new Set(),
     discoveredCollections: [],
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
@@ -377,7 +375,6 @@ const getInitialState = (
 
                 state.rediscoveryRequired = false;
                 state.collectionsRequiringRediscovery = [];
-                state.disabledCollections.clear();
 
                 state.backfilledBindings = [];
                 state.backfillAllBindings = false;
@@ -1099,8 +1096,6 @@ const getInitialState = (
                                     state.collectionsRequiringRediscovery
                                 );
                             }
-
-                            state.disabledCollections.add(collectionName);
                         } else {
                             delete state.resourceConfigs[uuid].meta.disable;
 
@@ -1111,8 +1106,6 @@ const getInitialState = (
 
                                 state.rediscoveryRequired = true;
                             }
-
-                            state.disabledCollections.delete(collectionName);
                         }
                     });
                 }),
