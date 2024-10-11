@@ -3,12 +3,12 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BaseComponentProps } from 'types';
 
 const UpdateHelmetContext = React.createContext<{
-    updateOgDescription: (newVal: string | undefined) => void;
+    updateDescription: (newVal: string | undefined) => void;
     updateOgTitle: (newVal: string | undefined) => void;
     updateTitle: (newVal: string) => void;
 }>({
     updateTitle: () => {},
-    updateOgDescription: () => {},
+    updateDescription: () => {},
     updateOgTitle: () => {},
 });
 
@@ -18,7 +18,7 @@ const UpdateHelmetContext = React.createContext<{
 //  controlling Helmet. Probably want to "build it into" React Router configuration.
 const UpdateHelmetProvider = ({ children }: BaseComponentProps) => {
     const [title, setTitle] = useState<string | null>(null);
-    const [ogDescription, setOgDescription] = useState<string | undefined>(
+    const [description, setDescription] = useState<string | undefined>(
         undefined
     );
     const [ogTitle, setOgTitle] = useState<string | undefined>(undefined);
@@ -27,9 +27,9 @@ const UpdateHelmetProvider = ({ children }: BaseComponentProps) => {
         setTitle(newTitle);
     }, []);
 
-    const updateOgDescription = useCallback(
+    const updateDescription = useCallback(
         (newDescription: string | undefined) => {
-            setOgDescription(newDescription);
+            setDescription(newDescription);
         },
         []
     );
@@ -42,15 +42,17 @@ const UpdateHelmetProvider = ({ children }: BaseComponentProps) => {
         <HelmetProvider>
             <UpdateHelmetContext.Provider
                 value={{
-                    updateOgDescription,
+                    updateDescription,
                     updateOgTitle,
                     updateTitle,
                 }}
             >
                 <Helmet>
                     <title>{title}</title>
+                    <meta name="description" content={description} />
+
                     <meta property="og:title" content={ogTitle} />
-                    <meta property="og:description" content={ogDescription} />
+                    <meta property="og:description" content={description} />
                 </Helmet>
                 {children}
             </UpdateHelmetContext.Provider>

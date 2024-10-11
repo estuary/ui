@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 interface MetaSettings {
-    ogDescriptionKey?: string;
+    descriptionKey?: string;
     ogTitleKey?: string;
 }
 
@@ -14,40 +14,41 @@ function useBrowserTitle(
 ) {
     const intl = useIntl();
 
-    const { updateOgDescription, updateOgTitle, updateTitle } =
-        useUpdateHelmet();
+    const { updateDescription, updateOgTitle, updateTitle } = useUpdateHelmet();
 
     useEffect(() => {
-        updateTitle(
-            `${intl.formatMessage({
-                id: prefixKey ?? 'common.browserTitle',
-            })} | ${intl.formatMessage({
-                id: titleKey,
-            })}`
-        );
+        const newTitle = `${intl.formatMessage({
+            id: prefixKey ?? 'common.browserTitle',
+        })} | ${intl.formatMessage({
+            id: titleKey,
+        })}`;
 
+        updateTitle(newTitle);
+
+        // We do not have any pass in an og:title today
+        //  but added it anyway just in case we need it
         updateOgTitle(
             metaSettings?.ogTitleKey
                 ? `${intl.formatMessage({
                       id: metaSettings.ogTitleKey,
                   })}`
-                : undefined
+                : newTitle
         );
 
-        updateOgDescription(
+        updateDescription(
             `${intl.formatMessage({
                 id:
-                    metaSettings?.ogDescriptionKey ??
-                    'routeTitle.default.ogDescription',
+                    metaSettings?.descriptionKey ??
+                    'routeTitle.login.description',
             })}`
         );
     }, [
         intl,
         metaSettings?.ogTitleKey,
-        metaSettings?.ogDescriptionKey,
+        metaSettings?.descriptionKey,
         prefixKey,
         titleKey,
-        updateOgDescription,
+        updateDescription,
         updateOgTitle,
         updateTitle,
     ]);
