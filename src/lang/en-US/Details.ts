@@ -7,7 +7,7 @@ export const Details: Record<string, string> = {
     'details.tabs.history': `History`,
     'details.tabs.ops': `Logs`,
 
-    'details.history.noPublications': `No publications for this entity were found`,
+    'details.history.noPublications': `No publications were found`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
