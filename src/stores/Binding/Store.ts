@@ -469,7 +469,7 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationRehydrating);
 
-        hydrateConnectorTagDependentState(connectorTagId, get);
+        await hydrateConnectorTagDependentState(connectorTagId, get);
 
         // TODO (capture-interval): Use the capture interval defined in the live/draft specification when applicable.
         if (editWorkflow && liveSpecIds.length > 0) {
