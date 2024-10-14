@@ -110,8 +110,9 @@ jobs:
                   workload_identity_provider: projects/1084703453822/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
 
             - name: Update Dashboard Deployment
-              run: |
-                  gcloud run deploy dashboard \
-                    --project estuary-control \
-                    --region us-central1 \
-                    --source ./build/
+              uses: 'google-github-actions/deploy-cloudrun@v2'
+              with:
+                  service: 'dashboard'
+                  project_id: 'estuary-control'
+                  region: 'us-central1'
+                  source: './build/'
