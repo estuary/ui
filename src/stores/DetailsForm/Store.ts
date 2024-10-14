@@ -3,7 +3,7 @@ import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
@@ -418,10 +418,6 @@ export const getInitialState = (
                 get().setHydrationErrorsExist(true);
             }
         }
-    },
-
-    stateChanged: () => {
-        return !isEqual(get().details.data, get().previousDetails.data);
     },
 
     resetState: () => {

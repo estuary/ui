@@ -72,6 +72,5 @@ export interface DetailsFormState
 
     hydrateState: (workflow: EntityWorkflow | null) => Promise<void>;
 
-    stateChanged: () => boolean;
     resetState: () => void;
 }
