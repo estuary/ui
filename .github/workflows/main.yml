@@ -109,6 +109,7 @@ jobs:
                   service_account: cd-github-ui@estuary-control.iam.gserviceaccount.com
                   workload_identity_provider: projects/1084703453822/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
 
+            # Based on https://github.com/google-github-actions/example-workflows/blob/main/workflows/deploy-cloudrun/cloudrun-source.yml
             - name: Update Dashboard Deployment
               uses: 'google-github-actions/deploy-cloudrun@v2'
               with:
