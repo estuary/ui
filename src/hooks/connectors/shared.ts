@@ -1,6 +1,6 @@
-import { EntityWithCreateWorkflow, Schema } from 'types';
-import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'services/supabase';
 import { ConnectorTag_Base } from 'api/connectors';
+import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'services/supabase';
+import { EntityWithCreateWorkflow, Schema } from 'types';
 
 //////////////////////////
 // useConnectors
@@ -57,7 +57,7 @@ export interface ConnectorTag {
     disable_backfill: boolean;
     id: string;
     connector_id: string;
-    // default_capture_interval: any; //interval
+    default_capture_interval: any;
     image_tag: string;
     endpoint_spec_schema: Schema;
     resource_spec_schema: Schema;

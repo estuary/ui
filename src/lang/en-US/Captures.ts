@@ -84,4 +84,7 @@ export const Captures: Record<string, string> = {
     'captureEdit.test.waitMessage': `Please wait while we test your capture.`,
     'captureEdit.testNotification.title': `Test Successful`,
     'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
+
+    // Capture Interval
+    'captureInterval.description.format': `Please enter up to two digits or a Postgres interval (e.g., HH:MM:SS).`,
 };

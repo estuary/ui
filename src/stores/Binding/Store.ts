@@ -36,8 +36,8 @@ import {
     getCollectionName,
     getDisableProps,
 } from 'utils/workflow-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -49,8 +49,8 @@ import {
 } from './slices/TimeTravel';
 import {
     BindingMetadata,
-    BindingState,
     Bindings,
+    BindingState,
     ResourceConfig,
     ResourceConfigDictionary,
 } from './types';
@@ -218,6 +218,32 @@ const initializeAndGenerateUUID = (
     };
 };
 
+const hydrateConnectorTagDependentState = async (
+    connectorTagId: string,
+    get: StoreApi<BindingState>['getState']
+) => {
+    if (connectorTagId && connectorTagId.length > 0) {
+        const { data, error } = await getSchema_Resource(connectorTagId);
+
+        if (error) {
+            get().setHydrationErrorsExist(true);
+        } else if (data?.resource_spec_schema) {
+            const {
+                setBackfillSupported,
+                setCaptureInterval,
+                setResourceSchema,
+            } = get();
+
+            await setResourceSchema(
+                data.resource_spec_schema as unknown as Schema
+            );
+
+            setBackfillSupported(!Boolean(data.disable_backfill));
+            setCaptureInterval(data.default_capture_interval ?? null);
+        }
+    }
+};
+
 const getInitialBindingData = (): Pick<
     BindingState,
     'bindingErrorsExist' | 'bindings' | 'currentBinding'
@@ -234,6 +260,7 @@ const getInitialMiscData = (): Pick<
     | 'backfillDataFlow'
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
+    | 'captureInterval'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
     | 'rediscoveryRequired'
@@ -249,6 +276,7 @@ const getInitialMiscData = (): Pick<
     backfillDataFlow: false,
     backfillSupported: true,
     backfilledBindings: [],
+    captureInterval: '',
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
     rediscoveryRequired: false,
@@ -441,22 +469,9 @@ const getInitialState = (
         const { resetState, setHydrationErrorsExist } = get();
         resetState(materializationRehydrating);
 
-        if (connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Resource(connectorTagId);
+        hydrateConnectorTagDependentState(connectorTagId, get);
 
-            if (error) {
-                setHydrationErrorsExist(true);
-            } else if (data?.resource_spec_schema) {
-                const { setBackfillSupported, setResourceSchema } = get();
-
-                await setResourceSchema(
-                    data.resource_spec_schema as unknown as Schema
-                );
-
-                setBackfillSupported(!Boolean(data.disable_backfill));
-            }
-        }
-
+        // TODO (capture-interval): Use the capture interval defined in the live/draft specification when applicable.
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
                 await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
@@ -938,6 +953,16 @@ const getInitialState = (
             }),
             false,
             'Backfilled Collections Set'
+        );
+    },
+
+    setCaptureInterval: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.captureInterval = value;
+            }),
+            false,
+            'Capture interval set'
         );
     },
 

@@ -104,6 +104,10 @@ export interface BindingState
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
+    // Capture interval
+    captureInterval: string | null;
+    setCaptureInterval: (value: BindingState['captureInterval']) => void;
+
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
 
