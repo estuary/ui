@@ -1,8 +1,8 @@
 import { useShallow } from 'zustand/react/shallow';
 import {
-    getAllCollectionNames,
-    getAllCollections,
-    getAllEnabledCollectionNames,
+    getCollectionNames,
+    getCollections,
+    getEnabledCollectionNames,
 } from './shared';
 import { FullSourceJsonForms } from './slices/TimeTravel';
 import { useBindingStore } from './Store';
@@ -124,19 +124,18 @@ export const useBinding_removeBindings = () => {
 
 export const useBinding_collections = () =>
     useBindingStore(
-        useShallow((state) => getAllCollectionNames(state.resourceConfigs))
+        useShallow((state) => getCollectionNames(state.resourceConfigs))
     );
 
 export const useBinding_collections_count = () =>
     useBindingStore(
-        useShallow((state) => getAllCollections(state.resourceConfigs).length)
+        useShallow((state) => getCollections(state.resourceConfigs).length)
     );
 
 export const useBinding_enabledCollections_count = () =>
     useBindingStore(
         useShallow(
-            (state) =>
-                getAllEnabledCollectionNames(state.resourceConfigs).length
+            (state) => getEnabledCollectionNames(state.resourceConfigs).length
         )
     );
 
@@ -147,7 +146,7 @@ export const useBinding_toggleDisable = () => {
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(
         useShallow((state) =>
-            getAllCollections(state.resourceConfigs).every(
+            getCollections(state.resourceConfigs).every(
                 (config) => config.meta.disable
             )
         )
