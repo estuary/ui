@@ -4,10 +4,17 @@ test('has basic functionality', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
 
     // Make sure the title is right
-    await expect(page).toHaveTitle('Flow · Login');
+    await expect(page).toHaveTitle(
+        'Estuary Flow Dashboard | Manage Your Data Pipelines'
+    );
+
+    // Switch to register
+    await page.getByText('Register').click();
 
     // Register updates UI
-    await page.getByText('Register').click();
+    await expect(page).toHaveTitle(
+        'Register for Estuary Flow | Build Data Pipelines'
+    );
     await expect(
         page.getByRole('heading', {
             name: 'Get started with Estuary Flow',

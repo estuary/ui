@@ -2,7 +2,7 @@ import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
 import {
     CustomError,
@@ -237,37 +237,27 @@ const getInitialState = (
             }
 
             if (get().active && data && data.length > 0) {
-                const {
-                    setEncryptedEndpointConfig,
-                    setEndpointConfig,
-                    setPreviousEndpointConfig,
-                    setPublishedEndpointConfig,
-                    endpointSchema,
-                } = get();
-
                 const encryptedEndpointConfig =
                     data[0].spec.endpoint.connector.config;
 
-                setEncryptedEndpointConfig({ data: encryptedEndpointConfig });
+                get().setEncryptedEndpointConfig({
+                    data: encryptedEndpointConfig,
+                });
 
-                setPublishedEndpointConfig({ data: encryptedEndpointConfig });
+                get().setPublishedEndpointConfig({
+                    data: encryptedEndpointConfig,
+                });
 
                 const endpointConfig = parseEncryptedEndpointConfig(
                     encryptedEndpointConfig,
-                    endpointSchema
+                    get().endpointSchema
                 );
 
-                setPreviousEndpointConfig(endpointConfig);
+                get().setPreviousEndpointConfig(endpointConfig);
 
-                setEndpointConfig(endpointConfig);
+                get().setEndpointConfig(endpointConfig);
             }
         }
-    },
-
-    stateChanged: () => {
-        const { encryptedEndpointConfig, publishedEndpointConfig } = get();
-
-        return !isEqual(encryptedEndpointConfig, publishedEndpointConfig);
     },
 
     resetState: () => {

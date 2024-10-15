@@ -3,7 +3,7 @@ import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
@@ -307,12 +307,6 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         if (connectorId) {
-            const {
-                setDataPlaneOptions,
-                setHydrationError,
-                setHydrationErrorsExist,
-            } = get();
-
             let dataPlaneOptions: DataPlaneOption[] = [];
 
             const dataPlaneResponse = await getDataPlaneOptions();
@@ -340,9 +334,9 @@ export const getInitialState = (
                     }
                 );
 
-                setDataPlaneOptions(dataPlaneOptions);
+                get().setDataPlaneOptions(dataPlaneOptions);
             } else {
-                setHydrationError(
+                get().setHydrationError(
                     dataPlaneResponse.error?.message ??
                         'An error was encountered initializing the details form. If the issue persists, please contact support.'
                 );
@@ -353,26 +347,20 @@ export const getInitialState = (
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (connectorImage && dataPlane !== null) {
-                    const {
-                        setDetails_connector,
-                        setDetails_dataPlane,
-                        setPreviousDetails,
-                    } = get();
-
-                    setDetails_connector(connectorImage);
+                    get().setDetails_connector(connectorImage);
 
                     const {
                         data: { entityName },
                         errors,
                     } = initialDetails;
 
-                    setDetails_dataPlane(dataPlane);
-                    setPreviousDetails({
+                    get().setDetails_dataPlane(dataPlane);
+                    get().setPreviousDetails({
                         data: { entityName, connectorImage, dataPlane },
                         errors,
                     });
                 } else {
-                    setHydrationErrorsExist(true);
+                    get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {
                 const { data, error } = await getLiveSpecs_detailsForm(
@@ -398,12 +386,6 @@ export const getInitialState = (
                     );
 
                     if (connectorImage && dataPlane !== null) {
-                        const {
-                            setDetails,
-                            setPreviousDetails,
-                            setUnsupportedConnectorVersion,
-                        } = get();
-
                         const hydratedDetails: Details = {
                             data: {
                                 entityName: catalog_name,
@@ -412,37 +394,30 @@ export const getInitialState = (
                             },
                         };
 
-                        setUnsupportedConnectorVersion(
+                        get().setUnsupportedConnectorVersion(
                             connectorImage.id,
                             connector_tag_id
                         );
 
-                        setDetails(hydratedDetails);
-                        setPreviousDetails(hydratedDetails);
+                        get().setDetails(hydratedDetails);
+                        get().setPreviousDetails(hydratedDetails);
                     } else {
-                        setHydrationErrorsExist(true);
+                        get().setHydrationErrorsExist(true);
                     }
                 } else {
-                    setHydrationErrorsExist(true);
+                    get().setHydrationErrorsExist(true);
                 }
             } else if (workflow === 'test_json_forms') {
-                const { setDetails_connector } = get();
-                setDetails_connector({
+                get().setDetails_connector({
                     id: connectorId,
                     iconPath: '',
                     imageName: '',
                     imagePath: '',
                     connectorId,
                 });
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             }
         }
-    },
-
-    stateChanged: () => {
-        const { details, previousDetails } = get();
-
-        return !isEqual(details.data, previousDetails.data);
     },
 
     resetState: () => {

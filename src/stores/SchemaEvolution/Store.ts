@@ -2,7 +2,7 @@ import produce from 'immer';
 import { SchemaEvolutionState } from 'stores/SchemaEvolution/types';
 import { SchemaEvolutionStoreNames } from 'stores/names';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
+import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
@@ -21,28 +21,23 @@ const getInitialStateData = (): Pick<
 });
 
 const getInitialState = (
-    set: NamedSet<SchemaEvolutionState>,
-    get: StoreApi<SchemaEvolutionState>['getState']
+    set: NamedSet<SchemaEvolutionState>
+    // get: StoreApi<SchemaEvolutionState>['getState']
 ): SchemaEvolutionState => ({
     ...getInitialStateData(),
 
     setAutoDiscover: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const {
-                    addNewBindings,
-                    evolveIncompatibleCollections,
-                    settingsActive,
-                } = get();
-
-                if (!settingsActive && !options?.initOnly) {
+                if (!state.settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
                 }
 
                 // Disable the auto-discovery options when auto-discovery itself is disabled.
                 if (
                     !value &&
-                    (addNewBindings || evolveIncompatibleCollections)
+                    (state.addNewBindings ||
+                        state.evolveIncompatibleCollections)
                 ) {
                     state.addNewBindings = false;
                     state.evolveIncompatibleCollections = false;
@@ -58,14 +53,12 @@ const getInitialState = (
     setAddNewBindings: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const { autoDiscover, settingsActive } = get();
-
-                if (!settingsActive && !options?.initOnly) {
+                if (!state.settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
                 }
 
                 // Enable auto-discovery when the add new bindings option is enabled.
-                if (value && !autoDiscover) {
+                if (value && !state.autoDiscover) {
                     state.autoDiscover = true;
                 }
 
@@ -79,14 +72,12 @@ const getInitialState = (
     setEvolveIncompatibleCollections: (value, options) => {
         set(
             produce((state: SchemaEvolutionState) => {
-                const { autoDiscover, settingsActive } = get();
-
-                if (!settingsActive && !options?.initOnly) {
+                if (!state.settingsActive && !options?.initOnly) {
                     state.settingsActive = true;
                 }
 
                 // Enable auto-discovery when the incompatible collection evolution option is enabled.
-                if (value && !autoDiscover) {
+                if (value && !state.autoDiscover) {
                     state.autoDiscover = true;
                 }
 
@@ -130,6 +121,6 @@ const getInitialState = (
 
 export const createSchemaEvolutionStore = (key: SchemaEvolutionStoreNames) => {
     return create<SchemaEvolutionState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools((set) => getInitialState(set), devtoolsOptions(key))
     );
 };
