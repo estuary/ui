@@ -140,10 +140,6 @@ export interface BindingState
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
 
-    // Computed Values
-    getCollections: () => string[];
-    getEnabledCollections: () => string[];
-
     // Misc.
     hydrateState: (
         editWorkflow: boolean,

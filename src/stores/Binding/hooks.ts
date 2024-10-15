@@ -1,4 +1,9 @@
 import { useShallow } from 'zustand/react/shallow';
+import {
+    getAllCollectionNames,
+    getAllCollections,
+    getAllEnabledCollectionNames,
+} from './shared';
 import { FullSourceJsonForms } from './slices/TimeTravel';
 import { useBindingStore } from './Store';
 import { ResourceConfig } from './types';
@@ -117,16 +122,22 @@ export const useBinding_removeBindings = () => {
     return useBindingStore((state) => state.removeBindings);
 };
 
-export const useBinding_collections = () => {
-    return useBindingStore(useShallow((state) => state.getCollections()));
-};
+export const useBinding_collections = () =>
+    useBindingStore(
+        useShallow((state) => getAllCollectionNames(state.resourceConfigs))
+    );
 
 export const useBinding_collections_count = () =>
-    useBindingStore(useShallow((state) => state.getCollections().length));
+    useBindingStore(
+        useShallow((state) => getAllCollections(state.resourceConfigs).length)
+    );
 
 export const useBinding_enabledCollections_count = () =>
     useBindingStore(
-        useShallow((state) => state.getEnabledCollections().length)
+        useShallow(
+            (state) =>
+                getAllEnabledCollectionNames(state.resourceConfigs).length
+        )
     );
 
 export const useBinding_toggleDisable = () => {
@@ -136,7 +147,7 @@ export const useBinding_toggleDisable = () => {
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(
         useShallow((state) =>
-            Object.values(state.resourceConfigs).every(
+            getAllCollections(state.resourceConfigs).every(
                 (config) => config.meta.disable
             )
         )
