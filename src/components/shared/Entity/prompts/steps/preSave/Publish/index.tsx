@@ -3,13 +3,13 @@ import { useBindingsEditorStore_setIncompatibleCollections } from 'components/ed
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
+import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { useEffect } from 'react';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import usePublicationHandler from '../../usePublicationHandler';
-import useStepIsIdle from '../../useStepIsIdle';
 
 function Publish() {
     const publicationHandler = usePublicationHandler();
