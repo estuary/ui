@@ -2,7 +2,6 @@ import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -95,6 +94,7 @@ function ResourceConfig({
                 />
             ) : null}
 
+            {/* TODO (onIncompatibleSchemaChange)
             {entityType === 'materialization' ? (
                 <ErrorBoundryWrapper>
                     <OnIncompatibleSchemaChange
@@ -102,6 +102,7 @@ function ResourceConfig({
                     />
                 </ErrorBoundryWrapper>
             ) : null}
+            */}
         </>
     );
 }
