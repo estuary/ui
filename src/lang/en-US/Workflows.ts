@@ -161,6 +161,7 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.errors.publishFailed': `Publishing failed.`,
     'resetDataFlow.errors.missingSession': `Cannot find user session.`,
     'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
+    'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.destinations']}`,

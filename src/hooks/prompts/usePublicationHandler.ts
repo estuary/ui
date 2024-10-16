@@ -2,13 +2,13 @@ import {
     getPublicationByIdQuery,
     PublicationJobStatus,
 } from 'api/publications';
+import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';
 import { handlePollerError } from 'services/supabase';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { usePreSavePromptStore } from '../store/usePreSavePromptStore';
 
 function usePublicationHandler() {
     const { jobStatusPoller } = useJobStatusPoller();
