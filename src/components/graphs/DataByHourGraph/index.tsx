@@ -15,6 +15,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -58,7 +59,10 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
-    const statType = useDetailsUsageStore((store) => store.statType);
+    const [statType, range] = useDetailsUsageStore((store) => [
+        store.statType,
+        store.range,
+    ]);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
@@ -161,6 +165,16 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             return `${defaultDataFormat(value, precision)}`;
         },
         [intl]
+    );
+
+    const xAxisFormatter = useCallback(
+        (value: any) => {
+            if (value) {
+                return DateTime.fromISO(value).toFormat(range.formatPattern);
+            }
+            return '';
+        },
+        [range.formatPattern]
     );
 
     const [
@@ -320,12 +334,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                 {
                     axisLabel: {
                         align: 'center',
-                        formatter: (value: any) => {
-                            if (value) {
-                                return format(parseISO(value), `p`);
-                            }
-                            return '';
-                        },
+                        formatter: xAxisFormatter,
                     },
                     axisPointer: {
                         show: true,
@@ -396,6 +405,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
+        xAxisFormatter,
     ]);
 
     return <div id={id} style={{ height: 350 }} />;

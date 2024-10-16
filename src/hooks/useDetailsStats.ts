@@ -8,15 +8,13 @@ import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-function useDetailsStats(catalogName: string, grain: string) {
+function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
     const range = useDetailsUsageStore((store) => store.range);
 
     const { data, error, isValidating } = useQuery(
         hasLength(catalogName)
-            ? getStatsForDetails(catalogName, entityType, grain, {
-                  hours: range,
-              })
+            ? getStatsForDetails(catalogName, entityType, range)
             : null,
         {
             refreshInterval: 15000,
@@ -34,15 +32,18 @@ function useDetailsStats(catalogName: string, grain: string) {
         }
 
         // Server is in UTC so start with that
-        const max = DateTime.utc().startOf('hour');
+        const max = DateTime.utc().startOf(range.timeUnit);
 
         // Subtracting 1 here because the interval is inclusive of the minimum
-        const min = max.minus({ hours: range - 1 });
+        const min = max.minus({ [range.relativeUnit]: range.amount - 1 });
 
         // Go through the entire interval and populate the response if we have data
         //  otherwise default to an "empty" response
-        return Interval.fromDateTimes(min, max.plus({ hours: 1 }))
-            .splitBy({ hours: 1 })
+        return Interval.fromDateTimes(
+            min,
+            max.plus({ [range.relativeUnit]: 1 })
+        )
+            .splitBy({ [range.relativeUnit]: 1 })
             .map((timeInterval) => {
                 const ts =
                     timeInterval.start?.toFormat(`yyyy-MM-dd'T'HH:mm:ssZZ`) ??
@@ -53,7 +54,7 @@ function useDetailsStats(catalogName: string, grain: string) {
                     ({
                         ts,
                         catalog_name: '',
-                        grain: 'hourly',
+                        grain: range.grain,
                         bytes_read: 0,
                         docs_read: 0,
                         bytes_written: 0,

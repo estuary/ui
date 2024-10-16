@@ -1,12 +1,14 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
-import { DataByHourRange } from 'components/graphs/types';
+import { DataByHourRange, DataGrains } from 'components/graphs/types';
 import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 function HourlyRangeFilter() {
+    const intl = useIntl();
+
     const [range, setRange] = useDetailsUsageStore((store) => [
         store.range,
         store.setRange,
@@ -48,12 +50,12 @@ function HourlyRangeFilter() {
                 onClick={handlers.openMenu}
                 sx={{ ...linkButtonSx }}
             >
-                <FormattedMessage
-                    id="detailsPanel.recentUsage.filter.label"
-                    values={{
-                        range,
-                    }}
-                />
+                {intl.formatMessage(
+                    {
+                        id: `detailsPanel.recentUsage.filter.label.${range.relativeUnit}`,
+                    },
+                    { range: range.amount }
+                )}
             </Button>
 
             <Menu
@@ -66,37 +68,82 @@ function HourlyRangeFilter() {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => handlers.setFilter(6)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 6,
+                            grain: DataGrains.hourly,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
+                        {
                             range: 6,
-                        }}
-                    />
+                        }
+                    )}
                 </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(12)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 12,
+                            grain: DataGrains.hourly,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
+                        {
                             range: 12,
-                        }}
-                    />
+                        }
+                    )}
                 </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(24)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 24,
+                            grain: DataGrains.hourly,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
+                        {
                             range: 24,
-                        }}
-                    />
+                        }
+                    )}
                 </MenuItem>
-                <MenuItem onClick={() => handlers.setFilter(48)}>
-                    <FormattedMessage
-                        id="detailsPanel.recentUsage.filter.label"
-                        values={{
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 48,
+                            grain: DataGrains.hourly,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
+                        {
                             range: 48,
-                        }}
-                    />
+                        }
+                    )}
+                </MenuItem>
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 30,
+                            grain: DataGrains.daily,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        {
+                            id: 'detailsPanel.recentUsage.filter.label.days',
+                        },
+                        {
+                            range: 30,
+                        }
+                    )}
                 </MenuItem>
             </Menu>
         </Stack>

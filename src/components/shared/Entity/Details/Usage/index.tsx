@@ -17,10 +17,7 @@ interface Props {
 }
 
 function Usage({ catalogName }: Props) {
-    const { isValidating, stats, error } = useDetailsStats(
-        catalogName,
-        'hourly'
-    );
+    const { isValidating, stats, error } = useDetailsStats(catalogName);
 
     return (
         <CardWrapper
