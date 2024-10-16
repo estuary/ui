@@ -52,6 +52,9 @@ const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
     });
 };
 
+// TODO (data graph) - need to rename this as it can handle multiple grains
+//  not renaming as this is not 100% supporting of all the grains
+//  just hourly and daily as it required for details not (Q4 2024)
 function DataByHourGraph({ id, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
@@ -59,9 +62,9 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
-    const [statType, range] = useDetailsUsageStore((store) => [
+    const [statType, formatPattern] = useDetailsUsageStore((store) => [
         store.statType,
-        store.range,
+        store.range.formatPattern,
     ]);
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -102,7 +105,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     // Update the "last updated" string shown as an xAxis label
     useEffect(() => {
         // Want to format with seconds to show more of a "ticking clock" to users
-        const currentTime = format(new Date(), `pp`);
+        const currentTime = DateTime.now().toFormat(`tt`);
 
         // Made a string instead of passing value into message to make life easier
         setLastUpdated(
@@ -170,11 +173,11 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const xAxisFormatter = useCallback(
         (value: any) => {
             if (value) {
-                return DateTime.fromISO(value).toFormat(range.formatPattern);
+                return DateTime.fromISO(value).toFormat(formatPattern);
             }
             return '';
         },
-        [range.formatPattern]
+        [formatPattern]
     );
 
     const [

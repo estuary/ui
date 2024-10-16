@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { defaultQueryDateFormat } from 'services/luxon';
 
 function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
@@ -46,8 +47,7 @@ function useDetailsStats(catalogName: string) {
             .splitBy({ [range.relativeUnit]: 1 })
             .map((timeInterval) => {
                 const ts =
-                    timeInterval.start?.toFormat(`yyyy-MM-dd'T'HH:mm:ssZZ`) ??
-                    '';
+                    timeInterval.start?.toFormat(defaultQueryDateFormat) ?? '';
 
                 return (
                     find(data, { ts }) ??
