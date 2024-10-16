@@ -2,13 +2,12 @@ import { createPublication } from 'api/publications';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useEffect } from 'react';
-import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { hasLength } from 'utils/misc-utils';
+import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
+import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
+import useIncompatibleCollectionChecker from 'hooks/prompts/useIncompatibleCollectionChecker';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import usePublicationHandler from '../../usePublicationHandler';
-import useStepIsIdle from '../../useStepIsIdle';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();
@@ -19,6 +18,7 @@ function PublishStepDataFlowReset() {
 
     const stepIndex = useLoopIndex();
     const stepIsIdle = useStepIsIdle();
+    const incompatibleCollectionChecker = useIncompatibleCollectionChecker();
     const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
         usePreSavePromptStore((state) => [
             state.updateStep,
@@ -58,24 +58,10 @@ function PublishStepDataFlowReset() {
             });
 
             publicationHandler(publishResponse.data[0].id, (response) => {
-                const hasIncompatibleCollections = hasLength(
-                    response?.job_status?.incompatible_collections
+                incompatibleCollectionChecker(
+                    response,
+                    'resetDataFlow.disableCapture.errors.incompatibleCollections'
                 );
-
-                // If we hit this basically just stop everything and tell the user
-                if (hasIncompatibleCollections) {
-                    updateStep(stepIndex, {
-                        allowRetry: false,
-                        error: {
-                            message:
-                                'resetDataFlow.errors.incompatibleCollections',
-                        },
-                    });
-
-                    logRocketEvent(CustomEvents.DATA_FLOW_RESET, {
-                        incompatibleCollections: true,
-                    });
-                }
             });
         };
 
@@ -83,6 +69,7 @@ function PublishStepDataFlowReset() {
     }, [
         dataFlowResetDraftId,
         dataPlaneName,
+        incompatibleCollectionChecker,
         initUUID,
         publicationHandler,
         stepIndex,
