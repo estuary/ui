@@ -9,6 +9,8 @@ import {
     useDetailsUsageStoreRangeSettings,
 } from 'stores/DetailsUsage/useDetailsUsageStore';
 
+// TODO (details range) - we should probably not add many more predefined ranges and
+//  start allowing a user to enter their own range manually.
 function DetailsRange() {
     const intl = useIntl();
 
