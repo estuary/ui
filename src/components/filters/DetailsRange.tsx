@@ -9,7 +9,7 @@ import {
     useDetailsUsageStoreRangeSettings,
 } from 'stores/DetailsUsage/useDetailsUsageStore';
 
-function HourlyRangeFilter() {
+function DetailsRange() {
     const intl = useIntl();
 
     const range = useDetailsUsageStoreRangeSettings();
@@ -152,4 +152,4 @@ function HourlyRangeFilter() {
     );
 }
 
-export default HourlyRangeFilter;
+export default DetailsRange;

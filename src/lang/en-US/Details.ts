@@ -50,7 +50,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
-    'detailsPanel.recentUsage.filter.label.months': `{range} days`,
+    'detailsPanel.recentUsage.filter.label.months': `{range} months`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 
