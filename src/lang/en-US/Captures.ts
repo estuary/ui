@@ -87,4 +87,5 @@ export const Captures: Record<string, string> = {
 
     // Capture Interval
     'captureInterval.description.format': `Please enter up to two digits or a Postgres interval (e.g., HH:MM:SS).`,
+    'captureInterval.error.updateFailed': `Interval update failed`,
 };

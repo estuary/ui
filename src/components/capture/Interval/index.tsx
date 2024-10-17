@@ -14,9 +14,15 @@ import {
     primaryColoredBackground_hovered,
 } from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_setFormState,
+    useFormStateStore_status,
+} from 'stores/FormState/hooks';
+import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { NUMERIC_RE, POSTGRES_INTERVAL_RE } from 'validation';
 
@@ -33,24 +39,68 @@ function CaptureInterval({ readOnly }: Props) {
         id: 'workflows.interval.input.label',
     });
 
-    const { updateStoredInterval } = useCaptureInterval();
+    const { applyCaptureInterval, updateStoredInterval } = useCaptureInterval();
 
+    // Binding Store
     const interval = useBindingStore((state) => state.captureInterval);
 
+    // Form State Store
+    const formActive = useFormStateStore_isActive();
+    const formStatus = useFormStateStore_status();
+    const setFormState = useFormStateStore_setFormState();
+
+    const [saving, setSaving] = useState(false);
+    const [unit, setUnit] = useState(interval?.at(-1) ?? '');
     const [input, setInput] = useState(
         interval?.substring(0, interval.length - 1)
     );
 
-    const [unit, setUnit] = useState(interval?.at(-1) ?? '');
+    const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
+
+    const errorsExist = Boolean(
+        input &&
+            hasLength(input) &&
+            !NUMERIC_RE.test(input) &&
+            !POSTGRES_INTERVAL_RE.test(input)
+    );
+
+    // TODO (capture-interval): Consider whether capture interval changes should
+    //   place the form in an active state while the server patch is underway.
+    useEffect(() => {
+        if (!errorsExist && !saving) {
+            setSaving(true);
+
+            applyCaptureInterval()
+                .then(
+                    () => {},
+                    (error) => {
+                        if (error) {
+                            setFormState({
+                                status: FormStatus.FAILED,
+                                error: {
+                                    title: 'captureInterval.error.updateFailed',
+                                    error,
+                                },
+                            });
+                        }
+                    }
+                )
+                .finally(() => {
+                    setSaving(false);
+                });
+        }
+    }, [
+        applyCaptureInterval,
+        errorsExist,
+        interval,
+        saving,
+        setFormState,
+        setSaving,
+    ]);
 
     if (typeof input !== 'string') {
         return null;
     }
-
-    const errorExists =
-        hasLength(input) &&
-        !NUMERIC_RE.test(input) &&
-        !POSTGRES_INTERVAL_RE.test(input);
 
     return (
         <Stack spacing={1}>
@@ -63,7 +113,8 @@ function CaptureInterval({ readOnly }: Props) {
             </Typography>
 
             <FormControl
-                error={errorExists}
+                disabled={readOnly ?? loading}
+                error={errorsExist}
                 fullWidth={false}
                 size={INPUT_SIZE}
                 variant="outlined"
@@ -74,7 +125,7 @@ function CaptureInterval({ readOnly }: Props) {
                 }}
             >
                 <InputLabel
-                    disabled={readOnly}
+                    disabled={readOnly ?? loading}
                     focused
                     htmlFor={INPUT_ID}
                     variant="outlined"
@@ -84,14 +135,14 @@ function CaptureInterval({ readOnly }: Props) {
 
                 <OutlinedInput
                     aria-describedby={DESCRIPTION_ID}
-                    disabled={readOnly}
+                    disabled={readOnly ?? loading}
                     endAdornment={
                         <InputAdornment
                             position="end"
                             style={{ marginRight: 1 }}
                         >
                             <Select
-                                disabled={readOnly}
+                                disabled={readOnly ?? loading}
                                 disableUnderline
                                 error={false}
                                 onChange={(event) => {
@@ -155,7 +206,7 @@ function CaptureInterval({ readOnly }: Props) {
                             </Select>
                         </InputAdornment>
                     }
-                    error={errorExists}
+                    error={errorsExist}
                     id={INPUT_ID}
                     label={label}
                     onChange={(event) => {
@@ -175,7 +226,7 @@ function CaptureInterval({ readOnly }: Props) {
 
                 <FormHelperText
                     id={DESCRIPTION_ID}
-                    error={errorExists}
+                    error={errorsExist}
                     style={{ marginLeft: 0 }}
                 >
                     {intl.formatMessage({

@@ -45,8 +45,8 @@ export default function useCaptureInterval() {
     );
 
     const applyCaptureInterval = useCallback(async () => {
-        if (!mutateDraftSpecs || !draftSpec) {
-            return Promise.reject();
+        if (!mutateDraftSpecs || !draftId || !draftSpec) {
+            return Promise.resolve();
         }
 
         const spec: Schema = draftSpec.spec;
