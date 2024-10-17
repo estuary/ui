@@ -22,7 +22,7 @@ export const useDetailsUsageStore = create<DetailsUsageState>()(
                             state.range = newVal;
                         }),
                         false,
-                        'setRangeSettings'
+                        'setRange'
                     );
                 },
                 setStatType: (newVal) => {
