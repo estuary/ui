@@ -21,11 +21,11 @@ import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import useDetailsUsageStore from 'stores/DetailsUsage/useDetailsUsageStore';
 import { CatalogStats_Details } from 'types';
+import useDataByHourGraphMessages from 'hooks/useDataByHourGraphMessages';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
-import useDataByHourGraphMessages from './useDataByHourGraphMessages';
 
 interface Props {
     id: string;

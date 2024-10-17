@@ -49,7 +49,9 @@ function useDetailsStats(catalogName: string) {
                 const ts =
                     timeInterval.start?.toFormat(defaultQueryDateFormat) ?? '';
 
-                return (
+                // Fetch data or default to empty object. This handles the rare case
+                //  where an entity will miss some rows here and there with stats
+                const response =
                     find(data, { ts }) ??
                     ({
                         ts,
@@ -59,8 +61,14 @@ function useDetailsStats(catalogName: string) {
                         docs_read: 0,
                         bytes_written: 0,
                         docs_written: 0,
-                    } as CatalogStats_Details)
-                );
+                    } as CatalogStats_Details);
+
+                // We want to overwrite time stamp with our own to not worry about
+                //  converting UTC to local times
+                return {
+                    ...response,
+                    ts,
+                };
             });
     }, [data, range]);
 
