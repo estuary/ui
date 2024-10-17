@@ -9,6 +9,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { POSTGRES_INTERVAL_RE } from 'validation';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -218,3 +219,32 @@ export const isPostgrestFetcher = (
     | PostgrestFilterBuilder<any, any, any, any, any>
     | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
+
+export const formatPostgresInterval = (
+    interval: string | null
+): string | null => {
+    if (typeof interval === 'string' && POSTGRES_INTERVAL_RE.test(interval)) {
+        const [hours, minutes, seconds] = interval.split(':').map((segment) => {
+            const numericSegment = Number(segment);
+
+            return isFinite(numericSegment) ? numericSegment : 0;
+        });
+
+        if (seconds > 0) {
+            const hoursInSeconds = hours * 3600;
+            const minutesInSeconds = minutes * 60;
+
+            return `${hoursInSeconds + minutesInSeconds + seconds}s`;
+        }
+
+        if (minutes > 0) {
+            const hoursInMinutes = hours * 60;
+
+            return `${hoursInMinutes + minutes}m`;
+        }
+
+        return `${hours}h`;
+    }
+
+    return interval;
+};

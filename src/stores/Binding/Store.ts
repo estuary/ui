@@ -32,7 +32,11 @@ import {
 import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
 import { Entity, Schema } from 'types';
-import { getDereffedSchema, hasLength } from 'utils/misc-utils';
+import {
+    formatPostgresInterval,
+    getDereffedSchema,
+    hasLength,
+} from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
     getBackfillCounter,
@@ -40,7 +44,6 @@ import {
     getCollectionName,
     getDisableProps,
 } from 'utils/workflow-utils';
-import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
@@ -221,33 +224,6 @@ const initializeAndGenerateUUID = (
         collection,
         UUID,
     };
-};
-
-const formatPostgresInterval = (interval: string | null): string | null => {
-    if (typeof interval === 'string' && POSTGRES_INTERVAL_RE.test(interval)) {
-        const [hours, minutes, seconds] = interval.split(':').map((segment) => {
-            const numericSegment = Number(segment);
-
-            return isFinite(numericSegment) ? numericSegment : 0;
-        });
-
-        if (seconds > 0) {
-            const hoursInSeconds = hours * 3600;
-            const minutesInSeconds = minutes * 60;
-
-            return `${hoursInSeconds + minutesInSeconds + seconds}s`;
-        }
-
-        if (minutes > 0) {
-            const hoursInMinutes = hours * 60;
-
-            return `${hoursInMinutes + minutes}m`;
-        }
-
-        return `${hours}h`;
-    }
-
-    return interval;
 };
 
 const hydrateConnectorTagDependentState = async (

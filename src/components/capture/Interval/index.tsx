@@ -13,10 +13,12 @@ import {
     primaryButtonText,
     primaryColoredBackground_hovered,
 } from 'context/Theme';
+import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
+import { NUMERIC_RE, POSTGRES_INTERVAL_RE } from 'validation';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
@@ -25,16 +27,15 @@ interface Props {
     readOnly?: boolean;
 }
 
-const NUMERIC_RE = RegExp(`^[0-9]+$`);
-
 function CaptureInterval({ readOnly }: Props) {
     const intl = useIntl();
     const label = intl.formatMessage({
         id: 'workflows.interval.input.label',
     });
 
+    const { updateStoredInterval } = useCaptureInterval();
+
     const interval = useBindingStore((state) => state.captureInterval);
-    const setInterval = useBindingStore((state) => state.setCaptureInterval);
 
     const [input, setInput] = useState(
         interval?.substring(0, interval.length - 1)
@@ -46,7 +47,10 @@ function CaptureInterval({ readOnly }: Props) {
         return null;
     }
 
-    const errorExists = hasLength(input) && !NUMERIC_RE.test(input);
+    const errorExists =
+        hasLength(input) &&
+        !NUMERIC_RE.test(input) &&
+        !POSTGRES_INTERVAL_RE.test(input);
 
     return (
         <Stack spacing={1}>
@@ -100,6 +104,11 @@ function CaptureInterval({ readOnly }: Props) {
                                     );
 
                                     setUnit(event.target.value);
+
+                                    updateStoredInterval(
+                                        input,
+                                        event.target.value
+                                    );
                                 }}
                                 required
                                 size={INPUT_SIZE}
@@ -154,10 +163,7 @@ function CaptureInterval({ readOnly }: Props) {
                         const value = event.target.value.trim();
 
                         setInput(value);
-
-                        if (!hasLength(value) || NUMERIC_RE.test(input)) {
-                            setInterval(value);
-                        }
+                        updateStoredInterval(value, unit);
                     }}
                     size={INPUT_SIZE}
                     sx={{
