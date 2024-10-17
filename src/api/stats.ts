@@ -271,7 +271,7 @@ const getStatsForDetails = (
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', range.grain)
-        .gt('ts', past.toFormat(defaultQueryDateFormat))
+        .gte('ts', past.toFormat(defaultQueryDateFormat))
         .lte('ts', current.toFormat(defaultQueryDateFormat))
         .order('ts', { ascending: true })
         .returns<CatalogStats_Details[]>();

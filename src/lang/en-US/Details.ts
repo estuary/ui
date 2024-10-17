@@ -54,5 +54,5 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 
-    'detailsPanel.graph.timezone': `{relativeUnit} shown in:`,
+    'detailsPanel.graph.timezone': `{relativeUnit} are in`,
 };
