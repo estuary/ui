@@ -1,5 +1,4 @@
 import { DataGrains } from 'components/graphs/types';
-import { convertRangeToSettings } from 'services/luxon';
 import { PersistOptions } from 'zustand/middleware';
 import { DetailsUsageState } from './types';
 
@@ -13,10 +12,10 @@ export const persistOptions: PersistOptions<DetailsUsageState> = {
             const amount = persistedState.range ?? 6;
 
             // Version 0 was only storing the range as 6, 12, 24, 48
-            persistedState.range = convertRangeToSettings({
+            persistedState.range = {
                 amount,
                 grain: DataGrains.hourly,
-            });
+            };
 
             if (persistedState.foo) {
                 delete persistedState.foo;

@@ -7,17 +7,18 @@ import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { defaultQueryDateFormat } from 'services/luxon';
-import useDetailsUsageStore from 'stores/DetailsUsage/useDetailsUsageStore';
+import { useDetailsUsageStoreRangeSettings } from 'stores/DetailsUsage/useDetailsUsageStore';
 
 function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
-    const range = useDetailsUsageStore((store) => store.range);
+    const range = useDetailsUsageStoreRangeSettings();
 
     const { data, error, isValidating } = useQuery(
         hasLength(catalogName)
             ? getStatsForDetails(catalogName, entityType, range)
             : null,
         {
+            revalidateOnMount: true,
             refreshInterval: 15000,
         }
     );

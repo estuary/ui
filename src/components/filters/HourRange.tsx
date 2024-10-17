@@ -4,15 +4,17 @@ import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useDetailsUsageStore from 'stores/DetailsUsage/useDetailsUsageStore';
+import {
+    useDetailsUsageStore,
+    useDetailsUsageStoreRangeSettings,
+} from 'stores/DetailsUsage/useDetailsUsageStore';
 
 function HourlyRangeFilter() {
     const intl = useIntl();
 
-    const [range, setRange] = useDetailsUsageStore((store) => [
-        store.range,
-        store.setRange,
-    ]);
+    const range = useDetailsUsageStoreRangeSettings();
+
+    const [setRange] = useDetailsUsageStore((store) => [store.setRange]);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
