@@ -5,7 +5,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { omit } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { useBindingStore } from 'stores/Binding/Store';
 import { Schema } from 'types';
 import { formatPostgresInterval, hasLength } from 'utils/misc-utils';
@@ -21,9 +21,17 @@ export default function useCaptureInterval() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const updateStoredInterval = (input: string, unit: string) => {
-        const unitlessInterval =
-            !hasLength(input) || POSTGRES_INTERVAL_RE.test(input);
+    const updateStoredInterval = (
+        input: string,
+        unit: string,
+        setUnit?: Dispatch<SetStateAction<string>>
+    ) => {
+        const postgresIntervalFormat = POSTGRES_INTERVAL_RE.test(input);
+        const unitlessInterval = !hasLength(input) || postgresIntervalFormat;
+
+        if (setUnit && postgresIntervalFormat) {
+            setUnit('');
+        }
 
         if (unitlessInterval || NUMERIC_RE.test(input)) {
             setInterval(unitlessInterval ? input : `${input}${unit}`);

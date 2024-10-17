@@ -163,7 +163,7 @@ function CaptureInterval({ readOnly }: Props) {
                         const value = event.target.value.trim();
 
                         setInput(value);
-                        updateStoredInterval(value, unit);
+                        updateStoredInterval(value, unit, setUnit);
                     }}
                     size={INPUT_SIZE}
                     sx={{
