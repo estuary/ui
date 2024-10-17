@@ -17,7 +17,6 @@ import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
-import { POSTGRES_INTERVAL_RE } from 'validation';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
@@ -26,23 +25,7 @@ interface Props {
     readOnly?: boolean;
 }
 
-const formatPostgresInterval = (interval: string | null): string => {
-    if (typeof interval === 'string' && POSTGRES_INTERVAL_RE.test(interval)) {
-        const [hours, minutes, seconds] = interval.split(':').map((segment) => {
-            const numericSegment = Number(segment);
-
-            return isFinite(numericSegment) ? numericSegment : 0;
-        });
-
-        return hours > 0
-            ? `${hours}h`
-            : minutes > 0
-            ? `${minutes}m`
-            : `${seconds}s`;
-    }
-
-    return interval ?? '';
-};
+const NUMERIC_RE = RegExp(`^[0-9]+$`);
 
 function CaptureInterval({ readOnly }: Props) {
     const intl = useIntl();
@@ -53,14 +36,17 @@ function CaptureInterval({ readOnly }: Props) {
     const interval = useBindingStore((state) => state.captureInterval);
     const setInterval = useBindingStore((state) => state.setCaptureInterval);
 
-    const [input, setInput] = useState(interval);
-    const [unit, setUnit] = useState(
-        formatPostgresInterval(interval).at(-1) ?? ''
+    const [input, setInput] = useState(
+        interval?.substring(0, interval.length - 1)
     );
+
+    const [unit, setUnit] = useState(interval?.at(-1) ?? '');
 
     if (typeof input !== 'string') {
         return null;
     }
+
+    const errorExists = hasLength(input) && !NUMERIC_RE.test(input);
 
     return (
         <Stack spacing={1}>
@@ -73,7 +59,7 @@ function CaptureInterval({ readOnly }: Props) {
             </Typography>
 
             <FormControl
-                error={false}
+                error={errorExists}
                 fullWidth={false}
                 size={INPUT_SIZE}
                 variant="outlined"
@@ -160,7 +146,7 @@ function CaptureInterval({ readOnly }: Props) {
                             </Select>
                         </InputAdornment>
                     }
-                    error={!POSTGRES_INTERVAL_RE.test(input)}
+                    error={errorExists}
                     id={INPUT_ID}
                     label={label}
                     onChange={(event) => {
@@ -169,10 +155,7 @@ function CaptureInterval({ readOnly }: Props) {
 
                         setInput(value);
 
-                        if (
-                            !hasLength(value) ||
-                            POSTGRES_INTERVAL_RE.test(value)
-                        ) {
+                        if (!hasLength(value) || NUMERIC_RE.test(input)) {
                             setInterval(value);
                         }
                     }}
@@ -186,7 +169,7 @@ function CaptureInterval({ readOnly }: Props) {
 
                 <FormHelperText
                     id={DESCRIPTION_ID}
-                    error={!POSTGRES_INTERVAL_RE.test(input)}
+                    error={errorExists}
                     style={{ marginLeft: 0 }}
                 >
                     {intl.formatMessage({
