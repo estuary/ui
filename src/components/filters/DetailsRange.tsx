@@ -4,7 +4,7 @@ import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { BASE_RANGE_SETTINGS } from 'services/luxon';
+import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
 // TODO (details range) - we should probably not add many more predefined ranges and
@@ -16,7 +16,7 @@ function DetailsRange() {
         store.range,
         store.setRange,
     ]);
-    const { relativeUnit } = BASE_RANGE_SETTINGS[range.grain];
+    const { relativeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

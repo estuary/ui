@@ -1,7 +1,7 @@
 import { DataGrains } from 'components/graphs/types';
 import { DateTime, DateTimeUnit, ToRelativeUnit } from 'luxon';
 
-export interface RangeSettings {
+export interface LuxonGrainSettings {
     longFormat: (val: DateTime) => string;
     shortFormat: (val: DateTime) => string;
     getTimeZone: (val: DateTime) => string;
@@ -16,7 +16,7 @@ const dayAndMonthFormat = `LLL dd`;
 const timeZoneFormat = `ZZZZ`;
 export const defaultQueryDateFormat = `yyyy-MM-dd'T'HH:mm:ssZZ`;
 
-const DAILY_RANGE_SETTINGS: RangeSettings = {
+const DAILY_GRAIN_SETTINGS: LuxonGrainSettings = {
     relativeUnit: 'days',
     timeUnit: 'day',
     labelKey: 'detailsPanel.recentUsage.filter.label.days',
@@ -25,10 +25,10 @@ const DAILY_RANGE_SETTINGS: RangeSettings = {
     shortFormat: (val) => val.toUTC().toFormat(dayAndMonthFormat),
 };
 
-export const BASE_RANGE_SETTINGS: {
-    [k in DataGrains]: RangeSettings;
+export const LUXON_GRAIN_SETTINGS: {
+    [k in DataGrains]: LuxonGrainSettings;
 } = {
-    [DataGrains.daily]: DAILY_RANGE_SETTINGS,
+    [DataGrains.daily]: DAILY_GRAIN_SETTINGS,
     [DataGrains.hourly]: {
         relativeUnit: 'hours',
         timeUnit: 'hour',
@@ -38,7 +38,7 @@ export const BASE_RANGE_SETTINGS: {
         shortFormat: (val) => val.toLocaleString(DateTime.TIME_SIMPLE),
     },
     [DataGrains.monthly]: {
-        ...DAILY_RANGE_SETTINGS,
+        ...DAILY_GRAIN_SETTINGS,
         relativeUnit: 'months',
         timeUnit: 'month',
         labelKey: 'detailsPanel.recentUsage.filter.label.months',

@@ -21,7 +21,7 @@ import readable from 'readable-numbers';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 import { CatalogStats_Details } from 'types';
 import useDataByHourGraphMessages from 'hooks/useDataByHourGraphMessages';
-import { BASE_RANGE_SETTINGS } from 'services/luxon';
+import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
@@ -68,7 +68,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         store.statType,
     ]);
     const { shortFormat, longFormat, getTimeZone, labelKey } =
-        BASE_RANGE_SETTINGS[range.grain];
+        LUXON_GRAIN_SETTINGS[range.grain];
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');

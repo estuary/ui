@@ -15,7 +15,7 @@ import {
 } from 'date-fns';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
-import { BASE_RANGE_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
+import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
 import {
     escapeReservedCharacters,
     TABLES,
@@ -249,7 +249,7 @@ const getStatsForDetails = (
     entityType: Entity,
     range: DataByHourRange
 ) => {
-    const rangeSettings = BASE_RANGE_SETTINGS[range.grain];
+    const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
     const current = DateTime.utc().startOf(rangeSettings.timeUnit);
     const past = current.minus({
         [rangeSettings.relativeUnit]: range.amount - 1,

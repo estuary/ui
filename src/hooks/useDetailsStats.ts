@@ -6,14 +6,14 @@ import { useMemo } from 'react';
 import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { BASE_RANGE_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
+import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
 function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
 
     const [range] = useDetailsUsageStore((store) => [store.range]);
-    const { relativeUnit, timeUnit } = BASE_RANGE_SETTINGS[range.grain];
+    const { relativeUnit, timeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
     const { data, error, isValidating } = useQuery(
         hasLength(catalogName)
