@@ -49,7 +49,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
-    'detailsPanel.recentUsage.filter.label.days': `Last {range} days`,
+    'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 };

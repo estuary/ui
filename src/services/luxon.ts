@@ -20,7 +20,8 @@ export const convertRangeToSettings = (
         case DataGrains.hourly:
             return {
                 ...range,
-                formatPattern: `t ZZZZ`,
+                formatPattern: `p`,
+                // formatPattern: `t ZZZZ`,
                 // formatPattern: (val) => DateTime.fromISO(val).toFormat(`t`),
                 relativeUnit: 'hours',
                 timeUnit: 'hour',
@@ -28,7 +29,8 @@ export const convertRangeToSettings = (
         case DataGrains.daily:
             return {
                 ...range,
-                formatPattern: `D ZZZZ`,
+                formatPattern: `P`,
+                // formatPattern: `D ZZZZ`,
                 // formatPattern: (val) =>
                 //     DateTime.fromISO(val, { zone: 'UTC' }).toFormat(`D`),
                 relativeUnit: 'days',
@@ -37,7 +39,8 @@ export const convertRangeToSettings = (
         case DataGrains.monthly:
             return {
                 ...range,
-                formatPattern: `D ZZZZ`,
+                formatPattern: `P`,
+                // formatPattern: `D ZZZZ`,
                 relativeUnit: 'months',
                 timeUnit: 'month',
             };

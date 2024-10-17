@@ -1,5 +1,4 @@
 import { useTheme } from '@mui/material';
-import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
 import { format, parseISO } from 'date-fns';
@@ -20,6 +19,7 @@ import prettyBytes from 'pretty-bytes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
+import useDetailsUsageStore from 'stores/DetailsUsage/useDetailsUsageStore';
 import { CatalogStats_Details } from 'types';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourStatType } from '../types';
@@ -173,7 +173,8 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const xAxisFormatter = useCallback(
         (value: any) => {
             if (value) {
-                return DateTime.fromISO(value).toFormat(formatPattern);
+                return format(parseISO(value), formatPattern);
+                // return DateTime.fromISO(value).toFormat(formatPattern);
             }
             return '';
         },

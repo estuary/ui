@@ -1,23 +1,11 @@
-import {
-    DataByHourRange,
-    DataByHourStatType,
-    DataGrains,
-} from 'components/graphs/types';
+import { DataGrains } from 'components/graphs/types';
 import produce from 'immer';
-import { convertRangeToSettings, RangeSettings } from 'services/luxon';
+import { convertRangeToSettings } from 'services/luxon';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-
-interface DetailsUsageState {
-    range: RangeSettings;
-    setRange: (val: DataByHourRange) => void;
-    statType: DataByHourStatType;
-    setStatType: (val: DataByHourStatType) => void;
-}
-
-const name = 'estuary.details-usage-store';
-const version = 1;
+import { persistOptions } from './shared';
+import { DetailsUsageState } from './types';
 
 const useDetailsUsageStore = create<DetailsUsageState>()(
     persist(
@@ -34,7 +22,7 @@ const useDetailsUsageStore = create<DetailsUsageState>()(
                             state.range = convertRangeToSettings(newVal);
                         }),
                         false,
-                        'setRange'
+                        'setRangeSettings'
                     );
                 },
                 setStatType: (newVal) => {
@@ -47,8 +35,8 @@ const useDetailsUsageStore = create<DetailsUsageState>()(
                     );
                 },
             };
-        }, devtoolsOptions(name)),
-        { name, version }
+        }, devtoolsOptions(persistOptions.name)),
+        persistOptions
     )
 );
 

@@ -1,10 +1,10 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { DataByHourRange, DataGrains } from 'components/graphs/types';
-import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import useDetailsUsageStore from 'stores/DetailsUsage/useDetailsUsageStore';
 
 function HourlyRangeFilter() {
     const intl = useIntl();
