@@ -1,6 +1,5 @@
 import { DataGrains } from 'components/graphs/types';
 import produce from 'immer';
-import { convertRangeToSettings, RangeSettings } from 'services/luxon';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -39,7 +38,3 @@ export const useDetailsUsageStore = create<DetailsUsageState>()(
         persistOptions
     )
 );
-
-export const useDetailsUsageStoreRangeSettings = (): RangeSettings => {
-    return useDetailsUsageStore((store) => convertRangeToSettings(store.range));
-};

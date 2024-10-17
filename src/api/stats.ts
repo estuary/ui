@@ -1,5 +1,6 @@
 import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { DataByHourRange } from 'components/graphs/types';
 import { supabaseClient } from 'context/GlobalProviders';
 import {
     Duration,
@@ -14,7 +15,7 @@ import {
 } from 'date-fns';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
-import { defaultQueryDateFormat, RangeSettings } from 'services/luxon';
+import { BASE_RANGE_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
 import {
     escapeReservedCharacters,
     TABLES,
@@ -246,10 +247,13 @@ const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
 const getStatsForDetails = (
     catalogName: string,
     entityType: Entity,
-    range: RangeSettings
+    range: DataByHourRange
 ) => {
-    const current = DateTime.utc().startOf(range.timeUnit);
-    const past = current.minus({ [range.relativeUnit]: range.amount - 1 });
+    const rangeSettings = BASE_RANGE_SETTINGS[range.grain];
+    const current = DateTime.utc().startOf(rangeSettings.timeUnit);
+    const past = current.minus({
+        [rangeSettings.relativeUnit]: range.amount - 1,
+    });
 
     let query: string;
     switch (entityType) {

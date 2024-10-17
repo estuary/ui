@@ -4,19 +4,19 @@ import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import {
-    useDetailsUsageStore,
-    useDetailsUsageStoreRangeSettings,
-} from 'stores/DetailsUsage/useDetailsUsageStore';
+import { BASE_RANGE_SETTINGS } from 'services/luxon';
+import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
 // TODO (details range) - we should probably not add many more predefined ranges and
 //  start allowing a user to enter their own range manually.
 function DetailsRange() {
     const intl = useIntl();
 
-    const range = useDetailsUsageStoreRangeSettings();
-
-    const [setRange] = useDetailsUsageStore((store) => [store.setRange]);
+    const [range, setRange] = useDetailsUsageStore((store) => [
+        store.range,
+        store.setRange,
+    ]);
+    const { relativeUnit } = BASE_RANGE_SETTINGS[range.grain];
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -56,7 +56,7 @@ function DetailsRange() {
             >
                 {intl.formatMessage(
                     {
-                        id: `detailsPanel.recentUsage.filter.label.${range.relativeUnit}`,
+                        id: `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
                     },
                     { range: range.amount }
                 )}
