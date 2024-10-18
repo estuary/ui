@@ -90,7 +90,7 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
                                 intl.formatMessage({
                                     id:
                                         err === 'no binding'
-                                            ? 'notBeforeNotAfter.update.error.noBinding'
+                                            ? 'updateBinding.error.noBinding'
                                             : 'notBeforeNotAfter.update.error',
                                 }),
                                 { ...snackbarSettings, variant: 'error' }

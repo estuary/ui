@@ -1042,7 +1042,7 @@ const getInitialState = (
                 // Updating a single item
                 // A specific list (toggle page)
                 // Nothing specified (toggle all)
-                const evaluatedUUIDs =
+                const evaluatedUUIDs: string[] =
                     typeof targetUUIDs === 'string'
                         ? [targetUUIDs]
                         : Array.isArray(targetUUIDs)
