@@ -17,6 +17,8 @@ export const persistOptions: PersistOptions<DetailsUsageState> = {
                 grain: DataGrains.hourly,
             };
 
+            // Want to clean up the `foo` prop that erroneously made it
+            //  into production.
             if (persistedState.foo) {
                 delete persistedState.foo;
             }
