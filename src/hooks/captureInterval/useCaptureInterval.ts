@@ -9,7 +9,11 @@ import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { useBindingStore } from 'stores/Binding/Store';
 import { Schema } from 'types';
 import { formatPostgresInterval, hasLength } from 'utils/misc-utils';
-import { NUMERIC_RE, POSTGRES_INTERVAL_RE } from 'validation';
+import {
+    CAPTURE_INTERVAL_RE,
+    NUMERIC_RE,
+    POSTGRES_INTERVAL_RE,
+} from 'validation';
 
 export default function useCaptureInterval() {
     // Binding Store
@@ -26,15 +30,24 @@ export default function useCaptureInterval() {
         unit: string,
         setUnit?: Dispatch<SetStateAction<string>>
     ) => {
-        const postgresIntervalFormat = POSTGRES_INTERVAL_RE.test(input);
-        const unitlessInterval = !hasLength(input) || postgresIntervalFormat;
+        const trimmedInput = input.trim();
 
-        if (setUnit && postgresIntervalFormat) {
-            setUnit('');
+        const postgresIntervalFormat = POSTGRES_INTERVAL_RE.test(trimmedInput);
+        const captureIntervalFormat = CAPTURE_INTERVAL_RE.test(trimmedInput);
+
+        const unitlessInterval =
+            !hasLength(trimmedInput) ||
+            postgresIntervalFormat ||
+            captureIntervalFormat;
+
+        if (setUnit && (postgresIntervalFormat || captureIntervalFormat)) {
+            setUnit('i');
         }
 
-        if (unitlessInterval || NUMERIC_RE.test(input)) {
-            setInterval(unitlessInterval ? input : `${input}${unit}`);
+        if (unitlessInterval || NUMERIC_RE.test(trimmedInput)) {
+            setInterval(
+                unitlessInterval ? trimmedInput : `${trimmedInput}${unit}`
+            );
         }
     };
 

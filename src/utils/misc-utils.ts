@@ -9,7 +9,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { POSTGRES_INTERVAL_RE } from 'validation';
+import { CAPTURE_INTERVAL_RE, POSTGRES_INTERVAL_RE } from 'validation';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -223,28 +223,37 @@ export const isPostgrestFetcher = (
 export const formatPostgresInterval = (
     interval: string | null
 ): string | null => {
-    if (typeof interval === 'string' && POSTGRES_INTERVAL_RE.test(interval)) {
+    if (typeof interval !== 'string') {
+        return interval;
+    }
+
+    let formattedInterval = '';
+
+    if (POSTGRES_INTERVAL_RE.test(interval)) {
         const [hours, minutes, seconds] = interval.split(':').map((segment) => {
             const numericSegment = Number(segment);
 
             return isFinite(numericSegment) ? numericSegment : 0;
         });
 
-        if (seconds > 0) {
-            const hoursInSeconds = hours * 3600;
-            const minutesInSeconds = minutes * 60;
-
-            return `${hoursInSeconds + minutesInSeconds + seconds}s`;
+        if (hours > 0) {
+            formattedInterval = formattedInterval.concat(`${hours}h `);
         }
 
         if (minutes > 0) {
-            const hoursInMinutes = hours * 60;
-
-            return `${hoursInMinutes + minutes}m`;
+            formattedInterval = formattedInterval.concat(`${minutes}m `);
         }
 
-        return `${hours}h`;
+        if (seconds > 0) {
+            formattedInterval = formattedInterval.concat(`${seconds}s`);
+        }
     }
 
-    return interval;
+    if (CAPTURE_INTERVAL_RE.test(interval)) {
+        formattedInterval = formattedInterval.concat(interval);
+    }
+
+    return hasLength(formattedInterval)
+        ? formattedInterval.trim().concat('i')
+        : interval;
 };

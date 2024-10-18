@@ -280,7 +280,9 @@ const hydrateSpecificationDependentState = async (
         );
 
         get().setCaptureInterval(
-            draftSpecs[0].spec?.interval ?? fallbackInterval
+            draftSpecs[0].spec?.interval
+                ? formatPostgresInterval(draftSpecs[0].spec.interval)
+                : fallbackInterval
         );
     } else {
         get().prefillBindingDependentState(entityType, liveSpec.bindings);

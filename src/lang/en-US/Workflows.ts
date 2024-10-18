@@ -109,6 +109,7 @@ export const Workflows: Record<string, string> = {
     'workflows.interval.input.seconds': `seconds`,
     'workflows.interval.input.minutes': `minutes`,
     'workflows.interval.input.hours': `hours`,
+    'workflows.interval.input.interval': `interval`,
 
     'workflows.sourceCapture.header': `Link Capture`,
     'workflows.sourceCapture.cta': `Source From Capture`,

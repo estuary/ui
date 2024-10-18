@@ -9,7 +9,9 @@ export const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
 
 export const NUMERIC_RE = RegExp(`^[0-9]+$`);
 export const POSTGRES_INTERVAL_RE = new RegExp(`^[0-9]{2}:[0-9]{2}:[0-9]{2}$`);
-export const CAPTURE_INTERVAL_RE = new RegExp(`^[0-9]+(s|m|h)$`);
+export const CAPTURE_INTERVAL_RE = new RegExp(
+    /^([0-9]+h)? ?([0-9]+m)? ?([0-9]+s)?$/
+);
 
 // Based on the patterns connectors use for date time
 // eslint-disable-next-line no-useless-escape

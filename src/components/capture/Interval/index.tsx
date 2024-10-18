@@ -14,17 +14,20 @@ import {
     primaryColoredBackground_hovered,
 } from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
-    useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
-import { NUMERIC_RE, POSTGRES_INTERVAL_RE } from 'validation';
+import {
+    CAPTURE_INTERVAL_RE,
+    NUMERIC_RE,
+    POSTGRES_INTERVAL_RE,
+} from 'validation';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
@@ -39,7 +42,7 @@ function CaptureInterval({ readOnly }: Props) {
         id: 'workflows.interval.input.label',
     });
 
-    const { applyCaptureInterval, updateStoredInterval } = useCaptureInterval();
+    const { updateStoredInterval } = useCaptureInterval();
 
     // Binding Store
     const interval = useBindingStore((state) => state.captureInterval);
@@ -47,12 +50,17 @@ function CaptureInterval({ readOnly }: Props) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
-    const setFormState = useFormStateStore_setFormState();
+    // const setFormState = useFormStateStore_setFormState();
 
-    const [saving, setSaving] = useState(false);
-    const [unit, setUnit] = useState(interval?.at(-1) ?? '');
+    const lastIntervalChar = interval?.at(-1) ?? '';
+    const singleUnit = ['h', 'i', 'm', 's'].some(
+        (symbol) => lastIntervalChar === symbol
+    );
+
+    // const [saving, setSaving] = useState(false);
+    const [unit, setUnit] = useState(singleUnit ? lastIntervalChar : '');
     const [input, setInput] = useState(
-        interval?.substring(0, interval.length - 1)
+        singleUnit ? interval?.substring(0, interval.length - 1) : interval
     );
 
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
@@ -61,42 +69,43 @@ function CaptureInterval({ readOnly }: Props) {
         input &&
             hasLength(input) &&
             !NUMERIC_RE.test(input) &&
-            !POSTGRES_INTERVAL_RE.test(input)
+            !POSTGRES_INTERVAL_RE.test(input) &&
+            !CAPTURE_INTERVAL_RE.test(input)
     );
 
     // TODO (capture-interval): Consider whether capture interval changes should
     //   place the form in an active state while the server patch is underway.
-    useEffect(() => {
-        if (!errorsExist && !saving) {
-            setSaving(true);
+    // useEffect(() => {
+    //     if (!errorsExist && !saving) {
+    //         setSaving(true);
 
-            applyCaptureInterval()
-                .then(
-                    () => {},
-                    (error) => {
-                        if (error) {
-                            setFormState({
-                                status: FormStatus.FAILED,
-                                error: {
-                                    title: 'captureInterval.error.updateFailed',
-                                    error,
-                                },
-                            });
-                        }
-                    }
-                )
-                .finally(() => {
-                    setSaving(false);
-                });
-        }
-    }, [
-        applyCaptureInterval,
-        errorsExist,
-        interval,
-        saving,
-        setFormState,
-        setSaving,
-    ]);
+    //         applyCaptureInterval()
+    //             .then(
+    //                 () => {},
+    //                 (error) => {
+    //                     if (error) {
+    //                         setFormState({
+    //                             status: FormStatus.FAILED,
+    //                             error: {
+    //                                 title: 'captureInterval.error.updateFailed',
+    //                                 error,
+    //                             },
+    //                         });
+    //                     }
+    //                 }
+    //             )
+    //             .finally(() => {
+    //                 setSaving(false);
+    //             });
+    //     }
+    // }, [
+    //     applyCaptureInterval,
+    //     errorsExist,
+    //     interval,
+    //     saving,
+    //     setFormState,
+    //     setSaving,
+    // ]);
 
     if (typeof input !== 'string') {
         return null;
@@ -149,11 +158,6 @@ function CaptureInterval({ readOnly }: Props) {
                                     // TODO: (capture-interval): Unset interval values above the selected unit if the input
                                     //   is formatted as an interval. Otherwise, apply the input value to the interval and unset all
                                     //   other interval segments.
-                                    console.log(
-                                        'select change',
-                                        event.target.value
-                                    );
-
                                     setUnit(event.target.value);
 
                                     updateStoredInterval(
@@ -203,6 +207,10 @@ function CaptureInterval({ readOnly }: Props) {
                                 <MenuItem value="h">
                                     <FormattedMessage id="workflows.interval.input.hours" />
                                 </MenuItem>
+
+                                <MenuItem value="i">
+                                    <FormattedMessage id="workflows.interval.input.interval" />
+                                </MenuItem>
                             </Select>
                         </InputAdornment>
                     }
@@ -210,8 +218,7 @@ function CaptureInterval({ readOnly }: Props) {
                     id={INPUT_ID}
                     label={label}
                     onChange={(event) => {
-                        console.log('change', event.target.value);
-                        const value = event.target.value.trim();
+                        const value = event.target.value;
 
                         setInput(value);
                         updateStoredInterval(value, unit, setUnit);
