@@ -227,6 +227,7 @@ function CaptureInterval({ readOnly }: Props) {
                     sx={{
                         borderRadius: 3,
                         pr: 0,
+                        width: 400,
                     }}
                     value={input}
                 />
