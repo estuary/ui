@@ -32,9 +32,9 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     },
 };
 
-export const autoCompleteDefaults_Virtual_Clearable: AutocompleteProps<
+export const autoCompleteDefaults_Virtual_Non_Clearable: AutocompleteProps<
     any,
-    any,
+    false,
     true,
     false,
     'div'
@@ -43,6 +43,7 @@ export const autoCompleteDefaults_Virtual_Clearable: AutocompleteProps<
     PopperComponent,
     disableCloseOnSelect: false,
     disableClearable: true,
+    multiple: false,
     options: [], // You MUST provide these yourself
     size: 'small',
     renderInput: () => null, // You MUST provide these yourself
