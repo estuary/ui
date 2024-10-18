@@ -22,9 +22,9 @@ const getInitialStateData = (): Pick<
     hydrationErrors: null,
     hydrationErrorsExist: false,
     capabilities: {
-        admin: {},
-        read: {},
-        write: {},
+        admin: [],
+        read: [],
+        write: [],
     },
     mutate: null,
 });
@@ -83,11 +83,9 @@ const getInitialState = (
                     if (!authRole) {
                         return;
                     }
-
-                    state.capabilities[authRole.capability] = {
-                        ...state.capabilities[authRole.capability],
-                        [authRole.role_prefix]: {},
-                    };
+                    state.capabilities[authRole.capability].push(
+                        authRole.role_prefix
+                    );
                 });
             }),
             false,

@@ -13,13 +13,13 @@ import { useEntitiesStore } from './Store';
 
 export const useEntitiesStore_capabilities_readable = () => {
     return useEntitiesStore(
-        useShallow((state) =>
-            Object.keys({
+        useShallow((state) => [
+            ...new Set([
                 ...state.capabilities.admin,
                 ...state.capabilities.write,
                 ...state.capabilities.read,
-            })
-        )
+            ]),
+        ])
     );
 };
 
@@ -35,17 +35,21 @@ export const useEntitiesStore_capabilities_readable = () => {
 //     );
 // };
 
-export const useEntitiesStore_capabilities_adminable = () => {
+export const useEntitiesStore_atLeastOneAdminTenant = () => {
     return useEntitiesStore(
-        useShallow((state) => Object.keys(state.capabilities.admin))
+        useShallow((state) => state.capabilities.admin.length > 0)
     );
+};
+
+export const useEntitiesStore_capabilities_adminable = () => {
+    return useEntitiesStore(useShallow((state) => state.capabilities.admin));
 };
 
 export const useEntitiesStore_tenantsWithAdmin = () => {
     return useEntitiesStore(
         useShallow((state) => [
             ...new Set(
-                Object.keys(state.capabilities.admin).map((tenant) =>
+                state.capabilities.admin.map((tenant) =>
                     stripPathing(tenant, true)
                 )
             ),

@@ -1,20 +1,14 @@
 import { ParsedPagedFetchAllResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
-import { AuthRoles, Schema } from 'types';
-
-export interface ObjectRoleMetadata {
-    [key: string]: {
-        token?: string;
-    };
-}
+import { AuthRoles } from 'types';
 
 export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to
     capabilities: {
-        admin: ObjectRoleMetadata | Schema | {};
-        read: ObjectRoleMetadata | Schema | {};
-        write: ObjectRoleMetadata | Schema | {};
+        admin: string[];
+        read: string[];
+        write: string[];
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 

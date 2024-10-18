@@ -2,14 +2,14 @@ import { Box, Button } from '@mui/material';
 import ShareDataDialog from 'components/tables/AccessGrants/DataSharing/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import { useEntitiesStore_atLeastOneAdminTenant } from 'stores/Entities/hooks';
 
 function DataShareButton() {
     const [open, setOpen] = useState<boolean>(false);
 
-    const objectRoles = useEntitiesStore_capabilities_adminable();
+    const atLeastOneAdminTenant = useEntitiesStore_atLeastOneAdminTenant();
 
-    return objectRoles.length > 0 ? (
+    return atLeastOneAdminTenant ? (
         <Box>
             <Button
                 variant="outlined"
