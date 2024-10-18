@@ -2,23 +2,25 @@ import { getStatsForDetails } from 'api/stats';
 import { useEntityType } from 'context/EntityContext';
 import { hasLength } from 'utils/misc-utils';
 import { CatalogStats_Details } from 'types';
-import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useMemo } from 'react';
 import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
+import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
-function useDetailsStats(catalogName: string, grain: string) {
+function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
-    const range = useDetailsUsageStore((store) => store.range);
+
+    const [range] = useDetailsUsageStore((store) => [store.range]);
+    const { relativeUnit, timeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
     const { data, error, isValidating } = useQuery(
         hasLength(catalogName)
-            ? getStatsForDetails(catalogName, entityType, grain, {
-                  hours: range,
-              })
+            ? getStatsForDetails(catalogName, entityType, range)
             : null,
         {
+            revalidateOnMount: true,
             refreshInterval: 15000,
         }
     );
@@ -34,26 +36,29 @@ function useDetailsStats(catalogName: string, grain: string) {
         }
 
         // Server is in UTC so start with that
-        const max = DateTime.utc().startOf('hour');
+        const max = DateTime.utc().startOf(timeUnit);
 
         // Subtracting 1 here because the interval is inclusive of the minimum
-        const min = max.minus({ hours: range - 1 });
+        const min = max.minus({
+            [relativeUnit]: range.amount - 1,
+        });
 
         // Go through the entire interval and populate the response if we have data
         //  otherwise default to an "empty" response
-        return Interval.fromDateTimes(min, max.plus({ hours: 1 }))
-            .splitBy({ hours: 1 })
+        return Interval.fromDateTimes(min, max.plus({ [relativeUnit]: 1 }))
+            .splitBy({ [relativeUnit]: 1 })
             .map((timeInterval) => {
                 const ts =
-                    timeInterval.start?.toFormat(`yyyy-MM-dd'T'HH:mm:ssZZ`) ??
-                    '';
+                    timeInterval.start?.toFormat(defaultQueryDateFormat) ?? '';
 
+                // Fetch data or default to empty object. This handles the rare case
+                //  where an entity will miss some rows here and there with stats
                 return (
                     find(data, { ts }) ??
                     ({
                         ts,
                         catalog_name: '',
-                        grain: 'hourly',
+                        grain: range.grain,
                         bytes_read: 0,
                         docs_read: 0,
                         bytes_written: 0,
@@ -61,7 +66,7 @@ function useDetailsStats(catalogName: string, grain: string) {
                     } as CatalogStats_Details)
                 );
             });
-    }, [data, range]);
+    }, [data, range.amount, range.grain, relativeUnit, timeUnit]);
 
     // Not always returning an array so we know when the empty array is a response
     //  vs a default. That way we can keep showing old data while new data is geing fetched

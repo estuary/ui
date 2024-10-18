@@ -1,8 +1,6 @@
 import { useTheme } from '@mui/material';
-import useDetailsUsageStore from 'components/shared/Entity/Details/Usage/useDetailsUsageStore';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { format, parseISO } from 'date-fns';
 import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
@@ -15,16 +13,19 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
+import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 import { CatalogStats_Details } from 'types';
+import useDataByHourGraphMessages from 'hooks/useDataByHourGraphMessages';
+import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
 import { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
-import useDataByHourGraphMessages from './useDataByHourGraphMessages';
 
 interface Props {
     id: string;
@@ -51,6 +52,9 @@ const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
     });
 };
 
+// TODO (data graph) - need to rename this as it can handle multiple grains
+//  not renaming as this is not 100% supporting of all the grains
+//  just hourly and daily as it required for details not (Q4 2024)
 function DataByHourGraph({ id, stats = [] }: Props) {
     const intl = useIntl();
     const theme = useTheme();
@@ -58,10 +62,17 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
-    const statType = useDetailsUsageStore((store) => store.statType);
+
+    const [range, statType] = useDetailsUsageStore((store) => [
+        store.range,
+        store.statType,
+    ]);
+    const { shortFormat, longFormat, getTimeZone, labelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
+    const [renderingTimezone, setRenderingTimezone] = useState<string>('');
 
     const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
 
@@ -96,17 +107,34 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     }, [id, myChart]);
 
     // Update the "last updated" string shown as an xAxis label
+    // Want to format with seconds to show more of a "ticking clock" to users
     useEffect(() => {
-        // Want to format with seconds to show more of a "ticking clock" to users
-        const currentTime = format(new Date(), `pp`);
-
         // Made a string instead of passing value into message to make life easier
         setLastUpdated(
             `${intl.formatMessage({
                 id: 'entityTable.data.lastUpdatedWithColon',
-            })} ${currentTime}`
+            })} ${DateTime.now().toFormat(`tt ZZZZ`)}`
         );
     }, [intl, stats]);
+
+    // Update the "timezone" string shown at the bottom
+    useEffect(() => {
+        setRenderingTimezone(
+            `${intl.formatMessage(
+                {
+                    id: 'detailsPanel.graph.timezone',
+                },
+                {
+                    relativeUnit: intl.formatMessage(
+                        { id: labelKey },
+                        { range: '' }
+                    ),
+                }
+            )} ${getTimeZone(DateTime.now())}`
+        );
+    }, [getTimeZone, intl, labelKey]);
+
+    getTimeZone;
 
     // It kind of sucks to be checking the entityType and not just seeing what was returned
     //  However, this prevents us from having to look through ALL the stats to decide what
@@ -282,11 +310,11 @@ function DataByHourGraph({ id, stats = [] }: Props) {
 
                     // Add the header outside the loop as we are good just grabbing the first tooltip config
                     const { axisValue } = tooltipConfigs[0];
-                    const tooltipTitle = format(
-                        parseISO(axisValue),
-                        `P hh:mm aa`
+                    content.push(
+                        `${getTooltipTitle(
+                            longFormat(DateTime.fromISO(axisValue))
+                        )}`
                     );
-                    content.push(`${getTooltipTitle(tooltipTitle)}`);
 
                     // Go through all the tooltip configs. These should match to all the Y axis
                     tooltipConfigs.forEach(
@@ -322,7 +350,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                         align: 'center',
                         formatter: (value: any) => {
                             if (value) {
-                                return format(parseISO(value), `p`);
+                                return shortFormat(DateTime.fromISO(value));
                             }
                             return '';
                         },
@@ -344,6 +372,27 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                         show: false,
                     },
                     position: 'top',
+                    silent: true,
+                },
+                {
+                    data: [renderingTimezone],
+                    axisLabel: {
+                        align: 'center',
+                    },
+                    axisLine: {
+                        show: false,
+                    },
+                    axisPointer: {
+                        show: false,
+                    },
+                    axisTick: {
+                        show: false,
+                    },
+                    tooltip: {
+                        show: false,
+                    },
+                    offset: 20,
+                    position: 'bottom',
                     silent: true,
                 },
             ],
@@ -390,9 +439,12 @@ function DataByHourGraph({ id, stats = [] }: Props) {
         intl,
         lastUpdated,
         legendConfig,
+        longFormat,
         myChart,
         renderingBytes,
+        renderingTimezone,
         scopedDataSet,
+        shortFormat,
         theme.palette.mode,
         theme.palette.text.primary,
         tooltipConfig,
