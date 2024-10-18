@@ -4,12 +4,10 @@ import {
     AutocompleteChangeReason,
     AutocompleteProps,
     AutocompleteRenderInputParams,
-    ListItemText,
     SxProps,
     TextField,
     Theme,
 } from '@mui/material';
-import { ReactNode } from 'react';
 import { autoCompleteDefaults_Virtual_Clearable } from '../AutoComplete/DefaultProps';
 
 interface Props {
@@ -65,15 +63,6 @@ function AutocompletedField({
                     variant="outlined"
                 />
             )}
-            renderOption={(renderOptionProps, option, state) => {
-                const RowContent = <ListItemText primary={option} />;
-
-                return [
-                    renderOptionProps,
-                    RowContent,
-                    state.selected,
-                ] as ReactNode;
-            }}
         />
     );
 }
