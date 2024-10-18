@@ -35,6 +35,12 @@ export const useEntitiesStore_capabilities_readable = () => {
 //     );
 // };
 
+export const useEntitiesStore_atLeastOneAdminTenant = () => {
+    return useEntitiesStore(
+        useShallow((state) => state.capabilities.admin.length > 0)
+    );
+};
+
 export const useEntitiesStore_capabilities_adminable = () => {
     return useEntitiesStore(useShallow((state) => state.capabilities.admin));
 };

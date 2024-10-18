@@ -32,6 +32,26 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     },
 };
 
+export const autoCompleteDefaults_Virtual_Clearable: AutocompleteProps<
+    any,
+    any,
+    true,
+    false,
+    'div'
+> = {
+    ListboxComponent,
+    PopperComponent,
+    disableCloseOnSelect: false,
+    disableClearable: true,
+    options: [], // You MUST provide these yourself
+    size: 'small',
+    renderInput: () => null, // You MUST provide these yourself
+    renderGroup: (params) => params as unknown as React.ReactNode,
+    renderOption: (props, option, state) => {
+        return [props, option, state.selected] as React.ReactNode;
+    },
+};
+
 export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     any,
     true,
