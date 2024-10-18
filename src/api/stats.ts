@@ -1,5 +1,6 @@
 import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
+import { DataByHourRange } from 'components/graphs/types';
 import { supabaseClient } from 'context/GlobalProviders';
 import {
     Duration,
@@ -8,13 +9,13 @@ import {
     nextSaturday,
     parseISO,
     previousSunday,
-    sub,
     subDays,
     subMonths,
     subWeeks,
 } from 'date-fns';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
+import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
 import {
     escapeReservedCharacters,
     TABLES,
@@ -246,14 +247,13 @@ const getStatsForBilling = (tenant: string, startDate: AllowedDates) => {
 const getStatsForDetails = (
     catalogName: string,
     entityType: Entity,
-    grain: string,
-    duration?: Duration
+    range: DataByHourRange
 ) => {
-    const current = new UTCDate();
-    const past = duration ? sub(current, duration) : current;
-
-    const gt = convertToUTC(past, hourlyGrain);
-    const lte = convertToUTC(current, hourlyGrain);
+    const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
+    const current = DateTime.utc().startOf(rangeSettings.timeUnit);
+    const past = current.minus({
+        [rangeSettings.relativeUnit]: range.amount - 1,
+    });
 
     let query: string;
     switch (entityType) {
@@ -274,9 +274,9 @@ const getStatsForDetails = (
         .from(TABLES.CATALOG_STATS)
         .select(query)
         .eq('catalog_name', catalogName)
-        .eq('grain', grain)
-        .gt('ts', gt)
-        .lte('ts', lte)
+        .eq('grain', range.grain)
+        .gte('ts', past.toFormat(defaultQueryDateFormat))
+        .lte('ts', current.toFormat(defaultQueryDateFormat))
         .order('ts', { ascending: true })
         .returns<CatalogStats_Details[]>();
 };
