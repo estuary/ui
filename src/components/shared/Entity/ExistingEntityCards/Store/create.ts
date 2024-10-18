@@ -59,8 +59,6 @@ const getInitialState = (
 
         hydrateState: async (entityType, connectorId) => {
             if (get().active && connectorId) {
-                const { setCreateNewTask, setHydrationErrorsExist } = get();
-
                 const { data, error } = await getLiveSpecsByConnectorId(
                     entityType,
                     connectorId,
@@ -68,15 +66,13 @@ const getInitialState = (
                 );
 
                 if (error) {
-                    setHydrationErrorsExist(true);
-                    setCreateNewTask(true);
+                    get().setHydrationErrorsExist(true);
+                    get().setCreateNewTask(true);
                 } else if (data && data.length > 0) {
-                    const { setQueryData, setConnectorName } = get();
-
-                    setQueryData(data);
-                    setConnectorName(data[0].title);
+                    get().setQueryData(data);
+                    get().setConnectorName(data[0].title);
                 } else {
-                    setCreateNewTask(true);
+                    get().setCreateNewTask(true);
                 }
             }
         },

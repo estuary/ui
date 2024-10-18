@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import { useShallow } from 'zustand/react/shallow';
 import { useEndpointConfigStore } from './Store';
 
@@ -14,7 +15,15 @@ export const useEndpointConfigStore_reset = () => {
 };
 
 export const useEndpointConfigStore_changed = () => {
-    return useEndpointConfigStore(useShallow((state) => state.stateChanged));
+    return useEndpointConfigStore(
+        useShallow(
+            (state) =>
+                !isEqual(
+                    state.encryptedEndpointConfig,
+                    state.publishedEndpointConfig
+                )
+        )
+    );
 };
 
 export const useEndpointConfigStore_endpointSchema = () => {

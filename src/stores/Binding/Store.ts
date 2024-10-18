@@ -38,7 +38,7 @@ import {
 } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
-import { getAllCollectionNames } from './shared';
+import { getCollectionNames } from './shared';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -281,9 +281,7 @@ const getInitialState = (
     addEmptyBindings: (data, rehydrating) => {
         set(
             produce((state: BindingState) => {
-                const collections = getAllCollectionNames(
-                    state.resourceConfigs
-                );
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 const emptyCollections: string[] =
                     rehydrating && hasLength(collections) ? collections : [];
@@ -431,22 +429,19 @@ const getInitialState = (
         const materializationRehydrating =
             materializationHydrating && rehydrating;
 
-        const { resetState, setHydrationErrorsExist } = get();
-        resetState(materializationRehydrating);
+        get().resetState(materializationRehydrating);
 
         if (connectorTagId && connectorTagId.length > 0) {
             const { data, error } = await getSchema_Resource(connectorTagId);
 
             if (error) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (data?.resource_spec_schema) {
-                const { setBackfillSupported, setResourceSchema } = get();
-
-                await setResourceSchema(
+                await get().setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
                 );
 
-                setBackfillSupported(!Boolean(data.disable_backfill));
+                get().setBackfillSupported(!Boolean(data.disable_backfill));
             }
         }
 
@@ -455,25 +450,23 @@ const getInitialState = (
                 await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
 
             if (liveSpecError) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (liveSpecs && liveSpecs.length > 0) {
-                const { prefillBindingDependentState } = get();
-
                 if (draftId) {
                     const { data: draftSpecs, error: draftSpecError } =
                         await getDraftSpecsByDraftId(draftId, entityType);
 
                     if (draftSpecError) {
-                        setHydrationErrorsExist(true);
+                        get().setHydrationErrorsExist(true);
                     } else if (draftSpecs && draftSpecs.length > 0) {
-                        prefillBindingDependentState(
+                        get().prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
                             draftSpecs[0].spec.bindings
                         );
                     }
                 } else {
-                    prefillBindingDependentState(
+                    get().prefillBindingDependentState(
                         entityType,
                         liveSpecs[0].spec.bindings
                     );
@@ -489,7 +482,7 @@ const getInitialState = (
             );
 
             if (error) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 get().addEmptyBindings(data, rehydrating);
 
@@ -588,9 +581,7 @@ const getInitialState = (
     prefillResourceConfigs: (targetCollections, disableOmit) => {
         set(
             produce((state: BindingState) => {
-                const collections = getAllCollectionNames(
-                    state.resourceConfigs
-                );
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 const [removedCollections, newCollections] = whatChanged(
                     state.bindings,
@@ -745,9 +736,7 @@ const getInitialState = (
     removeBindings: (targetUUIDs, workflow, taskName) => {
         set(
             produce((state: BindingState) => {
-                const collections = getAllCollectionNames(
-                    state.resourceConfigs
-                );
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 // Remove the selected bindings from the resource config dictionary.
                 const evaluatedResourceConfigs = omit(
