@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { omit } from 'lodash';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
+import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EditorStatus, EditorStoreState } from './types';
 
@@ -45,8 +45,8 @@ const getInitialStateData = <T>(): Pick<
 };
 
 const getInitialState = <T>(
-    set: NamedSet<EditorStoreState<T>>,
-    get: StoreApi<EditorStoreState<T>>['getState']
+    set: NamedSet<EditorStoreState<T>>
+    // get: StoreApi<EditorStoreState<T>>['getState']
 ): EditorStoreState<T> => {
     return {
         ...getInitialStateData<T>(),
@@ -168,14 +168,12 @@ const getInitialState = <T>(
 
         removeStaleStatus: (value) => {
             set(
-                produce((state) => {
-                    const { invalidEditors, statuses } = get();
-
-                    if (Object.hasOwn(statuses, value)) {
-                        state.statuses = omit(statuses, value);
+                produce((state: EditorStoreState<any>) => {
+                    if (Object.hasOwn(state.statuses, value)) {
+                        state.statuses = omit(state.statuses, value);
                     }
 
-                    state.invalidEditors = invalidEditors.filter(
+                    state.invalidEditors = state.invalidEditors.filter(
                         (path) => path !== value
                     );
                 }),
@@ -225,9 +223,6 @@ const getInitialState = <T>(
 
 export const createEditorStore = <T>(key: string) => {
     return create<EditorStoreState<T>>()(
-        devtools(
-            (set, get) => getInitialState<T>(set, get),
-            devtoolsOptions(key)
-        )
+        devtools((set) => getInitialState<T>(set), devtoolsOptions(key))
     );
 };

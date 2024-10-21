@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 import { useEffect } from 'react';
 import { handlePollerError } from 'services/supabase';
 import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
+import { defaultQueryDateFormat } from 'services/luxon';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
@@ -90,7 +91,7 @@ function WaitForShardToIdle() {
                 async () => {
                     const currentTimeUTC = DateTime.utc();
                     const timeStopped = currentTimeUTC.toFormat(
-                        `yyyy-MM-dd'T'HH:mm:ss'Z'`
+                        defaultQueryDateFormat
                     );
 
                     updateContext({

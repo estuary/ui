@@ -38,6 +38,7 @@ import {
 } from 'utils/workflow-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
+import { getCollectionNames } from './shared';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -280,7 +281,7 @@ const getInitialState = (
     addEmptyBindings: (data, rehydrating) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 const emptyCollections: string[] =
                     rehydrating && hasLength(collections) ? collections : [];
@@ -410,16 +411,6 @@ const getInitialState = (
         );
     },
 
-    getCollections: () =>
-        Object.values(get().resourceConfigs).map(
-            ({ meta }) => meta.collectionName
-        ),
-
-    getEnabledCollections: () =>
-        Object.values(get().resourceConfigs)
-            .filter(({ meta }) => !meta.disable)
-            .map(({ meta }) => meta.collectionName),
-
     hydrateState: async (
         editWorkflow,
         entityType,
@@ -438,22 +429,19 @@ const getInitialState = (
         const materializationRehydrating =
             materializationHydrating && rehydrating;
 
-        const { resetState, setHydrationErrorsExist } = get();
-        resetState(materializationRehydrating);
+        get().resetState(materializationRehydrating);
 
         if (connectorTagId && connectorTagId.length > 0) {
             const { data, error } = await getSchema_Resource(connectorTagId);
 
             if (error) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (data?.resource_spec_schema) {
-                const { setBackfillSupported, setResourceSchema } = get();
-
-                await setResourceSchema(
+                await get().setResourceSchema(
                     data.resource_spec_schema as unknown as Schema
                 );
 
-                setBackfillSupported(!Boolean(data.disable_backfill));
+                get().setBackfillSupported(!Boolean(data.disable_backfill));
             }
         }
 
@@ -462,25 +450,23 @@ const getInitialState = (
                 await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
 
             if (liveSpecError) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (liveSpecs && liveSpecs.length > 0) {
-                const { prefillBindingDependentState } = get();
-
                 if (draftId) {
                     const { data: draftSpecs, error: draftSpecError } =
                         await getDraftSpecsByDraftId(draftId, entityType);
 
                     if (draftSpecError) {
-                        setHydrationErrorsExist(true);
+                        get().setHydrationErrorsExist(true);
                     } else if (draftSpecs && draftSpecs.length > 0) {
-                        prefillBindingDependentState(
+                        get().prefillBindingDependentState(
                             entityType,
                             liveSpecs[0].spec.bindings,
                             draftSpecs[0].spec.bindings
                         );
                     }
                 } else {
-                    prefillBindingDependentState(
+                    get().prefillBindingDependentState(
                         entityType,
                         liveSpecs[0].spec.bindings
                     );
@@ -496,7 +482,7 @@ const getInitialState = (
             );
 
             if (error) {
-                setHydrationErrorsExist(true);
+                get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
                 get().addEmptyBindings(data, rehydrating);
 
@@ -595,7 +581,7 @@ const getInitialState = (
     prefillResourceConfigs: (targetCollections, disableOmit) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 const [removedCollections, newCollections] = whatChanged(
                     state.bindings,
@@ -750,7 +736,7 @@ const getInitialState = (
     removeBindings: (targetUUIDs, workflow, taskName) => {
         set(
             produce((state: BindingState) => {
-                const collections = state.getCollections();
+                const collections = getCollectionNames(state.resourceConfigs);
 
                 // Remove the selected bindings from the resource config dictionary.
                 const evaluatedResourceConfigs = omit(
@@ -1049,70 +1035,68 @@ const getInitialState = (
     },
 
     toggleDisable: (targetUUIDs, value) => {
-        // Updating a single item
-        // A specific list (toggle page)
-        // Nothing specified (toggle all)
-        const evaluatedUUIDs =
-            typeof targetUUIDs === 'string'
-                ? [targetUUIDs]
-                : Array.isArray(targetUUIDs)
-                ? targetUUIDs
-                : Object.keys(get().resourceConfigs);
-
         let updatedCount = 0;
 
-        if (evaluatedUUIDs.length > 0) {
-            set(
-                produce((state: BindingState) => {
-                    evaluatedUUIDs.forEach((uuid) => {
-                        const { collectionName, disable, previouslyDisabled } =
-                            state.resourceConfigs[uuid].meta;
+        set(
+            produce((state: BindingState) => {
+                // Updating a single item
+                // A specific list (toggle page)
+                // Nothing specified (toggle all)
+                const evaluatedUUIDs =
+                    typeof targetUUIDs === 'string'
+                        ? [targetUUIDs]
+                        : Array.isArray(targetUUIDs)
+                        ? targetUUIDs
+                        : Object.keys(state.resourceConfigs);
 
-                        const currValue = isBoolean(disable) ? disable : false;
-                        const evaluatedFlag = value ?? !currValue;
+                evaluatedUUIDs.forEach((uuid) => {
+                    const { collectionName, disable, previouslyDisabled } =
+                        state.resourceConfigs[uuid].meta;
 
-                        if (value !== currValue) {
-                            updatedCount = updatedCount + 1;
-                        }
+                    const currValue = isBoolean(disable) ? disable : false;
+                    const evaluatedFlag = value ?? !currValue;
 
-                        if (evaluatedFlag) {
-                            state.resourceConfigs[uuid].meta.disable =
-                                evaluatedFlag;
+                    if (value !== currValue) {
+                        updatedCount = updatedCount + 1;
+                    }
 
-                            const existingIndex =
-                                state.collectionsRequiringRediscovery.findIndex(
-                                    (collectionRequiringRediscovery) =>
-                                        collectionRequiringRediscovery ===
-                                        collectionName
-                                );
+                    if (evaluatedFlag) {
+                        state.resourceConfigs[uuid].meta.disable =
+                            evaluatedFlag;
 
-                            if (existingIndex > -1) {
-                                state.collectionsRequiringRediscovery.splice(
-                                    existingIndex,
-                                    1
-                                );
-
-                                state.rediscoveryRequired = hasLength(
-                                    state.collectionsRequiringRediscovery
-                                );
-                            }
-                        } else {
-                            delete state.resourceConfigs[uuid].meta.disable;
-
-                            if (previouslyDisabled) {
-                                state.collectionsRequiringRediscovery.push(
+                        const existingIndex =
+                            state.collectionsRequiringRediscovery.findIndex(
+                                (collectionRequiringRediscovery) =>
+                                    collectionRequiringRediscovery ===
                                     collectionName
-                                );
+                            );
 
-                                state.rediscoveryRequired = true;
-                            }
+                        if (existingIndex > -1) {
+                            state.collectionsRequiringRediscovery.splice(
+                                existingIndex,
+                                1
+                            );
+
+                            state.rediscoveryRequired = hasLength(
+                                state.collectionsRequiringRediscovery
+                            );
                         }
-                    });
-                }),
-                false,
-                'Binding Disable Flag Toggled'
-            );
-        }
+                    } else {
+                        delete state.resourceConfigs[uuid].meta.disable;
+
+                        if (previouslyDisabled) {
+                            state.collectionsRequiringRediscovery.push(
+                                collectionName
+                            );
+
+                            state.rediscoveryRequired = true;
+                        }
+                    }
+                });
+            }),
+            false,
+            'Binding Disable Flag Toggled'
+        );
 
         // Return how many we updated
         return updatedCount;
