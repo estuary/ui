@@ -6,6 +6,7 @@ import {
     useBinding_backfilledBindings_count,
     useBinding_collections_count,
 } from 'stores/Binding/hooks';
+import { ENTITY_SETTINGS } from 'utils/entity-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useBindingsEditorStore } from '../Store/create';
 import { BackfillCountProps } from './types';
@@ -24,10 +25,7 @@ function BackfillCount({ disabled }: BackfillCountProps) {
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noBackfill, itemType_backfill, itemType_bindings] = useMemo(() => {
-        const itemTypeKey =
-            entityType === 'capture'
-                ? 'terms.bindings.plural'
-                : 'terms.collections.plural';
+        const itemTypeKey = ENTITY_SETTINGS[entityType].bindingTermId;
 
         return [
             calculatedCount < 1,

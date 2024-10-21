@@ -90,6 +90,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
 
+    'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
     'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,

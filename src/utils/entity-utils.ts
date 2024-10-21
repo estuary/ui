@@ -15,6 +15,7 @@ export const ENTITY_SETTINGS = {
     collection: {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
+        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
             details: authenticatedRoutes.collections.details.overview.fullPath,
@@ -25,6 +26,7 @@ export const ENTITY_SETTINGS = {
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
+        bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
             details: authenticatedRoutes.captures.details.overview.fullPath,
@@ -35,6 +37,7 @@ export const ENTITY_SETTINGS = {
     materialization: {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
+        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {
             details:

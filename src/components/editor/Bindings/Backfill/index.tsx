@@ -1,5 +1,4 @@
 import { Box, Stack, Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -27,6 +26,7 @@ import { useBindingsEditorStore } from '../Store/create';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
 import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
+import EvolvedAlert from './EvolvedAlert';
 import EvolvedCount from './EvolvedCount';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
@@ -229,11 +229,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                     </>
                 ) : null}
 
-                {reversioned && bindingIndex !== -1 ? (
-                    <AlertBox short severity="success">
-                        Reversioned collections will backfill on their own
-                    </AlertBox>
-                ) : null}
+                {reversioned && bindingIndex !== -1 ? <EvolvedAlert /> : null}
             </Stack>
 
             {dataFlowResetEnabled &&
