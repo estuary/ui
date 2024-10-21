@@ -126,6 +126,7 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponseEmpty'
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
+    | 'evolvedCollections'
     | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
@@ -141,6 +142,7 @@ const getInitialMiscData = (): Pick<
     inferSchemaResponseDoneProcessing: false,
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
+    evolvedCollections: [],
     hasIncompatibleCollections: false,
 });
 
@@ -202,6 +204,16 @@ const getInitialState = (
             }),
             false,
             'Incompatible Collections List Set'
+        );
+    },
+
+    setEvolvedCollections: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.evolvedCollections = value;
+            }),
+            false,
+            'Evolved Collections List Set'
         );
     },
 

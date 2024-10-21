@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -22,9 +23,11 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
+import { useBindingsEditorStore } from '../Store/create';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
 import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
+import EvolvedCount from './EvolvedCount';
 import { BackfillProps } from './types';
 import useUpdateBackfillCounter, {
     BindingMetadata,
@@ -39,6 +42,10 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const [dataFlowResetEnabled] = useLocalStorage(
         LocalStorageKeys.ENABLE_DATA_FLOW_RESET,
         false
+    );
+
+    const evolvedCollections = useBindingsEditorStore(
+        (state) => state.evolvedCollections
     );
 
     // Binding Store
@@ -65,14 +72,27 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         allBindingsDisabled ||
         !backfillSupported;
 
+    const reversioned = useMemo(() => {
+        if (bindingIndex === -1) {
+            return false;
+        }
+
+        return evolvedCollections.some(
+            (evolvedCollection) =>
+                evolvedCollection.new_name === currentCollection
+        );
+    }, [bindingIndex, currentCollection, evolvedCollections]);
+
     const selected = useMemo(() => {
         if (bindingIndex === -1) {
             return backfillAllBindings;
         }
 
-        return currentBindingUUID
-            ? backfilledBindings.includes(currentBindingUUID)
-            : false;
+        if (!currentBindingUUID) {
+            return false;
+        }
+
+        return backfilledBindings.includes(currentBindingUUID);
     }, [
         backfillAllBindings,
         backfilledBindings,
@@ -188,8 +208,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             <Stack direction="row" spacing={2}>
                 <BooleanToggleButton
                     size={bindingIndex === -1 ? 'large' : undefined}
-                    selected={selected}
-                    disabled={disabled}
+                    selected={Boolean(selected || reversioned)}
+                    disabled={disabled || reversioned}
                     onClick={(event, checked: string) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -203,7 +223,16 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 </BooleanToggleButton>
 
                 {backfillSupported && bindingIndex === -1 ? (
-                    <BackfillCount disabled={disabled} />
+                    <>
+                        <BackfillCount disabled={disabled} />
+                        <EvolvedCount />
+                    </>
+                ) : null}
+
+                {reversioned && bindingIndex !== -1 ? (
+                    <AlertBox short severity="success">
+                        Reversioned collections will backfill on their own
+                    </AlertBox>
                 ) : null}
             </Stack>
 

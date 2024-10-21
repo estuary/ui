@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { createEvolution, toEvolutionRequest } from 'api/evolutions';
+import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_incompatibleCollections,
     useBindingsEditorStore_setIncompatibleCollections,
@@ -58,6 +59,10 @@ function SchemaEvolution({ onFailure }: Props) {
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
+    const setEvolvedCollections = useBindingsEditorStore(
+        (state) => state.setEvolvedCollections
+    );
+
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
     const jobFailed = useCallback(
@@ -102,6 +107,11 @@ function SchemaEvolution({ onFailure }: Props) {
                 // Now that the collections are updated we can clear out the list so
                 //  the error section is no longer displayed.
                 setIncompatibleCollections([]);
+
+                // Store off so we can show users how many bindings will reversion
+                setEvolvedCollections(
+                    payload.job_status.evolved_collections ?? []
+                );
 
                 if (mutate_advancedEditor) {
                     await mutate_advancedEditor();

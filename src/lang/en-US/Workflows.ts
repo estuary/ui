@@ -85,10 +85,12 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} backfilling`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
+
+    'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
@@ -166,9 +168,9 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
-    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.destinations']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support data flow resets on materializations with a source capture. You may choose a materialization manually or skip and save your changes.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
+    'resetDataFlow.materializations.empty.header': `No related materializations`,
+    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found.  Pick one manually or skip this step.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
     'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,

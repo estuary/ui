@@ -6,14 +6,21 @@ import {
     useBinding_backfilledBindings_count,
     useBinding_collections_count,
 } from 'stores/Binding/hooks';
+import { useShallow } from 'zustand/react/shallow';
+import { useBindingsEditorStore } from '../Store/create';
 import { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();
     const entityType = useEntityType();
 
+    const evolvedCollectionsCount: number = useBindingsEditorStore(
+        useShallow((state) => state.evolvedCollections.length)
+    );
     const backfillCount = useBinding_backfilledBindings_count();
     const bindingsTotal = useBinding_collections_count();
+
+    const calculatedCount = backfillCount + evolvedCollectionsCount;
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noBackfill, itemType_backfill, itemType_bindings] = useMemo(() => {
@@ -23,21 +30,21 @@ function BackfillCount({ disabled }: BackfillCountProps) {
                 : 'terms.collections.plural';
 
         return [
-            backfillCount < 1,
+            calculatedCount < 1,
             intl.formatMessage(
                 {
                     id: itemTypeKey,
                 },
-                { count: backfillCount }
+                { count: calculatedCount }
             ),
             intl.formatMessage(
                 {
                     id: itemTypeKey,
                 },
-                { count: bindingsTotal }
+                { count: calculatedCount }
             ),
         ];
-    }, [backfillCount, bindingsTotal, entityType, intl]);
+    }, [calculatedCount, entityType, intl]);
 
     return (
         <Chip
@@ -70,7 +77,7 @@ function BackfillCount({ disabled }: BackfillCountProps) {
                               id: 'workflows.collectionSelector.manualBackfill.count',
                           },
                           {
-                              backfillCount,
+                              backfillCount: calculatedCount,
                               bindingsTotal,
                               itemType: itemType_bindings,
                           }
