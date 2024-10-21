@@ -13,6 +13,7 @@ import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { generateDisabledSpec } from 'utils/entity-utils';
@@ -124,6 +125,9 @@ function DisableCapture() {
                     );
 
                 if (incompatibleCollectionsFound) {
+                    logRocketEvent(CustomEvents.DATA_FLOW_RESET, {
+                        incompatibleCollections: true,
+                    });
                     setIncompatibleCollections(incompatibleCollections);
                     return;
                 }
