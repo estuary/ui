@@ -26,16 +26,19 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
         const newId = selectedRow ? selectedRow.id : null;
         const newReadsFrom = selectedRow ? selectedRow.reads_from : null;
 
-        updateContext({
-            backfillTarget: {
-                catalog_name: newCatalog,
-                id: newId,
-                reads_from: newReadsFrom,
-            },
-        });
-        updateStep(stepIndex, {
-            valid: Boolean(newCatalog),
-        });
+        if (newCatalog) {
+            updateContext({
+                backfillTarget: {
+                    catalog_name: newCatalog,
+                    id: newId,
+                    reads_from: newReadsFrom,
+                },
+            });
+            updateStep(stepIndex, {
+                valid: Boolean(newCatalog),
+            });
+        }
+
         resetSelected();
         toggle(false);
     };
