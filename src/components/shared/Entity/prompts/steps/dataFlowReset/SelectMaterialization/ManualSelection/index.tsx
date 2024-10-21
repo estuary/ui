@@ -41,9 +41,15 @@ function ManualSelection() {
     return (
         <Stack spacing={2}>
             {backfillTarget?.catalog_name && !targetHasOverlap ? (
-                <AlertBox short severity="error">
+                <AlertBox
+                    short
+                    severity="error"
+                    title={intl.formatMessage({
+                        id: 'resetDataFlow.materializations.noOverlap.title',
+                    })}
+                >
                     {intl.formatMessage({
-                        id: 'resetDataFlow.materializations.noOverlap.warning',
+                        id: 'resetDataFlow.materializations.noOverlap.message',
                     })}
                 </AlertBox>
             ) : null}

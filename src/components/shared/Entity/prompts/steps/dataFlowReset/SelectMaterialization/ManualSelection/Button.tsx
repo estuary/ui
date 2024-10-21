@@ -30,18 +30,20 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
         const newReadsFrom = selectedRow ? selectedRow.reads_from : null;
 
         if (newCatalog && newReadsFrom) {
+            const targetHasOverlap = collectionsBeingBackfilled.some(
+                (collection) => newReadsFrom.includes(collection)
+            );
+
             updateContext({
                 backfillTarget: {
                     catalog_name: newCatalog,
                     id: newId,
                     reads_from: newReadsFrom,
                 },
-                targetHasOverlap: collectionsBeingBackfilled.some(
-                    (collection) => newReadsFrom.includes(collection)
-                ),
+                targetHasOverlap,
             });
             updateStep(stepIndex, {
-                valid: Boolean(newCatalog),
+                valid: Boolean(newCatalog && targetHasOverlap),
             });
         }
 

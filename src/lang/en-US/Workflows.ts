@@ -3,6 +3,8 @@ import { CTAs } from './CTAs';
 
 const changesRejected = 'rejected due to incompatible collection updates';
 
+const skipDataFlowReset = `Skip data flow reset`;
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -170,8 +172,9 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
     'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
-    'resetDataFlow.materializations.empty.skip': `Skip data flow reset`,
-    'resetDataFlow.materializations.noOverlap.warning': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
+    'resetDataFlow.materializations.empty.skip': `${skipDataFlowReset}`,
+    'resetDataFlow.materializations.noOverlap.title': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
+    'resetDataFlow.materializations.noOverlap.message': `Please select another ${CommonMessages['terms.destination.lowercase']} to continue resetting the data flow or click "${skipDataFlowReset}"`,
 
     'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
     'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
