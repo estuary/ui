@@ -5,19 +5,16 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledBindings_count,
     useBinding_collections_count,
+    useBinding_evolvedCollections_count,
 } from 'stores/Binding/hooks';
 import { ENTITY_SETTINGS } from 'utils/entity-utils';
-import { useShallow } from 'zustand/react/shallow';
-import { useBindingsEditorStore } from '../Store/create';
 import { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const evolvedCollectionsCount: number = useBindingsEditorStore(
-        useShallow((state) => state.evolvedCollections.length)
-    );
+    const evolvedCollectionsCount = useBinding_evolvedCollections_count();
     const backfillCount = useBinding_backfilledBindings_count();
     const bindingsTotal = useBinding_collections_count();
 

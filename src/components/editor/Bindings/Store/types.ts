@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material';
-import { EvolvedCollections, IncompatibleCollections } from 'api/evolutions';
+import { IncompatibleCollections } from 'api/evolutions';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { InferSchemaPropertyForRender } from 'types';
 
@@ -56,10 +56,6 @@ export interface BindingsEditorState {
     incompatibleCollections: IncompatibleCollections[];
     setIncompatibleCollections: (
         value: BindingsEditorState['incompatibleCollections']
-    ) => void;
-    evolvedCollections: EvolvedCollections[];
-    setEvolvedCollections: (
-        value: BindingsEditorState['evolvedCollections']
     ) => void;
 
     hasIncompatibleCollections: boolean;

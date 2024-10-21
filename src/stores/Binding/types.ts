@@ -1,3 +1,4 @@
+import { EvolvedCollections } from 'api/evolutions';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -139,6 +140,9 @@ export interface BindingState
 
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
+
+    evolvedCollections: EvolvedCollections[];
+    setEvolvedCollections: (value: BindingState['evolvedCollections']) => void;
 
     // Misc.
     hydrateState: (

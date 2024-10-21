@@ -15,6 +15,7 @@ import {
     useBinding_backfillSupported,
     useBinding_enabledCollections_count,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -22,7 +23,6 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
-import { useBindingsEditorStore } from '../Store/create';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
 import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
@@ -44,7 +44,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
         false
     );
 
-    const evolvedCollections = useBindingsEditorStore(
+    const evolvedCollections = useBindingStore(
         (state) => state.evolvedCollections
     );
 

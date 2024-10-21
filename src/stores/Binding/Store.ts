@@ -237,6 +237,7 @@ const getInitialMiscData = (): Pick<
     | 'backfillSupported'
     | 'collectionsRequiringRediscovery'
     | 'discoveredCollections'
+    | 'evolvedCollections'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -252,6 +253,7 @@ const getInitialMiscData = (): Pick<
     backfilledBindings: [],
     collectionsRequiringRediscovery: [],
     discoveredCollections: [],
+    evolvedCollections: [],
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
@@ -1031,6 +1033,16 @@ const getInitialState = (
             }),
             false,
             'Backfill supported changed'
+        );
+    },
+
+    setEvolvedCollections: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.evolvedCollections = value;
+            }),
+            false,
+            'Evolved Collections List Set'
         );
     },
 

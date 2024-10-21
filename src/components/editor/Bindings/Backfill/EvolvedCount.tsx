@@ -2,17 +2,13 @@ import { Chip } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-
-import { useShallow } from 'zustand/react/shallow';
-import { useBindingsEditorStore } from '../Store/create';
+import { useBinding_evolvedCollections_count } from 'stores/Binding/hooks';
 
 function EvolvedCount() {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const evolvedCollectionsCount = useBindingsEditorStore(
-        useShallow((state) => state.evolvedCollections.length)
-    );
+    const evolvedCollectionsCount = useBinding_evolvedCollections_count();
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noEvolvedCollections, itemType_bindings] = useMemo(() => {

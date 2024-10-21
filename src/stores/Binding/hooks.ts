@@ -311,6 +311,13 @@ export const useBinding_fullSourceErrorsExist = () => {
     return useBindingStore((state) => state.fullSourceErrorsExist);
 };
 
+export const useBinding_evolvedCollections_count = () =>
+    useBindingStore(
+        useShallow((state) => {
+            return state.evolvedCollections.length;
+        })
+    );
+
 export const useBinding_backfilledBindings_count = () =>
     useBindingStore(
         useShallow((state) => {

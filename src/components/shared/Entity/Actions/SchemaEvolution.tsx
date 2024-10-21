@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import { createEvolution, toEvolutionRequest } from 'api/evolutions';
-import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_incompatibleCollections,
     useBindingsEditorStore_setIncompatibleCollections,
@@ -25,6 +24,7 @@ import {
     JOB_STATUS_POLLER_ERROR,
     TABLES,
 } from 'services/supabase';
+import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -59,7 +59,7 @@ function SchemaEvolution({ onFailure }: Props) {
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
-    const setEvolvedCollections = useBindingsEditorStore(
+    const setEvolvedCollections = useBindingStore(
         (state) => state.setEvolvedCollections
     );
 
