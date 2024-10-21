@@ -11,7 +11,6 @@ function EvolvedCount() {
 
     const evolvedCollectionsCount = useBinding_evolvedCollections_count();
 
-    // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noEvolvedCollections, itemType_bindings] = useMemo(() => {
         return [
             evolvedCollectionsCount < 1,
