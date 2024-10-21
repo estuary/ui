@@ -7,9 +7,12 @@ function SelectedChip() {
     const intl = useIntl();
     const stepIndex = useLoopIndex();
 
-    const backfillTarget = usePreSavePromptStore((state) => {
-        return state.context.backfillTarget;
-    });
+    const [backfillTarget, targetHasOverlap] = usePreSavePromptStore(
+        (state) => [
+            state.context.backfillTarget,
+            state.context.targetHasOverlap,
+        ]
+    );
 
     const [updateStep, updateContext] = usePreSavePromptStore((state) => [
         state.updateStep,
@@ -18,7 +21,13 @@ function SelectedChip() {
 
     return (
         <Chip
-            color={backfillTarget ? 'success' : 'info'}
+            color={
+                backfillTarget
+                    ? targetHasOverlap
+                        ? 'success'
+                        : 'error'
+                    : 'info'
+            }
             label={
                 backfillTarget?.catalog_name ??
                 intl.formatMessage({

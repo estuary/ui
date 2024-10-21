@@ -44,6 +44,7 @@ export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     loggingEvent: CustomEvents.ENTITY_SAVE,
     noMaterializations: null,
     relatedMaterializations: null,
+    targetHasOverlap: null,
     timeStopped: null,
 });
 

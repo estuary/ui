@@ -4,10 +4,13 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
 import { useStore } from 'zustand';
 
 function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
     const stepIndex = useLoopIndex();
+
+    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
 
     const [selected, resetSelected] = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -26,13 +29,16 @@ function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
         const newId = selectedRow ? selectedRow.id : null;
         const newReadsFrom = selectedRow ? selectedRow.reads_from : null;
 
-        if (newCatalog) {
+        if (newCatalog && newReadsFrom) {
             updateContext({
                 backfillTarget: {
                     catalog_name: newCatalog,
                     id: newId,
                     reads_from: newReadsFrom,
                 },
+                targetHasOverlap: collectionsBeingBackfilled.some(
+                    (collection) => newReadsFrom.includes(collection)
+                ),
             });
             updateStep(stepIndex, {
                 valid: Boolean(newCatalog),

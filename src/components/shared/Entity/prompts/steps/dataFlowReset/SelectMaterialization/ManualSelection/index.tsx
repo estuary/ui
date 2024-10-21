@@ -1,4 +1,5 @@
 import { Button, Stack, Tooltip } from '@mui/material';
+import AlertBox from 'components/shared/AlertBox';
 import AddDialog from 'components/shared/Entity/AddDialog';
 import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useState } from 'react';
@@ -10,13 +11,15 @@ const DIALOG_ID = 'add-materialization-search-dialog';
 
 function ManualSelection() {
     const intl = useIntl();
-    // const entityType = useEntityType();
 
     const [open, setOpen] = useState<boolean>(false);
 
-    const backfillTarget = usePreSavePromptStore((state) => {
-        return state.context.backfillTarget;
-    });
+    const [backfillTarget, targetHasOverlap] = usePreSavePromptStore(
+        (state) => [
+            state.context.backfillTarget,
+            state.context.targetHasOverlap,
+        ]
+    );
 
     const itemType = intl.formatMessage({
         id: 'terms.materialization',
@@ -32,12 +35,19 @@ function ManualSelection() {
     );
 
     const toggleDialog = (args: any) => {
-        // resetSelected();
         setOpen(typeof args === 'boolean' ? args : !open);
     };
 
     return (
-        <>
+        <Stack spacing={2}>
+            {backfillTarget?.catalog_name && !targetHasOverlap ? (
+                <AlertBox short severity="error">
+                    {intl.formatMessage({
+                        id: 'resetDataFlow.materializations.noOverlap.warning',
+                    })}
+                </AlertBox>
+            ) : null}
+
             <Stack
                 direction="row"
                 spacing={2}
@@ -56,6 +66,7 @@ function ManualSelection() {
                         {intl.formatMessage({ id: 'cta.manualSelect' })}
                     </Button>
                 </Tooltip>
+
                 <SelectedChip />
             </Stack>
             <AddDialog
@@ -69,7 +80,7 @@ function ManualSelection() {
                 toggle={toggleDialog}
                 title={itemType}
             />
-        </>
+        </Stack>
     );
 }
 

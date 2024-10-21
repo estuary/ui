@@ -171,6 +171,7 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
     'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
     'resetDataFlow.materializations.empty.skip': `Skip data flow reset`,
+    'resetDataFlow.materializations.noOverlap.warning': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
 
     'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
     'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
