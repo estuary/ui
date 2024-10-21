@@ -18,7 +18,12 @@ function BackfillCount({ disabled }: BackfillCountProps) {
     const backfillCount = useBinding_backfilledBindings_count();
     const bindingsTotal = useBinding_collections_count();
 
-    const calculatedCount = backfillCount + evolvedCollectionsCount;
+    // We shouldn't have any overlap (duplicate counting) with manual backfilling because backfill button is disabled
+    //  when evolved. So only time we could get duplicate counting is from the backfill all button
+    const calculatedCount =
+        backfillCount === bindingsTotal
+            ? backfillCount
+            : backfillCount + evolvedCollectionsCount;
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noBackfill, itemType_backfill, itemType_bindings] = useMemo(() => {
