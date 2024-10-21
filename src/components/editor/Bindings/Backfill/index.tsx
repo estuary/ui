@@ -88,11 +88,9 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             return backfillAllBindings;
         }
 
-        if (!currentBindingUUID) {
-            return false;
-        }
-
-        return backfilledBindings.includes(currentBindingUUID);
+        return currentBindingUUID
+            ? backfilledBindings.includes(currentBindingUUID)
+            : false;
     }, [
         backfillAllBindings,
         backfilledBindings,
