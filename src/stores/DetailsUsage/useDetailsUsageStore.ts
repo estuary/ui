@@ -1,24 +1,19 @@
-import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
+import { DataGrains } from 'components/graphs/types';
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { persistOptions } from './shared';
+import { DetailsUsageState } from './types';
 
-interface DetailsUsageState {
-    range: DataByHourRange;
-    setRange: (val: DataByHourRange) => void;
-    statType: DataByHourStatType;
-    setStatType: (val: DataByHourStatType) => void;
-}
-
-const name = 'estuary.details-usage-store';
-const version = 0;
-
-const useDetailsUsageStore = create<DetailsUsageState>()(
+export const useDetailsUsageStore = create<DetailsUsageState>()(
     persist(
         devtools((set) => {
             return {
-                range: 6,
+                range: {
+                    amount: 6,
+                    grain: DataGrains.hourly,
+                },
                 statType: 'bytes',
                 setRange: (newVal) => {
                     set(
@@ -39,9 +34,7 @@ const useDetailsUsageStore = create<DetailsUsageState>()(
                     );
                 },
             };
-        }, devtoolsOptions(name)),
-        { name, version }
+        }, devtoolsOptions(persistOptions.name)),
+        persistOptions
     )
 );
-
-export default useDetailsUsageStore;

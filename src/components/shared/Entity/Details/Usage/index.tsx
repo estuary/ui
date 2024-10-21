@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import HourlyRangeFilter from 'components/filters/HourRange';
+import DetailsRange from 'components/filters/DetailsRange';
 import DataByHourGraph from 'components/graphs/DataByHourGraph';
 import StatTypeSelector from 'components/graphs/DataByHourGraph/StatTypeSelector';
 import EmptyGraphState from 'components/graphs/states/Empty';
@@ -17,10 +17,7 @@ interface Props {
 }
 
 function Usage({ catalogName }: Props) {
-    const { isValidating, stats, error } = useDetailsStats(
-        catalogName,
-        'hourly'
-    );
+    const { isValidating, stats, error } = useDetailsStats(catalogName);
 
     return (
         <CardWrapper
@@ -30,7 +27,7 @@ function Usage({ catalogName }: Props) {
                     spacing={1}
                     sx={{ justifyContent: 'space-between', width: '100%' }}
                 >
-                    <HourlyRangeFilter />
+                    <DetailsRange />
                     <StatTypeSelector />
                 </Stack>
             }
