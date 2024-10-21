@@ -3,6 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_evolvedCollections_count } from 'stores/Binding/hooks';
+import { ENTITY_SETTINGS } from 'utils/entity-utils';
 
 function EvolvedCount() {
     const intl = useIntl();
@@ -12,16 +13,11 @@ function EvolvedCount() {
 
     // Only reason noBackfill is in here is because we are already running the memo on backfillCount change
     const [noEvolvedCollections, itemType_bindings] = useMemo(() => {
-        const itemTypeKey =
-            entityType === 'capture'
-                ? 'terms.bindings.plural'
-                : 'terms.collections.plural';
-
         return [
             evolvedCollectionsCount < 1,
             intl.formatMessage(
                 {
-                    id: itemTypeKey,
+                    id: ENTITY_SETTINGS[entityType].bindingTermId,
                 },
                 { count: evolvedCollectionsCount }
             ),
