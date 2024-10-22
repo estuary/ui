@@ -1,23 +1,18 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
+import { AutoCompleteOption } from 'components/editor/Bindings/OnIncompatibleSchemaChange/types';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_mutate,
+} from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { useBinding_bindings } from 'stores/Binding/hooks';
-import { Schema } from 'types';
+import { BindingMetadata, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_draftSpecs,
-    useEditorStore_queryResponse_mutate,
-} from '../../Store/hooks';
-import { AutoCompleteOption } from './types';
-
-export interface BindingMetadata {
-    bindingIndex: number;
-    collection: string;
-}
 
 const updateSchema = (binding: any, newVal: any) => {
     if (newVal) {

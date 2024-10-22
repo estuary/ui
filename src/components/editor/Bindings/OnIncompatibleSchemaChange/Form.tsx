@@ -20,11 +20,10 @@ import {
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import AlertBox from 'components/shared/AlertBox';
+import useSupportedOptions from 'hooks/OnIncompatibleSchemaChange/useSupportedOptions';
+import useUpdateOnIncompatibleSchemaChange from 'hooks/OnIncompatibleSchemaChange/useUpdateOnIncompatibleSchemaChange';
+import { BindingMetadata } from 'types';
 import { autoCompleteDefaultProps } from './shared';
-import useUpdateOnIncompatibleSchemaChange, {
-    BindingMetadata,
-} from './useUpdateOnIncompatibleSchemaChange';
-import useSupportedOptions from './useSupportedOptions';
 import { AutoCompleteOption } from './types';
 import SelectorOption from './SelectorOption';
 

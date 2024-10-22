@@ -94,7 +94,7 @@ function ResourceConfig({
                 />
             ) : null}
 
-            {/* TODO (onIncompatibleSchemaChange)
+            {/* TODO (onIncompatibleSchemaChange) - uncomment to enable feature
             {entityType === 'materialization' ? (
                 <ErrorBoundryWrapper>
                     <OnIncompatibleSchemaChange

@@ -31,11 +31,7 @@ function OnIncompatibleSchemaChange({
                     </Typography>
                 </Stack>
 
-                <Box>
-                    <OnIncompatibleSchemaChangeForm
-                        bindingIndex={bindingIndex}
-                    />
-                </Box>
+                <OnIncompatibleSchemaChangeForm bindingIndex={bindingIndex} />
             </Stack>
         </Box>
     );
