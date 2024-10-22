@@ -2,7 +2,7 @@
 
 A prompt is a `stepper` that is shown before an action is taken. The idea is to ask the user for confirmation, making a selection, more information, etc. before a final action is taken. As of Q4 2024 this is only used for `Data Flow Reset`.
 
-### Technial Overview
+### Technical Overview
 
 A `prompt` is currently a dialog that is made up of `Title`, `Actions`, and `Content`(this consumes a list of `step`s to know what to render).
 
@@ -14,7 +14,7 @@ All this is _really_ close to a finite state machine... but missing some key fea
 
 ### Assumptions made in code
 
-This entire thing RUNS on assumptions... and sadly not all of them are clearly listed. Some off the top of my head - all `step`s will be gone through in order, each non-publishing `step` will update it's own status, common `step`s are shared, the `step`s will NOT change while in the middle of a flow (though I think this is probably somewhat safe to do... _maybe_), and some more.
+This entire thing RUNS on assumptions... and sadly not all of them are clearly listed. Some off the top of my head - all `step`s will be gone through in order, each non-publishing `step` will update its own status, common `step`s are shared, the `step`s will NOT change while in the middle of a flow (though I think this is probably somewhat safe to do... _maybe_), and some more.
 
 _Be careful and talk to someone before expanding this_
 
