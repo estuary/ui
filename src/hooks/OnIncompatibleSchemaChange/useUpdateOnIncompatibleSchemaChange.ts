@@ -1,53 +1,42 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { BooleanString } from 'components/shared/buttons/types';
+import { AutoCompleteOption } from 'components/editor/Bindings/OnIncompatibleSchemaChange/types';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_draftSpecs,
+    useEditorStore_queryResponse_mutate,
+} from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
-import {
-    useBinding_backfilledBindings,
-    useBinding_bindings,
-} from 'stores/Binding/hooks';
+import { useBinding_bindings } from 'stores/Binding/hooks';
 import { BindingMetadata, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_mutate,
-} from '../../Store/hooks';
+import { getBindingIndex } from 'utils/workflow-utils';
 
-const evaluateBackfillCounter = (
-    binding: Schema,
-    increment: BooleanString
-): number => {
-    let counter = getBackfillCounter(binding);
-
-    if (increment === 'true') {
-        counter = counter + 1;
-    } else if (counter > 0) {
-        counter = counter - 1;
+const updateSchema = (binding: any, newVal: any) => {
+    if (newVal) {
+        binding.onIncompatibleSchemaChange = newVal;
+    } else {
+        delete binding.onIncompatibleSchemaChange;
     }
-
-    return counter;
 };
 
-function useUpdateBackfillCounter() {
+function useUpdateOnIncompatibleSchemaChange() {
     const intl = useIntl();
     const entityType = useEntityType();
 
     // Binding Store
     const bindings = useBinding_bindings();
-    const backfilledBindings = useBinding_backfilledBindings();
 
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const updateBackfillCounter = useCallback(
+    const updateOnIncompatibleSchemaChange = useCallback(
         async (
-            draftSpec: DraftSpecQuery,
-            increment: BooleanString,
+            newVal: AutoCompleteOption['val'] | undefined,
             bindingMetadata: BindingMetadata[]
         ) => {
             const bindingMetadataExists = hasLength(bindingMetadata);
@@ -58,7 +47,13 @@ function useUpdateBackfillCounter() {
                   )
                 : -1;
 
-            if (!mutateDraftSpecs || invalidBindingIndex > -1) {
+            if (
+                !draftId ||
+                !mutateDraftSpecs ||
+                draftSpecs.length === 0 ||
+                invalidBindingIndex > -1
+            ) {
+                // TODO (onschema) update message
                 const errorMessageId = bindingMetadataExists
                     ? 'workflows.collectionSelector.manualBackfill.error.message.singleCollection'
                     : 'workflows.collectionSelector.manualBackfill.error.message.allBindings';
@@ -79,16 +74,12 @@ function useUpdateBackfillCounter() {
                 });
             }
 
-            const spec: Schema = draftSpec.spec;
+            const spec: Schema = draftSpecs[0].spec;
 
             if (bindingMetadataExists) {
                 bindingMetadata.forEach(({ bindingIndex }) => {
                     if (bindingIndex > -1) {
-                        spec.bindings[bindingIndex].backfill =
-                            evaluateBackfillCounter(
-                                spec.bindings[bindingIndex],
-                                increment
-                            );
+                        updateSchema(spec.bindings[bindingIndex], newVal);
                     }
                 });
             } else {
@@ -102,23 +93,10 @@ function useUpdateBackfillCounter() {
                             );
 
                             if (existingBindingIndex > -1) {
-                                const backfilled =
-                                    backfilledBindings.includes(bindingUUID);
-
-                                const shouldIncrement =
-                                    !backfilled && increment === 'true';
-
-                                const shouldDecrement =
-                                    backfilled && increment === 'false';
-
-                                if (shouldIncrement || shouldDecrement) {
-                                    spec.bindings[
-                                        existingBindingIndex
-                                    ].backfill = evaluateBackfillCounter(
-                                        spec.bindings[existingBindingIndex],
-                                        increment
-                                    );
-                                }
+                                updateSchema(
+                                    spec.bindings[existingBindingIndex],
+                                    newVal
+                                );
                             }
                         });
                     }
@@ -127,7 +105,7 @@ function useUpdateBackfillCounter() {
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
-                catalog_name: draftSpec.catalog_name,
+                catalog_name: draftSpecs[0].catalog_name,
                 spec_type: entityType,
             });
 
@@ -137,17 +115,10 @@ function useUpdateBackfillCounter() {
 
             return mutateDraftSpecs();
         },
-        [
-            backfilledBindings,
-            bindings,
-            draftId,
-            entityType,
-            intl,
-            mutateDraftSpecs,
-        ]
+        [bindings, draftId, draftSpecs, entityType, intl, mutateDraftSpecs]
     );
 
-    return { updateBackfillCounter };
+    return { updateOnIncompatibleSchemaChange };
 }
 
-export default useUpdateBackfillCounter;
+export default useUpdateOnIncompatibleSchemaChange;
