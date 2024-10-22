@@ -3,15 +3,14 @@ import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { hasLength } from 'utils/misc-utils';
+import { useEntitiesStore_atLeastOneAdminTenant } from 'stores/Entities/hooks';
 
 function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
     const intl = useIntl();
 
     const entityTypeValue = useEntityType();
 
-    const objectRoles = useEntitiesStore_capabilities_adminable();
+    const atLeastOneAdminTenant = useEntitiesStore_atLeastOneAdminTenant();
 
     // TODO (maybe) Possibly we should just include this logic in the useEntityType hook?
     // Just to be safe translating the entity type from the hook. Probably was safe just passing
@@ -33,7 +32,7 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
         }
     }, [entityTypeValue, intl]);
 
-    if (!hasLength(objectRoles)) {
+    if (!atLeastOneAdminTenant) {
         return (
             <AlertBox
                 severity="error"
