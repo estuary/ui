@@ -13,9 +13,9 @@ import {
     getBindingAsFullSource,
     getCollectionName,
 } from 'utils/workflow-utils';
+import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { PromptStepState } from '../../../types';
-import useStepIsIdle from '../../useStepIsIdle';
 
 function MarkMaterialization() {
     const intl = useIntl();

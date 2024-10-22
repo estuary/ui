@@ -24,6 +24,7 @@ import {
     JOB_STATUS_POLLER_ERROR,
     TABLES,
 } from 'services/supabase';
+import { useBindingStore } from 'stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -57,6 +58,10 @@ function SchemaEvolution({ onFailure }: Props) {
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
+
+    const setEvolvedCollections = useBindingStore(
+        (state) => state.setEvolvedCollections
+    );
 
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
@@ -102,6 +107,11 @@ function SchemaEvolution({ onFailure }: Props) {
                 // Now that the collections are updated we can clear out the list so
                 //  the error section is no longer displayed.
                 setIncompatibleCollections([]);
+
+                // Store off so we can show users how many bindings will reversion
+                setEvolvedCollections(
+                    payload.job_status.evolved_collections ?? []
+                );
 
                 if (mutate_advancedEditor) {
                     await mutate_advancedEditor();
