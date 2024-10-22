@@ -237,6 +237,9 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.unknown': `Unknown`,
     'fieldSelection.table.label.filter': `Filter fields`,
 
+    // Messages from binding editing
+    'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
+
     // Time Travel
     'notBeforeNotAfter.header': `Time Travel`,
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
@@ -245,6 +248,28 @@ export const Workflows: Record<string, string> = {
     'notAfter.input.description': `only include data from before this time (UTC)`,
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
+
+    // Incompatible Schema Change
+    'incompatibleSchemaChange.header': `Incompatible Schema Change`,
+    'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
+    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
+    'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
+
+    'incompatibleSchemaChange.error.cta': `Remove Setting`,
+    'incompatibleSchemaChange.error.title': `Invalid setting`,
+    'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'incompatibleSchemaChange.options.abort.label': `Abort`,
+    'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
+
+    'incompatibleSchemaChange.options.backfill.label': `Backfill`,
+    'incompatibleSchemaChange.options.backfill.description': `Increment the backfill counter of the binding, causing it to start over from the beginning.`,
+
+    'incompatibleSchemaChange.options.disableBinding.label': `Disable Binding`,
+    'incompatibleSchemaChange.options.disableBinding.description': `Disable the binding, which will be effectively excluded from the task until it is re-enabled.`,
+
+    'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
+    'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

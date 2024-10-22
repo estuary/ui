@@ -21,6 +21,7 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { BindingMetadata } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
@@ -29,9 +30,7 @@ import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
 import EvolvedAlert from './EvolvedAlert';
 import EvolvedCount from './EvolvedCount';
 import { BackfillProps } from './types';
-import useUpdateBackfillCounter, {
-    BindingMetadata,
-} from './useUpdateBackfillCounter';
+import useUpdateBackfillCounter from './useUpdateBackfillCounter';
 
 function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const intl = useIntl();
