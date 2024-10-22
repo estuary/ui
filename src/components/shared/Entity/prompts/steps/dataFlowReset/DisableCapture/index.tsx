@@ -8,7 +8,7 @@ import {
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import useIncompatibleCollectionChecker from 'hooks/prompts/useIncompatibleCollectionChecker';
+import useCheckPublicationForIncompatibleCollections from 'hooks/prompts/useCheckPublicationForIncompatibleCollections';
 import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { useEffect } from 'react';
@@ -31,7 +31,8 @@ function DisableCapture() {
     const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    const incompatibleCollectionChecker = useIncompatibleCollectionChecker();
+    const checkPublicationForIncompatibleCollections =
+        useCheckPublicationForIncompatibleCollections();
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
 
@@ -119,7 +120,7 @@ function DisableCapture() {
 
             publicationHandler(publishResponse.data[0].id, (response) => {
                 const [incompatibleCollectionsFound, incompatibleCollections] =
-                    incompatibleCollectionChecker(
+                    checkPublicationForIncompatibleCollections(
                         response,
                         'resetDataFlow.disableCapture.errors.incompatibleCollections'
                     );
@@ -144,10 +145,10 @@ function DisableCapture() {
 
         void disableCaptureAndPublish();
     }, [
+        checkPublicationForIncompatibleCollections,
         dataPlaneName,
         draftId,
         draftSpecs,
-        incompatibleCollectionChecker,
         initUUID,
         intl,
         nextStep,

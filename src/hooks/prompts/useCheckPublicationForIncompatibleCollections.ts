@@ -6,7 +6,7 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { hasLength } from 'utils/misc-utils';
 
-function useIncompatibleCollectionChecker() {
+function useCheckPublicationForIncompatibleCollections() {
     const stepIndex = useLoopIndex();
 
     const [updateStep] = usePreSavePromptStore((state) => [state.updateStep]);
@@ -41,4 +41,4 @@ function useIncompatibleCollectionChecker() {
     );
 }
 
-export default useIncompatibleCollectionChecker;
+export default useCheckPublicationForIncompatibleCollections;

@@ -6,11 +6,13 @@ import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
-import useIncompatibleCollectionChecker from 'hooks/prompts/useIncompatibleCollectionChecker';
+import useCheckPublicationForIncompatibleCollections from 'hooks/prompts/useCheckPublicationForIncompatibleCollections';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();
+    const checkPublicationForIncompatibleCollections =
+        useCheckPublicationForIncompatibleCollections();
 
     const dataPlaneName = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.dataPlaneName.whole
@@ -18,7 +20,6 @@ function PublishStepDataFlowReset() {
 
     const stepIndex = useLoopIndex();
     const stepIsIdle = useStepIsIdle();
-    const incompatibleCollectionChecker = useIncompatibleCollectionChecker();
     const [updateStep, updateContext, initUUID, dataFlowResetDraftId] =
         usePreSavePromptStore((state) => [
             state.updateStep,
@@ -58,7 +59,7 @@ function PublishStepDataFlowReset() {
             });
 
             publicationHandler(publishResponse.data[0].id, (response) => {
-                incompatibleCollectionChecker(
+                checkPublicationForIncompatibleCollections(
                     response,
                     'resetDataFlow.disableCapture.errors.incompatibleCollections'
                 );
@@ -67,9 +68,9 @@ function PublishStepDataFlowReset() {
 
         void saveAndPublish();
     }, [
+        checkPublicationForIncompatibleCollections,
         dataFlowResetDraftId,
         dataPlaneName,
-        incompatibleCollectionChecker,
         initUUID,
         publicationHandler,
         stepIndex,
