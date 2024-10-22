@@ -1,6 +1,6 @@
 ### General Overview
 
-Prompts are a dialog `step`per that show before an action is taken. The idea is to ask the user for confirmation, making a selection, more information, etc. before a final action is taken. As of Q4 2024 this is only used for `Data Flow Reset`.
+A prompt is a `stepper` that is shown before an action is taken. The idea is to ask the user for confirmation, making a selection, more information, etc. before a final action is taken. As of Q4 2024 this is only used for `Data Flow Reset`.
 
 ### Technial Overview
 
@@ -22,6 +22,6 @@ _Be careful and talk to someone before expanding this_
 
 Need to decide if we will stick with this custom version or convert to an out of the box version. We also need to decide if we want to put in the extra effort to use a _finite_ state machine or not.
 
-Either way - probably need to end up making a mixin/base for stores so the idea of a stemp that contains a prompt can be shared.
+Either way - probably need to end up making a mixin/base for stores so the idea of a `step` that contains a prompt can be shared.
 
 The main logic of each `step` lives inside the component. This should probably be moved into a hook.
