@@ -9,8 +9,9 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { useIntl } from 'react-intl';
 import { useEffect } from 'react';
 import { handlePollerError } from 'services/supabase';
+import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
+import { defaultQueryDateFormat } from 'services/luxon';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import useStepIsIdle from '../../useStepIsIdle';
 
 function WaitForShardToIdle() {
     const intl = useIntl();
@@ -90,7 +91,7 @@ function WaitForShardToIdle() {
                 async () => {
                     const currentTimeUTC = DateTime.utc();
                     const timeStopped = currentTimeUTC.toFormat(
-                        `yyyy-MM-dd'T'HH:mm:ss'Z'`
+                        defaultQueryDateFormat
                     );
 
                     updateContext({

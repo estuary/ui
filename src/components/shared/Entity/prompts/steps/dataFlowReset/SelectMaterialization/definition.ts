@@ -5,6 +5,7 @@ import SelectMaterialization from '.';
 
 export interface SelectMaterializationStepContext {
     backfillTarget: LiveSpecsExt_Related | null;
+    targetHasOverlap: boolean | null;
     noMaterializations: boolean | null;
     relatedMaterializations: LiveSpecsExt_Related[] | null;
 }

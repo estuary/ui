@@ -44,6 +44,7 @@ function NoMaterializationsFound() {
                     >
                         <ManualSelection />
                         <Button
+                            style={{ alignSelf: 'end' }}
                             variant="text"
                             onClick={() => {
                                 setBackfillDataflow(false);

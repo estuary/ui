@@ -8,6 +8,7 @@ import {
     TextField,
     Theme,
 } from '@mui/material';
+import { autoCompleteDefaults_Virtual_Non_Clearable } from '../AutoComplete/DefaultProps';
 
 interface Props {
     label: string;
@@ -39,8 +40,8 @@ function AutocompletedField({
 }: Props) {
     return (
         <Autocomplete
+            {...autoCompleteDefaults_Virtual_Non_Clearable}
             defaultValue={defaultValue}
-            disableClearable
             id={id}
             onChange={changeHandler}
             options={options}

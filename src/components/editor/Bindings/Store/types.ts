@@ -57,6 +57,7 @@ export interface BindingsEditorState {
     setIncompatibleCollections: (
         value: BindingsEditorState['incompatibleCollections']
     ) => void;
+
     hasIncompatibleCollections: boolean;
 
     // Misc.

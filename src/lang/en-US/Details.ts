@@ -7,6 +7,8 @@ export const Details: Record<string, string> = {
     'details.tabs.history': `History`,
     'details.tabs.ops': `Logs`,
 
+    'details.history.noPublications': `No publications were found.`,
+
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
     'details.settings.notifications.alert.userNotSubscribed.message.button': `click here`,
@@ -46,7 +48,11 @@ export const Details: Record<string, string> = {
     'detailsPanel.totals.title': `Usage this month`,
     'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
-    'detailsPanel.recentUsage.filter.label': `{range} hours`,
+    'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
+    'detailsPanel.recentUsage.filter.label.days': `{range} days`,
+    'detailsPanel.recentUsage.filter.label.months': `{range} months`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
+
+    'detailsPanel.graph.timezone': `{relativeUnit} in`,
 };

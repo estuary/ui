@@ -1,5 +1,6 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
@@ -7,15 +8,16 @@ import {
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import useCheckPublicationForIncompatibleCollections from 'hooks/prompts/useCheckPublicationForIncompatibleCollections';
+import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
+import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-
 import { generateDisabledSpec } from 'utils/entity-utils';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import usePublicationHandler from '../../usePublicationHandler';
-import useStepIsIdle from '../../useStepIsIdle';
 
 function DisableCapture() {
     const intl = useIntl();
@@ -28,6 +30,11 @@ function DisableCapture() {
 
     const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+
+    const checkPublicationForIncompatibleCollections =
+        useCheckPublicationForIncompatibleCollections();
+    const setIncompatibleCollections =
+        useBindingsEditorStore_setIncompatibleCollections();
 
     const stepIndex = useLoopIndex();
     const stepIsIdle = useStepIsIdle();
@@ -111,7 +118,21 @@ function DisableCapture() {
                 }),
             });
 
-            publicationHandler(publishResponse.data[0].id, () => {
+            publicationHandler(publishResponse.data[0].id, (response) => {
+                const [incompatibleCollectionsFound, incompatibleCollections] =
+                    checkPublicationForIncompatibleCollections(
+                        response,
+                        'resetDataFlow.disableCapture.errors.incompatibleCollections'
+                    );
+
+                if (incompatibleCollectionsFound) {
+                    logRocketEvent(CustomEvents.DATA_FLOW_RESET, {
+                        incompatibleCollections: true,
+                    });
+                    setIncompatibleCollections(incompatibleCollections);
+                    return;
+                }
+
                 updateStep(stepIndex, {
                     optionalLabel: intl.formatMessage({
                         id: 'common.disabled',
@@ -124,6 +145,7 @@ function DisableCapture() {
 
         void disableCaptureAndPublish();
     }, [
+        checkPublicationForIncompatibleCollections,
         dataPlaneName,
         draftId,
         draftSpecs,
@@ -131,6 +153,7 @@ function DisableCapture() {
         intl,
         nextStep,
         publicationHandler,
+        setIncompatibleCollections,
         stepIndex,
         stepIsIdle,
         updateContext,

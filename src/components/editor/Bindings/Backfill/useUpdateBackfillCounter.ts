@@ -9,18 +9,13 @@ import {
     useBinding_backfilledBindings,
     useBinding_bindings,
 } from 'stores/Binding/hooks';
-import { Schema } from 'types';
+import { BindingMetadata, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from '../../Store/hooks';
-
-export interface BindingMetadata {
-    bindingIndex: number;
-    collection: string;
-}
 
 const evaluateBackfillCounter = (
     binding: Schema,

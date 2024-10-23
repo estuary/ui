@@ -13,6 +13,16 @@ const PopperComponent = styled(Popper)({
     },
 }) as any;
 
+const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
+    // MUST provide
+    options: [],
+    renderInput: () => null,
+
+    // Can alter if you want
+    PopperComponent,
+    size: 'small',
+};
+
 export const autoCompleteDefaults_Virtual: AutocompleteProps<
     any,
     any,
@@ -20,9 +30,26 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     false,
     'div'
 > = {
+    ...autoCompleteDefaults,
+    disableCloseOnSelect: true,
+    renderGroup: (params) => params as unknown as React.ReactNode,
+    renderOption: (props, option, state) => {
+        return [props, option, state.selected] as React.ReactNode;
+    },
+};
+
+export const autoCompleteDefaults_Virtual_Non_Clearable: AutocompleteProps<
+    any,
+    false,
+    true,
+    false,
+    'div'
+> = {
     ListboxComponent,
     PopperComponent,
-    disableCloseOnSelect: true,
+    disableCloseOnSelect: false,
+    disableClearable: true,
+    multiple: false,
     options: [], // You MUST provide these yourself
     size: 'small',
     renderInput: () => null, // You MUST provide these yourself
@@ -43,3 +70,11 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     multiple: true,
     blurOnSelect: false,
 };
+
+export const getTypedAutoCompleteDefaults = <T = any,>(): AutocompleteProps<
+    T,
+    false,
+    false,
+    false,
+    'div'
+> => autoCompleteDefaults;

@@ -55,7 +55,7 @@ test.describe.serial('Admin:', () => {
         test('The authProps.tenant will be preselected', async () => {
             await expect(
                 page.getByLabel('Prefix', { exact: true })
-            ).toHaveValue(authProps.tenant);
+            ).toHaveValue(`${authProps.tenant}/`);
         });
 
         test.describe('Organization Settings', () => {
@@ -155,7 +155,7 @@ test.describe.serial('Admin:', () => {
             });
 
             test('can choose Amazon', async () => {
-                await page.getByLabel('Provider').click();
+                await page.getByRole('combobox', { name: 'Provider' }).click();
                 await page
                     .getByRole('option', {
                         name: 'Amazon Simple Storage Service',
@@ -169,7 +169,7 @@ test.describe.serial('Admin:', () => {
             });
 
             test('can choose Google', async () => {
-                await page.getByLabel('Provider').click();
+                await page.getByRole('combobox', { name: 'Provider' }).click();
                 await page
                     .getByRole('option', { name: 'Google Cloud Storage' })
                     .click();
@@ -210,12 +210,12 @@ test.describe.serial('Admin:', () => {
             test('will ensure bucket is real during backend validation', async () => {
                 await page.getByRole('button', { name: 'Save' }).click();
 
-                await expect(
-                    page.getByRole('button', { name: 'Save' })
-                ).toBeEnabled();
                 await expect(page.getByRole('alert')).toContainText(
                     'failed to put object'
                 );
+                await expect(
+                    page.getByRole('button', { name: 'Save' })
+                ).toBeEnabled();
             });
 
             test('can be closed', async () => {
@@ -238,7 +238,7 @@ test.describe.serial('Admin:', () => {
         test('shows the authProps.tenant in the selector', async () => {
             await expect(
                 page.getByRole('combobox', { name: 'Prefix' })
-            ).toHaveValue(authProps.tenant);
+            ).toHaveValue(`${authProps.tenant}/`);
         });
     });
 

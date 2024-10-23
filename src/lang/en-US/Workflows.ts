@@ -3,6 +3,8 @@ import { CTAs } from './CTAs';
 
 const changesRejected = 'rejected due to incompatible collection updates';
 
+const skipDataFlowReset = `Skip data flow reset`;
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -83,10 +85,13 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} marked for backfill`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} backfilling`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
+
+    'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
+    'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
@@ -162,15 +167,18 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.errors.publishFailed': `Publishing failed.`,
     'resetDataFlow.errors.missingSession': `Cannot find user session.`,
     'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
+    'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
-    'resetDataFlow.materializations.empty.header': `No related ${CommonMessages['terms.destinations']}`,
-    'resetDataFlow.materializations.empty.message': `We currently only support data flow resets on materializations with a source capture. You may choose a materialization manually or skip and save your changes.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only publish your changes to the Capture and not do a full data flow backfill.`,
+    'resetDataFlow.materializations.empty.header': `No related materializations`,
+    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found.  Pick one manually or skip this step.`,
+    'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
     'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
-    'resetDataFlow.materializations.empty.skip': `Skip data flow reset`,
+    'resetDataFlow.materializations.empty.skip': `${skipDataFlowReset}`,
+    'resetDataFlow.materializations.noOverlap.title': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
+    'resetDataFlow.materializations.noOverlap.message': `Please select another ${CommonMessages['terms.destination.lowercase']} to continue resetting the data flow or click "${skipDataFlowReset}"`,
 
     'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
     'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
@@ -230,6 +238,9 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.unknown': `Unknown`,
     'fieldSelection.table.label.filter': `Filter fields`,
 
+    // Messages from binding editing
+    'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
+
     // Time Travel
     'notBeforeNotAfter.header': `Time Travel`,
     'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
@@ -238,6 +249,28 @@ export const Workflows: Record<string, string> = {
     'notAfter.input.description': `only include data from before this time (UTC)`,
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
+
+    // Incompatible Schema Change
+    'incompatibleSchemaChange.header': `Incompatible Schema Change`,
+    'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
+    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
+    'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
+
+    'incompatibleSchemaChange.error.cta': `Remove Setting`,
+    'incompatibleSchemaChange.error.title': `Invalid setting`,
+    'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'incompatibleSchemaChange.options.abort.label': `Abort`,
+    'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
+
+    'incompatibleSchemaChange.options.backfill.label': `Backfill`,
+    'incompatibleSchemaChange.options.backfill.description': `Increment the backfill counter of the binding, causing it to start over from the beginning.`,
+
+    'incompatibleSchemaChange.options.disableBinding.label': `Disable Binding`,
+    'incompatibleSchemaChange.options.disableBinding.description': `Disable the binding, which will be effectively excluded from the task until it is re-enabled.`,
+
+    'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
+    'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
