@@ -188,16 +188,19 @@ function UpdateEntity({
     useEffect(() => {
         const success = jobSucceeded(publication?.job_status);
 
-        if (success === true) {
-            setState(ProgressStates.SUCCESS);
-            setLogToken(publication?.logs_token ?? null);
-            onFinish(publication);
-        } else if (success === false) {
-            setState(ProgressStates.FAILED);
-            setLogToken(publication?.logs_token ?? null);
-            setError({});
-            onFinish(publication);
+        if (success === null) {
+            return;
         }
+
+        if (success) {
+            setState(ProgressStates.SUCCESS);
+        } else {
+            setState(ProgressStates.FAILED);
+            setError({});
+        }
+
+        setLogToken(publication?.logs_token ?? null);
+        onFinish(publication);
     }, [onFinish, publication]);
 
     useEffect(() => {
