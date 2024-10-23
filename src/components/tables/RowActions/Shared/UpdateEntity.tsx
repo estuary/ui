@@ -14,7 +14,7 @@ import {
     useLiveSpecsExtWithSpec,
 } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
 import {
@@ -54,6 +54,7 @@ function UpdateEntity({
     selectableStoreName,
     validateNewSpec,
 }: UpdateEntityProps) {
+    const publishCompleted = useRef(false);
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
@@ -85,6 +86,10 @@ function UpdateEntity({
         selectableStoreName === SelectTableStoreNames.CAPTURE;
 
     useEffect(() => {
+        if (publishCompleted.current) {
+            return;
+        }
+
         const done = (progressState: ProgressStates, response: any) => {
             setState(progressState);
             onFinish(response);
@@ -188,7 +193,9 @@ function UpdateEntity({
     useEffect(() => {
         const success = jobSucceeded(publication?.job_status);
 
-        if (success === null) {
+        // Either we don't know the outcome yet
+        //  of we have already processed everything and can skip
+        if (success === null || publishCompleted.current) {
             return;
         }
 
@@ -205,6 +212,7 @@ function UpdateEntity({
 
     useEffect(() => {
         if (state === ProgressStates.SUCCESS) {
+            publishCompleted.current = true;
             incrementSuccessfulTransformations();
         }
     }, [state, incrementSuccessfulTransformations]);
