@@ -508,7 +508,6 @@ const getInitialState = (
             materializationHydrating && rehydrating;
 
         get().resetState(materializationRehydrating);
-        get().resetState(materializationRehydrating);
 
         const connectorTagResponse = await hydrateConnectorTagDependentState(
             connectorTagId,
