@@ -34,7 +34,6 @@ function ProgressDialog({
     };
 
     const onFinish = useCallback(() => {
-        console.log('onFinish called');
         if (done) {
             return;
         }
@@ -43,9 +42,6 @@ function ProgressDialog({
     }, [done]);
 
     useEffect(() => {
-        console.log('finishedCount', finishedCount);
-        console.log('inProgressCount.current', inProgressCount.current);
-
         if (finishedCount === inProgressCount.current) {
             setDone(true);
         }
