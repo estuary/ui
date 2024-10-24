@@ -9,7 +9,11 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { CAPTURE_INTERVAL_RE, POSTGRES_INTERVAL_RE } from 'validation';
+import {
+    CAPTURE_INTERVAL_RE,
+    DURATION_RE,
+    POSTGRES_INTERVAL_RE,
+} from 'validation';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -222,7 +226,7 @@ export const isPostgrestFetcher = (
 
 export const formatCaptureInterval = (
     interval: string | null,
-    includeIntervalUnit?: boolean
+    intervalUnitSupported?: boolean
 ): string | null => {
     if (typeof interval !== 'string') {
         return interval;
@@ -255,7 +259,9 @@ export const formatCaptureInterval = (
     }
 
     formattedInterval =
-        hasLength(formattedInterval) && includeIntervalUnit
+        hasLength(formattedInterval.trim()) &&
+        intervalUnitSupported &&
+        !DURATION_RE.test(formattedInterval.trim())
             ? formattedInterval.trim().concat('i')
             : formattedInterval.trim();
 

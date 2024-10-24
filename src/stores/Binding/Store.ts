@@ -251,6 +251,7 @@ const hydrateConnectorTagDependentState = async (
 };
 
 const hydrateSpecificationDependentState = async (
+    defaultInterval: string | null,
     entityType: Entity,
     fallbackInterval: string | null,
     get: StoreApi<BindingState>['getState'],
@@ -280,9 +281,11 @@ const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec.bindings
         );
 
+        const targetInterval = draftSpecs[0].spec?.interval ?? defaultInterval;
+
         get().setCaptureInterval(
-            draftSpecs[0].spec?.interval
-                ? formatCaptureInterval(draftSpecs[0].spec.interval, true)
+            targetInterval
+                ? formatCaptureInterval(targetInterval, true)
                 : fallbackInterval
         );
     } else {
@@ -534,6 +537,7 @@ const getInitialState = (
             }
 
             const draftSpecError = await hydrateSpecificationDependentState(
+                connectorTagResponse?.default_capture_interval,
                 entityType,
                 fallbackInterval,
                 get,
