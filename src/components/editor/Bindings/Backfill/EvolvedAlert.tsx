@@ -1,7 +1,7 @@
 import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
-import { ENTITY_SETTINGS } from 'utils/entity-utils';
+import { ENTITY_SETTINGS } from 'settings/entity';
 
 function EvolvedAlert() {
     const entityType = useEntityType();

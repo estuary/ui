@@ -7,7 +7,7 @@ import {
     useBinding_collections_count,
     useBinding_evolvedCollections_count,
 } from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'utils/entity-utils';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {

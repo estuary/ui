@@ -16,7 +16,7 @@ import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'utils/entity-utils';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ReviewTable() {
