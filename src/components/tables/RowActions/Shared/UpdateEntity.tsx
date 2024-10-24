@@ -194,7 +194,7 @@ function UpdateEntity({
         const success = jobSucceeded(publication?.job_status);
 
         // Either we don't know the outcome yet
-        //  of we have already processed everything and can skip
+        //  or we have already processed everything and can skip
         if (success === null || publishCompleted.current) {
             return;
         }
