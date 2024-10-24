@@ -125,10 +125,6 @@ function CaptureInterval({ readOnly }: Props) {
                                 disableUnderline
                                 error={false}
                                 onChange={(event) => {
-                                    // TODO: (capture-interval): Unset interval values above the selected unit if the input
-                                    //   is formatted as an interval. Otherwise, apply the input value to the interval and unset all
-                                    //   other interval segments.
-
                                     const value = event.target.value;
                                     let evaluatedInterval = input;
 
