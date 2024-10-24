@@ -14,7 +14,7 @@ import {
     primaryColoredBackground_hovered,
 } from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
@@ -22,7 +22,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { hasLength } from 'utils/misc-utils';
+import { getCaptureIntervalSegment, hasLength } from 'utils/misc-utils';
 import {
     CAPTURE_INTERVAL_RE,
     NUMERIC_RE,
@@ -63,13 +63,19 @@ function CaptureInterval({ readOnly }: Props) {
 
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
-    const errorsExist = Boolean(
-        input &&
+    const errorsExist = useMemo(() => {
+        const intervalErrorsExist =
+            input &&
             hasLength(input) &&
-            !NUMERIC_RE.test(input) &&
             !POSTGRES_INTERVAL_RE.test(input) &&
-            !CAPTURE_INTERVAL_RE.test(input)
-    );
+            !CAPTURE_INTERVAL_RE.test(input);
+
+        return Boolean(
+            unit === 'i'
+                ? intervalErrorsExist
+                : intervalErrorsExist && !NUMERIC_RE.test(input)
+        );
+    }, [input, unit]);
 
     if (typeof input !== 'string') {
         return null;
@@ -122,11 +128,30 @@ function CaptureInterval({ readOnly }: Props) {
                                     // TODO: (capture-interval): Unset interval values above the selected unit if the input
                                     //   is formatted as an interval. Otherwise, apply the input value to the interval and unset all
                                     //   other interval segments.
-                                    setUnit(event.target.value);
+
+                                    const value = event.target.value;
+                                    let evaluatedInterval = input;
+
+                                    if (unit === 'i' && value !== 'i') {
+                                        const intervalSegment =
+                                            getCaptureIntervalSegment(
+                                                input,
+                                                value
+                                            );
+
+                                        evaluatedInterval =
+                                            intervalSegment > -1
+                                                ? intervalSegment.toString()
+                                                : '';
+
+                                        setInput(evaluatedInterval);
+                                    }
+
+                                    setUnit(value);
 
                                     updateStoredInterval(
-                                        input,
-                                        event.target.value
+                                        evaluatedInterval,
+                                        value
                                     );
                                 }}
                                 required
@@ -196,15 +221,20 @@ function CaptureInterval({ readOnly }: Props) {
                     value={input}
                 />
 
-                <FormHelperText
-                    id={DESCRIPTION_ID}
-                    error={errorsExist}
-                    style={{ marginLeft: 0 }}
-                >
-                    {intl.formatMessage({
-                        id: 'captureInterval.description.format',
-                    })}
-                </FormHelperText>
+                {errorsExist ? (
+                    <FormHelperText
+                        id={DESCRIPTION_ID}
+                        error={errorsExist}
+                        style={{ marginLeft: 0 }}
+                    >
+                        {intl.formatMessage({
+                            id:
+                                unit === 'i'
+                                    ? 'captureInterval.error.intervalFormat'
+                                    : 'captureInterval.error.generalFormat',
+                        })}
+                    </FormHelperText>
+                ) : null}
             </FormControl>
         </Stack>
     );

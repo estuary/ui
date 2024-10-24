@@ -86,6 +86,7 @@ export const Captures: Record<string, string> = {
     'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 
     // Capture Interval
-    'captureInterval.description.format': `Please enter up to two digits or a Postgres interval (e.g., HH:MM:SS).`,
     'captureInterval.error.updateFailed': `Interval update failed`,
+    'captureInterval.error.intervalFormat': `Intervals must be formatted as HH:MM:SS or [0-9]+(s|m|h).`,
+    'captureInterval.error.generalFormat': `Only numeric input is allowed.`,
 };

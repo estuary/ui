@@ -14,6 +14,8 @@ import {
     useRef,
     useState,
 } from 'react';
+import { logRocketConsole } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
@@ -52,19 +54,40 @@ export default function useCaptureInterval() {
     const applyCaptureInterval = useCallback(
         async (interval: string) => {
             if (!mutateDraftSpecs || !draftId || !draftSpec) {
+                logRocketConsole(CustomEvents.CAPTURE_INTERVAL_ERROR, {
+                    draftIdMissing: !draftId,
+                    draftSpecMissing: !draftSpec,
+                    mutateMissing: !mutateDraftSpecs,
+                });
+
                 return Promise.resolve();
             }
 
-            const spec: Schema = draftSpec.spec;
+            let spec: Schema = draftSpec.spec;
 
             if (!hasLength(interval)) {
-                omit(spec, 'interval');
+                spec = omit(spec, 'interval');
             } else {
                 const strippedInterval = interval.endsWith('i')
                     ? interval.slice(0, interval.length - 1)
                     : interval;
 
-                spec.interval = formatCaptureInterval(strippedInterval);
+                const formattedInterval =
+                    formatCaptureInterval(strippedInterval);
+
+                if (
+                    !formattedInterval ||
+                    !CAPTURE_INTERVAL_RE.test(formattedInterval)
+                ) {
+                    logRocketConsole(CustomEvents.CAPTURE_INTERVAL_ERROR, {
+                        interval,
+                        formattedInterval,
+                    });
+
+                    return Promise.resolve();
+                }
+
+                spec.interval = formattedInterval;
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
@@ -103,7 +126,11 @@ export default function useCaptureInterval() {
             postgresIntervalFormat ||
             captureIntervalFormat;
 
-        if (setUnit && (postgresIntervalFormat || captureIntervalFormat)) {
+        if (
+            setUnit &&
+            hasLength(trimmedInput) &&
+            (postgresIntervalFormat || captureIntervalFormat)
+        ) {
             setUnit('i');
         }
 
@@ -118,7 +145,7 @@ export default function useCaptureInterval() {
     };
 
     useEffect(() => {
-        if (captureInterval && serverUpdateRequired) {
+        if (typeof captureInterval === 'string' && serverUpdateRequired) {
             setServerUpdateRequired(false);
 
             applyCaptureInterval(captureInterval).then(
