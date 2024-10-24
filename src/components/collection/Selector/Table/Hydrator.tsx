@@ -8,29 +8,23 @@ import { useUnmount } from 'react-use';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
 import { EVERYTHING, publishedColumn } from './shared';
-import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
+import { useCollectionsSelectorColumns } from './useCollectionsSelectorColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.ENTITY_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
 
 function Hydrator({
     disableQueryParamHack,
-    entity,
+    entity = 'collection',
     selectedCollections,
 }: TableHydratorProps) {
-    const selectingCaptures = entity === 'capture';
-    const selectingMaterializations = entity === 'materialization';
-
     const tableColumns = useCollectionsSelectorColumns(
-        selectingMaterializations
-            ? 'readsFrom'
-            : selectingCaptures
-            ? 'writesTo'
-            : undefined
+        ENTITY_SETTINGS[entity].selector.optionalColumns
     );
 
     const {
@@ -48,17 +42,12 @@ function Hydrator({
     } = useTableState('esl', publishedColumn, 'desc', tableRowsPerPage[0]);
 
     const query = useMemo(() => {
-        return getLiveSpecs_entitySelector(
-            pagination,
-            entity ?? 'collection',
-            searchQuery,
-            [
-                {
-                    col: columnToSort,
-                    direction: sortDirection,
-                },
-            ]
-        );
+        return getLiveSpecs_entitySelector(pagination, entity, searchQuery, [
+            {
+                col: columnToSort,
+                direction: sortDirection,
+            },
+        ]);
     }, [columnToSort, entity, pagination, searchQuery, sortDirection]);
 
     const setDisabledRows = useStore(
@@ -81,13 +70,14 @@ function Hydrator({
             disableQueryParamHack={disableQueryParamHack}
             query={query}
             selectableTableStoreName={selectableTableStoreName}
-            disableMultiSelect={selectingCaptures || selectingMaterializations}
+            disableMultiSelect={
+                ENTITY_SETTINGS[entity].selector.disableMultiSelect
+            }
         >
             <EntityTable
-                noExistingDataContentIds={{
-                    header: 'collections.message1',
-                    message: 'collections.message2',
-                }}
+                noExistingDataContentIds={
+                    ENTITY_SETTINGS[entity].selector.noExistingDataContentIds
+                }
                 columns={tableColumns}
                 renderTableRows={(data) => <Rows data={data} />}
                 pagination={pagination}
@@ -101,8 +91,8 @@ function Hydrator({
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header={null}
-                filterLabel="collectionsTable.filterLabel"
+                header={ENTITY_SETTINGS[entity].selector.headerIntlKey}
+                filterLabel={ENTITY_SETTINGS[entity].selector.filterIntlKey}
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
                 toolbar={

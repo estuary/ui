@@ -3,7 +3,6 @@ import DraftSpecEditor from 'components/editor/DraftSpec';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
@@ -11,7 +10,6 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
 import AlertBox from '../AlertBox';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
@@ -21,10 +19,6 @@ interface Props {
 
 function CatalogEditor({ messageId }: Props) {
     const draftId = useEditorStore_id();
-
-    const [dataFlowResetEnabled] = useLocalStorage(
-        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
-    );
 
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
@@ -49,9 +43,7 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {dataFlowResetEnabled &&
-                    backfillDataFlow &&
-                    backfillCount ? (
+                    {backfillDataFlow && backfillCount ? (
                         <AlertBox
                             sx={{
                                 maxWidth: 'fit-content',
@@ -72,9 +64,7 @@ function CatalogEditor({ messageId }: Props) {
                         <DraftSpecEditor
                             disabled={Boolean(
                                 formActive ||
-                                    (dataFlowResetEnabled &&
-                                        backfillDataFlow &&
-                                        backfillCount)
+                                    (backfillDataFlow && backfillCount)
                             )}
                             monitorCurrentCatalog
                         />

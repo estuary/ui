@@ -4,7 +4,6 @@ import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
@@ -22,7 +21,6 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
@@ -37,11 +35,6 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     const workflow = useEntityWorkflow();
-
-    const [dataFlowResetEnabled] = useLocalStorage(
-        LocalStorageKeys.ENABLE_DATA_FLOW_RESET,
-        false
-    );
 
     const evolvedCollections = useBindingStore(
         (state) => state.evolvedCollections
@@ -229,9 +222,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
                 {reversioned && bindingIndex !== -1 ? <EvolvedAlert /> : null}
             </Stack>
 
-            {dataFlowResetEnabled &&
-            bindingIndex === -1 &&
-            workflow === 'capture_edit' ? (
+            {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
             ) : null}
         </Box>

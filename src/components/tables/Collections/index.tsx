@@ -7,6 +7,7 @@ import TableHydrator from 'stores/Tables/Hydrator';
 import StatsHydrator from 'stores/Tables/StatsHydrator';
 import { useTableState } from 'stores/Tables/hooks';
 import { SelectTableStoreNames } from 'stores/names';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import RowSelector from '../RowActions/RowSelector';
 import { selectKeyValueName } from '../shared';
 import useCollectionColumns from './useCollectionColumns';
@@ -49,10 +50,10 @@ function CollectionsTable() {
                 >
                     <EntityTable
                         ExportComponent={CollectionExportButton}
-                        noExistingDataContentIds={{
-                            header: 'collections.message1',
-                            message: 'collections.message2',
-                        }}
+                        noExistingDataContentIds={
+                            ENTITY_SETTINGS.collection.table
+                                .noExistingDataContentIds
+                        }
                         columns={tableColumns}
                         renderTableRows={(data, showEntityStatus) => (
                             <Rows
@@ -70,8 +71,10 @@ function CollectionsTable() {
                         setSortDirection={setSortDirection}
                         columnToSort={columnToSort}
                         setColumnToSort={setColumnToSort}
-                        header="collectionsTable.title"
-                        filterLabel="collectionsTable.filterLabel"
+                        header={ENTITY_SETTINGS.collection.table.headerIntlKey}
+                        filterLabel={
+                            ENTITY_SETTINGS.collection.table.filterIntlKey
+                        }
                         showEntityStatus
                         selectableTableStoreName={selectableTableStoreName}
                         showToolbar

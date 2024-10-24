@@ -4,6 +4,7 @@ import Rows from 'components/tables/Captures/Rows';
 import EntityTable from 'components/tables/EntityTable';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -49,10 +50,10 @@ function CapturesTable() {
                 >
                     <EntityTable
                         ExportComponent={CaptureExportButton}
-                        noExistingDataContentIds={{
-                            header: 'captures.message1',
-                            message: 'captures.message2',
-                        }}
+                        noExistingDataContentIds={
+                            ENTITY_SETTINGS.capture.table
+                                .noExistingDataContentIds
+                        }
                         columns={tableColumns}
                         renderTableRows={(data, showEntityStatus) => (
                             <Rows
@@ -70,8 +71,10 @@ function CapturesTable() {
                         setSortDirection={setSortDirection}
                         columnToSort={columnToSort}
                         setColumnToSort={setColumnToSort}
-                        header="captureTable.header"
-                        filterLabel="capturesTable.filterLabel"
+                        header={ENTITY_SETTINGS.capture.table.headerIntlKey}
+                        filterLabel={
+                            ENTITY_SETTINGS.capture.table.filterIntlKey
+                        }
                         showEntityStatus
                         selectableTableStoreName={selectableTableStoreName}
                         showToolbar
