@@ -23,7 +23,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             headerIntlKey: null,
             noExistingDataContentIds: {
                 header: 'entityTable.captures.missing.header',
-                message: 'entityTable.collections.missing.message2',
+                message: 'entityTable.collections.missing.message',
             },
         },
         table: {
@@ -31,7 +31,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             headerIntlKey: 'collectionsTable.title',
             noExistingDataContentIds: {
                 header: 'entityTable.captures.missing.header',
-                message: 'entityTable.collections.missing.message2',
+                message: 'entityTable.collections.missing.message',
             },
         },
         termId: 'terms.collections',
@@ -50,15 +50,15 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             headerIntlKey: null,
             noExistingDataContentIds: {
                 header: 'entityTable.collections.missing.header',
-                message: 'entityTable.collections.missing.message2',
+                message: 'entityTable.collections.missing.message',
             },
         },
         table: {
             filterIntlKey: 'capturesTable.filterLabel',
             headerIntlKey: 'capturesTable.title',
             noExistingDataContentIds: {
-                header: 'entityTable.collections.missing.header',
-                message: 'entityTable.collections.missing.message2',
+                header: 'captures.message1',
+                message: 'captures.message2',
             },
         },
         termId: 'terms.sources',
@@ -78,15 +78,15 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             headerIntlKey: null,
             noExistingDataContentIds: {
                 header: 'entityTable.materializations.missing.header',
-                message: 'entityTable.materializations.missing.message2',
+                message: 'entityTable.materializations.missing.message',
             },
         },
         table: {
             filterIntlKey: 'materializationsTable.filterLabel',
             headerIntlKey: 'materializationsTable.title',
             noExistingDataContentIds: {
-                header: 'entityTable.materializations.missing.header',
-                message: 'entityTable.materializations.missing.message2',
+                header: 'materializations.message1',
+                message: 'materializations.message2',
             },
         },
         termId: 'terms.destinations',

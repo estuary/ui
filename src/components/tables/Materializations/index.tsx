@@ -4,6 +4,7 @@ import EntityTable from 'components/tables/EntityTable';
 import Rows from 'components/tables/Materializations/Rows';
 import RowSelector from 'components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -48,10 +49,10 @@ function MaterializationsTable() {
                 >
                     <EntityTable
                         ExportComponent={MaterializationExportButton}
-                        noExistingDataContentIds={{
-                            header: 'materializations.message1',
-                            message: 'materializations.message2',
-                        }}
+                        noExistingDataContentIds={
+                            ENTITY_SETTINGS.materialization.table
+                                .noExistingDataContentIds
+                        }
                         columns={tableColumns}
                         renderTableRows={(data, showEntityStatus) => (
                             <Rows
@@ -69,8 +70,12 @@ function MaterializationsTable() {
                         setSortDirection={setSortDirection}
                         columnToSort={columnToSort}
                         setColumnToSort={setColumnToSort}
-                        header="materializationsTable.title"
-                        filterLabel="materializationsTable.filterLabel"
+                        header={
+                            ENTITY_SETTINGS.materialization.table.headerIntlKey
+                        }
+                        filterLabel={
+                            ENTITY_SETTINGS.materialization.table.filterIntlKey
+                        }
                         showEntityStatus={true}
                         selectableTableStoreName={selectableTableStoreName}
                         showToolbar

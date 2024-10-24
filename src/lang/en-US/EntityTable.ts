@@ -74,15 +74,14 @@ export const EntityTable: Record<string, string> = {
 
     // Entity Selector / Add Dialog
     'entityTable.captures.missing.header': `You currently have no captures.  Click the captures icon on the menu bar to get started.`,
-    // captures just use the collections message
 
     'entityTable.collections.missing.header': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
-    'entityTable.collections.missing.message2': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
-    'entityTable.collections.missing.message2.docLink': `collections`,
-    'entityTable.collections.missing.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
+    'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
+    'entityTable.collections.missing.message.docLink': `collections`,
+    'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 
     'entityTable.materializations.missing.header': `You currently have no materializations.  Click the materializations icon on the menu bar to get started.`,
-    'entityTable.materializations.missing.message2': `Materializations write to outside systems by reading data from {docLink} within Flow.`,
-    'entityTable.materializations.missing.message2.docLink': `collections`,
-    'entityTable.materializations.missing.message2.docPath': `https://docs.estuary.dev/concepts/collections/`,
+    'entityTable.materializations.missing.message': `Materializations write to outside systems by reading data from {docLink} within Flow.`,
+    'entityTable.materializations.missing.message.docLink': `collections`,
+    'entityTable.materializations.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
