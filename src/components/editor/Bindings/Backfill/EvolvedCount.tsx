@@ -3,7 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBinding_evolvedCollections_count } from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'utils/entity-utils';
+import { ENTITY_SETTINGS } from 'settings/entity';
 
 function EvolvedCount() {
     const intl = useIntl();
