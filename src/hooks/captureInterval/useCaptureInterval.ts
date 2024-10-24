@@ -64,6 +64,7 @@ export default function useCaptureInterval() {
             }
 
             let spec: Schema = draftSpec.spec;
+            const originalInterval = draftSpec.spec?.interval;
 
             if (!hasLength(interval)) {
                 spec = omit(spec, 'interval');
@@ -88,6 +89,10 @@ export default function useCaptureInterval() {
                 }
 
                 spec.interval = formattedInterval;
+            }
+
+            if (originalInterval === spec.interval) {
+                return Promise.resolve();
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
