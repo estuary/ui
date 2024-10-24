@@ -49,7 +49,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             filterIntlKey: 'capturesTable.filterLabel',
             headerIntlKey: null,
             noExistingDataContentIds: {
-                header: 'entityTable.collections.missing.header',
+                header: 'entityTable.captures.missing.header',
                 message: 'entityTable.collections.missing.message',
             },
         },
