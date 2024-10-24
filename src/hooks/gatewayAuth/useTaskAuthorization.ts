@@ -56,7 +56,7 @@ const useTaskAuthorization = (prefixes: string[]) => {
         grants.find((grant) => prefix.startsWith(grant))
     );
 
-    if (!hasLength(authorizedPrefixes)) {
+    if (!hasLength(authorizedPrefixes) && hasLength(prefixes)) {
         logRocketEvent(`${CustomEvents.AUTHORIZE_TASK} : InvalidPrefix`, {
             prefixes,
         });
