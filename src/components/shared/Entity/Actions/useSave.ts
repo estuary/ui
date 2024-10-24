@@ -15,7 +15,6 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -35,7 +34,6 @@ import { FormStatus } from 'stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
 import { hasLength } from 'utils/misc-utils';
 import { getCollectionName } from 'utils/workflow-utils';
 
@@ -64,9 +62,6 @@ function useSave(
     const [backfillDataflow] = useBindingStore((state) => [
         state.backfillDataFlow,
     ]);
-    const [dataFlowResetEnabled] = useLocalStorage(
-        LocalStorageKeys.ENABLE_DATA_FLOW_RESET
-    );
 
     // Draft Editor Store
     const setPubId = useEditorStore_setPubId();
@@ -97,11 +92,8 @@ function useSave(
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const showPreSavePrompt = useMemo(
-        () =>
-            Boolean(
-                isEdit && dataFlowResetEnabled && !dryRun && backfillDataflow
-            ),
-        [backfillDataflow, dataFlowResetEnabled, dryRun, isEdit]
+        () => Boolean(isEdit && !dryRun && backfillDataflow),
+        [backfillDataflow, dryRun, isEdit]
     );
 
     const waitForPublishToFinish = useCallback(
