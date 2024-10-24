@@ -86,6 +86,14 @@ export const Captures: Record<string, string> = {
     'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 
     // Capture Interval
+    'captureInterval.header': `Polling Interval`,
+    'captureInterval.message': `Controls how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion.`,
+    'captureInterval.tooltip': `For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
+    'captureInterval.input.label': `Interval`,
+    'captureInterval.input.seconds': `seconds`,
+    'captureInterval.input.minutes': `minutes`,
+    'captureInterval.input.hours': `hours`,
+    'captureInterval.input.interval': `interval`,
     'captureInterval.error.updateFailed': `Interval update failed`,
     'captureInterval.error.intervalFormat': `Intervals must be formatted as HH:MM:SS or [0-9]+(s|m|h).`,
     'captureInterval.error.generalFormat': `Only numeric input is allowed.`,

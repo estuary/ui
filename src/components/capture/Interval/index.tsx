@@ -7,6 +7,7 @@ import {
     OutlinedInput,
     Select,
     Stack,
+    Tooltip,
     Typography,
 } from '@mui/material';
 import {
@@ -14,6 +15,7 @@ import {
     primaryColoredBackground_hovered,
 } from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
+import { HelpCircle } from 'iconoir-react';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -39,7 +41,7 @@ interface Props {
 function CaptureInterval({ readOnly }: Props) {
     const intl = useIntl();
     const label = intl.formatMessage({
-        id: 'workflows.interval.input.label',
+        id: 'captureInterval.input.label',
     });
 
     const { updateStoredInterval } = useCaptureInterval();
@@ -83,12 +85,23 @@ function CaptureInterval({ readOnly }: Props) {
 
     return (
         <Stack spacing={1}>
-            <Typography variant="formSectionHeader">
-                <FormattedMessage id="workflows.interval.header" />
-            </Typography>
+            <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
+                <Typography variant="formSectionHeader">
+                    <FormattedMessage id="captureInterval.header" />
+                </Typography>
+
+                <Tooltip
+                    placement="right-start"
+                    title={intl.formatMessage({
+                        id: 'captureInterval.tooltip',
+                    })}
+                >
+                    <HelpCircle style={{ fontSize: 11 }} />
+                </Tooltip>
+            </Stack>
 
             <Typography style={{ marginBottom: 16 }}>
-                <FormattedMessage id="workflows.interval.message" />
+                <FormattedMessage id="captureInterval.message" />
             </Typography>
 
             <FormControl
@@ -155,7 +168,9 @@ function CaptureInterval({ readOnly }: Props) {
                                 sx={{
                                     'backgroundColor': (theme) =>
                                         theme.palette.primary.main,
+                                    'borderBottomLeftRadius': 0,
                                     'borderBottomRightRadius': 5,
+                                    'borderTopLeftRadius': 0,
                                     'borderTopRightRadius': 5,
                                     'color': (theme) =>
                                         primaryButtonText[theme.palette.mode],
@@ -168,8 +183,7 @@ function CaptureInterval({ readOnly }: Props) {
                                             ],
                                     },
                                     '& .MuiFilledInput-input': {
-                                        pb: '7px',
-                                        pt: '8px',
+                                        py: '8px',
                                     },
                                     '& .MuiSelect-iconFilled': {
                                         color: (theme) =>
@@ -182,19 +196,19 @@ function CaptureInterval({ readOnly }: Props) {
                                 variant="filled"
                             >
                                 <MenuItem value="s" selected>
-                                    <FormattedMessage id="workflows.interval.input.seconds" />
+                                    <FormattedMessage id="captureInterval.input.seconds" />
                                 </MenuItem>
 
                                 <MenuItem value="m">
-                                    <FormattedMessage id="workflows.interval.input.minutes" />
+                                    <FormattedMessage id="captureInterval.input.minutes" />
                                 </MenuItem>
 
                                 <MenuItem value="h">
-                                    <FormattedMessage id="workflows.interval.input.hours" />
+                                    <FormattedMessage id="captureInterval.input.hours" />
                                 </MenuItem>
 
                                 <MenuItem value="i">
-                                    <FormattedMessage id="workflows.interval.input.interval" />
+                                    <FormattedMessage id="captureInterval.input.interval" />
                                 </MenuItem>
                             </Select>
                         </InputAdornment>
