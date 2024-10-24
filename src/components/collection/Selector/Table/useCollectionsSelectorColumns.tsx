@@ -29,10 +29,10 @@ const optionalColumns = {
     } as ColumnProps,
 };
 
-export type optionalColumn = keyof typeof optionalColumns;
+export type OptionalColumn = keyof typeof optionalColumns;
 
 export const useCollectionsSelectorColumns = (
-    include?: optionalColumn
+    include?: OptionalColumn
 ): ColumnProps[] => {
     return useMemo(() => {
         if (include) {
