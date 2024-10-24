@@ -298,15 +298,15 @@ export const formatCaptureInterval = (
             s: seconds,
         } = parsePostgresInterval(interval);
 
-        if (hours > -1) {
+        if (hours > 0) {
             formattedInterval = formattedInterval.concat(`${hours}h `);
         }
 
-        if (minutes > -1) {
+        if (minutes > 0) {
             formattedInterval = formattedInterval.concat(`${minutes}m `);
         }
 
-        if (seconds > -1) {
+        if (seconds > 0) {
             formattedInterval = formattedInterval.concat(`${seconds}s`);
         }
     }
