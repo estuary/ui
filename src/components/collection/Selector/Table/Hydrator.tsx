@@ -13,7 +13,7 @@ import { MAX_BINDINGS } from 'utils/workflow-utils';
 import { useStore } from 'zustand';
 import Rows from './Rows';
 import { EVERYTHING, publishedColumn } from './shared';
-import useCollectionsSelectorColumns from './useCollectionsSelectorColumns';
+import { useCollectionsSelectorColumns } from './useCollectionsSelectorColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.ENTITY_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];
