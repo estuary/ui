@@ -71,4 +71,13 @@ export const EntityTable: Record<string, string> = {
     // Update Entity
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
+
+    // Entity Selector / Add Dialog
+    'entityTable.captures.missing.header': `You currently have no captures.  Click the captures icon on the menu bar to get started.`,
+    'entityTable.materializations.missing.header': `You currently have no materializations.  Click the materializations icon on the menu bar to get started.`,
+
+    'entityTable.collections.missing.header': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
+    'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
+    'entityTable.collections.missing.message.docLink': `collections`,
+    'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };
