@@ -220,8 +220,9 @@ export const isPostgrestFetcher = (
     | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
 
-export const formatPostgresInterval = (
-    interval: string | null
+export const formatCaptureInterval = (
+    interval: string | null,
+    includeIntervalUnit?: boolean
 ): string | null => {
     if (typeof interval !== 'string') {
         return interval;
@@ -253,7 +254,10 @@ export const formatPostgresInterval = (
         formattedInterval = formattedInterval.concat(interval);
     }
 
-    return hasLength(formattedInterval)
-        ? formattedInterval.trim().concat('i')
-        : interval;
+    formattedInterval =
+        hasLength(formattedInterval) && includeIntervalUnit
+            ? formattedInterval.trim().concat('i')
+            : formattedInterval.trim();
+
+    return hasLength(formattedInterval) ? formattedInterval : interval;
 };

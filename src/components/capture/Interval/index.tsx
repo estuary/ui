@@ -50,14 +50,12 @@ function CaptureInterval({ readOnly }: Props) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
-    // const setFormState = useFormStateStore_setFormState();
 
     const lastIntervalChar = interval?.at(-1) ?? '';
     const singleUnit = ['h', 'i', 'm', 's'].some(
         (symbol) => lastIntervalChar === symbol
     );
 
-    // const [saving, setSaving] = useState(false);
     const [unit, setUnit] = useState(singleUnit ? lastIntervalChar : '');
     const [input, setInput] = useState(
         singleUnit ? interval?.substring(0, interval.length - 1) : interval
@@ -72,40 +70,6 @@ function CaptureInterval({ readOnly }: Props) {
             !POSTGRES_INTERVAL_RE.test(input) &&
             !CAPTURE_INTERVAL_RE.test(input)
     );
-
-    // TODO (capture-interval): Consider whether capture interval changes should
-    //   place the form in an active state while the server patch is underway.
-    // useEffect(() => {
-    //     if (!errorsExist && !saving) {
-    //         setSaving(true);
-
-    //         applyCaptureInterval()
-    //             .then(
-    //                 () => {},
-    //                 (error) => {
-    //                     if (error) {
-    //                         setFormState({
-    //                             status: FormStatus.FAILED,
-    //                             error: {
-    //                                 title: 'captureInterval.error.updateFailed',
-    //                                 error,
-    //                             },
-    //                         });
-    //                     }
-    //                 }
-    //             )
-    //             .finally(() => {
-    //                 setSaving(false);
-    //             });
-    //     }
-    // }, [
-    //     applyCaptureInterval,
-    //     errorsExist,
-    //     interval,
-    //     saving,
-    //     setFormState,
-    //     setSaving,
-    // ]);
 
     if (typeof input !== 'string') {
         return null;

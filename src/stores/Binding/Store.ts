@@ -33,7 +33,7 @@ import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
 import { Entity, Schema } from 'types';
 import {
-    formatPostgresInterval,
+    formatCaptureInterval,
     getDereffedSchema,
     hasLength,
 } from 'utils/misc-utils';
@@ -282,7 +282,7 @@ const hydrateSpecificationDependentState = async (
 
         get().setCaptureInterval(
             draftSpecs[0].spec?.interval
-                ? formatPostgresInterval(draftSpecs[0].spec.interval)
+                ? formatCaptureInterval(draftSpecs[0].spec.interval, true)
                 : fallbackInterval
         );
     } else {
@@ -548,8 +548,9 @@ const getInitialState = (
             }
         } else {
             get().setCaptureInterval(
-                formatPostgresInterval(
-                    connectorTagResponse?.default_capture_interval
+                formatCaptureInterval(
+                    connectorTagResponse?.default_capture_interval,
+                    true
                 ) ?? fallbackInterval
             );
         }
