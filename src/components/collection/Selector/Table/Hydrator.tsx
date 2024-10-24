@@ -23,15 +23,8 @@ function Hydrator({
     entity = 'collection',
     selectedCollections,
 }: TableHydratorProps) {
-    const selectingCaptures = entity === 'capture';
-    const selectingMaterializations = entity === 'materialization';
-
     const tableColumns = useCollectionsSelectorColumns(
-        selectingMaterializations
-            ? 'readsFrom'
-            : selectingCaptures
-            ? 'writesTo'
-            : undefined
+        ENTITY_SETTINGS[entity].selector.optionalColumns
     );
 
     const {
@@ -77,7 +70,9 @@ function Hydrator({
             disableQueryParamHack={disableQueryParamHack}
             query={query}
             selectableTableStoreName={selectableTableStoreName}
-            disableMultiSelect={selectingCaptures || selectingMaterializations}
+            disableMultiSelect={
+                ENTITY_SETTINGS[entity].selector.disableMultiSelect
+            }
         >
             <EntityTable
                 noExistingDataContentIds={

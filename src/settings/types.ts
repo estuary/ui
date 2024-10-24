@@ -1,3 +1,4 @@
+import { optionalColumn } from 'components/collection/Selector/Table/useCollectionsSelectorColumns';
 import { TableIntlConfig } from 'types';
 
 export interface EntitySetting {
@@ -15,6 +16,8 @@ export interface EntitySetting {
         noExistingDataContentIds: TableIntlConfig;
         filterIntlKey: string;
         headerIntlKey: string | null;
+        disableMultiSelect?: boolean;
+        optionalColumns?: optionalColumn;
     };
     table: {
         noExistingDataContentIds: TableIntlConfig;

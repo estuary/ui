@@ -17,7 +17,7 @@ const defaultColumns: ColumnProps[] = [
     },
 ];
 
-const optionalColumns = {
+export const optionalColumns = {
     writesTo: {
         field: null,
         headerIntlKey: 'entityTable.data.writesTo',
@@ -29,8 +29,10 @@ const optionalColumns = {
     } as ColumnProps,
 };
 
+export type optionalColumn = keyof typeof optionalColumns;
+
 const useCollectionsSelectorColumns = (
-    include?: keyof typeof optionalColumns
+    include?: optionalColumn
 ): ColumnProps[] => {
     return useMemo(() => {
         if (include) {

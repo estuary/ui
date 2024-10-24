@@ -19,8 +19,10 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             viewAll: authenticatedRoutes.captures.fullPath,
         },
         selector: {
+            disableMultiSelect: true,
             filterIntlKey: 'capturesTable.filterLabel',
             headerIntlKey: null,
+            optionalColumns: 'writesTo',
             noExistingDataContentIds: {
                 header: 'entityTable.captures.missing.header',
                 message: 'entityTable.collections.missing.message',
@@ -74,8 +76,10 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             viewAll: authenticatedRoutes.materializations.fullPath,
         },
         selector: {
+            disableMultiSelect: true,
             filterIntlKey: 'materializationsTable.filterLabel',
             headerIntlKey: null,
+            optionalColumns: 'readsFrom',
             noExistingDataContentIds: {
                 header: 'entityTable.materializations.missing.header',
                 message: 'materializations.message2',
