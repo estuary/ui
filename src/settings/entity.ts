@@ -9,33 +9,6 @@ import { Entity } from 'types';
 import { EntitySetting } from './types';
 
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
-    collection: {
-        Icon: DatabaseScript,
-        background: semiTransparentBackground_blue,
-        bindingTermId: 'terms.collections.plural',
-        pluralId: 'terms.collections.plural',
-        routes: {
-            details: authenticatedRoutes.collections.details.overview.fullPath,
-            viewAll: authenticatedRoutes.collections.fullPath,
-        },
-        selector: {
-            filterIntlKey: 'collectionsTable.filterLabel',
-            headerIntlKey: null,
-            noExistingDataContentIds: {
-                header: 'entityTable.captures.missing.header',
-                message: 'entityTable.collections.missing.message',
-            },
-        },
-        table: {
-            filterIntlKey: 'collectionsTable.filterLabel',
-            headerIntlKey: 'collectionsTable.title',
-            noExistingDataContentIds: {
-                header: 'entityTable.captures.missing.header',
-                message: 'entityTable.collections.missing.message',
-            },
-        },
-        termId: 'terms.collections',
-    },
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
@@ -63,6 +36,33 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         termId: 'terms.sources',
     },
+    collection: {
+        Icon: DatabaseScript,
+        background: semiTransparentBackground_blue,
+        bindingTermId: 'terms.collections.plural',
+        pluralId: 'terms.collections.plural',
+        routes: {
+            details: authenticatedRoutes.collections.details.overview.fullPath,
+            viewAll: authenticatedRoutes.collections.fullPath,
+        },
+        selector: {
+            filterIntlKey: 'collectionsTable.filterLabel',
+            headerIntlKey: null,
+            noExistingDataContentIds: {
+                header: 'entityTable.collections.missing.header',
+                message: 'entityTable.collections.missing.message',
+            },
+        },
+        table: {
+            filterIntlKey: 'collectionsTable.filterLabel',
+            headerIntlKey: 'collectionsTable.title',
+            noExistingDataContentIds: {
+                header: 'entityTable.collections.missing.header',
+                message: 'entityTable.collections.missing.message',
+            },
+        },
+        termId: 'terms.collections',
+    },
     materialization: {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
@@ -78,7 +78,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             headerIntlKey: null,
             noExistingDataContentIds: {
                 header: 'entityTable.materializations.missing.header',
-                message: 'entityTable.materializations.missing.message',
+                message: 'materializations.message2',
             },
         },
         table: {
