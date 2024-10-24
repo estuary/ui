@@ -30,13 +30,16 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
     const [settings, setSettings] = useState<IConfirmationModalOptions>(
         getDefaultSettings()
     );
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showConfirmationModal, setShowConfirmationModal] =
+        useState<boolean>(false);
     const resolver = useRef<any>();
 
     const [continueAllowed, setContinueAllowed] = useState<boolean>(true);
+    const [disableClick, setDisableClick] = useState<boolean>(false);
 
     const handlers = {
         confirm: () => {
+            setDisableClick(true);
             resolver.current?.(true);
             setShowConfirmationModal(false);
         },
@@ -53,6 +56,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 ...getDefaultSettings(),
                 ...userSettings,
             });
+            setDisableClick(false);
             setShowConfirmationModal(true);
 
             return new Promise((resolve) => {
@@ -96,7 +100,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         variant="outlined"
                         onClick={handlers.confirm}
                         autoFocus
-                        disabled={!continueAllowed}
+                        disabled={disableClick || !continueAllowed}
                     >
                         <FormattedMessage id={settings.confirmText} />
                     </Button>
