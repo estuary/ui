@@ -20,6 +20,7 @@ const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
 
     // Can alter if you want
     PopperComponent,
+    ListboxComponent,
     size: 'small',
 };
 
@@ -45,18 +46,20 @@ export const autoCompleteDefaults_Virtual_Non_Clearable: AutocompleteProps<
     false,
     'div'
 > = {
-    ListboxComponent,
-    PopperComponent,
     disableCloseOnSelect: false,
     disableClearable: true,
     multiple: false,
     options: [], // You MUST provide these yourself
     size: 'small',
     renderInput: () => null, // You MUST provide these yourself
-    renderGroup: (params) => params as unknown as React.ReactNode,
-    renderOption: (props, option, state) => {
-        return [props, option, state.selected] as React.ReactNode;
-    },
+
+    // TODO (virtualize autocomplete)
+    // need a way to pass in the option rendering when using this
+    // ListboxComponent,
+    // PopperComponent,
+    // renderOption: (props, option, state) => {
+    //     return [props, option, state.selected] as React.ReactNode;
+    // },
 };
 
 export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
