@@ -95,8 +95,14 @@ describe('getCaptureIntervalSegment', () => {
 });
 
 describe('formatCaptureInterval', () => {
-    test('returns null when the interval is null', () => {
-        expect(formatCaptureInterval(null)).toBeNull();
+    describe('returns null', () => {
+        test('when the interval is null', () => {
+            expect(formatCaptureInterval(null)).toBeNull();
+        });
+
+        test('when the interval is undefined', () => {
+            expect(formatCaptureInterval(undefined)).toBeNull();
+        });
     });
 
     test('returns an empty string when the interval is an empty string', () => {

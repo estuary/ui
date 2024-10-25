@@ -248,7 +248,7 @@ const hydrateConnectorTagDependentState = async (
 };
 
 const hydrateSpecificationDependentState = async (
-    defaultInterval: string | null,
+    defaultInterval: string | null | undefined,
     entityType: Entity,
     fallbackInterval: string | null,
     get: StoreApi<BindingState>['getState'],
@@ -516,7 +516,7 @@ const getInitialState = (
 
         const fallbackInterval =
             entityType === 'capture' &&
-            connectorTagResponse?.default_capture_interval
+            typeof connectorTagResponse?.default_capture_interval === 'string'
                 ? ''
                 : null;
 

@@ -63,11 +63,11 @@ export const getCaptureIntervalSegment = (interval: string, unit: string) => {
 };
 
 export const formatCaptureInterval = (
-    interval: string | null,
+    interval: string | null | undefined,
     intervalUnitSupported?: boolean
 ): string | null => {
     if (typeof interval !== 'string') {
-        return interval;
+        return null;
     }
 
     let formattedInterval = '';
