@@ -9,30 +9,38 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { compression } from 'vite-plugin-compression2';
 import { ViteImageOptimizer as viteImageOptimizer } from 'vite-plugin-image-optimizer';
 import circleDependency from 'vite-plugin-circular-dependency';
-import { vitePluginVersionMark } from 'vite-plugin-version-mark';
 import { type Plugin } from 'vite';
 import path from 'path';
 import { sri } from 'vite-plugin-sri3';
 
-const APP_VERSION = '__ESTUARY_UI_VERSION__';
+// TODO (vite) using require is deprecated. Need to switch to import before vite 6
+const gitCommands = require('git-rev-sync');
 
 const writeVersionToFile: () => Plugin = () => ({
     name: 'write-version-to-file',
     async config(config) {
-        const version = config.define?.[APP_VERSION]?.replaceAll(`"`, '');
-        if (!version) {
-            console.error(`${APP_VERSION} not found`);
-            return;
-        }
-
         try {
-            // get version in vitePlugin if you open `ifGlobal`
+            // Fetch details from git
+            const commitId = gitCommands.long();
+            const commitDate = gitCommands.date();
+
+            // Make sure we got something
+            if (!commitId || !commitDate) {
+                console.error(`Failed to get details from git`, {
+                    commitDate,
+                    commitId,
+                });
+                return;
+            }
+
+            // Get the output ready
             const output = JSON.stringify({
-                version,
+                commitDate,
+                commitId,
             });
-            const file = './public/meta.json';
 
             // Make sure the file is there
+            const file = './public/meta.json';
             await fs
                 .access(path.dirname(file))
                 .catch(() => fs.mkdir(path.dirname(file), { recursive: true }));
@@ -46,6 +54,14 @@ const writeVersionToFile: () => Plugin = () => ({
                 .catch((err) => {
                     console.error(err);
                 });
+
+            // Return back so the app can access this property
+            return {
+                define: {
+                    ['__ESTUARY_UI_COMMIT_ID__']: JSON.stringify(commitId),
+                    ['__ESTUARY_UI_COMMIT_DATE__']: JSON.stringify(commitDate),
+                },
+            };
         } catch (err) {
             console.error(err);
         }
@@ -62,10 +78,6 @@ export default defineConfig({
     optimizeDeps: {
         include: ['@estuary/flow-web'],
         // exclude: ['@estuary/flow-web'],
-    },
-
-    define: {
-        [APP_VERSION]: JSON.stringify(process.env.npm_package_version),
     },
 
     preview: { port: 3000, strictPort: true },
@@ -91,14 +103,7 @@ export default defineConfig({
 
     // https://github.com/vitejs/awesome-vite#plugins
     plugins: [
-        writeVersionToFile(),
         viteTsconfigPaths(),
-        // vitePluginVersionMark({
-        //     ifGitSHA: false,
-        //     ifMeta: false,
-        //     ifGlobal: true,
-        //     ifLog: true,
-        // }),
 
         // Code injection
         nodePolyfills({
@@ -113,6 +118,7 @@ export default defineConfig({
         wasm(),
 
         // Build/Deploy stuff
+        writeVersionToFile(),
         viteImageOptimizer({}),
         sri(), // make sure this is before compression
         compression({
