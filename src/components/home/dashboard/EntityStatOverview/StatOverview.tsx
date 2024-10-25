@@ -4,7 +4,7 @@ import LinkWrapper from 'components/shared/LinkWrapper';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Entity } from 'types';
-import { ENTITY_SETTINGS } from 'utils/entity-utils';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import ActiveEntityCount from './ActiveEntityCount';
 import Statistic from './Statistic';
 

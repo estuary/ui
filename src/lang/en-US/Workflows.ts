@@ -413,6 +413,7 @@ export const Workflows: Record<string, string> = {
         'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
 
     // Logs Dialog
+    'logs.default': `waiting`,
     'logs.paused': `paused`,
     'logs.noLogs': `stopped checking for logs`,
     'logs.restartLink': `click here`,
