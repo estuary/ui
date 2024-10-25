@@ -32,12 +32,9 @@ import {
 import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
 import { Entity, Schema } from 'types';
-import {
-    formatCaptureInterval,
-    getDereffedSchema,
-    hasLength,
-} from 'utils/misc-utils';
+import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
+import { formatCaptureInterval } from 'utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,

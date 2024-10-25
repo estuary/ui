@@ -24,7 +24,8 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { getCaptureIntervalSegment, hasLength } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
+import { getCaptureIntervalSegment } from 'utils/time-utils';
 import {
     CAPTURE_INTERVAL_RE,
     NUMERIC_RE,
