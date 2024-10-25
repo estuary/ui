@@ -94,7 +94,7 @@ export const Captures: Record<string, string> = {
     'captureInterval.input.minutes': `minutes`,
     'captureInterval.input.hours': `hours`,
     'captureInterval.input.interval': `interval`,
-    'captureInterval.error.updateFailed': `Interval update failed`,
+    'captureInterval.error.updateFailed': `Polling interval update failed`,
     'captureInterval.error.intervalFormat': `Intervals must be formatted as HH:MM:SS or [0-9]+(s|m|h).`,
     'captureInterval.error.generalFormat': `Only numeric input is allowed.`,
 };
