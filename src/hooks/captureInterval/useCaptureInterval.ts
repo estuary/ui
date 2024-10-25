@@ -156,7 +156,7 @@ export default function useCaptureInterval() {
 
             applyCaptureInterval(captureInterval).then(
                 () => {
-                    setFormState({ status: FormStatus.UPDATED });
+                    setFormState({ status: FormStatus.UPDATED, error: null });
                 },
                 (error) => {
                     if (error) {
