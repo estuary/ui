@@ -1,3 +1,4 @@
+import { Box, Divider } from '@mui/material';
 import { getLatestVersionDetails } from 'api/meta';
 import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
 import { NavArrowDown } from 'iconoir-react';
@@ -40,23 +41,25 @@ export function UpdateAlert() {
     }
 
     return (
-        <ButtonWithPopper
-            popper={<Actions />}
-            buttonProps={{
-                endIcon: <NavArrowDown style={{ fontSize: 13 }} />,
-                size: 'small',
-                sx: {
-                    alignItems: 'center',
-                    p: 1,
-                    mr: 2,
-                },
-                variant: 'text',
-            }}
-            popperProps={{
-                placement: 'bottom-end',
-            }}
-        >
-            {intl.formatMessage({ id: 'updateAlert.cta' })}
-        </ButtonWithPopper>
+        <Box sx={{ display: 'flex' }}>
+            <ButtonWithPopper
+                popper={<Actions />}
+                buttonProps={{
+                    endIcon: <NavArrowDown style={{ fontSize: 13 }} />,
+                    size: 'small',
+                    sx: {
+                        alignItems: 'center',
+                        p: 1,
+                    },
+                    variant: 'text',
+                }}
+                popperProps={{
+                    placement: 'bottom-end',
+                }}
+            >
+                {intl.formatMessage({ id: 'updateAlert.cta' })}
+            </ButtonWithPopper>
+            <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
+        </Box>
     );
 }
