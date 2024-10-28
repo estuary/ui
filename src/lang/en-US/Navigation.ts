@@ -30,7 +30,7 @@ export const Navigation: Record<string, string> = {
     'modeSwitch.label': `Toggle Color Mode`,
 
     'updateAlert.cta': `Update`,
-    'updateAlert.title': `Dashboard Update`,
-    'updateAlert.message': `An updated dashboard UI was released. To get the latest version, reload.`,
+    'updateAlert.title': `Dashboard Updated`,
+    'updateAlert.message': `An updated version of the UI was released. Reload this page to get the latest changes.`,
     'updateAlert.warning': `Unsaved changes could be lost.`,
 };
