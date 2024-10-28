@@ -1,8 +1,13 @@
+// import { Box, Divider } from '@mui/material';
 import { getLatestVersionDetails } from 'api/meta';
+// import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
+// import { NavArrowDown } from 'iconoir-react';
 import { useEffect, useState } from 'react';
+// import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import useSWR from 'swr';
+// import Actions from './Actions';
 
 export function UpdateAlert() {
     // const intl = useIntl();
@@ -35,7 +40,6 @@ export function UpdateAlert() {
         return null;
     }
 
-    // Pushing to production with this commented out first to be safe
     return null;
     // return (
     //     <Box sx={{ display: 'flex' }}>
