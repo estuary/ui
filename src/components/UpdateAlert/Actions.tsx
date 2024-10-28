@@ -1,4 +1,5 @@
 import { Button, Divider, Stack, Typography } from '@mui/material';
+import { ReloadWindow } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -25,7 +26,14 @@ function Actions() {
                 {intl.formatMessage({ id: 'updateAlert.warning' })}
             </Typography>
             <Divider />
-            <Button onClick={reloadPage}>
+            <Button
+                onClick={reloadPage}
+                endIcon={<ReloadWindow style={{ fontSize: 12 }} />}
+                style={{
+                    alignSelf: 'self-end',
+                    maxWidth: 'fit-content',
+                }}
+            >
                 {intl.formatMessage({ id: 'cta.reload' })}
             </Button>
         </Stack>
