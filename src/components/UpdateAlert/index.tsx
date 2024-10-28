@@ -1,20 +1,22 @@
-import { MenuItem } from '@mui/material';
 import { getLatestVersionDetails } from 'api/meta';
-import IconMenu from 'components/menus/IconMenu';
-import { ReloadWindow } from 'iconoir-react';
+import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
+import { NavArrowDown } from 'iconoir-react';
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import useSWR from 'swr';
+import Actions from './Actions';
 
 export function UpdateAlert() {
-    const intl = useIntl();
-    const [hasLatest, setHasLatest] = useState(true);
+    const [hasLatest, setHasLatest] = useState<boolean>(true);
 
-    const { data } = useSWR('meta.json', getLatestVersionDetails, {
-        revalidateOnFocus: true,
-        revalidateOnReconnect: true,
-        refreshInterval: 6000,
-    });
+    const { data } = useSWR(
+        hasLatest ? 'meta.json' : null,
+        getLatestVersionDetails,
+        {
+            revalidateOnFocus: true,
+        }
+    );
 
     useEffect(() => {
         if (!data) {
@@ -23,6 +25,10 @@ export function UpdateAlert() {
 
         if (data.commitId !== __ESTUARY_UI_COMMIT_ID__) {
             setHasLatest(false);
+            logRocketEvent(CustomEvents.UPDATE_AVAILABLE, {
+                commitId: data.commitId,
+                commitDate: data.commitDate,
+            });
         }
     }, [data]);
 
@@ -31,15 +37,21 @@ export function UpdateAlert() {
     }
 
     return (
-        <IconMenu
-            ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<ReloadWindow />}
-            identifier="help-menu"
-            tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
-        >
-            <MenuItem tabIndex={0} onClick={() => window.location.reload()}>
-                Reload - unsaved work will be lost
-            </MenuItem>
-        </IconMenu>
+        <ButtonWithPopper
+            messageId="updateAlert.cta"
+            popper={<Actions />}
+            buttonProps={{
+                endIcon: <NavArrowDown />,
+                size: 'small',
+                sx: {
+                    p: 1,
+                    mr: 2,
+                },
+                variant: 'outlined',
+            }}
+            popperProps={{
+                placement: 'bottom-end',
+            }}
+        />
     );
 }

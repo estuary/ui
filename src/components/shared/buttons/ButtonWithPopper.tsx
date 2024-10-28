@@ -1,24 +1,20 @@
-import { Button, SxProps, Theme } from '@mui/material';
+import { Button, ButtonProps, PopperProps } from '@mui/material';
 import PopperWrapper from 'components/shared/PopperWrapper';
 import { MouseEvent, ReactNode, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
+    buttonProps: Partial<ButtonProps>;
     messageId: string;
     popper: ReactNode;
-    disabled?: boolean;
-    startIcon?: ReactNode;
-    variant?: 'text' | 'outlined' | 'contained';
-    buttonSx?: SxProps<Theme>;
+    popperProps?: Partial<PopperProps>;
 }
 
 function ButtonWithPopper({
+    buttonProps,
     messageId,
     popper,
-    disabled,
-    startIcon,
-    variant,
-    buttonSx,
+    popperProps,
 }: Props) {
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -30,17 +26,16 @@ function ButtonWithPopper({
 
     return (
         <>
-            <Button
-                variant={variant}
-                disabled={disabled}
-                startIcon={startIcon}
-                onClick={togglePopper}
-                sx={buttonSx}
-            >
+            <Button {...buttonProps} onClick={togglePopper}>
                 <FormattedMessage id={messageId} />
             </Button>
 
-            <PopperWrapper anchorEl={anchorEl} open={open} setOpen={setOpen}>
+            <PopperWrapper
+                anchorEl={anchorEl}
+                open={open}
+                popperProps={popperProps}
+                setOpen={setOpen}
+            >
                 {popper}
             </PopperWrapper>
         </>

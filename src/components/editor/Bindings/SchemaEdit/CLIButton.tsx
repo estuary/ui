@@ -21,8 +21,10 @@ function SchemaEditCLIButton() {
 
     return collectionData ? (
         <ButtonWithPopper
-            variant="text"
-            disabled={isActive}
+            buttonProps={{
+                disabled: isActive,
+                variant: 'text',
+            }}
             messageId="workflows.collectionSelector.cta.schemaEdit"
             popper={
                 <EditCommandsWrapper>
