@@ -312,7 +312,6 @@ function CollectionSelectorList({
                 </AlertBox>
             </Popper>
             <DataGrid
-                disableEval
                 apiRef={apiRef}
                 columns={columns}
                 components={{ NoRowsOverlay: SelectorEmpty }}
