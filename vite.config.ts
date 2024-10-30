@@ -107,7 +107,7 @@ export default defineConfig({
 
         // Code injection
         nodePolyfills({
-            include: ['path', 'process', 'stream'],
+            include: ['buffer', 'path', 'process', 'stream'],
         }),
         topLevelAwait(),
 
