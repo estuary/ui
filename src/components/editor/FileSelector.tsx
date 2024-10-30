@@ -87,6 +87,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
     if (specs && specs.length > 0) {
         return (
             <DataGrid
+                disableEval
                 rows={specs}
                 columns={columns}
                 columnHeaderHeight={40}

@@ -228,6 +228,7 @@ function DataPreview() {
 
     return (
         <DataGrid
+            disableEval
             columnHeaderHeight={40}
             columns={
                 isReady()

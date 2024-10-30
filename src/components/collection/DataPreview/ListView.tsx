@@ -75,6 +75,7 @@ function ListView({
                     displayBorder
                     list={
                         <DataGrid
+                            disableEval
                             columns={[
                                 {
                                     field: 'key',
