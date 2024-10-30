@@ -5,6 +5,7 @@ declare global {
             auth_url: string | null;
             enableDataFlowReset: boolean;
         } | null;
+        dataLayer?: any[]; // Must match name we pass to GTM in index.html
         monaco: any;
         __REDUX_DEVTOOLS_EXTENSION__: any;
         // TODO (integrity | logrocket)
