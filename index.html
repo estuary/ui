@@ -16,10 +16,8 @@
         <script type="module" src="/src/index.tsx"></script>
 
         <!-- Google Tag Manager -->
-        <script nonce="nonce-__NGINX_CSP_NONCE__">
-            const enabled = '%VITE_GOOGLE_TAG_MANAGER_ENABLED%';
-
-            if (enabled === 'true') {
+        <script nonce="__NGINX_CSP_NONCE__">
+            if ('%VITE_GOOGLE_TAG_MANAGER_ENABLED%' === 'true') {
                 (function (w, d, s, l, i) {
                     w[l] = w[l] || [];
                     w[l].push({
