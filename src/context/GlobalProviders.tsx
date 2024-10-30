@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import FullPageSpinner from 'components/fullPage/Spinner';
-import { initGoogleTagManager } from 'services/gtm';
 import { initLogRocket } from 'services/logrocket';
 import { BaseComponentProps } from 'types';
 import { enableMapSet, setAutoFreeze } from 'immer';
@@ -22,7 +21,6 @@ if (
 // Put global initializing code early. The LogRocket one _MUST_ be done
 //  before the `createClient` call made below for Supabase
 initLogRocket();
-initGoogleTagManager();
 
 // TODO (logrocket | compliance)
 // Eventually we need to make sure to not include LR for certain tenants
