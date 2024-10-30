@@ -55,11 +55,14 @@ export default function useCaptureInterval() {
     const applyCaptureInterval = useCallback(
         async (interval: string) => {
             if (!mutateDraftSpecs || !draftId || !draftSpec) {
-                logRocketConsole(CustomEvents.CAPTURE_INTERVAL_ERROR, {
-                    draftIdMissing: !draftId,
-                    draftSpecMissing: !draftSpec,
-                    mutateMissing: !mutateDraftSpecs,
-                });
+                logRocketConsole(
+                    `${CustomEvents.CAPTURE_INTERVAL} : missing critical resources to update draft`,
+                    {
+                        draftIdMissing: !draftId,
+                        draftSpecMissing: !draftSpec,
+                        mutateMissing: !mutateDraftSpecs,
+                    }
+                );
 
                 return Promise.resolve();
             }
@@ -81,10 +84,13 @@ export default function useCaptureInterval() {
                     !formattedInterval ||
                     !CAPTURE_INTERVAL_RE.test(formattedInterval)
                 ) {
-                    logRocketConsole(CustomEvents.CAPTURE_INTERVAL_ERROR, {
-                        interval,
-                        formattedInterval,
-                    });
+                    logRocketConsole(
+                        `${CustomEvents.CAPTURE_INTERVAL} : incorrect interval format`,
+                        {
+                            interval,
+                            formattedInterval,
+                        }
+                    );
 
                     return Promise.resolve();
                 }

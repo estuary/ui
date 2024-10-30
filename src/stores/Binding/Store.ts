@@ -1,7 +1,6 @@
 import { PostgrestError } from '@supabase/postgrest-js';
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
-    ConnectorTagResourceData,
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
@@ -227,7 +226,7 @@ const initializeAndGenerateUUID = (
 const hydrateConnectorTagDependentState = async (
     connectorTagId: string,
     get: StoreApi<BindingState>['getState']
-): Promise<ConnectorTagResourceData | null> => {
+): Promise<Schema | null> => {
     if (!hasLength(connectorTagId)) {
         return null;
     }
@@ -237,11 +236,11 @@ const hydrateConnectorTagDependentState = async (
     if (error) {
         get().setHydrationErrorsExist(true);
     } else if (data?.resource_spec_schema) {
-        const { setBackfillSupported, setResourceSchema } = get();
+        await get().setResourceSchema(
+            data.resource_spec_schema as unknown as Schema
+        );
 
-        await setResourceSchema(data.resource_spec_schema as unknown as Schema);
-
-        setBackfillSupported(!Boolean(data.disable_backfill));
+        get().setBackfillSupported(!Boolean(data.disable_backfill));
     }
 
     return data;

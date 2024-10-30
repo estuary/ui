@@ -11,12 +11,16 @@ interface SegmentedInterval {
     s: number;
 }
 
-const parsePostgresInterval = (interval: string): SegmentedInterval => {
-    const [hours, minutes, seconds] = interval.split(':').map((segment) => {
-        const numericSegment = Number(segment);
+const getNumericSegment = (value: string) => {
+    const numericSegment = Number(value);
 
-        return isFinite(numericSegment) ? numericSegment : -1;
-    });
+    return Number.isSafeInteger(numericSegment) ? numericSegment : -1;
+};
+
+const parsePostgresInterval = (interval: string): SegmentedInterval => {
+    const [hours, minutes, seconds] = interval
+        .split(':')
+        .map((segment) => getNumericSegment(segment));
 
     return { h: hours, m: minutes, s: seconds };
 };
@@ -27,15 +31,15 @@ const parseCaptureInterval = (interval: string): SegmentedInterval => {
     let seconds = -1;
 
     interval.split(' ').forEach((segment) => {
-        const numericSegment = Number(segment.substring(0, segment.length - 1));
-        const numericValue = isFinite(numericSegment) ? numericSegment : -1;
+        const value = segment.substring(0, segment.length - 1);
+        const numericSegment = getNumericSegment(value);
 
-        if (segment.includes('h')) {
-            hours = numericValue;
-        } else if (segment.includes('m')) {
-            minutes = numericValue;
-        } else if (segment.includes('s')) {
-            seconds = numericValue;
+        if (segment.endsWith('h')) {
+            hours = numericSegment;
+        } else if (segment.endsWith('m')) {
+            minutes = numericSegment;
+        } else if (segment.endsWith('s')) {
+            seconds = numericSegment;
         }
     });
 
@@ -48,15 +52,9 @@ export const getCaptureIntervalSegment = (interval: string, unit: string) => {
     const granularTimeUnit = unit === 'h' || unit === 'm' || unit === 's';
 
     if (granularTimeUnit && POSTGRES_INTERVAL_RE.test(interval)) {
-        const segments = parsePostgresInterval(interval);
-
-        truncatedInterval = segments[unit];
-    }
-
-    if (granularTimeUnit && CAPTURE_INTERVAL_RE.test(interval)) {
-        const segments = parseCaptureInterval(interval);
-
-        truncatedInterval = segments[unit];
+        truncatedInterval = parsePostgresInterval(interval)[unit];
+    } else if (granularTimeUnit && CAPTURE_INTERVAL_RE.test(interval)) {
+        truncatedInterval = parseCaptureInterval(interval)[unit];
     }
 
     return truncatedInterval;
@@ -70,7 +68,7 @@ export const formatCaptureInterval = (
         return null;
     }
 
-    let formattedInterval = '';
+    const segments: string[] = [];
 
     if (POSTGRES_INTERVAL_RE.test(interval)) {
         const {
@@ -80,28 +78,29 @@ export const formatCaptureInterval = (
         } = parsePostgresInterval(interval);
 
         if (hours > 0) {
-            formattedInterval = formattedInterval.concat(`${hours}h `);
+            segments.push(`${hours}h`);
         }
 
         if (minutes > 0) {
-            formattedInterval = formattedInterval.concat(`${minutes}m `);
+            segments.push(`${minutes}m`);
         }
 
         if (seconds > 0) {
-            formattedInterval = formattedInterval.concat(`${seconds}s`);
+            segments.push(`${seconds}s`);
         }
+    } else if (CAPTURE_INTERVAL_RE.test(interval)) {
+        segments.push(interval);
     }
 
-    if (CAPTURE_INTERVAL_RE.test(interval)) {
-        formattedInterval = formattedInterval.concat(interval);
-    }
+    let formattedInterval = segments.join(' ').trim();
 
-    formattedInterval =
-        hasLength(formattedInterval.trim()) &&
+    if (
+        hasLength(formattedInterval) &&
         intervalUnitSupported &&
-        !DURATION_RE.test(formattedInterval.trim())
-            ? formattedInterval.trim().concat('i')
-            : formattedInterval.trim();
+        !DURATION_RE.test(formattedInterval)
+    ) {
+        formattedInterval = formattedInterval.concat('i');
+    }
 
     return hasLength(formattedInterval) ? formattedInterval : interval;
 };

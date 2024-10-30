@@ -69,7 +69,7 @@ describe('getCaptureIntervalSegment', () => {
         });
     });
 
-    test('returns 0 when the time unit corresponds to an interval segment that is zero', () => {
+    test('returns a positive number when the time unit corresponds to an interval segment that exists', () => {
         expect(getCaptureIntervalSegment('00:01:30', 'h')).toBe(0);
 
         expect(getCaptureIntervalSegment(postgresInterval, 'm')).toBe(0);
@@ -77,9 +77,7 @@ describe('getCaptureIntervalSegment', () => {
         expect(getCaptureIntervalSegment(postgresInterval, 's')).toBe(0);
 
         expect(getCaptureIntervalSegment('2m 0s', 's')).toBe(0);
-    });
 
-    test('returns a number greater than 0 when the time unit corresponds to an interval segment that is non-zero', () => {
         expect(getCaptureIntervalSegment(postgresInterval, 'h')).toBe(1);
 
         expect(getCaptureIntervalSegment('00:20:30', 'm')).toBe(20);
@@ -91,6 +89,10 @@ describe('getCaptureIntervalSegment', () => {
         expect(getCaptureIntervalSegment('20m 30s', 'm')).toBe(20);
 
         expect(getCaptureIntervalSegment('20m 30s', 's')).toBe(30);
+
+        expect(getCaptureIntervalSegment('20m 3000000000s', 's')).toBe(
+            3000000000
+        );
     });
 });
 
