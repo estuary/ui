@@ -28,4 +28,9 @@ export const Navigation: Record<string, string> = {
     'accountMenu.emailVerified': `verified`,
 
     'modeSwitch.label': `Toggle Color Mode`,
+
+    'updateAlert.cta': `Update`,
+    'updateAlert.title': `Dashboard Updated`,
+    'updateAlert.message': `An updated version of the UI was released. Reload this page to get the latest changes.`,
+    'updateAlert.warning': `Unsaved changes could be lost.`,
 };
