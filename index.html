@@ -16,10 +16,10 @@
         <script type="module" src="/src/index.tsx"></script>
 
         <!-- Google Tag Manager -->
-        <script nonce="__NGINX_CSP_NONCE__">
-            const enabled = "%VITE_GOOGLE_TAG_MANAGER_ENABLED%";
+        <script nonce="nonce-__NGINX_CSP_NONCE__">
+            const enabled = '%VITE_GOOGLE_TAG_MANAGER_ENABLED%';
 
-            if (enabled === "true") {
+            if (enabled === 'true') {
                 (function (w, d, s, l, i) {
                     w[l] = w[l] || [];
                     w[l].push({
@@ -30,12 +30,22 @@
                         j = d.createElement(s),
                         dl = l != 'dataLayer' ? '&l=' + l : '';
                     j.async = true;
-                    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                    j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
                     var n = d.querySelector('[nonce]');
                     n &&
-                        j.setAttribute('nonce', n.nonce || n.getAttribute('nonce'));
+                        j.setAttribute(
+                            'nonce',
+                            n.nonce || n.getAttribute('nonce')
+                        );
                     f.parentNode.insertBefore(j, f);
-                })(window, document, 'script', 'dataLayer', '<%VITE_GOOGLE_TAG_MANAGER_ID%>');
+                })(
+                    window,
+                    document,
+                    'script',
+                    'dataLayer',
+                    '%VITE_GOOGLE_TAG_MANAGER_ID%'
+                );
             }
         </script>
         <!-- End Google Tag Manager -->
