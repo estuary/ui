@@ -3,6 +3,7 @@ import {
     ClickAwayListener,
     Fade,
     Popper,
+    PopperProps,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
@@ -14,9 +15,16 @@ interface Props {
     anchorEl: HTMLElement | null;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    popperProps?: Partial<PopperProps>;
 }
 
-function PopperWrapper({ children, anchorEl, open, setOpen }: Props) {
+function PopperWrapper({
+    children,
+    anchorEl,
+    open,
+    popperProps,
+    setOpen,
+}: Props) {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -29,6 +37,7 @@ function PopperWrapper({ children, anchorEl, open, setOpen }: Props) {
 
     return (
         <Popper
+            {...(popperProps ?? {})}
             id={id}
             open={open}
             anchorEl={anchorEl}

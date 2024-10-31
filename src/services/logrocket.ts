@@ -170,7 +170,7 @@ const maskContent = (requestResponse: any) => {
 export const initLogRocket = () => {
     if (logRocketSettings?.appID) {
         const settings: Settings = {
-            release: __ESTUARY_UI_VERSION__,
+            release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,

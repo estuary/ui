@@ -7,9 +7,12 @@ import {
     useBindingsEditorStore_editModeEnabled,
 } from 'components/editor/Bindings/Store/hooks';
 import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
+import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 
 function SchemaEditCLIButton() {
+    const intl = useIntl();
+
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
@@ -21,9 +24,10 @@ function SchemaEditCLIButton() {
 
     return collectionData ? (
         <ButtonWithPopper
-            variant="text"
-            disabled={isActive}
-            messageId="workflows.collectionSelector.cta.schemaEdit"
+            buttonProps={{
+                disabled: isActive,
+                variant: 'text',
+            }}
             popper={
                 <EditCommandsWrapper>
                     {collectionData.belongsToDraft ? (
@@ -33,7 +37,11 @@ function SchemaEditCLIButton() {
                     )}
                 </EditCommandsWrapper>
             }
-        />
+        >
+            {intl.formatMessage({
+                id: 'workflows.collectionSelector.cta.schemaEdit',
+            })}
+        </ButtonWithPopper>
     ) : (
         <Skeleton variant="rectangular" width={75} />
     );

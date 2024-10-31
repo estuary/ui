@@ -6,6 +6,7 @@ import HelpMenu from 'components/menus/HelpMenu';
 import UserMenu from 'components/menus/UserMenu';
 import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
+import { UpdateAlert } from 'components/UpdateAlert';
 import { zIndexIncrement } from 'context/Theme';
 
 const Topbar = () => {
@@ -38,6 +39,8 @@ const Topbar = () => {
                 </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <UpdateAlert />
+
                     <HelpMenu />
 
                     <UserMenu iconColor={theme.palette.text.primary} />
