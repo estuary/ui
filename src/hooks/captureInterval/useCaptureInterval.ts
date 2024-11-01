@@ -14,7 +14,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { logRocketConsole } from 'services/shared';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
@@ -55,7 +55,7 @@ export default function useCaptureInterval() {
     const applyCaptureInterval = useCallback(
         async (interval: string) => {
             if (!mutateDraftSpecs || !draftId || !draftSpec) {
-                logRocketConsole(
+                logRocketEvent(
                     `${CustomEvents.CAPTURE_INTERVAL} : missing critical resources to update draft`,
                     {
                         draftIdMissing: !draftId,
@@ -84,7 +84,7 @@ export default function useCaptureInterval() {
                     !formattedInterval ||
                     !CAPTURE_INTERVAL_RE.test(formattedInterval)
                 ) {
-                    logRocketConsole(
+                    logRocketEvent(
                         `${CustomEvents.CAPTURE_INTERVAL} : incorrect interval format`,
                         {
                             interval,
