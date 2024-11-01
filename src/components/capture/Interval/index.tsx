@@ -16,6 +16,8 @@ import {
 } from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
 import { HelpCircle } from 'iconoir-react';
+import { isEmpty } from 'lodash';
+import { Duration } from 'luxon';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -47,6 +49,9 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
 
     // Binding Store
     const interval = useBindingStore((state) => state.captureInterval);
+    const defaultInterval = useBindingStore(
+        (state) => state.defaultCaptureInterval
+    );
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -78,7 +83,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
         );
     }, [input, unit]);
 
-    if (typeof input !== 'string') {
+    if (typeof input !== 'string' || isEmpty(defaultInterval)) {
         return null;
     }
 
@@ -229,6 +234,20 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                     }}
                     value={input}
                 />
+
+                <FormHelperText id={DESCRIPTION_ID} style={{ marginLeft: 0 }}>
+                    {intl.formatMessage(
+                        { id: 'captureInterval.input.description' },
+                        {
+                            value: Duration.fromObject(defaultInterval).toHuman(
+                                {
+                                    listStyle: 'long',
+                                    unitDisplay: 'short',
+                                }
+                            ),
+                        }
+                    )}
+                </FormHelperText>
 
                 {errorsExist ? (
                     <FormHelperText

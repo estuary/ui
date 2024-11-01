@@ -20,6 +20,7 @@ import {
     pick,
     union,
 } from 'lodash';
+import { Duration } from 'luxon';
 import { createJSONFormDefaults } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
@@ -40,6 +41,7 @@ import {
     getCollectionName,
     getDisableProps,
 } from 'utils/workflow-utils';
+import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { getCollectionNames } from './shared';
@@ -282,12 +284,16 @@ const hydrateSpecificationDependentState = async (
         get().setCaptureInterval(
             targetInterval
                 ? formatCaptureInterval(targetInterval, true)
-                : fallbackInterval
+                : fallbackInterval,
+            defaultInterval
         );
     } else {
         get().prefillBindingDependentState(entityType, liveSpec.bindings);
 
-        get().setCaptureInterval(liveSpec?.interval ?? fallbackInterval);
+        get().setCaptureInterval(
+            liveSpec?.interval ?? fallbackInterval,
+            defaultInterval
+        );
     }
 
     return null;
@@ -311,6 +317,7 @@ const getInitialMiscData = (): Pick<
     | 'backfillSupported'
     | 'captureInterval'
     | 'collectionsRequiringRediscovery'
+    | 'defaultCaptureInterval'
     | 'discoveredCollections'
     | 'evolvedCollections'
     | 'rediscoveryRequired'
@@ -328,6 +335,7 @@ const getInitialMiscData = (): Pick<
     backfilledBindings: [],
     captureInterval: null,
     collectionsRequiringRediscovery: [],
+    defaultCaptureInterval: null,
     discoveredCollections: [],
     evolvedCollections: [],
     rediscoveryRequired: false,
@@ -551,7 +559,8 @@ const getInitialState = (
                 formatCaptureInterval(
                     connectorTagResponse?.default_capture_interval,
                     true
-                ) ?? fallbackInterval
+                ) ?? fallbackInterval,
+                connectorTagResponse?.default_capture_interval
             );
         }
 
@@ -1008,9 +1017,17 @@ const getInitialState = (
         );
     },
 
-    setCaptureInterval: (value) => {
+    setCaptureInterval: (value, defaultInterval) => {
         set(
             produce((state: BindingState) => {
+                if (
+                    defaultInterval &&
+                    POSTGRES_INTERVAL_RE.test(defaultInterval)
+                ) {
+                    state.defaultCaptureInterval =
+                        Duration.fromISOTime(defaultInterval).toObject();
+                }
+
                 state.captureInterval = value;
             }),
             false,

@@ -1,6 +1,7 @@
 import { EvolvedCollections } from 'api/evolutions';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
+import { DurationObjectUnits } from 'luxon';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
@@ -107,7 +108,11 @@ export interface BindingState
 
     // Capture interval
     captureInterval: string | null;
-    setCaptureInterval: (value: BindingState['captureInterval']) => void;
+    setCaptureInterval: (
+        value: BindingState['captureInterval'],
+        defaultInterval?: string | null
+    ) => void;
+    defaultCaptureInterval: DurationObjectUnits | null;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
