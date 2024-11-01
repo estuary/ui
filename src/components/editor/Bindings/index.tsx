@@ -1,6 +1,5 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
-import CaptureInterval from 'components/capture/Interval';
 import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
@@ -104,7 +103,7 @@ function BindingsMultiEditor({
             <Stack spacing={3} sx={{ mb: 5 }}>
                 {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
-                {entityType === 'capture' ? <CaptureInterval /> : null}
+                {/* {entityType === 'capture' ? <CaptureInterval /> : null} */}
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
