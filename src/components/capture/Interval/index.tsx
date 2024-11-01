@@ -31,15 +31,13 @@ import {
     NUMERIC_RE,
     POSTGRES_INTERVAL_RE,
 } from 'validation';
+import { CaptureIntervalProps } from './types';
 
 const DESCRIPTION_ID = 'capture-interval-description';
 const INPUT_ID = 'capture-interval-input';
 const INPUT_SIZE = 'small';
-interface Props {
-    readOnly?: boolean;
-}
 
-function CaptureInterval({ readOnly }: Props) {
+function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();
     const label = intl.formatMessage({
         id: 'captureInterval.input.label',
@@ -196,7 +194,7 @@ function CaptureInterval({ readOnly }: Props) {
                                 value={unit}
                                 variant="filled"
                             >
-                                <MenuItem value="s" selected>
+                                <MenuItem value="s">
                                     <FormattedMessage id="captureInterval.input.seconds" />
                                 </MenuItem>
 
