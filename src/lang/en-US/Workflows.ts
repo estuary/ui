@@ -264,6 +264,19 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
+    // Schema Mode
+    'schemaMode.header': `Source Capture Schema Mode`,
+    'schemaMode.message': `When adding new bindings from a source capture to a materialization, how should the schema of the materialization binding be set.`,
+    'schemaMode.input.label': `How schemas for bindings are set`,
+
+    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
+    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+
+    'schemaMode.options.fromSourceName.label': `From Source Name`,
+    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
+
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,

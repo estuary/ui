@@ -5,6 +5,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import SchemaMode from 'components/editor/Bindings/SchemaMode';
 import { useIntl } from 'react-intl';
 
 function OptionalSettings() {
@@ -21,19 +22,14 @@ function OptionalSettings() {
                     onChange={(event, checked) => {
                         console.log('clicked', [checked, event]);
                     }}
-                    label={intl.formatMessage({ id: 'Delta Upates' })}
+                    label={intl.formatMessage({ id: 'Delta Updates' })}
                 />
+                When adding new bindings from a source capture to a
+                materialization, how should the schema of the materialization
+                binding be set.
             </FormControl>
 
-            <FormControl sx={{ mx: 0 }}>
-                <FormControlLabel
-                    control={<Checkbox value={true} />}
-                    onChange={(event, checked) => {
-                        console.log('clicked', [checked, event]);
-                    }}
-                    label={intl.formatMessage({ id: 'Target Schema' })}
-                />
-            </FormControl>
+            <SchemaMode />
         </Stack>
     );
 }
