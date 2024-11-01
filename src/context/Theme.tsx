@@ -1,16 +1,16 @@
 import { ThemeKeys } from '@microlink/react-json-view';
 import {
-    ThemeProvider as MUIThemeProvider,
+    createTheme,
     PaletteOptions,
     SxProps,
     Theme,
     ThemeOptions,
+    ThemeProvider as MUIThemeProvider,
     TypographyProps,
-    createTheme,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Square, XmarkCircle, Check, Copy, WarningCircle } from 'iconoir-react';
+import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
@@ -378,6 +378,11 @@ export const semiTransparentBackground_purple = {
     dark: 'rgba(214, 194, 255, 0.12)',
 };
 
+export const primaryColoredBackground_hovered = {
+    light: '#3149AB',
+    dark: '#9EAED7',
+};
+
 export const textLoadingColor = {
     light: 'rgba(11, 19, 30, 0.4)',
     dark: 'rgba(247, 249, 252, 0.4)',
@@ -666,6 +671,11 @@ export const errorOutlinedButtonBackground_disabled = {
 export const successButtonText = {
     light: '#2A7942',
     dark: '#66BB6A',
+};
+
+export const primaryButtonText = {
+    light: 'white',
+    dark: 'rgba(0, 0, 0, 0.87)',
 };
 
 // Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.

@@ -33,6 +33,7 @@ function SidePanelDocsOpenButton() {
 
                 <Tooltip
                     arrow
+                    placement="bottom-end"
                     title={<FormattedMessage id="docs.cta.expand.tooltip" />}
                 >
                     <Button

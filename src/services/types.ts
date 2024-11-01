@@ -11,6 +11,7 @@ export enum CustomEvents {
     CAPTURE_CREATE_CONFIG_EDIT = 'Capture_Create_Config_Edit',
     CAPTURE_DISCOVER = 'Capture_Discover',
     CAPTURE_EDIT = 'Capture_Edit',
+    CAPTURE_INTERVAL = 'CaptureInterval',
     CAPTURE_MATERIALIZE_ATTEMPT = 'Capture_Materialize_Attempt',
     CAPTURE_MATERIALIZE_FAILED = 'Capture_Materialize_Failed',
     CAPTURE_MATERIALIZE_SUCCESS = 'Capture_Materialize_Success',
@@ -58,6 +59,7 @@ export enum CustomEvents {
     SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',
     TRANSLATION_KEY_MISSING = 'Translation_Key_Missing',
+    UPDATE_AVAILABLE = 'Update_Available',
     URL_FORMAT_ERROR = 'URLFormatError',
 }
 
