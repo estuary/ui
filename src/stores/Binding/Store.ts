@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/postgrest-js';
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
@@ -5,6 +6,7 @@ import {
     getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import {
     difference,
@@ -18,8 +20,10 @@ import {
     pick,
     union,
 } from 'lodash';
+import { Duration } from 'luxon';
 import { createJSONFormDefaults } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
+import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import {
     getInitialHydrationData,
@@ -27,17 +31,19 @@ import {
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
 import { populateErrors } from 'stores/utils';
-import { Schema } from 'types';
+import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
+import { formatCaptureInterval } from 'utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,
     getCollectionName,
     getDisableProps,
 } from 'utils/workflow-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { POSTGRES_INTERVAL_RE } from 'validation';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 import { getCollectionNames } from './shared';
 import {
     getInitialFieldSelectionData,
@@ -50,8 +56,8 @@ import {
 } from './slices/TimeTravel';
 import {
     BindingMetadata,
-    BindingState,
     Bindings,
+    BindingState,
     ResourceConfig,
     ResourceConfigDictionary,
 } from './types';
@@ -219,6 +225,80 @@ const initializeAndGenerateUUID = (
     };
 };
 
+const hydrateConnectorTagDependentState = async (
+    connectorTagId: string,
+    get: StoreApi<BindingState>['getState']
+): Promise<Schema | null> => {
+    if (!hasLength(connectorTagId)) {
+        return null;
+    }
+
+    const { data, error } = await getSchema_Resource(connectorTagId);
+
+    if (error) {
+        get().setHydrationErrorsExist(true);
+    } else if (data?.resource_spec_schema) {
+        await get().setResourceSchema(
+            data.resource_spec_schema as unknown as Schema
+        );
+
+        get().setBackfillSupported(!Boolean(data.disable_backfill));
+    }
+
+    return data;
+};
+
+const hydrateSpecificationDependentState = async (
+    defaultInterval: string | null | undefined,
+    entityType: Entity,
+    fallbackInterval: string | null,
+    get: StoreApi<BindingState>['getState'],
+    liveSpec: LiveSpecsExtQuery['spec'],
+    searchParams: URLSearchParams
+): Promise<PostgrestError | null> => {
+    const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
+
+    if (draftId) {
+        const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
+            draftId,
+            entityType
+        );
+
+        if (error || !draftSpecs || draftSpecs.length === 0) {
+            return (
+                error ?? {
+                    ...BASE_ERROR,
+                    message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
+                }
+            );
+        }
+
+        get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings,
+            draftSpecs[0].spec.bindings
+        );
+
+        const targetInterval = draftSpecs[0].spec?.interval ?? defaultInterval;
+
+        get().setCaptureInterval(
+            targetInterval
+                ? formatCaptureInterval(targetInterval, true)
+                : fallbackInterval,
+            defaultInterval
+        );
+    } else {
+        get().prefillBindingDependentState(entityType, liveSpec.bindings);
+
+        get().setCaptureInterval(
+            liveSpec?.interval ?? fallbackInterval,
+            defaultInterval
+        );
+    }
+
+    return null;
+};
+
 const getInitialBindingData = (): Pick<
     BindingState,
     'bindingErrorsExist' | 'bindings' | 'currentBinding'
@@ -235,7 +315,9 @@ const getInitialMiscData = (): Pick<
     | 'backfillDataFlow'
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
+    | 'captureInterval'
     | 'collectionsRequiringRediscovery'
+    | 'defaultCaptureInterval'
     | 'discoveredCollections'
     | 'evolvedCollections'
     | 'rediscoveryRequired'
@@ -251,7 +333,9 @@ const getInitialMiscData = (): Pick<
     backfillDataFlow: false,
     backfillSupported: true,
     backfilledBindings: [],
+    captureInterval: null,
     collectionsRequiringRediscovery: [],
+    defaultCaptureInterval: null,
     discoveredCollections: [],
     evolvedCollections: [],
     rediscoveryRequired: false,
@@ -420,7 +504,6 @@ const getInitialState = (
         rehydrating
     ) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
         const prefillLiveSpecIds = searchParams.getAll(
             GlobalSearchParams.PREFILL_LIVE_SPEC_ID
         );
@@ -433,47 +516,52 @@ const getInitialState = (
 
         get().resetState(materializationRehydrating);
 
-        if (connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Resource(connectorTagId);
+        const connectorTagResponse = await hydrateConnectorTagDependentState(
+            connectorTagId,
+            get
+        );
 
-            if (error) {
-                get().setHydrationErrorsExist(true);
-            } else if (data?.resource_spec_schema) {
-                await get().setResourceSchema(
-                    data.resource_spec_schema as unknown as Schema
-                );
-
-                get().setBackfillSupported(!Boolean(data.disable_backfill));
-            }
-        }
+        const fallbackInterval =
+            entityType === 'capture' &&
+            typeof connectorTagResponse?.default_capture_interval === 'string'
+                ? ''
+                : null;
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
                 await getLiveSpecsByLiveSpecId(liveSpecIds[0], entityType);
 
-            if (liveSpecError) {
+            if (liveSpecError || !liveSpecs || liveSpecs.length === 0) {
                 get().setHydrationErrorsExist(true);
-            } else if (liveSpecs && liveSpecs.length > 0) {
-                if (draftId) {
-                    const { data: draftSpecs, error: draftSpecError } =
-                        await getDraftSpecsByDraftId(draftId, entityType);
 
-                    if (draftSpecError) {
-                        get().setHydrationErrorsExist(true);
-                    } else if (draftSpecs && draftSpecs.length > 0) {
-                        get().prefillBindingDependentState(
-                            entityType,
-                            liveSpecs[0].spec.bindings,
-                            draftSpecs[0].spec.bindings
-                        );
-                    }
-                } else {
-                    get().prefillBindingDependentState(
-                        entityType,
-                        liveSpecs[0].spec.bindings
-                    );
-                }
+                return Promise.reject(
+                    liveSpecError?.message ??
+                        `An issue was encountered fetching the live specification for this ${entityType}`
+                );
             }
+
+            const draftSpecError = await hydrateSpecificationDependentState(
+                connectorTagResponse?.default_capture_interval,
+                entityType,
+                fallbackInterval,
+                get,
+                liveSpecs[0].spec,
+                searchParams
+            );
+
+            if (draftSpecError) {
+                get().setHydrationErrorsExist(true);
+
+                return Promise.reject(draftSpecError.message);
+            }
+        } else {
+            get().setCaptureInterval(
+                formatCaptureInterval(
+                    connectorTagResponse?.default_capture_interval,
+                    true
+                ) ?? fallbackInterval,
+                connectorTagResponse?.default_capture_interval
+            );
         }
 
         if (prefillLiveSpecIds.length > 0) {
@@ -926,6 +1014,24 @@ const getInitialState = (
             }),
             false,
             'Backfilled Collections Set'
+        );
+    },
+
+    setCaptureInterval: (value, defaultInterval) => {
+        set(
+            produce((state: BindingState) => {
+                if (
+                    defaultInterval &&
+                    POSTGRES_INTERVAL_RE.test(defaultInterval)
+                ) {
+                    state.defaultCaptureInterval =
+                        Duration.fromISOTime(defaultInterval).toObject();
+                }
+
+                state.captureInterval = value;
+            }),
+            false,
+            'Capture interval set'
         );
     },
 

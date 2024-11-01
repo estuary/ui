@@ -1,6 +1,7 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import { useEffect, useRef } from 'react';
+import { logRocketConsole } from 'services/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { BaseComponentProps } from 'types';
@@ -56,7 +57,12 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                             setPrefilledCapture(response[0].catalog_name);
                         }
                     },
-                    () => {
+                    (error) => {
+                        logRocketConsole(
+                            'Failed to hydrate binding-dependent views',
+                            error
+                        );
+
                         setHydrationErrorsExist(true);
                     }
                 )
