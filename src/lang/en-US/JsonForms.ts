@@ -5,7 +5,7 @@ export const JsonForms: Record<string, string> = {
 
     // Group
     'jsonForms.clearGroup': `Clear {label}`,
-    'jsonForms.clearGroup.message': `Will full remove this group and all children from configuration.`,
+    'jsonForms.clearGroup.message': `Remove this group and all children.`,
 
     // Custom Renderers
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
