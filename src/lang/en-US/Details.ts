@@ -55,4 +55,6 @@ export const Details: Record<string, string> = {
     'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
 
     'detailsPanel.graph.timezone': `{relativeUnit} in`,
+    'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay}`,
+    'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to sync schedule`,
 };

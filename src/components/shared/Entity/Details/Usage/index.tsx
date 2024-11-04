@@ -10,6 +10,7 @@ import useDetailsStats from 'hooks/useDetailsStats';
 import { FormattedMessage } from 'react-intl';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 import { hasLength } from 'utils/misc-utils';
+import DelayWarning from './DelayWarning';
 
 interface Props {
     catalogName: string;
@@ -59,6 +60,8 @@ function Usage({ catalogName }: Props) {
                     }
                 />
             )}
+
+            <DelayWarning />
         </CardWrapper>
     );
 }
