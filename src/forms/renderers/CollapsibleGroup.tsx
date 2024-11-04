@@ -57,10 +57,10 @@ const CollapsibleGroupRenderer = ({
 
     const uiSchemaOptions = uischema.options ?? {};
 
-    const hasRequiredFields =
-        uiSchemaOptions[CONTAINS_REQUIRED_FIELDS] === true;
     const expand =
-        hasRequiredFields || uiSchemaOptions[ADVANCED] !== true || false;
+        uiSchemaOptions[CONTAINS_REQUIRED_FIELDS] === true ||
+        uiSchemaOptions[ADVANCED] !== true ||
+        false;
 
     return (
         <Hidden xsUp={!visible}>
