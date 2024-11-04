@@ -18,7 +18,13 @@ export function useSyncScheduleDelayWarning() {
                 ?.syncFrequency;
 
         if (syncFrequency) {
-            if (syncFrequency === '0s') {
+            // Upper case to match the ISO 8601 duration format AND make it
+            //  safer to check the string value
+            const formattedSyncFrequency = syncFrequency.toUpperCase();
+
+            // If the requency is 0 then just show default otherwise the math and
+            //  message would make no sense
+            if (formattedSyncFrequency === '0S') {
                 logRocketEvent(CustomEvents.SYNC_SCHEDULE, {
                     zeroSeconds: true,
                 });
@@ -30,7 +36,7 @@ export function useSyncScheduleDelayWarning() {
             // The pattern we have is pretty close to ISO 8601 so
             //  preface with PT and hope it works
             const syncDuration = Duration.fromISO(
-                `PT${syncFrequency.toUpperCase()}`
+                `PT${formattedSyncFrequency}`
             );
 
             // If we cannot parse the duration fire event and use default message
