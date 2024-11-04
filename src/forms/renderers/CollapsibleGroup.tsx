@@ -3,20 +3,25 @@ import {
     MaterialLayoutRenderer,
     MaterialLayoutRendererProps,
 } from '@jsonforms/material-renderers';
-import { withJsonFormsLayoutProps } from '@jsonforms/react';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Button,
+    Box,
     Hidden,
     Typography,
     useTheme,
+    Tooltip,
 } from '@mui/material';
 import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
-import { NavArrowDown } from 'iconoir-react';
+import { NavArrowDown, Xmark } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+import { withCustomJsonFormsLayoutProps } from 'services/jsonforms/JsonFormsContext';
 import {
     ADVANCED,
     CONTAINS_REQUIRED_FIELDS,
+    LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
 } from 'services/jsonforms/shared';
 import SshEndpointInfo from './Informational/SshEndpoint';
@@ -31,18 +36,19 @@ export const collapsibleGroupTester: RankedTester = rankWith(
 // TODO (typing) Just used any here as it makes things easier.
 //  previous versions had more typing but the typing wasn't 100% correct
 const CollapsibleGroupRenderer = ({
+    childrenHaveValue,
     uischema,
     schema,
-    path,
     visible,
     renderers,
+    handleChange,
 }: any) => {
+    const intl = useIntl();
     const theme = useTheme();
 
     const layoutProps = {
         elements: uischema.elements,
         schema,
-        path,
         direction: 'column' as MaterialLayoutRendererProps['direction'],
         visible,
         uischema,
@@ -50,10 +56,11 @@ const CollapsibleGroupRenderer = ({
     };
 
     const uiSchemaOptions = uischema.options ?? {};
+
+    const hasRequiredFields =
+        uiSchemaOptions[CONTAINS_REQUIRED_FIELDS] === true;
     const expand =
-        uiSchemaOptions[CONTAINS_REQUIRED_FIELDS] === true ||
-        uiSchemaOptions[ADVANCED] !== true ||
-        false;
+        hasRequiredFields || uiSchemaOptions[ADVANCED] !== true || false;
 
     return (
         <Hidden xsUp={!visible}>
@@ -86,6 +93,49 @@ const CollapsibleGroupRenderer = ({
                         <SshEndpointInfo />
                     ) : null}
 
+                    {uiSchemaOptions[LAYOUT_PATH] ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'end',
+                                my: 1,
+                            }}
+                        >
+                            <Tooltip
+                                title={intl.formatMessage({
+                                    id: 'jsonForms.clearGroup.message',
+                                })}
+                            >
+                                <Button
+                                    disabled={!Boolean(childrenHaveValue)}
+                                    variant="text"
+                                    size="small"
+                                    onClick={() => {
+                                        handleChange(
+                                            uiSchemaOptions[LAYOUT_PATH],
+                                            undefined
+                                        );
+                                    }}
+                                    startIcon={
+                                        <Xmark style={{ fontSize: 13 }} />
+                                    }
+                                    sx={{
+                                        maxWidth: '75%',
+                                    }}
+                                >
+                                    {intl.formatMessage(
+                                        {
+                                            id: 'jsonForms.clearGroup',
+                                        },
+                                        {
+                                            label: uischema.label,
+                                        }
+                                    )}
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    ) : null}
+
                     <MaterialLayoutRenderer {...layoutProps} />
                 </AccordionDetails>
             </Accordion>
@@ -93,6 +143,6 @@ const CollapsibleGroupRenderer = ({
     );
 };
 
-export const CollapsibleGroup = withJsonFormsLayoutProps(
+export const CollapsibleGroup = withCustomJsonFormsLayoutProps(
     CollapsibleGroupRenderer
 );

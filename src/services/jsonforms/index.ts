@@ -36,6 +36,7 @@ import {
     Layout,
     resolveSchema,
     toDataPath,
+    toDataPathSegments,
     UISchemaElement,
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
@@ -49,6 +50,7 @@ import {
     ADVANCED,
     allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
+    LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
 
@@ -201,6 +203,16 @@ const addRequiredGroupOptions = (
 const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
     if (!Object.hasOwn(elem.options ?? {}, SHOW_INFO_SSH_ENDPOINT)) {
         addOption(elem, SHOW_INFO_SSH_ENDPOINT, true);
+    }
+};
+
+const addLayoutPath = (
+    elem: Layout | ControlElement | GroupLayout,
+    path: string
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, LAYOUT_PATH)) {
+        // Based on `fromScoped` in jsonforms/packages/core/src/util/util.ts
+        addOption(elem, LAYOUT_PATH, toDataPathSegments(path).join('.'));
     }
 };
 
@@ -441,6 +453,8 @@ const generateUISchema = (
     const isRequired = isRequiredField(schemaName, rootSchema);
 
     if (isPlainObject(jsonSchema)) {
+        console.log('jsonSchema', jsonSchema);
+
         if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
             // Always create a Group for "advanced" configuration objects, so that we can collapse it and
             // see the label.
@@ -557,6 +571,11 @@ const generateUISchema = (
                 if (containsSshEndpoint(jsonSchema)) {
                     addInfoSshEndpoint(layout);
                 }
+
+                // This is only used within the CollapsibleGroup (Q4 2024)
+                // Need to add a path to group layouts so we can allow users to clear them
+                //  out when they are optional.
+                addLayoutPath(layout, currentRef);
             }
         } else {
             layout = createLayout(layoutType);
