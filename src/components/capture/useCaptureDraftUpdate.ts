@@ -23,6 +23,7 @@ import {
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'stores/EndpointConfig/hooks';
+import { isDekafConnector } from 'utils/misc-utils';
 
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
@@ -38,8 +39,10 @@ function useDiscoverDraftUpdate(options?: {
     const persistedDraftId = useEditorStore_persistedDraftId();
     const setDraftId = useEditorStore_setId();
 
-    const imagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
+    const imagePath = useDetailsFormStore((state) =>
+        isDekafConnector(state.details.data.connectorImage)
+            ? undefined
+            : state.details.data.connectorImage.imagePath
     );
 
     const setEncryptedEndpointConfig =
@@ -67,10 +70,13 @@ function useDiscoverDraftUpdate(options?: {
             //      Doing a rediscovery with no new changes
 
             if (
-                (!draftId && persistedDraftId && !options?.initiateDiscovery) ||
-                (persistedDraftId &&
-                    !options?.initiateDiscovery &&
-                    !options?.initiateRediscovery)
+                imagePath &&
+                ((!draftId &&
+                    persistedDraftId &&
+                    !options?.initiateDiscovery) ||
+                    (persistedDraftId &&
+                        !options?.initiateDiscovery &&
+                        !options?.initiateRediscovery))
             ) {
                 const existingDraftSpecResponse =
                     await getDraftSpecsByCatalogName(

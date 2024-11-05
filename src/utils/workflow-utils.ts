@@ -17,8 +17,8 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { DekafConfig, Entity, EntityWithCreateWorkflow, Schema } from 'types';
+import { hasLength, isDekafEndpointConfig } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
 
 // This is the soft limit we recommend to users
@@ -163,7 +163,7 @@ export const updateFullSource = () => {};
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
-    connectorConfig: ConnectorConfig,
+    endpointConfig: ConnectorConfig | DekafConfig,
     resourceConfigs: ResourceConfigDictionary,
     resourceConfigServerUpdateRequired: boolean,
     bindings: Bindings,
@@ -180,7 +180,11 @@ export const generateTaskSpec = (
           }
         : existingTaskData.spec;
 
-    draftSpec.endpoint.connector = connectorConfig;
+    const endpointProp = isDekafEndpointConfig(endpointConfig)
+        ? 'dekaf'
+        : 'connector';
+
+    draftSpec.endpoint[endpointProp] = endpointConfig;
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);

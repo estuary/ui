@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
+    ConnectorMetadata,
     DataPlaneOption,
     Details,
     DetailsFormState,
@@ -55,13 +56,23 @@ const getConnectorImage = async (
 
         const connectorTag = evaluateConnectorVersions(connector, options);
 
-        return {
+        const connectorMetadata: ConnectorMetadata = {
             connectorId,
+            iconPath: logo_url,
             id: connectorTag.id,
             imageName: image_name,
-            imagePath: `${image_name}${connectorTag.image_tag}`,
-            iconPath: logo_url,
+            imageTag: connectorTag.image_tag,
         };
+
+        return connectorTag.image_tag.includes(':dekaf')
+            ? {
+                  ...connectorMetadata,
+                  variant: `${image_name}${connectorTag.image_tag}`,
+              }
+            : {
+                  ...connectorMetadata,
+                  imagePath: `${image_name}${connectorTag.image_tag}`,
+              };
     }
 
     return null;
@@ -103,6 +114,7 @@ const initialDetails: Details = {
             iconPath: '',
             imageName: '',
             imagePath: '',
+            imageTag: '',
         },
         entityName: '',
     },
@@ -413,6 +425,7 @@ export const getInitialState = (
                     iconPath: '',
                     imageName: '',
                     imagePath: '',
+                    imageTag: '',
                     connectorId,
                 });
                 get().setHydrationErrorsExist(true);

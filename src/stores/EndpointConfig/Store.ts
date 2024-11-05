@@ -23,8 +23,8 @@ import {
 } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 import { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';
@@ -237,8 +237,12 @@ const getInitialState = (
             }
 
             if (get().active && data && data.length > 0) {
-                const encryptedEndpointConfig =
-                    data[0].spec.endpoint.connector.config;
+                const encryptedEndpointConfig = Object.hasOwn(
+                    data[0].spec.endpoint,
+                    'dekaf'
+                )
+                    ? data[0].spec.endpoint.dekaf.config
+                    : data[0].spec.endpoint.connector.config;
 
                 get().setEncryptedEndpointConfig({
                     data: encryptedEndpointConfig,

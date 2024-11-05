@@ -18,15 +18,25 @@ export interface DataPlaneOption {
     scope: 'public' | 'private';
 }
 
+export interface ConnectorMetadata {
+    connectorId: string;
+    iconPath: string;
+    id: string;
+    imageName: string;
+    imageTag: string;
+}
+
+export interface StandardConnectorMetadata extends ConnectorMetadata {
+    imagePath: string;
+}
+
+export interface DekafConnectorMetadata extends ConnectorMetadata {
+    variant: string;
+}
+
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     data: {
-        connectorImage: {
-            id: string;
-            iconPath: string;
-            imageName: string;
-            imagePath: string;
-            connectorId: string;
-        };
+        connectorImage: StandardConnectorMetadata | DekafConnectorMetadata;
         entityName: string;
         dataPlane?: DataPlaneOption;
     };

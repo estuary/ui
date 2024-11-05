@@ -9,6 +9,12 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import {
+    DekafConnectorMetadata,
+    StandardConnectorMetadata,
+} from 'stores/DetailsForm/types';
+import { DekafConfig } from 'types';
+import { ConnectorConfig } from '../../deps/flow/flow';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -218,3 +224,11 @@ export const isPostgrestFetcher = (
     | PostgrestFilterBuilder<any, any, any, any, any>
     | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
+
+export const isDekafConnector = (
+    value: StandardConnectorMetadata | DekafConnectorMetadata
+): value is DekafConnectorMetadata => 'variant' in value;
+
+export const isDekafEndpointConfig = (
+    value: ConnectorConfig | DekafConfig
+): value is DekafConfig => 'variant' in value;

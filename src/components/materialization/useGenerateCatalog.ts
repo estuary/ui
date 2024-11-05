@@ -28,13 +28,13 @@ import {
 } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
-    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_setFormState,
@@ -42,8 +42,11 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { DekafConfig } from 'types';
+import { isDekafConnector, isDekafEndpointConfig } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
+import { ConnectorConfig } from '../../../deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -61,8 +64,17 @@ function useGenerateCatalog() {
     const imageConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
-    const imagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
+    const endpointConfig: ConnectorConfig | DekafConfig = useDetailsFormStore(
+        (state) =>
+            isDekafConnector(state.details.data.connectorImage)
+                ? {
+                      config: {},
+                      variant: state.details.data.connectorImage.variant,
+                  }
+                : {
+                      config: {},
+                      image: state.details.data.connectorImage.imagePath,
+                  }
     );
     const setDraftedEntityName = useDetailsFormStore(
         (state) => state.setDraftedEntityName
@@ -195,24 +207,28 @@ function useGenerateCatalog() {
                     evaluatedDraftId = draftsResponse.data[0].id;
                 }
 
-                const encryptedEndpointConfig = await encryptEndpointConfig(
-                    serverUpdateRequired
-                        ? endpointConfigData
-                        : serverEndpointConfigData,
-                    endpointSchema,
-                    serverUpdateRequired,
-                    imageConnectorId,
-                    imageConnectorTagId,
-                    callFailed,
-                    { overrideJsonFormDefaults: true }
-                );
+                const standardEndpointDetected =
+                    !isDekafEndpointConfig(endpointConfig);
+
+                if (standardEndpointDetected) {
+                    const encryptedEndpointConfig = await encryptEndpointConfig(
+                        serverUpdateRequired
+                            ? endpointConfigData
+                            : serverEndpointConfigData,
+                        endpointSchema,
+                        serverUpdateRequired,
+                        imageConnectorId,
+                        imageConnectorTagId,
+                        callFailed,
+                        { overrideJsonFormDefaults: true }
+                    );
+
+                    endpointConfig.config = encryptedEndpointConfig.data;
+                }
 
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
-                    {
-                        image: imagePath,
-                        config: encryptedEndpointConfig.data,
-                    },
+                    endpointConfig,
                     resourceConfigs,
                     resourceConfigServerUpdateRequired,
                     bindings,
@@ -272,11 +288,14 @@ function useGenerateCatalog() {
                 await mutateDraftSpecs();
 
                 // Update all the store state
+                if (standardEndpointDetected) {
+                    setEncryptedEndpointConfig({
+                        data: draftSpecsResponse.data[0].spec.endpoint.connector
+                            .config,
+                    });
+                }
+
                 setCatalogName(processedEntityName);
-                setEncryptedEndpointConfig({
-                    data: draftSpecsResponse.data[0].spec.endpoint.connector
-                        .config,
-                });
                 setPreviousEndpointConfig({ data: endpointConfigData });
                 setDraftId(evaluatedDraftId);
                 setPersistedDraftId(evaluatedDraftId);
@@ -303,6 +322,7 @@ function useGenerateCatalog() {
             bindings,
             callFailed,
             detailsFormsErrorsExist,
+            endpointConfig,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
@@ -310,7 +330,6 @@ function useGenerateCatalog() {
             fullSourceErrorsExist,
             imageConnectorId,
             imageConnectorTagId,
-            imagePath,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,

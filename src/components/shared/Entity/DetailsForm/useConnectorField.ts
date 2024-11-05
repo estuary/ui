@@ -6,9 +6,9 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
-import { Details } from 'stores/DetailsForm/types';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { ConnectorMetadata, Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import {
@@ -17,7 +17,35 @@ import {
 } from 'utils/workflow-utils';
 import { MAC_ADDR_RE } from 'validation';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
-import { getConnectorImageDetails } from './Form';
+
+// TODO (optimization): Consider deriving ConnectorWithTagDetailQuery and ConnectorsQuery_DetailsForm
+//   from the same base interface so this function can be used in getConnectorImage.
+const getConnectorImageDetails = (
+    connector: ConnectorWithTagDetailQuery,
+    options?: { connectorId: string; existingImageTag: string }
+): Details['data']['connectorImage'] => {
+    const connectorTag = evaluateConnectorVersions(connector, options);
+
+    const { image_name } = connector;
+
+    const connectorMetadata: ConnectorMetadata = {
+        connectorId: connector.id,
+        iconPath: connector.image,
+        id: connectorTag.id,
+        imageName: image_name,
+        imageTag: connectorTag.image_tag,
+    };
+
+    return connectorTag.image_tag.includes(':dekaf')
+        ? {
+              ...connectorMetadata,
+              variant: `${image_name}${connectorTag.image_tag}`,
+          }
+        : {
+              ...connectorMetadata,
+              imagePath: `${image_name}${connectorTag.image_tag}`,
+          };
+};
 
 export default function useConnectorField(
     connectorTags: ConnectorWithTagDetailQuery[],
@@ -33,8 +61,8 @@ export default function useConnectorField(
     const originalConnectorImage = useDetailsFormStore(
         (state) => state.details.data.connectorImage
     );
-    const connectorImagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
+    const connectorImageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageTag
     );
     const connectorIdChanged = useDetailsForm_changed_connectorId();
     const setDetails_connector = useDetailsFormStore(
@@ -66,21 +94,17 @@ export default function useConnectorField(
         | undefined = useMemo(() => {
         // This is rare but can happen so being safe.
         // If you remove the connector id from the create URL
-        if (!connectorImagePath) {
+        if (!connectorImageTag) {
             return undefined;
         }
 
-        const imageTagStartIndex = connectorImagePath.indexOf(':');
-        return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
+        return isEdit && hasLength(connectorId)
             ? {
                   connectorId,
-                  existingImageTag: connectorImagePath.substring(
-                      imageTagStartIndex,
-                      connectorImagePath.length
-                  ),
+                  existingImageTag: connectorImageTag,
               }
             : undefined;
-    }, [connectorId, connectorImagePath, isEdit]);
+    }, [connectorId, connectorImageTag, isEdit]);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];

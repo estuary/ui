@@ -460,3 +460,8 @@ export interface BindingMetadata {
     bindingIndex: number;
     collection: string;
 }
+
+export interface DekafConfig {
+    config: {};
+    variant: string;
+}
