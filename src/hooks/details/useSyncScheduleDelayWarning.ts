@@ -12,6 +12,9 @@ export function useSyncScheduleDelayWarning() {
         localScope: true,
     });
 
+    // TODO (delay warning) - we may want to add file based support
+    // file based materializations (iceberg, parquet/csv sinks etc.) use a
+    //  similar mechanism for commit delaying is under a different option
     return useMemo(() => {
         const syncFrequency =
             currentCatalog?.spec?.endpoint?.connector?.config?.syncSchedule
