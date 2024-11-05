@@ -180,22 +180,15 @@ const isOAuthConfig = (schema: JsonSchema): boolean => {
     return Object.hasOwn(schema, Annotations.oAuthProvider);
 };
 
-const hasOnlyOneChildAsObject = (schema: JsonSchema) => {
-    if (!schema.properties) {
-        return false;
-    }
-
-    // Many or zero can both return false as this is mainly just checking
-    //  so we don't show the "clear section" button nested.
-    //  An example of a config that this helps is Network Tunneling
-    const propertiesAsArray = Object.values(schema.properties);
-    if (propertiesAsArray.length !== 1) {
-        return false;
-    }
-
-    // Make sure the child is an object
-    return propertiesAsArray[0].type === 'object';
-};
+// TODO (reset section) might want to know if there are multiple children in future
+// const getChildObjectCount = (schema: JsonSchema) => {
+//     if (!schema.properties) {
+//         return 0;
+//     }
+//     return Object.values(schema.properties).map(
+//         (property) => property.type === 'object'
+//     ).length;
+// };
 
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     if (isAdvancedConfig(schema)) {
@@ -587,13 +580,7 @@ const generateUISchema = (
                     addInfoSshEndpoint(layout);
                 }
 
-                // Check if the group only houses one child that is an object.
-                //  that way we do not add the layoutPath and cause two
-                //  "clear section" buttons to be shown really close to each other.
-                if (!hasOnlyOneChildAsObject(jsonSchema)) {
-                    // This is only used within the CollapsibleGroup (Q4 2024)
-                    addLayoutPath(layout, currentRef);
-                }
+                addLayoutPath(layout, currentRef);
             }
         } else {
             layout = createLayout(layoutType);

@@ -20,8 +20,8 @@ import { useIntl } from 'react-intl';
 import { withCustomJsonFormsLayoutProps } from 'services/jsonforms/JsonFormsContext';
 import {
     ADVANCED,
+    CHILDREN_HAVE_VALUE,
     CONTAINS_REQUIRED_FIELDS,
-    LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
 } from 'services/jsonforms/shared';
 import SshEndpointInfo from './Informational/SshEndpoint';
@@ -36,12 +36,11 @@ export const collapsibleGroupTester: RankedTester = rankWith(
 // TODO (typing) Just used any here as it makes things easier.
 //  previous versions had more typing but the typing wasn't 100% correct
 const CollapsibleGroupRenderer = ({
-    childrenHaveValue,
     uischema,
     schema,
     visible,
     renderers,
-    handleChange,
+    clearSettings,
 }: any) => {
     const intl = useIntl();
     const theme = useTheme();
@@ -93,7 +92,7 @@ const CollapsibleGroupRenderer = ({
                         <SshEndpointInfo />
                     ) : null}
 
-                    {uiSchemaOptions[LAYOUT_PATH] ? (
+                    {clearSettings ? (
                         <Box
                             sx={{
                                 display: 'flex',
@@ -107,15 +106,14 @@ const CollapsibleGroupRenderer = ({
                                 })}
                             >
                                 <Button
-                                    disabled={!Boolean(childrenHaveValue)}
+                                    disabled={
+                                        !Boolean(
+                                            uiSchemaOptions[CHILDREN_HAVE_VALUE]
+                                        )
+                                    }
                                     variant="text"
                                     size="small"
-                                    onClick={() => {
-                                        handleChange(
-                                            uiSchemaOptions[LAYOUT_PATH],
-                                            undefined
-                                        );
-                                    }}
+                                    onClick={clearSettings}
                                     startIcon={
                                         <Xmark style={{ fontSize: 13 }} />
                                     }

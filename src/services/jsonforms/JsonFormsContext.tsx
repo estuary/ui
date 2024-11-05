@@ -42,6 +42,7 @@ import {
 } from '@jsonforms/react';
 import { getDiscriminatorIndex } from 'forms/renderers/shared';
 import React, { ComponentType } from 'react';
+import { CHILDREN_HAVE_VALUE, LAYOUT_PATH } from './shared';
 
 // All these functions are customized just so we can end up with the custom function
 //  mapCustomStateToCombinatorRendererProps calling into out own getDiscriminatorIndex
@@ -105,7 +106,7 @@ export const withCustomJsonFormsOneOfDiscriminatorProps = (
 //  a passed in `handleChange`
 export interface CustomLayoutProps extends LayoutProps {
     childrenHaveValue?: boolean;
-    handleChange: (path: string, value: any) => void;
+    clearSettings: (path: string, value: any) => void;
 }
 
 // based on : packages/react/src/JsonFormsContext.tsx
@@ -115,20 +116,27 @@ const withCustomContextToLayoutProps =
     ({ ctx, props }: any) => {
         const layoutProps = ctxToLayoutProps(ctx, props) as CustomLayoutProps;
 
-        // based on : jsonforms/packages/examples/src/examples/onChange.ts
-        layoutProps.handleChange = (path, value) => {
-            ctx.dispatch(update(path, () => value));
-        };
-
         // So we know to disable the "clear settings" button we want
         //  to see if the children have data
-        if (layoutProps.uischema.options?.layoutPath) {
+        if (layoutProps.uischema.options?.[LAYOUT_PATH]) {
+            // Only add the handleChange if there is a layout path to clear
+            // based on : jsonforms/packages/examples/src/examples/onChange.ts
+            layoutProps.clearSettings = () => {
+                ctx.dispatch(
+                    update(
+                        layoutProps.uischema.options?.[LAYOUT_PATH],
+                        () => undefined
+                    )
+                );
+            };
+
             const childData = Resolve.data(
                 layoutProps.data,
                 props.uischema.options.layoutPath
             );
 
-            layoutProps.childrenHaveValue = Boolean(childData);
+            layoutProps.uischema.options[CHILDREN_HAVE_VALUE] =
+                Boolean(childData);
         }
 
         return <Component {...props} {...layoutProps} />;
