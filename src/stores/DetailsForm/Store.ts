@@ -27,7 +27,7 @@ import {
     parseDataPlaneName,
     PUBLIC_DATA_PLANE_PREFIX,
 } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix } from 'utils/env-utils';
+import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import {
@@ -346,7 +346,19 @@ export const getInitialState = (
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
-                if (connectorImage && dataPlane !== null) {
+                if (!isProduction && connectorImage && dataPlane === null) {
+                    get().setDetails_connector(connectorImage);
+
+                    const {
+                        data: { entityName },
+                        errors,
+                    } = initialDetails;
+
+                    get().setPreviousDetails({
+                        data: { entityName, connectorImage },
+                        errors,
+                    });
+                } else if (connectorImage && dataPlane !== null) {
                     get().setDetails_connector(connectorImage);
 
                     const {

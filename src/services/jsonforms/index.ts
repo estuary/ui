@@ -180,6 +180,23 @@ const isOAuthConfig = (schema: JsonSchema): boolean => {
     return Object.hasOwn(schema, Annotations.oAuthProvider);
 };
 
+const hasOnlyOneChildAsObject = (schema: JsonSchema) => {
+    if (!schema.properties) {
+        return false;
+    }
+
+    // Many or zero can both return false as this is mainly just checking
+    //  so we don't show the "clear section" button nested.
+    //  An example of a config that this helps is Network Tunneling
+    const propertiesAsArray = Object.values(schema.properties);
+    if (propertiesAsArray.length !== 1) {
+        return false;
+    }
+
+    // Make sure the child is an object
+    return propertiesAsArray[0].type === 'object';
+};
+
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     if (isAdvancedConfig(schema)) {
         addOption(elem, ADVANCED, true);
@@ -453,8 +470,6 @@ const generateUISchema = (
     const isRequired = isRequiredField(schemaName, rootSchema);
 
     if (isPlainObject(jsonSchema)) {
-        console.log('jsonSchema', jsonSchema);
-
         if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
             // Always create a Group for "advanced" configuration objects, so that we can collapse it and
             // see the label.
@@ -572,10 +587,13 @@ const generateUISchema = (
                     addInfoSshEndpoint(layout);
                 }
 
-                // This is only used within the CollapsibleGroup (Q4 2024)
-                // Need to add a path to group layouts so we can allow users to clear them
-                //  out when they are optional.
-                addLayoutPath(layout, currentRef);
+                // Check if the group only houses one child that is an object.
+                //  that way we do not add the layoutPath and cause two
+                //  "clear section" buttons to be shown really close to each other.
+                if (!hasOnlyOneChildAsObject(jsonSchema)) {
+                    // This is only used within the CollapsibleGroup (Q4 2024)
+                    addLayoutPath(layout, currentRef);
+                }
             }
         } else {
             layout = createLayout(layoutType);
