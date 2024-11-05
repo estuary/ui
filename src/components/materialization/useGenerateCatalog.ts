@@ -43,7 +43,7 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { DekafConfig } from 'types';
-import { isDekafConnector, isDekafEndpointConfig } from 'utils/misc-utils';
+import { isDekafConnector } from 'utils/misc-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../deps/flow/flow';
@@ -207,24 +207,19 @@ function useGenerateCatalog() {
                     evaluatedDraftId = draftsResponse.data[0].id;
                 }
 
-                const standardEndpointDetected =
-                    !isDekafEndpointConfig(endpointConfig);
+                const encryptedEndpointConfig = await encryptEndpointConfig(
+                    serverUpdateRequired
+                        ? endpointConfigData
+                        : serverEndpointConfigData,
+                    endpointSchema,
+                    serverUpdateRequired,
+                    imageConnectorId,
+                    imageConnectorTagId,
+                    callFailed,
+                    { overrideJsonFormDefaults: true }
+                );
 
-                if (standardEndpointDetected) {
-                    const encryptedEndpointConfig = await encryptEndpointConfig(
-                        serverUpdateRequired
-                            ? endpointConfigData
-                            : serverEndpointConfigData,
-                        endpointSchema,
-                        serverUpdateRequired,
-                        imageConnectorId,
-                        imageConnectorTagId,
-                        callFailed,
-                        { overrideJsonFormDefaults: true }
-                    );
-
-                    endpointConfig.config = encryptedEndpointConfig.data;
-                }
+                endpointConfig.config = encryptedEndpointConfig.data;
 
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
@@ -288,14 +283,16 @@ function useGenerateCatalog() {
                 await mutateDraftSpecs();
 
                 // Update all the store state
-                if (standardEndpointDetected) {
-                    setEncryptedEndpointConfig({
-                        data: draftSpecsResponse.data[0].spec.endpoint.connector
-                            .config,
-                    });
-                }
-
                 setCatalogName(processedEntityName);
+                setEncryptedEndpointConfig({
+                    data: Object.hasOwn(
+                        draftSpecsResponse.data[0].spec.endpoint,
+                        'dekaf'
+                    )
+                        ? draftSpecsResponse.data[0].spec.endpoint.dekaf.config
+                        : draftSpecsResponse.data[0].spec.endpoint.connector
+                              .config,
+                });
                 setPreviousEndpointConfig({ data: endpointConfigData });
                 setDraftId(evaluatedDraftId);
                 setPersistedDraftId(evaluatedDraftId);

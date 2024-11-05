@@ -176,7 +176,9 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
-                state.serverUpdateRequired = updateRequired;
+                state.serverUpdateRequired = state.endpointCanBeEmpty
+                    ? false
+                    : updateRequired;
 
                 populateErrors(state.endpointConfig, state.customErrors, state);
             }),

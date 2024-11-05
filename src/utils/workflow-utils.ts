@@ -184,7 +184,7 @@ export const generateTaskSpec = (
         ? 'dekaf'
         : 'connector';
 
-    draftSpec.endpoint[endpointProp] = endpointConfig;
+    draftSpec.endpoint = { [endpointProp]: endpointConfig };
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
