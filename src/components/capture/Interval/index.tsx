@@ -1,19 +1,12 @@
 import {
-    FormControl,
+    Autocomplete,
+    AutocompleteRenderInputParams,
     FormHelperText,
-    InputAdornment,
-    InputLabel,
-    MenuItem,
-    OutlinedInput,
-    Select,
     Stack,
+    TextField,
     Tooltip,
     Typography,
 } from '@mui/material';
-import {
-    primaryButtonText,
-    primaryColoredBackground_hovered,
-} from 'context/Theme';
 import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
@@ -27,17 +20,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
-import { getCaptureIntervalSegment } from 'utils/time-utils';
-import {
-    CAPTURE_INTERVAL_RE,
-    NUMERIC_RE,
-    POSTGRES_INTERVAL_RE,
-} from 'validation';
+import { CAPTURE_INTERVAL_RE } from 'validation';
 import { CaptureIntervalProps } from './types';
 
 const DESCRIPTION_ID = 'capture-interval-description';
-const INPUT_ID = 'capture-interval-input';
-const INPUT_SIZE = 'small';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();
@@ -57,31 +43,17 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
 
-    const lastIntervalChar = interval?.at(-1) ?? '';
-    const singleUnit = ['h', 'i', 'm', 's'].some(
-        (symbol) => lastIntervalChar === symbol
-    );
-
-    const [unit, setUnit] = useState(singleUnit ? lastIntervalChar : '');
-    const [input, setInput] = useState(
-        singleUnit ? interval?.substring(0, interval.length - 1) : interval
-    );
+    const [input, setInput] = useState(interval ?? '');
 
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
-    const errorsExist = useMemo(() => {
-        const intervalErrorsExist =
-            input &&
-            hasLength(input) &&
-            !POSTGRES_INTERVAL_RE.test(input) &&
-            !CAPTURE_INTERVAL_RE.test(input);
-
-        return Boolean(
-            unit === 'i'
-                ? intervalErrorsExist
-                : intervalErrorsExist && !NUMERIC_RE.test(input)
-        );
-    }, [input, unit]);
+    const errorsExist = useMemo(
+        () =>
+            Boolean(
+                input && hasLength(input) && !CAPTURE_INTERVAL_RE.test(input)
+            ),
+        [input]
+    );
 
     if (typeof input !== 'string' || isEmpty(defaultInterval)) {
         return null;
@@ -108,162 +80,73 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 <FormattedMessage id="captureInterval.message" />
             </Typography>
 
-            <FormControl
+            <Autocomplete
                 disabled={readOnly ?? loading}
-                error={errorsExist}
-                fullWidth={false}
-                size={INPUT_SIZE}
-                variant="outlined"
-                sx={{
-                    '& .MuiFormHelperText-root.Mui-error': {
-                        whiteSpace: 'break-spaces',
-                    },
+                freeSolo
+                onInputChange={(_event, value) => {
+                    setInput(value);
+                    updateStoredInterval(value);
                 }}
-            >
-                <InputLabel
-                    disabled={readOnly ?? loading}
-                    focused
-                    htmlFor={INPUT_ID}
-                    variant="outlined"
-                >
-                    {label}
-                </InputLabel>
-
-                <OutlinedInput
-                    aria-describedby={DESCRIPTION_ID}
-                    disabled={readOnly ?? loading}
-                    endAdornment={
-                        <InputAdornment
-                            position="end"
-                            style={{ marginRight: 1 }}
-                        >
-                            <Select
-                                disabled={readOnly ?? loading}
-                                disableUnderline
-                                error={false}
-                                onChange={(event) => {
-                                    const value = event.target.value;
-                                    let evaluatedInterval = input;
-
-                                    if (unit === 'i' && value !== 'i') {
-                                        const intervalSegment =
-                                            getCaptureIntervalSegment(
-                                                input,
-                                                value
-                                            );
-
-                                        evaluatedInterval =
-                                            intervalSegment > -1
-                                                ? intervalSegment.toString()
-                                                : '';
-
-                                        setInput(evaluatedInterval);
-                                    }
-
-                                    setUnit(value);
-
-                                    updateStoredInterval(
-                                        evaluatedInterval,
-                                        value
-                                    );
-                                }}
-                                required
-                                size={INPUT_SIZE}
-                                sx={{
-                                    'backgroundColor': (theme) =>
-                                        theme.palette.primary.main,
-                                    'borderBottomLeftRadius': 0,
-                                    'borderBottomRightRadius': 5,
-                                    'borderTopLeftRadius': 0,
-                                    'borderTopRightRadius': 5,
-                                    'color': (theme) =>
-                                        primaryButtonText[theme.palette.mode],
-                                    'maxWidth': 100,
-                                    'minWidth': 100,
-                                    '&.Mui-focused,&:hover': {
-                                        backgroundColor: (theme) =>
-                                            primaryColoredBackground_hovered[
-                                                theme.palette.mode
-                                            ],
-                                    },
-                                    '& .MuiFilledInput-input': {
-                                        py: '8px',
-                                    },
-                                    '& .MuiSelect-iconFilled': {
-                                        color: (theme) =>
-                                            primaryButtonText[
-                                                theme.palette.mode
-                                            ],
-                                    },
-                                }}
-                                value={unit}
-                                variant="filled"
-                            >
-                                <MenuItem value="s">
-                                    <FormattedMessage id="captureInterval.input.seconds" />
-                                </MenuItem>
-
-                                <MenuItem value="m">
-                                    <FormattedMessage id="captureInterval.input.minutes" />
-                                </MenuItem>
-
-                                <MenuItem value="h">
-                                    <FormattedMessage id="captureInterval.input.hours" />
-                                </MenuItem>
-
-                                <MenuItem value="i">
-                                    <FormattedMessage id="captureInterval.input.interval" />
-                                </MenuItem>
-                            </Select>
-                        </InputAdornment>
-                    }
-                    error={errorsExist}
-                    id={INPUT_ID}
-                    label={label}
-                    onChange={(event) => {
-                        const value = event.target.value;
-
+                onChange={(_event, value) => {
+                    if (typeof value === 'string') {
                         setInput(value);
-                        updateStoredInterval(value, unit, setUnit);
-                    }}
-                    size={INPUT_SIZE}
-                    sx={{
-                        borderRadius: 3,
-                        pr: 0,
-                        width: 400,
-                    }}
-                    value={input}
-                />
-
-                <FormHelperText id={DESCRIPTION_ID} style={{ marginLeft: 0 }}>
-                    {intl.formatMessage(
-                        { id: 'captureInterval.input.description' },
-                        {
-                            value: Duration.fromObject(defaultInterval).toHuman(
-                                {
-                                    listStyle: 'long',
-                                    unitDisplay: 'short',
-                                }
-                            ),
-                        }
-                    )}
-                </FormHelperText>
-
-                {errorsExist ? (
-                    <FormHelperText
-                        id={DESCRIPTION_ID}
+                        updateStoredInterval(value);
+                    }
+                }}
+                options={[
+                    '0s',
+                    '30s',
+                    '1m',
+                    '5m',
+                    '15m',
+                    '30m',
+                    '1h',
+                    '2h',
+                    '4h',
+                ]}
+                renderInput={({
+                    InputProps,
+                    ...params
+                }: AutocompleteRenderInputParams) => (
+                    <TextField
+                        {...params}
+                        InputProps={{
+                            ...InputProps,
+                            sx: { borderRadius: 3 },
+                        }}
                         error={errorsExist}
-                        style={{ marginLeft: 0 }}
-                    >
-                        {intl.formatMessage({
-                            id:
-                                unit === 'i'
-                                    ? 'captureInterval.error.intervalFormat'
-                                    : 'captureInterval.error.generalFormat',
-                        })}
-                    </FormHelperText>
-                ) : null}
-            </FormControl>
+                        label={label}
+                        size="small"
+                        variant="outlined"
+                    />
+                )}
+                sx={{ width: 400 }}
+                value={input}
+            />
+
+            <FormHelperText id={DESCRIPTION_ID} style={{ marginLeft: 0 }}>
+                {intl.formatMessage(
+                    { id: 'captureInterval.input.description' },
+                    {
+                        value: Duration.fromObject(defaultInterval).toHuman({
+                            listStyle: 'long',
+                            unitDisplay: 'short',
+                        }),
+                    }
+                )}
+            </FormHelperText>
+
+            {errorsExist ? (
+                <FormHelperText
+                    id={DESCRIPTION_ID}
+                    error={errorsExist}
+                    style={{ marginLeft: 0 }}
+                >
+                    {intl.formatMessage({
+                        id: 'captureInterval.error.intervalFormat',
+                    })}
+                </FormHelperText>
+            ) : null}
         </Stack>
     );
 }

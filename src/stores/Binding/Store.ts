@@ -283,7 +283,7 @@ const hydrateSpecificationDependentState = async (
 
         get().setCaptureInterval(
             targetInterval
-                ? formatCaptureInterval(targetInterval, true)
+                ? formatCaptureInterval(targetInterval)
                 : fallbackInterval,
             defaultInterval
         );
@@ -557,8 +557,7 @@ const getInitialState = (
         } else {
             get().setCaptureInterval(
                 formatCaptureInterval(
-                    connectorTagResponse?.default_capture_interval,
-                    true
+                    connectorTagResponse?.default_capture_interval
                 ) ?? fallbackInterval,
                 connectorTagResponse?.default_capture_interval
             );
