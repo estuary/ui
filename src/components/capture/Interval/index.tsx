@@ -23,8 +23,6 @@ import { hasLength } from 'utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'validation';
 import { CaptureIntervalProps } from './types';
 
-const DESCRIPTION_ID = 'capture-interval-description';
-
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();
     const label = intl.formatMessage({
@@ -124,7 +122,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 value={input}
             />
 
-            <FormHelperText id={DESCRIPTION_ID} style={{ marginLeft: 0 }}>
+            <FormHelperText style={{ marginLeft: 0 }}>
                 {intl.formatMessage(
                     { id: 'captureInterval.input.description' },
                     {
@@ -137,11 +135,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
             </FormHelperText>
 
             {errorsExist ? (
-                <FormHelperText
-                    id={DESCRIPTION_ID}
-                    error={errorsExist}
-                    style={{ marginLeft: 0 }}
-                >
+                <FormHelperText error={errorsExist} style={{ marginLeft: 0 }}>
                     {intl.formatMessage({
                         id: 'captureInterval.error.intervalFormat',
                     })}
