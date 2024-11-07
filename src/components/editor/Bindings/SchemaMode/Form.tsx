@@ -112,7 +112,7 @@ function SchemaModeForm({ bindingIndex = -1 }: Props) {
     }, [currentSetting, currentValue]);
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ width: '100%' }}>
             {invalidSetting ? (
                 <AlertBox
                     severity="error"

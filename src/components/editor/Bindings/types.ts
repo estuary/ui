@@ -8,3 +8,7 @@ export interface CollectionData {
 export interface SelectedCollectionChangeData {
     name: string;
 }
+
+export interface BindingPropertyEditorProps {
+    bindingIndex?: number;
+}

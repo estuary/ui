@@ -264,10 +264,14 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
+    // Delta Updates
+    'deltaUpdates.header': `Delta Updates`,
+    'deltaUpdates.message': `Mark new bindings as delta updates`,
+
     // Schema Mode
     'schemaMode.header': `Source Capture Schema Mode`,
-    'schemaMode.message': `When adding new bindings from a source capture to a materialization, how should the schema of the materialization binding be set.`,
-    'schemaMode.input.label': `How schemas for bindings are set`,
+    'schemaMode.message': `How should the schema of the materialization binding be set.`,
+    'schemaMode.input.label': `Set new bindings schemas as`,
 
     'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 

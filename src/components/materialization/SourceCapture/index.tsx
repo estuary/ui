@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+import OptionalSettings from 'components/shared/Entity/AddDialog/OptionalSettings';
 import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 import SelectCapture from './SelectCapture';
@@ -35,6 +36,7 @@ function SourceCapture() {
                 <SelectCapture />
                 <SourceCaptureChip />
             </Stack>
+            <OptionalSettings />
         </Stack>
     );
 }

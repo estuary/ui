@@ -25,7 +25,7 @@ function AddDialog({
     const ContinueButton = primaryCTA;
 
     return (
-        <Dialog id={id} open={open} fullWidth maxWidth="md">
+        <Dialog id={id} open={open} fullWidth maxWidth="xl">
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
@@ -41,6 +41,8 @@ function AddDialog({
                             ) : null}
                         </Box>
                     </StepWrapper>
+
+                    {/*TODO (deltaUpdates) how to pass this in and change the update*/}
                     <OptionalSettings />
                 </Stack>
             </DialogContent>

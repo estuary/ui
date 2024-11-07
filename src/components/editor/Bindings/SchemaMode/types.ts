@@ -9,7 +9,3 @@ export interface AutoCompleteOption {
 export interface SelectorOptionProps {
     option: AutoCompleteOption;
 }
-
-export interface SchemaModeFormProps {
-    bindingIndex?: number;
-}

@@ -1,37 +1,28 @@
-import { Box, Stack, Typography } from '@mui/material';
-import { useIntl } from 'react-intl';
-import SchemaModeForm from './Form';
-import { SchemaModeFormProps } from './types';
+import { FormControl, FormControlLabel, Switch } from '@mui/material';
+import { BindingPropertyEditorProps } from '../types';
 
-function SchemaMode({ bindingIndex = -1 }: SchemaModeFormProps) {
-    const intl = useIntl();
-
+function SchemaMode({ bindingIndex = -1 }: BindingPropertyEditorProps) {
     if (bindingIndex > -1) {
         return null;
     }
 
     return (
-        <Box sx={{ mt: 3, mb: 5 }}>
-            <Stack>
-                <Stack spacing={1} sx={{ mb: 2 }}>
-                    <Stack direction="row">
-                        <Typography variant="h6">
-                            {intl.formatMessage({
-                                id: 'schemaMode.header',
-                            })}
-                        </Typography>
-                    </Stack>
-
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'schemaMode.message',
-                        })}
-                    </Typography>
-                </Stack>
-
-                <SchemaModeForm bindingIndex={bindingIndex} />
-            </Stack>
-        </Box>
+        <FormControl>
+            <FormControlLabel
+                control={
+                    <Switch
+                        size="small"
+                        // value={autoDiscover}
+                        // checked={autoDiscover}
+                        // disabled={readOnly ?? formActive}
+                        onChange={(event, checked) => {
+                            console.log('clicked', [checked, event]);
+                        }}
+                    />
+                }
+                label="Default schema from source name"
+            />
+        </FormControl>
     );
 }
 
