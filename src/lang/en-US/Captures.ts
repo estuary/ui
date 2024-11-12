@@ -88,7 +88,7 @@ export const Captures: Record<string, string> = {
     // Capture Interval
     'captureInterval.header': `Polling Interval`,
     'captureInterval.message': `Controls how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion.`,
-    'captureInterval.tooltip': `For example, if the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
+    'captureInterval.tooltip': `If the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
     'captureInterval.input.label': `Interval`,
     'captureInterval.input.description': `The default polling interval is {value}.`,
     'captureInterval.input.seconds': `seconds`,
