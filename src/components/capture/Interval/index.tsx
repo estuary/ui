@@ -74,7 +74,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 </Tooltip>
             </Stack>
 
-            <Typography style={{ marginBottom: 16 }}>
+            <Typography>
                 <FormattedMessage id="captureInterval.message" />
             </Typography>
 

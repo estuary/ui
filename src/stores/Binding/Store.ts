@@ -279,7 +279,7 @@ const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec.bindings
         );
 
-        const targetInterval = draftSpecs[0].spec?.interval ?? defaultInterval;
+        const targetInterval = draftSpecs[0].spec?.interval;
 
         get().setCaptureInterval(
             targetInterval
@@ -556,9 +556,7 @@ const getInitialState = (
             }
         } else {
             get().setCaptureInterval(
-                formatCaptureInterval(
-                    connectorTagResponse?.default_capture_interval
-                ) ?? fallbackInterval,
+                fallbackInterval,
                 connectorTagResponse?.default_capture_interval
             );
         }
