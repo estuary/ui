@@ -1,8 +1,14 @@
 import { FormControl, FormControlLabel, Stack, Switch } from '@mui/material';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { BindingPropertyEditorProps } from '../types';
 
 // https://docs.estuary.dev/concepts/materialization/#delta-updates
 function DeltaUpdates({ bindingIndex = -1 }: BindingPropertyEditorProps) {
+    const [deltaUpdates, setDeltaUpdates] = useSourceCaptureStore((state) => [
+        state.deltaUpdates,
+        state.setDeltaUpdates,
+    ]);
+
     if (bindingIndex > -1) {
         return null;
     }
@@ -14,11 +20,12 @@ function DeltaUpdates({ bindingIndex = -1 }: BindingPropertyEditorProps) {
                     control={
                         <Switch
                             size="small"
-                            // value={autoDiscover}
-                            // checked={autoDiscover}
+                            value={deltaUpdates}
+                            checked={deltaUpdates}
                             // disabled={readOnly ?? formActive}
                             onChange={(event, checked) => {
                                 console.log('clicked', [checked, event]);
+                                setDeltaUpdates(checked);
                             }}
                         />
                     }

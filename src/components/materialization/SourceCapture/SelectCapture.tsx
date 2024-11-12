@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import AddDialog from 'components/shared/Entity/AddDialog';
+import OptionalSettings from 'components/shared/Entity/AddDialog/OptionalSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isString } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -95,6 +96,7 @@ function SelectCapture() {
                 selectedCollections={sourceCapture ? [sourceCapture] : []}
                 toggle={toggleDialog}
                 title={<FormattedMessage id="captureTable.header" />}
+                optionalSettings={<OptionalSettings />}
             />
         </>
     );

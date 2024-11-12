@@ -4,11 +4,21 @@ import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { SourceCaptureState } from './types';
 
-const getInitialStateData = () => ({
+const getInitialStateData = (): Pick<
+    SourceCaptureState,
+    | 'error'
+    | 'sourceCapture'
+    | 'saving'
+    | 'prefilledCapture'
+    | 'deltaUpdates'
+    | 'targetSchema'
+> => ({
     error: null,
     sourceCapture: null,
     saving: false,
     prefilledCapture: null,
+    deltaUpdates: false,
+    targetSchema: 'fromSourceName',
 });
 
 const getInitialState = (
@@ -54,6 +64,26 @@ const getInitialState = (
             }),
             false,
             'Source Capture Error Set'
+        );
+    },
+
+    setDeltaUpdates: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.deltaUpdates = value;
+            }),
+            false,
+            'Source Capture Delta Updates Set'
+        );
+    },
+
+    setTargetSchema: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.targetSchema = value;
+            }),
+            false,
+            'Source Capture Target Schema Set'
         );
     },
 

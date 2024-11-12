@@ -7,4 +7,5 @@ export interface AddDialogProps extends AddCollectionDialogCTAProps {
     primaryCTA: any;
     selectedCollections: string[];
     title: string | ReactNode;
+    optionalSettings?: ReactNode;
 }

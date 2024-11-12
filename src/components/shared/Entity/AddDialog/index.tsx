@@ -10,7 +10,6 @@ import {
 import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import { FormattedMessage } from 'react-intl';
-import OptionalSettings from './OptionalSettings';
 import { AddDialogProps } from './types';
 
 function AddDialog({
@@ -21,6 +20,7 @@ function AddDialog({
     selectedCollections,
     title,
     toggle,
+    optionalSettings = null,
 }: AddDialogProps) {
     const ContinueButton = primaryCTA;
 
@@ -42,8 +42,7 @@ function AddDialog({
                         </Box>
                     </StepWrapper>
 
-                    {/*TODO (deltaUpdates) how to pass this in and change the update*/}
-                    <OptionalSettings />
+                    {optionalSettings}
                 </Stack>
             </DialogContent>
 

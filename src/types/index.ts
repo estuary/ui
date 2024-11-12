@@ -460,3 +460,5 @@ export interface BindingMetadata {
     bindingIndex: number;
     collection: string;
 }
+
+export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
