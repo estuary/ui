@@ -115,7 +115,6 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                         error={errorsExist}
                         label={label}
                         size="small"
-                        variant="outlined"
                     />
                 )}
                 sx={{ width: 400 }}
