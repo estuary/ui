@@ -1021,8 +1021,18 @@ const getInitialState = (
                     defaultInterval &&
                     POSTGRES_INTERVAL_RE.test(defaultInterval)
                 ) {
-                    state.defaultCaptureInterval =
+                    const intervalObject =
                         Duration.fromISOTime(defaultInterval).toObject();
+
+                    Object.entries(intervalObject).forEach(
+                        ([timeUnit, unitValue]) => {
+                            if (unitValue === 0) {
+                                intervalObject[timeUnit] = undefined;
+                            }
+                        }
+                    );
+
+                    state.defaultCaptureInterval = intervalObject;
                 }
 
                 state.captureInterval = value;
