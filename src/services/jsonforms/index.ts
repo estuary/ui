@@ -41,7 +41,6 @@ import {
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import startCase from 'lodash/startCase';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
@@ -402,14 +401,15 @@ const wrapInLayoutIfNecessary = (
  */
 const addLabel = (layout: Layout, labelName: string) => {
     if (!isEmpty(labelName)) {
-        const fixedLabel = startCase(labelName);
+        // We do NOT call startCase as we want to allow
+        //  the schema to control case. Ex: "dbt Cloud Job Trigger"
         if (isGroup(layout)) {
-            layout.label = fixedLabel;
+            layout.label = labelName;
         } else {
             // add label with name
             const label: LabelElement = {
                 type: 'Label',
-                text: fixedLabel,
+                text: labelName,
             };
             layout.elements.push(label);
         }
