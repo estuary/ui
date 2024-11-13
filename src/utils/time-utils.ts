@@ -1,9 +1,22 @@
 import { Duration, DurationObjectUnits } from 'luxon';
-import { CAPTURE_INTERVAL_RE, POSTGRES_INTERVAL_RE } from 'validation';
+import { CAPTURE_INTERVAL_RE } from 'validation';
 import { hasLength } from './misc-utils';
 
-const parsePostgresInterval = (interval: string): DurationObjectUnits => {
-    return Duration.fromISOTime(interval).toObject();
+export const parsePostgresInterval = (
+    interval: string,
+    removeZeros?: boolean
+): DurationObjectUnits => {
+    const intervalObject = Duration.fromISOTime(interval).toObject();
+
+    if (removeZeros) {
+        Object.entries(intervalObject).forEach(([timeUnit, unitValue]) => {
+            if (unitValue === 0) {
+                intervalObject[timeUnit] = undefined;
+            }
+        });
+    }
+
+    return intervalObject;
 };
 
 export const formatCaptureInterval = (
@@ -15,11 +28,7 @@ export const formatCaptureInterval = (
 
     let formattedInterval = '';
 
-    if (POSTGRES_INTERVAL_RE.test(interval)) {
-        formattedInterval = Duration.fromObject(
-            parsePostgresInterval(interval)
-        ).toFormat(`h'h' m'm' s's'`);
-    } else if (CAPTURE_INTERVAL_RE.test(interval)) {
+    if (CAPTURE_INTERVAL_RE.test(interval)) {
         formattedInterval = interval.trim();
     }
 

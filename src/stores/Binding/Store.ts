@@ -20,7 +20,6 @@ import {
     pick,
     union,
 } from 'lodash';
-import { Duration } from 'luxon';
 import { createJSONFormDefaults } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
@@ -34,7 +33,7 @@ import { populateErrors } from 'stores/utils';
 import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { formatCaptureInterval } from 'utils/time-utils';
+import { formatCaptureInterval, parsePostgresInterval } from 'utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,
@@ -1021,18 +1020,10 @@ const getInitialState = (
                     defaultInterval &&
                     POSTGRES_INTERVAL_RE.test(defaultInterval)
                 ) {
-                    const intervalObject =
-                        Duration.fromISOTime(defaultInterval).toObject();
-
-                    Object.entries(intervalObject).forEach(
-                        ([timeUnit, unitValue]) => {
-                            if (unitValue === 0) {
-                                intervalObject[timeUnit] = undefined;
-                            }
-                        }
+                    state.defaultCaptureInterval = parsePostgresInterval(
+                        defaultInterval,
+                        true
                     );
-
-                    state.defaultCaptureInterval = intervalObject;
                 }
 
                 state.captureInterval = value;

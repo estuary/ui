@@ -22,16 +22,12 @@ describe('formatCaptureInterval', () => {
 
         expect(formatCaptureInterval('20:00')).toBe('20:00');
 
+        expect(formatCaptureInterval('01:20:00')).toBe('01:20:00');
+
         expect(formatCaptureInterval('1h2m')).toBe('1h2m');
     });
 
     test('returns a formatted capture interval when the interval is in a supported format', () => {
-        expect(formatCaptureInterval('01:20:00')).toBe('1h 20m 0s');
-
-        expect(formatCaptureInterval('01:20:05')).toBe('1h 20m 5s');
-
-        expect(formatCaptureInterval('00:20:00')).toBe('0h 20m 0s');
-
         expect(formatCaptureInterval('1h 20m')).toBe('1h 20m');
 
         expect(formatCaptureInterval('1h 20m 5s')).toBe('1h 20m 5s');
