@@ -64,6 +64,9 @@ function SourceCaptureChip() {
                     display: 'block',
                     whiteSpace: 'normal',
                 },
+                // Just force a minwidth so the chip cannot shrink so much that the
+                //  content is invisible under the delete icon
+                'minWidth': sourceCapture ? 375 : undefined,
                 // This is hacky but is needed as this chip has extra content and was
                 //  causing the SVG to resize and shrink if the chip got narrow
                 //  while the content was wide
