@@ -40,7 +40,7 @@ function SourceCaptureChip() {
                 >
                     <Box sx={{ ...truncateTextSx }}>{label}</Box>
                     {sourceCapture ? (
-                        <Stack direction="row" spacing={1} sx={{ px: 2 }}>
+                        <Stack direction="row" spacing={3} sx={{ px: 2 }}>
                             {targetSchema === 'fromSourceName' ? (
                                 <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip" />
                             ) : null}
