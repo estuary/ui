@@ -13,6 +13,7 @@ function SourceCaptureOptionInfo({ messageKey }: SourceCaptureOptionInfoProps) {
             spacing={1}
             style={{
                 alignItems: 'center',
+                minWidth: 'min-content',
                 width: 'min-content',
                 whiteSpace: 'break-spaces',
             }}

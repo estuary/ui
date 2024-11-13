@@ -35,12 +35,15 @@ function SourceCaptureChip() {
             label={
                 <Stack
                     direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
+                    spacing={3}
+                    sx={{
+                        alignItems: 'center',
+                        pr: sourceCapture ? 3 : undefined,
+                    }}
                 >
-                    <Box sx={{ ...truncateTextSx }}>{label}</Box>
+                    <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
                     {sourceCapture ? (
-                        <Stack direction="row" spacing={2} sx={{ px: 2 }}>
+                        <>
                             {targetSchema === 'fromSourceName' ? (
                                 <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip" />
                             ) : null}
@@ -48,13 +51,14 @@ function SourceCaptureChip() {
                             {deltaUpdates ? (
                                 <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip" />
                             ) : null}
-                        </Stack>
+                        </>
                     ) : null}
                 </Stack>
             }
             sx={{
                 ...chipOutlinedStyling,
                 'height': 'auto',
+                'maxWidth': '50%',
                 'py': 1,
                 '& .MuiChip-label': {
                     display: 'block',
@@ -69,7 +73,6 @@ function SourceCaptureChip() {
                 },
             }}
             variant="outlined"
-            style={{ maxWidth: '50%' }}
             onDelete={
                 sourceCapture
                     ? async () => {
