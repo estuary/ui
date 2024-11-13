@@ -55,9 +55,17 @@ function SourceCaptureChip() {
             sx={{
                 ...chipOutlinedStyling,
                 'height': 'auto',
+                'py': 1,
                 '& .MuiChip-label': {
                     display: 'block',
                     whiteSpace: 'normal',
+                },
+                // This is hacky but is needed as this chip has extra content and was
+                //  causing the SVG to resize and shrink if the chip got narrow
+                //  while the content was wide
+                '& svg': {
+                    minHeight: 21,
+                    minWidth: 21,
                 },
             }}
             variant="outlined"
