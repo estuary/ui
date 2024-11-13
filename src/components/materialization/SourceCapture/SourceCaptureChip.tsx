@@ -40,7 +40,7 @@ function SourceCaptureChip() {
                 >
                     <Box sx={{ ...truncateTextSx }}>{label}</Box>
                     {sourceCapture ? (
-                        <>
+                        <Box sx={{ pl: 1 }}>
                             {targetSchema === 'fromSourceName' ? (
                                 <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip" />
                             ) : null}
@@ -48,7 +48,7 @@ function SourceCaptureChip() {
                             {deltaUpdates ? (
                                 <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip" />
                             ) : null}
-                        </>
+                        </Box>
                     ) : null}
                 </Stack>
             }

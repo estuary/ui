@@ -10,6 +10,7 @@ function SourceCaptureOptionInfo({ messageKey }: SourceCaptureOptionInfoProps) {
     return (
         <Stack
             direction="row"
+            spacing={1}
             style={{
                 alignItems: 'center',
                 width: 'min-content',
