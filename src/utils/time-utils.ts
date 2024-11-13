@@ -18,7 +18,7 @@ export const formatCaptureInterval = (
     if (POSTGRES_INTERVAL_RE.test(interval)) {
         formattedInterval = Duration.fromObject(
             parsePostgresInterval(interval)
-        ).toFormat("h'h' m'm' s's'");
+        ).toFormat(`h'h' m'm' s's'`);
     } else if (CAPTURE_INTERVAL_RE.test(interval)) {
         formattedInterval = interval.trim();
     }
