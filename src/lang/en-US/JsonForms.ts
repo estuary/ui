@@ -3,6 +3,10 @@ import { Errors } from './Errors';
 export const JsonForms: Record<string, string> = {
     'jsonForms.clearInput': `Clear input field`,
 
+    // Group
+    'jsonForms.clearGroup': `Clear {label}`,
+    'jsonForms.clearGroup.message': `Remove this group and all children.`,
+
     // Custom Renderers
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
     'dateTimePicker.picker.currentStep': `Selecting: {currentStep}`,

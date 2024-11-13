@@ -27,16 +27,22 @@ import {
     CombinatorKeyword,
     CombinatorRendererProps,
     getUISchemas,
+    LayoutProps,
     mapStateToControlProps,
     OwnPropsOfControl,
+    OwnPropsOfLayout,
+    Resolve,
     StatePropsOfCombinator,
+    update,
 } from '@jsonforms/core';
 import {
     ctxDispatchToControlProps,
     withJsonFormsContext,
+    ctxToLayoutProps,
 } from '@jsonforms/react';
 import { getDiscriminatorIndex } from 'forms/renderers/shared';
 import React, { ComponentType } from 'react';
+import { CHILDREN_HAVE_VALUE, LAYOUT_PATH } from './shared';
 
 // All these functions are customized just so we can end up with the custom function
 //  mapCustomStateToCombinatorRendererProps calling into out own getDiscriminatorIndex
@@ -91,6 +97,58 @@ export const withCustomJsonFormsOneOfDiscriminatorProps = (
 ): ComponentType<OwnPropsOfControl> =>
     withJsonFormsContext(
         withCustomContextToOneOfProps(
+            memoize ? React.memo(Component) : Component
+        )
+    );
+
+// Custom Layout for CollapsibleGroup
+// Used to allow groups that are optional to remove all of their own properties via
+//  a passed in `handleChange`
+export interface CustomLayoutProps extends LayoutProps {
+    childrenHaveValue?: boolean;
+    clearSettings: (path: string, value: any) => void;
+}
+
+// based on : packages/react/src/JsonFormsContext.tsx
+const withCustomContextToLayoutProps =
+    (Component: any): any =>
+    // eslint-disable-next-line react/display-name
+    ({ ctx, props }: any) => {
+        const layoutProps = ctxToLayoutProps(ctx, props) as CustomLayoutProps;
+
+        // So we know to disable the "clear settings" button we want
+        //  to see if the children have data
+        if (layoutProps.uischema.options?.[LAYOUT_PATH]) {
+            // Only add the handleChange if there is a layout path to clear
+            // based on : jsonforms/packages/examples/src/examples/onChange.ts
+            layoutProps.clearSettings = () => {
+                ctx.dispatch(
+                    update(
+                        layoutProps.uischema.options?.[LAYOUT_PATH],
+                        () => undefined
+                    )
+                );
+            };
+
+            const childData = Resolve.data(
+                layoutProps.data,
+                props.uischema.options.layoutPath
+            );
+
+            layoutProps.uischema.options[CHILDREN_HAVE_VALUE] =
+                Boolean(childData);
+        }
+
+        return <Component {...props} {...layoutProps} />;
+    };
+
+// based on : packages/react/src/JsonFormsContext.tsx
+export const withCustomJsonFormsLayoutProps = <T extends LayoutProps>(
+    Component: ComponentType<T>,
+    memoize = true
+): ComponentType<T & OwnPropsOfLayout> =>
+    withJsonFormsContext(
+        withCustomContextToLayoutProps(
             memoize ? React.memo(Component) : Component
         )
     );
