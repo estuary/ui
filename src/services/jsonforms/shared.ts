@@ -1,6 +1,8 @@
 import { ValidationMode } from '@jsonforms/core';
 
 export const CONTAINS_REQUIRED_FIELDS = 'containsRequiredFields';
+export const CHILDREN_HAVE_VALUE = 'childrenHaveValue';
+export const LAYOUT_PATH = 'layoutPath';
 export const SHOW_INFO_SSH_ENDPOINT = 'showInfo_sshEndpoint';
 export const ADVANCED = 'advanced';
 
