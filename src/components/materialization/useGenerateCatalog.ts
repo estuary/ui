@@ -42,8 +42,10 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { SourceCaptureDef } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
+import { useShallow } from 'zustand/react/shallow';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -108,8 +110,18 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const [sourceCapture, deltaUpdates, targetSchema] = useSourceCaptureStore(
-        (state) => [state.sourceCapture, state.deltaUpdates, state.targetSchema]
+    const sourceCapture = useSourceCaptureStore(
+        useShallow((state): SourceCaptureDef | null => {
+            if (state.sourceCapture) {
+                return {
+                    capture: state.sourceCapture,
+                    deltaUpdates: state.deltaUpdates,
+                    targetSchema: state.targetSchema,
+                };
+            }
+
+            return null;
+        })
     );
 
     // After the first generation we already have a name with the
@@ -221,13 +233,7 @@ function useGenerateCatalog() {
                     existingTaskData,
                     {
                         fullSource: fullSourceConfigs,
-                        sourceCapture: sourceCapture
-                            ? {
-                                  capture: sourceCapture,
-                                  deltaUpdates,
-                                  targetSchema,
-                              }
-                            : null,
+                        sourceCapture,
                     }
                 );
 
@@ -313,7 +319,6 @@ function useGenerateCatalog() {
         [
             bindings,
             callFailed,
-            deltaUpdates,
             detailsFormsErrorsExist,
             endpointConfigData,
             endpointConfigErrorsExist,
@@ -341,7 +346,6 @@ function useGenerateCatalog() {
             setPersistedDraftId,
             setPreviousEndpointConfig,
             sourceCapture,
-            targetSchema,
             updateFormStatus,
         ]
     );
