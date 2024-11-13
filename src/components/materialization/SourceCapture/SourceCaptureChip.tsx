@@ -1,5 +1,6 @@
-import { Box, Chip, Divider, Stack } from '@mui/material';
+import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
 import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
+import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
@@ -7,6 +8,7 @@ import useSourceCapture from '../useSourceCapture';
 
 function SourceCaptureChip() {
     const intl = useIntl();
+    const theme = useTheme();
     const formActive = useFormStateStore_isActive();
 
     const updateDraft = useSourceCapture();
@@ -32,24 +34,61 @@ function SourceCaptureChip() {
             color={sourceCapture ? 'success' : 'info'}
             disabled={saving || formActive}
             label={
-                <Stack>
-                    <Box sx={{ ...truncateTextSx, fontweight: 700 }}>
-                        {label}
-                    </Box>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <Box sx={{ ...truncateTextSx }}>{label}</Box>
                     {sourceCapture ? (
                         <>
-                            <Divider />
-                            <Box>
-                                {intl.formatMessage({
-                                    id: `workflows.sourceCapture.optionalSettings.${targetSchema}.chip`,
-                                })}
-                            </Box>
+                            {targetSchema === 'fromSourceName' ? (
+                                <Stack
+                                    direction="row"
+                                    style={{
+                                        alignItems: 'center',
+                                        width: 'min-content',
+                                        whiteSpace: 'break-spaces',
+                                    }}
+                                >
+                                    <Typography>
+                                        <Check
+                                            style={{
+                                                fontSize: 14,
+                                                color: theme.palette.success
+                                                    .main,
+                                            }}
+                                        />
+                                    </Typography>
+                                    {intl.formatMessage({
+                                        id: `workflows.sourceCapture.optionalSettings.targetSchema.chip`,
+                                    })}
+                                </Stack>
+                            ) : null}
+
                             {deltaUpdates ? (
-                                <Box>
+                                <Stack
+                                    direction="row"
+                                    style={{
+                                        alignItems: 'center',
+                                        width: 'min-content',
+                                        whiteSpace: 'break-spaces',
+                                    }}
+                                >
+                                    <Typography>
+                                        <Check
+                                            style={{
+                                                fontSize: 14,
+                                                color: theme.palette.success
+                                                    .main,
+                                            }}
+                                        />
+                                    </Typography>
+
                                     {intl.formatMessage({
                                         id: `workflows.sourceCapture.optionalSettings.deltaUpdates.chip`,
                                     })}
-                                </Box>
+                                </Stack>
                             ) : null}
                         </>
                     ) : null}
@@ -60,7 +99,7 @@ function SourceCaptureChip() {
                 height: 'auto',
             }}
             variant="outlined"
-            style={{ maxWidth: '35%' }}
+            style={{ maxWidth: '50%' }}
             onDelete={
                 sourceCapture
                     ? async () => {
