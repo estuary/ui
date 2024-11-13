@@ -1,14 +1,13 @@
-import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
 import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
-import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
+import SourceCaptureOptionInfo from './SourceCaptureOptionInfo';
 
 function SourceCaptureChip() {
     const intl = useIntl();
-    const theme = useTheme();
     const formActive = useFormStateStore_isActive();
 
     const updateDraft = useSourceCapture();
@@ -36,59 +35,18 @@ function SourceCaptureChip() {
             label={
                 <Stack
                     direction="row"
-                    spacing={2}
+                    spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
                     <Box sx={{ ...truncateTextSx }}>{label}</Box>
                     {sourceCapture ? (
                         <>
                             {targetSchema === 'fromSourceName' ? (
-                                <Stack
-                                    direction="row"
-                                    style={{
-                                        alignItems: 'center',
-                                        width: 'min-content',
-                                        whiteSpace: 'break-spaces',
-                                    }}
-                                >
-                                    <Typography>
-                                        <Check
-                                            style={{
-                                                fontSize: 14,
-                                                color: theme.palette.success
-                                                    .main,
-                                            }}
-                                        />
-                                    </Typography>
-                                    {intl.formatMessage({
-                                        id: `workflows.sourceCapture.optionalSettings.targetSchema.chip`,
-                                    })}
-                                </Stack>
+                                <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip" />
                             ) : null}
 
                             {deltaUpdates ? (
-                                <Stack
-                                    direction="row"
-                                    style={{
-                                        alignItems: 'center',
-                                        width: 'min-content',
-                                        whiteSpace: 'break-spaces',
-                                    }}
-                                >
-                                    <Typography>
-                                        <Check
-                                            style={{
-                                                fontSize: 14,
-                                                color: theme.palette.success
-                                                    .main,
-                                            }}
-                                        />
-                                    </Typography>
-
-                                    {intl.formatMessage({
-                                        id: `workflows.sourceCapture.optionalSettings.deltaUpdates.chip`,
-                                    })}
-                                </Stack>
+                                <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip" />
                             ) : null}
                         </>
                     ) : null}
@@ -96,7 +54,11 @@ function SourceCaptureChip() {
             }
             sx={{
                 ...chipOutlinedStyling,
-                height: 'auto',
+                'height': 'auto',
+                '& .MuiChip-label': {
+                    display: 'block',
+                    whiteSpace: 'normal',
+                },
             }}
             variant="outlined"
             style={{ maxWidth: '50%' }}
