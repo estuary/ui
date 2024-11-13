@@ -37,5 +37,17 @@ describe('formatCaptureInterval', () => {
         expect(formatCaptureInterval('1h 20m 5s')).toBe('1h 20m 5s');
 
         expect(formatCaptureInterval('20m')).toBe('20m');
+
+        expect(
+            formatCaptureInterval(
+                '100000000000000000h 200000000000000000000000000000000m 5000000000000000000000000000000s'
+            )
+        ).toBe(
+            '100000000000000000h 200000000000000000000000000000000m 5000000000000000000000000000000s'
+        );
+
+        expect(formatCaptureInterval('10000000000000000000000000000m')).toBe(
+            '10000000000000000000000000000m'
+        );
     });
 });
