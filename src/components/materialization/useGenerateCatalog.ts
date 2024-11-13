@@ -108,7 +108,9 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const sourceCapture = useSourceCaptureStore((state) => state.sourceCapture);
+    const [sourceCapture, deltaUpdates, targetSchema] = useSourceCaptureStore(
+        (state) => [state.sourceCapture, state.deltaUpdates, state.targetSchema]
+    );
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -217,7 +219,16 @@ function useGenerateCatalog() {
                     resourceConfigServerUpdateRequired,
                     bindings,
                     existingTaskData,
-                    { fullSource: fullSourceConfigs, sourceCapture }
+                    {
+                        fullSource: fullSourceConfigs,
+                        sourceCapture: sourceCapture
+                            ? {
+                                  capture: sourceCapture,
+                                  deltaUpdates,
+                                  targetSchema,
+                              }
+                            : null,
+                    }
                 );
 
                 // If there is a draft already with task data then update. We do not match on
@@ -302,6 +313,7 @@ function useGenerateCatalog() {
         [
             bindings,
             callFailed,
+            deltaUpdates,
             detailsFormsErrorsExist,
             endpointConfigData,
             endpointConfigErrorsExist,
@@ -329,6 +341,7 @@ function useGenerateCatalog() {
             setPersistedDraftId,
             setPreviousEndpointConfig,
             sourceCapture,
+            targetSchema,
             updateFormStatus,
         ]
     );

@@ -9,7 +9,7 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
-import { Schema } from 'types';
+import { Schema, SourceCaptureDef } from 'types';
 import { addOrRemoveSourceCapture } from 'utils/workflow-utils';
 
 function useSourceCapture() {
@@ -23,7 +23,7 @@ function useSourceCapture() {
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
     const update = useCallback(
-        async (sourceCapture: string | null) => {
+        async (sourceCapture: SourceCaptureDef | null) => {
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
                 return Promise.reject();
             } else {
@@ -52,7 +52,7 @@ function useSourceCapture() {
     );
 
     return useCallback(
-        async (sourceCapture: string | null) => {
+        async (sourceCapture: SourceCaptureDef | null) => {
             update(sourceCapture)
                 .then(
                     () => setFormState({ status: FormStatus.UPDATED }),

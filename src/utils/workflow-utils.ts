@@ -17,7 +17,12 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+import {
+    Entity,
+    EntityWithCreateWorkflow,
+    Schema,
+    SourceCaptureDef,
+} from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
 
@@ -135,7 +140,7 @@ export const getFullSource = (
 
 export const addOrRemoveSourceCapture = (
     draftSpec: any,
-    sourceCapture: string | null
+    sourceCapture: SourceCaptureDef | null
 ) => {
     if (sourceCapture) {
         draftSpec.sourceCapture = sourceCapture;
@@ -170,7 +175,7 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     options: {
         fullSource: FullSourceDictionary | null;
-        sourceCapture: string | null;
+        sourceCapture: SourceCaptureDef | null;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)

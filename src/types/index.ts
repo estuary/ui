@@ -462,3 +462,9 @@ export interface BindingMetadata {
 }
 
 export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
+
+export interface SourceCaptureDef {
+    capture: string;
+    deltaUpdates: boolean;
+    targetSchema: TargetSchemas;
+}

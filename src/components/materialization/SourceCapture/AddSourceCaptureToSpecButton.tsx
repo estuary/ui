@@ -17,10 +17,13 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const [sourceCapture, setSourceCapture] = useSourceCaptureStore((state) => [
-        state.sourceCapture,
-        state.setSourceCapture,
-    ]);
+    const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
+        useSourceCaptureStore((state) => [
+            state.sourceCapture,
+            state.setSourceCapture,
+            state.deltaUpdates,
+            state.targetSchema,
+        ]);
 
     const updateDraft = useSourceCapture();
 
@@ -39,10 +42,16 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             setSourceCapture(updatedSourceCapture);
 
             if (selectedRow?.writes_to) {
+                // TODO (source capture) need to use the new WASM stuff to set
+                //  defaults of bindings properly
                 prefillResourceConfigs(selectedRow.writes_to, true);
             }
 
-            await updateDraft(updatedSourceCapture);
+            await updateDraft({
+                capture: updatedSourceCapture,
+                deltaUpdates,
+                targetSchema,
+            });
         }
         toggle(false);
     };
