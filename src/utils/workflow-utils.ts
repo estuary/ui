@@ -4,10 +4,7 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import {
-    ConnectorTagWithDetailTags,
-    ConnectorWithTagDetailQuery,
-} from 'hooks/connectors/shared';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -385,17 +382,9 @@ export interface ConnectorVersionEvaluationOptions {
 }
 
 export function evaluateConnectorVersions(
-    connector: ConnectorWithTagDetailQuery,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTagWithDetailTags;
-export function evaluateConnectorVersions(
-    connector: ConnectorsQuery_DetailsForm,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTag_Base;
-export function evaluateConnectorVersions(
     connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions
-): ConnectorTagWithDetailTags | ConnectorTag_Base {
+): ConnectorTag_Base {
     // Return the version of the connector that is used by the existing task in an edit workflow.
     if (options && options.connectorId === connector.id) {
         const connectorsInUse = connector.connector_tags.filter(
@@ -408,7 +397,9 @@ export function evaluateConnectorVersions(
     }
 
     // Return the latest version of a given connector.
-    return connector.connector_tags.sort((a, b) =>
-        b.image_tag.localeCompare(a.image_tag)
+    const { connector_id, id, image_tag } = connector.connector_tags.sort(
+        (a, b) => b.image_tag.localeCompare(a.image_tag)
     )[0];
+
+    return { connector_id, id, image_tag };
 }

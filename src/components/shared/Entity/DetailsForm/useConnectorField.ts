@@ -8,8 +8,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { ConnectorMetadata, Details } from 'stores/DetailsForm/types';
+import { Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
+import { getConnectorMetadata } from 'utils/connector-utils';
 import { hasLength } from 'utils/misc-utils';
 import {
     ConnectorVersionEvaluationOptions,
@@ -17,35 +18,6 @@ import {
 } from 'utils/workflow-utils';
 import { MAC_ADDR_RE } from 'validation';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
-
-// TODO (optimization): Consider deriving ConnectorWithTagDetailQuery and ConnectorsQuery_DetailsForm
-//   from the same base interface so this function can be used in getConnectorImage.
-const getConnectorImageDetails = (
-    connector: ConnectorWithTagDetailQuery,
-    options?: { connectorId: string; existingImageTag: string }
-): Details['data']['connectorImage'] => {
-    const connectorTag = evaluateConnectorVersions(connector, options);
-
-    const { image_name } = connector;
-
-    const connectorMetadata: ConnectorMetadata = {
-        connectorId: connector.id,
-        iconPath: connector.image,
-        id: connectorTag.id,
-        imageName: image_name,
-        imageTag: connectorTag.image_tag,
-    };
-
-    return connectorTag.image_tag.includes(':dekaf')
-        ? {
-              ...connectorMetadata,
-              variant: `${image_name}${connectorTag.image_tag}`,
-          }
-        : {
-              ...connectorMetadata,
-              imagePath: `${image_name}${connectorTag.image_tag}`,
-          };
-};
 
 export default function useConnectorField(
     connectorTags: ConnectorWithTagDetailQuery[],
@@ -81,7 +53,7 @@ export default function useConnectorField(
                     connectorTag.connector_id === connectorId;
 
                 if (connectorLocated) {
-                    setDetails_connector(getConnectorImageDetails(connector));
+                    setDetails_connector(getConnectorMetadata(connector));
                 }
 
                 return connectorLocated;
@@ -112,7 +84,7 @@ export default function useConnectorField(
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: getConnectorImageDetails(
+                    const: getConnectorMetadata(
                         connector,
                         versionEvaluationOptions
                     ),

@@ -7,7 +7,6 @@ import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
-    ConnectorMetadata,
     DataPlaneOption,
     Details,
     DetailsFormState,
@@ -23,6 +22,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
+import { getConnectorMetadata } from 'utils/connector-utils';
 import {
     getDataPlaneScope,
     parseDataPlaneName,
@@ -31,10 +31,7 @@ import {
 import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import {
-    ConnectorVersionEvaluationOptions,
-    evaluateConnectorVersions,
-} from 'utils/workflow-utils';
+import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -49,30 +46,11 @@ const getConnectorImage = async (
 
     if (!error && data && data.length > 0) {
         const connector = data[0];
-        const { image_name, logo_url } = connector;
 
         const options: ConnectorVersionEvaluationOptions | undefined =
             existingImageTag ? { connectorId, existingImageTag } : undefined;
 
-        const connectorTag = evaluateConnectorVersions(connector, options);
-
-        const connectorMetadata: ConnectorMetadata = {
-            connectorId,
-            iconPath: logo_url,
-            id: connectorTag.id,
-            imageName: image_name,
-            imageTag: connectorTag.image_tag,
-        };
-
-        return connectorTag.image_tag.includes(':dekaf')
-            ? {
-                  ...connectorMetadata,
-                  variant: `${image_name}${connectorTag.image_tag}`,
-              }
-            : {
-                  ...connectorMetadata,
-                  imagePath: `${image_name}${connectorTag.image_tag}`,
-              };
+        return getConnectorMetadata(connector, options);
     }
 
     return null;
