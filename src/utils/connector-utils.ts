@@ -22,14 +22,15 @@ import {
 } from './workflow-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+const DEKAF_VARIANT_PROPERTY = 'variant';
 
 export const isDekafConnector = (
     value: StandardConnectorMetadata | DekafConnectorMetadata
-): value is DekafConnectorMetadata => 'variant' in value;
+): value is DekafConnectorMetadata => DEKAF_VARIANT_PROPERTY in value;
 
 export const isDekafEndpointConfig = (
     value: ConnectorConfig | DekafConfig
-): value is DekafConfig => 'variant' in value;
+): value is DekafConfig => DEKAF_VARIANT_PROPERTY in value;
 
 // TODO (typing): Align `connectors` and `connector_tags` query interfaces.
 //   Renamed table columns need to be given the same name to avoid type conflicts.
