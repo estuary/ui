@@ -53,7 +53,7 @@ export function getConnectorMetadata(
     return image_name.startsWith(DEKAF_IMAGE_PREFIX)
         ? {
               ...connectorMetadata,
-              variant: `${image_name}${image_tag}`,
+              variant: image_name.substring(DEKAF_IMAGE_PREFIX.length),
           }
         : {
               ...connectorMetadata,
