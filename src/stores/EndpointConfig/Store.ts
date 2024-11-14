@@ -16,6 +16,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { JsonFormsData, Schema } from 'types';
+import { getEndpointConfig } from 'utils/connector-utils';
 import {
     configCanBeEmpty,
     getDereffedSchema,
@@ -239,12 +240,7 @@ const getInitialState = (
             }
 
             if (get().active && data && data.length > 0) {
-                const encryptedEndpointConfig = Object.hasOwn(
-                    data[0].spec.endpoint,
-                    'dekaf'
-                )
-                    ? data[0].spec.endpoint.dekaf.config
-                    : data[0].spec.endpoint.connector.config;
+                const encryptedEndpointConfig = getEndpointConfig(data);
 
                 get().setEncryptedEndpointConfig({
                     data: encryptedEndpointConfig,

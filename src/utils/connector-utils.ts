@@ -5,7 +5,9 @@
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { ConnectorsQuery_DetailsForm } from 'api/connectors';
+import { DraftSpecsExtQuery_ByDraftId } from 'api/draftSpecs';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import {
     ConnectorMetadata,
     DekafConnectorMetadata,
@@ -60,6 +62,13 @@ export function getConnectorMetadata(
               imagePath: `${image_name}${image_tag}`,
           };
 }
+
+export const getEndpointConfig = (
+    data: DraftSpecsExtQuery_ByDraftId[] | LiveSpecsExtQuery[]
+) =>
+    Boolean(data[0].spec.endpoint?.dekaf)
+        ? data[0].spec.endpoint.dekaf.config
+        : data[0].spec.endpoint.connector.config;
 
 // TODO (V2 typing) - query should take in filter builder better
 export const requiredConnectorColumnsExist = <Response>(
