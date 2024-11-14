@@ -48,3 +48,16 @@ export const getSourceCapture = (
 
     return sourceCapture.capture;
 };
+
+export const addOrRemoveSourceCapture = (
+    draftSpec: any,
+    sourceCapture: SourceCaptureDef | null
+) => {
+    if (sourceCapture) {
+        draftSpec.sourceCapture = sourceCapture;
+    } else {
+        delete draftSpec.sourceCapture;
+    }
+
+    return draftSpec;
+};

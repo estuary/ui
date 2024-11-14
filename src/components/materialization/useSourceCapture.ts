@@ -10,7 +10,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 import { Schema, SourceCaptureDef } from 'types';
-import { addOrRemoveSourceCapture } from 'utils/workflow-utils';
+import { addOrRemoveSourceCapture } from 'utils/entity-utils';
 
 function useSourceCapture() {
     const setFormState = useFormStateStore_setFormState();
