@@ -15,8 +15,9 @@ import {
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
 import { DekafConfig, Entity, EntityWithCreateWorkflow, Schema } from 'types';
-import { hasLength, isDekafEndpointConfig } from 'utils/misc-utils';
+import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
+import { isDekafEndpointConfig } from './connector-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;

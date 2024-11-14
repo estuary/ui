@@ -6,7 +6,14 @@
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { ConnectorsQuery_DetailsForm } from 'api/connectors';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { ConnectorMetadata, Details } from 'stores/DetailsForm/types';
+import {
+    ConnectorMetadata,
+    DekafConnectorMetadata,
+    Details,
+    StandardConnectorMetadata,
+} from 'stores/DetailsForm/types';
+import { DekafConfig } from 'types';
+import { ConnectorConfig } from '../../deps/flow/flow';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
@@ -14,24 +21,13 @@ import {
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
-// TODO (V2 typing) - query should take in filter builder better
-export const requiredConnectorColumnsExist = <Response>(
-    query: any,
-    columnPrefix?: string
-): PostgrestFilterBuilder<any, any, Response> => {
-    return query
-        .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
-        .not(
-            `${columnPrefix ? `${columnPrefix}.` : ''}resource_spec_schema`,
-            'is',
-            null
-        )
-        .not(
-            `${columnPrefix ? `${columnPrefix}.` : ''}endpoint_spec_schema`,
-            'is',
-            null
-        );
-};
+export const isDekafConnector = (
+    value: StandardConnectorMetadata | DekafConnectorMetadata
+): value is DekafConnectorMetadata => 'variant' in value;
+
+export const isDekafEndpointConfig = (
+    value: ConnectorConfig | DekafConfig
+): value is DekafConfig => 'variant' in value;
 
 // TODO (typing): Align `connectors` and `connector_tags` query interfaces.
 //   Renamed table columns need to be given the same name to avoid type conflicts.
@@ -64,3 +60,22 @@ export function getConnectorMetadata(
               imagePath: `${image_name}${image_tag}`,
           };
 }
+
+// TODO (V2 typing) - query should take in filter builder better
+export const requiredConnectorColumnsExist = <Response>(
+    query: any,
+    columnPrefix?: string
+): PostgrestFilterBuilder<any, any, Response> => {
+    return query
+        .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
+        .not(
+            `${columnPrefix ? `${columnPrefix}.` : ''}resource_spec_schema`,
+            'is',
+            null
+        )
+        .not(
+            `${columnPrefix ? `${columnPrefix}.` : ''}endpoint_spec_schema`,
+            'is',
+            null
+        );
+};

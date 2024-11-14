@@ -23,7 +23,7 @@ import {
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'stores/EndpointConfig/hooks';
-import { isDekafConnector } from 'utils/misc-utils';
+import { isDekafConnector } from 'utils/connector-utils';
 
 import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
 
