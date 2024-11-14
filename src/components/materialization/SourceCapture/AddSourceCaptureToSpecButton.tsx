@@ -36,6 +36,9 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             ? selectedRow.catalog_name
             : null;
 
+        // TODO (source capture) need to check ALL the SourceCaptureDef settings to see if any
+        //  of them changed
+
         // Only fire updates if a change happened. Since single select table can allow the user
         //   to deselect a row and then select it again
         if (updatedSourceCapture && sourceCapture !== updatedSourceCapture) {
