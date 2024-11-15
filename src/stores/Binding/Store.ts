@@ -11,7 +11,6 @@ import produce from 'immer';
 import {
     difference,
     has,
-    intersection,
     isBoolean,
     isEmpty,
     isEqual,
@@ -34,21 +33,23 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
-import { populateErrors } from 'stores/utils';
 import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { formatCaptureInterval } from 'utils/time-utils';
-import {
-    getBackfillCounter,
-    getBindingIndex,
-    getCollectionName,
-    getDisableProps,
-} from 'utils/workflow-utils';
+import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
-import { getCollectionNames } from './shared';
+import {
+    getCollectionNames,
+    initializeAndGenerateUUID,
+    initializeBinding,
+    initializeCurrentBinding,
+    populateResourceConfigErrors,
+    sortResourceConfigs,
+    whatChanged,
+} from './shared';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -58,176 +59,9 @@ import {
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from './slices/TimeTravel';
-import {
-    BindingMetadata,
-    Bindings,
-    BindingState,
-    ResourceConfig,
-    ResourceConfigDictionary,
-} from './types';
+import { BindingMetadata, BindingState, ResourceConfig } from './types';
 
 const STORE_KEY = 'Bindings';
-
-const sortByDisableStatus = (
-    disabledA: boolean,
-    disabledB: boolean,
-    collectionA: string,
-    collectionB: string,
-    ascendingSort: boolean
-) => {
-    // If a is enabled and b is disabled then return <0 to put a first
-    if (!disabledA && disabledB) {
-        return -1;
-    }
-
-    // If a is disabled and b is enabled then return >0 to put b first
-    if (disabledA && !disabledB) {
-        return 1;
-    }
-
-    return ascendingSort
-        ? collectionA.localeCompare(collectionB)
-        : collectionB.localeCompare(collectionA);
-};
-
-const sortResourceConfigs = (resourceConfigs: ResourceConfigDictionary) => {
-    const sortedResources: ResourceConfigDictionary = {};
-
-    Object.entries(resourceConfigs)
-        .sort(([_uuidA, configA], [_uuidB, configB]) => {
-            const { disable: disabledA, collectionName: collectionA } =
-                configA.meta;
-            const { disable: disabledB, collectionName: collectionB } =
-                configB.meta;
-
-            return sortByDisableStatus(
-                disabledA ?? false,
-                disabledB ?? false,
-                collectionA,
-                collectionB,
-                true
-            );
-        })
-        .forEach(([uuid, config]) => {
-            sortedResources[uuid] = config;
-        });
-
-    return sortedResources;
-};
-
-const initializeBinding = (
-    state: BindingState,
-    collection: string,
-    bindingUUID: string
-) => {
-    let existingBindingUUIDs: string[] = [];
-
-    if (Object.hasOwn(state.bindings, collection)) {
-        existingBindingUUIDs = state.bindings[collection];
-    }
-
-    state.bindings[collection] = existingBindingUUIDs.concat(bindingUUID);
-};
-
-const initializeCurrentBinding = (
-    state: BindingState,
-    resourceConfigs: ResourceConfigDictionary
-) => {
-    const initialConfig = Object.entries(resourceConfigs).at(0);
-
-    if (initialConfig) {
-        const [bindingUUID, resourceConfig] = initialConfig;
-
-        state.currentBinding = {
-            uuid: bindingUUID,
-            collection: resourceConfig.meta.collectionName,
-        };
-    }
-};
-
-const getResourceConfig = (
-    binding: any,
-    bindingIndex: number
-): ResourceConfig => {
-    const { resource, disable } = binding;
-
-    const collectionName = getCollectionName(binding);
-    const disableProp = getDisableProps(disable);
-
-    // Take the binding resource and place into config OR
-    // generate a default in case there are any issues with it
-    return {
-        data: resource,
-        errors: [],
-        meta: { ...disableProp, collectionName, bindingIndex },
-    };
-};
-
-const initializeResourceConfig = (
-    state: BindingState,
-    binding: any,
-    bindingUUID: string,
-    bindingIndex: number
-) => {
-    const config = getResourceConfig(binding, bindingIndex);
-
-    state.resourceConfigs[bindingUUID] = config;
-
-    if (config.meta.disable) {
-        state.resourceConfigs[bindingUUID].meta.previouslyDisabled = true;
-    }
-};
-
-const populateResourceConfigErrors = (
-    state: BindingState,
-    resourceConfigs: ResourceConfigDictionary
-): void => {
-    const { configErrors, hasErrors } = populateErrors(resourceConfigs);
-
-    state.resourceConfigErrors = configErrors;
-    state.resourceConfigErrorsExist = hasErrors;
-};
-
-const whatChanged = (
-    bindings: Bindings,
-    resourceConfig: ResourceConfigDictionary,
-    targetCollections: string[]
-) => {
-    const currentBindings = Object.keys(resourceConfig);
-
-    const currentCollections = Object.entries(bindings)
-        .filter(
-            ([_collection, bindingUUIDs]) =>
-                intersection(bindingUUIDs, currentBindings).length > 0
-        )
-        .map(([collection]) => collection);
-
-    const removedCollections = difference(
-        currentCollections,
-        targetCollections
-    );
-
-    const addedCollections = difference(targetCollections, currentCollections);
-
-    return [removedCollections, addedCollections];
-};
-
-const initializeAndGenerateUUID = (
-    state: BindingState,
-    binding: any,
-    index: number
-) => {
-    const collection = getCollectionName(binding);
-    const UUID = crypto.randomUUID();
-
-    initializeBinding(state, collection, UUID);
-    initializeResourceConfig(state, binding, UUID, index);
-
-    return {
-        collection,
-        UUID,
-    };
-};
 
 const hydrateConnectorTagDependentState = async (
     connectorTagId: string,
