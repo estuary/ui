@@ -1,16 +1,11 @@
 import { FormControl, FormControlLabel, Switch } from '@mui/material';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { BindingPropertyEditorProps } from '../types';
 
-function SchemaMode({ bindingIndex = -1 }: BindingPropertyEditorProps) {
+function SchemaMode() {
     const [targetSchema, setTargetSchema] = useSourceCaptureStore((state) => [
         state.targetSchema,
         state.setTargetSchema,
     ]);
-
-    if (bindingIndex > -1) {
-        return null;
-    }
 
     return (
         <FormControl>
@@ -22,7 +17,6 @@ function SchemaMode({ bindingIndex = -1 }: BindingPropertyEditorProps) {
                         checked={targetSchema === 'fromSourceName'}
                         // disabled={readOnly ?? formActive}
                         onChange={(event, checked) => {
-                            console.log('clicked', [checked, event]);
                             setTargetSchema(
                                 checked ? 'fromSourceName' : 'leaveEmpty'
                             );
