@@ -2,12 +2,12 @@ import { Chip } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import {
     useBinding_backfilledBindings_count,
-    useBinding_collections_count,
+    useBinding_enabledCollections_count,
     useBinding_evolvedCollections_count,
 } from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'settings/entity';
 import { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
@@ -16,7 +16,7 @@ function BackfillCount({ disabled }: BackfillCountProps) {
 
     const evolvedCollectionsCount = useBinding_evolvedCollections_count();
     const backfillCount = useBinding_backfilledBindings_count();
-    const bindingsTotal = useBinding_collections_count();
+    const bindingsTotal = useBinding_enabledCollections_count();
 
     // We shouldn't have any overlap (duplicate counting) with manual backfilling because backfill button is disabled
     //  when evolved. So only time we could get duplicate counting is from the backfill all button
