@@ -1,7 +1,10 @@
 import { FormControl, FormControlLabel, Switch } from '@mui/material';
+import { useIntl } from 'react-intl';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 function SchemaMode() {
+    const intl = useIntl();
+
     const [targetSchema, setTargetSchema] = useSourceCaptureStore((state) => [
         state.targetSchema,
         state.setTargetSchema,
@@ -23,7 +26,9 @@ function SchemaMode() {
                         }}
                     />
                 }
-                label="Default schema from source name"
+                label={intl.formatMessage({
+                    id: 'workflows.sourceCapture.optionalSettings.targetSchema.control',
+                })}
             />
         </FormControl>
     );

@@ -1,8 +1,11 @@
 import { FormControl, FormControlLabel, Stack, Switch } from '@mui/material';
+import { useIntl } from 'react-intl';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 // https://docs.estuary.dev/concepts/materialization/#delta-updates
 function DeltaUpdates() {
+    const intl = useIntl();
+
     const [deltaUpdates, setDeltaUpdates] = useSourceCaptureStore((state) => [
         state.deltaUpdates,
         state.setDeltaUpdates,
@@ -23,7 +26,9 @@ function DeltaUpdates() {
                             }}
                         />
                     }
-                    label="Default delta updates"
+                    label={intl.formatMessage({
+                        id: 'workflows.sourceCapture.optionalSettings.deltaUpdates.control',
+                    })}
                 />
             </FormControl>
         </Stack>

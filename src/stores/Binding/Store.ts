@@ -164,8 +164,8 @@ const getInitialMiscData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
-    | 'sourceCaptureDeltaUpdatesSpported'
-    | 'sourceCaptureTargetSchemaSpported'
+    | 'sourceCaptureDeltaUpdatesSupported'
+    | 'sourceCaptureTargetSchemaSupported'
 > => ({
     backfillAllBindings: false,
     backfillDataFlowTarget: null,
@@ -184,8 +184,8 @@ const getInitialMiscData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
-    sourceCaptureDeltaUpdatesSpported: false,
-    sourceCaptureTargetSchemaSpported: false,
+    sourceCaptureDeltaUpdatesSupported: false,
+    sourceCaptureTargetSchemaSupported: false,
 });
 
 const getInitialStoreData = () => ({
@@ -916,9 +916,15 @@ const getInitialState = (
 
                 state.resourceSchema = resolved;
 
-                state.sourceCaptureDeltaUpdatesSpported =
+                // TODO (source capture) need to decide how we'l figure this out
+                //  this needs to look through the ENTIRE schema... but we also
+                //  do that when we generate the UI Schema... but that does not
+                //  normally set stuff in a store. However, it does return array of
+                //  properties.
+                //  Might not be horrible to run through the objects twice
+                state.sourceCaptureDeltaUpdatesSupported =
                     schemaSupportsDeltaUpdates(resolved);
-                state.sourceCaptureDeltaUpdatesSpported =
+                state.sourceCaptureDeltaUpdatesSupported =
                     schemaSupportsTargetSchema(resolved);
             }),
             false,

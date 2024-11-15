@@ -116,9 +116,13 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
-    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
+    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
 
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
+
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
