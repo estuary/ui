@@ -33,17 +33,12 @@ export const addKeywords = (ajv: Ajv) => {
 
     // How to write a config schema
     // https://github.com/estuary/connectors/blob/main/config_schema_guidelines.md
-    ajv.addKeyword('multiline'); // text input should expect multiple lines
-    ajv.addKeyword('secret'); // should render as a password
-    ajv.addKeyword('airbyte_secret'); // should render as a password
-    ajv.addKeyword('advanced'); // Should be collapsed by default (over ridden if section contains required fields)
-    ajv.addKeyword('order'); // Used to order the fields in the UI
-    ajv.addKeyword('x-oauth2-provider'); // Used to display OAuth
-    ajv.addKeyword('x-collection-name'); // Used to default name in resource configs
-    ajv.addKeyword('discriminator'); // Used to know what field in a complex oneOf should be unique (ex: parser)
-    ajv.addKeyword('x-infer-schema'); // Indicates that schema inference should be enabled in the UI
-    ajv.addKeyword('x-delta-updates'); // Backend only
-    ajv.addKeyword('x-schema-name'); // Backend only
+    for (const annotation in Annotations) {
+        if (typeof annotation === 'string') {
+            ajv.addKeyword(annotation);
+        }
+    }
+
     return ajv;
 };
 

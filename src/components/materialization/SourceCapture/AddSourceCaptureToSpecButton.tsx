@@ -1,9 +1,7 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
-
 import { FormattedMessage } from 'react-intl';
-
 import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useStore } from 'zustand';

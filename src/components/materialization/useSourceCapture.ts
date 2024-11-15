@@ -38,7 +38,6 @@ function useSourceCapture() {
                 setFormState({ status: FormStatus.UPDATING });
                 setSaving(true);
 
-                // We had changes so let's update the spec
                 const spec: Schema = addOrRemoveSourceCapture(
                     draftSpecs[0].spec,
                     sourceCapture
