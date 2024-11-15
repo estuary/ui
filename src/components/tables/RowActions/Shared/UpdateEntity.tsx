@@ -141,8 +141,11 @@ function UpdateEntity({
                 newDraftId,
                 entityName,
                 newSpec,
-                generateNewSpecType(targetEntity),
-                liveSpecResponse.data.last_pub_id
+                generateNewSpecType(targetEntity)
+                // TODO (update entity) - add last pub id when we add retry for pub failure
+                //  Should use a regex like this
+                //  export const PUBLICATION_MISMATCH_ERROR = RegExp( `expected publication ID \d was not matched`, 'gi');
+                // liveSpecResponse.data.last_pub_id
             );
             if (draftSpecsResponse.error) {
                 return failed(draftSpecsResponse);
