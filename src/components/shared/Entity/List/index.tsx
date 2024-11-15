@@ -1,19 +1,11 @@
 import { Box } from '@mui/material';
 import CollectionSelector from 'components/collection/Selector';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
-import CatalogList, {
-    CatalogListContent,
-} from 'components/transformation/create/Config/catalog/CatalogList';
+import CatalogList from 'components/transformation/create/Config/catalog/CatalogList';
 import CollectionList from 'components/transformation/create/Config/catalog/CollectionList';
-import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
+import { EntityListProps } from './types';
 
-interface Props extends AddCollectionDialogCTAProps {
-    content: CatalogListContent[];
-    primaryCTA: ReactNode;
-}
-
-function EntityList({ content, primaryCTA, toggle }: Props) {
+function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
     const intl = useIntl();
 
     return (
@@ -23,7 +15,7 @@ function EntityList({ content, primaryCTA, toggle }: Props) {
                     id: 'newTransform.config.transform.header',
                 })}
                 selectedCollections={[]}
-                AddSelectedButton={primaryCTA}
+                AddSelectedButton={PrimaryCTA}
             />
 
             <CatalogList

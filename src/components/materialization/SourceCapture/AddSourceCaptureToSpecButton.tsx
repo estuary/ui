@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
-import { isEqual } from 'lodash';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -33,20 +32,31 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
-        const updatedSourceCapture = {
-            capture: selectedRow ? selectedRow.catalog_name : null,
-            deltaUpdates,
-            targetSchema,
-        };
+        const updatedSourceCaptureName = selectedRow
+            ? selectedRow.catalog_name
+            : null;
+
+        // We need to know if the name or settings changed so that we can control
+        //  what name is used in the call to update the source capture setting
+        const nameUpdated = Boolean(
+            updatedSourceCaptureName &&
+                sourceCapture !== updatedSourceCaptureName
+        );
+        const settingsUpdated =
+            deltaUpdates !== existingSourceCapture?.deltaUpdates ||
+            targetSchema !== existingSourceCapture.targetSchema;
 
         // Only update draft is something in the settings changed
-        if (!isEqual(updatedSourceCapture, existingSourceCapture)) {
+        if (nameUpdated || settingsUpdated) {
+            const updatedSourceCapture = {
+                capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
+                deltaUpdates,
+                targetSchema,
+            };
+
             // Check the name since the optional settings may
             //  have changed but not the name
-            if (
-                updatedSourceCapture.capture &&
-                sourceCapture !== updatedSourceCapture.capture
-            ) {
+            if (nameUpdated) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
@@ -58,7 +68,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 }
             }
 
-            await updateDraft(updatedSourceCapture.capture);
+            await updateDraft(updatedSourceCapture);
         }
 
         toggle(false);

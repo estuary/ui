@@ -9,6 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
+import CancelSourceCaptureButton from './CancelSourceCaptureButton';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
@@ -92,7 +93,8 @@ function SelectCapture() {
                 entity="capture"
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={AddSourceCaptureToSpecButton}
+                PrimaryCTA={AddSourceCaptureToSpecButton}
+                SecondaryCTA={CancelSourceCaptureButton}
                 selectedCollections={sourceCapture ? [sourceCapture] : []}
                 toggle={toggleDialog}
                 title={<FormattedMessage id="captureTable.header" />}
