@@ -112,6 +112,10 @@ export interface BindingState
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
+    // Control sourceCapture optional settings
+    sourceCaptureTargetSchemaSpported: boolean;
+    sourceCaptureDeltaUpdatesSpported: boolean;
+
     // Capture interval
     captureInterval: string | null;
     setCaptureInterval: (

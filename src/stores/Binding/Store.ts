@@ -21,7 +21,11 @@ import {
     union,
 } from 'lodash';
 import { Duration } from 'luxon';
-import { createJSONFormDefaults } from 'services/ajv';
+import {
+    createJSONFormDefaults,
+    schemaSupportsDeltaUpdates,
+    schemaSupportsTargetSchema,
+} from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -238,9 +242,8 @@ const hydrateConnectorTagDependentState = async (
     if (error) {
         get().setHydrationErrorsExist(true);
     } else if (data?.resource_spec_schema) {
-        await get().setResourceSchema(
-            data.resource_spec_schema as unknown as Schema
-        );
+        const schema = data.resource_spec_schema as unknown as Schema;
+        await get().setResourceSchema(schema);
 
         get().setBackfillSupported(!Boolean(data.disable_backfill));
     }
@@ -327,6 +330,8 @@ const getInitialMiscData = (): Pick<
     | 'resourceSchema'
     | 'restrictedDiscoveredCollections'
     | 'serverUpdateRequired'
+    | 'sourceCaptureDeltaUpdatesSpported'
+    | 'sourceCaptureTargetSchemaSpported'
 > => ({
     backfillAllBindings: false,
     backfillDataFlowTarget: null,
@@ -345,6 +350,8 @@ const getInitialMiscData = (): Pick<
     resourceSchema: {},
     restrictedDiscoveredCollections: [],
     serverUpdateRequired: false,
+    sourceCaptureDeltaUpdatesSpported: false,
+    sourceCaptureTargetSchemaSpported: false,
 });
 
 const getInitialStoreData = () => ({
@@ -1074,6 +1081,11 @@ const getInitialState = (
                 }
 
                 state.resourceSchema = resolved;
+
+                state.sourceCaptureDeltaUpdatesSpported =
+                    schemaSupportsDeltaUpdates(resolved);
+                state.sourceCaptureDeltaUpdatesSpported =
+                    schemaSupportsTargetSchema(resolved);
             }),
             false,
             'Resource Schema Set'

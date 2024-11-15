@@ -1,4 +1,4 @@
-import { createAjv } from '@jsonforms/core';
+import { createAjv, JsonSchema } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
@@ -117,3 +117,9 @@ export function createJSONFormDefaults(
 
     return { data, errors };
 }
+
+export const schemaSupportsDeltaUpdates = (schema: JsonSchema): boolean =>
+    Object.hasOwn(schema, Annotations.deltaUpdates);
+
+export const schemaSupportsTargetSchema = (schema: JsonSchema): boolean =>
+    Object.hasOwn(schema, Annotations.targetSchema);

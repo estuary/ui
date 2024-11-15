@@ -173,9 +173,8 @@ const getNullableType = (schema: JsonSchema): null | string => {
     return null;
 };
 
-const isOAuthConfig = (schema: JsonSchema): boolean => {
-    return Object.hasOwn(schema, Annotations.oAuthProvider);
-};
+const isOAuthConfig = (schema: JsonSchema): boolean =>
+    Object.hasOwn(schema, Annotations.oAuthProvider);
 
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     if (isAdvancedConfig(schema)) {
