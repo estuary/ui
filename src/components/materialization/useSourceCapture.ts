@@ -4,13 +4,13 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 import { Schema, SourceCaptureDef } from 'types';
-import { addOrRemoveSourceCapture } from 'utils/entity-utils';
+import { addOrRemoveSourceCapture, getSourceCapture } from 'utils/entity-utils';
 
 function useSourceCapture() {
     const setFormState = useFormStateStore_setFormState();
@@ -22,6 +22,14 @@ function useSourceCapture() {
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
+    const existingSourceCapture = useMemo(() => {
+        if (draftSpecs.length === 0) {
+            return null;
+        }
+
+        return getSourceCapture(draftSpecs[0].spec.sourceCapture);
+    }, [draftSpecs]);
+
     const update = useCallback(
         async (sourceCapture: SourceCaptureDef | null) => {
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
@@ -30,6 +38,7 @@ function useSourceCapture() {
                 setFormState({ status: FormStatus.UPDATING });
                 setSaving(true);
 
+                // We had changes so let's update the spec
                 const spec: Schema = addOrRemoveSourceCapture(
                     draftSpecs[0].spec,
                     sourceCapture
@@ -51,7 +60,7 @@ function useSourceCapture() {
         [draftId, draftSpecs, mutateDraftSpecs, setFormState, setSaving]
     );
 
-    return useCallback(
+    const updateDraft = useCallback(
         async (sourceCapture: SourceCaptureDef | null) => {
             update(sourceCapture)
                 .then(
@@ -63,6 +72,11 @@ function useSourceCapture() {
         },
         [setFormState, setSaving, update]
     );
+
+    return {
+        existingSourceCapture,
+        updateDraft,
+    };
 }
 
 export default useSourceCapture;

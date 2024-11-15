@@ -10,14 +10,14 @@ function SourceCaptureChip() {
     const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
-    const updateDraft = useSourceCapture();
+    const { updateDraft } = useSourceCapture();
 
-    const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
+    const [sourceCapture, deltaUpdates, targetSchema, resetState] =
         useSourceCaptureStore((state) => [
             state.sourceCapture,
-            state.setSourceCapture,
             state.deltaUpdates,
             state.targetSchema,
+            state.resetState,
         ]);
 
     const saving = useSourceCaptureStore((state) => state.saving);
@@ -79,7 +79,7 @@ function SourceCaptureChip() {
             onDelete={
                 sourceCapture
                     ? async () => {
-                          setSourceCapture(null);
+                          resetState();
                           await updateDraft(null);
                       }
                     : undefined

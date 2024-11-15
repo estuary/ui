@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
+import { isEqual } from 'lodash';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -25,37 +26,41 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             state.targetSchema,
         ]);
 
-    const updateDraft = useSourceCapture();
+    const { existingSourceCapture, updateDraft } = useSourceCapture();
 
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
     const close = async () => {
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
-        const updatedSourceCapture = selectedRow
-            ? selectedRow.catalog_name
-            : null;
+        const updatedSourceCapture = {
+            capture: selectedRow ? selectedRow.catalog_name : null,
+            deltaUpdates,
+            targetSchema,
+        };
 
-        // TODO (source capture) need to check ALL the SourceCaptureDef settings to see if any
-        //  of them changed
+        // Only update draft is something in the settings changed
+        if (!isEqual(updatedSourceCapture, existingSourceCapture)) {
+            // Check the name since the optional settings may
+            //  have changed but not the name
+            if (
+                updatedSourceCapture.capture &&
+                sourceCapture !== updatedSourceCapture.capture
+            ) {
+                setSourceCapture(updatedSourceCapture.capture);
 
-        // Only fire updates if a change happened. Since single select table can allow the user
-        //   to deselect a row and then select it again
-        if (updatedSourceCapture && sourceCapture !== updatedSourceCapture) {
-            setSourceCapture(updatedSourceCapture);
-
-            if (selectedRow?.writes_to) {
-                // TODO (source capture) need to use the new WASM stuff to set
-                //  defaults of bindings properly
-                prefillResourceConfigs(selectedRow.writes_to, true);
+                if (selectedRow?.writes_to) {
+                    prefillResourceConfigs(
+                        selectedRow.writes_to,
+                        true,
+                        updatedSourceCapture
+                    );
+                }
             }
 
-            await updateDraft({
-                capture: updatedSourceCapture,
-                deltaUpdates,
-                targetSchema,
-            });
+            await updateDraft(updatedSourceCapture.capture);
         }
+
         toggle(false);
     };
 

@@ -4,7 +4,13 @@ import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    Entity,
+    EntityWorkflow,
+    JsonFormsData,
+    Schema,
+    SourceCaptureDef,
+} from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 
@@ -122,7 +128,8 @@ export interface BindingState
     // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
-        disableOmit?: boolean
+        disableOmit?: boolean,
+        sourceCapture?: SourceCaptureDef
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and
