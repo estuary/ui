@@ -1,6 +1,10 @@
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect, useState } from 'react';
-import { failedToLazyLoad, logRocketEvent } from 'services/shared';
+import {
+    failedToLazyLoad,
+    logRocketConsole,
+    logRocketEvent,
+} from 'services/shared';
 import { CustomEvents } from 'services/types';
 import Error from 'components/shared/Error';
 import { FallbackProps } from 'react-error-boundary';
@@ -8,6 +12,11 @@ import { getWithExpiry, setWithExpiry } from './shared';
 
 export function ErrorImporting({ error }: FallbackProps) {
     const [stopTrying, setStopTrying] = useState(false);
+
+    // TODO (error importing) get rid of this logging.
+    //  Keep an eye on the error so we know the list for
+    //  failedToLazyLoad is valid.
+    logRocketConsole('Error Importing Error', error);
 
     useEffect(() => {
         if (error?.message && failedToLazyLoad(error.message)) {
