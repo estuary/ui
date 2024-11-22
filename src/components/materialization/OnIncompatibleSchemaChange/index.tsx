@@ -7,25 +7,23 @@ function OnIncompatibleSchemaChange() {
 
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
-            <Stack>
-                <Stack spacing={1} sx={{ mb: 1 }}>
-                    <Stack direction="row">
-                        <Typography variant="formSectionHeader">
-                            {intl.formatMessage({
-                                id: 'incompatibleSchemaChange.header',
-                            })}
-                        </Typography>
-                    </Stack>
-
-                    <Typography>
+            <Stack spacing={1} sx={{ mb: 1 }}>
+                <Stack direction="row">
+                    <Typography variant="formSectionHeader">
                         {intl.formatMessage({
-                            id: 'incompatibleSchemaChange.message.specificationSetting',
+                            id: 'incompatibleSchemaChange.header',
                         })}
                     </Typography>
                 </Stack>
 
-                <OnIncompatibleSchemaChangeForm />
+                <Typography>
+                    {intl.formatMessage({
+                        id: 'incompatibleSchemaChange.message.specificationSetting',
+                    })}
+                </Typography>
             </Stack>
+
+            <OnIncompatibleSchemaChangeForm />
         </Box>
     );
 }
