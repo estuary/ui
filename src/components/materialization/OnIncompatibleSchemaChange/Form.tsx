@@ -50,13 +50,10 @@ export default function OnIncompatibleSchemaChangeForm() {
                 .then(() => {
                     setFormState({ status: FormStatus.UPDATED });
                 })
-                .catch((err) => {
+                .catch(() => {
                     enqueueSnackbar(
                         intl.formatMessage({
-                            id:
-                                err === 'no binding'
-                                    ? 'updateBinding.error.noBinding'
-                                    : 'incompatibleSchemaChange.update.error',
+                            id: 'incompatibleSchemaChange.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );
