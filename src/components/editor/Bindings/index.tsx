@@ -5,6 +5,7 @@ import BindingsEditor from 'components/editor/Bindings/Editor';
 import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
+import OnIncompatibleSchemaChange from 'components/materialization/OnIncompatibleSchemaChange';
 import SourceCapture from 'components/materialization/SourceCapture';
 import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
@@ -115,6 +116,10 @@ function BindingsMultiEditor({
                             id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,
                         })}
                     />
+                ) : null}
+
+                {entityType === 'materialization' ? (
+                    <OnIncompatibleSchemaChange />
                 ) : null}
             </Stack>
 
