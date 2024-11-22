@@ -8,13 +8,11 @@ function OnIncompatibleSchemaChange() {
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
             <Stack spacing={1} sx={{ mb: 1 }}>
-                <Stack direction="row">
-                    <Typography variant="formSectionHeader">
-                        {intl.formatMessage({
-                            id: 'incompatibleSchemaChange.header',
-                        })}
-                    </Typography>
-                </Stack>
+                <Typography variant="formSectionHeader">
+                    {intl.formatMessage({
+                        id: 'incompatibleSchemaChange.header',
+                    })}
+                </Typography>
 
                 <Typography>
                     {intl.formatMessage({
