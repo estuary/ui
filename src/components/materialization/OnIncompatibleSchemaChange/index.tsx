@@ -8,7 +8,7 @@ function OnIncompatibleSchemaChange() {
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
             <Stack>
-                <Stack spacing={1} sx={{ mb: 2 }}>
+                <Stack spacing={1} sx={{ mb: 1 }}>
                     <Stack direction="row">
                         <Typography variant="formSectionHeader">
                             {intl.formatMessage({
