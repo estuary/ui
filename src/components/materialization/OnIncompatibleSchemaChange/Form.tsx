@@ -85,7 +85,7 @@ export default function OnIncompatibleSchemaChangeForm() {
     }, [currentSetting, selection]);
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={1}>
             {invalidSetting ? (
                 <AlertBox
                     severity="error"
@@ -149,9 +149,12 @@ export default function OnIncompatibleSchemaChangeForm() {
                             error={invalidSetting}
                             helperText={
                                 invalidSetting
-                                    ? intl.formatMessage({
-                                          id: 'incompatibleSchemaChange.error.message',
-                                      })
+                                    ? intl.formatMessage(
+                                          {
+                                              id: 'incompatibleSchemaChange.error.message',
+                                          },
+                                          { currentSetting }
+                                      )
                                     : undefined
                             }
                             label={intl.formatMessage({
