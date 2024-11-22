@@ -1,4 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
@@ -7,6 +8,9 @@ import useEntityShouldShowLogs from './useEntityShouldShowLogs';
 function DetailTabs() {
     const intl = useIntl();
 
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
     const shouldShowLogs = useEntityShouldShowLogs();
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
@@ -23,12 +27,15 @@ function DetailTabs() {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },
-            // TODO (details:history) not currently live but is here to make sure it can render
-            // {
-            //     label: 'details.tabs.history',
-            //     path: 'history',
-            // },
         ];
+
+        // TODO (details:history) not currently live but is here to make sure it can render
+        if (hasSupportRole) {
+            response.push({
+                label: 'details.tabs.history',
+                path: 'history',
+            });
+        }
 
         if (shouldShowLogs) {
             response.push({
@@ -38,7 +45,7 @@ function DetailTabs() {
         }
 
         return response;
-    }, [shouldShowLogs]);
+    }, [hasSupportRole, shouldShowLogs]);
 
     const tabs = useMemo(
         () =>
