@@ -40,16 +40,11 @@ export default function useSpecificationIncompatibleSchemaSetting() {
             }
 
             let spec: Schema = draftSpec.spec;
-            const originalSetting = draftSpec.spec?.onIncompatibleSchemaChange;
 
             if (!hasLength(value)) {
                 spec = omit(spec, 'onIncompatibleSchemaChange');
             } else {
                 spec.onIncompatibleSchemaChange = value;
-            }
-
-            if (originalSetting === spec.onIncompatibleSchemaChange) {
-                return Promise.resolve();
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
