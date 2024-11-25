@@ -16,7 +16,7 @@ export function ErrorImporting({ error }: FallbackProps) {
     // TODO (error importing) get rid of this logging.
     //  Keep an eye on the error so we know the list for
     //  failedToLazyLoad is valid.
-    logRocketConsole('Error Importing Error', error);
+    logRocketConsole('ErrorImporting: error', error);
 
     useEffect(() => {
         if (error?.message && failedToLazyLoad(error.message)) {
