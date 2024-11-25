@@ -16,6 +16,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { JsonFormsData, Schema } from 'types';
+import { getEndpointConfig } from 'utils/connector-utils';
 import {
     configCanBeEmpty,
     getDereffedSchema,
@@ -23,8 +24,8 @@ import {
 } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
 import { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';
@@ -176,7 +177,9 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
-                state.serverUpdateRequired = updateRequired;
+                state.serverUpdateRequired = state.endpointCanBeEmpty
+                    ? false
+                    : updateRequired;
 
                 populateErrors(state.endpointConfig, state.customErrors, state);
             }),
@@ -237,8 +240,7 @@ const getInitialState = (
             }
 
             if (get().active && data && data.length > 0) {
-                const encryptedEndpointConfig =
-                    data[0].spec.endpoint.connector.config;
+                const encryptedEndpointConfig = getEndpointConfig(data);
 
                 get().setEncryptedEndpointConfig({
                     data: encryptedEndpointConfig,

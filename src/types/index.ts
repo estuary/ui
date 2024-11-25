@@ -460,3 +460,11 @@ export interface BindingMetadata {
     bindingIndex: number;
     collection: string;
 }
+
+// The type attributed to the config property will not be narrowed until its shape is fixed
+// such information is needed in the client. The backend DekafConfig type is defined here:
+// https://github.com/estuary/flow/blob/e158f7d010e152bfb50af24c52988a98405511c9/crates/dekaf/src/connector.rs#L26-L42
+export interface DekafConfig {
+    config: Schema;
+    variant: string;
+}

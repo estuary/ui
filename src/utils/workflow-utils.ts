@@ -4,10 +4,7 @@ import {
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import {
-    ConnectorTagWithDetailTags,
-    ConnectorWithTagDetailQuery,
-} from 'hooks/connectors/shared';
+import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
@@ -17,9 +14,10 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+import { DekafConfig, Entity, EntityWithCreateWorkflow, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
+import { isDekafEndpointConfig } from './connector-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -163,7 +161,7 @@ export const updateFullSource = () => {};
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (
     entityType: EntityWithCreateWorkflow,
-    connectorConfig: ConnectorConfig,
+    endpointConfig: ConnectorConfig | DekafConfig,
     resourceConfigs: ResourceConfigDictionary,
     resourceConfigServerUpdateRequired: boolean,
     bindings: Bindings,
@@ -180,7 +178,11 @@ export const generateTaskSpec = (
           }
         : existingTaskData.spec;
 
-    draftSpec.endpoint.connector = connectorConfig;
+    const endpointProp = isDekafEndpointConfig(endpointConfig)
+        ? 'dekaf'
+        : 'connector';
+
+    draftSpec.endpoint = { [endpointProp]: endpointConfig };
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
@@ -381,17 +383,9 @@ export interface ConnectorVersionEvaluationOptions {
 }
 
 export function evaluateConnectorVersions(
-    connector: ConnectorWithTagDetailQuery,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTagWithDetailTags;
-export function evaluateConnectorVersions(
-    connector: ConnectorsQuery_DetailsForm,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTag_Base;
-export function evaluateConnectorVersions(
     connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions
-): ConnectorTagWithDetailTags | ConnectorTag_Base {
+): ConnectorTag_Base {
     // Return the version of the connector that is used by the existing task in an edit workflow.
     if (options && options.connectorId === connector.id) {
         const connectorsInUse = connector.connector_tags.filter(
@@ -404,7 +398,9 @@ export function evaluateConnectorVersions(
     }
 
     // Return the latest version of a given connector.
-    return connector.connector_tags.sort((a, b) =>
-        b.image_tag.localeCompare(a.image_tag)
+    const { connector_id, id, image_tag } = connector.connector_tags.sort(
+        (a, b) => b.image_tag.localeCompare(a.image_tag)
     )[0];
+
+    return { connector_id, id, image_tag };
 }

@@ -1,17 +1,17 @@
 import { supabaseClient } from 'context/GlobalProviders';
 import {
-    CONNECTOR_WITH_TAG_QUERY,
     ConnectorWithTagDetailQuery,
+    CONNECTOR_WITH_TAG_QUERY,
 } from 'hooks/connectors/shared';
 import {
+    CONNECTOR_DETAILS,
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
-    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
     supabaseRetry,
-    CONNECTOR_DETAILS,
+    TABLES,
 } from 'services/supabase';
 import { SortDirection } from 'types';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
@@ -57,14 +57,14 @@ export interface ConnectorTag_Base {
 export interface ConnectorsQuery_DetailsForm {
     id: string;
     image_name: string;
-    logo_url: string;
+    image: string;
     connector_tags: ConnectorTag_Base[];
 }
 
 const DETAILS_FORM_QUERY = `
     id,
     image_name,
-    logo_url:logo_url->>en-US::text,
+    image:logo_url->>en-US::text,
     connector_tags !inner(
         id,
         connector_id,
