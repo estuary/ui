@@ -29,7 +29,6 @@ function SourceCaptureOptionInfo({
                         color: enabled
                             ? theme.palette.success.main
                             : theme.palette.error.main,
-                        opacity: enabled ? 1 : 0.7,
                         fontSize: 14,
                     }}
                 />
