@@ -64,9 +64,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                         updatedSourceCapture
                     );
                 }
+                await updateDraft(updatedSourceCapture);
             }
 
-            await updateDraft(updatedSourceCapture);
+            // TODO (source capture) MOVE UPDATE DOWN HERE
         }
 
         toggle(false);
