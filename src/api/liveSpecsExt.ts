@@ -267,6 +267,8 @@ export interface LiveSpecsExtQuery_ByCatalogName {
     last_pub_id: string;
 }
 
+// TODO (live spec) - remove this and combine with getLatestLiveSpecByName
+//  as the cata log name is a unique index on this
 const getLiveSpecsByCatalogName = async (
     catalogName: string,
     specType: Entity
@@ -399,6 +401,26 @@ const getLiveSpecSpec = (liveSpecId: string) => {
         .single();
 };
 
+export interface LiveSpecsExtQuery_Latest {
+    spec: any;
+    id: string;
+    last_pub_id: string;
+}
+
+const getLatestLiveSpecByName = async (catalogName: string) => {
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                .select(`spec, id, last_pub_id`)
+                .eq('catalog_name', catalogName)
+                .single(),
+        'getNotificationSubscriptionForUser'
+    ).then(handleSuccess<LiveSpecsExtQuery_Latest>, handleFailure);
+
+    return data;
+};
+
 const getLiveSpecShards = (tenant: string, entityType: Entity) => {
     return supabaseClient
         .from(TABLES.LIVE_SPECS_EXT)
@@ -446,6 +468,13 @@ export interface LiveSpecsExt_Related {
 // };
 
 export {
+    getLatestLiveSpecByName,
+    getLiveSpecShards,
+    getLiveSpecSpec,
+    getLiveSpecsByCatalogName,
+    getLiveSpecsByCatalogNames,
+    getLiveSpecsByConnectorId,
+    getLiveSpecsByLiveSpecId,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_dataPlaneAuthReq,
@@ -453,10 +482,4 @@ export {
     getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
-    getLiveSpecsByCatalogName,
-    getLiveSpecsByCatalogNames,
-    getLiveSpecsByConnectorId,
-    getLiveSpecsByLiveSpecId,
-    getLiveSpecShards,
-    getLiveSpecSpec,
 };

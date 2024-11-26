@@ -55,6 +55,7 @@ export enum CustomEvents {
     OAUTH_WINDOW_OPENER = 'Oauth_Window_Opener',
     REPUBLISH_PREFIX_FAILED = 'Republish_Prefix:Failed',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
+    SYNC_SCHEDULE = 'Sync_Schedule',
     SUPABASE_CALL_FAILED = 'Supabase_Call_Failed',
     SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',

@@ -20,7 +20,7 @@ import BasicLogin from 'pages/login/Basic';
 import EnterpriseLogin from 'pages/login/Enterprise';
 import MarketplaceCallback from 'pages/marketplace/Callback';
 import MarketplaceVerification from 'pages/marketplace/Verification';
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import {
     Route,
     RouterProvider,
@@ -28,7 +28,8 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
 } from 'react-router-dom';
-import { handledLazy } from 'services/react';
+import { ErrorImporting } from 'components/shared/ErrorImporting';
+import { ErrorBoundary } from 'react-error-boundary';
 import Authenticated from './Authenticated';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import CapturesTable from './CapturesTable';
@@ -36,34 +37,30 @@ import MaterializationsTable from './MaterializationsTable';
 import RequireAuth from './RequireAuth';
 
 // Capture
-const CaptureCreateRoute = handledLazy(() => import('./CaptureCreate'));
-const CaptureCreateNewRoute = handledLazy(() => import('./CaptureCreateNew'));
-const CaptureDetailsRoute = handledLazy(() => import('./CaptureDetails'));
-const CaptureEditRoute = handledLazy(() => import('./CaptureEdit'));
+const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
+const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
+const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
 
 // Collection
-const DerivationCreateComponent = handledLazy(
+const DerivationCreateComponent = lazy(
     () => import('components/derivation/Create')
 );
-const CollectionCreateRoute = handledLazy(() => import('./CollectionCreate'));
-const CollectionCreateNewRoute = handledLazy(
-    () => import('./CollectionCreateNew')
-);
-const CollectionDetailsRoute = handledLazy(() => import('./CollectionDetails'));
+const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
+const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));
+const CollectionDetailsRoute = lazy(() => import('./CollectionDetails'));
 
 //Materializations
-const MaterializationCreateRoute = handledLazy(
+const MaterializationCreateRoute = lazy(
     () => import('./MaterializationCreate')
 );
-const MaterializationCreateNewRoute = handledLazy(
+const MaterializationCreateNewRoute = lazy(
     () => import('./MaterializationCreateNew')
 );
-const MaterializationDetailsRoute = handledLazy(
+const MaterializationDetailsRoute = lazy(
     () => import('./MaterializationDetails')
 );
-const MaterializationEditRoute = handledLazy(
-    () => import('./MaterializationEdit')
-);
+const MaterializationEditRoute = lazy(() => import('./MaterializationEdit'));
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -190,18 +187,26 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={null}>
-                                    <CollectionCreateRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CollectionCreateRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.beta.new.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <CollectionCreateNewRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CollectionCreateNewRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
                     </Route>
@@ -218,9 +223,13 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CollectionDetailsRoute tab="overview" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="overview" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -230,9 +239,13 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CollectionDetailsRoute tab="spec" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="spec" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -242,9 +255,13 @@ const router = createBrowserRouter(
                                         .history.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CollectionDetailsRoute tab="history" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="history" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -254,9 +271,13 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CollectionDetailsRoute tab="ops" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="ops" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
                         </Route>
@@ -273,11 +294,17 @@ const router = createBrowserRouter(
                                                     .create.new.path
                                             }
                                             element={
-                                                <Suspense fallback={null}>
-                                                    <WorkflowContextProvider value="collection_create">
-                                                        <DerivationCreateComponent />
-                                                    </WorkflowContextProvider>
-                                                </Suspense>
+                                                <ErrorBoundary
+                                                    FallbackComponent={
+                                                        ErrorImporting
+                                                    }
+                                                >
+                                                    <Suspense fallback={null}>
+                                                        <WorkflowContextProvider value="collection_create">
+                                                            <DerivationCreateComponent />
+                                                        </WorkflowContextProvider>
+                                                    </Suspense>
+                                                </ErrorBoundary>
                                             }
                                         />
                                     </Routes>
@@ -290,36 +317,52 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={null}>
-                                    <CapturesTable />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CapturesTable />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.create.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <CaptureCreateRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureCreateRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.create.new.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <CaptureCreateNewRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureCreateNewRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
                         <Route
                             path={authenticatedRoutes.captures.edit.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <CaptureEditRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureEditRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
@@ -330,9 +373,13 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CaptureDetailsRoute tab="overview" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="overview" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -342,9 +389,13 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CaptureDetailsRoute tab="spec" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="spec" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -354,9 +405,13 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CaptureDetailsRoute tab="history" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="history" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -366,9 +421,13 @@ const router = createBrowserRouter(
                                         .path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <CaptureDetailsRoute tab="ops" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="ops" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
                         </Route>
@@ -378,9 +437,13 @@ const router = createBrowserRouter(
                         <Route
                             path=""
                             element={
-                                <Suspense fallback={null}>
-                                    <MaterializationsTable />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <MaterializationsTable />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
@@ -389,9 +452,13 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.create.path
                             }
                             element={
-                                <Suspense fallback={null}>
-                                    <MaterializationCreateRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <MaterializationCreateRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
@@ -401,9 +468,13 @@ const router = createBrowserRouter(
                                     .path
                             }
                             element={
-                                <Suspense fallback={null}>
-                                    <MaterializationCreateNewRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <MaterializationCreateNewRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
@@ -412,9 +483,13 @@ const router = createBrowserRouter(
                                 authenticatedRoutes.materializations.edit.path
                             }
                             element={
-                                <Suspense fallback={null}>
-                                    <MaterializationEditRoute />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <MaterializationEditRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
 
@@ -430,9 +505,13 @@ const router = createBrowserRouter(
                                         .overview.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <MaterializationDetailsRoute tab="overview" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="overview" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -442,9 +521,13 @@ const router = createBrowserRouter(
                                         .spec.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <MaterializationDetailsRoute tab="spec" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="spec" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -454,9 +537,13 @@ const router = createBrowserRouter(
                                         .history.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <MaterializationDetailsRoute tab="history" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="history" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
 
@@ -466,9 +553,13 @@ const router = createBrowserRouter(
                                         .ops.path
                                 }
                                 element={
-                                    <Suspense fallback={null}>
-                                        <MaterializationDetailsRoute tab="ops" />
-                                    </Suspense>
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="ops" />
+                                        </Suspense>
+                                    </ErrorBoundary>
                                 }
                             />
                         </Route>
@@ -528,17 +619,25 @@ const router = createBrowserRouter(
                         <Route
                             path={authenticatedRoutes.admin.connectors.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <AdminConnectors />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <AdminConnectors />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
                         <Route
                             path={authenticatedRoutes.admin.billing.path}
                             element={
-                                <Suspense fallback={null}>
-                                    <AdminBilling />
-                                </Suspense>
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <AdminBilling />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
                         <Route
@@ -554,9 +653,11 @@ const router = createBrowserRouter(
                     <Route
                         path="test/jsonforms"
                         element={
-                            <EntityContextProvider value="capture">
-                                <TestJsonForms />
-                            </EntityContextProvider>
+                            <ErrorBoundary FallbackComponent={ErrorImporting}>
+                                <EntityContextProvider value="capture">
+                                    <TestJsonForms />
+                                </EntityContextProvider>
+                            </ErrorBoundary>
                         }
                     />
 

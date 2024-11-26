@@ -36,6 +36,7 @@ import {
     Layout,
     resolveSchema,
     toDataPath,
+    toDataPathSegments,
     UISchemaElement,
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
@@ -48,6 +49,7 @@ import {
     ADVANCED,
     allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
+    LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
 
@@ -176,6 +178,16 @@ const getNullableType = (schema: JsonSchema): null | string => {
 const isOAuthConfig = (schema: JsonSchema): boolean =>
     Object.hasOwn(schema, Annotations.oAuthProvider);
 
+// TODO (reset section) might want to know if there are multiple children in future
+// const getChildObjectCount = (schema: JsonSchema) => {
+//     if (!schema.properties) {
+//         return 0;
+//     }
+//     return Object.values(schema.properties).map(
+//         (property) => property.type === 'object'
+//     ).length;
+// };
+
 const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     if (isAdvancedConfig(schema)) {
         addOption(elem, ADVANCED, true);
@@ -199,6 +211,16 @@ const addRequiredGroupOptions = (
 const addInfoSshEndpoint = (elem: Layout | ControlElement | GroupLayout) => {
     if (!Object.hasOwn(elem.options ?? {}, SHOW_INFO_SSH_ENDPOINT)) {
         addOption(elem, SHOW_INFO_SSH_ENDPOINT, true);
+    }
+};
+
+const addLayoutPath = (
+    elem: Layout | ControlElement | GroupLayout,
+    path: string
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, LAYOUT_PATH)) {
+        // Based on `fromScoped` in jsonforms/packages/core/src/util/util.ts
+        addOption(elem, LAYOUT_PATH, toDataPathSegments(path).join('.'));
     }
 };
 
@@ -556,6 +578,8 @@ const generateUISchema = (
                 if (containsSshEndpoint(jsonSchema)) {
                     addInfoSshEndpoint(layout);
                 }
+
+                addLayoutPath(layout, currentRef);
             }
         } else {
             layout = createLayout(layoutType);

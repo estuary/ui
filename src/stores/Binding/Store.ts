@@ -19,7 +19,6 @@ import {
     pick,
     union,
 } from 'lodash';
-import { Duration } from 'luxon';
 import {
     createJSONFormDefaults,
     schemaSupportsDeltaUpdates,
@@ -36,7 +35,7 @@ import { BindingStoreNames } from 'stores/names';
 import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { formatCaptureInterval } from 'utils/time-utils';
+import { formatCaptureInterval, parsePostgresInterval } from 'utils/time-utils';
 import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
@@ -116,11 +115,11 @@ const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec.bindings
         );
 
-        const targetInterval = draftSpecs[0].spec?.interval ?? defaultInterval;
+        const targetInterval = draftSpecs[0].spec?.interval;
 
         get().setCaptureInterval(
             targetInterval
-                ? formatCaptureInterval(targetInterval, true)
+                ? formatCaptureInterval(targetInterval)
                 : fallbackInterval,
             defaultInterval
         );
@@ -397,10 +396,7 @@ const getInitialState = (
             }
         } else {
             get().setCaptureInterval(
-                formatCaptureInterval(
-                    connectorTagResponse?.default_capture_interval,
-                    true
-                ) ?? fallbackInterval,
+                fallbackInterval,
                 connectorTagResponse?.default_capture_interval
             );
         }
@@ -871,8 +867,10 @@ const getInitialState = (
                     defaultInterval &&
                     POSTGRES_INTERVAL_RE.test(defaultInterval)
                 ) {
-                    state.defaultCaptureInterval =
-                        Duration.fromISOTime(defaultInterval).toObject();
+                    state.defaultCaptureInterval = parsePostgresInterval(
+                        defaultInterval,
+                        true
+                    );
                 }
 
                 state.captureInterval = value;

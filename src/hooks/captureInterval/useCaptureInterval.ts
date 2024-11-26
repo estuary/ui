@@ -5,15 +5,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { debounce, omit } from 'lodash';
-import {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -23,11 +15,7 @@ import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { formatCaptureInterval } from 'utils/time-utils';
 import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
-import {
-    CAPTURE_INTERVAL_RE,
-    NUMERIC_RE,
-    POSTGRES_INTERVAL_RE,
-} from 'validation';
+import { CAPTURE_INTERVAL_RE } from 'validation';
 
 export default function useCaptureInterval() {
     // Binding Store
@@ -123,35 +111,14 @@ export default function useCaptureInterval() {
         }, DEFAULT_DEBOUNCE_WAIT)
     );
 
-    const updateStoredInterval = (
-        input: string,
-        unit: string,
-        setUnit?: Dispatch<SetStateAction<string>>
-    ) => {
+    const updateStoredInterval = (input: string) => {
         const trimmedInput = input.trim();
 
-        const postgresIntervalFormat = POSTGRES_INTERVAL_RE.test(trimmedInput);
-        const captureIntervalFormat = CAPTURE_INTERVAL_RE.test(trimmedInput);
-
-        const unitlessInterval =
-            !hasLength(trimmedInput) ||
-            postgresIntervalFormat ||
-            captureIntervalFormat;
-
         if (
-            setUnit &&
-            hasLength(trimmedInput) &&
-            (postgresIntervalFormat || captureIntervalFormat)
+            !hasLength(trimmedInput) ||
+            CAPTURE_INTERVAL_RE.test(trimmedInput)
         ) {
-            setUnit('i');
-        }
-
-        if (unitlessInterval || NUMERIC_RE.test(trimmedInput)) {
-            const interval = unitlessInterval
-                ? trimmedInput
-                : `${trimmedInput}${unit}`;
-
-            setCaptureInterval(interval);
+            setCaptureInterval(trimmedInput);
             debounceSeverUpdate.current();
         }
     };
