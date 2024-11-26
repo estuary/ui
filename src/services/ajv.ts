@@ -1,4 +1,4 @@
-import { createAjv, JsonSchema } from '@jsonforms/core';
+import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
@@ -33,7 +33,7 @@ export const addKeywords = (ajv: Ajv) => {
 
     // How to write a config schema
     // https://github.com/estuary/connectors/blob/main/config_schema_guidelines.md
-    for (const annotation in Annotations) {
+    for (const annotation of Object.values(Annotations)) {
         if (typeof annotation === 'string') {
             ajv.addKeyword(annotation);
         }
@@ -42,14 +42,10 @@ export const addKeywords = (ajv: Ajv) => {
     return ajv;
 };
 
-// eslint-disable-next-line func-names
-export const setDefaultsValidator = (function () {
-    const ajv = createAjv(defaultAjvSettings);
-    return addKeywords(ajv);
-})();
+export const customAjv = addKeywords(createAjv(defaultAjvSettings));
 
 function setJSONFormDefaults(jsonSchema: any, formData: any) {
-    const hydrateAndValidate = setDefaultsValidator.compile(jsonSchema);
+    const hydrateAndValidate = customAjv.compile(jsonSchema);
 
     hydrateAndValidate(formData);
 
@@ -118,8 +114,40 @@ export function createJSONFormDefaults(
     return { data, errors };
 }
 
-export const schemaSupportsDeltaUpdates = (schema: JsonSchema): boolean =>
-    Object.hasOwn(schema, Annotations.deltaUpdates);
+export interface ResourceConfigPointers {
+    [Annotations.defaultResourceConfigName]?: boolean;
+    [Annotations.targetSchema]?: boolean;
+    [Annotations.deltaUpdates]?: boolean;
+}
 
-export const schemaSupportsTargetSchema = (schema: JsonSchema): boolean =>
-    Object.hasOwn(schema, Annotations.targetSchema);
+export const findKeysInObject = (
+    obj: Record<string, any>,
+    keysToFind: string[],
+    results: ResourceConfigPointers = {}
+): ResourceConfigPointers => {
+    // Iterate over each key in the object
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+
+            // Check if the key is one of the keys we're searching for
+            if (keysToFind.includes(key)) {
+                results[key] = value;
+            }
+
+            // If the value is an object, recurse into it
+            if (value && typeof value === 'object') {
+                findKeysInObject(value, keysToFind, results);
+            }
+        }
+    }
+
+    return results;
+};
+
+export const getResourceConfigPointers = (schema: any) =>
+    findKeysInObject(schema, [
+        Annotations.defaultResourceConfigName,
+        Annotations.targetSchema,
+        Annotations.deltaUpdates,
+    ]);

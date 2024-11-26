@@ -19,7 +19,7 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { setDefaultsValidator } from 'services/ajv';
+import { customAjv } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
@@ -178,7 +178,7 @@ const TestJsonForms = () => {
                                     searchParams.toString();
                             }
                         }}
-                        ajv={setDefaultsValidator}
+                        ajv={customAjv}
                     />
 
                     <Editor
@@ -216,7 +216,7 @@ const TestJsonForms = () => {
                                                 state
                                             );
                                         }}
-                                        ajv={setDefaultsValidator}
+                                        ajv={customAjv}
                                     />
                                 ) : (
                                     <>

@@ -7,7 +7,7 @@ import { jsonFormsPadding } from 'context/Theme';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { setDefaultsValidator } from 'services/ajv';
+import { customAjv } from 'services/ajv';
 import { custom_generateDefaultUISchema } from 'services/jsonforms';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions } from 'services/jsonforms/shared';
@@ -73,7 +73,7 @@ function EndpointConfigForm({ readOnly }: Props) {
                     readonly={readOnly || isActive}
                     validationMode="ValidateAndShow"
                     onChange={setEndpointConfig}
-                    ajv={setDefaultsValidator}
+                    ajv={customAjv}
                 />
                 {endpointCanBeEmpty ? (
                     <AlertBox short severity="info">

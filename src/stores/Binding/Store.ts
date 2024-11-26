@@ -21,8 +21,7 @@ import {
 } from 'lodash';
 import {
     createJSONFormDefaults,
-    schemaSupportsDeltaUpdates,
-    schemaSupportsTargetSchema,
+    getResourceConfigPointers,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
@@ -920,10 +919,14 @@ const getInitialState = (
                 //  normally set stuff in a store. However, it does return array of
                 //  properties.
                 //  Might not be horrible to run through the objects twice
-                state.sourceCaptureDeltaUpdatesSupported =
-                    schemaSupportsDeltaUpdates(resolved);
-                state.sourceCaptureDeltaUpdatesSupported =
-                    schemaSupportsTargetSchema(resolved);
+                const pointers = getResourceConfigPointers(resolved);
+
+                state.sourceCaptureDeltaUpdatesSupported = Boolean(
+                    pointers['x-delta-updates']
+                );
+                state.sourceCaptureTargetSchemaSupported = Boolean(
+                    pointers['x-schema-name']
+                );
             }),
             false,
             'Resource Schema Set'
