@@ -14,7 +14,6 @@ import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
-import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { generateDisabledSpec } from 'utils/entity-utils';
@@ -57,6 +56,16 @@ function DisableCapture() {
             progress: ProgressStates.RUNNING,
         });
 
+        if (!persistedDraftId) {
+            updateStep(stepIndex, {
+                error: {
+                    message: 'resetDataFlow.errors.missingDraftId',
+                },
+                progress: ProgressStates.FAILED,
+            });
+            return;
+        }
+
         updateContext({
             disableClose: true,
         });
@@ -69,19 +78,6 @@ function DisableCapture() {
             );
 
             const captureName = draftSpecs[0].catalog_name;
-
-            if (!persistedDraftId) {
-                updateStep(stepIndex, {
-                    error: {
-                        ...BASE_ERROR,
-                        message: intl.formatMessage({
-                            id: 'resetDataFlow.errors.missingDraftId',
-                        }),
-                    },
-                    progress: ProgressStates.FAILED,
-                });
-                return;
-            }
 
             // Update the Capture to be disabled
             const updateResponse = await modifyDraftSpec(
