@@ -1,11 +1,16 @@
 import { Box, Stack, useTheme } from '@mui/material';
-import { Check } from 'iconoir-react';
+import { Check, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { SourceCaptureOptionInfoProps } from './types';
 
-function SourceCaptureOptionInfo({ messageKey }: SourceCaptureOptionInfoProps) {
+function SourceCaptureOptionInfo({
+    enabled,
+    messageKey,
+}: SourceCaptureOptionInfoProps) {
     const intl = useIntl();
     const theme = useTheme();
+
+    const Icon = enabled ? Check : Xmark;
 
     return (
         <Stack
@@ -19,10 +24,13 @@ function SourceCaptureOptionInfo({ messageKey }: SourceCaptureOptionInfoProps) {
             }}
         >
             <Box component="span">
-                <Check
+                <Icon
                     style={{
+                        color: enabled
+                            ? theme.palette.success.main
+                            : theme.palette.error.main,
+                        opacity: enabled ? 1 : 0.7,
                         fontSize: 14,
-                        color: theme.palette.success.main,
                     }}
                 />
             </Box>

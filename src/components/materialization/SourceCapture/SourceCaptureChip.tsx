@@ -44,13 +44,15 @@ function SourceCaptureChip() {
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
                     {sourceCapture ? (
                         <>
-                            {targetSchema === 'fromSourceName' ? (
-                                <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip" />
-                            ) : null}
+                            <SourceCaptureOptionInfo
+                                enabled={targetSchema === 'fromSourceName'}
+                                messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip"
+                            />
 
-                            {deltaUpdates ? (
-                                <SourceCaptureOptionInfo messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip" />
-                            ) : null}
+                            <SourceCaptureOptionInfo
+                                enabled={Boolean(deltaUpdates)}
+                                messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip"
+                            />
                         </>
                     ) : null}
                 </Stack>
