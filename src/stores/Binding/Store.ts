@@ -19,7 +19,10 @@ import {
     pick,
     union,
 } from 'lodash';
-import { createJSONFormDefaults } from 'services/ajv';
+import {
+    createJSONFormDefaults,
+    getResourceConfigPointers,
+} from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
@@ -918,14 +921,14 @@ const getInitialState = (
                 //  Might not be horrible to run through the objects twice
 
                 // TODO (source capture) new options enable here
-                // const pointers = getResourceConfigPointers(resolved);
+                const pointers = getResourceConfigPointers(resolved);
 
-                // state.sourceCaptureDeltaUpdatesSupported = Boolean(
-                //     pointers['x-delta-updates']
-                // );
-                // state.sourceCaptureTargetSchemaSupported = Boolean(
-                //     pointers['x-schema-name']
-                // );
+                state.sourceCaptureDeltaUpdatesSupported = Boolean(
+                    pointers['x-delta-updates']
+                );
+                state.sourceCaptureTargetSchemaSupported = Boolean(
+                    pointers['x-schema-name']
+                );
             }),
             false,
             'Resource Schema Set'

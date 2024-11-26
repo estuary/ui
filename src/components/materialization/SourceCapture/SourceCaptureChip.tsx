@@ -1,9 +1,11 @@
 import { Box, Chip, Stack } from '@mui/material';
 import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
+import SourceCaptureOptionInfo from './SourceCaptureOptionInfo';
 
 function SourceCaptureChip() {
     const intl = useIntl();
@@ -11,27 +13,21 @@ function SourceCaptureChip() {
 
     const { updateDraft } = useSourceCapture();
 
-    const [
-        sourceCapture,
-        resetState,
-        // deltaUpdates,
-        // targetSchema
-    ] = useSourceCaptureStore((state) => [
-        state.sourceCapture,
-        state.resetState,
-        // TODO (source capture) new options enable here
-        // state.deltaUpdates,
-        // state.targetSchema,
-    ]);
+    const [sourceCapture, resetState, deltaUpdates, targetSchema] =
+        useSourceCaptureStore((state) => [
+            state.sourceCapture,
+            state.resetState,
+            state.deltaUpdates,
+            state.targetSchema,
+        ]);
 
-    // TODO (source capture) new options enable here
-    // const [
-    //     sourceCaptureDeltaUpdatesSupported,
-    //     sourceCaptureTargetSchemaSupported,
-    // ] = useBindingStore((state) => [
-    //     state.sourceCaptureDeltaUpdatesSupported,
-    //     state.sourceCaptureTargetSchemaSupported,
-    // ]);
+    const [
+        sourceCaptureDeltaUpdatesSupported,
+        sourceCaptureTargetSchemaSupported,
+    ] = useBindingStore((state) => [
+        state.sourceCaptureDeltaUpdatesSupported,
+        state.sourceCaptureTargetSchemaSupported,
+    ]);
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
@@ -55,8 +51,7 @@ function SourceCaptureChip() {
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
-                    {/* TODO (source capture) new options enable here*/}
-                    {/*                    {(sourceCaptureDeltaUpdatesSupported ||
+                    {(sourceCaptureDeltaUpdatesSupported ||
                         sourceCaptureTargetSchemaSupported) &&
                     sourceCapture ? (
                         <>
@@ -70,7 +65,7 @@ function SourceCaptureChip() {
                                 messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip"
                             />
                         </>
-                    ) : null}*/}
+                    ) : null}
                 </Stack>
             }
             sx={{
@@ -84,8 +79,7 @@ function SourceCaptureChip() {
                 },
                 // Just force a minwidth so the chip cannot shrink so much that the
                 //  content is invisible under the delete icon
-                // TODO (source capture) new options enable here
-                // 'minWidth': sourceCapture ? 375 : undefined,
+                'minWidth': sourceCapture ? 375 : undefined,
 
                 // This is hacky but is needed as this chip has extra content and was
                 //  causing the SVG to resize and shrink if the chip got narrow
