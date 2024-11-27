@@ -31,6 +31,8 @@ function SourceCaptureChip() {
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
+    console.log('sourceCapture', sourceCapture);
+
     const label =
         sourceCapture ??
         intl.formatMessage({
