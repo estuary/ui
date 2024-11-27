@@ -16,6 +16,8 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBinding_bindings,
     useBinding_fullSourceConfigs,
@@ -281,6 +283,12 @@ function useGenerateCatalog() {
                         .config,
                 });
                 setPreviousEndpointConfig({ data: endpointConfigData });
+
+                logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                    newValue: evaluatedDraftId,
+                    component: 'useDiscoverStartDiscovery',
+                });
+
                 setDraftId(evaluatedDraftId);
                 setPersistedDraftId(evaluatedDraftId);
                 setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);

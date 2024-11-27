@@ -22,6 +22,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Dispatch, SetStateAction, useCallback } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 
@@ -227,6 +229,10 @@ function useInitializeTaskDraft() {
                     );
 
                     if (!draftSpecsError) {
+                        logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                            newValue: evaluatedDraftId,
+                            component: 'useInitializeTaskDraft',
+                        });
                         setDraftId(evaluatedDraftId);
                         setPersistedDraftId(evaluatedDraftId);
 

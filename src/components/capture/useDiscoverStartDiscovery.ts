@@ -13,6 +13,8 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { Entity } from 'types';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import useDiscoverStartSubscription from './useDiscoverStartSubscription';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
@@ -76,6 +78,11 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             );
 
             if (discoverResponse.error) {
+                logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                    newValue: null,
+                    component: 'useDiscoverStartDiscovery',
+                });
+
                 // If we failed at discovery we need to clear draft ID like we do
                 //  when we createDiscoversSubscription. Otherwise, the Test|Save
                 //  buttons will appear.
