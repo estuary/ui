@@ -20,7 +20,9 @@ import useBrowserTitle from 'hooks/useBrowserTitle';
 import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
@@ -126,7 +128,14 @@ function EntityEdit({
             endpointConfigServerUpdateRequired ||
             resourceConfigServerUpdateRequired;
 
-        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
+        const newValue = resetDraftIdFlag ? null : persistedDraftId;
+
+        logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+            newValue,
+            component: 'EntityEdit',
+        });
+
+        setDraftId(newValue);
     }, [
         setDraftId,
         endpointConfigServerUpdateRequired,

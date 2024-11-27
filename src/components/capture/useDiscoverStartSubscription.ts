@@ -74,6 +74,11 @@ function useDiscoverStartSubscription(entityType: Entity) {
             existingEndpointConfig: any, // JsonFormsData
             skipUpdate?: boolean
         ) => {
+            logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                newValue: null,
+                component: 'useDiscoverStartSubscription',
+            });
+
             setDraftId(null);
             setDiscoveredDraftId(discoverDraftId);
 
