@@ -3,6 +3,7 @@ import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
 import SourceCaptureOptionInfo from './SourceCaptureOptionInfo';
@@ -13,13 +14,10 @@ function SourceCaptureChip() {
 
     const { updateDraft } = useSourceCapture();
 
-    const [sourceCapture, resetState, deltaUpdates, targetSchema] =
-        useSourceCaptureStore((state) => [
-            state.sourceCapture,
-            state.resetState,
-            state.deltaUpdates,
-            state.targetSchema,
-        ]);
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
+
+    const [resetState] = useSourceCaptureStore((state) => [state.resetState]);
 
     const [
         sourceCaptureDeltaUpdatesSupported,
@@ -31,17 +29,15 @@ function SourceCaptureChip() {
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
-    console.log('sourceCapture', sourceCapture);
-
     const label =
-        sourceCapture ??
+        sourceCaptureDefinition?.capture ??
         intl.formatMessage({
             id: 'workflows.sourceCapture.selected.none',
         });
 
     return (
         <Chip
-            color={sourceCapture ? 'success' : 'info'}
+            color={sourceCaptureDefinition?.capture ? 'success' : 'info'}
             disabled={saving || formActive}
             label={
                 <Stack
@@ -49,21 +45,26 @@ function SourceCaptureChip() {
                     spacing={3}
                     sx={{
                         alignItems: 'center',
-                        pr: sourceCapture ? 3 : undefined,
+                        pr: sourceCaptureDefinition?.capture ? 3 : undefined,
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
                     {(sourceCaptureDeltaUpdatesSupported ||
                         sourceCaptureTargetSchemaSupported) &&
-                    sourceCapture ? (
+                    sourceCaptureDefinition?.capture ? (
                         <>
                             <SourceCaptureOptionInfo
-                                enabled={targetSchema === 'fromSourceName'}
+                                enabled={
+                                    sourceCaptureDefinition.targetSchema ===
+                                    'fromSourceName'
+                                }
                                 messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip"
                             />
 
                             <SourceCaptureOptionInfo
-                                enabled={Boolean(deltaUpdates)}
+                                enabled={Boolean(
+                                    sourceCaptureDefinition.deltaUpdates
+                                )}
                                 messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip"
                             />
                         </>
@@ -81,7 +82,7 @@ function SourceCaptureChip() {
                 },
                 // Just force a minwidth so the chip cannot shrink so much that the
                 //  content is invisible under the delete icon
-                'minWidth': sourceCapture ? 375 : undefined,
+                'minWidth': sourceCaptureDefinition?.capture ? 375 : undefined,
 
                 // This is hacky but is needed as this chip has extra content and was
                 //  causing the SVG to resize and shrink if the chip got narrow
@@ -93,7 +94,7 @@ function SourceCaptureChip() {
             }}
             variant="outlined"
             onDelete={
-                sourceCapture
+                sourceCaptureDefinition?.capture
                     ? async () => {
                           resetState();
                           await updateDraft(null);

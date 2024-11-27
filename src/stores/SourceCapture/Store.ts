@@ -17,8 +17,8 @@ const getInitialStateData = (): Pick<
     sourceCapture: null,
     saving: false,
     prefilledCapture: null,
-    deltaUpdates: false,
-    targetSchema: 'fromSourceName',
+    deltaUpdates: undefined,
+    targetSchema: undefined,
 });
 
 const getInitialState = (

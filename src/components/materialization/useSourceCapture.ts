@@ -22,7 +22,7 @@ function useSourceCapture() {
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
-    const existingSourceCapture = useMemo(() => {
+    const existingSourceCapture = useMemo((): SourceCaptureDef | null => {
         if (draftSpecs.length === 0) {
             return null;
         }

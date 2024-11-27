@@ -39,20 +39,14 @@ export const generateDisabledSpec = (
 
 export const getSourceCapture = (
     sourceCapture: SourceCaptureDef | string | null | undefined
-): Nullable<SourceCaptureDef> => {
+): SourceCaptureDef | null => {
     if (!sourceCapture) {
-        return {
-            capture: null,
-            deltaUpdates: null,
-            targetSchema: null,
-        };
+        return null;
     }
 
     if (typeof sourceCapture === 'string') {
         return {
             capture: sourceCapture,
-            deltaUpdates: null,
-            targetSchema: null,
         };
     }
 

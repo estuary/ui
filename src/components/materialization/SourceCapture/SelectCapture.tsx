@@ -7,9 +7,12 @@ import { isString } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useSourceCaptureStore_SourceCaptureDefinition } from 'stores/SourceCapture/hooks';
+import {
+    useSourceCaptureStore_setSourceCaptureDefinition,
+    useSourceCaptureStore_sourceCaptureDefinition,
+} from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { getSourceCapture, hasSourceCaptureChanged } from 'utils/entity-utils';
+import { getSourceCapture } from 'utils/entity-utils';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
 import CancelSourceCaptureButton from './CancelSourceCaptureButton';
 
@@ -19,6 +22,7 @@ function SelectCapture() {
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
     const prefilledOnce = useRef(false);
+    const defaultedOnce = useRef(false);
 
     const [open, setOpen] = useState<boolean>(false);
     const toggleDialog = (args: any) => {
@@ -26,17 +30,11 @@ function SelectCapture() {
     };
 
     const sourceCaptureDefinition =
-        useSourceCaptureStore_SourceCaptureDefinition();
+        useSourceCaptureStore_sourceCaptureDefinition();
+    const setSourceCaptureDefinition =
+        useSourceCaptureStore_setSourceCaptureDefinition();
 
-    const [
-        setSourceCapture,
-        setDeltaUpdates,
-        setTargetSchema,
-        prefilledCapture,
-    ] = useSourceCaptureStore((state) => [
-        state.setSourceCapture,
-        state.setDeltaUpdates,
-        state.setTargetSchema,
+    const [prefilledCapture] = useSourceCaptureStore((state) => [
         state.prefilledCapture,
     ]);
 
@@ -64,37 +62,26 @@ function SelectCapture() {
         [draftSpecs, isEdit]
     );
 
+    // TODO (source capture optional settings)
+    // Need to handle checking isEdit in here so we don't set the optional
+    //  settings incorrectly
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
         //  accidently override their existing setting without noticing
-        if (isString(existingSourceCaptureDefinition?.capture)) {
-            if (
-                existingSourceCaptureDefinition &&
-                hasSourceCaptureChanged(
-                    sourceCaptureDefinition,
-                    existingSourceCaptureDefinition
-                )
-            ) {
-                setSourceCapture(existingSourceCaptureDefinition.capture);
-
-                // This is for when a user is editing their current sourceCapture that is just a plain string.
-                //  We do not want to flip their settings to something they are not expecting. So let the
-                //  components default as they are prepared to do.
-                if (existingSourceCaptureDefinition.deltaUpdates) {
-                    setDeltaUpdates(
-                        existingSourceCaptureDefinition.deltaUpdates
-                    );
-                }
-
-                if (existingSourceCaptureDefinition.targetSchema) {
-                    setTargetSchema(
-                        existingSourceCaptureDefinition.targetSchema
-                    );
-                }
-            }
+        if (
+            !defaultedOnce.current &&
+            isString(existingSourceCaptureDefinition?.capture)
+        ) {
+            setSourceCaptureDefinition(existingSourceCaptureDefinition);
+            defaultedOnce.current = true;
         } else if (!prefilledOnce.current && prefilledExists) {
-            if (sourceCaptureDefinition.capture !== prefilledCapture) {
-                setSourceCapture(prefilledCapture);
+            if (
+                prefilledCapture &&
+                existingSourceCaptureDefinition?.capture !== prefilledCapture
+            ) {
+                setSourceCaptureDefinition({
+                    capture: prefilledCapture,
+                });
                 prefilledOnce.current = true;
             }
         }
@@ -102,10 +89,7 @@ function SelectCapture() {
         existingSourceCaptureDefinition,
         prefilledCapture,
         prefilledExists,
-        setDeltaUpdates,
-        setSourceCapture,
-        setTargetSchema,
-        sourceCaptureDefinition,
+        setSourceCaptureDefinition,
     ]);
 
     return (
@@ -115,7 +99,7 @@ function SelectCapture() {
                     id={
                         showLoading
                             ? 'workflows.sourceCapture.cta.loading'
-                            : sourceCaptureDefinition.capture
+                            : sourceCaptureDefinition?.capture
                             ? 'workflows.sourceCapture.cta.edit'
                             : 'workflows.sourceCapture.cta'
                     }
@@ -128,7 +112,7 @@ function SelectCapture() {
                 PrimaryCTA={AddSourceCaptureToSpecButton}
                 SecondaryCTA={CancelSourceCaptureButton}
                 selectedCollections={
-                    sourceCaptureDefinition.capture
+                    sourceCaptureDefinition?.capture
                         ? [sourceCaptureDefinition.capture]
                         : []
                 }

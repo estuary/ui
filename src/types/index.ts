@@ -465,6 +465,6 @@ export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
 
 export interface SourceCaptureDef {
     capture: string;
-    deltaUpdates: boolean;
-    targetSchema: TargetSchemas;
+    deltaUpdates?: boolean;
+    targetSchema?: TargetSchemas;
 }

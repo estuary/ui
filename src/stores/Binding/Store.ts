@@ -504,7 +504,7 @@ const getInitialState = (
         );
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
+    prefillResourceConfigs: (targetCollections, disableOmit) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -547,7 +547,6 @@ const getInitialState = (
 
                     // TODO (source capture)
                     // Will want to merge / update / something with WASM here into the defaultConfig.data
-                    console.log('sourceCapture = ', sourceCapture);
 
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,

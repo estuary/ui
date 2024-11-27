@@ -4,49 +4,35 @@ import { useRef } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
+import {
+    useSourceCaptureStore_setSourceCaptureDefinition,
+    useSourceCaptureStore_sourceCaptureDefinition,
+} from 'stores/SourceCapture/hooks';
 
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { SourceCaptureDef } from 'types';
 
 function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
     const settingsCacheHack = useRef<SourceCaptureDef | null>(null);
 
-    const [
-        sourceCapture,
-        deltaUpdates,
-        targetSchema,
-        setSourceCapture,
-        setDeltaUpdates,
-        setTargetSchema,
-    ] = useSourceCaptureStore((state) => [
-        state.sourceCapture,
-        state.deltaUpdates,
-        state.targetSchema,
-        state.setSourceCapture,
-        state.setDeltaUpdates,
-        state.setTargetSchema,
-    ]);
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
+    const setSourceCaptureDefinition =
+        useSourceCaptureStore_setSourceCaptureDefinition();
 
     const close = async () => {
         if (settingsCacheHack.current) {
-            setSourceCapture(
-                settingsCacheHack.current.capture.length > 0
-                    ? settingsCacheHack.current.capture
-                    : null
-            );
-            setDeltaUpdates(settingsCacheHack.current.deltaUpdates);
-            setTargetSchema(settingsCacheHack.current.targetSchema);
+            if (settingsCacheHack.current.capture.length > 0) {
+                setSourceCaptureDefinition(settingsCacheHack.current);
+            } else {
+                setSourceCaptureDefinition(null);
+            }
         }
 
         toggle(false);
     };
 
     useMount(() => {
-        settingsCacheHack.current = {
-            capture: sourceCapture ?? '',
-            deltaUpdates,
-            targetSchema,
-        };
+        settingsCacheHack.current = sourceCaptureDefinition;
     });
 
     return (

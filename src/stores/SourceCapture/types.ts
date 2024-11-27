@@ -9,10 +9,10 @@ export interface SourceCaptureState {
         value: SourceCaptureState['prefilledCapture']
     ) => void;
 
-    deltaUpdates: boolean;
+    deltaUpdates: boolean | undefined;
     setDeltaUpdates: (value: SourceCaptureState['deltaUpdates']) => void;
 
-    targetSchema: TargetSchemas;
+    targetSchema: TargetSchemas | undefined;
     setTargetSchema: (value: SourceCaptureState['targetSchema']) => void;
 
     saving: boolean;

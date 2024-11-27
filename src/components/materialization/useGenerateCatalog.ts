@@ -41,11 +41,9 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { SourceCaptureDef } from 'types';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
-import { useShallow } from 'zustand/react/shallow';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -110,19 +108,7 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const sourceCapture = useSourceCaptureStore(
-        useShallow((state): SourceCaptureDef | null => {
-            if (state.sourceCapture) {
-                return {
-                    capture: state.sourceCapture,
-                    deltaUpdates: state.deltaUpdates,
-                    targetSchema: state.targetSchema,
-                };
-            }
-
-            return null;
-        })
-    );
+    const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)

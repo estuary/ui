@@ -42,7 +42,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         );
         const settingsUpdated =
             deltaUpdates !== existingSourceCapture?.deltaUpdates ||
-            targetSchema !== existingSourceCapture.targetSchema;
+            targetSchema !== existingSourceCapture?.targetSchema;
 
         // Only update draft is something in the settings changed
         if (nameUpdated || settingsUpdated) {
@@ -53,16 +53,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             };
 
             // Check the name since the optional settings may
-            //  have changed but not the name
+            //  have changed but not the name. Also, we have
+            //  already saved the new optional settings in the
+            //  store so we do not need to update that here
             if (nameUpdated) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
-                    prefillResourceConfigs(
-                        selectedRow.writes_to,
-                        true,
-                        updatedSourceCapture
-                    );
+                    prefillResourceConfigs(selectedRow.writes_to, true);
                 }
             }
 
