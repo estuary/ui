@@ -24,11 +24,6 @@ function SelectCapture() {
     const prefilledOnce = useRef(false);
     const defaultedOnce = useRef(false);
 
-    const [open, setOpen] = useState<boolean>(false);
-    const toggleDialog = (args: any) => {
-        setOpen(typeof args === 'boolean' ? args : !open);
-    };
-
     const sourceCaptureDefinition =
         useSourceCaptureStore_sourceCaptureDefinition();
     const setSourceCaptureDefinition =
@@ -37,6 +32,20 @@ function SelectCapture() {
     const [prefilledCapture] = useSourceCaptureStore((state) => [
         state.prefilledCapture,
     ]);
+
+    const [open, setOpen] = useState<boolean>(false);
+    const toggleDialog = (args: any) => {
+        // On create default settings when going to set the
+        //  source capture for the first time
+        if (!isEdit && !sourceCaptureDefinition) {
+            setSourceCaptureDefinition({
+                capture: '',
+                deltaUpdates: false,
+                targetSchema: 'fromSourceName',
+            });
+        }
+        setOpen(typeof args === 'boolean' ? args : !open);
+    };
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 

@@ -44,7 +44,12 @@ export const useSourceCaptureStore_setSourceCaptureDefinition = () => {
                 return;
             }
 
-            setSourceCapture(newVal.capture);
+            // Mainly here to handle defaulting this different on
+            //  edit and create
+            if (newVal.capture.length > 0) {
+                setSourceCapture(newVal.capture);
+            }
+
             setDeltaUpdates(newVal.deltaUpdates);
             setTargetSchema(newVal.targetSchema);
         },
