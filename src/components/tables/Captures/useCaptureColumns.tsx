@@ -17,7 +17,7 @@ const defaultColumns: ColumnProps[] = [
             return (
                 <StatsHeader
                     key={`captures-statsHeader-${index}`}
-                    headerSuffix="data.written"
+                    firstHeaderSuffix="data.written"
                     selectableTableStoreName={selectableTableStoreName}
                 />
             );
