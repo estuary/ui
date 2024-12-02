@@ -3,6 +3,7 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
@@ -15,13 +16,12 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
-        useSourceCaptureStore((state) => [
-            state.sourceCapture,
-            state.setSourceCapture,
-            state.deltaUpdates,
-            state.targetSchema,
-        ]);
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
+
+    const [setSourceCapture] = useSourceCaptureStore((state) => [
+        state.setSourceCapture,
+    ]);
 
     const { existingSourceCapture, updateDraft } = useSourceCapture();
 
@@ -38,18 +38,21 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         //  what name is used in the call to update the source capture setting
         const nameUpdated = Boolean(
             updatedSourceCaptureName &&
-                sourceCapture !== updatedSourceCaptureName
+                sourceCaptureDefinition?.capture !== updatedSourceCaptureName
         );
         const settingsUpdated =
-            deltaUpdates !== existingSourceCapture?.deltaUpdates ||
-            targetSchema !== existingSourceCapture?.targetSchema;
+            sourceCaptureDefinition?.deltaUpdates !==
+                existingSourceCapture?.deltaUpdates ||
+            sourceCaptureDefinition?.targetSchema !==
+                existingSourceCapture?.targetSchema;
 
         // Only update draft is something in the settings changed
         if (nameUpdated || settingsUpdated) {
             const updatedSourceCapture = {
-                capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
-                deltaUpdates,
-                targetSchema,
+                ...sourceCaptureDefinition,
+                capture: nameUpdated
+                    ? updatedSourceCaptureName
+                    : sourceCaptureDefinition?.capture,
             };
 
             // Check the name since the optional settings may
