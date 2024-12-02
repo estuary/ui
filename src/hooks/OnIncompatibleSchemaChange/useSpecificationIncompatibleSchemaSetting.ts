@@ -1,10 +1,10 @@
 import { modifyDraftSpec } from 'api/draftSpecs';
-import { AutoCompleteOption } from 'components/editor/Bindings/OnIncompatibleSchemaChange/types';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
+import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
 import { omit } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';

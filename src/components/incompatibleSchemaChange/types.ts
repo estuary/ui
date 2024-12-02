@@ -1,5 +1,10 @@
 import { choices } from './shared';
 
+export interface BaseFormProps {
+    currentSetting: string;
+    updateDraftedSetting: Function;
+}
+
 export interface AutoCompleteOption {
     description: string;
     label: string;
