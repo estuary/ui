@@ -1,7 +1,5 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
 import { SourceCaptureDef } from 'types';
-import { Nullable } from 'types/utils';
 import { specContainsDerivation } from 'utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
@@ -65,10 +63,3 @@ export const addOrRemoveSourceCapture = (
 
     return draftSpec;
 };
-
-// Just ALWAYS call the get function so the calling function
-//  does not need to worry about that;
-export const hasSourceCaptureChanged = (
-    existingSourceCapture: Nullable<SourceCaptureDef> | null | undefined,
-    sourceCapture: Nullable<SourceCaptureDef> | null | undefined
-) => !isEqual(existingSourceCapture, sourceCapture);
