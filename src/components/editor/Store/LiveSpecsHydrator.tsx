@@ -7,6 +7,8 @@ import { useEntityType } from 'context/EntityContext';
 import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
 import EntityNotFound from 'pages/error/EntityNotFound';
 import { useEffect } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -32,6 +34,10 @@ function LiveSpecsHydrator({
 
     useEffect(() => {
         if (hasLength(liveSpecs)) {
+            logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                newValue: liveSpecs[0].last_pub_id,
+                component: 'liveSpecHydrator',
+            });
             setSpecs(liveSpecs);
             setId(liveSpecs[0].last_pub_id);
         }

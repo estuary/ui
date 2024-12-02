@@ -23,6 +23,7 @@ export enum CustomEvents {
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
     DIRECTIVE_GUARD_STATE = 'Directive:Guard:State',
+    DRAFT_ID_SET = 'Draft_Id_Set',
     ENTITY_SAVE = 'Entity_Save',
     ENTITY_NOT_FOUND = 'Entity_Not_Found',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',

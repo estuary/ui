@@ -157,6 +157,7 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.publish.title': `Publish data flow reset`,
 
     'resetDataFlow.errors.publishFailed': `Publishing failed.`,
+    'resetDataFlow.errors.missingDraftId': `Cannot find draft to update.`,
     'resetDataFlow.errors.missingSession': `Cannot find user session.`,
     'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
     'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,

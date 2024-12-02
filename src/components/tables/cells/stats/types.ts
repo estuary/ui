@@ -1,3 +1,5 @@
+import { SelectTableStoreNames } from 'stores/names';
+
 export interface BaseStatsProps {
     failed?: boolean;
     read?: boolean;
@@ -7,4 +9,12 @@ export interface BaseStatsProps {
 export interface StatsCellProps extends BaseStatsProps {
     formatter: (val: number) => string;
     statType: 'bytes' | 'docs';
+}
+
+export interface StatsHeaderProps {
+    selectableTableStoreName: SelectTableStoreNames;
+    header?: string;
+    hideFilter?: boolean;
+    firstHeaderSuffix?: 'data.written' | 'data.read' | 'data.in' | 'data.out';
+    secondHeaderSuffix?: 'data.written' | 'data.read' | 'data.in' | 'data.out';
 }
