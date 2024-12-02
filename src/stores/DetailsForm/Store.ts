@@ -23,8 +23,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import {
-    getDataPlaneScope,
-    parseDataPlaneName,
+    formatDataPlaneOption,
     PUBLIC_DATA_PLANE_PREFIX,
 } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
@@ -317,21 +316,7 @@ export const getInitialState = (
                 dataPlaneResponse.data.length > 0
             ) {
                 dataPlaneOptions = dataPlaneResponse.data.map(
-                    ({ data_plane_name, id, reactor_address }) => {
-                        const scope = getDataPlaneScope(data_plane_name);
-
-                        const dataPlaneName = parseDataPlaneName(
-                            data_plane_name,
-                            scope
-                        );
-
-                        return {
-                            dataPlaneName,
-                            id,
-                            reactorAddress: reactor_address,
-                            scope,
-                        };
-                    }
+                    formatDataPlaneOption
                 );
 
                 get().setDataPlaneOptions(dataPlaneOptions);

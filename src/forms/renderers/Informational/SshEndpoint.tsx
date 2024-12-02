@@ -1,10 +1,19 @@
 import { Box } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 function SshEndpointInfo() {
     const intl = useIntl();
+
+    const ipList = useMemo(() => {
+        // Check if private data plane has IPs and use 'em
+
+        return intl.formatMessage({
+            id: 'informational.sshEndpoint.ip',
+        });
+    }, [intl]);
 
     return (
         <Box
@@ -25,11 +34,7 @@ function SshEndpointInfo() {
                         minWidth: 'fit-content',
                     }}
                 >
-                    <SingleLineCode
-                        value={intl.formatMessage({
-                            id: 'informational.sshEndpoint.ip',
-                        })}
-                    />
+                    <SingleLineCode value={ipList} />
                 </Box>
             </AlertBox>
         </Box>

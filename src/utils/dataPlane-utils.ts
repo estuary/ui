@@ -1,4 +1,5 @@
 import { Session } from '@supabase/supabase-js';
+import { BaseDataPlaneQuery } from 'api/dataPlanes';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
     ProtocolLabelSelector,
@@ -238,6 +239,23 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
         : whole;
 
     return formattedName.trim();
+};
+
+export const formatDataPlaneOption = ({
+    data_plane_name,
+    id,
+    reactor_address,
+}: BaseDataPlaneQuery) => {
+    const scope = getDataPlaneScope(data_plane_name);
+
+    const dataPlaneName = parseDataPlaneName(data_plane_name, scope);
+
+    return {
+        dataPlaneName,
+        id,
+        reactorAddress: reactor_address,
+        scope,
+    };
 };
 
 // We increment the read window by this many bytes every time we get back
