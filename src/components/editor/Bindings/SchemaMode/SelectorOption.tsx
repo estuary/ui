@@ -4,8 +4,6 @@ import { SelectorOptionProps } from './types';
 function SelectorOption({ option }: SelectorOptionProps) {
     const { description, label } = option;
 
-    console.log('SelectorOption', option);
-
     return (
         <Stack component="span" spacing={1}>
             <Typography component="span">{label}</Typography>
