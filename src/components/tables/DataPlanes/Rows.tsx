@@ -3,6 +3,7 @@ import { BaseDataPlaneQuery } from 'api/dataPlanes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import DataPlane from 'components/shared/Entity/DataPlane';
 import { getEntityTableRowSx } from 'context/Theme';
+import { useIntl } from 'react-intl';
 import {
     formatDataPlaneName,
     formatDataPlaneOption,
@@ -17,6 +18,7 @@ interface RowProps {
 }
 
 function Row({ row }: RowProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const dataPlaneOption = formatDataPlaneOption(row);
@@ -44,7 +46,9 @@ function Row({ row }: RowProps) {
                 {row.ssh_subnets ? (
                     <SingleLineCode value={row.ssh_subnets.join(', ')} />
                 ) : (
-                    '-'
+                    intl.formatMessage({
+                        id: 'admin.dataPlanes.table.columns.ips.missing',
+                    })
                 )}
             </TableCell>
         </TableRow>

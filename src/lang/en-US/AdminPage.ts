@@ -127,6 +127,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.table.columns.name': `Name`,
     'admin.dataPlanes.table.columns.reactor': `Reactor Address`,
     'admin.dataPlanes.table.columns.ips': `IP Blocks`,
+    'admin.dataPlanes.table.columns.ips.missing': `None configured`,
     'admin.dataPlanes.table.noContent.header': `No private data planes found`,
     'admin.dataPlanes.table.noContent.message': `To being configuring a private data please contact support.`,
     'admin.dataPlanes.table.filterLabel': `Filter by Prefix or Email`,
