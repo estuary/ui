@@ -12,6 +12,10 @@ import {
 import { SourceCaptureDef } from 'types';
 
 function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
+    // This is here so that we can switch settings back to how they originally were.
+    //  Since the Source Capture modal has a 'cancel' button we need to allow the user
+    //  to change the optional settings and then click cancel and not change anything
+    //  on their draft.
     const settingsCacheHack = useRef<SourceCaptureDef | null>(null);
 
     const sourceCaptureDefinition =
