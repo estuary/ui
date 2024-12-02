@@ -1,12 +1,12 @@
 import { Box, Stack, useTheme } from '@mui/material';
 import { Check, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { SourceCaptureOptionInfoProps } from './types';
+import { SourceCaptureChipOptionProps } from './types';
 
-function SourceCaptureOptionInfo({
+function SourceCaptureChipOption({
     enabled,
     messageKey,
-}: SourceCaptureOptionInfoProps) {
+}: SourceCaptureChipOptionProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -43,4 +43,4 @@ function SourceCaptureOptionInfo({
     );
 }
 
-export default SourceCaptureOptionInfo;
+export default SourceCaptureChipOption;

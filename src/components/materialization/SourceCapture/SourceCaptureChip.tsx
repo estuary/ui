@@ -1,12 +1,11 @@
 import { Box, Chip, Stack } from '@mui/material';
 import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
-import SourceCaptureOptionInfo from './SourceCaptureOptionInfo';
+import SourceCaptureChipOptionalSettings from './SourceCaptureChipOptionalSettings';
 
 function SourceCaptureChip() {
     const intl = useIntl();
@@ -18,14 +17,6 @@ function SourceCaptureChip() {
         useSourceCaptureStore_sourceCaptureDefinition();
 
     const [resetState] = useSourceCaptureStore((state) => [state.resetState]);
-
-    const [
-        sourceCaptureDeltaUpdatesSupported,
-        sourceCaptureTargetSchemaSupported,
-    ] = useBindingStore((state) => [
-        state.sourceCaptureDeltaUpdatesSupported,
-        state.sourceCaptureTargetSchemaSupported,
-    ]);
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
@@ -49,26 +40,7 @@ function SourceCaptureChip() {
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
-                    {(sourceCaptureDeltaUpdatesSupported ||
-                        sourceCaptureTargetSchemaSupported) &&
-                    sourceCaptureDefinition?.capture ? (
-                        <>
-                            <SourceCaptureOptionInfo
-                                enabled={
-                                    sourceCaptureDefinition.targetSchema ===
-                                    'fromSourceName'
-                                }
-                                messageKey="workflows.sourceCapture.optionalSettings.targetSchema.chip"
-                            />
-
-                            <SourceCaptureOptionInfo
-                                enabled={Boolean(
-                                    sourceCaptureDefinition.deltaUpdates
-                                )}
-                                messageKey="workflows.sourceCapture.optionalSettings.deltaUpdates.chip"
-                            />
-                        </>
-                    ) : null}
+                    <SourceCaptureChipOptionalSettings />
                 </Stack>
             }
             sx={{

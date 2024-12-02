@@ -1,4 +1,4 @@
-export interface SourceCaptureOptionInfoProps {
+export interface SourceCaptureChipOptionProps {
     enabled: boolean;
     messageKey: string;
 }
