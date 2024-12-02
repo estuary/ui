@@ -114,6 +114,8 @@ export function createJSONFormDefaults(
     return { data, errors };
 }
 
+// TODO (web flow wasm) This should be fetched with WASM code
+//  waiting on https://github.com/estuary/flow/issues/1760
 export interface ResourceConfigPointers {
     [Annotations.defaultResourceConfigName]?: boolean;
     [Annotations.targetSchema]?: boolean;
