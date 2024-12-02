@@ -1,9 +1,12 @@
 import { FormControl, FormControlLabel, Switch } from '@mui/material';
 import { useIntl } from 'react-intl';
+import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 function SchemaMode() {
     const intl = useIntl();
+
+    const formActive = useFormStateStore_isActive();
 
     const [targetSchema, setTargetSchema] = useSourceCaptureStore((state) => [
         state.targetSchema,
@@ -18,7 +21,7 @@ function SchemaMode() {
                         size="small"
                         value={targetSchema}
                         checked={targetSchema === 'fromSourceName'}
-                        // disabled={readOnly ?? formActive}
+                        disabled={formActive}
                         onChange={(event, checked) => {
                             setTargetSchema(
                                 checked ? 'fromSourceName' : 'leaveEmpty'
