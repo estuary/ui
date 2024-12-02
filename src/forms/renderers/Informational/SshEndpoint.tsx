@@ -3,17 +3,25 @@ import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 
 function SshEndpointInfo() {
     const intl = useIntl();
 
+    const sshSubnets = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.sshSubnets
+    );
+
     const ipList = useMemo(() => {
         // Check if private data plane has IPs and use 'em
+        if (sshSubnets && sshSubnets.length > 0) {
+            return sshSubnets.join(', ');
+        }
 
         return intl.formatMessage({
             id: 'informational.sshEndpoint.ip',
         });
-    }, [intl]);
+    }, [intl, sshSubnets]);
 
     return (
         <Box

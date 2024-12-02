@@ -245,6 +245,7 @@ export const formatDataPlaneOption = ({
     data_plane_name,
     id,
     reactor_address,
+    ssh_subnets,
 }: BaseDataPlaneQuery) => {
     const scope = getDataPlaneScope(data_plane_name);
 
@@ -254,6 +255,7 @@ export const formatDataPlaneOption = ({
         dataPlaneName,
         id,
         reactorAddress: reactor_address,
+        sshSubnets: ssh_subnets,
         scope,
     };
 };

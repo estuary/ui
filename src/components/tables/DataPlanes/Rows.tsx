@@ -21,8 +21,6 @@ function Row({ row }: RowProps) {
 
     const dataPlaneOption = formatDataPlaneOption(row);
 
-    console.log('row', dataPlaneOption.dataPlaneName);
-
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TableCell>
