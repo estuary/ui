@@ -4,6 +4,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { formatSshSubnets } from 'utils/dataPlane-utils';
 
 function SshEndpointInfo() {
     const intl = useIntl();
@@ -15,7 +16,7 @@ function SshEndpointInfo() {
     const ipList = useMemo(() => {
         // Check if private data plane has IPs and use 'em
         if (sshSubnets && sshSubnets.length > 0) {
-            return sshSubnets.join(', ');
+            return sshSubnets.map(formatSshSubnets).join(', ');
         }
 
         return intl.formatMessage({

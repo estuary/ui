@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import {
     formatDataPlaneName,
     formatDataPlaneOption,
+    formatSshSubnets,
 } from 'utils/dataPlane-utils';
 
 interface RowsProps {
@@ -44,7 +45,9 @@ function Row({ row }: RowProps) {
 
             <TableCell>
                 {row.ssh_subnets ? (
-                    <SingleLineCode value={row.ssh_subnets.join(', ')} />
+                    <SingleLineCode
+                        value={row.ssh_subnets.map(formatSshSubnets).join(', ')}
+                    />
                 ) : (
                     intl.formatMessage({
                         id: 'admin.dataPlanes.table.columns.ips.missing',
