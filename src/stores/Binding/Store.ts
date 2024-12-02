@@ -545,8 +545,10 @@ const getInitialState = (
                         collectionName
                     );
 
-                    // TODO (source capture)
-                    // Will want to merge / update / something with WASM here into the defaultConfig.data
+                    // TODO (web flow wasm - source capture)
+                    //  Will want to merge / update / something with WASM here into the defaultConfig.data
+                    //  once we add the ability in WASM AND we wire up the ability for a user to make
+                    //  mass changes to their binding settings here
 
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
@@ -912,16 +914,13 @@ const getInitialState = (
 
                 state.resourceSchema = resolved;
 
-                // TODO (source capture) need to decide how we'l figure this out
-                //  this needs to look through the ENTIRE schema... but we also
-                //  do that when we generate the UI Schema... but that does not
-                //  normally set stuff in a store. However, it does return array of
-                //  properties.
-                //  Might not be horrible to run through the objects twice
-
-                // TODO (source capture) new options enable here
+                // TODO (web flow wasm - source capture - possible perf improvement)
+                //  Us calling `getResourceConfigPointers` here means we end up going
+                //   through the schema multiple times. Once here and twice when we go through
+                //   it to generate a UI schema. That does NOT set anything in a store and probably
+                //   should never set anything in a store directly.
+                //  Might not be a huge deal to do this twice but something to think about.
                 const pointers = getResourceConfigPointers(resolved);
-
                 state.sourceCaptureDeltaUpdatesSupported = Boolean(
                     pointers['x-delta-updates']
                 );
