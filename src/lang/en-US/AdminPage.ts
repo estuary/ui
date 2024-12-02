@@ -123,6 +123,10 @@ export const AdminPage: Record<string, string> = {
 
     'admin.dataPlanes.header': `Data Planes`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
+    'admin.dataPlanes.table.columns.scope': `Scope`,
+    'admin.dataPlanes.table.columns.name': `Name`,
+    'admin.dataPlanes.table.columns.reactor': `Reactor Address`,
+    'admin.dataPlanes.table.columns.ips': `IP Blocks`,
     'admin.dataPlanes.table.noContent.header': `No data planes found`,
     'admin.dataPlanes.table.noContent.message': `...`,
     'admin.dataPlanes.table.filterLabel': `Filter by Prefix or Email`,

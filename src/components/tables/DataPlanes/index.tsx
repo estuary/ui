@@ -11,19 +11,19 @@ import Rows from './Rows';
 const columns: TableColumns[] = [
     {
         field: null,
-        headerIntlKey: 'scope',
-    },
-    {
-        field: 'data_plane_name',
-        headerIntlKey: 'data plane name',
-    },
-    {
-        field: 'reactor_address',
-        headerIntlKey: 'reactor address',
+        headerIntlKey: 'admin.dataPlanes.table.columns.scope',
     },
     {
         field: null,
-        headerIntlKey: 'ip blocks',
+        headerIntlKey: 'admin.dataPlanes.table.columns.name',
+    },
+    {
+        field: 'reactor_address',
+        headerIntlKey: 'admin.dataPlanes.table.columns.reactor',
+    },
+    {
+        field: null,
+        headerIntlKey: 'admin.dataPlanes.table.columns.ips',
     },
 ];
 
