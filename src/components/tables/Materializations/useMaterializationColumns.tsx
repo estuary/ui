@@ -22,7 +22,7 @@ const defaultColumns: ColumnProps[] = [
             return (
                 <StatsHeader
                     key={`materializations-statsHeader-${index}`}
-                    headerSuffix="data.read"
+                    firstHeaderSuffix="data.read"
                     selectableTableStoreName={selectableTableStoreName}
                 />
             );
