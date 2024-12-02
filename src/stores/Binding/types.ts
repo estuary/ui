@@ -127,7 +127,6 @@ export interface BindingState
     prefillResourceConfigs: (
         targetCollections: string[],
         disableOmit?: boolean
-        // sourceCapture?: SourceCaptureDef
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and
