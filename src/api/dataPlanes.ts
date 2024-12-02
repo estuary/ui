@@ -1,7 +1,9 @@
 import { supabaseClient } from 'context/GlobalProviders';
 import {
+    defaultTableFilter,
     handleFailure,
     handleSuccess,
+    SortingProps,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
@@ -10,19 +12,37 @@ export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
     reactor_address: string;
+    ssh_subnets: string[] | null;
 }
+
+const baseDataPlaneSelect =
+    'data_plane_name,id,reactor_address,ssh_subnets:config->ssh_subnets, config';
 
 const getDataPlaneOptions = async () => {
     const data = await supabaseRetry(
         () =>
             supabaseClient
                 .from(TABLES.DATA_PLANES)
-                .select('data_plane_name,id,reactor_address')
+                .select(baseDataPlaneSelect)
                 .order('data_plane_name'),
         'getDataPlaneOptions'
     ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
 
     return data;
+};
+
+const getDataPlanesForTable = (
+    pagination: any,
+    searchQuery: any,
+    sorting: SortingProps<any>[]
+) => {
+    return defaultTableFilter<BaseDataPlaneQuery>(
+        supabaseClient.from(TABLES.DATA_PLANES).select(baseDataPlaneSelect),
+        ['data_plane_name', 'reactor_address'],
+        searchQuery,
+        sorting,
+        pagination
+    );
 };
 
 // TODO (data-planes): Keep an eye on whether this function gets used in the future.
@@ -32,7 +52,7 @@ const getDataPlaneOptions = async () => {
 //         () =>
 //             supabaseClient
 //                 .from(TABLES.DATA_PLANES)
-//                 .select('data_plane_name,id')
+//                 .select('data_plane_name,id,reactor_address,cidr_blocks')
 //                 .eq('id', dataPlaneId)
 //                 .limit(1),
 //         'getDataPlaneOptions'
@@ -41,4 +61,4 @@ const getDataPlaneOptions = async () => {
 //     return data;
 // };
 
-export { getDataPlaneOptions };
+export { getDataPlanesForTable, getDataPlaneOptions };
