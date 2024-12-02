@@ -71,9 +71,6 @@ function SelectCapture() {
         [draftSpecs, isEdit]
     );
 
-    // TODO (source capture optional settings)
-    // Need to handle checking isEdit in here so we don't set the optional
-    //  settings incorrectly
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
         //  accidently override their existing setting without noticing
