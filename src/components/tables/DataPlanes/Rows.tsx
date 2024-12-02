@@ -25,7 +25,6 @@ function Row({ row }: RowProps) {
 
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
-            <TableCell>{dataPlaneOption.scope}</TableCell>
             <TableCell>
                 {Boolean(dataPlaneOption.dataPlaneName) ? (
                     <DataPlane
@@ -33,7 +32,8 @@ function Row({ row }: RowProps) {
                         formattedSuffix={formatDataPlaneName(
                             dataPlaneOption.dataPlaneName
                         )}
-                        logoSize={20}
+                        hidePrefix
+                        logoSize={30}
                         scope={dataPlaneOption.scope}
                     />
                 ) : null}

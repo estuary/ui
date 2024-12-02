@@ -32,12 +32,16 @@ const getDataPlaneOptions = async () => {
 };
 
 const getDataPlanesForTable = (
+    catalogPrefix: string,
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
     return defaultTableFilter<BaseDataPlaneQuery>(
-        supabaseClient.from(TABLES.DATA_PLANES).select(baseDataPlaneSelect),
+        supabaseClient
+            .from(TABLES.DATA_PLANES)
+            .select(baseDataPlaneSelect)
+            .ilike('data_plane_name', `ops/dp/private/${catalogPrefix}%`),
         ['data_plane_name', 'reactor_address'],
         searchQuery,
         sorting,

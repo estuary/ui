@@ -12,7 +12,7 @@ function DataPlanes() {
                 variant="h6"
                 sx={{ m: 2, alignItems: 'center' }}
             >
-                {intl.formatMessage({ id: 'admin.dataPlanes.header' })}
+                {intl.formatMessage({ id: 'admin.dataPlanes.private.header' })}
             </Typography>
 
             <DataPlanesTable />

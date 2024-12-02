@@ -11,10 +11,6 @@ import Rows from './Rows';
 const columns: TableColumns[] = [
     {
         field: null,
-        headerIntlKey: 'admin.dataPlanes.table.columns.scope',
-    },
-    {
-        field: null,
         headerIntlKey: 'admin.dataPlanes.table.columns.name',
     },
     {
@@ -47,7 +43,7 @@ function DataPlanesTable() {
 
     const query = useMemo(() => {
         return selectedTenant
-            ? getDataPlanesForTable(pagination, searchQuery, [
+            ? getDataPlanesForTable(selectedTenant, pagination, searchQuery, [
                   {
                       col: columnToSort,
                       direction: sortDirection,
@@ -84,8 +80,6 @@ function DataPlanesTable() {
                 hideFilter
                 filterLabel="admin.dataPlanes.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
-                // showToolbar
-                // toolbar={<AlertGenerateButton />}
                 tableAriaLabelKey="admin.dataPlanes.table.aria.label"
             />
         </TableHydrator>

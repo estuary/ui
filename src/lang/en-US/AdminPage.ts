@@ -121,14 +121,14 @@ export const AdminPage: Record<string, string> = {
     'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'admin.alerts.table.label.alertMethod': `Notification Method`,
 
-    'admin.dataPlanes.header': `Data Planes`,
+    'admin.dataPlanes.private.header': `Private Data Planes`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
     'admin.dataPlanes.table.columns.scope': `Scope`,
     'admin.dataPlanes.table.columns.name': `Name`,
     'admin.dataPlanes.table.columns.reactor': `Reactor Address`,
     'admin.dataPlanes.table.columns.ips': `IP Blocks`,
-    'admin.dataPlanes.table.noContent.header': `No data planes found`,
-    'admin.dataPlanes.table.noContent.message': `...`,
+    'admin.dataPlanes.table.noContent.header': `No private data planes found`,
+    'admin.dataPlanes.table.noContent.message': `To being configuring a private data please contact support.`,
     'admin.dataPlanes.table.filterLabel': `Filter by Prefix or Email`,
 
     'admin.tabs.users': `Account Access`,
