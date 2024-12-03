@@ -41,8 +41,9 @@ function Row({ row }: RowProps) {
             <TableCell>
                 <SingleLineCode value={dataPlaneOption.reactorAddress} />
             </TableCell>
-
-            <TableCell>{cidrBlocks(row.cidr_blocks)}</TableCell>
+            <TableCell>
+                <SingleLineCode value={cidrBlocks(row.cidr_blocks)} />
+            </TableCell>
         </TableRow>
     );
 }
