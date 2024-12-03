@@ -1,4 +1,4 @@
-import { TableCell, TableRow, useTheme } from '@mui/material';
+import { Box, TableCell, TableRow, useTheme } from '@mui/material';
 import { BaseDataPlaneQuery } from 'api/dataPlanes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import DataPlane from 'components/shared/Entity/DataPlane';
@@ -27,15 +27,17 @@ function Row({ row }: RowProps) {
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TableCell>
                 {Boolean(dataPlaneOption.dataPlaneName) ? (
-                    <DataPlane
-                        dataPlaneName={dataPlaneOption.dataPlaneName}
-                        formattedSuffix={formatDataPlaneName(
-                            dataPlaneOption.dataPlaneName
-                        )}
-                        hidePrefix
-                        logoSize={30}
-                        scope={dataPlaneOption.scope}
-                    />
+                    <Box sx={{ minWidth: 'fit-content', whiteSpace: 'nowrap' }}>
+                        <DataPlane
+                            dataPlaneName={dataPlaneOption.dataPlaneName}
+                            formattedSuffix={formatDataPlaneName(
+                                dataPlaneOption.dataPlaneName
+                            )}
+                            hidePrefix
+                            logoSize={30}
+                            scope={dataPlaneOption.scope}
+                        />
+                    </Box>
                 ) : null}
             </TableCell>
             <TableCell>
