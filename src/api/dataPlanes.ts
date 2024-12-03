@@ -57,7 +57,7 @@ const getDataPlanesForTable = (
 //         () =>
 //             supabaseClient
 //                 .from(TABLES.DATA_PLANES)
-//                 .select('data_plane_name,id,reactor_address,cidr_blocks')
+//                 .select(QUERY)
 //                 .eq('id', dataPlaneId)
 //                 .limit(1),
 //         'getDataPlaneOptions'
