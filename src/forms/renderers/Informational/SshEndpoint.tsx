@@ -8,20 +8,20 @@ import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 function SshEndpointInfo() {
     const intl = useIntl();
 
-    const sshSubnets = useDetailsFormStore(
-        (state) => state.details.data.dataPlane?.sshSubnets
+    const cidrBlocks = useDetailsFormStore(
+        (state) => state.details.data.dataPlane?.cidrBlocks
     );
 
     const ipList = useMemo(() => {
         // Check if private data plane has IPs and use 'em
-        if (sshSubnets && sshSubnets.length > 0) {
-            return sshSubnets.join(', ');
+        if (cidrBlocks && cidrBlocks.length > 0) {
+            return cidrBlocks.join(', ');
         }
 
         return intl.formatMessage({
             id: 'informational.sshEndpoint.ip',
         });
-    }, [intl, sshSubnets]);
+    }, [intl, cidrBlocks]);
 
     return (
         <Box

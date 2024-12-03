@@ -16,7 +16,7 @@ export interface DataPlaneOption {
     id: string;
     reactorAddress: string;
     scope: 'public' | 'private';
-    sshSubnets?: string[] | null;
+    cidrBlocks?: string[] | null;
 }
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {

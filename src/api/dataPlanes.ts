@@ -12,15 +12,10 @@ export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
     reactor_address: string;
-    ssh_subnets: string[] | null;
+    cidr_blocks: string[] | null;
 }
 
-const COLUMNS = [
-    'data_plane_name',
-    'id',
-    'reactor_address',
-    'ssh_subnets:config->ssh_subnets',
-];
+const COLUMNS = ['data_plane_name', 'id', 'reactor_address', 'cidr_blocks'];
 
 const QUERY = COLUMNS.join(',');
 

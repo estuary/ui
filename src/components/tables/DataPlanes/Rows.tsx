@@ -43,8 +43,8 @@ function Row({ row }: RowProps) {
             </TableCell>
 
             <TableCell>
-                {row.ssh_subnets && row.ssh_subnets.length > 0 ? (
-                    <SingleLineCode value={row.ssh_subnets.join(', ')} />
+                {row.cidr_blocks && row.cidr_blocks.length > 0 ? (
+                    <SingleLineCode value={row.cidr_blocks.join(', ')} />
                 ) : (
                     intl.formatMessage({
                         id: 'admin.dataPlanes.table.columns.ips.missing',

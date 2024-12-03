@@ -245,8 +245,8 @@ export const formatDataPlaneOption = ({
     data_plane_name,
     id,
     reactor_address,
-    ssh_subnets,
-}: BaseDataPlaneQuery) => {
+    cidr_blocks,
+}: BaseDataPlaneQuery): DataPlaneOption => {
     const scope = getDataPlaneScope(data_plane_name);
 
     const dataPlaneName = parseDataPlaneName(data_plane_name, scope);
@@ -255,7 +255,7 @@ export const formatDataPlaneOption = ({
         dataPlaneName,
         id,
         reactorAddress: reactor_address,
-        sshSubnets: ssh_subnets,
+        cidrBlocks: cidr_blocks,
         scope,
     };
 };
