@@ -130,7 +130,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.table.columns.ips.missing': `None configured`,
     'admin.dataPlanes.table.noContent.header': `No private data planes found`,
     'admin.dataPlanes.table.noContent.message': `To being configuring a private data please contact support.`,
-    'admin.dataPlanes.table.filterLabel': `Filter by Prefix or Email`,
+    'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.connectors': `Connectors`,

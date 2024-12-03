@@ -1,27 +1,18 @@
 import { Box } from '@mui/material';
 import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
-import { useMemo } from 'react';
+import useCidrBlocks from 'hooks/useCidrBlocks';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 
 function SshEndpointInfo() {
     const intl = useIntl();
 
-    const cidrBlocks = useDetailsFormStore(
+    const cidrBlocks = useCidrBlocks();
+
+    const dataPlaneCidrBlocks = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.cidrBlocks
     );
-
-    const ipList = useMemo(() => {
-        // Check if private data plane has IPs and use 'em
-        if (cidrBlocks && cidrBlocks.length > 0) {
-            return cidrBlocks.join(', ');
-        }
-
-        return intl.formatMessage({
-            id: 'informational.sshEndpoint.ip',
-        });
-    }, [intl, cidrBlocks]);
 
     return (
         <Box
@@ -42,7 +33,7 @@ function SshEndpointInfo() {
                         minWidth: 'fit-content',
                     }}
                 >
-                    <SingleLineCode value={ipList} />
+                    <SingleLineCode value={cidrBlocks(dataPlaneCidrBlocks)} />
                 </Box>
             </AlertBox>
         </Box>

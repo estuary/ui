@@ -5,25 +5,9 @@ import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns } from 'types';
+import Header from './Header';
 import Rows from './Rows';
-
-const columns: TableColumns[] = [
-    {
-        field: null,
-        headerIntlKey: 'admin.dataPlanes.table.columns.name',
-    },
-    {
-        field: 'reactor_address',
-        headerIntlKey: 'admin.dataPlanes.table.columns.reactor',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.dataPlanes.table.columns.ips',
-    },
-];
-
-const selectableTableStoreName = SelectTableStoreNames.DATA_PLANE;
+import { columns, selectableTableStoreName } from './shared';
 
 function DataPlanesTable() {
     const {
@@ -76,8 +60,7 @@ function DataPlanesTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header={null}
-                hideFilter
+                header={<Header />}
                 filterLabel="admin.dataPlanes.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 tableAriaLabelKey="admin.dataPlanes.table.aria.label"

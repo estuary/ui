@@ -3,7 +3,7 @@ import { BaseDataPlaneQuery } from 'api/dataPlanes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import DataPlane from 'components/shared/Entity/DataPlane';
 import { getEntityTableRowSx } from 'context/Theme';
-import { useIntl } from 'react-intl';
+import useCidrBlocks from 'hooks/useCidrBlocks';
 import {
     formatDataPlaneName,
     formatDataPlaneOption,
@@ -18,9 +18,9 @@ interface RowProps {
 }
 
 function Row({ row }: RowProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
+    const cidrBlocks = useCidrBlocks();
     const dataPlaneOption = formatDataPlaneOption(row);
 
     return (
@@ -42,15 +42,7 @@ function Row({ row }: RowProps) {
                 <SingleLineCode value={dataPlaneOption.reactorAddress} />
             </TableCell>
 
-            <TableCell>
-                {row.cidr_blocks && row.cidr_blocks.length > 0 ? (
-                    <SingleLineCode value={row.cidr_blocks.join(', ')} />
-                ) : (
-                    intl.formatMessage({
-                        id: 'admin.dataPlanes.table.columns.ips.missing',
-                    })
-                )}
-            </TableCell>
+            <TableCell>{cidrBlocks(row.cidr_blocks)}</TableCell>
         </TableRow>
     );
 }
