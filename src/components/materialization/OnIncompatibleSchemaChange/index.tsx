@@ -6,9 +6,9 @@ function OnIncompatibleSchemaChange() {
     const intl = useIntl();
 
     return (
-        <Box sx={{ mt: 3, mb: 5 }}>
+        <Box sx={{ mt: 3 }}>
             <Stack spacing={1} sx={{ mb: 1 }}>
-                <Typography variant="formSectionHeader">
+                <Typography style={{ fontWeight: 500 }}>
                     {intl.formatMessage({
                         id: 'incompatibleSchemaChange.header',
                     })}

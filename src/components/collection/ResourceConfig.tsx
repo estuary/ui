@@ -74,7 +74,7 @@ function ResourceConfig({
             </Box>
 
             {showBackfillButton || entityType === 'materialization' ? (
-                <BackfillSection isBinding>
+                <BackfillSection>
                     {showBackfillButton ? (
                         <Backfill
                             bindingIndex={draftedBindingIndex}
