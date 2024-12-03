@@ -15,15 +15,21 @@ export interface BaseDataPlaneQuery {
     ssh_subnets: string[] | null;
 }
 
-const baseDataPlaneSelect =
-    'data_plane_name,id,reactor_address,ssh_subnets:config->ssh_subnets, config';
+const COLUMNS = [
+    'data_plane_name',
+    'id',
+    'reactor_address',
+    'ssh_subnets:config->ssh_subnets',
+];
+
+const QUERY = COLUMNS.join(',');
 
 const getDataPlaneOptions = async () => {
     const data = await supabaseRetry(
         () =>
             supabaseClient
                 .from(TABLES.DATA_PLANES)
-                .select(baseDataPlaneSelect)
+                .select(QUERY)
                 .order('data_plane_name'),
         'getDataPlaneOptions'
     ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
@@ -40,7 +46,7 @@ const getDataPlanesForTable = (
     return defaultTableFilter<BaseDataPlaneQuery>(
         supabaseClient
             .from(TABLES.DATA_PLANES)
-            .select(baseDataPlaneSelect)
+            .select(QUERY)
             .ilike('data_plane_name', `ops/dp/private/${catalogPrefix}%`),
         ['data_plane_name', 'reactor_address'],
         searchQuery,
