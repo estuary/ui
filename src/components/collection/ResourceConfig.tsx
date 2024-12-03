@@ -55,7 +55,11 @@ function ResourceConfig({
 
     return (
         <>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography
+                component="div"
+                sx={{ mb: 2 }}
+                variant="formSectionHeader"
+            >
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
 
