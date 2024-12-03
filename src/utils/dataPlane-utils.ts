@@ -324,7 +324,3 @@ export const isHttp = (ep: Endpoint): boolean => {
 export const formatHttpUrl = (fullHostName: string): string => {
     return `https://${fullHostName}/`;
 };
-
-export const formatSshSubnets = (subnet: string) => {
-    return subnet.replaceAll('/32', '').replaceAll('/64', '');
-};
