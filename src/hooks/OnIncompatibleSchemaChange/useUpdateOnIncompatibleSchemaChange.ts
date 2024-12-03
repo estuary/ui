@@ -9,10 +9,8 @@ import { useEntityType } from 'context/EntityContext';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
-import { useBinding_bindings } from 'stores/Binding/hooks';
 import { BindingMetadata, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { getBindingIndex } from 'utils/workflow-utils';
 
 const updateSchema = (binding: any, newVal: any) => {
     if (newVal) {
@@ -26,9 +24,6 @@ function useUpdateOnIncompatibleSchemaChange() {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    // Binding Store
-    const bindings = useBinding_bindings();
-
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -41,11 +36,13 @@ function useUpdateOnIncompatibleSchemaChange() {
         ) => {
             const bindingMetadataExists = hasLength(bindingMetadata);
 
-            const invalidBindingIndex = bindingMetadataExists
-                ? bindingMetadata.findIndex(
-                      ({ bindingIndex }) => bindingIndex === -1
-                  )
-                : -1;
+            if (!bindingMetadataExists) {
+                return Promise.resolve();
+            }
+
+            const invalidBindingIndex = bindingMetadata.findIndex(
+                ({ bindingIndex }) => bindingIndex === -1
+            );
 
             if (
                 !draftId ||
@@ -53,55 +50,27 @@ function useUpdateOnIncompatibleSchemaChange() {
                 draftSpecs.length === 0 ||
                 invalidBindingIndex > -1
             ) {
-                // TODO (onschema) update message
-                const errorMessageId = bindingMetadataExists
-                    ? 'workflows.collectionSelector.manualBackfill.error.message.singleCollection'
-                    : 'workflows.collectionSelector.manualBackfill.error.message.allBindings';
-
-                const errorMessageValues = bindingMetadataExists
-                    ? {
-                          collection:
-                              bindingMetadata[invalidBindingIndex].collection,
-                      }
-                    : undefined;
-
                 return Promise.reject({
                     ...BASE_ERROR,
                     message: intl.formatMessage(
-                        { id: errorMessageId },
-                        errorMessageValues
+                        {
+                            id: 'incompatibleSchemaChange.error.bindingSettingUpdateFailed',
+                        },
+                        {
+                            collection:
+                                bindingMetadata[invalidBindingIndex].collection,
+                        }
                     ),
                 });
             }
 
             const spec: Schema = draftSpecs[0].spec;
 
-            if (bindingMetadataExists) {
-                bindingMetadata.forEach(({ bindingIndex }) => {
-                    if (bindingIndex > -1) {
-                        updateSchema(spec.bindings[bindingIndex], newVal);
-                    }
-                });
-            } else {
-                Object.entries(bindings).forEach(
-                    ([collection, bindingUUIDs]) => {
-                        bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
-                            const existingBindingIndex = getBindingIndex(
-                                spec.bindings,
-                                collection,
-                                iteratedIndex
-                            );
-
-                            if (existingBindingIndex > -1) {
-                                updateSchema(
-                                    spec.bindings[existingBindingIndex],
-                                    newVal
-                                );
-                            }
-                        });
-                    }
-                );
-            }
+            bindingMetadata.forEach(({ bindingIndex }) => {
+                if (bindingIndex > -1) {
+                    updateSchema(spec.bindings[bindingIndex], newVal);
+                }
+            });
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
@@ -115,7 +84,7 @@ function useUpdateOnIncompatibleSchemaChange() {
 
             return mutateDraftSpecs();
         },
-        [bindings, draftId, draftSpecs, entityType, intl, mutateDraftSpecs]
+        [draftId, draftSpecs, entityType, intl, mutateDraftSpecs]
     );
 
     return { updateOnIncompatibleSchemaChange };

@@ -6,6 +6,7 @@ import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
+import { StoreWithIncompatibleSchemaChange } from './slices/IncompatibleSchemaChange';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface BindingMetadata {
@@ -34,6 +35,7 @@ export interface ResourceConfigDictionary {
 
 export interface BindingState
     extends StoreWithHydration,
+        StoreWithIncompatibleSchemaChange,
         StoreWithFieldSelection,
         StoreWithTimeTravel {
     bindings: Bindings;

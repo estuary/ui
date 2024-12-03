@@ -49,6 +49,10 @@ import {
     getStoreWithFieldSelectionSettings,
 } from './slices/FieldSelection';
 import {
+    getInitialIncompatibleSchemaChangeData,
+    getStoreWithIncompatibleSchemaChangeSettings,
+} from './slices/IncompatibleSchemaChange';
+import {
     getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
@@ -350,6 +354,7 @@ const getInitialStoreData = () => ({
     ...getInitialBindingData(),
     ...getInitialFieldSelectionData(),
     ...getInitialHydrationData(),
+    ...getInitialIncompatibleSchemaChangeData(),
     ...getInitialMiscData(),
     ...getInitialTimeTravelData(),
 });
@@ -361,6 +366,7 @@ const getInitialState = (
     ...getInitialStoreData(),
     ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
+    ...getStoreWithIncompatibleSchemaChangeSettings(set),
     ...getStoreWithTimeTravelSettings(set),
 
     addEmptyBindings: (data, rehydrating) => {

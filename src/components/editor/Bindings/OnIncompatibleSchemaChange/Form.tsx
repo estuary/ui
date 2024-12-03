@@ -9,6 +9,7 @@ import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
@@ -24,6 +25,16 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
 
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
+
+    const incompatibleSchemaChange = useBindingStore((state) =>
+        currentBindingUUID
+            ? state.incompatibleSchemaChanges[currentBindingUUID]
+            : undefined
+    );
+
+    const setSingleIncompatibleSchemaChange = useBindingStore(
+        (state) => state.setSingleIncompatibleSchemaChange
+    );
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -47,6 +58,13 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
         async (value?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
+            if (currentBindingUUID) {
+                setSingleIncompatibleSchemaChange(
+                    currentBindingUUID,
+                    value?.val
+                );
+            }
+
             updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
                 .then(() => {
                     setFormState({ status: FormStatus.UPDATED });
@@ -67,16 +85,18 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
         },
         [
             bindingMetadata,
+            currentBindingUUID,
             enqueueSnackbar,
             intl,
             setFormState,
+            setSingleIncompatibleSchemaChange,
             updateOnIncompatibleSchemaChange,
         ]
     );
 
     return (
         <IncompatibleSchemaChangeForm
-            currentSetting={currentSetting}
+            currentSetting={currentSetting ?? incompatibleSchemaChange}
             updateDraftedSetting={updateServer}
         />
     );

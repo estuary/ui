@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -8,11 +8,11 @@ import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
     useBinding_backfilledBindings,
-    useBinding_currentCollection,
-    useBinding_currentBindingUUID,
-    useBinding_setBackfilledBindings,
     useBinding_backfillSupported,
+    useBinding_currentBindingUUID,
+    useBinding_currentCollection,
     useBinding_enabledCollections_count,
+    useBinding_setBackfilledBindings,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import {
@@ -180,16 +180,8 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     }
 
     return (
-        <Box sx={{ mt: 3 }}>
+        <>
             <Stack spacing={1} sx={{ mb: 2 }}>
-                <Typography
-                    variant={bindingIndex === -1 ? 'formSectionHeader' : 'h6'}
-                >
-                    {intl.formatMessage({
-                        id: 'workflows.collectionSelector.manualBackfill.header',
-                    })}
-                </Typography>
-
                 <Typography component="div">{description}</Typography>
 
                 {!backfillSupported ? <BackfillNotSupportedAlert /> : null}
@@ -225,7 +217,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
             ) : null}
-        </Box>
+        </>
     );
 }
 

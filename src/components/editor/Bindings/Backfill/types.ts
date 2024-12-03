@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { BaseComponentProps } from 'types';
 
 export interface BackfillProps {
     description: ReactNode;
@@ -11,4 +12,8 @@ export interface BackfillDataflowOptionProps {
 
 export interface BackfillCountProps {
     disabled?: boolean;
+}
+
+export interface BackfillSectionProps extends BaseComponentProps {
+    isBinding?: boolean;
 }

@@ -8,12 +8,8 @@ function OnIncompatibleSchemaChange({
 }: OnIncompatibleSchemaChangeFormProps) {
     const intl = useIntl();
 
-    if (bindingIndex < 0) {
-        return null;
-    }
-
     return (
-        <Box sx={{ mt: 3, mb: 5 }}>
+        <Box sx={{ mt: bindingIndex > -1 ? 3 : undefined, mb: 5 }}>
             <Stack>
                 <Stack spacing={1} sx={{ mb: 2 }}>
                     <Stack direction="row">

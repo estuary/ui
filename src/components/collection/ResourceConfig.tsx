@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
+import BackfillSection from 'components/editor/Bindings/Backfill/SectionWrapper';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
@@ -49,6 +50,9 @@ function ResourceConfig({
         'disable'
     );
 
+    const showBackfillButton =
+        isEdit && draftedBindingIndex > -1 && !collectionDisabled;
+
     return (
         <>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -69,23 +73,27 @@ function ResourceConfig({
                 )}
             </Box>
 
-            {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
-                <Backfill
-                    bindingIndex={draftedBindingIndex}
-                    description={
-                        <FormattedMessage
-                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+            {showBackfillButton || entityType === 'materialization' ? (
+                <BackfillSection isBinding>
+                    {showBackfillButton ? (
+                        <Backfill
+                            bindingIndex={draftedBindingIndex}
+                            description={
+                                <FormattedMessage
+                                    id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                                />
+                            }
                         />
-                    }
-                />
-            ) : null}
+                    ) : null}
 
-            {entityType === 'materialization' ? (
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange
-                        bindingIndex={draftedBindingIndex}
-                    />
-                </ErrorBoundryWrapper>
+                    {entityType === 'materialization' ? (
+                        <ErrorBoundryWrapper>
+                            <OnIncompatibleSchemaChange
+                                bindingIndex={draftedBindingIndex}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+                </BackfillSection>
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
