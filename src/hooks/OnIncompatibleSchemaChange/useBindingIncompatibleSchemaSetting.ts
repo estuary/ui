@@ -20,7 +20,7 @@ const updateSchema = (binding: any, newVal: any) => {
     }
 };
 
-function useUpdateOnIncompatibleSchemaChange() {
+function useBindingIncompatibleSchemaSetting() {
     const intl = useIntl();
     const entityType = useEntityType();
 
@@ -90,4 +90,4 @@ function useUpdateOnIncompatibleSchemaChange() {
     return { updateOnIncompatibleSchemaChange };
 }
 
-export default useUpdateOnIncompatibleSchemaChange;
+export default useBindingIncompatibleSchemaSetting;

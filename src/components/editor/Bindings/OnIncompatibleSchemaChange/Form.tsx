@@ -1,7 +1,7 @@
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
 import IncompatibleSchemaChangeForm from 'components/incompatibleSchemaChange/Form';
 import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
-import useUpdateOnIncompatibleSchemaChange from 'hooks/OnIncompatibleSchemaChange/useUpdateOnIncompatibleSchemaChange';
+import useBindingIncompatibleSchemaSetting from 'hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -44,7 +44,7 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     );
 
     const { updateOnIncompatibleSchemaChange } =
-        useUpdateOnIncompatibleSchemaChange();
+        useBindingIncompatibleSchemaSetting();
 
     const bindingMetadata = useMemo<BindingMetadata[]>(() => {
         if (bindingIndex > -1 && currentCollection && currentBindingUUID) {
