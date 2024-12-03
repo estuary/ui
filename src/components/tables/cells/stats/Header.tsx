@@ -5,25 +5,19 @@ import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSumm
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-
-interface Props {
-    selectableTableStoreName: SelectTableStoreNames;
-    header?: string;
-    hideFilter?: boolean;
-    headerSuffix?: 'data.written' | 'data.read';
-}
+import { StatsHeaderProps } from './types';
 
 const StatsHeader = ({
     selectableTableStoreName,
     header,
     hideFilter,
-    headerSuffix,
-}: Props) => {
+    firstHeaderSuffix,
+    secondHeaderSuffix,
+}: StatsHeaderProps) => {
     const intl = useIntl();
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
 
@@ -51,7 +45,7 @@ const StatsHeader = ({
         return [
             intl.formatMessage(
                 {
-                    id: headerSuffix ? headerSuffix : 'data.written',
+                    id: firstHeaderSuffix ? firstHeaderSuffix : 'data.written',
                 },
                 {
                     type: intl.formatMessage({
@@ -61,7 +55,7 @@ const StatsHeader = ({
             ),
             intl.formatMessage(
                 {
-                    id: headerSuffix ? headerSuffix : 'data.read',
+                    id: secondHeaderSuffix ? secondHeaderSuffix : 'data.read',
                 },
                 {
                     type: intl.formatMessage({
@@ -70,7 +64,7 @@ const StatsHeader = ({
                 }
             ),
         ];
-    }, [header, headerSuffix, intl]);
+    }, [firstHeaderSuffix, header, intl, secondHeaderSuffix]);
 
     return (
         <>
