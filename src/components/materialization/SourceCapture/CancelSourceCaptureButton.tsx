@@ -40,7 +40,7 @@ function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
     });
 
     return (
-        <Button variant="contained" onClick={close}>
+        <Button variant="outlined" onClick={close}>
             <FormattedMessage id="cta.cancel" />
         </Button>
     );
