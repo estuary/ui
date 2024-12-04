@@ -21,7 +21,7 @@ function DeltaUpdates() {
                     control={
                         <Switch
                             size="small"
-                            value={deltaUpdates}
+                            value={Boolean(deltaUpdates)}
                             checked={deltaUpdates}
                             disabled={formActive}
                             onChange={(event, checked) => {
