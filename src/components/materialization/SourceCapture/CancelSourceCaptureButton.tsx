@@ -4,10 +4,8 @@ import { useRef } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
-import {
-    useSourceCaptureStore_setSourceCaptureDefinition,
-    useSourceCaptureStore_sourceCaptureDefinition,
-} from 'stores/SourceCapture/hooks';
+import { useSourceCaptureStore_setSourceCaptureDefinition } from 'stores/SourceCapture/hooks';
+import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
 import { SourceCaptureDef } from 'types';
 
@@ -18,8 +16,9 @@ function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
     //  on their draft.
     const settingsCacheHack = useRef<SourceCaptureDef | null>(null);
 
-    const sourceCaptureDefinition =
-        useSourceCaptureStore_sourceCaptureDefinition();
+    const [sourceCapture, deltaUpdates, targetSchema] = useSourceCaptureStore(
+        (state) => [state.sourceCapture, state.deltaUpdates, state.targetSchema]
+    );
     const setSourceCaptureDefinition =
         useSourceCaptureStore_setSourceCaptureDefinition();
 
@@ -36,7 +35,11 @@ function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
     };
 
     useMount(() => {
-        settingsCacheHack.current = sourceCaptureDefinition;
+        settingsCacheHack.current = {
+            capture: sourceCapture ?? '',
+            deltaUpdates,
+            targetSchema,
+        };
     });
 
     return (
