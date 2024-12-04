@@ -20,7 +20,7 @@ function AddDialog({
     selectedCollections,
     title,
     toggle,
-    optionalSettings = null,
+    OptionalSettings,
 }: AddDialogProps) {
     const CancelButton = SecondaryCTA ?? DefaultCancelButton;
 
@@ -42,7 +42,7 @@ function AddDialog({
                         </Box>
                     </StepWrapper>
 
-                    {optionalSettings}
+                    {OptionalSettings ? <OptionalSettings /> : null}
                 </Stack>
             </DialogContent>
 

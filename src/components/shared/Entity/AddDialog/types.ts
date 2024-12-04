@@ -5,9 +5,13 @@ import { AddCollectionDialogCTAProps } from '../types';
 export interface AddDialogProps extends AddCollectionDialogCTAProps {
     id: string;
     open: boolean;
-    PrimaryCTA: (props: AddCollectionDialogCTAProps) => EmotionJSX.Element;
+    PrimaryCTA: (
+        props: AddCollectionDialogCTAProps
+    ) => EmotionJSX.Element | null;
     selectedCollections: string[];
     title: string | ReactNode;
-    optionalSettings?: ReactNode;
-    SecondaryCTA?: (props: AddCollectionDialogCTAProps) => EmotionJSX.Element;
+    OptionalSettings?: () => EmotionJSX.Element | null;
+    SecondaryCTA?: (
+        props: AddCollectionDialogCTAProps
+    ) => EmotionJSX.Element | null;
 }
