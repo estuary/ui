@@ -7,12 +7,10 @@ import { isString } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import {
-    useSourceCaptureStore_setSourceCaptureDefinition,
-    useSourceCaptureStore_sourceCaptureDefinition,
-} from 'stores/SourceCapture/hooks';
+import { useSourceCaptureStore_setSourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { getSourceCapture } from 'utils/entity-utils';
+import { useShallow } from 'zustand/react/shallow';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
 import CancelSourceCaptureButton from './CancelSourceCaptureButton';
 
@@ -24,20 +22,18 @@ function SelectCapture() {
     const prefilledOnce = useRef(false);
     const defaultedOnce = useRef(false);
 
-    const sourceCaptureDefinition =
-        useSourceCaptureStore_sourceCaptureDefinition();
     const setSourceCaptureDefinition =
         useSourceCaptureStore_setSourceCaptureDefinition();
 
-    const [prefilledCapture] = useSourceCaptureStore((state) => [
-        state.prefilledCapture,
-    ]);
+    const [sourceCapture, prefilledCapture] = useSourceCaptureStore(
+        useShallow((state) => [state.sourceCapture, state.prefilledCapture])
+    );
 
     const [open, setOpen] = useState<boolean>(false);
     const toggleDialog = (args: any) => {
         // On create default settings when going to set the
         //  source capture for the first time
-        if (!isEdit && !sourceCaptureDefinition) {
+        if (!isEdit && !sourceCapture) {
             setSourceCaptureDefinition({
                 capture: '',
                 deltaUpdates: false,
@@ -69,6 +65,12 @@ function SelectCapture() {
     const showLoading = useMemo(
         () => isEdit && draftSpecs.length === 0,
         [draftSpecs, isEdit]
+    );
+
+    // Put this in a memo - otherwise the disalog keeps rendering
+    const selectedCollections = useMemo(
+        () => (sourceCapture ? [sourceCapture] : []),
+        [sourceCapture]
     );
 
     useEffect(() => {
@@ -105,7 +107,7 @@ function SelectCapture() {
                     id={
                         showLoading
                             ? 'workflows.sourceCapture.cta.loading'
-                            : sourceCaptureDefinition?.capture
+                            : sourceCapture
                             ? 'workflows.sourceCapture.cta.edit'
                             : 'workflows.sourceCapture.cta'
                     }
@@ -117,14 +119,10 @@ function SelectCapture() {
                 open={open}
                 PrimaryCTA={AddSourceCaptureToSpecButton}
                 SecondaryCTA={CancelSourceCaptureButton}
-                selectedCollections={
-                    sourceCaptureDefinition?.capture
-                        ? [sourceCaptureDefinition.capture]
-                        : []
-                }
+                selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={<FormattedMessage id="captureTable.header" />}
-                optionalSettings={<OptionalSettings />}
+                OptionalSettings={OptionalSettings}
             />
         </>
     );
