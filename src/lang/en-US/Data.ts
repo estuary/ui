@@ -29,4 +29,5 @@ export const Data: Record<string, string> = {
     'data.reactor': `Reactor Address`,
     'data.cidr': `IP Blocks`,
     'data.scope': `Scope`,
+    'data.serviceAccount': `Service Account`,
 };
