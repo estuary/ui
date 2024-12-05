@@ -12,3 +12,31 @@ export type PrefixedName_Change = (
         name?: PrefixedName_Errors;
     }
 ) => void;
+
+export interface PrefixedNameProps {
+    label: string | null;
+    entityType?: string;
+    allowBlankName?: boolean;
+    allowEndSlash?: boolean;
+    defaultPrefix?: boolean;
+    disabled?: boolean;
+    hideErrorMessage?: boolean;
+    onChange?: PrefixedName_Change;
+    onNameChange?: PrefixedName_Change;
+    onPrefixChange?: PrefixedName_Change;
+    prefixOnly?: boolean;
+    required?: boolean;
+    showDescription?: boolean;
+    size?: 'small' | 'medium';
+    standardVariant?: boolean;
+    validateOnLoad?: boolean;
+    value?: string;
+}
+
+export interface PrefixSelectorProps
+    extends Pick<PrefixedNameProps, 'disabled' | 'value'> {
+    error: boolean;
+    labelId: string;
+    onChange: (newVal: any) => void;
+    options: string[];
+}
