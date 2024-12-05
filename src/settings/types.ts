@@ -1,8 +1,15 @@
 import { OptionalColumn } from 'components/collection/Selector/Table/useCollectionsSelectorColumns';
 import { TableIntlConfig } from 'types';
 
+interface TableSettings {
+    noExistingDataContentIds: TableIntlConfig;
+    filterIntlKey: string;
+    headerIntlKey: string;
+}
+
 export interface DataPlaneSetting {
     prefix: string;
+    table: TableSettings;
 }
 
 export interface EntitySetting {
@@ -23,10 +30,6 @@ export interface EntitySetting {
         disableMultiSelect?: boolean;
         optionalColumns?: OptionalColumn;
     };
-    table: {
-        noExistingDataContentIds: TableIntlConfig;
-        filterIntlKey: string;
-        headerIntlKey: string;
-    };
+    table: TableSettings;
     termId: string;
 }

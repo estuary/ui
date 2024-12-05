@@ -56,11 +56,10 @@ function DataPlanesTable() {
             selectableTableStoreName={SelectTableStoreNames.DATA_PLANE}
         >
             <EntityTable
-                noExistingDataContentIds={{
-                    header: `admin.dataPlanes.${dataPlaneScope}.table.noContent.header`,
-                    message: `admin.dataPlanes.${dataPlaneScope}.table.noContent.message`,
-                    disableDoclink: true,
-                }}
+                noExistingDataContentIds={
+                    DATA_PLANE_SETTINGS[dataPlaneScope].table
+                        .noExistingDataContentIds
+                }
                 columns={columns}
                 renderTableRows={(data) => <Rows data={data} />}
                 rowsPerPage={rowsPerPage}
@@ -74,7 +73,9 @@ function DataPlanesTable() {
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
                 header={<Header />}
-                filterLabel="admin.dataPlanes.table.filterLabel"
+                filterLabel={
+                    DATA_PLANE_SETTINGS[dataPlaneScope].table.filterIntlKey
+                }
                 selectableTableStoreName={selectableTableStoreName}
                 tableAriaLabelKey="admin.dataPlanes.table.aria.label"
             />

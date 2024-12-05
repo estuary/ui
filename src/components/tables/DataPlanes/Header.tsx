@@ -3,6 +3,7 @@ import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton
 import ExternalLink from 'components/shared/ExternalLink';
 import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
 import { useIntl } from 'react-intl';
+import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 
 const docsUrl = 'https://docs.estuary.dev/getting-started/deployment-options/';
 
@@ -21,7 +22,7 @@ function Header() {
                 }}
             >
                 {intl.formatMessage({
-                    id: 'admin.dataPlanes.header',
+                    id: DATA_PLANE_SETTINGS[dataPlaneScope].table.headerIntlKey,
                 })}
             </Typography>
 
