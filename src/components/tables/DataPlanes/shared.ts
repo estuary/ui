@@ -4,17 +4,17 @@ import { TableColumns } from 'types';
 export const columns: TableColumns[] = [
     {
         field: 'data_plane_name',
-        headerIntlKey: 'admin.dataPlanes.table.columns.name',
+        headerIntlKey: 'data.name',
         collapseHeader: true,
     },
     {
         field: 'reactor_address',
-        headerIntlKey: 'admin.dataPlanes.table.columns.reactor',
+        headerIntlKey: 'data.reactor',
         collapseHeader: true,
     },
     {
         field: 'cidr_blocks',
-        headerIntlKey: 'admin.dataPlanes.table.columns.ips',
+        headerIntlKey: 'data.cidr',
     },
 ];
 

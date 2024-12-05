@@ -26,4 +26,7 @@ export const Data: Record<string, string> = {
     'data.actions': `Actions`,
     'data.active': `Active`,
     'data.dataPlane': `Data Plane`,
+    'data.reactor': `Reactor Address`,
+    'data.cidr': `IP Blocks`,
+    'data.scope': `Scope`,
 };
