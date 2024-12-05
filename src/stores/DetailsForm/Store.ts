@@ -6,6 +6,7 @@ import produce from 'immer';
 import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import {
     DataPlaneOption,
     Details,
@@ -22,10 +23,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import {
-    generateDataPlaneOption,
-    PUBLIC_DATA_PLANE_PREFIX,
-} from 'utils/dataPlane-utils';
+import { generateDataPlaneOption } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
@@ -81,7 +79,7 @@ const getDataPlane = (
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
-            `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
+            `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
     );
 
     if (dataPlaneId) {

@@ -7,7 +7,6 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import { PRIVATE_DATA_PLANE_PREFIX } from 'utils/dataPlane-utils';
 
 export interface AwsDnsEntry {
     dns_name: string;
@@ -64,10 +63,7 @@ const getDataPlanesForTable = (
         supabaseClient
             .from(TABLES.DATA_PLANES)
             .select(QUERY)
-            .ilike(
-                'data_plane_name',
-                `${PRIVATE_DATA_PLANE_PREFIX}${catalogPrefix}%`
-            ),
+            .ilike('data_plane_name', `${catalogPrefix}%`),
         [
             'data_plane_name',
             'reactor_address',

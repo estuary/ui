@@ -1,10 +1,13 @@
 import { Box } from '@mui/material';
 import DataPlanesTable from 'components/tables/DataPlanes';
+import { DataPlaneScopeContextProvider } from 'context/DataPlaneScopeContext';
 
 function DataPlanes() {
     return (
         <Box>
-            <DataPlanesTable />
+            <DataPlaneScopeContextProvider>
+                <DataPlanesTable />
+            </DataPlaneScopeContextProvider>
         </Box>
     );
 }

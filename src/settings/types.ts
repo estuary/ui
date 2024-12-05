@@ -1,6 +1,10 @@
 import { OptionalColumn } from 'components/collection/Selector/Table/useCollectionsSelectorColumns';
 import { TableIntlConfig } from 'types';
 
+export interface DataPlaneSetting {
+    prefix: string;
+}
+
 export interface EntitySetting {
     Icon: React.ForwardRefExoticComponent<
         Omit<React.SVGProps<SVGSVGElement>, 'ref'>

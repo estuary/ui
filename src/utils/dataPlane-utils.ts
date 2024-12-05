@@ -9,6 +9,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
+import { DATA_PLANE_PREFIX, DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
 import { Endpoint } from 'stores/ShardDetail/types';
 import {
@@ -151,14 +152,10 @@ export const getJournals = async (
         brokerToken
     );
 
-export const DATA_PLANE_PREFIX = 'ops/dp/';
-export const PUBLIC_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}public/`;
-export const PRIVATE_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}private/`;
-
 export const getDataPlaneScope = (
     dataPlaneName: string
 ): DataPlaneOption['scope'] => {
-    return dataPlaneName.startsWith(PUBLIC_DATA_PLANE_PREFIX)
+    return dataPlaneName.startsWith(DATA_PLANE_SETTINGS.public.prefix)
         ? 'public'
         : 'private';
 };

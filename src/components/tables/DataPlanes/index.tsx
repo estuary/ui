@@ -1,6 +1,8 @@
 import { getDataPlanesForTable } from 'api/dataPlanes';
 import EntityTable from 'components/tables/EntityTable';
+import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
 import { useMemo } from 'react';
+import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
@@ -24,17 +26,28 @@ function DataPlanesTable() {
     } = useTableState(TablePrefixes.dataPlanes, 'data_plane_name', 'asc');
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { dataPlaneScope } = useDataPlaneScope();
+
+    const formattedTenant = useMemo(() => {
+        if (!selectedTenant) {
+            return null;
+        }
+
+        return `${DATA_PLANE_SETTINGS[dataPlaneScope].prefix}${
+            dataPlaneScope === 'private' ? selectedTenant : ''
+        }`;
+    }, [dataPlaneScope, selectedTenant]);
 
     const query = useMemo(() => {
-        return selectedTenant
-            ? getDataPlanesForTable(selectedTenant, pagination, searchQuery, [
+        return formattedTenant
+            ? getDataPlanesForTable(formattedTenant, pagination, searchQuery, [
                   {
                       col: columnToSort,
                       direction: sortDirection,
                   },
               ])
             : null;
-    }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
+    }, [columnToSort, formattedTenant, pagination, searchQuery, sortDirection]);
 
     return (
         <TableHydrator
@@ -44,8 +57,8 @@ function DataPlanesTable() {
         >
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'admin.dataPlanes.table.noContent.header',
-                    message: 'admin.dataPlanes.table.noContent.message',
+                    header: `admin.dataPlanes.${dataPlaneScope}.table.noContent.header`,
+                    message: `admin.dataPlanes.${dataPlaneScope}.table.noContent.message`,
                     disableDoclink: true,
                 }}
                 columns={columns}
