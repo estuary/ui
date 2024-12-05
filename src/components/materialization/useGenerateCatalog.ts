@@ -43,7 +43,7 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
 
@@ -110,7 +110,7 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const sourceCapture = useSourceCaptureStore((state) => state.sourceCapture);
+    const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -219,7 +219,10 @@ function useGenerateCatalog() {
                     resourceConfigServerUpdateRequired,
                     bindings,
                     existingTaskData,
-                    { fullSource: fullSourceConfigs, sourceCapture }
+                    {
+                        fullSource: fullSourceConfigs,
+                        sourceCapture,
+                    }
                 );
 
                 // If there is a draft already with task data then update. We do not match on

@@ -9,3 +9,7 @@ export type WithRequiredNonNullProperty<T, K extends keyof T> = T & {
 export type EnumDictionary<E extends string | symbol | number, T> = {
     [K in E]: T;
 };
+
+export type Nullable<T> = {
+    [K in keyof T]: T[K] | null;
+};

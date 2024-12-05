@@ -1,3 +1,5 @@
+import { TargetSchemas } from 'types';
+
 export interface SourceCaptureState {
     sourceCapture: string | null;
     setSourceCapture: (value: SourceCaptureState['sourceCapture']) => void;
@@ -6,6 +8,12 @@ export interface SourceCaptureState {
     setPrefilledCapture: (
         value: SourceCaptureState['prefilledCapture']
     ) => void;
+
+    deltaUpdates: boolean | undefined;
+    setDeltaUpdates: (value: SourceCaptureState['deltaUpdates']) => void;
+
+    targetSchema: TargetSchemas | undefined;
+    setTargetSchema: (value: SourceCaptureState['targetSchema']) => void;
 
     saving: boolean;
     setSaving: (value: SourceCaptureState['saving']) => void;

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { SourceCaptureDef } from 'types';
 import { specContainsDerivation } from 'utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
@@ -32,4 +33,33 @@ export const generateDisabledSpec = (
             });
         }
     }
+};
+
+export const getSourceCapture = (
+    sourceCapture: SourceCaptureDef | string | null | undefined
+): SourceCaptureDef | null => {
+    if (!sourceCapture) {
+        return null;
+    }
+
+    if (typeof sourceCapture === 'string') {
+        return {
+            capture: sourceCapture,
+        };
+    }
+
+    return sourceCapture;
+};
+
+export const addOrRemoveSourceCapture = (
+    draftSpec: any,
+    sourceCapture: SourceCaptureDef | null
+) => {
+    if (sourceCapture) {
+        draftSpec.sourceCapture = sourceCapture;
+    } else {
+        delete draftSpec.sourceCapture;
+    }
+
+    return draftSpec;
 };
