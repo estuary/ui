@@ -17,9 +17,15 @@ import {
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
 import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import { Entity, EntityWithCreateWorkflow, Schema } from 'types';
+import {
+    Entity,
+    EntityWithCreateWorkflow,
+    Schema,
+    SourceCaptureDef,
+} from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
+import { addOrRemoveSourceCapture } from './entity-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -133,19 +139,6 @@ export const getFullSource = (
     return response;
 };
 
-export const addOrRemoveSourceCapture = (
-    draftSpec: any,
-    sourceCapture: string | null
-) => {
-    if (sourceCapture) {
-        draftSpec.sourceCapture = sourceCapture;
-    } else {
-        delete draftSpec.sourceCapture;
-    }
-
-    return draftSpec;
-};
-
 export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
     collectionName: string,
@@ -170,7 +163,7 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     options: {
         fullSource: FullSourceDictionary | null;
-        sourceCapture: string | null;
+        sourceCapture: SourceCaptureDef | null;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)

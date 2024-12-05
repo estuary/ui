@@ -4,13 +4,13 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
-import { Schema } from 'types';
-import { addOrRemoveSourceCapture } from 'utils/workflow-utils';
+import { Schema, SourceCaptureDef } from 'types';
+import { addOrRemoveSourceCapture, getSourceCapture } from 'utils/entity-utils';
 
 function useSourceCapture() {
     const setFormState = useFormStateStore_setFormState();
@@ -22,8 +22,16 @@ function useSourceCapture() {
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
+    const existingSourceCapture = useMemo((): SourceCaptureDef | null => {
+        if (draftSpecs.length === 0) {
+            return null;
+        }
+
+        return getSourceCapture(draftSpecs[0].spec.sourceCapture);
+    }, [draftSpecs]);
+
     const update = useCallback(
-        async (sourceCapture: string | null) => {
+        async (sourceCapture: SourceCaptureDef | null) => {
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
                 return Promise.reject();
             } else {
@@ -51,8 +59,8 @@ function useSourceCapture() {
         [draftId, draftSpecs, mutateDraftSpecs, setFormState, setSaving]
     );
 
-    return useCallback(
-        async (sourceCapture: string | null) => {
+    const updateDraft = useCallback(
+        async (sourceCapture: SourceCaptureDef | null) => {
             update(sourceCapture)
                 .then(
                     () => setFormState({ status: FormStatus.UPDATED }),
@@ -63,6 +71,11 @@ function useSourceCapture() {
         },
         [setFormState, setSaving, update]
     );
+
+    return {
+        existingSourceCapture,
+        updateDraft,
+    };
 }
 
 export default useSourceCapture;
