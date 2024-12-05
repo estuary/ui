@@ -9,14 +9,35 @@ import {
 } from 'services/supabase';
 import { PRIVATE_DATA_PLANE_PREFIX } from 'utils/dataPlane-utils';
 
+export interface AwsDnsEntry {
+    dns_name: string;
+    hosted_zone_id: string;
+}
+
+export interface AwsLinkEndpoint {
+    dns_entries: AwsDnsEntry[];
+    service_name: string;
+}
+
 export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
     reactor_address: string;
     cidr_blocks: string[] | null;
+    gcp_service_account_email: string | null;
+    aws_iam_user_arn: string | null;
+    // aws_link_endpoints: AwsLinkEndpoint | null;
 }
 
-const COLUMNS = ['data_plane_name', 'id', 'reactor_address', 'cidr_blocks'];
+const COLUMNS = [
+    'data_plane_name',
+    'id',
+    'reactor_address',
+    'cidr_blocks',
+    'gcp_service_account_email',
+    'aws_iam_user_arn',
+    // 'aws_link_endpoints', db will reject queries for this
+];
 
 const QUERY = COLUMNS.join(',');
 
@@ -47,7 +68,12 @@ const getDataPlanesForTable = (
                 'data_plane_name',
                 `${PRIVATE_DATA_PLANE_PREFIX}${catalogPrefix}%`
             ),
-        ['data_plane_name', 'reactor_address'],
+        [
+            'data_plane_name',
+            'reactor_address',
+            'gcp_service_account_email',
+            'aws_iam_user_arn',
+        ],
         searchQuery,
         sorting,
         pagination

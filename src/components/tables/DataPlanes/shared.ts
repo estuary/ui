@@ -8,6 +8,11 @@ export const columns: TableColumns[] = [
         collapseHeader: true,
     },
     {
+        field: null,
+        headerIntlKey: 'data.serviceAccount',
+        collapseHeader: true,
+    },
+    {
         field: 'reactor_address',
         headerIntlKey: 'data.reactor',
         collapseHeader: true,
