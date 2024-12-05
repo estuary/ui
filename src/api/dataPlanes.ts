@@ -7,6 +7,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
+import { PRIVATE_DATA_PLANE_PREFIX } from 'utils/dataPlane-utils';
 
 export interface BaseDataPlaneQuery {
     data_plane_name: string;
@@ -42,7 +43,10 @@ const getDataPlanesForTable = (
         supabaseClient
             .from(TABLES.DATA_PLANES)
             .select(QUERY)
-            .ilike('data_plane_name', `ops/dp/private/${catalogPrefix}%`),
+            .ilike(
+                'data_plane_name',
+                `${PRIVATE_DATA_PLANE_PREFIX}${catalogPrefix}%`
+            ),
         ['data_plane_name', 'reactor_address'],
         searchQuery,
         sorting,

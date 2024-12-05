@@ -153,6 +153,7 @@ export const getJournals = async (
 
 export const DATA_PLANE_PREFIX = 'ops/dp/';
 export const PUBLIC_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}public/`;
+export const PRIVATE_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}private/`;
 
 export const getDataPlaneScope = (
     dataPlaneName: string
