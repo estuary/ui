@@ -4,9 +4,7 @@ import {
     Input,
     InputAdornment,
     InputLabel,
-    MenuItem,
     OutlinedInput,
-    Select,
     TextField,
 } from '@mui/material';
 import useValidatePrefix from 'components/inputs/PrefixedName/useValidatePrefix';
@@ -16,27 +14,8 @@ import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { hasLength } from 'utils/misc-utils';
-import { PrefixedName_Change } from './types';
-
-export interface Props {
-    label: string | null;
-    entityType?: string;
-    allowBlankName?: boolean;
-    allowEndSlash?: boolean;
-    defaultPrefix?: boolean;
-    disabled?: boolean;
-    hideErrorMessage?: boolean;
-    onChange?: PrefixedName_Change;
-    onNameChange?: PrefixedName_Change;
-    onPrefixChange?: PrefixedName_Change;
-    prefixOnly?: boolean;
-    required?: boolean;
-    showDescription?: boolean;
-    size?: 'small' | 'medium';
-    standardVariant?: boolean;
-    validateOnLoad?: boolean;
-    value?: string;
-}
+import { PrefixedNameProps } from './types';
+import PrefixSelector from './PrefixSelector';
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';
@@ -61,7 +40,7 @@ function PrefixedName({
     standardVariant,
     validateOnLoad,
     value,
-}: Props) {
+}: PrefixedNameProps) {
     // Hooks
     const intl = useIntl();
 
@@ -196,29 +175,14 @@ function PrefixedName({
                     {label}
                 </InputLabel>
 
-                <Select
-                    label={label}
-                    labelId={INPUT_ID}
+                <PrefixSelector
                     disabled={disabled}
                     error={Boolean(prefixError)}
-                    required
-                    size="small"
+                    labelId={INPUT_ID}
+                    onChange={(newValue) => handlers.setPrefix(newValue)}
+                    options={objectRoles}
                     value={prefix}
-                    variant="outlined"
-                    sx={{
-                        minWidth: 75,
-                        borderRadius: 3,
-                    }}
-                    onChange={(event) => {
-                        handlers.setPrefix(event.target.value);
-                    }}
-                >
-                    {objectRoles.map((objectRole) => (
-                        <MenuItem key={objectRole} value={objectRole}>
-                            {objectRole}
-                        </MenuItem>
-                    ))}
-                </Select>
+                />
 
                 <FormHelperText
                     id={DESCRIPTION_ID}
@@ -277,34 +241,16 @@ function PrefixedName({
                         {singleOption ? (
                             prefix
                         ) : (
-                            <Select
+                            <PrefixSelector
                                 disabled={disabled}
-                                disableUnderline
                                 error={Boolean(prefixError)}
-                                required
-                                size="small"
+                                labelId={INPUT_ID}
+                                onChange={(newValue) =>
+                                    handlers.setPrefix(newValue)
+                                }
+                                options={objectRoles}
                                 value={prefix}
-                                variant="standard"
-                                sx={{
-                                    'maxWidth': 150,
-                                    'minWidth': 75,
-                                    '& .MuiSelect-select': {
-                                        paddingBottom: 0.2,
-                                    },
-                                }}
-                                onChange={(event) => {
-                                    handlers.setPrefix(event.target.value);
-                                }}
-                            >
-                                {objectRoles.map((objectRole) => (
-                                    <MenuItem
-                                        key={objectRole}
-                                        value={objectRole}
-                                    >
-                                        {objectRole}
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                            />
                         )}
                     </InputAdornment>
                 }
