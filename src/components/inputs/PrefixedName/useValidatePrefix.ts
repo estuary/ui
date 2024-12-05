@@ -33,12 +33,18 @@ function useValidatePrefix({
     const objectRoles = useEntitiesStore_capabilities_adminable();
     const singleOption = objectRoles.length === 1;
 
+    // Fetch for the default value
+    // const [selectedTenant, setSelectedTenant] = useTenantStore((state) => [
+    //     state.selectedTenant,
+    //     state.setSelectedTenant,
+    // ]);
+
     // Local State for editing
     const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
     const [prefix, setPrefix] = useState(
-        singleOption || defaultPrefix ? objectRoles[0] : ''
+        singleOption || defaultPrefix ? objectRoles[0] : '' //selectedTenant
     );
     const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
 
@@ -97,6 +103,7 @@ function useValidatePrefix({
             );
 
             setPrefix(prefixValue);
+            // setSelectedTenant(prefixValue);
 
             if (onPrefixChange) {
                 onPrefixChange(prefixValue, errorString, {
