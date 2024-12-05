@@ -23,7 +23,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import {
-    formatDataPlaneOption,
+    generateDataPlaneOption,
     PUBLIC_DATA_PLANE_PREFIX,
 } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
@@ -316,7 +316,7 @@ export const getInitialState = (
                 dataPlaneResponse.data.length > 0
             ) {
                 dataPlaneOptions = dataPlaneResponse.data.map(
-                    formatDataPlaneOption
+                    generateDataPlaneOption
                 );
 
                 get().setDataPlaneOptions(dataPlaneOptions);

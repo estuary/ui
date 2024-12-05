@@ -6,7 +6,7 @@ import { getEntityTableRowSx } from 'context/Theme';
 import useCidrBlocks from 'hooks/useCidrBlocks';
 import {
     formatDataPlaneName,
-    formatDataPlaneOption,
+    generateDataPlaneOption,
 } from 'utils/dataPlane-utils';
 
 interface RowsProps {
@@ -21,7 +21,7 @@ function Row({ row }: RowProps) {
     const theme = useTheme();
 
     const cidrBlocks = useCidrBlocks();
-    const dataPlaneOption = formatDataPlaneOption(row);
+    const dataPlaneOption = generateDataPlaneOption(row);
 
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>

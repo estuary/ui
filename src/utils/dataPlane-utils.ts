@@ -242,7 +242,7 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     return formattedName.trim();
 };
 
-export const formatDataPlaneOption = ({
+export const generateDataPlaneOption = ({
     data_plane_name,
     id,
     reactor_address,
