@@ -1,39 +1,55 @@
 import { Button } from '@mui/material';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
 import AddDialog from 'components/shared/Entity/AddDialog';
+import OptionalSettings from 'components/shared/Entity/AddDialog/OptionalSettings';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { isString } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useSourceCaptureStore_setSourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { getSourceCapture } from 'utils/entity-utils';
+import { useShallow } from 'zustand/react/shallow';
 import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
+import CancelSourceCaptureButton from './CancelSourceCaptureButton';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
 function SelectCapture() {
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
-
     const prefilledOnce = useRef(false);
+    const defaultedOnce = useRef(false);
 
-    const [sourceCapture, setSourceCapture, prefilledCapture] =
-        useSourceCaptureStore((state) => [
-            state.sourceCapture,
-            state.setSourceCapture,
-            state.prefilledCapture,
-        ]);
+    const setSourceCaptureDefinition =
+        useSourceCaptureStore_setSourceCaptureDefinition();
+
+    const [sourceCapture, prefilledCapture] = useSourceCaptureStore(
+        useShallow((state) => [state.sourceCapture, state.prefilledCapture])
+    );
 
     const [open, setOpen] = useState<boolean>(false);
-
     const toggleDialog = (args: any) => {
+        // On create default settings when going to set the
+        //  source capture for the first time
+        if (!isEdit && !sourceCapture) {
+            setSourceCaptureDefinition({
+                capture: '',
+                deltaUpdates: false,
+                targetSchema: 'fromSourceName',
+            });
+        }
         setOpen(typeof args === 'boolean' ? args : !open);
     };
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const settingsExist = useMemo(
+
+    const existingSourceCaptureDefinition = useMemo(
         () =>
-            draftSpecs.length > 0 && isString(draftSpecs[0].spec.sourceCapture),
+            draftSpecs.length > 0
+                ? getSourceCapture(draftSpecs[0].spec.sourceCapture)
+                : null,
         [draftSpecs]
     );
 
@@ -51,27 +67,37 @@ function SelectCapture() {
         [draftSpecs, isEdit]
     );
 
+    // Put this in a memo - otherwise the disalog keeps rendering
+    const selectedCollections = useMemo(
+        () => (sourceCapture ? [sourceCapture] : []),
+        [sourceCapture]
+    );
+
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
         //  accidently override their existing setting without noticing
-        if (settingsExist) {
-            const sourceCaptureSetting = draftSpecs[0].spec.sourceCapture;
-            if (sourceCapture !== sourceCaptureSetting) {
-                setSourceCapture(sourceCaptureSetting);
-            }
+        if (
+            !defaultedOnce.current &&
+            isString(existingSourceCaptureDefinition?.capture)
+        ) {
+            setSourceCaptureDefinition(existingSourceCaptureDefinition);
+            defaultedOnce.current = true;
         } else if (!prefilledOnce.current && prefilledExists) {
-            if (sourceCapture !== prefilledCapture) {
-                setSourceCapture(prefilledCapture);
+            if (
+                prefilledCapture &&
+                existingSourceCaptureDefinition?.capture !== prefilledCapture
+            ) {
+                setSourceCaptureDefinition({
+                    capture: prefilledCapture,
+                });
                 prefilledOnce.current = true;
             }
         }
     }, [
-        draftSpecs,
+        existingSourceCaptureDefinition,
         prefilledCapture,
         prefilledExists,
-        setSourceCapture,
-        settingsExist,
-        sourceCapture,
+        setSourceCaptureDefinition,
     ]);
 
     return (
@@ -91,10 +117,12 @@ function SelectCapture() {
                 entity="capture"
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={AddSourceCaptureToSpecButton}
-                selectedCollections={sourceCapture ? [sourceCapture] : []}
+                PrimaryCTA={AddSourceCaptureToSpecButton}
+                SecondaryCTA={CancelSourceCaptureButton}
+                selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={<FormattedMessage id="captureTable.header" />}
+                OptionalSettings={OptionalSettings}
             />
         </>
     );

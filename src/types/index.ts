@@ -460,3 +460,11 @@ export interface BindingMetadata {
     bindingIndex: number;
     collection: string;
 }
+
+export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
+
+export interface SourceCaptureDef {
+    capture: string;
+    deltaUpdates?: boolean;
+    targetSchema?: TargetSchemas;
+}

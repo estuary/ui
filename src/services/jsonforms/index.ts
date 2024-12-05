@@ -175,9 +175,8 @@ const getNullableType = (schema: JsonSchema): null | string => {
     return null;
 };
 
-const isOAuthConfig = (schema: JsonSchema): boolean => {
-    return Object.hasOwn(schema, Annotations.oAuthProvider);
-};
+const isOAuthConfig = (schema: JsonSchema): boolean =>
+    Object.hasOwn(schema, Annotations.oAuthProvider);
 
 // TODO (reset section) might want to know if there are multiple children in future
 // const getChildObjectCount = (schema: JsonSchema) => {

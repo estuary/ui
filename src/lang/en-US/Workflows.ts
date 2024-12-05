@@ -116,6 +116,14 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
+    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
+
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
+
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
+
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 
@@ -264,6 +272,23 @@ export const Workflows: Record<string, string> = {
 
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
+
+    // Delta Updates
+    'deltaUpdates.header': `Delta Updates`,
+    'deltaUpdates.message': `Mark new bindings as delta updates`,
+
+    // Schema Mode
+    'schemaMode.header': `Source Capture Schema Mode`,
+    'schemaMode.message': `How should the schema of the materialization binding be set.`,
+    'schemaMode.input.label': `Set new bindings schemas as`,
+
+    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
+    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+
+    'schemaMode.options.fromSourceName.label': `From Source Name`,
+    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

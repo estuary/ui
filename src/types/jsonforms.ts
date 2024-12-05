@@ -29,14 +29,19 @@ export enum Patterns {
     time = "HH:mm:ss'Z'",
 }
 
+// THESE ARE ADDED TO AJV AS KEYWORDS (ui/src/services/ajv.ts)
 export enum Annotations {
-    advanced = 'advanced',
-    oAuthProvider = 'x-oauth2-provider',
-    multiline = 'multiline',
-    order = 'order',
-    secret = 'secret',
-    defaultResourceConfigName = 'x-collection-name',
-    inferSchema = 'x-infer-schema',
+    advanced = 'advanced', // Should be collapsed by default (over ridden if section contains required fields)
+    oAuthProvider = 'x-oauth2-provider', // Used to display OAuth
+    multiline = 'multiline', // text input should expect multiple lines
+    order = 'order', // Used to order the fields in the UI
+    secret = 'secret', // render as a password
+    secretAirbyte = 'airbyte_secret', // render as a password
+    defaultResourceConfigName = 'x-collection-name', // Used to default name in resource configs
+    inferSchema = 'x-infer-schema', // Indicates that schema inference should be enabled in the UI
+    deltaUpdates = 'x-delta-updates', // SourceCapture - Shows 'deltaUpdates' optional setting
+    targetSchema = 'x-schema-name', // SourceCapture - Shows 'targetSchema' optional setting
+    discriminator = 'discriminator', // Used to know what field in a complex oneOf should be unique (ex: parser)
 }
 
 export enum CustomTypes {

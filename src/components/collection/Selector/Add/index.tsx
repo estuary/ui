@@ -2,15 +2,10 @@ import { Button, Tooltip } from '@mui/material';
 import AddDialog from 'components/shared/Entity/AddDialog';
 import { useEntityType } from 'context/EntityContext';
 import invariableStores from 'context/Zustand/invariableStores';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useStore } from 'zustand';
-
-interface Props {
-    selectedCollections: string[];
-    AddSelectedButton: ReactNode;
-    disabled?: boolean;
-}
+import { BindingsEditorAddProps } from '../types';
 
 const DIALOG_ID = 'add-collection-search-dialog';
 
@@ -18,7 +13,7 @@ function BindingsEditorAdd({
     AddSelectedButton,
     disabled,
     selectedCollections,
-}: Props) {
+}: BindingsEditorAddProps) {
     const intl = useIntl();
     const entityType = useEntityType();
 
@@ -80,7 +75,7 @@ function BindingsEditorAdd({
                 entity="collection"
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={AddSelectedButton}
+                PrimaryCTA={AddSelectedButton}
                 selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={itemType}

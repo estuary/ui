@@ -79,7 +79,7 @@ function ManualSelection() {
                 entity="materialization"
                 id={DIALOG_ID}
                 open={open}
-                primaryCTA={ManualSelectionButton}
+                PrimaryCTA={ManualSelectionButton}
                 selectedCollections={
                     backfillTarget ? [backfillTarget.catalog_name] : []
                 }
