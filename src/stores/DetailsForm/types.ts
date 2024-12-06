@@ -11,11 +11,14 @@ export interface DataPlaneName {
     whole: string;
 }
 
+export type DataPlaneScopes = 'public' | 'private';
+
 export interface DataPlaneOption {
     dataPlaneName: DataPlaneName;
     id: string;
     reactorAddress: string;
-    scope: 'public' | 'private';
+    scope: DataPlaneScopes;
+    cidrBlocks?: string[] | null;
 }
 
 export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
