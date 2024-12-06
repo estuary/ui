@@ -9,7 +9,7 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.name',
     },
     {
-        field: null,
+        field: null, // This is null because this column shows 2 columns data in a single one
         headerIntlKey: 'data.serviceAccount',
     },
     {
