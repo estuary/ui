@@ -1,23 +1,19 @@
 import { Box, Stack, Typography } from '@mui/material';
+import { OnIncompatibleSchemaChangeFormProps } from 'components/incompatibleSchemaChange/types';
 import { useIntl } from 'react-intl';
-import OnIncompatibleSchemaChangeForm from './Form';
-import { OnIncompatibleSchemaChangeFormProps } from './types';
+import BindingIncompatibleSchemaChangeForm from './Form';
 
 function OnIncompatibleSchemaChange({
     bindingIndex = -1,
 }: OnIncompatibleSchemaChangeFormProps) {
     const intl = useIntl();
 
-    if (bindingIndex < 0) {
-        return null;
-    }
-
     return (
-        <Box sx={{ mt: 3, mb: 5 }}>
+        <Box sx={{ mt: bindingIndex > -1 ? 3 : undefined, mb: 5 }}>
             <Stack>
                 <Stack spacing={1} sx={{ mb: 2 }}>
                     <Stack direction="row">
-                        <Typography variant="h6">
+                        <Typography style={{ fontWeight: 500 }}>
                             {intl.formatMessage({
                                 id: 'incompatibleSchemaChange.header',
                             })}
@@ -31,7 +27,9 @@ function OnIncompatibleSchemaChange({
                     </Typography>
                 </Stack>
 
-                <OnIncompatibleSchemaChangeForm bindingIndex={bindingIndex} />
+                <BindingIncompatibleSchemaChangeForm
+                    bindingIndex={bindingIndex}
+                />
             </Stack>
         </Box>
     );

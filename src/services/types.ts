@@ -34,6 +34,7 @@ export enum CustomEvents {
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
     FORM_STATE_PREVENTED = 'FormState:Prevented',
     FULL_PAGE_ERROR_DISPLAYED = 'Full_Page_Error_Displayed',
+    INCOMPATIBLE_SCHEMA_CHANGE = 'IncompatibleSchemaChange',
     LAZY_LOADING = 'Lazy Loading',
     LOGIN = 'Login',
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',

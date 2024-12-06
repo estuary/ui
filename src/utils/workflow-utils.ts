@@ -12,6 +12,7 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
+import { IncompatibleSchemaChangeDictionary } from 'stores/Binding/slices/IncompatibleSchemaChange';
 import {
     FullSource,
     FullSourceDictionary,
@@ -163,6 +164,7 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     options: {
         fullSource: FullSourceDictionary | null;
+        incompatibleSchemaChanges: IncompatibleSchemaChangeDictionary | null;
         sourceCapture: SourceCaptureDef | null;
     }
 ) => {
@@ -177,7 +179,7 @@ export const generateTaskSpec = (
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
-        const { fullSource } = options;
+        const { fullSource, incompatibleSchemaChanges } = options;
 
         Object.entries(bindings).forEach(([_collection, bindingUUIDs]) => {
             bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
@@ -209,6 +211,20 @@ export const generateTaskSpec = (
                         delete draftSpec.bindings[existingBindingIndex].disable;
                     }
 
+                    if (
+                        entityType === 'materialization' &&
+                        incompatibleSchemaChanges &&
+                        hasLength(incompatibleSchemaChanges[bindingUUID])
+                    ) {
+                        draftSpec.bindings[
+                            existingBindingIndex
+                        ].onIncompatibleSchemaChange =
+                            incompatibleSchemaChanges[bindingUUID];
+                    } else if (entityType === 'materialization') {
+                        delete draftSpec.bindings[existingBindingIndex]
+                            .onIncompatibleSchemaChange;
+                    }
+
                     // Only update if there is a fullSource to populate. Otherwise just set the name.
                     //  This handles both captures that do not have these settings AND when
                     draftSpec.bindings[existingBindingIndex] = {
@@ -225,7 +241,7 @@ export const generateTaskSpec = (
                 } else if (Object.keys(resourceConfig).length > 0) {
                     const disabledProps = getDisableProps(bindingDisabled);
 
-                    draftSpec.bindings.push({
+                    const newBinding: Schema = {
                         [collectionNameProp]: getFullSourceSetting(
                             fullSource,
                             collectionName,
@@ -235,7 +251,18 @@ export const generateTaskSpec = (
                         resource: {
                             ...resourceConfig,
                         },
-                    });
+                    };
+
+                    if (
+                        entityType === 'materialization' &&
+                        incompatibleSchemaChanges &&
+                        hasLength(incompatibleSchemaChanges[bindingUUID])
+                    ) {
+                        newBinding.onIncompatibleSchemaChange =
+                            incompatibleSchemaChanges[bindingUUID];
+                    }
+
+                    draftSpec.bindings.push(newBinding);
                 }
             });
         });
@@ -329,7 +356,11 @@ export const modifyExistingCaptureDraftSpec = async (
         resourceConfigServerUpdateRequired,
         bindings,
         existingTaskData,
-        { fullSource: null, sourceCapture: null }
+        {
+            fullSource: null,
+            incompatibleSchemaChanges: null,
+            sourceCapture: null,
+        }
     );
 
     return modifyDraftSpec(draftSpec, {

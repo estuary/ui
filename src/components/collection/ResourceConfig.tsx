@@ -1,7 +1,9 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
+import BackfillSection from 'components/editor/Bindings/Backfill/SectionWrapper';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
+import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -48,9 +50,16 @@ function ResourceConfig({
         'disable'
     );
 
+    const showBackfillButton =
+        isEdit && draftedBindingIndex > -1 && !collectionDisabled;
+
     return (
         <>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography
+                component="div"
+                sx={{ mb: 2 }}
+                variant="formSectionHeader"
+            >
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
 
@@ -68,15 +77,27 @@ function ResourceConfig({
                 )}
             </Box>
 
-            {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
-                <Backfill
-                    bindingIndex={draftedBindingIndex}
-                    description={
-                        <FormattedMessage
-                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+            {showBackfillButton || entityType === 'materialization' ? (
+                <BackfillSection>
+                    {showBackfillButton ? (
+                        <Backfill
+                            bindingIndex={draftedBindingIndex}
+                            description={
+                                <FormattedMessage
+                                    id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                                />
+                            }
                         />
-                    }
-                />
+                    ) : null}
+
+                    {entityType === 'materialization' ? (
+                        <ErrorBoundryWrapper>
+                            <OnIncompatibleSchemaChange
+                                bindingIndex={draftedBindingIndex}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+                </BackfillSection>
             ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
@@ -93,16 +114,6 @@ function ResourceConfig({
                     collectionName={collectionName}
                 />
             ) : null}
-
-            {/* TODO (onIncompatibleSchemaChange) - uncomment to enable feature
-            {entityType === 'materialization' ? (
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange
-                        bindingIndex={draftedBindingIndex}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
-            */}
         </>
     );
 }

@@ -28,15 +28,16 @@ import {
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
-    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
+    useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
 import {
     useFormStateStore_setFormState,
@@ -108,6 +109,10 @@ function useGenerateCatalog() {
 
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+
+    const incompatibleSchemaChanges = useBindingStore(
+        (state) => state.incompatibleSchemaChanges
+    );
 
     // Source Capture Store
     const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
@@ -221,6 +226,7 @@ function useGenerateCatalog() {
                     existingTaskData,
                     {
                         fullSource: fullSourceConfigs,
+                        incompatibleSchemaChanges,
                         sourceCapture,
                     }
                 );
@@ -322,6 +328,7 @@ function useGenerateCatalog() {
             imageConnectorId,
             imageConnectorTagId,
             imagePath,
+            incompatibleSchemaChanges,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,
