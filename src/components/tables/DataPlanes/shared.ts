@@ -7,17 +7,14 @@ export const columns: TableColumns[] = [
     {
         field: 'data_plane_name',
         headerIntlKey: 'data.name',
-        collapseHeader: true,
     },
     {
         field: null,
         headerIntlKey: 'data.serviceAccount',
-        collapseHeader: true,
     },
     {
         field: 'reactor_address',
         headerIntlKey: 'data.reactor',
-        collapseHeader: true,
     },
     {
         field: 'cidr_blocks',
