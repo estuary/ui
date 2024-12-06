@@ -43,7 +43,7 @@ function TransformList() {
         <EntityList
             content={content}
             entity="collection"
-            primaryCTA={UpdateDraftButton}
+            PrimaryCTA={UpdateDraftButton}
             toggle={toggleDialog}
         />
     );

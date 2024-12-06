@@ -7,6 +7,7 @@ import {
     generateMockConnectorConfig,
     generateMockResourceConfig,
 } from 'test/test-utils';
+import { SourceCaptureDef } from 'types';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
 import { ConnectorConfig } from '../../../deps/flow/flow';
 
@@ -182,7 +183,7 @@ describe('generateTaskSpec', () => {
         connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-        sourceCapture: string | null,
+        sourceCapture: SourceCaptureDef | null,
         fullSource: FullSourceDictionary | null,
         incompatibleSchemaChanges: IncompatibleSchemaChangeDictionary | null,
         resourceConfigServerUpdateRequired: boolean;
@@ -449,7 +450,11 @@ describe('generateTaskSpec', () => {
             });
 
             test('cannot return the `sourceCapture` property', () => {
-                sourceCapture = 'mock/source/capture';
+                sourceCapture = {
+                    capture: 'mock/source/capture',
+                    deltaUpdates: false,
+                    targetSchema: 'leaveEmpty',
+                };
 
                 expect(
                     generateTaskSpec(
@@ -521,7 +526,11 @@ describe('generateTaskSpec', () => {
             });
 
             test('can return the `sourceCapture` property', () => {
-                sourceCapture = 'mock/source/capture';
+                sourceCapture = {
+                    capture: 'mock/source/capture',
+                    deltaUpdates: false,
+                    targetSchema: 'leaveEmpty',
+                };
 
                 expect(
                     generateTaskSpec(

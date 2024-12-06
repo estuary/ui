@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Dialog,
     DialogActions,
     DialogContent,
@@ -9,31 +8,24 @@ import {
 } from '@mui/material';
 import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { AddCollectionDialogCTAProps } from './types';
-
-interface Props extends AddCollectionDialogCTAProps {
-    id: string;
-    open: boolean;
-    primaryCTA: any;
-    selectedCollections: string[];
-    title: string | ReactNode;
-}
+import DefaultCancelButton from './DefaultCancelButton';
+import { AddDialogProps } from './types';
 
 function AddDialog({
     entity,
     id,
-    primaryCTA,
+    PrimaryCTA,
+    SecondaryCTA,
     open,
     selectedCollections,
     title,
     toggle,
-}: Props) {
-    const ContinueButton = primaryCTA;
+    OptionalSettings,
+}: AddDialogProps) {
+    const CancelButton = SecondaryCTA ?? DefaultCancelButton;
 
     return (
-        <Dialog id={id} open={open} fullWidth maxWidth="md">
+        <Dialog id={id} open={open} fullWidth maxWidth="xl">
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
@@ -49,20 +41,14 @@ function AddDialog({
                             ) : null}
                         </Box>
                     </StepWrapper>
+
+                    {OptionalSettings ? <OptionalSettings /> : null}
                 </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    variant="outlined"
-                    onClick={() => {
-                        toggle(false);
-                    }}
-                >
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
-
-                <ContinueButton toggle={toggle} />
+                <CancelButton toggle={toggle} />
+                <PrimaryCTA toggle={toggle} />
             </DialogActions>
         </Dialog>
     );
