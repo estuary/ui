@@ -28,7 +28,7 @@ function DataPlanesTable() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const { dataPlaneScope } = useDataPlaneScope();
 
-    const formattedTenant = useMemo(() => {
+    const dataPlaneName = useMemo(() => {
         if (!selectedTenant) {
             return null;
         }
@@ -39,15 +39,15 @@ function DataPlanesTable() {
     }, [dataPlaneScope, selectedTenant]);
 
     const query = useMemo(() => {
-        return formattedTenant
-            ? getDataPlanesForTable(formattedTenant, pagination, searchQuery, [
+        return dataPlaneName
+            ? getDataPlanesForTable(dataPlaneName, pagination, searchQuery, [
                   {
                       col: columnToSort,
                       direction: sortDirection,
                   },
               ])
             : null;
-    }, [columnToSort, formattedTenant, pagination, searchQuery, sortDirection]);
+    }, [columnToSort, dataPlaneName, pagination, searchQuery, sortDirection]);
 
     return (
         <TableHydrator

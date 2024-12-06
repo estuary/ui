@@ -13,7 +13,7 @@ function Header() {
     const { dataPlaneScope, toggleScope } = useDataPlaneScope();
 
     return (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={2}>
             <Typography
                 component="span"
                 variant="h6"
@@ -54,7 +54,7 @@ function Header() {
                 </OutlinedToggleButton>
             </ToggleButtonGroup>
 
-            <ExternalLink link={docsUrl}>
+            <ExternalLink link={docsUrl} sx={{ ml: 0 }}>
                 {intl.formatMessage({ id: 'terms.documentation' })}
             </ExternalLink>
         </Stack>

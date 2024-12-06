@@ -54,7 +54,7 @@ const getDataPlaneOptions = async () => {
 };
 
 const getDataPlanesForTable = (
-    catalogPrefix: string,
+    dataPlanePrefix: string,
     pagination: any,
     searchQuery: any,
     sorting: SortingProps<any>[]
@@ -63,7 +63,7 @@ const getDataPlanesForTable = (
         supabaseClient
             .from(TABLES.DATA_PLANES)
             .select(QUERY)
-            .ilike('data_plane_name', `${catalogPrefix}%`),
+            .ilike('data_plane_name', `${dataPlanePrefix}%`),
         [
             'data_plane_name',
             'reactor_address',
