@@ -33,7 +33,10 @@ export const getStoreWithIncompatibleSchemaChangeSettings = (
                 if (value) {
                     state.incompatibleSchemaChanges[bindingUUID] = value;
                 } else {
-                    omit(state.incompatibleSchemaChanges, bindingUUID);
+                    state.incompatibleSchemaChanges = omit(
+                        state.incompatibleSchemaChanges,
+                        bindingUUID
+                    );
                 }
             }),
             false,
