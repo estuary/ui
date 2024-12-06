@@ -2,8 +2,14 @@ import { Stack, ToggleButtonGroup, Typography } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
+import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
+import {
+    SelectableTableStore,
+    selectableTableStoreSelectors,
+} from 'stores/Tables/Store';
+import { selectableTableStoreName } from './shared';
 
 const docsUrl = 'https://docs.estuary.dev/getting-started/deployment-options/';
 
@@ -11,6 +17,22 @@ function Header() {
     const intl = useIntl();
 
     const { dataPlaneScope, toggleScope } = useDataPlaneScope();
+
+    const setHydrated = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['setHydrated']
+    >(selectableTableStoreName, selectableTableStoreSelectors.hydrated.set);
+
+    const changeScope = () => {
+        // TODO (table filters)
+        // This is a hack but also not... cause it is a shared store. However, we should probably make the filtering
+        //  that is used for the search input shared. Then we can utilize a lot of the same helper functions when
+        //  building out filter buttons, lists, switches, etc. like this one and not manually setting stuff.
+
+        // forces the table to display in loading mode
+        setHydrated(false);
+        toggleScope();
+    };
 
     return (
         <Stack direction="row" spacing={2}>
@@ -33,7 +55,7 @@ function Header() {
                 value={dataPlaneScope}
             >
                 <OutlinedToggleButton
-                    onClick={() => toggleScope()}
+                    onClick={changeScope}
                     selected={dataPlaneScope === 'private'}
                     size="small"
                     value="private"
@@ -43,7 +65,7 @@ function Header() {
                     })}
                 </OutlinedToggleButton>
                 <OutlinedToggleButton
-                    onClick={() => toggleScope()}
+                    onClick={changeScope}
                     selected={dataPlaneScope === 'public'}
                     size="small"
                     value="public"

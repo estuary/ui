@@ -1,6 +1,8 @@
 import { SelectTableStoreNames } from 'stores/names';
 import { TableColumns } from 'types';
 
+export const selectableTableStoreName = SelectTableStoreNames.DATA_PLANE;
+
 export const columns: TableColumns[] = [
     {
         field: 'data_plane_name',
@@ -22,5 +24,3 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.cidr',
     },
 ];
-
-export const selectableTableStoreName = SelectTableStoreNames.DATA_PLANE;

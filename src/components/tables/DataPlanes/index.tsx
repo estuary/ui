@@ -3,7 +3,6 @@ import EntityTable from 'components/tables/EntityTable';
 import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
 import { useMemo } from 'react';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useTenantStore } from 'stores/Tenant/Store';
@@ -53,7 +52,7 @@ function DataPlanesTable() {
         <TableHydrator
             disableQueryParamHack
             query={query}
-            selectableTableStoreName={SelectTableStoreNames.DATA_PLANE}
+            selectableTableStoreName={selectableTableStoreName}
         >
             <EntityTable
                 noExistingDataContentIds={
