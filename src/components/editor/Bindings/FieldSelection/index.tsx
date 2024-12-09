@@ -275,8 +275,11 @@ function FieldSelectionViewer({
         <Box sx={{ mt: 3 }}>
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                 <Stack spacing={1}>
-                    <Stack direction="row">
-                        <Typography variant="h6" sx={{ mr: 0.5 }}>
+                    <Stack style={{ alignItems: 'center' }} direction="row">
+                        <Typography
+                            sx={{ mr: 0.5 }}
+                            variant="formSectionHeader"
+                        >
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 

@@ -25,7 +25,10 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
-import { addOrRemoveSourceCapture } from './entity-utils';
+import {
+    addOrRemoveOnIncompatibleSchemaChange,
+    addOrRemoveSourceCapture,
+} from './entity-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -164,6 +167,7 @@ export const generateTaskSpec = (
     options: {
         fullSource: FullSourceDictionary | null;
         sourceCapture: SourceCaptureDef | null;
+        specOnIncompatibleSchemaChange?: string;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -183,11 +187,21 @@ export const generateTaskSpec = (
             bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
                 const resourceConfig = resourceConfigs[bindingUUID].data;
 
-                const { bindingIndex, collectionName, disable } =
-                    resourceConfigs[bindingUUID].meta;
+                const {
+                    bindingIndex,
+                    collectionName,
+                    disable,
+                    onIncompatibleSchemaChange,
+                } = resourceConfigs[bindingUUID].meta;
 
                 // Check if disable is a boolean otherwise default to false
                 const bindingDisabled = isBoolean(disable) ? disable : false;
+
+                // Check if the binding-level `onIncompatibleSchemaChange` is set.
+                const onIncompatibleSchemaChangeOverridden = Boolean(
+                    entityType === 'materialization' &&
+                        onIncompatibleSchemaChange
+                );
 
                 // See which binding we need to update
                 const existingBindingIndex = resourceConfigServerUpdateRequired
@@ -209,6 +223,16 @@ export const generateTaskSpec = (
                         delete draftSpec.bindings[existingBindingIndex].disable;
                     }
 
+                    if (onIncompatibleSchemaChangeOverridden) {
+                        draftSpec.bindings[
+                            existingBindingIndex
+                        ].onIncompatibleSchemaChange =
+                            onIncompatibleSchemaChange;
+                    } else if (entityType === 'materialization') {
+                        delete draftSpec.bindings[existingBindingIndex]
+                            .onIncompatibleSchemaChange;
+                    }
+
                     // Only update if there is a fullSource to populate. Otherwise just set the name.
                     //  This handles both captures that do not have these settings AND when
                     draftSpec.bindings[existingBindingIndex] = {
@@ -225,7 +249,7 @@ export const generateTaskSpec = (
                 } else if (Object.keys(resourceConfig).length > 0) {
                     const disabledProps = getDisableProps(bindingDisabled);
 
-                    draftSpec.bindings.push({
+                    const newBinding: Schema = {
                         [collectionNameProp]: getFullSourceSetting(
                             fullSource,
                             collectionName,
@@ -235,7 +259,14 @@ export const generateTaskSpec = (
                         resource: {
                             ...resourceConfig,
                         },
-                    });
+                    };
+
+                    if (onIncompatibleSchemaChangeOverridden) {
+                        newBinding.onIncompatibleSchemaChange =
+                            onIncompatibleSchemaChange;
+                    }
+
+                    draftSpec.bindings.push(newBinding);
                 }
             });
         });
@@ -253,9 +284,13 @@ export const generateTaskSpec = (
         draftSpec.bindings = [];
     }
 
-    // Try adding at the end because this setting could be added/changed at any time
+    // Try adding at the end because these settings could be added/changed at any time
     if (entityType === 'materialization') {
         addOrRemoveSourceCapture(draftSpec, options.sourceCapture);
+        addOrRemoveOnIncompatibleSchemaChange(
+            draftSpec,
+            options.specOnIncompatibleSchemaChange
+        );
     }
 
     return draftSpec;
@@ -329,7 +364,10 @@ export const modifyExistingCaptureDraftSpec = async (
         resourceConfigServerUpdateRequired,
         bindings,
         existingTaskData,
-        { fullSource: null, sourceCapture: null }
+        {
+            fullSource: null,
+            sourceCapture: null,
+        }
     );
 
     return modifyDraftSpec(draftSpec, {
