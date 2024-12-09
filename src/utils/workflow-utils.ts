@@ -12,7 +12,6 @@ import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
 import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
-import { IncompatibleSchemaChangeDictionary } from 'stores/Binding/slices/IncompatibleSchemaChange';
 import {
     FullSource,
     FullSourceDictionary,
@@ -26,7 +25,10 @@ import {
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
-import { addOrRemoveSourceCapture } from './entity-utils';
+import {
+    addOrRemoveOnIncompatibleSchemaChange,
+    addOrRemoveSourceCapture,
+} from './entity-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -164,8 +166,8 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     options: {
         fullSource: FullSourceDictionary | null;
-        incompatibleSchemaChanges: IncompatibleSchemaChangeDictionary | null;
         sourceCapture: SourceCaptureDef | null;
+        specOnIncompatibleSchemaChange?: string;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -179,17 +181,27 @@ export const generateTaskSpec = (
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
-        const { fullSource, incompatibleSchemaChanges } = options;
+        const { fullSource } = options;
 
         Object.entries(bindings).forEach(([_collection, bindingUUIDs]) => {
             bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
                 const resourceConfig = resourceConfigs[bindingUUID].data;
 
-                const { bindingIndex, collectionName, disable } =
-                    resourceConfigs[bindingUUID].meta;
+                const {
+                    bindingIndex,
+                    collectionName,
+                    disable,
+                    onIncompatibleSchemaChange,
+                } = resourceConfigs[bindingUUID].meta;
 
                 // Check if disable is a boolean otherwise default to false
                 const bindingDisabled = isBoolean(disable) ? disable : false;
+
+                // Check if the binding-level `onIncompatibleSchemaChange` is set.
+                const onIncompatibleSchemaChangeOverridden = Boolean(
+                    entityType === 'materialization' &&
+                        onIncompatibleSchemaChange
+                );
 
                 // See which binding we need to update
                 const existingBindingIndex = resourceConfigServerUpdateRequired
@@ -211,15 +223,11 @@ export const generateTaskSpec = (
                         delete draftSpec.bindings[existingBindingIndex].disable;
                     }
 
-                    if (
-                        entityType === 'materialization' &&
-                        incompatibleSchemaChanges &&
-                        hasLength(incompatibleSchemaChanges[bindingUUID])
-                    ) {
+                    if (onIncompatibleSchemaChangeOverridden) {
                         draftSpec.bindings[
                             existingBindingIndex
                         ].onIncompatibleSchemaChange =
-                            incompatibleSchemaChanges[bindingUUID];
+                            onIncompatibleSchemaChange;
                     } else if (entityType === 'materialization') {
                         delete draftSpec.bindings[existingBindingIndex]
                             .onIncompatibleSchemaChange;
@@ -253,13 +261,9 @@ export const generateTaskSpec = (
                         },
                     };
 
-                    if (
-                        entityType === 'materialization' &&
-                        incompatibleSchemaChanges &&
-                        hasLength(incompatibleSchemaChanges[bindingUUID])
-                    ) {
+                    if (onIncompatibleSchemaChangeOverridden) {
                         newBinding.onIncompatibleSchemaChange =
-                            incompatibleSchemaChanges[bindingUUID];
+                            onIncompatibleSchemaChange;
                     }
 
                     draftSpec.bindings.push(newBinding);
@@ -280,9 +284,13 @@ export const generateTaskSpec = (
         draftSpec.bindings = [];
     }
 
-    // Try adding at the end because this setting could be added/changed at any time
+    // Try adding at the end because these settings could be added/changed at any time
     if (entityType === 'materialization') {
         addOrRemoveSourceCapture(draftSpec, options.sourceCapture);
+        addOrRemoveOnIncompatibleSchemaChange(
+            draftSpec,
+            options.specOnIncompatibleSchemaChange
+        );
     }
 
     return draftSpec;
@@ -358,7 +366,6 @@ export const modifyExistingCaptureDraftSpec = async (
         existingTaskData,
         {
             fullSource: null,
-            incompatibleSchemaChanges: null,
             sourceCapture: null,
         }
     );

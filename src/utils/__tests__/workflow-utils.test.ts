@@ -1,5 +1,4 @@
 import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
-import { IncompatibleSchemaChangeDictionary } from 'stores/Binding/slices/IncompatibleSchemaChange';
 import { FullSourceDictionary } from 'stores/Binding/slices/TimeTravel';
 import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
 import {
@@ -185,7 +184,6 @@ describe('generateTaskSpec', () => {
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
         sourceCapture: SourceCaptureDef | null,
         fullSource: FullSourceDictionary | null,
-        incompatibleSchemaChanges: IncompatibleSchemaChangeDictionary | null,
         resourceConfigServerUpdateRequired: boolean;
 
     beforeEach(() => {
@@ -205,7 +203,6 @@ describe('generateTaskSpec', () => {
         existingTaskData = null;
         sourceCapture = null;
         fullSource = null;
-        incompatibleSchemaChanges = null;
         resourceConfigServerUpdateRequired = false;
     });
 
@@ -223,7 +220,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, incompatibleSchemaChanges, sourceCapture }
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -270,7 +267,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, incompatibleSchemaChanges, sourceCapture }
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -327,7 +324,7 @@ describe('generateTaskSpec', () => {
                     [resourceConfig_three.meta.collectionName]: [uuidThree],
                 },
                 existingTaskData,
-                { fullSource, incompatibleSchemaChanges, sourceCapture }
+                { fullSource, sourceCapture }
             );
             expect(response.bindings).toStrictEqual([
                 {
@@ -381,7 +378,7 @@ describe('generateTaskSpec', () => {
                         [resourceConfig_two.meta.collectionName]: [uuidTwo],
                     },
                     existingTaskData,
-                    { fullSource, incompatibleSchemaChanges, sourceCapture }
+                    { fullSource, sourceCapture }
                 );
 
                 expect(response.bindings).toMatchSnapshot();
@@ -441,7 +438,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, incompatibleSchemaChanges, sourceCapture }
+                        { fullSource, sourceCapture }
                     ).bindings.map(({ target }: any) => target)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -467,7 +464,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, incompatibleSchemaChanges, sourceCapture }
+                        { fullSource, sourceCapture }
                     ).sourceCapture
                 ).toBeUndefined();
             });
@@ -517,7 +514,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, incompatibleSchemaChanges, sourceCapture }
+                        { fullSource, sourceCapture }
                     ).bindings.map(({ source }: any) => source)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -543,7 +540,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, incompatibleSchemaChanges, sourceCapture }
+                        { fullSource, sourceCapture }
                     ).sourceCapture
                 ).toStrictEqual(sourceCapture);
             });

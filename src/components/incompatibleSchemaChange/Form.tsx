@@ -72,6 +72,7 @@ export default function IncompatibleSchemaChangeForm({
                             }
                         )}
                     </Typography>
+
                     <Button
                         disabled={formActive}
                         size="small"
@@ -87,7 +88,7 @@ export default function IncompatibleSchemaChangeForm({
             ) : null}
 
             {/* The presence of ListboxComponent in autoCompleteDefaultProps prevents
-                the options from rendering  */}
+                the options from rendering. */}
             <Autocomplete
                 disabled={formActive}
                 getOptionLabel={(option) => option.label}

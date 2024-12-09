@@ -6,7 +6,6 @@ import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
-import { StoreWithIncompatibleSchemaChange } from './slices/IncompatibleSchemaChange';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface BindingMetadata {
@@ -25,6 +24,7 @@ export interface ResourceConfig extends JsonFormsData {
         collectionName: string;
         bindingIndex: number;
         disable?: boolean;
+        onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
     };
 }
@@ -35,7 +35,6 @@ export interface ResourceConfigDictionary {
 
 export interface BindingState
     extends StoreWithHydration,
-        StoreWithIncompatibleSchemaChange,
         StoreWithFieldSelection,
         StoreWithTimeTravel {
     bindings: Bindings;
@@ -119,6 +118,13 @@ export interface BindingState
         defaultInterval?: string | null
     ) => void;
     defaultCaptureInterval: DurationObjectUnits | null;
+
+    // On incompatible schema change (specification-level)
+    onIncompatibleSchemaChange: string | undefined;
+    setSpecOnIncompatibleSchemaChange: (
+        value: BindingState['onIncompatibleSchemaChange']
+    ) => void;
+    setBindingOnIncompatibleSchemaChange: (value: string | undefined) => void;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;

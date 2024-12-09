@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
+    useBinding_resourceConfigOfMetaBindingProperty,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
@@ -26,14 +27,14 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
 
-    const incompatibleSchemaChange = useBindingStore((state) =>
-        currentBindingUUID
-            ? state.incompatibleSchemaChanges[currentBindingUUID]
-            : undefined
-    );
+    const incompatibleSchemaChange =
+        useBinding_resourceConfigOfMetaBindingProperty(
+            currentBindingUUID,
+            'onIncompatibleSchemaChange'
+        );
 
-    const setSingleIncompatibleSchemaChange = useBindingStore(
-        (state) => state.setSingleIncompatibleSchemaChange
+    const setIncompatibleSchemaChange = useBindingStore(
+        (state) => state.setBindingOnIncompatibleSchemaChange
     );
 
     const setFormState = useFormStateStore_setFormState();
@@ -59,10 +60,7 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
             if (currentBindingUUID) {
-                setSingleIncompatibleSchemaChange(
-                    currentBindingUUID,
-                    value?.val
-                );
+                setIncompatibleSchemaChange(value?.val);
             }
 
             updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
@@ -89,14 +87,20 @@ function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
             enqueueSnackbar,
             intl,
             setFormState,
-            setSingleIncompatibleSchemaChange,
+            setIncompatibleSchemaChange,
             updateOnIncompatibleSchemaChange,
         ]
     );
 
     return (
         <IncompatibleSchemaChangeForm
-            currentSetting={currentSetting ?? incompatibleSchemaChange}
+            currentSetting={
+                currentSetting
+                    ? currentSetting
+                    : typeof incompatibleSchemaChange === 'string'
+                    ? incompatibleSchemaChange
+                    : ''
+            }
             updateDraftedSetting={updateServer}
         />
     );

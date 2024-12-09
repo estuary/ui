@@ -63,3 +63,16 @@ export const addOrRemoveSourceCapture = (
 
     return draftSpec;
 };
+
+export const addOrRemoveOnIncompatibleSchemaChange = (
+    draftSpec: any,
+    value: string | undefined
+) => {
+    if (value) {
+        draftSpec.onIncompatibleSchemaChange = value;
+    } else {
+        delete draftSpec.onIncompatibleSchemaChange;
+    }
+
+    return draftSpec;
+};

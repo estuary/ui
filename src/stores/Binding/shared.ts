@@ -132,7 +132,12 @@ export const getResourceConfig = (
     return {
         data: resource,
         errors: [],
-        meta: { ...disableProp, collectionName, bindingIndex },
+        meta: {
+            ...disableProp,
+            collectionName,
+            bindingIndex,
+            onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
+        },
     };
 };
 

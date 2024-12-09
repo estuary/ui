@@ -4,6 +4,7 @@ import useSpecificationIncompatibleSchemaSetting from 'hooks/OnIncompatibleSchem
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { snackbarSettings } from 'utils/notification-utils';
@@ -11,6 +12,10 @@ import { snackbarSettings } from 'utils/notification-utils';
 export default function SpecificationIncompatibleSchemaChangeForm() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+
+    const setIncompatibleSchemaChange = useBindingStore(
+        (state) => state.setSpecOnIncompatibleSchemaChange
+    );
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -20,6 +25,8 @@ export default function SpecificationIncompatibleSchemaChangeForm() {
     const updateServer = useCallback(
         async (option?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
+
+            setIncompatibleSchemaChange(option?.val);
 
             updateOnIncompatibleSchemaChange(option?.val)
                 .then(() => {
@@ -36,7 +43,13 @@ export default function SpecificationIncompatibleSchemaChangeForm() {
                     setFormState({ status: FormStatus.FAILED });
                 });
         },
-        [enqueueSnackbar, intl, setFormState, updateOnIncompatibleSchemaChange]
+        [
+            enqueueSnackbar,
+            intl,
+            setFormState,
+            setIncompatibleSchemaChange,
+            updateOnIncompatibleSchemaChange,
+        ]
     );
 
     return (

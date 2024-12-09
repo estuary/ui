@@ -110,8 +110,8 @@ function useGenerateCatalog() {
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
-    const incompatibleSchemaChanges = useBindingStore(
-        (state) => state.incompatibleSchemaChanges
+    const specIncompatibleSchemaChange = useBindingStore(
+        (state) => state.onIncompatibleSchemaChange
     );
 
     // Source Capture Store
@@ -226,8 +226,9 @@ function useGenerateCatalog() {
                     existingTaskData,
                     {
                         fullSource: fullSourceConfigs,
-                        incompatibleSchemaChanges,
                         sourceCapture,
+                        specOnIncompatibleSchemaChange:
+                            specIncompatibleSchemaChange,
                     }
                 );
 
@@ -328,7 +329,6 @@ function useGenerateCatalog() {
             imageConnectorId,
             imageConnectorTagId,
             imagePath,
-            incompatibleSchemaChanges,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,
@@ -347,6 +347,7 @@ function useGenerateCatalog() {
             setPersistedDraftId,
             setPreviousEndpointConfig,
             sourceCapture,
+            specIncompatibleSchemaChange,
             updateFormStatus,
         ]
     );
