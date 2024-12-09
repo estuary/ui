@@ -33,7 +33,7 @@ export default function useSpecificationIncompatibleSchemaSetting() {
         async (value: AutoCompleteOption['val'] | undefined) => {
             if (!mutateDraftSpecs || !draftId || !draftSpec) {
                 logRocketEvent(
-                    `${CustomEvents.INCOMPATIBLE_SCHEMA_CHANGE} : missing critical resources to update draft`,
+                    `${CustomEvents.INCOMPATIBLE_SCHEMA_CHANGE}:Missing Draft Resources`,
                     {
                         draftIdMissing: !draftId,
                         draftSpecMissing: !draftSpec,
