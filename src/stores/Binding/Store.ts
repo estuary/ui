@@ -1157,11 +1157,18 @@ const getInitialState = (
                 };
 
                 if (!isEmpty(existingConfig)) {
-                    const { disable, previouslyDisabled } = existingConfig.meta;
+                    const {
+                        disable,
+                        onIncompatibleSchemaChange,
+                        previouslyDisabled,
+                    } = existingConfig.meta;
 
                     evaluatedConfig.meta.disable = disable;
                     evaluatedConfig.meta.previouslyDisabled =
                         previouslyDisabled;
+
+                    evaluatedConfig.meta.onIncompatibleSchemaChange =
+                        onIncompatibleSchemaChange;
                 }
 
                 // Only actually update if there was a change. This is mainly here because
