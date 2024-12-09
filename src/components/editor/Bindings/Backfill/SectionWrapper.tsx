@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
-export default function BackfillSection({ children }: BaseComponentProps) {
+export default function SectionWrapper({ children }: BaseComponentProps) {
     const intl = useIntl();
 
     return (

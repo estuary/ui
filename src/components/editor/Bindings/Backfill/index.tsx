@@ -4,7 +4,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import BackfillButton from './BackfillButton';
-import BackfillSection from './SectionWrapper';
+import SectionWrapper from './SectionWrapper';
 import { BackfillProps } from './types';
 
 export default function Backfill({
@@ -17,7 +17,7 @@ export default function Backfill({
     const showBackfillButton = isEdit && bindingIndex > -1 && collectionEnabled;
 
     return showBackfillButton || entityType === 'materialization' ? (
-        <BackfillSection>
+        <SectionWrapper>
             {showBackfillButton ? (
                 <BackfillButton
                     bindingIndex={bindingIndex}
@@ -34,6 +34,6 @@ export default function Backfill({
                     <OnIncompatibleSchemaChange bindingIndex={bindingIndex} />
                 </ErrorBoundryWrapper>
             ) : null}
-        </BackfillSection>
+        </SectionWrapper>
     ) : null;
 }
