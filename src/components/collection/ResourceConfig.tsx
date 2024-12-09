@@ -1,14 +1,11 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
 import Backfill from 'components/editor/Bindings/Backfill';
-import BackfillSection from 'components/editor/Bindings/Backfill/SectionWrapper';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingIndex,
@@ -31,7 +28,6 @@ function ResourceConfig({
     readOnly = false,
 }: Props) {
     const entityType = useEntityType();
-    const isEdit = useEntityWorkflow_Editing();
 
     const hydrated = useBinding_hydrated();
     const stagedBindingIndex = useBinding_currentBindingIndex();
@@ -49,9 +45,6 @@ function ResourceConfig({
         bindingUUID,
         'disable'
     );
-
-    const showBackfillButton =
-        isEdit && draftedBindingIndex > -1 && !collectionDisabled;
 
     return (
         <>
@@ -77,28 +70,10 @@ function ResourceConfig({
                 )}
             </Box>
 
-            {showBackfillButton || entityType === 'materialization' ? (
-                <BackfillSection>
-                    {showBackfillButton ? (
-                        <Backfill
-                            bindingIndex={draftedBindingIndex}
-                            description={
-                                <FormattedMessage
-                                    id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
-                                />
-                            }
-                        />
-                    ) : null}
-
-                    {entityType === 'materialization' ? (
-                        <ErrorBoundryWrapper>
-                            <OnIncompatibleSchemaChange
-                                bindingIndex={draftedBindingIndex}
-                            />
-                        </ErrorBoundryWrapper>
-                    ) : null}
-                </BackfillSection>
-            ) : null}
+            <Backfill
+                bindingIndex={draftedBindingIndex}
+                collectionEnabled={!collectionDisabled}
+            />
 
             {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer

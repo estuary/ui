@@ -23,7 +23,7 @@ import {
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
-import Backfill from './Backfill';
+import BackfillButton from './Backfill/BackfillButton';
 import BackfillSection from './Backfill/SectionWrapper';
 
 interface Props {
@@ -116,7 +116,7 @@ function BindingsMultiEditor({
                     <BackfillSection>
                         {workflow === 'capture_edit' ||
                         workflow === 'materialization_edit' ? (
-                            <Backfill
+                            <BackfillButton
                                 description={intl.formatMessage({
                                     id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,
                                 })}
