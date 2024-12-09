@@ -5,13 +5,12 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
-import { omit } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBindingStore } from 'stores/Binding/Store';
 import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { addOrRemoveOnIncompatibleSchemaChange } from 'utils/entity-utils';
 
 export default function useSpecificationIncompatibleSchemaSetting() {
     // Binding Store
@@ -45,13 +44,9 @@ export default function useSpecificationIncompatibleSchemaSetting() {
                 return Promise.resolve();
             }
 
-            let spec: Schema = draftSpec.spec;
+            const spec: Schema = draftSpec.spec;
 
-            if (!hasLength(value)) {
-                spec = omit(spec, 'onIncompatibleSchemaChange');
-            } else {
-                spec.onIncompatibleSchemaChange = value;
-            }
+            addOrRemoveOnIncompatibleSchemaChange(spec, value);
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
