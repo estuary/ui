@@ -11,7 +11,7 @@ import {
 } from 'stores/Tables/Store';
 import { selectableTableStoreName } from './shared';
 
-const docsUrl = 'https://docs.estuary.dev/getting-started/deployment-options/';
+const docsUrl = 'https://docs.estuary.dev/reference/allow-ip-addresses/';
 
 function Header() {
     const intl = useIntl();
