@@ -2,17 +2,17 @@ import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 import { codeBackground, getButtonIcon } from 'context/Theme';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-
-interface Props {
-    value: string;
-    subsequentCommandExists?: boolean;
-}
+import { SingleLineCodeProps } from './types';
 
 type TransientButtonState = 'success' | 'error' | undefined;
 
 const borderRadius = 3;
 
-function SingleLineCode({ value, subsequentCommandExists }: Props) {
+function SingleLineCode({
+    value,
+    subsequentCommandExists,
+    sx,
+}: SingleLineCodeProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -42,6 +42,7 @@ function SingleLineCode({ value, subsequentCommandExists }: Props) {
                 display: 'flex',
                 bgcolor: codeBackground[theme.palette.mode],
                 borderRadius,
+                ...(sx ?? {}),
             }}
         >
             <Typography

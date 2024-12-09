@@ -84,6 +84,9 @@ const invariableStores = {
     [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
         SelectTableStoreNames.COLLECTION
     ),
+    [SelectTableStoreNames.DATA_PLANE]: createSelectableTableStore(
+        SelectTableStoreNames.DATA_PLANE
+    ),
     [SelectTableStoreNames.ENTITY_SELECTOR]: createSelectableTableStore(
         SelectTableStoreNames.ENTITY_SELECTOR
     ),

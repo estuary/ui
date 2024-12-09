@@ -290,7 +290,8 @@ function EntityTable({
 
     return (
         <Box data-public>
-            {hideHeaderAndFooter ? null : (
+            {hideHeaderAndFooter ||
+            (!showToolbar && hideFilter && !ExportComponent) ? null : (
                 <Box sx={{ mx: 2 }}>
                     <Stack direction="row" spacing={1}>
                         {showToolbar ? (
