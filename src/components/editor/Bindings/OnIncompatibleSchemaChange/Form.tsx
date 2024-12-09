@@ -19,9 +19,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
 import { snackbarSettings } from 'utils/notification-utils';
 
-function BindingIncompatibleSchemaChangeForm({
-    bindingIndex = -1,
-}: OnIncompatibleSchemaChangeProps) {
+function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -107,4 +105,4 @@ function BindingIncompatibleSchemaChangeForm({
     );
 }
 
-export default BindingIncompatibleSchemaChangeForm;
+export default Form;

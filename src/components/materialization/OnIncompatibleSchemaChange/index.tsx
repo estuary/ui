@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
-import SpecificationIncompatibleSchemaChangeForm from './Form';
+import Form from './Form';
 
 function OnIncompatibleSchemaChange() {
     const intl = useIntl();
@@ -21,7 +21,7 @@ function OnIncompatibleSchemaChange() {
                 </Typography>
             </Stack>
 
-            <SpecificationIncompatibleSchemaChangeForm />
+            <Form />
         </Box>
     );
 }

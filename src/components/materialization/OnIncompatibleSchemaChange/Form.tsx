@@ -9,7 +9,7 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { snackbarSettings } from 'utils/notification-utils';
 
-export default function SpecificationIncompatibleSchemaChangeForm() {
+export default function Form() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
