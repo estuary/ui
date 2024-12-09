@@ -6,8 +6,8 @@ function OnIncompatibleSchemaChange() {
     const intl = useIntl();
 
     return (
-        <Box sx={{ mt: 3 }}>
-            <Stack spacing={1} sx={{ mb: 1 }}>
+        <Box>
+            <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography style={{ fontWeight: 500 }}>
                     {intl.formatMessage({
                         id: 'incompatibleSchemaChange.header',

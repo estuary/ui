@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -180,7 +180,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
     }
 
     return (
-        <>
+        <Box>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography component="div">{description}</Typography>
 
@@ -217,7 +217,7 @@ function Backfill({ description, bindingIndex = -1 }: BackfillProps) {
             {bindingIndex === -1 && workflow === 'capture_edit' ? (
                 <BackfillDataFlowOption />
             ) : null}
-        </>
+        </Box>
     );
 }
 

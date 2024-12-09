@@ -1,6 +1,9 @@
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
 import IncompatibleSchemaChangeForm from 'components/incompatibleSchemaChange/Form';
-import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
+import {
+    AutoCompleteOption,
+    OnIncompatibleSchemaChangeProps,
+} from 'components/incompatibleSchemaChange/types';
 import useBindingIncompatibleSchemaSetting from 'hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
@@ -16,11 +19,9 @@ import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
 import { snackbarSettings } from 'utils/notification-utils';
 
-interface Props {
-    bindingIndex: number;
-}
-
-function BindingIncompatibleSchemaChangeForm({ bindingIndex = -1 }: Props) {
+function BindingIncompatibleSchemaChangeForm({
+    bindingIndex = -1,
+}: OnIncompatibleSchemaChangeProps) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 

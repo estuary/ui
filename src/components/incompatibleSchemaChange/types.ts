@@ -15,6 +15,6 @@ export interface SelectorOptionProps {
     option: AutoCompleteOption;
 }
 
-export interface OnIncompatibleSchemaChangeFormProps {
+export interface OnIncompatibleSchemaChangeProps {
     bindingIndex?: number;
 }
