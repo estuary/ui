@@ -253,6 +253,16 @@ function EndpointConfig({
                         </Box>
                     ) : null}
 
+                    {canBeEmpty ? (
+                        <Box sx={{ mb: 3 }}>
+                            <AlertBox severity="info" short>
+                                {intl.formatMessage({
+                                    id: 'workflows.alert.endpointConfigEmpty',
+                                })}
+                            </AlertBox>
+                        </Box>
+                    ) : null}
+
                     <EndpointConfigForm readOnly={readOnly} />
                 </ErrorBoundryWrapper>
             </WrapperWithHeader>
