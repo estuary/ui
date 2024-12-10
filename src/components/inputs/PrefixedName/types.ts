@@ -34,9 +34,10 @@ export interface PrefixedNameProps {
 }
 
 export interface PrefixSelectorProps
-    extends Pick<PrefixedNameProps, 'disabled' | 'value'> {
+    extends Pick<PrefixedNameProps, 'disabled' | 'label' | 'value'> {
     error: boolean;
     labelId: string;
     onChange: (newVal: any) => void;
     options: string[];
+    variantString?: 'standard' | 'outlined';
 }

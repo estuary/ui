@@ -6,6 +6,7 @@ import { DataPlaneProps } from './types';
 export default function DataPlane({
     dataPlaneName,
     formattedSuffix,
+    hidePrefix,
     hideScopeIcon,
     logoSize,
     scope,
@@ -26,7 +27,9 @@ export default function DataPlane({
             ) : null}
 
             <Stack>
-                {dataPlaneName && hasLength(dataPlaneName.prefix) ? (
+                {!hidePrefix &&
+                dataPlaneName &&
+                hasLength(dataPlaneName.prefix) ? (
                     <Typography variant="caption" style={{ fontSize: 10 }}>
                         {dataPlaneName.prefix}
                     </Typography>

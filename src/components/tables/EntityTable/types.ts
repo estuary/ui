@@ -8,3 +8,9 @@ export interface ColumnProps extends TableColumns {
         storeName: SelectTableStoreNames
     ) => ReactNode;
 }
+
+export interface StandAloneTableTitleProps {
+    titleIntlKey: string;
+    docsUrl?: string;
+    messageIntlKey?: string;
+}

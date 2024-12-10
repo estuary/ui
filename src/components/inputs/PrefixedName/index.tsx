@@ -158,30 +158,15 @@ function PrefixedName({
                     },
                 }}
             >
-                <InputLabel
-                    color="secondary"
-                    disabled={disabled}
-                    focused
-                    htmlFor={INPUT_ID}
-                    required
-                    variant="outlined"
-                    sx={{
-                        'top': -6,
-                        '&.MuiInputLabel-shrink': {
-                            top: 0,
-                        },
-                    }}
-                >
-                    {label}
-                </InputLabel>
-
                 <PrefixSelector
                     disabled={disabled}
                     error={Boolean(prefixError)}
+                    label={label}
                     labelId={INPUT_ID}
                     onChange={(newValue) => handlers.setPrefix(newValue)}
                     options={objectRoles}
                     value={prefix}
+                    variantString={variantString}
                 />
 
                 <FormHelperText
@@ -244,12 +229,14 @@ function PrefixedName({
                             <PrefixSelector
                                 disabled={disabled}
                                 error={Boolean(prefixError)}
+                                label={label}
                                 labelId={INPUT_ID}
                                 onChange={(newValue) =>
                                     handlers.setPrefix(newValue)
                                 }
                                 options={objectRoles}
                                 value={prefix}
+                                variantString={variantString}
                             />
                         )}
                     </InputAdornment>
