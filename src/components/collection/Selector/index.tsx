@@ -1,16 +1,8 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { defaultOutline } from 'context/Theme';
-import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import BindingsEditorAdd from './Add';
-
-interface Props {
-    selectedCollections: string[];
-    AddSelectedButton: ReactNode;
-    itemType?: string;
-    readOnly?: boolean;
-    RediscoverButton?: ReactNode;
-}
+import { CollectionSelectorProps } from './types';
 
 function CollectionSelector({
     readOnly = false,
@@ -18,7 +10,7 @@ function CollectionSelector({
     RediscoverButton,
     AddSelectedButton,
     selectedCollections,
-}: Props) {
+}: CollectionSelectorProps) {
     const intl = useIntl();
     const theme = useTheme();
 

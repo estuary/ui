@@ -16,6 +16,8 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBinding_bindings,
     useBinding_fullSourceConfigs,
@@ -41,7 +43,7 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { DekafConfig } from 'types';
 import { isDekafConnector } from 'utils/connector-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
@@ -120,7 +122,7 @@ function useGenerateCatalog() {
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     // Source Capture Store
-    const sourceCapture = useSourceCaptureStore((state) => state.sourceCapture);
+    const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -228,7 +230,10 @@ function useGenerateCatalog() {
                     resourceConfigServerUpdateRequired,
                     bindings,
                     existingTaskData,
-                    { fullSource: fullSourceConfigs, sourceCapture }
+                    {
+                        fullSource: fullSourceConfigs,
+                        sourceCapture,
+                    }
                 );
 
                 // If there is a draft already with task data then update. We do not match on
@@ -294,6 +299,12 @@ function useGenerateCatalog() {
                               .config,
                 });
                 setPreviousEndpointConfig({ data: endpointConfigData });
+
+                logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                    newValue: evaluatedDraftId,
+                    component: 'useDiscoverStartDiscovery',
+                });
+
                 setDraftId(evaluatedDraftId);
                 setPersistedDraftId(evaluatedDraftId);
                 setDraftedEntityName(draftSpecsResponse.data[0].catalog_name);

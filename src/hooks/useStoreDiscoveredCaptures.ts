@@ -8,6 +8,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
@@ -111,6 +113,10 @@ function useStoreDiscoveredCaptures() {
                     });
                 }
 
+                logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                    newValue: newDraftId,
+                    component: 'useStoreDiscoveredCaptures',
+                });
                 setDraftId(newDraftId);
                 setPersistedDraftId(newDraftId);
             }

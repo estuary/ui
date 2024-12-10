@@ -20,6 +20,8 @@ const defaultColumns: ColumnProps[] = [
                     hideFilter
                     key={`collection-docsStatsHeader-${index}`}
                     header="data.data"
+                    firstHeaderSuffix="data.in"
+                    secondHeaderSuffix="data.out"
                     selectableTableStoreName={selectableTableStoreName}
                 />
             );
@@ -33,6 +35,8 @@ const defaultColumns: ColumnProps[] = [
                 <StatsHeader
                     key={`collection-docsStatsHeader-${index}`}
                     header="data.docs"
+                    firstHeaderSuffix="data.in"
+                    secondHeaderSuffix="data.out"
                     selectableTableStoreName={selectableTableStoreName}
                 />
             );

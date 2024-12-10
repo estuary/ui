@@ -85,7 +85,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} backfilling`,
+    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} will be backfilled`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
@@ -115,6 +115,14 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
+
+    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
+
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
+
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
@@ -157,6 +165,7 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.publish.title': `Publish data flow reset`,
 
     'resetDataFlow.errors.publishFailed': `Publishing failed.`,
+    'resetDataFlow.errors.missingDraftId': `Cannot find draft to update.`,
     'resetDataFlow.errors.missingSession': `Cannot find user session.`,
     'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
     'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
@@ -265,6 +274,23 @@ export const Workflows: Record<string, string> = {
 
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
+
+    // Delta Updates
+    'deltaUpdates.header': `Delta Updates`,
+    'deltaUpdates.message': `Mark new bindings as delta updates`,
+
+    // Schema Mode
+    'schemaMode.header': `Source Capture Schema Mode`,
+    'schemaMode.message': `How should the schema of the materialization binding be set.`,
+    'schemaMode.input.label': `Set new bindings schemas as`,
+
+    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
+    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+
+    'schemaMode.options.fromSourceName.label': `From Source Name`,
+    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

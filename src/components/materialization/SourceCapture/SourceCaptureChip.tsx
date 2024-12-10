@@ -1,38 +1,74 @@
-import { Chip } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
+import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
+import SourceCaptureChipOptionalSettings from './SourceCaptureChipOptionalSettings';
 
 function SourceCaptureChip() {
     const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
-    const updateDraft = useSourceCapture();
+    const { updateDraft } = useSourceCapture();
 
-    const [sourceCapture, setSourceCapture] = useSourceCaptureStore((state) => [
-        state.sourceCapture,
-        state.setSourceCapture,
-    ]);
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
+
+    const [resetState] = useSourceCaptureStore((state) => [state.resetState]);
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
+    const label =
+        sourceCaptureDefinition?.capture ??
+        intl.formatMessage({
+            id: 'workflows.sourceCapture.selected.none',
+        });
+
     return (
         <Chip
-            color={sourceCapture ? 'success' : 'info'}
+            color={sourceCaptureDefinition?.capture ? 'success' : 'info'}
             disabled={saving || formActive}
             label={
-                sourceCapture ??
-                intl.formatMessage({
-                    id: 'workflows.sourceCapture.selected.none',
-                })
+                <Stack
+                    direction="row"
+                    spacing={3}
+                    sx={{
+                        alignItems: 'center',
+                        pr: sourceCaptureDefinition?.capture ? 3 : undefined,
+                    }}
+                >
+                    <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
+                    <SourceCaptureChipOptionalSettings />
+                </Stack>
             }
+            sx={{
+                ...chipOutlinedStyling,
+                'height': 'auto',
+                'maxWidth': '50%',
+                'py': 1,
+                '& .MuiChip-label': {
+                    display: 'block',
+                    whiteSpace: 'normal',
+                },
+                // Just force a minwidth so the chip cannot shrink so much that the
+                //  content is invisible under the delete icon
+                'minWidth': sourceCaptureDefinition?.capture ? 375 : undefined,
+
+                // This is hacky but is needed as this chip has extra content and was
+                //  causing the SVG to resize and shrink if the chip got narrow
+                //  while the content was wide
+                '& svg': {
+                    minHeight: 21,
+                    minWidth: 21,
+                },
+            }}
             variant="outlined"
-            style={{ maxWidth: '50%' }}
             onDelete={
-                sourceCapture
+                sourceCaptureDefinition?.capture
                     ? async () => {
-                          setSourceCapture(null);
+                          resetState();
                           await updateDraft(null);
                       }
                     : undefined

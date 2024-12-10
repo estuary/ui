@@ -2,7 +2,7 @@ import { modifyDraftSpec } from 'api/draftSpecs';
 import { createPublication } from 'api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import {
-    useEditorStore_id,
+    useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
 } from 'components/editor/Store/hooks';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
@@ -28,7 +28,7 @@ function DisableCapture() {
         (state) => state.details.data.dataPlane?.dataPlaneName.whole
     );
 
-    const draftId = useEditorStore_id();
+    const persistedDraftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const checkPublicationForIncompatibleCollections =
@@ -56,6 +56,16 @@ function DisableCapture() {
             progress: ProgressStates.RUNNING,
         });
 
+        if (!persistedDraftId) {
+            updateStep(stepIndex, {
+                error: {
+                    message: 'resetDataFlow.errors.missingDraftId',
+                },
+                progress: ProgressStates.FAILED,
+            });
+            return;
+        }
+
         updateContext({
             disableClose: true,
         });
@@ -73,7 +83,7 @@ function DisableCapture() {
             const updateResponse = await modifyDraftSpec(
                 newSpec,
                 {
-                    draft_id: draftId,
+                    draft_id: persistedDraftId,
                     catalog_name: captureName,
                     spec_type: 'capture',
                 },
@@ -92,7 +102,7 @@ function DisableCapture() {
 
             // Start publishing it
             const publishResponse = await createPublication(
-                draftId,
+                persistedDraftId,
                 false,
                 `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`,
                 dataPlaneName
@@ -147,7 +157,7 @@ function DisableCapture() {
     }, [
         checkPublicationForIncompatibleCollections,
         dataPlaneName,
-        draftId,
+        persistedDraftId,
         draftSpecs,
         initUUID,
         intl,
@@ -160,7 +170,7 @@ function DisableCapture() {
         updateStep,
     ]);
 
-    return <DraftErrors draftId={draftId} />;
+    return <DraftErrors draftId={persistedDraftId} />;
 }
 
 export default DisableCapture;

@@ -3,16 +3,13 @@ import {
     createDraftSpec,
     draftCollectionsEligibleForDeletion,
 } from 'api/draftSpecs';
-import { CaptureQuery } from 'api/liveSpecsExt';
+import { CaptureQuery, getLatestLiveSpecByName } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
 import AlertBox from 'components/shared/AlertBox';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
 import { useZustandStore } from 'context/Zustand/provider';
-import {
-    LiveSpecsExtQueryWithSpec,
-    useLiveSpecsExtWithSpec,
-} from 'hooks/useLiveSpecsExt';
+import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useRef, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
@@ -54,7 +51,9 @@ function UpdateEntity({
     selectableStoreName,
     validateNewSpec,
 }: UpdateEntityProps) {
+    const updateStarted = useRef(false);
     const publishCompleted = useRef(false);
+
     const [state, setState] = useState<ProgressStates>(ProgressStates.RUNNING);
     const [error, setError] = useState<any | null>(null);
     const [draftId, setDraftId] = useState<string | null>(null);
@@ -74,21 +73,17 @@ function UpdateEntity({
         SelectableTableStore['actionSettings']
     >(selectableStoreName, selectableTableStoreSelectors.actionSettings.get);
 
-    const liveSpecsResponse = useLiveSpecsExtWithSpec(
-        entity.id,
-        entity.spec_type
-    );
-    const liveSpecs = liveSpecsResponse.liveSpecs;
-    const liveSpecsError = liveSpecsResponse.error;
-    const liveSpecsValidating = liveSpecsResponse.isValidating;
-
     const deleteCollections =
         selectableStoreName === SelectTableStoreNames.CAPTURE;
 
     useEffect(() => {
-        if (publishCompleted.current) {
+        // If we published or started already exit
+        if (publishCompleted.current || updateStarted.current) {
             return;
         }
+
+        // Mark that we have started updating
+        updateStarted.current = true;
 
         const done = (progressState: ProgressStates, response: any) => {
             setState(progressState);
@@ -99,29 +94,28 @@ function UpdateEntity({
             done(ProgressStates.FAILED, response);
         };
 
-        if (liveSpecsValidating) {
-            return;
-        }
+        const updateEntity = async (targetEntity: CaptureQuery) => {
+            // Fetch this as late as possible so we have the latest as possible
+            const liveSpecResponse = await getLatestLiveSpecByName(
+                targetEntity.catalog_name
+            );
 
-        if (liveSpecsError) {
-            return failed({ error: liveSpecsError });
-        }
+            // Make sure we're good to continue
+            if (liveSpecResponse.error) {
+                return failed({ error: liveSpecResponse.error });
+            }
 
-        if (liveSpecs.length <= 0) {
-            return failed({
-                error: {
-                    message: 'updateEntity.noLiveSpecs',
-                },
-            });
-        }
+            if (!liveSpecResponse.data?.spec) {
+                return failed({
+                    error: {
+                        message: 'updateEntity.noLiveSpecs',
+                    },
+                });
+            }
 
-        const updateEntity = async (
-            targetEntity: CaptureQuery,
-            spec: LiveSpecsExtQueryWithSpec['spec']
-        ) => {
             // We want to make sure there is a new spec to update before
-            //  calling anything on
-            const newSpec = generateNewSpec(spec);
+            //  calling anything on it
+            const newSpec = generateNewSpec(liveSpecResponse.data.spec);
             if (validateNewSpec && !newSpec) {
                 // If we have a skipped message ID set it to the error
                 if (skippedMessageID) {
@@ -148,6 +142,10 @@ function UpdateEntity({
                 entityName,
                 newSpec,
                 generateNewSpecType(targetEntity)
+                // TODO (update entity) - add last pub id when we add retry for pub failure
+                //  Should use a regex like this
+                //  export const PUBLICATION_MISMATCH_ERROR = RegExp( `expected publication ID \d was not matched`, 'gi');
+                // liveSpecResponse.data.last_pub_id
             );
             if (draftSpecsResponse.error) {
                 return failed(draftSpecsResponse);
@@ -176,12 +174,8 @@ function UpdateEntity({
             setPubID(publishResponse.data[0].id);
         };
 
-        void updateEntity(entity, liveSpecs[0].spec);
-
-        // We only want to run the useEffect after the data is fetched
-        //  OR if there was an error
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [liveSpecs, liveSpecsError, liveSpecsValidating]);
+        void updateEntity(entity);
+    });
 
     // Start fetching publication status.
     //  If update is running keep checking

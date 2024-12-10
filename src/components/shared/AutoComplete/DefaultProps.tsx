@@ -20,7 +20,6 @@ const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
 
     // Can alter if you want
     PopperComponent,
-    ListboxComponent,
     size: 'small',
 };
 
@@ -32,6 +31,7 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     'div'
 > = {
     ...autoCompleteDefaults,
+    ListboxComponent,
     disableCloseOnSelect: true,
     renderGroup: (params) => params as unknown as React.ReactNode,
     renderOption: (props, option, state) => {

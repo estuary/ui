@@ -33,6 +33,12 @@ export const REQUEST_FAILED = 'REQUEST FAILED';
 export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
 export const FETCH_DEFAULT_ERROR = 'Server Error';
 
+// Lazy Loading Errors
+export const FAILED_TO_FETCH_DYNAMIC_IMPORT =
+    'FAILED TO FETCH DYNAMICALLY IMPORTED MODULE';
+export const IMPORTING_SCRIPT_FAILED = 'IMPORTING A MODULE SCRIPT FAILED';
+export const LOADING_CHUNK = 'LOADING CHUNK';
+
 export const RETRY_REASONS = [
     RESPONSE_JSON_NOT_FN, // We will retry mainly due to the new reactor endpoints sometimes return this
     FAILED_TO_FETCH,
@@ -41,6 +47,11 @@ export const RETRY_REASONS = [
     FETCH_DEFAULT_ERROR,
 ];
 export const NETWORK_ERRORS = [FAILED_TO_FETCH, RESPONSE_JSON_NOT_FN];
+export const LAZY_LOAD_ERRORS = [
+    FAILED_TO_FETCH_DYNAMIC_IMPORT,
+    IMPORTING_SCRIPT_FAILED,
+    LOADING_CHUNK,
+];
 
 export const checkErrorMessage = (
     checkingFor: string,
@@ -54,3 +65,6 @@ export const retryAfterFailure = (message?: string | null | undefined) =>
 export const showAsTechnicalDifficulties = (
     message?: string | null | undefined
 ) => NETWORK_ERRORS.some((el) => checkErrorMessage(el, message));
+
+export const failedToLazyLoad = (message?: string | null | undefined) =>
+    LAZY_LOAD_ERRORS.some((el) => checkErrorMessage(el, message));

@@ -16,6 +16,8 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
 import { useCallback } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 
 const specType = 'collection';
 
@@ -171,6 +173,11 @@ function useInitializeCollectionDraft() {
                         liveSpec
                     );
                 }
+
+                logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+                    newValue: newDraftId,
+                    component: 'useInitializeCollectionDraft',
+                });
 
                 setLocalDraftId(newDraftId);
                 setDraftId(newDraftId);
