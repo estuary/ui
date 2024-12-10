@@ -6,7 +6,7 @@ import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useTenantStore } from 'stores/Tenant/Store';
-import Header from './Header';
+import ToggleDataPlaneScope from './ToggleDataPlaneScope';
 import Rows from './Rows';
 import { columns, selectableTableStoreName } from './shared';
 
@@ -71,12 +71,14 @@ function DataPlanesTable() {
                 setSortDirection={setSortDirection}
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
-                header={<Header />}
+                header={null}
                 filterLabel={
                     DATA_PLANE_SETTINGS[dataPlaneScope].table.filterIntlKey
                 }
                 selectableTableStoreName={selectableTableStoreName}
                 tableAriaLabelKey="admin.dataPlanes.table.aria.label"
+                showToolbar
+                toolbar={<ToggleDataPlaneScope />}
             />
         </TableHydrator>
     );
