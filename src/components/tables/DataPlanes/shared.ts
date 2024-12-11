@@ -9,12 +9,12 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.name',
     },
     {
-        field: null, // This is null because this column shows 2 columns data in a single one
-        headerIntlKey: 'data.serviceAccount',
+        field: 'aws_iam_user_arn',
+        headerIntlKey: 'data.awsIamUserArn',
     },
     {
-        field: 'reactor_address',
-        headerIntlKey: 'data.reactor',
+        field: 'gcp_service_account_email',
+        headerIntlKey: 'data.gcpServiceAccount',
     },
     {
         field: 'cidr_blocks',

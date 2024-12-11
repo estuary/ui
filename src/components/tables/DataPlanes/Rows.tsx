@@ -23,9 +23,6 @@ function Row({ row }: RowProps) {
     const cidrBlocks = useCidrBlocks();
     const dataPlaneOption = generateDataPlaneOption(row);
 
-    const serviceAccount =
-        row.aws_iam_user_arn ?? row.gcp_service_account_email ?? null;
-
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TableCell>
@@ -44,12 +41,14 @@ function Row({ row }: RowProps) {
                 ) : null}
             </TableCell>
             <TableCell>
-                {serviceAccount ? (
-                    <SingleLineCode value={serviceAccount} />
+                {row.aws_iam_user_arn ? (
+                    <SingleLineCode value={row.aws_iam_user_arn} />
                 ) : null}
             </TableCell>
             <TableCell>
-                <SingleLineCode value={dataPlaneOption.reactorAddress} />
+                {row.gcp_service_account_email ? (
+                    <SingleLineCode value={row.gcp_service_account_email} />
+                ) : null}
             </TableCell>
             <TableCell>
                 <SingleLineCode value={cidrBlocks(row.cidr_blocks)} />

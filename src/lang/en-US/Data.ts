@@ -27,7 +27,8 @@ export const Data: Record<string, string> = {
     'data.active': `Active`,
     'data.dataPlane': `Data Plane`,
     'data.reactor': `Reactor Address`,
-    'data.cidr': `IP Blocks`,
+    'data.cidr': `CIDR Blocks`,
     'data.scope': `Scope`,
-    'data.serviceAccount': `Service Account`,
+    'data.gcpServiceAccount': `GCP Service Account Email`,
+    'data.awsIamUserArn': `AWS IAM User ARN`,
 };
