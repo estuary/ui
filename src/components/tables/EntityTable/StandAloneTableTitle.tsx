@@ -18,7 +18,7 @@ function StandAloneTableTitle({
             spacing={messageIntlKey ? 2 : 0}
             sx={{ m: 2, mb: 0 }}
         >
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 <Typography component="div" variant="h6">
                     {intl.formatMessage({
                         id: titleIntlKey,
