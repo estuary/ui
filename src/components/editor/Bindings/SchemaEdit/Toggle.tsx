@@ -1,5 +1,7 @@
 import { Button } from '@mui/material';
+import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
 import { FormattedMessage } from 'react-intl';
+import { useBinding_currentCollection } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
     useBindingsEditorStore_editModeEnabled,
@@ -7,11 +9,17 @@ import {
 } from '../Store/hooks';
 
 function SchemaEditToggle() {
+    const { addCollectionToDraft } = useInitializeCollectionDraft();
+
     const formActive = useFormStateStore_isActive();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const setEditModeEnabled = useBindingsEditorStore_setEditModeEnabled();
+    const currentCollection = useBinding_currentCollection();
 
-    const toggleEditMode = () => {
+    const toggleEditMode = async () => {
+        if (currentCollection) {
+            await addCollectionToDraft(currentCollection);
+        }
         setEditModeEnabled(!editModeEnabled);
     };
 

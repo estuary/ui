@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
-import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
+import LiveSpecViewer from 'components/editor/Bindings/LiveSpecViewer';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationAlert,
@@ -37,7 +37,7 @@ interface Props {
 function BindingsEditor({ itemType, readOnly = false }: Props) {
     const entityType = useEntityType();
 
-    const initializeCollectionDraft = useInitializeCollectionDraft();
+    const { getCurrentCollectionSpec } = useInitializeCollectionDraft();
     const { refreshRequired } = useBackgroundTest();
 
     // Binding Store
@@ -69,10 +69,10 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
             setCurrentCatalog(null);
             setCollectionSpecs(null);
 
-            void initializeCollectionDraft(currentCollection);
+            void getCurrentCollectionSpec(currentCollection);
         }
     }, [
-        initializeCollectionDraft,
+        getCurrentCollectionSpec,
         setCollectionSpecs,
         setCurrentCatalog,
         activeTab,
@@ -161,7 +161,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         />
                                     </DraftSpecEditorHydrator>
                                 ) : (
-                                    <ControlledEditor />
+                                    <LiveSpecViewer />
                                 )
                             ) : (
                                 <CollectionSchemaEditorSkeleton />

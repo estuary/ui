@@ -15,7 +15,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 
@@ -195,12 +195,45 @@ function useInitializeCollectionDraft() {
         ]
     );
 
-    return useCallback(
-        async (collection: string): Promise<void> => {
+    const getCurrentCollectionSpec = useCallback(
+        async (
+            collection: string
+        ): Promise<LiveSpecsExtQuery_ByCatalogName | null> => {
             resetBindingsEditorState(true);
 
             if (collection) {
                 const publishedCollection = await getCollection(collection);
+
+                if (!publishedCollection) {
+                    setCollectionData({
+                        spec: null,
+                        belongsToDraft: false,
+                    });
+
+                    return Promise.reject(publishedCollection);
+                }
+
+                setCollectionData({
+                    spec: publishedCollection.spec,
+                    belongsToDraft: false,
+                });
+
+                return Promise.resolve(publishedCollection);
+            }
+
+            return Promise.reject();
+        },
+        [resetBindingsEditorState, setCollectionData]
+    );
+
+    const addCollectionToDraft = useCallback(
+        async (collection: string): Promise<void> => {
+            resetBindingsEditorState(true);
+
+            if (collection) {
+                const publishedCollection = await getCurrentCollectionSpec(
+                    collection
+                );
 
                 await getCollectionDraftSpecs(
                     collection,
@@ -210,8 +243,20 @@ function useInitializeCollectionDraft() {
                 );
             }
         },
-        [getCollectionDraftSpecs, resetBindingsEditorState, draftId]
+        [
+            resetBindingsEditorState,
+            getCurrentCollectionSpec,
+            getCollectionDraftSpecs,
+            draftId,
+        ]
     );
+
+    return useMemo(() => {
+        return {
+            getCurrentCollectionSpec,
+            addCollectionToDraft,
+        };
+    }, [addCollectionToDraft, getCurrentCollectionSpec]);
 }
 
 export default useInitializeCollectionDraft;
