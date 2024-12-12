@@ -197,26 +197,24 @@ function useInitializeCollectionDraft() {
 
     const getCurrentCollectionSpec = useCallback(
         async (
-            collection: string
+            collection: string,
+            skipStoring?: boolean
         ): Promise<LiveSpecsExtQuery_ByCatalogName | null> => {
             resetBindingsEditorState(true);
 
             if (collection) {
                 const publishedCollection = await getCollection(collection);
 
-                if (!publishedCollection) {
+                if (!skipStoring) {
                     setCollectionData({
-                        spec: null,
+                        spec: publishedCollection?.spec ?? null,
                         belongsToDraft: false,
                     });
-
-                    return Promise.reject(publishedCollection);
                 }
 
-                setCollectionData({
-                    spec: publishedCollection.spec,
-                    belongsToDraft: false,
-                });
+                if (!publishedCollection) {
+                    return Promise.reject(publishedCollection);
+                }
 
                 return Promise.resolve(publishedCollection);
             }
@@ -228,11 +226,12 @@ function useInitializeCollectionDraft() {
 
     const addCollectionToDraft = useCallback(
         async (collection: string): Promise<void> => {
-            resetBindingsEditorState(true);
+            // resetBindingsEditorState(true);
 
             if (collection) {
                 const publishedCollection = await getCurrentCollectionSpec(
-                    collection
+                    collection,
+                    true
                 );
 
                 await getCollectionDraftSpecs(
@@ -244,7 +243,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
-            resetBindingsEditorState,
+            // resetBindingsEditorState,
             getCurrentCollectionSpec,
             getCollectionDraftSpecs,
             draftId,

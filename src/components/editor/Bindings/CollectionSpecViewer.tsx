@@ -13,7 +13,7 @@ import {
     useBinding_currentCollection,
 } from 'stores/Binding/hooks';
 
-function LiveSpecViewer() {
+function CollectionSpecViewer() {
     const currentBindingUUID = useBinding_currentBindingUUID();
     const collectionData = useBindingsEditorStore_collectionData();
 
@@ -29,8 +29,6 @@ function LiveSpecViewer() {
 
     useEffect(() => {
         if (collectionData && currentCollection) {
-            console.log('currentCollection', currentCollection);
-            console.log('collectionData', collectionData);
             populateInferSchemaResponse(collectionData.spec, currentCollection);
         }
 
@@ -57,4 +55,4 @@ function LiveSpecViewer() {
     }
 }
 
-export default LiveSpecViewer;
+export default CollectionSpecViewer;

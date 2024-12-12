@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ResourceConfig from 'components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
-import LiveSpecViewer from 'components/editor/Bindings/LiveSpecViewer';
+import CollectionSpecViewer from 'components/editor/Bindings/CollectionSpecViewer';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationAlert,
@@ -161,7 +161,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         />
                                     </DraftSpecEditorHydrator>
                                 ) : (
-                                    <LiveSpecViewer />
+                                    <CollectionSpecViewer />
                                 )
                             ) : (
                                 <CollectionSchemaEditorSkeleton />
