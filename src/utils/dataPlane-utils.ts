@@ -1,4 +1,5 @@
 import { Session } from '@supabase/supabase-js';
+import { BaseDataPlaneQuery } from 'api/dataPlanes';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
     ProtocolLabelSelector,
@@ -8,6 +9,7 @@ import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
+import { DATA_PLANE_PREFIX, DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
 import { Endpoint } from 'stores/ShardDetail/types';
 import {
@@ -150,13 +152,10 @@ export const getJournals = async (
         brokerToken
     );
 
-export const DATA_PLANE_PREFIX = 'ops/dp/';
-export const PUBLIC_DATA_PLANE_PREFIX = `${DATA_PLANE_PREFIX}public/`;
-
 export const getDataPlaneScope = (
     dataPlaneName: string
 ): DataPlaneOption['scope'] => {
-    return dataPlaneName.startsWith(PUBLIC_DATA_PLANE_PREFIX)
+    return dataPlaneName.startsWith(DATA_PLANE_SETTINGS.public.prefix)
         ? 'public'
         : 'private';
 };
@@ -238,6 +237,25 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
         : whole;
 
     return formattedName.trim();
+};
+
+export const generateDataPlaneOption = ({
+    data_plane_name,
+    id,
+    reactor_address,
+    cidr_blocks,
+}: BaseDataPlaneQuery): DataPlaneOption => {
+    const scope = getDataPlaneScope(data_plane_name);
+
+    const dataPlaneName = parseDataPlaneName(data_plane_name, scope);
+
+    return {
+        dataPlaneName,
+        id,
+        reactorAddress: reactor_address,
+        cidrBlocks: cidr_blocks,
+        scope,
+    };
 };
 
 // We increment the read window by this many bytes every time we get back
