@@ -15,9 +15,10 @@ export default function ControllerErrors({
                 style={{
                     alignItems: 'center',
                     display: 'inline-flex',
-                    height: '100%',
+                    height: 24,
                     justifyContent: 'center',
-                    width: '100%',
+                    padding: '0px 8px',
+                    width: 64,
                 }}
             >
                 <Typography>{0}</Typography>
