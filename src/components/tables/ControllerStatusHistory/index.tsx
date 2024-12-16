@@ -17,7 +17,7 @@ export const optionalColumnIntlKeys = {
 export const columns: TableColumns[] = [
     {
         field: null,
-        headerIntlKey: 'data.details',
+        headerIntlKey: 'data.event',
     },
     {
         field: 'created',
