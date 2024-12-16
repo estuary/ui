@@ -9,6 +9,13 @@ export const Details: Record<string, string> = {
 
     'details.history.noPublications': `No publications were found.`,
 
+    'details.ops.status.header': `Status`,
+    'details.ops.status.table.label': `Controller Status History Table`,
+    'details.ops.status.table.header': `Controller Status History`,
+    'details.ops.status.table.empty.header': `No history found`,
+    'details.ops.status.table.empty.message': `Click "Refresh" to fetch the latest controller status events.`,
+    'details.ops.status.table.error.message': `There was an error attempting to fetch the list of fields.`,
+
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
     'details.settings.notifications.alert.userNotSubscribed.message.button': `click here`,

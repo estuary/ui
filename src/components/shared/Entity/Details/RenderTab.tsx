@@ -1,8 +1,9 @@
+import { useDetailsPage } from './context';
 import History from './History';
+import Status from './Logs/Status';
 import Ops from './Ops';
 import Overview from './Overview';
 import Spec from './Spec';
-import { useDetailsPage } from './context';
 
 function RenderTab() {
     const page = useDetailsPage();
@@ -15,7 +16,13 @@ function RenderTab() {
             return <History />;
 
         case 'ops':
-            return <Ops />;
+            return (
+                <>
+                    <Ops />
+
+                    <Status />
+                </>
+            );
 
         default:
             return <Overview />;
