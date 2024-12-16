@@ -1,9 +1,13 @@
 import { AlertColor } from '@mui/material';
 import { IncompatibleCollections } from 'api/evolutions';
+import { LiveSpecsExtQuery_ByCatalogName } from 'api/liveSpecsExt';
 import { CollectionData } from 'components/editor/Bindings/types';
 import { InferSchemaPropertyForRender } from 'types';
 
 export interface BindingsEditorState {
+    latestLiveSpec: LiveSpecsExtQuery_ByCatalogName | null;
+    setLatestLiveSpec: (value: BindingsEditorState['latestLiveSpec']) => void;
+
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
 

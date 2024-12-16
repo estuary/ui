@@ -116,32 +116,34 @@ const getInitialMiscData = (): Pick<
     | 'collectionData'
     | 'collectionInitializationAlert'
     | 'collectionInitializationDone'
+    | 'editModeEnabled'
+    | 'hasIncompatibleCollections'
+    | 'incompatibleCollections'
+    | 'inferSchemaResponse'
+    | 'inferSchemaResponseDoneProcessing'
+    | 'inferSchemaResponseEmpty'
+    | 'inferSchemaResponseError'
+    | 'inferSchemaResponse_Keys'
+    | 'latestLiveSpec'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
     | 'schemaUpdating'
-    | 'editModeEnabled'
-    | 'inferSchemaResponse'
-    | 'inferSchemaResponseError'
-    | 'inferSchemaResponseDoneProcessing'
-    | 'inferSchemaResponseEmpty'
-    | 'inferSchemaResponse_Keys'
-    | 'incompatibleCollections'
-    | 'hasIncompatibleCollections'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
     collectionInitializationDone: false,
+    editModeEnabled: false,
+    hasIncompatibleCollections: false,
+    incompatibleCollections: [],
+    inferSchemaResponse: null,
+    inferSchemaResponseDoneProcessing: false,
+    inferSchemaResponseEmpty: false,
+    inferSchemaResponseError: null,
+    inferSchemaResponse_Keys: [],
+    latestLiveSpec: null,
     schemaUpdateErrored: false,
     schemaUpdated: true,
     schemaUpdating: false,
-    editModeEnabled: false,
-    inferSchemaResponse: null,
-    inferSchemaResponse_Keys: [],
-    inferSchemaResponseError: null,
-    inferSchemaResponseDoneProcessing: false,
-    inferSchemaResponseEmpty: false,
-    incompatibleCollections: [],
-    hasIncompatibleCollections: false,
 });
 
 const getInitialStateData = () => ({
@@ -161,6 +163,16 @@ const getInitialState = (
             }),
             false,
             'Edit Mode Enabled Set'
+        );
+    },
+
+    setLatestLiveSpec: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.latestLiveSpec = value;
+            }),
+            false,
+            'Latest Live Spec Set'
         );
     },
 

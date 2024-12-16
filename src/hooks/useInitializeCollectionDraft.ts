@@ -1,5 +1,9 @@
 import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
+import {
+    createDraftSpec,
+    DraftSpecsExtQuery_ByCatalogName,
+    getDraftSpecsByCatalogName,
+} from 'api/draftSpecs';
 import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
@@ -29,7 +33,24 @@ const createGenericDraft = async (): Promise<string | null> => {
         : null;
 };
 
-const getCollection = async (
+const getDraftSpecCollection = async (
+    draftId: string,
+    collectionName: string
+): Promise<DraftSpecsExtQuery_ByCatalogName | null> => {
+    const draftSpecResponse = await getDraftSpecsByCatalogName(
+        draftId,
+        collectionName,
+        specType
+    );
+
+    if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
+        return draftSpecResponse.data[0];
+    } else {
+        return null;
+    }
+};
+
+const getLiveSpecCollection = async (
     collectionName: string
 ): Promise<LiveSpecsExtQuery_ByCatalogName | null> => {
     const liveSpecResponse = await getLiveSpecsByCatalogName(
@@ -46,9 +67,11 @@ const getCollection = async (
 
 function useInitializeCollectionDraft() {
     // Bindings Editor Store
-    const setCollectionInitializationDone = useBindingsEditorStore(
-        (state) => state.setCollectionInitializationDone
-    );
+    const [setCollectionInitializationDone, setLatestLiveSpec] =
+        useBindingsEditorStore((state) => [
+            state.setCollectionInitializationDone,
+            state.setLatestLiveSpec,
+        ]);
     const setCollectionData = useBindingsEditorStore_setCollectionData();
     const setCollectionInitializationAlert =
         useBindingsEditorStore_setCollectionInitializationAlert();
@@ -199,13 +222,39 @@ function useInitializeCollectionDraft() {
         async (
             collection: string,
             skipStoring?: boolean
-        ): Promise<LiveSpecsExtQuery_ByCatalogName | null> => {
+        ): Promise<
+            | LiveSpecsExtQuery_ByCatalogName
+            | DraftSpecsExtQuery_ByCatalogName
+            | null
+        > => {
             resetBindingsEditorState(true);
 
-            if (collection) {
-                const publishedCollection = await getCollection(collection);
+            if (collection && draftId) {
+                const draftCollection = await getDraftSpecCollection(
+                    draftId,
+                    collection
+                );
+
+                if (draftCollection) {
+                    if (!skipStoring) {
+                        setCollectionData({
+                            spec: draftCollection.spec ?? null,
+                            belongsToDraft: true,
+                        });
+                    }
+
+                    return Promise.resolve(draftCollection);
+                }
+
+                // This need to first try fetching the collection from the draft
+                //  that way if a user edits a collection, views another binding, and comes back
+                //  they see their changes
+                const publishedCollection = await getLiveSpecCollection(
+                    collection
+                );
 
                 if (!skipStoring) {
+                    setLatestLiveSpec(publishedCollection);
                     setCollectionData({
                         spec: publishedCollection?.spec ?? null,
                         belongsToDraft: false,
@@ -221,7 +270,12 @@ function useInitializeCollectionDraft() {
 
             return Promise.reject();
         },
-        [resetBindingsEditorState, setCollectionData]
+        [
+            draftId,
+            resetBindingsEditorState,
+            setCollectionData,
+            setLatestLiveSpec,
+        ]
     );
 
     const addCollectionToDraft = useCallback(
@@ -234,12 +288,16 @@ function useInitializeCollectionDraft() {
                     true
                 );
 
-                await getCollectionDraftSpecs(
-                    collection,
-                    draftId,
-                    publishedCollection?.last_pub_id,
-                    publishedCollection?.spec
-                );
+                // @ts-expect-error i'll fix this soon
+                if (publishedCollection?.last_pub_id) {
+                    await getCollectionDraftSpecs(
+                        collection,
+                        draftId,
+                        // @ts-expect-error i'll fix this soon
+                        publishedCollection.last_pub_id,
+                        publishedCollection.spec
+                    );
+                }
             }
         },
         [
