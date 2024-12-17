@@ -229,7 +229,7 @@ function PrefixedName({
                             <PrefixSelector
                                 disabled={disabled}
                                 error={Boolean(prefixError)}
-                                label={label}
+                                label={null} // No label as we render it manually up above
                                 labelId={INPUT_ID}
                                 onChange={(newValue) =>
                                     handlers.setPrefix(newValue)
