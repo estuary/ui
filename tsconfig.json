@@ -32,9 +32,17 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "typeRoots": ["src/types", "node_modules/@types"],
-        "types": ["vitest", "vite/client", "vitest/globals"]
+        "types": ["vitest", "vite/client", "vitest/globals"],
+        "paths": {
+            "deps/control-plane/*": ["../deps/control-plane/*"]
+        }
     },
-    "include": ["src", "deps/flow/flow.d.ts", "deps/supabase/types.d.ts"],
+    "include": [
+        "src",
+        "deps/control-plane",
+        "deps/flow/flow.d.ts",
+        "deps/supabase/types.d.ts"
+    ],
     "exclude": [
         "node_modules",
         "build",

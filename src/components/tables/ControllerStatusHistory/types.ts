@@ -1,5 +1,5 @@
+import { PublicationInfo } from 'deps/control-plane/types';
 import { SortDirection } from 'types';
-import { PublicationInfo } from 'utils/entityStatus-utils';
 
 export interface RowProps {
     row: PublicationInfo;
