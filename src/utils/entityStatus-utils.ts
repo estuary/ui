@@ -5,20 +5,10 @@ import {
     successMain,
     warningMain,
 } from 'context/Theme';
-import { EntityStatusResponse, JobStatus } from 'deps/control-plane/types';
-import { client } from 'services/client';
-import { getEntityStatusSettings } from './env-utils';
-
-const { entityStatusBaseEndpoint } = getEntityStatusSettings();
+import { JobStatus } from 'deps/control-plane/types';
 
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
 export type StatusColor = SemanticColor | '#C4D3E9' | '#E1E9F4';
-
-export const getEntityStatus = async (
-    accessToken: string,
-    catalogName: string
-): Promise<EntityStatusResponse> =>
-    client(`${entityStatusBaseEndpoint}${catalogName}`, {}, accessToken);
 
 export const getStatusIndicatorColor = (
     colorMode: PaletteMode,

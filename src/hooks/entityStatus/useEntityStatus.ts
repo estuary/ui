@@ -1,9 +1,9 @@
+import { getEntityStatus } from 'api/entityStatus';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
 import useSWR from 'swr';
-import { getEntityStatus } from 'utils/entityStatus-utils';
 import { hasLength } from 'utils/misc-utils';
 
 type EntityStatusFetcherArgs = [string, string];
