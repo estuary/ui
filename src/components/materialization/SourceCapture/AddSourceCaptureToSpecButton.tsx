@@ -3,6 +3,7 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { SourceCaptureDef } from 'types';
 import { useStore } from 'zustand';
@@ -17,6 +18,15 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     );
 
     const { existingSourceCapture, updateDraft } = useSourceCapture();
+
+    const [
+        sourceCaptureDeltaUpdatesSupported,
+        sourceCaptureTargetSchemaSupported,
+    ] = useBindingStore((state) => [
+        state.sourceCaptureDeltaUpdatesSupported,
+        state.sourceCaptureTargetSchemaSupported,
+    ]);
+
     const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
         useSourceCaptureStore((state) => [
             state.sourceCapture,
@@ -41,16 +51,25 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 sourceCapture !== updatedSourceCaptureName
         );
         const settingsUpdated =
-            deltaUpdates !== existingSourceCapture?.deltaUpdates ||
-            targetSchema !== existingSourceCapture?.targetSchema;
+            (sourceCaptureDeltaUpdatesSupported &&
+                deltaUpdates !== existingSourceCapture?.deltaUpdates) ||
+            (sourceCaptureTargetSchemaSupported &&
+                targetSchema !== existingSourceCapture?.targetSchema);
 
         // Only update draft is something in the settings changed
         if (nameUpdated || settingsUpdated) {
             const updatedSourceCapture: SourceCaptureDef = {
                 capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
-                deltaUpdates,
-                targetSchema,
             };
+
+            // Make sure these are support by the connector before
+            //  adding to the config
+            if (sourceCaptureDeltaUpdatesSupported) {
+                updatedSourceCapture.deltaUpdates = deltaUpdates;
+            }
+            if (sourceCaptureTargetSchemaSupported) {
+                updatedSourceCapture.targetSchema = targetSchema;
+            }
 
             // Check the name since the optional settings may
             //  have changed but not the name. Also, we have
