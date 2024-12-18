@@ -5,36 +5,18 @@ import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
 import { Props } from 'components/shared/Entity/DetailsForm/types';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'services/jsonforms/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { evaluateConnectorVersions } from 'utils/workflow-utils';
 import useFormFields from './useFormFields';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
-
-export const getConnectorImageDetails = (
-    connector: ConnectorWithTagDetailQuery,
-    options?: { connectorId: string; existingImageTag: string }
-): Details['data']['connectorImage'] => {
-    const connectorTag = evaluateConnectorVersions(connector, options);
-
-    return {
-        connectorId: connector.id,
-        id: connectorTag.id,
-        imageName: connector.image_name,
-        imagePath: `${connector.image_name}${connectorTag.image_tag}`,
-        iconPath: connector.image,
-    };
-};
 
 function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const intl = useIntl();
