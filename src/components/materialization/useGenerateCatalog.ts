@@ -45,8 +45,11 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
+import { DekafConfig } from 'types';
+import { isDekafConnector } from 'utils/connector-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
+import { ConnectorConfig } from '../../../deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -64,8 +67,17 @@ function useGenerateCatalog() {
     const imageConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
-    const imagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
+    const endpointConfig: ConnectorConfig | DekafConfig = useDetailsFormStore(
+        (state) =>
+            isDekafConnector(state.details.data.connectorImage)
+                ? {
+                      config: {},
+                      variant: state.details.data.connectorImage.variant,
+                  }
+                : {
+                      config: {},
+                      image: state.details.data.connectorImage.imagePath,
+                  }
     );
     const setDraftedEntityName = useDetailsFormStore(
         (state) => state.setDraftedEntityName
@@ -214,12 +226,11 @@ function useGenerateCatalog() {
                     { overrideJsonFormDefaults: true }
                 );
 
+                endpointConfig.config = encryptedEndpointConfig.data;
+
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
-                    {
-                        image: imagePath,
-                        config: encryptedEndpointConfig.data,
-                    },
+                    endpointConfig,
                     resourceConfigs,
                     resourceConfigServerUpdateRequired,
                     bindings,
@@ -286,8 +297,13 @@ function useGenerateCatalog() {
                 // Update all the store state
                 setCatalogName(processedEntityName);
                 setEncryptedEndpointConfig({
-                    data: draftSpecsResponse.data[0].spec.endpoint.connector
-                        .config,
+                    data: Object.hasOwn(
+                        draftSpecsResponse.data[0].spec.endpoint,
+                        'dekaf'
+                    )
+                        ? draftSpecsResponse.data[0].spec.endpoint.dekaf.config
+                        : draftSpecsResponse.data[0].spec.endpoint.connector
+                              .config,
                 });
                 setPreviousEndpointConfig({ data: endpointConfigData });
 
@@ -321,6 +337,7 @@ function useGenerateCatalog() {
             bindings,
             callFailed,
             detailsFormsErrorsExist,
+            endpointConfig,
             endpointConfigData,
             endpointConfigErrorsExist,
             endpointSchema,
@@ -328,7 +345,6 @@ function useGenerateCatalog() {
             fullSourceErrorsExist,
             imageConnectorId,
             imageConnectorTagId,
-            imagePath,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,

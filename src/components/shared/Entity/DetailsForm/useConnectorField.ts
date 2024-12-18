@@ -6,10 +6,11 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
+import { getConnectorMetadata } from 'utils/connector-utils';
 import { hasLength } from 'utils/misc-utils';
 import {
     ConnectorVersionEvaluationOptions,
@@ -17,7 +18,6 @@ import {
 } from 'utils/workflow-utils';
 import { MAC_ADDR_RE } from 'validation';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
-import { getConnectorImageDetails } from './Form';
 
 export default function useConnectorField(
     connectorTags: ConnectorWithTagDetailQuery[],
@@ -33,8 +33,8 @@ export default function useConnectorField(
     const originalConnectorImage = useDetailsFormStore(
         (state) => state.details.data.connectorImage
     );
-    const connectorImagePath = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imagePath
+    const connectorImageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageTag
     );
     const connectorIdChanged = useDetailsForm_changed_connectorId();
     const setDetails_connector = useDetailsFormStore(
@@ -53,7 +53,7 @@ export default function useConnectorField(
                     connectorTag.connector_id === connectorId;
 
                 if (connectorLocated) {
-                    setDetails_connector(getConnectorImageDetails(connector));
+                    setDetails_connector(getConnectorMetadata(connector));
                 }
 
                 return connectorLocated;
@@ -66,21 +66,17 @@ export default function useConnectorField(
         | undefined = useMemo(() => {
         // This is rare but can happen so being safe.
         // If you remove the connector id from the create URL
-        if (!connectorImagePath) {
+        if (!connectorImageTag) {
             return undefined;
         }
 
-        const imageTagStartIndex = connectorImagePath.indexOf(':');
-        return isEdit && hasLength(connectorId) && imageTagStartIndex > 0
+        return isEdit && hasLength(connectorId)
             ? {
                   connectorId,
-                  existingImageTag: connectorImagePath.substring(
-                      imageTagStartIndex,
-                      connectorImagePath.length
-                  ),
+                  existingImageTag: connectorImageTag,
               }
             : undefined;
-    }, [connectorId, connectorImagePath, isEdit]);
+    }, [connectorId, connectorImageTag, isEdit]);
 
     const connectorsOneOf = useMemo(() => {
         const response = [] as { title: string; const: Object }[];
@@ -88,7 +84,7 @@ export default function useConnectorField(
         if (connectorTags.length > 0) {
             connectorTags.forEach((connector) => {
                 response.push({
-                    const: getConnectorImageDetails(
+                    const: getConnectorMetadata(
                         connector,
                         versionEvaluationOptions
                     ),

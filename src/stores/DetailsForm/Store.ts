@@ -6,6 +6,7 @@ import produce from 'immer';
 import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import {
     DataPlaneOption,
     Details,
@@ -22,18 +23,12 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import {
-    getDataPlaneScope,
-    parseDataPlaneName,
-    PUBLIC_DATA_PLANE_PREFIX,
-} from 'utils/dataPlane-utils';
+import { getConnectorMetadata } from 'utils/connector-utils';
+import { generateDataPlaneOption } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import {
-    ConnectorVersionEvaluationOptions,
-    evaluateConnectorVersions,
-} from 'utils/workflow-utils';
+import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -48,20 +43,11 @@ const getConnectorImage = async (
 
     if (!error && data && data.length > 0) {
         const connector = data[0];
-        const { image_name, logo_url } = connector;
 
         const options: ConnectorVersionEvaluationOptions | undefined =
             existingImageTag ? { connectorId, existingImageTag } : undefined;
 
-        const connectorTag = evaluateConnectorVersions(connector, options);
-
-        return {
-            connectorId,
-            id: connectorTag.id,
-            imageName: image_name,
-            imagePath: `${image_name}${connectorTag.image_tag}`,
-            iconPath: logo_url,
-        };
+        return getConnectorMetadata(connector, options);
     }
 
     return null;
@@ -82,7 +68,7 @@ const getDataPlane = (
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
-            `${PUBLIC_DATA_PLANE_PREFIX}${defaultDataPlaneSuffix}`
+            `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
     );
 
     if (dataPlaneId) {
@@ -103,6 +89,7 @@ const initialDetails: Details = {
             iconPath: '',
             imageName: '',
             imagePath: '',
+            imageTag: '',
         },
         entityName: '',
     },
@@ -317,21 +304,7 @@ export const getInitialState = (
                 dataPlaneResponse.data.length > 0
             ) {
                 dataPlaneOptions = dataPlaneResponse.data.map(
-                    ({ data_plane_name, id, reactor_address }) => {
-                        const scope = getDataPlaneScope(data_plane_name);
-
-                        const dataPlaneName = parseDataPlaneName(
-                            data_plane_name,
-                            scope
-                        );
-
-                        return {
-                            dataPlaneName,
-                            id,
-                            reactorAddress: reactor_address,
-                            scope,
-                        };
-                    }
+                    generateDataPlaneOption
                 );
 
                 get().setDataPlaneOptions(dataPlaneOptions);
@@ -425,6 +398,7 @@ export const getInitialState = (
                     iconPath: '',
                     imageName: '',
                     imagePath: '',
+                    imageTag: '',
                     connectorId,
                 });
                 get().setHydrationErrorsExist(true);

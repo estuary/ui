@@ -13,10 +13,12 @@ import { PrefixSelectorProps } from './types';
 function PrefixSelector({
     disabled,
     error,
+    label,
     labelId,
     onChange,
     options,
     value,
+    variantString,
 }: PrefixSelectorProps) {
     return (
         <Autocomplete
@@ -42,9 +44,10 @@ function PrefixSelector({
                     {...params}
                     InputProps={{
                         ...InputProps,
-                        disableUnderline: true,
+                        disableUnderline: variantString === 'standard',
                         sx: { borderRadius: 3 },
                     }}
+                    label={label}
                     error={Boolean(error)}
                     required
                     size="small"
@@ -52,7 +55,7 @@ function PrefixSelector({
                         maxWidth: 250,
                         minWidth: 100,
                     }}
-                    variant="standard"
+                    variant={variantString}
                 />
             )}
         />

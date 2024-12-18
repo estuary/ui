@@ -19,6 +19,7 @@ export interface DataPlaneProps {
     formattedSuffix: string;
     scope: DataPlaneOption['scope'];
     dataPlaneName?: DataPlaneOption['dataPlaneName'];
+    hidePrefix?: boolean;
     hideScopeIcon?: DataPlaneIconProps['hideScopeIcon'];
     logoSize?: DataPlaneIconProps['size'];
 }

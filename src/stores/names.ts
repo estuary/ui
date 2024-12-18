@@ -45,6 +45,7 @@ export enum SelectTableStoreNames {
     BILLING = 'Billing-Table',
     CAPTURE = 'Captures-Table',
     COLLECTION = 'Collections-Table',
+    DATA_PLANE = 'Data-Plane-Table',
     ENTITY_SELECTOR = 'Entity-Selector-Table',
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
