@@ -1,22 +1,37 @@
 import { useCallback } from 'react';
+import { useBindingStore } from 'stores/Binding/Store';
 import { SourceCaptureDef } from 'types';
 import { useShallow } from 'zustand/react/shallow';
 import { useSourceCaptureStore } from './Store';
 
 export const useSourceCaptureStore_sourceCaptureDefinition =
-    (): SourceCaptureDef | null =>
-        useSourceCaptureStore(
+    (): SourceCaptureDef | null => {
+        const [
+            sourceCaptureDeltaUpdatesSupported,
+            sourceCaptureTargetSchemaSupported,
+        ] = useBindingStore((state) => [
+            state.sourceCaptureDeltaUpdatesSupported,
+            state.sourceCaptureTargetSchemaSupported,
+        ]);
+
+        return useSourceCaptureStore(
             useShallow((state) => {
                 if (state.sourceCapture) {
                     const response: SourceCaptureDef = {
                         capture: state.sourceCapture,
                     };
 
-                    if (state.deltaUpdates) {
+                    if (
+                        sourceCaptureDeltaUpdatesSupported &&
+                        state.deltaUpdates
+                    ) {
                         response.deltaUpdates = state.deltaUpdates;
                     }
 
-                    if (state.targetSchema) {
+                    if (
+                        sourceCaptureTargetSchemaSupported &&
+                        state.targetSchema
+                    ) {
                         response.targetSchema = state.targetSchema;
                     }
 
@@ -26,6 +41,7 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
                 return null;
             })
         );
+    };
 
 export const useSourceCaptureStore_setSourceCaptureDefinition = () => {
     const [setSourceCapture, setDeltaUpdates, setTargetSchema] =

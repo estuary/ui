@@ -1,18 +1,10 @@
-import { Typography } from '@mui/material';
+import StandAloneTableTitle from 'components/tables/EntityTable/StandAloneTableTitle';
 import PrefixAlertTable from 'components/tables/PrefixAlerts';
-import { FormattedMessage } from 'react-intl';
 
 function PrefixAlerts() {
     return (
         <>
-            <Typography
-                component="div"
-                variant="h6"
-                sx={{ m: 2, alignItems: 'center' }}
-            >
-                <FormattedMessage id="admin.alerts.header" />
-            </Typography>
-
+            <StandAloneTableTitle titleIntlKey="admin.alerts.header" />
             <PrefixAlertTable />
         </>
     );
