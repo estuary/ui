@@ -229,7 +229,14 @@ function useInitializeCollectionDraft() {
         > => {
             resetBindingsEditorState(true);
 
-            if (collection && draftId) {
+            if (!collection) {
+                return Promise.reject();
+            }
+
+            if (draftId) {
+                // This need to first try fetching the collection from the draft
+                //  that way if a user edits a collection, views another binding, and comes back
+                //  they see their changes
                 const draftCollection = await getDraftSpecCollection(
                     draftId,
                     collection
@@ -245,30 +252,23 @@ function useInitializeCollectionDraft() {
 
                     return Promise.resolve(draftCollection);
                 }
-
-                // This need to first try fetching the collection from the draft
-                //  that way if a user edits a collection, views another binding, and comes back
-                //  they see their changes
-                const publishedCollection = await getLiveSpecCollection(
-                    collection
-                );
-
-                if (!skipStoring) {
-                    setLatestLiveSpec(publishedCollection);
-                    setCollectionData({
-                        spec: publishedCollection?.spec ?? null,
-                        belongsToDraft: false,
-                    });
-                }
-
-                if (!publishedCollection) {
-                    return Promise.reject(publishedCollection);
-                }
-
-                return Promise.resolve(publishedCollection);
             }
 
-            return Promise.reject();
+            const publishedCollection = await getLiveSpecCollection(collection);
+
+            if (!skipStoring) {
+                setLatestLiveSpec(publishedCollection);
+                setCollectionData({
+                    spec: publishedCollection?.spec ?? null,
+                    belongsToDraft: false,
+                });
+            }
+
+            if (!publishedCollection) {
+                return Promise.reject(publishedCollection);
+            }
+
+            return Promise.resolve(publishedCollection);
         },
         [
             draftId,
