@@ -1,6 +1,6 @@
 import produce from 'immer';
-import { SourceCaptureDef } from 'types';
-import { specContainsDerivation } from 'utils/misc-utils';
+import { Schema, SourceCaptureDef } from 'types';
+import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
@@ -62,4 +62,17 @@ export const addOrRemoveSourceCapture = (
     }
 
     return draftSpec;
+};
+
+export const addOrRemoveOnIncompatibleSchemaChange = (
+    schema: Schema,
+    value: string | undefined
+) => {
+    if (hasLength(value)) {
+        schema.onIncompatibleSchemaChange = value;
+    } else {
+        delete schema.onIncompatibleSchemaChange;
+    }
+
+    return schema;
 };

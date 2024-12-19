@@ -122,12 +122,20 @@ const hydrateSpecificationDependentState = async (
                 : fallbackInterval,
             defaultInterval
         );
+
+        get().setSpecOnIncompatibleSchemaChange(
+            draftSpecs[0].spec?.onIncompatibleSchemaChange
+        );
     } else {
         get().prefillBindingDependentState(entityType, liveSpec.bindings);
 
         get().setCaptureInterval(
             liveSpec?.interval ?? fallbackInterval,
             defaultInterval
+        );
+
+        get().setSpecOnIncompatibleSchemaChange(
+            liveSpec?.onIncompatibleSchemaChange
         );
     }
 
@@ -155,6 +163,7 @@ const getInitialMiscData = (): Pick<
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
     | 'evolvedCollections'
+    | 'onIncompatibleSchemaChange'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -175,6 +184,7 @@ const getInitialMiscData = (): Pick<
     defaultCaptureInterval: null,
     discoveredCollections: [],
     evolvedCollections: [],
+    onIncompatibleSchemaChange: undefined,
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
@@ -860,6 +870,20 @@ const getInitialState = (
         );
     },
 
+    setBindingOnIncompatibleSchemaChange: (value, bindingUUID) => {
+        set(
+            produce((state: BindingState) => {
+                if (bindingUUID) {
+                    state.resourceConfigs[
+                        bindingUUID
+                    ].meta.onIncompatibleSchemaChange = value;
+                }
+            }),
+            false,
+            'Binding Incompatible Schema Change Set'
+        );
+    },
+
     setCaptureInterval: (value, defaultInterval) => {
         set(
             produce((state: BindingState) => {
@@ -971,6 +995,17 @@ const getInitialState = (
         );
     },
 
+    setSpecOnIncompatibleSchemaChange: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.onIncompatibleSchemaChange = value;
+            }),
+            false,
+            'Specification Incompatible Schema Change Set'
+        );
+    },
+
+    // TODO (organization): Correct the location of store actions that are out-of-order.
     setBackfillDataFlow: (value) => {
         set(
             produce((state: BindingState) => {
@@ -1120,11 +1155,18 @@ const getInitialState = (
                 };
 
                 if (!isEmpty(existingConfig)) {
-                    const { disable, previouslyDisabled } = existingConfig.meta;
+                    const {
+                        disable,
+                        onIncompatibleSchemaChange,
+                        previouslyDisabled,
+                    } = existingConfig.meta;
 
                     evaluatedConfig.meta.disable = disable;
                     evaluatedConfig.meta.previouslyDisabled =
                         previouslyDisabled;
+
+                    evaluatedConfig.meta.onIncompatibleSchemaChange =
+                        onIncompatibleSchemaChange;
                 }
 
                 // Only actually update if there was a change. This is mainly here because
