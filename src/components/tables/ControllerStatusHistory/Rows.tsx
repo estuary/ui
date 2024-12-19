@@ -1,7 +1,7 @@
 import { TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
-import ControllerErrors from '../cells/ControllerErrors';
-import ControllerStatus from '../cells/ControllerStatus';
+import ControllerErrors from '../cells/entityStatus/ControllerErrors';
+import ControllerStatus from '../cells/entityStatus/ControllerStatus';
 import TimeStamp from '../cells/TimeStamp';
 import { RowProps, RowsProps } from './types';
 
@@ -9,9 +9,7 @@ function Row({ row }: RowProps) {
     return (
         <TableRow>
             {row.detail ? (
-                <TableCell>
-                    <ControllerStatus detail={row.detail} status={row.result} />
-                </TableCell>
+                <ControllerStatus detail={row.detail} status={row.result} />
             ) : (
                 <TableCell />
             )}
@@ -28,12 +26,10 @@ function Row({ row }: RowProps) {
                 <TableCell />
             )}
 
-            <TableCell>
-                <ControllerErrors
-                    errors={row.errors ? row.errors : []}
-                    popperPlacement="bottom-start"
-                />
-            </TableCell>
+            <ControllerErrors
+                errors={row.errors ? row.errors : []}
+                popperPlacement="bottom-start"
+            />
         </TableRow>
     );
 }

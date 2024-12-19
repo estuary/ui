@@ -22,7 +22,7 @@ export default function StatusIndicator({
                     width: INDICATOR_SIZE,
                     marginRight: INDICATOR_MARGIN,
                     border: 0,
-                    backgroundColor: color,
+                    backgroundColor: color.hex,
                     borderRadius: 50,
                     display: 'inline-block',
                     verticalAlign: 'middle',

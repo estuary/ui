@@ -1,9 +1,12 @@
 import { Box, Typography } from '@mui/material';
 import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
 import { linkButtonSx } from 'context/Theme';
-import { DetailProps } from './types';
+import { ControllerEventProps } from './types';
 
-export default function Detail({ detail, popperPlacement }: DetailProps) {
+export default function ControllerEvent({
+    detail,
+    popperPlacement,
+}: ControllerEventProps) {
     return (
         <ButtonWithPopper
             buttonProps={{
