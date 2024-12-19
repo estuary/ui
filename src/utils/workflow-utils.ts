@@ -200,12 +200,6 @@ export const generateTaskSpec = (
                 // Check if disable is a boolean otherwise default to false
                 const bindingDisabled = isBoolean(disable) ? disable : false;
 
-                // Check if the binding-level `onIncompatibleSchemaChange` is set.
-                const onIncompatibleSchemaChangeOverridden = Boolean(
-                    entityType === 'materialization' &&
-                        onIncompatibleSchemaChange
-                );
-
                 // See which binding we need to update
                 const existingBindingIndex = resourceConfigServerUpdateRequired
                     ? getBindingIndex(
@@ -226,14 +220,11 @@ export const generateTaskSpec = (
                         delete draftSpec.bindings[existingBindingIndex].disable;
                     }
 
-                    if (onIncompatibleSchemaChangeOverridden) {
-                        draftSpec.bindings[
-                            existingBindingIndex
-                        ].onIncompatibleSchemaChange =
-                            onIncompatibleSchemaChange;
-                    } else if (entityType === 'materialization') {
-                        delete draftSpec.bindings[existingBindingIndex]
-                            .onIncompatibleSchemaChange;
+                    if (entityType === 'materialization') {
+                        addOrRemoveOnIncompatibleSchemaChange(
+                            draftSpec.bindings[existingBindingIndex],
+                            onIncompatibleSchemaChange
+                        );
                     }
 
                     // Only update if there is a fullSource to populate. Otherwise just set the name.
@@ -264,9 +255,11 @@ export const generateTaskSpec = (
                         },
                     };
 
-                    if (onIncompatibleSchemaChangeOverridden) {
-                        newBinding.onIncompatibleSchemaChange =
-                            onIncompatibleSchemaChange;
+                    if (entityType === 'materialization') {
+                        addOrRemoveOnIncompatibleSchemaChange(
+                            newBinding,
+                            onIncompatibleSchemaChange
+                        );
                     }
 
                     draftSpec.bindings.push(newBinding);

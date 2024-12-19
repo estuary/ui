@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { SourceCaptureDef } from 'types';
+import { Schema, SourceCaptureDef } from 'types';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
@@ -65,14 +65,14 @@ export const addOrRemoveSourceCapture = (
 };
 
 export const addOrRemoveOnIncompatibleSchemaChange = (
-    draftSpec: any,
+    schema: Schema,
     value: string | undefined
 ) => {
     if (hasLength(value)) {
-        draftSpec.onIncompatibleSchemaChange = value;
+        schema.onIncompatibleSchemaChange = value;
     } else {
-        delete draftSpec.onIncompatibleSchemaChange;
+        delete schema.onIncompatibleSchemaChange;
     }
 
-    return draftSpec;
+    return schema;
 };
