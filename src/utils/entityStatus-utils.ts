@@ -5,7 +5,11 @@ import {
     successMain,
     warningMain,
 } from 'context/Theme';
-import { JobStatus } from 'deps/control-plane/types';
+import {
+    ControllerStatus,
+    EntityControllerStatus,
+    JobStatus,
+} from 'deps/control-plane/types';
 
 type MuiColorId =
     | 'default'
@@ -26,7 +30,7 @@ export interface StatusColor {
 
 export const getStatusIndicatorColor = (
     colorMode: PaletteMode,
-    status?: JobStatus
+    status?: JobStatus | null
 ): StatusColor => {
     if (status?.type === 'success' || status?.type === 'emptyDraft') {
         return { hex: successMain, id: 'success' };
@@ -42,3 +46,8 @@ export const getStatusIndicatorColor = (
 
     return { hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9', id: 'default' };
 };
+
+export const isEntityControllerStatus = (
+    value: ControllerStatus
+): value is EntityControllerStatus =>
+    'activation' in value && 'publications' in value;

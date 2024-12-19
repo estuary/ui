@@ -8,5 +8,5 @@ const { entityStatusBaseEndpoint } = getEntityStatusSettings();
 export const getEntityStatus = async (
     accessToken: string,
     catalogName: string
-): Promise<EntityStatusResponse> =>
+): Promise<EntityStatusResponse[]> =>
     client(`${entityStatusBaseEndpoint}?name=${catalogName}`, {}, accessToken);

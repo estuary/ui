@@ -1,7 +1,9 @@
 type ControllerStatus =
     | CaptureControllerStatus
     | CollectionControllerStatus
-    | MaterializationControllerStatus;
+    | MaterializationControllerStatus
+    | TestControllerStatus
+    | BaseControllerStatus;
 
 // Status of the activation of the task in the data-plane.
 interface ActivationStatus {
@@ -25,48 +27,50 @@ interface AutoDiscoverOutcome {
 }
 
 interface AutoDiscoverStatus {
-    failure?: AutoDiscoverFailure;
-    interval?: string;
-    last_success?: AutoDiscoverOutcome;
-    next_at?: string | null;
-    pending_publish?: AutoDiscoverOutcome;
+    failure?: AutoDiscoverFailure | null;
+    interval?: string | null;
+    last_success?: AutoDiscoverOutcome | null;
+    next_at?: string;
+    pending_publish?: AutoDiscoverOutcome | null;
 }
 
 interface BaseControllerStatus {
     type: string;
-    activation?: ActivationStatus;
-    publications?: PublicationStatus;
 }
 
-export interface CaptureControllerStatus extends BaseControllerStatus {
-    auto_discover?: AutoDiscoverStatus;
+export interface CaptureControllerStatus extends EntityControllerStatus {
+    auto_discover?: AutoDiscoverStatus | null;
 }
 
-export interface CollectionControllerStatus extends BaseControllerStatus {
-    inferred_schema?: InferredSchemaStatus;
+export interface CollectionControllerStatus extends EntityControllerStatus {
+    inferred_schema?: InferredSchemaStatus | null;
 }
 
 interface DiscoverChange {
     disable: boolean;
     resource_path: string[];
-    target: any;
+    target: string;
 }
 
 export type Entity = 'capture' | 'materialization' | 'collection';
 
+export interface EntityControllerStatus extends PublicationControllerStatus {
+    activation?: ActivationStatus;
+}
+
 export interface EntityStatusResponse {
     catalog_name: string;
     controller_failures: number;
-    controller_status: ControllerStatus;
+    controller_next_run: string | null;
     controller_updated_at: string;
-    disable: boolean;
     last_build_id: string;
     last_pub_id: string;
     live_spec_id: string;
     live_spec_updated_at: string;
     spec_type: Entity;
-    controller_next_run?: string | null;
+    status: ControllerStatus;
     controller_error?: string | null;
+    disabled?: boolean;
 }
 
 export interface Error {
@@ -84,15 +88,19 @@ interface EvolvedCollection {
 
 interface InferredSchemaStatus {
     schema_last_updated?: string;
-    schema_md5?: string;
+    schema_md5?: string | null;
 }
 
 export interface JobStatus {
     type: string;
 }
 
-export interface MaterializationControllerStatus extends BaseControllerStatus {
-    source_capture?: SourceCaptureStatus;
+export interface MaterializationControllerStatus extends EntityControllerStatus {
+    source_capture?: SourceCaptureStatus | null;
+}
+
+interface PublicationControllerStatus extends BaseControllerStatus {
+    publications?: PublicationStatus;
 }
 
 export interface PublicationInfo {
@@ -100,19 +108,23 @@ export interface PublicationInfo {
     completed?: string;
     count?: number;
     created?: string;
-    detail?: string;
+    detail?: string | null;
     errors?: Error[];
     is_touch?: boolean;
-    result?: JobStatus;
+    result?: JobStatus | null;
 }
 
 interface PublicationStatus {
     history: PublicationInfo[];
-    dependency_hash?: string;
+    dependency_hash?: string | null;
     max_observed_pub_id?: string;
 }
 
 interface SourceCaptureStatus {
     add_bindings?: string[];
     up_to_date?: boolean;
+}
+
+interface TestControllerStatus extends PublicationControllerStatus {
+    passing: boolean;
 }

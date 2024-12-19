@@ -5,6 +5,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
+import { isEntityControllerStatus } from 'utils/entityStatus-utils';
 
 export default function Status() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -37,7 +38,11 @@ export default function Status() {
             </Typography>
 
             <ControllerStatusHistoryTable
-                history={data?.controller_status.publications?.history}
+                history={
+                    data?.[0].status && isEntityControllerStatus(data[0].status)
+                        ? data[0].status.publications?.history
+                        : []
+                }
                 serverErrorExists={false}
             />
         </Stack>

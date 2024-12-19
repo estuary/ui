@@ -4,7 +4,7 @@ import { StatusColor } from 'utils/entityStatus-utils';
 
 export interface ControllerStatusProps {
     detail: string;
-    status?: JobStatus;
+    status?: JobStatus | null;
 }
 
 export interface ChipLabelProps {
@@ -14,5 +14,5 @@ export interface ChipLabelProps {
 
 export interface StatusIndicatorProps {
     smallMargin?: boolean;
-    status?: JobStatus;
+    status?: JobStatus | null;
 }
