@@ -11,6 +11,7 @@ import useSupportedOptions from 'hooks/OnIncompatibleSchemaChange/useSupportedOp
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { autoCompleteDefaultProps } from './shared';
 import { BaseFormProps } from './types';
 
 export default function IncompatibleSchemaChangeForm({
@@ -87,9 +88,8 @@ export default function IncompatibleSchemaChangeForm({
                 </AlertBox>
             ) : null}
 
-            {/* The presence of ListboxComponent in autoCompleteDefaultProps prevents
-                the options from rendering. */}
             <Autocomplete
+                {...autoCompleteDefaultProps}
                 disabled={formActive}
                 getOptionLabel={(option) => option.label}
                 inputValue={inputValue}
