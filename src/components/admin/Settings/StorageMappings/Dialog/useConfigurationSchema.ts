@@ -51,7 +51,7 @@ const s3ProviderSchema = {
         },
     ],
     type: 'object',
-    required: ['bucket'],
+    required: ['bucket', 'region'],
     properties: {
         bucket: {
             description: 'Bucket into which Flow will store data.',
@@ -60,8 +60,7 @@ const s3ProviderSchema = {
                 '(^(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])$)',
         },
         region: {
-            description:
-                'AWS region of the S3 bucket. Uses the default value from the AWS credentials of the Gazette broker if unset.',
+            description: 'AWS region of the S3 bucket.',
             type: 'string',
         },
         prefix: {
