@@ -28,6 +28,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
@@ -120,6 +121,10 @@ function useGenerateCatalog() {
 
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+
+    const specIncompatibleSchemaChange = useBindingStore(
+        (state) => state.onIncompatibleSchemaChange
+    );
 
     // Source Capture Store
     const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
@@ -233,6 +238,8 @@ function useGenerateCatalog() {
                     {
                         fullSource: fullSourceConfigs,
                         sourceCapture,
+                        specOnIncompatibleSchemaChange:
+                            specIncompatibleSchemaChange,
                     }
                 );
 
@@ -356,6 +363,7 @@ function useGenerateCatalog() {
             setPersistedDraftId,
             setPreviousEndpointConfig,
             sourceCapture,
+            specIncompatibleSchemaChange,
             updateFormStatus,
         ]
     );
