@@ -59,7 +59,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
             if (currentBindingUUID) {
-                setIncompatibleSchemaChange(value?.val);
+                setIncompatibleSchemaChange(value?.val, currentBindingUUID);
             }
 
             updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)

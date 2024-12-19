@@ -870,11 +870,9 @@ const getInitialState = (
         );
     },
 
-    setBindingOnIncompatibleSchemaChange: (value) => {
+    setBindingOnIncompatibleSchemaChange: (value, bindingUUID) => {
         set(
             produce((state: BindingState) => {
-                const bindingUUID = state.currentBinding?.uuid;
-
                 if (bindingUUID) {
                     state.resourceConfigs[
                         bindingUUID

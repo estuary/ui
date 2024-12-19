@@ -124,7 +124,10 @@ export interface BindingState
     setSpecOnIncompatibleSchemaChange: (
         value: BindingState['onIncompatibleSchemaChange']
     ) => void;
-    setBindingOnIncompatibleSchemaChange: (value: string | undefined) => void;
+    setBindingOnIncompatibleSchemaChange: (
+        value: string | undefined,
+        bindingUUID: string | null
+    ) => void;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;
