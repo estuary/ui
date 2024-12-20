@@ -108,8 +108,12 @@ export default function IncompatibleSchemaChangeForm({
                     );
                 }}
                 onChange={(_state, newVal) => updateDraftedSetting(newVal)}
-                onInputChange={(_event, newInputValue) => {
-                    setInputValue(newInputValue);
+                onInputChange={(event, newInputValue) => {
+                    // Set the input value component state only when an option is clicked
+                    // to avoid clashing with the effect which also updates this state.
+                    if (Boolean(event)) {
+                        setInputValue(newInputValue);
+                    }
                 }}
                 options={options}
                 renderInput={(params) => {

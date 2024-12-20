@@ -26,10 +26,10 @@ export default function Form() {
         async (option?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            setIncompatibleSchemaChange(option?.val);
-
             updateOnIncompatibleSchemaChange(option?.val)
                 .then(() => {
+                    setIncompatibleSchemaChange(option?.val);
+
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch(() => {
@@ -40,10 +40,12 @@ export default function Form() {
                         { ...snackbarSettings, variant: 'error' }
                     );
 
+                    setIncompatibleSchemaChange(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
                 });
         },
         [
+            currentSetting,
             enqueueSnackbar,
             intl,
             setFormState,

@@ -6,19 +6,15 @@ import {
 } from 'components/editor/Store/hooks';
 import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
 import { useEntityType } from 'context/EntityContext';
+import { cloneDeep } from 'lodash';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
+import { CustomEvents } from 'services/types';
 import { BindingMetadata, Schema } from 'types';
+import { addOrRemoveOnIncompatibleSchemaChange } from 'utils/entity-utils';
 import { hasLength } from 'utils/misc-utils';
-
-const updateSchema = (binding: any, newVal: any) => {
-    if (newVal) {
-        binding.onIncompatibleSchemaChange = newVal;
-    } else {
-        delete binding.onIncompatibleSchemaChange;
-    }
-};
 
 function useBindingIncompatibleSchemaSetting() {
     const intl = useIntl();
@@ -31,12 +27,23 @@ function useBindingIncompatibleSchemaSetting() {
 
     const updateOnIncompatibleSchemaChange = useCallback(
         async (
-            newVal: AutoCompleteOption['val'] | undefined,
+            value: AutoCompleteOption['val'] | undefined,
             bindingMetadata: BindingMetadata[]
         ) => {
-            const bindingMetadataExists = hasLength(bindingMetadata);
+            if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
+                logRocketEvent(
+                    `${CustomEvents.INCOMPATIBLE_SCHEMA_CHANGE}:Missing Draft Resources`,
+                    {
+                        draftIdMissing: !draftId,
+                        draftSpecMissing: draftSpecs.length === 0,
+                        mutateMissing: !mutateDraftSpecs,
+                    }
+                );
 
-            if (!bindingMetadataExists) {
+                return Promise.resolve();
+            }
+
+            if (!hasLength(bindingMetadata)) {
                 return Promise.resolve();
             }
 
@@ -44,12 +51,7 @@ function useBindingIncompatibleSchemaSetting() {
                 ({ bindingIndex }) => bindingIndex === -1
             );
 
-            if (
-                !draftId ||
-                !mutateDraftSpecs ||
-                draftSpecs.length === 0 ||
-                invalidBindingIndex > -1
-            ) {
+            if (invalidBindingIndex > -1) {
                 return Promise.reject({
                     ...BASE_ERROR,
                     message: intl.formatMessage(
@@ -64,11 +66,14 @@ function useBindingIncompatibleSchemaSetting() {
                 });
             }
 
-            const spec: Schema = draftSpecs[0].spec;
+            const spec: Schema = cloneDeep(draftSpecs[0].spec);
 
             bindingMetadata.forEach(({ bindingIndex }) => {
                 if (bindingIndex > -1) {
-                    updateSchema(spec.bindings[bindingIndex], newVal);
+                    addOrRemoveOnIncompatibleSchemaChange(
+                        spec.bindings[bindingIndex],
+                        value
+                    );
                 }
             });
 

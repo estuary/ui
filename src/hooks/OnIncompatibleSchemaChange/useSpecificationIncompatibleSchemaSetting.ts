@@ -5,19 +5,14 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
 import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
+import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { useBindingStore } from 'stores/Binding/Store';
 import { Schema } from 'types';
 import { addOrRemoveOnIncompatibleSchemaChange } from 'utils/entity-utils';
 
 export default function useSpecificationIncompatibleSchemaSetting() {
-    // Binding Store
-    const onIncompatibleSchemaChange = useBindingStore(
-        (state) => state.onIncompatibleSchemaChange
-    );
-
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -44,7 +39,7 @@ export default function useSpecificationIncompatibleSchemaSetting() {
                 return Promise.resolve();
             }
 
-            const spec: Schema = draftSpec.spec;
+            const spec: Schema = cloneDeep(draftSpec.spec);
 
             addOrRemoveOnIncompatibleSchemaChange(spec, value);
 
@@ -66,8 +61,6 @@ export default function useSpecificationIncompatibleSchemaSetting() {
     return {
         currentSetting: draftSpec?.spec?.onIncompatibleSchemaChange
             ? draftSpec.spec.onIncompatibleSchemaChange
-            : typeof onIncompatibleSchemaChange === 'string'
-            ? onIncompatibleSchemaChange
             : '',
         updateOnIncompatibleSchemaChange,
     };

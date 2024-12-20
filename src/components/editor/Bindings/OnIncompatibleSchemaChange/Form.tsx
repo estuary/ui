@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
-    useBinding_resourceConfigOfMetaBindingProperty,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
@@ -25,12 +24,6 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
 
     const currentCollection = useBinding_currentCollection();
     const currentBindingUUID = useBinding_currentBindingUUID();
-
-    const incompatibleSchemaChange =
-        useBinding_resourceConfigOfMetaBindingProperty(
-            currentBindingUUID,
-            'onIncompatibleSchemaChange'
-        );
 
     const setIncompatibleSchemaChange = useBindingStore(
         (state) => state.setBindingOnIncompatibleSchemaChange
@@ -58,12 +51,15 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
         async (value?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            if (currentBindingUUID) {
-                setIncompatibleSchemaChange(value?.val, currentBindingUUID);
-            }
-
             updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
                 .then(() => {
+                    if (currentBindingUUID) {
+                        setIncompatibleSchemaChange(
+                            value?.val,
+                            currentBindingUUID
+                        );
+                    }
+
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch((err) => {
@@ -77,12 +73,17 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
                         { ...snackbarSettings, variant: 'error' }
                     );
 
+                    setIncompatibleSchemaChange(
+                        currentSetting,
+                        currentBindingUUID
+                    );
                     setFormState({ status: FormStatus.FAILED });
                 });
         },
         [
             bindingMetadata,
             currentBindingUUID,
+            currentSetting,
             enqueueSnackbar,
             intl,
             setFormState,
@@ -93,13 +94,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
 
     return (
         <IncompatibleSchemaChangeForm
-            currentSetting={
-                currentSetting
-                    ? currentSetting
-                    : typeof incompatibleSchemaChange === 'string'
-                    ? incompatibleSchemaChange
-                    : ''
-            }
+            currentSetting={currentSetting ? currentSetting : ''}
             updateDraftedSetting={updateServer}
         />
     );
