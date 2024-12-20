@@ -28,7 +28,7 @@ export default function IncompatibleSchemaChangeForm({
     const options = useSupportedOptions();
 
     const selection = useMemo(() => {
-        if (!currentSetting) {
+        if (!currentSetting || typeof currentSetting !== 'string') {
             return null;
         }
 
@@ -69,7 +69,10 @@ export default function IncompatibleSchemaChangeForm({
                                 id: 'incompatibleSchemaChange.error.message',
                             },
                             {
-                                currentSetting,
+                                currentSetting:
+                                    typeof currentSetting === 'string'
+                                        ? currentSetting
+                                        : JSON.stringify(currentSetting),
                             }
                         )}
                     </Typography>
@@ -128,7 +131,15 @@ export default function IncompatibleSchemaChangeForm({
                                           {
                                               id: 'incompatibleSchemaChange.error.message',
                                           },
-                                          { currentSetting }
+                                          {
+                                              currentSetting:
+                                                  typeof currentSetting ===
+                                                  'string'
+                                                      ? currentSetting
+                                                      : JSON.stringify(
+                                                            currentSetting
+                                                        ),
+                                          }
                                       )
                                     : undefined
                             }

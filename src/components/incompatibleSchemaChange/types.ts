@@ -1,7 +1,7 @@
 import { choices } from './shared';
 
 export interface BaseFormProps {
-    currentSetting: string;
+    currentSetting: any;
     updateDraftedSetting: Function;
 }
 
