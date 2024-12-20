@@ -4,6 +4,7 @@ import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useIntl } from 'react-intl';
 import OnIncompatibleSchemaChange from '../../materialization/OnIncompatibleSchemaChange';
+import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 export default function Backfill() {
     const intl = useIntl();
@@ -22,7 +23,9 @@ export default function Backfill() {
             ) : null}
 
             {entityType === 'materialization' ? (
-                <OnIncompatibleSchemaChange />
+                <ErrorBoundryWrapper>
+                    <OnIncompatibleSchemaChange />
+                </ErrorBoundryWrapper>
             ) : null}
         </SectionWrapper>
     ) : null;
