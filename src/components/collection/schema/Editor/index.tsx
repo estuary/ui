@@ -82,6 +82,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     //  of CLI button we want to fire mutate and make sure we get the latest
     useUpdateEffect(() => {
         if (mutate && schemaUpdated) {
+            // TODO (edit collections) set meta data here - maybe?
             void mutate();
         }
     }, [schemaUpdated]);
@@ -91,6 +92,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     //  for the collection
     useUpdateEffect(() => {
         if (mutate && collectionInitializationDone) {
+            // TODO (edit collections) set meta data here - maybe?
             void mutate();
         }
     }, [mutate, collectionInitializationDone]);
@@ -98,6 +100,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const onKeyChange = useCallback(
         async (_event, keys) => {
             if (entityName) {
+                // TODO (edit collections) set meta data here
                 await onChange(keys, entityName, 'collection', 'key');
             }
         },
@@ -106,6 +109,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
     const onPropertiesViewerChange = useCallback(
         async (value: Schema, path, type, scope) => {
+            // TODO (edit collections) set meta data here
             await onChange(value, path, type, scope ?? 'schema');
         },
         [onChange]

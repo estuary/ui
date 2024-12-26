@@ -23,6 +23,7 @@ export interface ResourceConfig extends JsonFormsData {
     meta: {
         collectionName: string;
         bindingIndex: number;
+        edited?: boolean;
         disable?: boolean;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
     };
@@ -109,6 +110,8 @@ export interface BindingState
     // Control sourceCapture optional settings
     sourceCaptureTargetSchemaSupported: boolean;
     sourceCaptureDeltaUpdatesSupported: boolean;
+
+    setCollectionEdited: () => void;
 
     // Capture interval
     captureInterval: string | null;

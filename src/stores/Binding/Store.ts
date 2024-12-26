@@ -203,6 +203,11 @@ const getInitialState = (
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
 
+    setCollectionEdited: () => {
+        // TODO (edit collections) need to figure a quick way
+        //   to fetch the binding to update
+    },
+
     addEmptyBindings: (data, rehydrating) => {
         set(
             produce((state: BindingState) => {
