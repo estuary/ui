@@ -156,6 +156,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         localScope
                                     >
                                         <CollectionSchemaEditor
+                                            bindingUUID={currentBindingUUID}
                                             entityName={currentCollection}
                                             localZustandScope
                                         />

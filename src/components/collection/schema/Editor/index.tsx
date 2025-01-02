@@ -15,16 +15,22 @@ import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
+import { useBindingStore } from 'stores/Binding/Store';
 import { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
 import CollectionSchemaEditorSkeleton from './Skeleton';
 
 export interface Props {
+    bindingUUID?: string;
     entityName?: string;
     localZustandScope?: boolean;
 }
 
-function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
+function CollectionSchemaEditor({
+    bindingUUID,
+    entityName,
+    localZustandScope,
+}: Props) {
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);
@@ -36,6 +42,10 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     );
 
     const entityType = useEntityType();
+
+    const setCollectionEdited = useBindingStore(
+        (state) => state.setCollectionEdited
+    );
 
     // We need to know the schema was updated so we can "reload" this section
     const schemaUpdated = useBindingsEditorStore_schemaUpdated();
@@ -50,6 +60,12 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
+
+    const markCollectionEdited = useCallback(() => {
+        if (bindingUUID) {
+            setCollectionEdited(bindingUUID);
+        }
+    }, [bindingUUID, setCollectionEdited]);
 
     useEffect(() => {
         if (draftSpec?.spec && entityName) {
@@ -82,7 +98,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     //  of CLI button we want to fire mutate and make sure we get the latest
     useUpdateEffect(() => {
         if (mutate && schemaUpdated) {
-            // TODO (edit collections) set meta data here - maybe?
+            // We probably need this here?
+            markCollectionEdited();
+
             void mutate();
         }
     }, [schemaUpdated]);
@@ -92,7 +110,6 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     //  for the collection
     useUpdateEffect(() => {
         if (mutate && collectionInitializationDone) {
-            // TODO (edit collections) set meta data here - maybe?
             void mutate();
         }
     }, [mutate, collectionInitializationDone]);
@@ -100,19 +117,23 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const onKeyChange = useCallback(
         async (_event, keys) => {
             if (entityName) {
-                // TODO (edit collections) set meta data here
                 await onChange(keys, entityName, 'collection', 'key');
+
+                // Should probably wait for the onChange to succeed
+                markCollectionEdited();
             }
         },
-        [onChange, entityName]
+        [entityName, markCollectionEdited, onChange]
     );
 
     const onPropertiesViewerChange = useCallback(
         async (value: Schema, path, type, scope) => {
-            // TODO (edit collections) set meta data here
             await onChange(value, path, type, scope ?? 'schema');
+
+            // Should probably wait for the onChange to succeed
+            markCollectionEdited();
         },
-        [onChange]
+        [markCollectionEdited, onChange]
     );
 
     if (draftSpec && entityName) {

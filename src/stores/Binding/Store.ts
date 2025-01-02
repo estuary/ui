@@ -203,9 +203,18 @@ const getInitialState = (
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
 
-    setCollectionEdited: () => {
-        // TODO (edit collections) need to figure a quick way
-        //   to fetch the binding to update
+    setCollectionEdited: (uuid) => {
+        if (!uuid) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                state.resourceConfigs[uuid].meta.edited = true;
+            }),
+            false,
+            'Collection edited set'
+        );
     },
 
     addEmptyBindings: (data, rehydrating) => {

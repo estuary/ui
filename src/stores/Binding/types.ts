@@ -111,7 +111,8 @@ export interface BindingState
     sourceCaptureTargetSchemaSupported: boolean;
     sourceCaptureDeltaUpdatesSupported: boolean;
 
-    setCollectionEdited: () => void;
+    // Track which collections are changed so we can clean up draft on publish
+    setCollectionEdited: (uuid: string | null) => void;
 
     // Capture interval
     captureInterval: string | null;
