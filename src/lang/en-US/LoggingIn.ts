@@ -110,10 +110,10 @@ export const LoggingIn: Record<string, string> = {
 
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 
-    'tenant.usedSso.title': `Ask admin for invite link`,
-    'tenant.usedSso.message': `Your account was created successfuly and can be added to your organization's tenant.`,
-    'tenant.usedSso.instructions1': `Your admin user needs to create an invite link and share with you.`,
-    'tenant.usedSso.instructions2': `When you access this link you will be added to the tenant.`,
+    'tenant.usedSso.title': `Successfully Authenticated`,
+    'tenant.usedSso.message': `Your account was created successfully and can be added to your organization's ${CommonMessages.company} tenant.`,
+    'tenant.usedSso.instructions': `To do so, ask an ${CommonMessages.company} admin at your company to go to the URL below and create an invite link which they can share with you.`,
+    'tenant.usedSso.instructions.fullPath': `https://dashboard.estuary.dev/admin/accessGrants`,
 
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,

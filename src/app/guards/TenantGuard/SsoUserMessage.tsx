@@ -1,5 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import FullPageWrapper from 'app/FullPageWrapper';
+import MessageWithLink from 'components/content/MessageWithLink';
+import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
 import { useIntl } from 'react-intl';
 
@@ -13,23 +15,22 @@ function SsoUserMessage() {
                 severity="info"
                 title={intl.formatMessage({ id: 'tenant.usedSso.title' })}
             >
-                <Stack spacing={1}>
+                <Stack spacing={2}>
                     <Typography>
                         {intl.formatMessage({ id: 'tenant.usedSso.message' })}
                     </Typography>
 
-                    <Stack>
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'tenant.usedSso.instructions1',
-                            })}
-                        </Typography>
+                    <Stack spacing={1}>
+                        <MessageWithLink messageID="tenant.usedSso.instructions" />
 
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'tenant.usedSso.instructions2',
+                        <SingleLineCode
+                            sx={{
+                                maxWidth: 'fit-content',
+                            }}
+                            value={intl.formatMessage({
+                                id: 'tenant.usedSso.instructions.fullPath',
                             })}
-                        </Typography>
+                        />
                     </Stack>
                 </Stack>
             </AlertBox>
