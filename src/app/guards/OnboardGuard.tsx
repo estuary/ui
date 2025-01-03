@@ -5,6 +5,8 @@ import { createOnboardingStore } from 'directives/Onboard/Store/create';
 import { useMemo } from 'react';
 import { OnboardingStoreNames } from 'stores/names';
 import { BaseComponentProps } from 'types';
+import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import { Stack } from '@mui/material';
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'betaOnboard';
@@ -16,10 +18,16 @@ const SELECTED_DIRECTIVE = 'betaOnboard';
 //  stop passing in the grantsMutate and pass the directiveGuard mutate.
 interface Props extends BaseComponentProps {
     grantsMutate: any;
+    AlertElement?: () => EmotionJSX.Element | null;
     forceDisplay?: boolean;
 }
 
-function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
+function OnboardGuard({
+    AlertElement,
+    children,
+    forceDisplay,
+    grantsMutate,
+}: Props) {
     const { directive, loading, status } = useDirectiveGuard(
         SELECTED_DIRECTIVE,
         { forceNew: forceDisplay }
@@ -36,11 +44,14 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return (
             <FullPageWrapper fullWidth={true}>
                 <LocalZustandProvider createStore={localStore}>
-                    <BetaOnboard
-                        directive={directive}
-                        status={status}
-                        mutate={grantsMutate}
-                    />
+                    <Stack spacing={2}>
+                        {AlertElement ? <AlertElement /> : null}
+                        <BetaOnboard
+                            directive={directive}
+                            status={status}
+                            mutate={grantsMutate}
+                        />
+                    </Stack>
                 </LocalZustandProvider>
             </FullPageWrapper>
         );

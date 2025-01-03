@@ -1,10 +1,12 @@
+import { useUserStore } from 'context/User/useUserContextStore';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
 import { BaseComponentProps } from 'types';
-import OnboardGuard from './OnboardGuard';
+import OnboardGuard from '../OnboardGuard';
+import SsoUserMessage from './SsoUserMessage';
 
 // This is a way to very simply "hide" the flow where anyone
 //  can create a tenant but allow us to test it out in prod.
@@ -21,9 +23,14 @@ function TenantGuard({ children }: BaseComponentProps) {
 
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
     const mutate = useUserInfoSummaryStore((state) => state.mutate);
+    const usedSSO = useUserStore((state) => state.userDetails?.usedSSO);
 
     const showOnboarding = !hasAnyAccess || showBeta;
     if (showOnboarding) {
+        if (usedSSO && !showBeta) {
+            return <SsoUserMessage />;
+        }
+
         return (
             <OnboardGuard grantsMutate={mutate} forceDisplay={showOnboarding} />
         );
