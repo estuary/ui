@@ -10,8 +10,11 @@ export const Details: Record<string, string> = {
     'details.history.noPublications': `No publications were found.`,
 
     'details.ops.status.header': `Status`,
+    'details.ops.status.overview.controller.header': `Controller`,
+    'details.ops.status.overview.controller.subheaderActivation': `Data Plane Activation`,
+    'details.ops.status.overview.controller.subheaderLastUpdated': `Last Updated`,
     'details.ops.status.table.label': `Controller Status History Table`,
-    'details.ops.status.table.header': `Controller Status History`,
+    'details.ops.status.table.header': `Recent Events`,
     'details.ops.status.table.empty.header': `No history found`,
     'details.ops.status.table.empty.message': `Click "Refresh" to fetch the latest controller status events.`,
     'details.ops.status.table.error.message': `There was an error attempting to fetch the list of fields.`,

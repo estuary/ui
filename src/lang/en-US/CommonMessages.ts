@@ -50,6 +50,9 @@ export const CommonMessages: Record<string, string> = {
     'common.default': `Default`,
     'common.public': `Public`,
     'common.private': `Private`,
+    'common.pending': `Pending`,
+    'common.upToDate': `Up-to-date`,
+    'common.unknown': `Unknown`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -130,4 +133,9 @@ export const CommonMessages: Record<string, string> = {
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
     'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
+
+    // Status
+    'status.error.high': `High`,
+    'status.error.low': `Low`,
+    'status.error.medium': `Medium`,
 };

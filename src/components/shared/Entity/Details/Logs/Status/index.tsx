@@ -6,6 +6,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
 import { isEntityControllerStatus } from 'utils/entityStatus-utils';
+import Overview from './Overview';
 
 export default function Status() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -26,6 +27,8 @@ export default function Status() {
                     used to mock the Account Access tab of the Admin page.
                 </Typography>
             </Box>
+
+            <Overview />
 
             <Divider />
 
