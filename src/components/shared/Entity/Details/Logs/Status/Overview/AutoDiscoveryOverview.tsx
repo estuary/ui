@@ -3,11 +3,10 @@ import CardWrapper from 'components/shared/CardWrapper';
 import { cardHeaderSx } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import OptionMenu from '../OptionMenu';
-import ActivationDetail from './ActivationDetail';
-import ControllerStatus from './ControllerStatus';
-import ControllerUpdatedDetail from './ControllerUpdatedDetail';
+import AutoDiscoverOutcome from './AutoDiscoverOutcome';
+import AutoDiscoveryStatus from './AutoDiscoveryStatus';
 
-export default function ControllerOverview() {
+export default function AutoDiscoveryOverview() {
     const intl = useIntl();
 
     return (
@@ -30,7 +29,7 @@ export default function ControllerOverview() {
                                 sx={{ ...cardHeaderSx, mr: 3 }}
                             >
                                 {intl.formatMessage({
-                                    id: 'details.ops.status.overview.controller.header',
+                                    id: 'details.ops.status.overview.autoDiscovery.header',
                                 })}
                             </Typography>
 
@@ -45,12 +44,10 @@ export default function ControllerOverview() {
                             </OptionMenu>
                         </Stack>
 
-                        <ControllerStatus />
+                        <AutoDiscoveryStatus />
                     </Stack>
 
-                    <ActivationDetail headerMessageId="details.ops.status.overview.controller.subheaderActivation" />
-
-                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.controller.subheaderLastUpdated" />
+                    <AutoDiscoverOutcome />
                 </Stack>
             </CardWrapper>
         </Grid>

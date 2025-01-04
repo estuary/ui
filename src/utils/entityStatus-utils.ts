@@ -7,12 +7,13 @@ import {
 } from 'context/Theme';
 import {
     ActivationStatus,
+    AutoDiscoverStatus,
+    CaptureControllerStatus,
     ControllerStatus,
     EntityControllerStatus,
     EntityStatusResponse,
     JobStatus,
 } from 'deps/control-plane/types';
-import { parseInt } from 'lodash';
 
 type MuiColorId =
     | 'default'
@@ -50,12 +51,12 @@ export const getStatusIndicatorColor = (
     return { hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9', id: 'default' };
 };
 
-interface StatusIndicatorState {
+export interface StatusIndicatorState {
     color: StatusColor;
     messageId: string;
 }
 
-export const getControllerStatusIndicatorColor = (
+export const getControllerStatusIndicatorState = (
     colorMode: PaletteMode,
     controllerError: EntityStatusResponse['controller_error'],
     controllerNextRun: EntityStatusResponse['controller_next_run'] | undefined
@@ -93,10 +94,51 @@ export const getControllerStatusIndicatorColor = (
     };
 };
 
+export const getAutoDiscoveryIndicatorState = (
+    colorMode: PaletteMode,
+    failure: AutoDiscoverStatus['failure']
+): StatusIndicatorState => {
+    if (!failure) {
+        return {
+            color: {
+                hex: successMain,
+                id: 'success',
+            },
+            messageId: 'status.error.low',
+        };
+    }
+
+    if (failure.count > 0 && failure.count < 3) {
+        return {
+            color: { hex: warningMain, id: 'warning' },
+            messageId: 'status.error.medium',
+        };
+    }
+
+    if (failure.count > 3) {
+        return {
+            color: { hex: errorMain, id: 'error' },
+            messageId: 'status.error.high',
+        };
+    }
+
+    return {
+        color: {
+            hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9',
+            id: 'default',
+        },
+        messageId: 'common.unknown',
+    };
+};
+
 export const isEntityControllerStatus = (
     value: ControllerStatus
 ): value is EntityControllerStatus =>
     'activation' in value && 'publications' in value;
+
+export const isCaptureControllerStatus = (
+    value: ControllerStatus
+): value is CaptureControllerStatus => 'auto_discover' in value;
 
 export const getDataPlaneActivationStatus = (
     lastActivated: ActivationStatus['last_activated'],
@@ -106,7 +148,21 @@ export const getDataPlaneActivationStatus = (
         return 'common.unknown';
     }
 
-    return parseInt(lastActivated, 16) < parseInt(lastBuildId, 16)
-        ? 'common.pending'
-        : 'common.upToDate';
+    return lastActivated === lastBuildId ? 'common.upToDate' : 'common.pending';
+};
+
+export const formatInteger = (originalValue: number) => {
+    const digitCount = originalValue.toString().length;
+
+    if (digitCount < 4) {
+        return originalValue.toString();
+    }
+
+    if (digitCount < 7) {
+        const formattedValue = originalValue / 1000;
+
+        return `${formattedValue.toFixed(2)}k`;
+    }
+
+    return '999k+';
 };

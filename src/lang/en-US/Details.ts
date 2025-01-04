@@ -10,6 +10,12 @@ export const Details: Record<string, string> = {
     'details.history.noPublications': `No publications were found.`,
 
     'details.ops.status.header': `Status`,
+    'details.ops.status.overview.autoDiscovery.header': `Auto Discovery`,
+    'details.ops.status.overview.autoDiscovery.subheaderFirstFailure': `First Failed`,
+    'details.ops.status.overview.autoDiscovery.subheaderLastSuccess': `Last Success`,
+    'details.ops.status.overview.autoDiscovery.subheaderAdded': `Added`,
+    'details.ops.status.overview.autoDiscovery.subheaderModified': `Modified`,
+    'details.ops.status.overview.autoDiscovery.subheaderRemoved': `Removed`,
     'details.ops.status.overview.controller.header': `Controller`,
     'details.ops.status.overview.controller.subheaderActivation': `Data Plane Activation`,
     'details.ops.status.overview.controller.subheaderLastUpdated': `Last Updated`,

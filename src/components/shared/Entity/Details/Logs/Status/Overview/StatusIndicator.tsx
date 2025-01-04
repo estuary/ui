@@ -1,30 +1,17 @@
 import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { getControllerStatusIndicatorColor } from 'utils/entityStatus-utils';
 import { useShallow } from 'zustand/react/shallow';
+import { StatusIndicatorProps } from './types';
 
 const INDICATOR_SIZE = 10;
 
-export default function StatusIndicator() {
+export default function StatusIndicator({ status }: StatusIndicatorProps) {
     const intl = useIntl();
     const theme = useTheme();
 
     const loading = useEntityStatusStore(
         useShallow((state) => Boolean(!state.response))
-    );
-
-    const controllerError = useEntityStatusStore(
-        (state) => state.response?.controller_error
-    );
-    const controllerNextRun = useEntityStatusStore(
-        (state) => state.response?.controller_next_run
-    );
-
-    const status = getControllerStatusIndicatorColor(
-        theme.palette.mode,
-        controllerError,
-        controllerNextRun
     );
 
     if (loading) {
