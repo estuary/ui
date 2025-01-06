@@ -10,6 +10,7 @@ import AlertBox from 'components/shared/AlertBox';
 import useSupportedOptions from 'hooks/OnIncompatibleSchemaChange/useSupportedOptions';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { stringifyJSON } from 'services/stringify';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { autoCompleteDefaultProps } from './shared';
 import { BaseFormProps } from './types';
@@ -72,7 +73,7 @@ export default function IncompatibleSchemaChangeForm({
                                 currentSetting:
                                     typeof currentSetting === 'string'
                                         ? currentSetting
-                                        : JSON.stringify(currentSetting),
+                                        : stringifyJSON(currentSetting),
                             }
                         )}
                     </Typography>
