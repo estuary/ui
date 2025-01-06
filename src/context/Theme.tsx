@@ -927,6 +927,7 @@ const themeSettings = createTheme({
             fontSize: 14,
         },
         formSectionHeader: {
+            fontSize: 18,
             fontWeight: 500,
         },
     },
