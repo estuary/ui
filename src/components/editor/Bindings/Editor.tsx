@@ -129,7 +129,10 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    <Typography variant="h6" sx={{ mr: 1 }}>
+                                    <Typography
+                                        variant="formSectionHeader"
+                                        sx={{ mr: 1 }}
+                                    >
                                         <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                                         <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
                                             <FormattedMessage id="terms.documentation" />

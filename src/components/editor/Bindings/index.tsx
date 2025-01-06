@@ -6,6 +6,7 @@ import BindingSelector from 'components/editor/Bindings/Selector';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import { createEditorStore } from 'components/editor/Store/create';
 import SourceCapture from 'components/materialization/SourceCapture';
+import Backfill from 'components/shared/Entity/Backfill';
 import { useEntityType } from 'context/EntityContext';
 import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
@@ -22,7 +23,6 @@ import {
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 import { EditorStoreNames } from 'stores/names';
-import Backfill from './Backfill';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -101,21 +101,14 @@ function BindingsMultiEditor({
                 />
             </Typography>
 
-            <Stack spacing={3} sx={{ mb: 5 }}>
+            <Stack spacing={5} sx={{ mb: 5 }}>
                 {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
                 {entityType === 'capture' ? <CaptureInterval /> : null}
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
-                {workflow === 'capture_edit' ||
-                workflow === 'materialization_edit' ? (
-                    <Backfill
-                        description={intl.formatMessage({
-                            id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,
-                        })}
-                    />
-                ) : null}
+                <Backfill />
             </Stack>
 
             <ListAndDetails
