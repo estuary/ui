@@ -5,6 +5,7 @@ export interface EntityStatusState {
     responses: EntityStatusResponse[] | null;
     format: 'code' | 'dashboard';
     lastUpdated: DateTime | null;
+    getLoading: () => boolean;
     getSingleResponse: (
         catalogName: string
     ) => EntityStatusResponse | undefined;

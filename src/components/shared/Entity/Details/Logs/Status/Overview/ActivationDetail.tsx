@@ -8,7 +8,6 @@ import {
     getDataPlaneActivationStatus,
     isEntityControllerStatus,
 } from 'utils/entityStatus-utils';
-import { useShallow } from 'zustand/react/shallow';
 import DetailWrapper from './DetailWrapper';
 import { BaseDetailProps } from './types';
 
@@ -17,9 +16,7 @@ export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
 
     const intl = useIntl();
 
-    const loading = useEntityStatusStore(
-        useShallow((state) => Boolean(!state.getSingleResponse(catalogName)))
-    );
+    const loading = useEntityStatusStore((state) => state.getLoading());
 
     const lastActivated = useEntityStatusStore((state) => {
         const response = state.getSingleResponse(catalogName);

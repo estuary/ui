@@ -1,23 +1,15 @@
 import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { useShallow } from 'zustand/react/shallow';
 import { StatusIndicatorProps } from './types';
 
 const INDICATOR_SIZE = 10;
 
 export default function StatusIndicator({ status }: StatusIndicatorProps) {
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-
     const intl = useIntl();
     const theme = useTheme();
 
-    const loading = useEntityStatusStore(
-        useShallow((state) => Boolean(!state.getSingleResponse(catalogName)))
-    );
+    const loading = useEntityStatusStore((state) => state.getLoading());
 
     if (loading) {
         return <Skeleton height={21} width={50} />;

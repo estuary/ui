@@ -1,10 +1,6 @@
 import { Skeleton, Typography } from '@mui/material';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { formatInteger } from 'utils/entityStatus-utils';
-import { useShallow } from 'zustand/react/shallow';
 import DetailWrapper from './DetailWrapper';
 import { NumericDetailProps } from './types';
 
@@ -12,11 +8,7 @@ export default function NumericDetail({
     headerMessageId,
     value,
 }: NumericDetailProps) {
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-
-    const loading = useEntityStatusStore(
-        useShallow((state) => Boolean(!state.getSingleResponse(catalogName)))
-    );
+    const loading = useEntityStatusStore((state) => state.getLoading());
 
     const content = formatInteger(value);
 

@@ -19,6 +19,8 @@ const getInitialState = (
 ): EntityStatusState => ({
     ...getInitialStateData(),
 
+    getLoading: () => get().responses === null,
+
     getSingleResponse: (catalogName) =>
         get()
             .responses?.filter((datum) => datum.catalog_name === catalogName)
