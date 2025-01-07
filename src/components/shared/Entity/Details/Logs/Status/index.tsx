@@ -42,8 +42,9 @@ export default function Status() {
 
             <ControllerStatusHistoryTable
                 history={
-                    data?.[0].status && isEntityControllerStatus(data[0].status)
-                        ? data[0].status.publications?.history
+                    data?.[0].controller_status &&
+                    isEntityControllerStatus(data[0].controller_status)
+                        ? data[0].controller_status.publications?.history
                         : []
                 }
                 serverErrorExists={false}

@@ -18,13 +18,13 @@ export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
 
     const lastActivated = useEntityStatusStore((state) => {
         if (
-            !state.response?.status ||
-            !isEntityControllerStatus(state.response.status)
+            !state.response?.controller_status ||
+            !isEntityControllerStatus(state.response.controller_status)
         ) {
             return undefined;
         }
 
-        return state.response.status.activation?.last_activated;
+        return state.response.controller_status.activation?.last_activated;
     });
 
     const lastBuildId = useEntityStatusStore(

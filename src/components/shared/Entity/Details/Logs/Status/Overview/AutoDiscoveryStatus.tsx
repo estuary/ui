@@ -12,12 +12,12 @@ export default function AutoDiscoveryStatus() {
     const autoDiscoveryFailure = useEntityStatusStore((state) => {
         if (
             !state.response ||
-            !isCaptureControllerStatus(state.response.status)
+            !isCaptureControllerStatus(state.response.controller_status)
         ) {
             return undefined;
         }
 
-        return state.response.status.auto_discover?.failure;
+        return state.response.controller_status.auto_discover?.failure;
     });
 
     const status = getAutoDiscoveryIndicatorState(
