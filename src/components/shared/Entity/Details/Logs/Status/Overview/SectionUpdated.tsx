@@ -9,7 +9,7 @@ export default function SectionUpdated() {
     const lastUpdated = useEntityStatusStore((state) => state.lastUpdated);
 
     return (
-        <Grid item xs={12} style={{ paddingTop: 12 }}>
+        <Grid item xs={12}>
             {lastUpdated ? (
                 <Stack direction="row" style={{ justifyContent: 'flex-end' }}>
                     <Typography
