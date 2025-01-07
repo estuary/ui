@@ -1,11 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { OnIncompatibleSchemaChangeProps } from 'components/incompatibleSchemaChange/types';
 import { useIntl } from 'react-intl';
 import Form from './Form';
 
-function OnIncompatibleSchemaChange({
-    bindingIndex = -1,
-}: OnIncompatibleSchemaChangeProps) {
+function OnIncompatibleSchemaChange() {
     const intl = useIntl();
 
     return (
@@ -19,12 +16,12 @@ function OnIncompatibleSchemaChange({
 
                 <Typography>
                     {intl.formatMessage({
-                        id: 'incompatibleSchemaChange.message',
+                        id: 'incompatibleSchemaChange.message.specificationSetting',
                     })}
                 </Typography>
             </Stack>
 
-            <Form bindingIndex={bindingIndex} />
+            <Form />
         </Box>
     );
 }

@@ -1,7 +1,7 @@
 import { Stack, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
-import { useEntityType } from 'context/EntityContext';
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+import { useEntityType } from 'context/EntityContext';
+import { FormattedMessage } from 'react-intl';
 
 import ShardsDisableForm from './Form';
 import ShardsDisableWarning from './Warning';
@@ -20,7 +20,7 @@ function ShardsDisable() {
             <ShardsDisableWarning />
 
             <Stack spacing={1} sx={{ mb: 2 }}>
-                <Typography variant="formSectionHeader">
+                <Typography style={{ fontWeight: 500 }}>
                     <FormattedMessage
                         id="workflows.disable.title"
                         values={{ entityType }}

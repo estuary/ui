@@ -1,5 +1,10 @@
 import { choices } from './shared';
 
+export interface BaseFormProps {
+    currentSetting: any;
+    updateDraftedSetting: Function;
+}
+
 export interface AutoCompleteOption {
     description: string;
     label: string;
@@ -10,6 +15,6 @@ export interface SelectorOptionProps {
     option: AutoCompleteOption;
 }
 
-export interface OnIncompatibleSchemaChangeFormProps {
+export interface OnIncompatibleSchemaChangeProps {
     bindingIndex?: number;
 }

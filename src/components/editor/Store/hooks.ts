@@ -511,9 +511,11 @@ export const useEditorStore_queryResponse_draftSpecs_schemaProp = (
     return useZustandStore<EditorStoreState<DraftSpecQuery>, any>(
         storeName(entityType, localScope),
         useShallow((state) => {
-            return state.queryResponse.draftSpecs[0]?.spec.bindings[
-                bindingIndex
-            ][schemaProp];
+            return bindingIndex > -1
+                ? state.queryResponse.draftSpecs[0]?.spec.bindings[
+                      bindingIndex
+                  ][schemaProp]
+                : undefined;
         })
     );
 };

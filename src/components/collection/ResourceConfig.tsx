@@ -6,7 +6,6 @@ import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingIndex,
@@ -29,7 +28,6 @@ function ResourceConfig({
     readOnly = false,
 }: Props) {
     const entityType = useEntityType();
-    const isEdit = useEntityWorkflow_Editing();
 
     const hydrated = useBinding_hydrated();
     const stagedBindingIndex = useBinding_currentBindingIndex();
@@ -50,7 +48,11 @@ function ResourceConfig({
 
     return (
         <>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography
+                component="div"
+                sx={{ mb: 2 }}
+                variant="formSectionHeader"
+            >
                 <FormattedMessage id="materializationCreate.resourceConfig.heading" />
             </Typography>
 
@@ -68,16 +70,10 @@ function ResourceConfig({
                 )}
             </Box>
 
-            {isEdit && draftedBindingIndex > -1 && !collectionDisabled ? (
-                <Backfill
-                    bindingIndex={draftedBindingIndex}
-                    description={
-                        <FormattedMessage
-                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
-                        />
-                    }
-                />
-            ) : null}
+            <Backfill
+                bindingIndex={draftedBindingIndex}
+                collectionEnabled={!collectionDisabled}
+            />
 
             {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer
@@ -93,16 +89,6 @@ function ResourceConfig({
                     collectionName={collectionName}
                 />
             ) : null}
-
-            {/* TODO (onIncompatibleSchemaChange) - uncomment to enable feature
-            {entityType === 'materialization' ? (
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange
-                        bindingIndex={draftedBindingIndex}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
-            */}
         </>
     );
 }

@@ -6,10 +6,12 @@ function SelectorOption({ option }: SelectorOptionProps) {
 
     return (
         <Stack component="span" spacing={1}>
-            <Typography component="span">{label}</Typography>
+            <Typography component="span" style={{ fontWeight: 500 }}>
+                {label}
+            </Typography>
+
             <Typography
                 component="span"
-                variant="caption"
                 sx={{
                     pl: 1.5,
                 }}
