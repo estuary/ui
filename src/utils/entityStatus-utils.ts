@@ -49,7 +49,10 @@ export const getStatusIndicatorColor = (
         return { hex: errorMain, id: 'error' };
     }
 
-    return { hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9', id: 'default' };
+    return {
+        hex: shardStatusDefaultColor[colorMode] as StatusColorHex,
+        id: 'default',
+    };
 };
 
 export interface StatusIndicatorState {
@@ -125,7 +128,7 @@ export const getAutoDiscoveryIndicatorState = (
 
     return {
         color: {
-            hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9',
+            hex: shardStatusDefaultColor[colorMode] as StatusColorHex,
             id: 'default',
         },
         messageId: 'common.unknown',

@@ -25,7 +25,7 @@ export default function TimestampDetail({
               second: '2-digit',
               timeZoneName: 'short',
           })
-        : intl.formatMessage({ id: 'common.unknown' });
+        : '--';
 
     return (
         <DetailWrapper
