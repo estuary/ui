@@ -6,18 +6,23 @@ import { EntityStatusState } from './types';
 
 const getInitialStateData = (): Pick<
     EntityStatusState,
-    'format' | 'lastUpdated' | 'response'
+    'format' | 'lastUpdated' | 'responses'
 > => ({
     format: 'dashboard',
     lastUpdated: null,
-    response: null,
+    responses: null,
 });
 
 const getInitialState = (
     set: NamedSet<EntityStatusState>,
-    _get: StoreApi<EntityStatusState>['getState']
+    get: StoreApi<EntityStatusState>['getState']
 ): EntityStatusState => ({
     ...getInitialStateData(),
+
+    getSingleResponse: (catalogName) =>
+        get()
+            .responses?.filter((datum) => datum.catalog_name === catalogName)
+            .at(0),
 
     setFormat: (value, invertedValue) => {
         set(
@@ -39,13 +44,13 @@ const getInitialState = (
         );
     },
 
-    setResponse: (value) => {
+    setResponses: (value) => {
         set(
             produce((state: EntityStatusState) => {
-                state.response = value;
+                state.responses = value;
             }),
             false,
-            'Response set'
+            'Responses set'
         );
     },
 });

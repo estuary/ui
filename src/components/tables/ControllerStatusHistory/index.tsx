@@ -3,6 +3,9 @@ import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { PublicationInfo } from 'deps/control-plane/types';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
@@ -46,14 +49,19 @@ const evaluateColumnsToShow = (columnsToHide: string[]) =>
 export default function ControllerStatusHistoryTable({
     serverErrorExists,
 }: TableProps) {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const intl = useIntl();
 
     const history: PublicationInfo[] | null | undefined = useEntityStatusStore(
-        (state) =>
-            state.response?.controller_status &&
-            isEntityControllerStatus(state.response.controller_status)
-                ? state.response.controller_status.publications?.history
-                : []
+        (state) => {
+            const response = state.getSingleResponse(catalogName);
+
+            return response?.controller_status &&
+                isEntityControllerStatus(response.controller_status)
+                ? response.controller_status.publications?.history
+                : [];
+        }
     );
 
     const [tableState, setTableState] = useState<TableState>({

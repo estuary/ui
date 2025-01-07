@@ -26,7 +26,7 @@ export default function useEntityStatus(catalogName: string) {
     const setLastUpdated = useEntityStatusStore(
         (state) => state.setLastUpdated
     );
-    const setResponse = useEntityStatusStore((state) => state.setResponse);
+    const storeResponses = useEntityStatusStore((state) => state.setResponses);
 
     const authorizedPrefix = grants.some((grant) =>
         catalogName.startsWith(grant)
@@ -49,7 +49,7 @@ export default function useEntityStatus(catalogName: string) {
                     responses.length === 1 &&
                     responses[0].catalog_name === catalogName
                 ) {
-                    setResponse(responses[0]);
+                    storeResponses(responses);
                     setLastUpdated(DateTime.now());
                 }
             },

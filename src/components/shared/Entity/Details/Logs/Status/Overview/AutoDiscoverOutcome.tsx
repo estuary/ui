@@ -1,29 +1,38 @@
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { isCaptureControllerStatus } from 'utils/entityStatus-utils';
 import AutoDiscoverChanges from './AutoDiscoverChanges';
 import TimestampDetail from './TimestampDetail';
 
 export default function AutoDiscoverOutcome() {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const failure = useEntityStatusStore((state) => {
+        const response = state.getSingleResponse(catalogName);
+
         if (
-            !state.response ||
-            !isCaptureControllerStatus(state.response.controller_status)
+            !response ||
+            !isCaptureControllerStatus(response.controller_status)
         ) {
             return undefined;
         }
 
-        return state.response.controller_status.auto_discover?.failure;
+        return response.controller_status.auto_discover?.failure;
     });
 
     const lastSuccess = useEntityStatusStore((state) => {
+        const response = state.getSingleResponse(catalogName);
+
         if (
-            !state.response ||
-            !isCaptureControllerStatus(state.response.controller_status)
+            !response ||
+            !isCaptureControllerStatus(response.controller_status)
         ) {
             return undefined;
         }
 
-        return state.response.controller_status.auto_discover?.last_success;
+        return response.controller_status.auto_discover?.last_success;
     });
 
     if (failure) {

@@ -2,6 +2,9 @@ import { Editor } from '@monaco-editor/react';
 import { Box, Divider, Paper, useTheme } from '@mui/material';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
 import { editorToolBarSx } from 'context/Theme';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
@@ -13,12 +16,16 @@ import { hasLength } from 'utils/misc-utils';
 const EDITOR_HEIGHT = 400;
 
 export default function StatusResponseViewer() {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const theme = useTheme();
     const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(
         null
     );
 
-    const response = useEntityStatusStore((state) => state.response);
+    const response = useEntityStatusStore((state) =>
+        state.getSingleResponse(catalogName)
+    );
 
     if (response) {
         return (

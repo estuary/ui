@@ -1,4 +1,7 @@
 import { Skeleton, Typography } from '@mui/material';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import {
@@ -10,25 +13,29 @@ import DetailWrapper from './DetailWrapper';
 import { BaseDetailProps } from './types';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const intl = useIntl();
 
     const loading = useEntityStatusStore(
-        useShallow((state) => Boolean(!state.response))
+        useShallow((state) => Boolean(!state.getSingleResponse(catalogName)))
     );
 
     const lastActivated = useEntityStatusStore((state) => {
+        const response = state.getSingleResponse(catalogName);
+
         if (
-            !state.response?.controller_status ||
-            !isEntityControllerStatus(state.response.controller_status)
+            !response?.controller_status ||
+            !isEntityControllerStatus(response.controller_status)
         ) {
             return undefined;
         }
 
-        return state.response.controller_status.activation?.last_activated;
+        return response.controller_status.activation?.last_activated;
     });
 
     const lastBuildId = useEntityStatusStore(
-        (state) => state.response?.last_build_id
+        (state) => state.getSingleResponse(catalogName)?.last_build_id
     );
 
     const contentMessageId = getDataPlaneActivationStatus(

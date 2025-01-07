@@ -1,4 +1,7 @@
 import { Skeleton, Typography } from '@mui/material';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { useShallow } from 'zustand/react/shallow';
@@ -9,10 +12,12 @@ export default function TimestampDetail({
     headerMessageId,
     time,
 }: TimestampDetailProps) {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const intl = useIntl();
 
     const loading = useEntityStatusStore(
-        useShallow((state) => Boolean(!state.response))
+        useShallow((state) => Boolean(!state.getSingleResponse(catalogName)))
     );
 
     const content = time
