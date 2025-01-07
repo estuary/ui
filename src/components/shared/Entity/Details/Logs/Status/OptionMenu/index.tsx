@@ -1,6 +1,7 @@
 import { Box, IconButton, Menu, PopoverProps, useTheme } from '@mui/material';
 import {
     defaultOutline,
+    menuBackgroundColor,
     paperBackground,
     paperBackgroundImage,
 } from 'context/Theme';
@@ -28,7 +29,7 @@ export default function OptionMenu({ children, identifier }: OptionMenuProps) {
                     setAnchorEl(event.currentTarget);
                 }}
                 style={{
-                    backgroundColor: '#F0F4F9',
+                    backgroundColor: menuBackgroundColor[theme.palette.mode],
                     borderRadius: 4,
                     height: 21,
                     marginLeft: 4,

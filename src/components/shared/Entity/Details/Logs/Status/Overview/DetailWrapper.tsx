@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import { diminishedTextColor } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import { DetailWrapperProps } from './types';
 
@@ -11,7 +12,13 @@ export default function DetailWrapper({
 
     return (
         <Box>
-            <Typography noWrap style={{ color: '#70767E', marginBottom: 2 }}>
+            <Typography
+                noWrap
+                sx={{
+                    color: (theme) => diminishedTextColor[theme.palette.mode],
+                    mb: '2px',
+                }}
+            >
                 {intl.formatMessage({ id: headerMessageId })}
             </Typography>
 

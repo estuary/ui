@@ -2,6 +2,7 @@ import { PaletteMode } from '@mui/material';
 import {
     errorMain,
     SemanticColor,
+    shardStatusDefaultColor,
     successMain,
     warningMain,
 } from 'context/Theme';
@@ -87,7 +88,7 @@ export const getControllerStatusIndicatorState = (
 
     return {
         color: {
-            hex: colorMode === 'dark' ? '#E1E9F4' : '#C4D3E9',
+            hex: shardStatusDefaultColor[colorMode] as StatusColorHex,
             id: 'default',
         },
         messageId: 'common.unknown',
