@@ -9,7 +9,7 @@ function SsoUserMessage() {
     const intl = useIntl();
 
     return (
-        <FullPageWrapper fullWidth={true}>
+        <FullPageWrapper fullWidth>
             <AlertBox
                 short
                 severity="info"
