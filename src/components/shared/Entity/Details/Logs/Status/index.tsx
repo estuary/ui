@@ -5,6 +5,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { Refresh } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import SectionUpdated from './Overview/SectionUpdated';
 import SectionFormatter from './SectionFormatter';
 import SectionViews from './SectionViews';
 
@@ -55,6 +56,8 @@ export default function Status() {
             </Stack>
 
             <SectionViews />
+
+            <SectionUpdated />
         </Stack>
     );
 }

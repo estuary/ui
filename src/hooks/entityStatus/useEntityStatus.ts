@@ -1,5 +1,6 @@
 import { getEntityStatus } from 'api/entityStatus';
 import { useUserStore } from 'context/User/useUserContextStore';
+import { DateTime } from 'luxon';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
@@ -21,6 +22,10 @@ export default function useEntityStatus(catalogName: string) {
     const session = useUserStore((state) => state.session);
 
     const grants = useEntitiesStore_capabilities_readable();
+
+    const setLastUpdated = useEntityStatusStore(
+        (state) => state.setLastUpdated
+    );
     const setResponse = useEntityStatusStore((state) => state.setResponse);
 
     const authorizedPrefix = grants.some((grant) =>
@@ -45,6 +50,7 @@ export default function useEntityStatus(catalogName: string) {
                     responses[0].catalog_name === catalogName
                 ) {
                     setResponse(responses[0]);
+                    setLastUpdated(DateTime.now());
                 }
             },
         }

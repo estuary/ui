@@ -16,15 +16,16 @@ export default function TimestampDetail({
     );
 
     const content = time
-        ? intl.formatDate(time, {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
+        ? `${intl.formatDate(time, {
               hour: '2-digit',
               minute: '2-digit',
               second: '2-digit',
               timeZoneName: 'short',
-          })
+          })}, ${intl.formatDate(time, {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+          })}`
         : '--';
 
     return (

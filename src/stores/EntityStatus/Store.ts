@@ -6,9 +6,10 @@ import { EntityStatusState } from './types';
 
 const getInitialStateData = (): Pick<
     EntityStatusState,
-    'format' | 'response'
+    'format' | 'lastUpdated' | 'response'
 > => ({
     format: 'dashboard',
+    lastUpdated: null,
     response: null,
 });
 
@@ -25,6 +26,16 @@ const getInitialState = (
             }),
             false,
             'Format set'
+        );
+    },
+
+    setLastUpdated: (value) => {
+        set(
+            produce((state: EntityStatusState) => {
+                state.lastUpdated = value;
+            }),
+            false,
+            'Last updated set'
         );
     },
 
