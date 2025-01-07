@@ -114,7 +114,7 @@ export const Authentication: Record<string, string> = {
     'tenant.usedSso.title': `Successfully Authenticated`,
     'tenant.usedSso.message': `Your account was created successfully and can be added to your organization's ${CommonMessages.company} tenant.`,
     'tenant.usedSso.instructions': `To do so, ask an ${CommonMessages.company} admin at your company to go to the URL below and create an invite link which they can share with you.`,
-    'tenant.usedSso.instructions.fullPath': `https://dashboard.estuary.dev/${authenticatedRoutes.admin.accessGrants.fullPath}`,
+    'tenant.usedSso.instructions.fullPath': `${window.location.origin}${authenticatedRoutes.admin.accessGrants.fullPath}`,
 
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,
