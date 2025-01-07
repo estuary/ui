@@ -2,10 +2,13 @@ import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useDisplayTableColumns } from 'context/TableSettings';
+import { PublicationInfo } from 'deps/control-plane/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { isEntityControllerStatus } from 'utils/entityStatus-utils';
 import Rows from './Rows';
 import { TableProps } from './types';
 
@@ -41,10 +44,17 @@ const evaluateColumnsToShow = (columnsToHide: string[]) =>
     );
 
 export default function ControllerStatusHistoryTable({
-    history,
     serverErrorExists,
 }: TableProps) {
     const intl = useIntl();
+
+    const history: PublicationInfo[] | null | undefined = useEntityStatusStore(
+        (state) =>
+            state.response?.controller_status &&
+            isEntityControllerStatus(state.response.controller_status)
+                ? state.response.controller_status.publications?.history
+                : []
+    );
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -66,9 +76,9 @@ export default function ControllerStatusHistoryTable({
     };
 
     useEffect(() => {
-        if (history === null) {
+        if (!history) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (history && history.length > 0) {
+        } else if (history.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });

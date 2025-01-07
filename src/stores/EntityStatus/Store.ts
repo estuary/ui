@@ -4,7 +4,11 @@ import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EntityStatusState } from './types';
 
-const getInitialStateData = (): Pick<EntityStatusState, 'response'> => ({
+const getInitialStateData = (): Pick<
+    EntityStatusState,
+    'format' | 'response'
+> => ({
+    format: 'dashboard',
     response: null,
 });
 
@@ -13,6 +17,16 @@ const getInitialState = (
     _get: StoreApi<EntityStatusState>['getState']
 ): EntityStatusState => ({
     ...getInitialStateData(),
+
+    setFormat: (value, invertedValue) => {
+        set(
+            produce((state: EntityStatusState) => {
+                state.format = state.format === value ? invertedValue : value;
+            }),
+            false,
+            'Format set'
+        );
+    },
 
     setResponse: (value) => {
         set(

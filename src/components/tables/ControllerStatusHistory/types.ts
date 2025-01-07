@@ -12,6 +12,5 @@ export interface RowsProps {
 }
 
 export interface TableProps {
-    history: PublicationInfo[] | null | undefined;
     serverErrorExists: boolean;
 }
