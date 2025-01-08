@@ -86,7 +86,7 @@ function useInitializeTaskDraft() {
                     if (connectorResponse.data) {
                         return {
                             ...liveSpecResponse.data[0],
-                            connector_id: connectorResponse.data.connectorId,
+                            connector_id: connectorResponse.data.id,
                         };
                     } else {
                         setDraftInitializationError({

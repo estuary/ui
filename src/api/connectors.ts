@@ -91,12 +91,12 @@ const getDekafConnectorId = async (connectorImage: string) => {
         () =>
             supabaseClient
                 .from(TABLES.CONNECTORS)
-                .select(DETAILS_FORM_QUERY)
+                .select(`id`)
                 .eq('image_name', connectorImage)
                 .limit(1)
                 .single(),
         'getDekafConnectorId'
-    ).then(handleSuccess<{ connectorId: string }>, handleFailure);
+    ).then(handleSuccess<{ id: string }>, handleFailure);
 
     return data;
 };
