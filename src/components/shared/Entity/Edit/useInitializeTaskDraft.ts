@@ -1,4 +1,5 @@
 import { PostgrestError } from '@supabase/postgrest-js';
+import { getDekafConnectorId } from 'api/connectors';
 import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import {
     createDraftSpec,
@@ -26,6 +27,7 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { DEKAF_IMAGE_PREFIX } from 'utils/connector-utils';
 
 interface SupabaseConfig {
     createNew: boolean;
@@ -72,6 +74,31 @@ function useInitializeTaskDraft() {
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
                 setCatalogName(liveSpecResponse.data[0].catalog_name);
+
+                if (
+                    taskSpecType === 'materialization' &&
+                    liveSpecResponse.data[0].spec.endpoint?.dekaf
+                ) {
+                    const connectorResponse = await getDekafConnectorId(
+                        `${DEKAF_IMAGE_PREFIX}${liveSpecResponse.data[0].spec.endpoint.dekaf.variant}`
+                    );
+
+                    if (connectorResponse.data) {
+                        return {
+                            ...liveSpecResponse.data[0],
+                            connector_id: connectorResponse.data.connectorId,
+                        };
+                    } else {
+                        setDraftInitializationError({
+                            severity: 'error',
+                            messageId:
+                                'workflows.initTask.alert.message.initFailed',
+                        });
+
+                        return null;
+                    }
+                }
+
                 return liveSpecResponse.data[0];
             } else {
                 setDraftInitializationError({
@@ -81,7 +108,12 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [liveSpecId, setCatalogName, setDraftInitializationError]);
+        }, [
+            liveSpecId,
+            setCatalogName,
+            setDraftInitializationError,
+            taskSpecType,
+        ]);
 
     const getTaskDraft = useCallback(
         async ({

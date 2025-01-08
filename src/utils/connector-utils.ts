@@ -21,7 +21,7 @@ import {
     evaluateConnectorVersions,
 } from './workflow-utils';
 
-const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';
 
 export const isDekafConnector = (

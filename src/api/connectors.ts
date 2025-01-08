@@ -86,4 +86,19 @@ const getConnectors_detailsForm = async (connectorId: string) => {
     return data;
 };
 
-export { getConnectors, getConnectors_detailsForm };
+const getDekafConnectorId = async (connectorImage: string) => {
+    const data = await supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.CONNECTORS)
+                .select(DETAILS_FORM_QUERY)
+                .eq('image_name', connectorImage)
+                .limit(1)
+                .single(),
+        'getDekafConnectorId'
+    ).then(handleSuccess<{ connectorId: string }>, handleFailure);
+
+    return data;
+};
+
+export { getConnectors, getConnectors_detailsForm, getDekafConnectorId };
