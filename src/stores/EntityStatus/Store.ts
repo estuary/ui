@@ -26,6 +26,10 @@ const getInitialState = (
             .responses?.filter((datum) => datum.catalog_name === catalogName)
             .at(0),
 
+    resetState: () => {
+        set(getInitialStateData(), false, 'State reset');
+    },
+
     setFormat: (value, invertedValue) => {
         set(
             produce((state: EntityStatusState) => {

@@ -9,6 +9,7 @@ export interface EntityStatusState {
     getSingleResponse: (
         catalogName: string
     ) => EntityStatusResponse | undefined;
+    resetState: () => void;
     setFormat: (
         value: EntityStatusState['format'],
         invertedValue: EntityStatusState['format']
