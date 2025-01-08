@@ -36,8 +36,6 @@ function EntityDetails() {
     );
 
     useUnmount(() => {
-        console.log('RESET');
-        console.log('-----------------------');
         resetEntityStatusState();
     });
 
