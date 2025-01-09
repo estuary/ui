@@ -1,14 +1,10 @@
-import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
-import { useIntl } from 'react-intl';
+import { Skeleton, Stack } from '@mui/material';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { StatusIndicatorProps } from './types';
 
 const INDICATOR_SIZE = 10;
 
 export default function StatusIndicator({ status }: StatusIndicatorProps) {
-    const intl = useIntl();
-    const theme = useTheme();
-
     const loading = useEntityStatusStore((state) => state.getLoading());
 
     if (loading) {
@@ -28,7 +24,7 @@ export default function StatusIndicator({ status }: StatusIndicatorProps) {
                     borderRadius: 50,
                     display: 'inline-block',
                     height: INDICATOR_SIZE,
-                    marginRight: 6,
+                    marginRight: 8,
                     marginTop: 1,
                     maxHeight: INDICATOR_SIZE,
                     maxWidth: INDICATOR_SIZE,
@@ -39,7 +35,7 @@ export default function StatusIndicator({ status }: StatusIndicatorProps) {
                 }}
             />
 
-            <Typography
+            {/* <Typography
                 style={{
                     color:
                         theme.palette.mode === 'light'
@@ -49,7 +45,7 @@ export default function StatusIndicator({ status }: StatusIndicatorProps) {
                 }}
             >
                 {intl.formatMessage({ id: status.messageId })}
-            </Typography>
+            </Typography> */}
         </Stack>
     );
 }

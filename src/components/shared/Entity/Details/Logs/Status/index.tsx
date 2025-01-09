@@ -1,4 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
+import UnderDev from 'components/shared/UnderDev';
 import useEntityStatus from 'hooks/entityStatus/useEntityStatus';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -18,6 +19,8 @@ export default function Status() {
 
     return (
         <Stack spacing={2} style={{ marginTop: 40 }}>
+            <UnderDev />
+
             <Stack
                 direction="row"
                 spacing={4}
@@ -27,7 +30,7 @@ export default function Status() {
                     <Stack
                         direction="row"
                         spacing={2}
-                        style={{ alignItems: 'center' }}
+                        style={{ alignItems: 'center', marginBottom: 2 }}
                     >
                         <Typography variant="h6" style={{ marginBottom: 4 }}>
                             {intl.formatMessage({
@@ -45,19 +48,13 @@ export default function Status() {
                         </Button>
                     </Stack>
 
-                    <Typography>
-                        This is a placeholder description for this section that
-                        is used to mock the Account Access tab of the Admin
-                        page.
-                    </Typography>
+                    <SectionUpdated />
                 </Box>
 
                 <SectionFormatter />
             </Stack>
 
             <SectionViews />
-
-            <SectionUpdated />
         </Stack>
     );
 }
