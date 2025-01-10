@@ -13,7 +13,7 @@ export const Details: Record<string, string> = {
     'details.ops.status.cta.raw': `Code`,
     'details.ops.status.header': `Status`,
     'details.ops.status.message.lastUpdated': `Updated at {timestamp}`,
-    'details.ops.status.overview.autoDiscovery.header': `Auto Discovery`,
+    'details.ops.status.overview.autoDiscovery.header': `Latest Auto Discovery`,
     'details.ops.status.overview.autoDiscovery.subheaderFirstFailure': `First Failed`,
     'details.ops.status.overview.autoDiscovery.subheaderLastSuccess': `Last Success`,
     'details.ops.status.overview.autoDiscovery.subheaderAdded': `Added`,
@@ -27,7 +27,7 @@ export const Details: Record<string, string> = {
     'details.ops.status.table.label': `Controller Status History Table`,
     'details.ops.status.table.header': `Recent Controller Events`,
     'details.ops.status.table.empty.header': `No history found`,
-    'details.ops.status.table.empty.message': `Click "Refresh" to fetch the latest controller status events.`,
+    'details.ops.status.table.empty.message': `Click "Refresh" to fetch the latest controller events.`,
     'details.ops.status.table.error.message': `There was an error attempting to fetch the list of fields.`,
 
     'details.settings.notifications.header': `Notification Settings`,

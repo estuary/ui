@@ -15,10 +15,10 @@ export default function SectionViews() {
             <>
                 <Overview />
 
-                <Divider style={{ marginBottom: 16, marginTop: 24 }} />
+                <Divider style={{ marginBottom: 8, marginTop: 24 }} />
 
                 <Typography
-                    style={{ fontSize: 18, fontWeight: 400, marginBottom: 8 }}
+                    style={{ fontSize: 18, fontWeight: 400, marginBottom: 16 }}
                 >
                     {intl.formatMessage({
                         id: 'details.ops.status.table.header',

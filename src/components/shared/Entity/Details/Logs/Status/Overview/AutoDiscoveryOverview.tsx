@@ -11,20 +11,20 @@ export default function AutoDiscoveryOverview() {
     return (
         <Grid item xs={12} md={6} lg={3}>
             <CardWrapper>
-                <Stack spacing={2}>
-                    <Stack direction="row">
-                        <AutoDiscoveryStatus />
+                <Stack
+                    direction="row"
+                    style={{ marginBottom: 16, marginLeft: -4 }}
+                >
+                    <AutoDiscoveryStatus />
 
-                        <Typography
-                            component="div"
-                            sx={{ ...cardHeaderSx, mr: 3 }}
-                        >
-                            {intl.formatMessage({
-                                id: 'details.ops.status.overview.autoDiscovery.header',
-                            })}
-                        </Typography>
-                    </Stack>
+                    <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
+                        {intl.formatMessage({
+                            id: 'details.ops.status.overview.autoDiscovery.header',
+                        })}
+                    </Typography>
+                </Stack>
 
+                <Stack spacing={2} style={{ marginLeft: 14 }}>
                     <AutoDiscoverOutcome />
                 </Stack>
             </CardWrapper>
