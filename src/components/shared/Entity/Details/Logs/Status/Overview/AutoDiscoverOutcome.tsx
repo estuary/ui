@@ -45,8 +45,8 @@ export default function AutoDiscoverOutcome() {
                 />
 
                 <TimestampDetail
-                    headerMessageId="details.ops.status.overview.autoDiscovery.subheaderFirstFailure"
-                    time={failure.first_ts}
+                    headerMessageId="details.ops.status.overview.autoDiscovery.subheaderLastFailure"
+                    time={failure.last_outcome.ts}
                 />
             </>
         );

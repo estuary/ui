@@ -14,7 +14,7 @@ export const Details: Record<string, string> = {
     'details.ops.status.header': `Status`,
     'details.ops.status.message.lastUpdated': `Updated at {timestamp}`,
     'details.ops.status.overview.autoDiscovery.header': `Latest Auto Discovery`,
-    'details.ops.status.overview.autoDiscovery.subheaderFirstFailure': `First Failed`,
+    'details.ops.status.overview.autoDiscovery.subheaderLastFailure': `Last Failure`,
     'details.ops.status.overview.autoDiscovery.subheaderLastSuccess': `Last Success`,
     'details.ops.status.overview.autoDiscovery.subheaderAdded': `Added`,
     'details.ops.status.overview.autoDiscovery.subheaderModified': `Modified`,
