@@ -1,3 +1,4 @@
+import { get_resource_config_pointers } from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
 import { Annotations } from 'types/jsonforms';
@@ -114,42 +115,28 @@ export function createJSONFormDefaults(
     return { data, errors };
 }
 
-// TODO (web flow wasm) This should be fetched with WASM code
-//  waiting on https://github.com/estuary/flow/issues/1760
+// TODO (web flow wasm - source capture)
+// Maybe we can get this type from wasm?
 export interface ResourceConfigPointers {
-    [Annotations.defaultResourceConfigName]?: boolean;
-    [Annotations.targetSchema]?: boolean;
-    [Annotations.deltaUpdates]?: boolean;
+    ['x_collection_name']: string | undefined;
+    ['x_schema_name']: string | undefined;
+    ['x_delta_updates']: string | undefined;
 }
 
-export const findKeysInObject = (
-    obj: Record<string, any>,
-    keysToFind: string[],
-    results: ResourceConfigPointers = {}
-): ResourceConfigPointers => {
-    // Iterate over each key in the object
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const value = obj[key];
+export const getResourceConfigPointers = (
+    schema: any
+): ResourceConfigPointers | null => {
+    try {
+        const response = get_resource_config_pointers(schema);
 
-            // Check if the key is one of the keys we're searching for
-            if (keysToFind.includes(key)) {
-                results[key] = value;
-            }
-
-            // If the value is an object, recurse into it
-            if (value && typeof value === 'object') {
-                findKeysInObject(value, keysToFind, results);
-            }
+        if (!response.pointers) {
+            return null;
         }
+
+        return response.pointers;
+
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        return null;
     }
-
-    return results;
 };
-
-export const getResourceConfigPointers = (schema: any) =>
-    findKeysInObject(schema, [
-        Annotations.defaultResourceConfigName,
-        Annotations.targetSchema,
-        Annotations.deltaUpdates,
-    ]);

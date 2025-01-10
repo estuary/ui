@@ -2,6 +2,7 @@ import { EvolvedCollections } from 'api/evolutions';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
+import { ResourceConfigPointers } from 'services/ajv';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
 import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
@@ -108,8 +109,7 @@ export interface BindingState
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
     // Control sourceCapture optional settings
-    sourceCaptureTargetSchemaSupported: boolean;
-    sourceCaptureDeltaUpdatesSupported: boolean;
+    resourceConfigPointers?: ResourceConfigPointers;
 
     // Capture interval
     captureInterval: string | null;

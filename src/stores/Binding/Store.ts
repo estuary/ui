@@ -1,12 +1,8 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-    getSchema_Resource,
 } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
 import {
     difference,
@@ -24,28 +20,29 @@ import {
     getResourceConfigPointers,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
-import { BASE_ERROR } from 'services/supabase';
+import { stringifyJSON } from 'services/stringify';
 import { CustomEvents } from 'services/types';
-import {
-    getInitialHydrationData,
-    getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
+import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
-import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { formatCaptureInterval, parsePostgresInterval } from 'utils/time-utils';
+import { parsePostgresInterval } from 'utils/time-utils';
 import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {
     getCollectionNames,
+    getInitialMiscData,
+    getInitialStoreData,
+    hydrateConnectorTagDependentState,
+    hydrateSpecificationDependentState,
     initializeAndGenerateUUID,
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
     sortResourceConfigs,
+    STORE_KEY,
     whatChanged,
 } from './shared';
 import {
@@ -58,151 +55,6 @@ import {
     initializeFullSourceConfig,
 } from './slices/TimeTravel';
 import { BindingMetadata, BindingState, ResourceConfig } from './types';
-
-const STORE_KEY = 'Bindings';
-
-const hydrateConnectorTagDependentState = async (
-    connectorTagId: string,
-    get: StoreApi<BindingState>['getState']
-): Promise<Schema | null> => {
-    if (!hasLength(connectorTagId)) {
-        return null;
-    }
-
-    const { data, error } = await getSchema_Resource(connectorTagId);
-
-    if (error) {
-        get().setHydrationErrorsExist(true);
-    } else if (data?.resource_spec_schema) {
-        const schema = data.resource_spec_schema as unknown as Schema;
-        await get().setResourceSchema(schema);
-
-        get().setBackfillSupported(!Boolean(data.disable_backfill));
-    }
-
-    return data;
-};
-
-const hydrateSpecificationDependentState = async (
-    defaultInterval: string | null | undefined,
-    entityType: Entity,
-    fallbackInterval: string | null,
-    get: StoreApi<BindingState>['getState'],
-    liveSpec: LiveSpecsExtQuery['spec'],
-    searchParams: URLSearchParams
-): Promise<PostgrestError | null> => {
-    const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
-
-    if (draftId) {
-        const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
-            draftId,
-            entityType
-        );
-
-        if (error || !draftSpecs || draftSpecs.length === 0) {
-            return (
-                error ?? {
-                    ...BASE_ERROR,
-                    message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
-                }
-            );
-        }
-
-        get().prefillBindingDependentState(
-            entityType,
-            liveSpec.bindings,
-            draftSpecs[0].spec.bindings
-        );
-
-        const targetInterval = draftSpecs[0].spec?.interval;
-
-        get().setCaptureInterval(
-            targetInterval
-                ? formatCaptureInterval(targetInterval)
-                : fallbackInterval,
-            defaultInterval
-        );
-
-        get().setSpecOnIncompatibleSchemaChange(
-            draftSpecs[0].spec?.onIncompatibleSchemaChange
-        );
-    } else {
-        get().prefillBindingDependentState(entityType, liveSpec.bindings);
-
-        get().setCaptureInterval(
-            liveSpec?.interval ?? fallbackInterval,
-            defaultInterval
-        );
-
-        get().setSpecOnIncompatibleSchemaChange(
-            liveSpec?.onIncompatibleSchemaChange
-        );
-    }
-
-    return null;
-};
-
-const getInitialBindingData = (): Pick<
-    BindingState,
-    'bindingErrorsExist' | 'bindings' | 'currentBinding'
-> => ({
-    bindingErrorsExist: false,
-    bindings: {},
-    currentBinding: null,
-});
-
-const getInitialMiscData = (): Pick<
-    BindingState,
-    | 'backfilledBindings'
-    | 'backfillAllBindings'
-    | 'backfillDataFlow'
-    | 'backfillDataFlowTarget'
-    | 'backfillSupported'
-    | 'captureInterval'
-    | 'collectionsRequiringRediscovery'
-    | 'defaultCaptureInterval'
-    | 'discoveredCollections'
-    | 'evolvedCollections'
-    | 'onIncompatibleSchemaChange'
-    | 'rediscoveryRequired'
-    | 'resourceConfigErrorsExist'
-    | 'resourceConfigErrors'
-    | 'resourceConfigs'
-    | 'resourceSchema'
-    | 'restrictedDiscoveredCollections'
-    | 'serverUpdateRequired'
-    | 'sourceCaptureDeltaUpdatesSupported'
-    | 'sourceCaptureTargetSchemaSupported'
-> => ({
-    backfillAllBindings: false,
-    backfillDataFlowTarget: null,
-    backfillDataFlow: false,
-    backfillSupported: true,
-    backfilledBindings: [],
-    captureInterval: null,
-    collectionsRequiringRediscovery: [],
-    defaultCaptureInterval: null,
-    discoveredCollections: [],
-    evolvedCollections: [],
-    onIncompatibleSchemaChange: undefined,
-    rediscoveryRequired: false,
-    resourceConfigErrorsExist: false,
-    resourceConfigErrors: [],
-    resourceConfigs: {},
-    resourceSchema: {},
-    restrictedDiscoveredCollections: [],
-    serverUpdateRequired: false,
-    sourceCaptureDeltaUpdatesSupported: false,
-    sourceCaptureTargetSchemaSupported: false,
-});
-
-const getInitialStoreData = () => ({
-    ...getInitialBindingData(),
-    ...getInitialFieldSelectionData(),
-    ...getInitialHydrationData(),
-    ...getInitialMiscData(),
-    ...getInitialTimeTravelData(),
-});
 
 const getInitialState = (
     set: NamedSet<BindingState>,
@@ -941,16 +793,19 @@ const getInitialState = (
                 // TODO (web flow wasm - source capture - possible perf improvement)
                 //  Us calling `getResourceConfigPointers` here means we end up going
                 //   through the schema multiple times. Once here and twice when we go through
-                //   it to generate a UI schema. That does NOT set anything in a store and probably
-                //   should never set anything in a store directly.
+                //   it to generate a UI schema. When generating the UI Schema we have never set
+                //   anything in a store and probably should never do that... maybe.
                 //  Might not be a huge deal to do this twice but something to think about.
-                const pointers = getResourceConfigPointers(resolved);
-                state.sourceCaptureDeltaUpdatesSupported = Boolean(
-                    pointers['x-delta-updates']
-                );
-                state.sourceCaptureTargetSchemaSupported = Boolean(
-                    pointers['x-schema-name']
-                );
+                const resourceConfigPointers = getResourceConfigPointers({
+                    spec: stringifyJSON(resolved),
+                });
+
+                if (!resourceConfigPointers) {
+                    state.setHydrationErrorsExist(true);
+                    return;
+                }
+
+                state.resourceConfigPointers = resourceConfigPointers;
             }),
             false,
             'Resource Schema Set'

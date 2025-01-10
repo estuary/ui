@@ -2,8 +2,10 @@ import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+import {
+    useBinding_prefillResourceConfigs,
+    useBinding_sourceCaptureFlags,
+} from 'stores/Binding/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { SourceCaptureDef } from 'types';
 import { useStore } from 'zustand';
@@ -19,13 +21,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const { existingSourceCapture, updateDraft } = useSourceCapture();
 
-    const [
+    const {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
-    ] = useBindingStore((state) => [
-        state.sourceCaptureDeltaUpdatesSupported,
-        state.sourceCaptureTargetSchemaSupported,
-    ]);
+    } = useBinding_sourceCaptureFlags();
 
     const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
         useSourceCaptureStore((state) => [
