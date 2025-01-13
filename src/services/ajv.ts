@@ -1,6 +1,7 @@
 import { get_resource_config_pointers } from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
+import { DefaultAjvResponse, Schema } from 'types';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -83,17 +84,21 @@ function defaultResourceSchema(resourceSchema: any, collection: string) {
     }
 }
 
+export function createJSONFormDefaults(jsonSchema: any): DefaultAjvResponse;
 export function createJSONFormDefaults(
     jsonSchema: any,
-    collection?: string
-): {
-    data: any;
-    errors: any[];
-} {
+    collection: string,
+    dataDefaults: Schema
+): DefaultAjvResponse;
+export function createJSONFormDefaults(
+    jsonSchema: any,
+    collection?: string,
+    dataDefaults?: Schema
+): DefaultAjvResponse {
     // We start with an empty object, and then validate it to set any default values.
     // Note that this requires all parent properties to also specify a `default` in the json
     // schema.
-    const data = {};
+    const data = dataDefaults ?? {};
 
     // Get the schema we want.
     //  If collection then we want to generate a Resource Schema

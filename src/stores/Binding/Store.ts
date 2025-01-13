@@ -1,3 +1,4 @@
+import { update_materialization_resource_spec } from '@estuary/flow-web';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
@@ -131,7 +132,8 @@ const getInitialState = (
                                 modifiedResourceConfigs[bindingUUID] = {
                                     ...createJSONFormDefaults(
                                         state.resourceSchema,
-                                        collectionName
+                                        collectionName,
+                                        {}
                                     ),
                                     meta: { collectionName, bindingIndex },
                                 };
@@ -366,7 +368,7 @@ const getInitialState = (
         );
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit) => {
+    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -402,15 +404,30 @@ const getInitialState = (
 
                     initializeBinding(state, collectionName, bindingUUID);
 
+                    let prefilledData = {};
+                    if (sourceCapture) {
+                        // If we have a sourceCapture then we should use those settings to have WASM
+                        //  produce some default data. This prefills certain settings the same way the
+                        //  backend would when new bindings are added.
+                        const defaultSchema =
+                            update_materialization_resource_spec({
+                                source_capture: sourceCapture,
+                                resource_spec: {},
+                                resource_spec_pointers:
+                                    state.resourceConfigPointers,
+                                collection_name: collectionName,
+                            });
+
+                        // TODO (web flow wasm - source capture)
+                        // We need to do some better error handling here
+                        prefilledData = JSON.parse(defaultSchema);
+                    }
+
                     const jsonFormDefaults = createJSONFormDefaults(
                         state.resourceSchema,
-                        collectionName
+                        collectionName,
+                        prefilledData
                     );
-
-                    // TODO (web flow wasm - source capture)
-                    //  Will want to merge / update / something with WASM here into the defaultConfig.data
-                    //  once we add the ability in WASM AND we wire up the ability for a user to make
-                    //  mass changes to their binding settings here
 
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,

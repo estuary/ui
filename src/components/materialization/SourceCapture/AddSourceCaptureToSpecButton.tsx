@@ -78,7 +78,11 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
-                    prefillResourceConfigs(selectedRow.writes_to, true);
+                    prefillResourceConfigs(
+                        selectedRow.writes_to,
+                        true,
+                        updatedSourceCapture
+                    );
                 }
             }
 
