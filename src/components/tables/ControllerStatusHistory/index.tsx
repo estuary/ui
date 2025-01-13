@@ -64,6 +64,10 @@ export default function ControllerStatusHistoryTable({
         }
     );
 
+    const dataFetching = useEntityStatusStore(
+        (state) => !state.hydrated || state.loading
+    );
+
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
@@ -84,7 +88,7 @@ export default function ControllerStatusHistoryTable({
     };
 
     useEffect(() => {
-        if (!history) {
+        if (!history || dataFetching) {
             setTableState({ status: TableStatuses.LOADING });
         } else if (history.length > 0) {
             setTableState({
@@ -95,7 +99,7 @@ export default function ControllerStatusHistoryTable({
                 status: TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [history]);
+    }, [dataFetching, history]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 

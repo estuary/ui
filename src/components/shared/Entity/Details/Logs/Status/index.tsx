@@ -1,21 +1,21 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import UnderDev from 'components/shared/UnderDev';
-import useEntityStatus from 'hooks/entityStatus/useEntityStatus';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { Refresh } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { useMount } from 'react-use';
+import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import SectionUpdated from './Overview/SectionUpdated';
+import RefreshButton from './RefreshButton';
 import SectionFormatter from './SectionFormatter';
 import SectionViews from './SectionViews';
 
 export default function Status() {
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-
     const intl = useIntl();
 
-    const { data, refresh } = useEntityStatus(catalogName);
+    const setActive = useEntityStatusStore((state) => state.setActive);
+
+    useMount(() => {
+        setActive(true);
+    });
 
     return (
         <Stack spacing={2} style={{ marginTop: 40 }}>
@@ -38,14 +38,7 @@ export default function Status() {
                             })}
                         </Typography>
 
-                        <Button
-                            variant="text"
-                            startIcon={<Refresh style={{ fontSize: 12 }} />}
-                            onClick={() => refresh()}
-                            disabled={data === undefined}
-                        >
-                            {intl.formatMessage({ id: 'cta.refresh' })}
-                        </Button>
+                        <RefreshButton />
                     </Stack>
 
                     <SectionUpdated />

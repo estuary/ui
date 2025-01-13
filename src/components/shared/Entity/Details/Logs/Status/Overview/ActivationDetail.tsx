@@ -16,7 +16,7 @@ export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
 
     const intl = useIntl();
 
-    const loading = useEntityStatusStore((state) => state.getLoading());
+    const hydrating = useEntityStatusStore((state) => !state.hydrated);
 
     const lastActivated = useEntityStatusStore((state) => {
         const response = state.getSingleResponse(catalogName);
@@ -43,7 +43,9 @@ export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     return (
         <DetailWrapper
             headerMessageId={headerMessageId}
-            Loading={loading ? <Skeleton height={21} width={75} /> : undefined}
+            Hydrating={
+                hydrating ? <Skeleton height={21} width={75} /> : undefined
+            }
         >
             <Typography>
                 {intl.formatMessage({ id: contentMessageId })}

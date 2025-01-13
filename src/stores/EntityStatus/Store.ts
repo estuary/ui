@@ -1,16 +1,28 @@
 import produce from 'immer';
+import {
+    getInitialHydrationData,
+    getStoreWithHydrationSettings,
+} from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EntityStatusState } from './types';
 
-const getInitialStateData = (): Pick<
+const STORE_KEY = 'entity-status';
+
+const getInitialEntityStatusData = (): Pick<
     EntityStatusState,
-    'format' | 'lastUpdated' | 'responses'
+    'format' | 'lastUpdated' | 'loading' | 'responses'
 > => ({
     format: 'dashboard',
     lastUpdated: null,
+    loading: false,
     responses: null,
+});
+
+const getInitialStateData = () => ({
+    ...getInitialEntityStatusData(),
+    ...getInitialHydrationData(),
 });
 
 const getInitialState = (
@@ -18,8 +30,7 @@ const getInitialState = (
     get: StoreApi<EntityStatusState>['getState']
 ): EntityStatusState => ({
     ...getInitialStateData(),
-
-    getLoading: () => get().responses === null,
+    ...getStoreWithHydrationSettings(STORE_KEY, set),
 
     getSingleResponse: (catalogName) =>
         get()
@@ -50,7 +61,24 @@ const getInitialState = (
         );
     },
 
+    setLoading: (value) => {
+        const action = value ? 'Loading' : 'Loaded';
+
+        set(
+            produce((state: EntityStatusState) => {
+                state.loading = value;
+            }),
+            false,
+            action
+        );
+    },
+
     setResponses: (value) => {
+        if (get().responses === null) {
+            get().setHydrated(true);
+            get().setActive(false);
+        }
+
         set(
             produce((state: EntityStatusState) => {
                 state.responses = value;
@@ -64,6 +92,6 @@ const getInitialState = (
 export const useEntityStatusStore = create<EntityStatusState>()(
     devtools(
         (set, get) => getInitialState(set, get),
-        devtoolsOptions('entity-status')
+        devtoolsOptions(STORE_KEY)
     )
 );

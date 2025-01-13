@@ -5,10 +5,16 @@ import { StatusIndicatorProps } from './types';
 const INDICATOR_SIZE = 10;
 
 export default function StatusIndicator({ status }: StatusIndicatorProps) {
-    const loading = useEntityStatusStore((state) => state.getLoading());
+    const hydrating = useEntityStatusStore((state) => !state.hydrated);
 
-    if (loading) {
-        return <Skeleton height={21} width={50} />;
+    if (hydrating) {
+        return (
+            <Skeleton
+                height={21}
+                width={INDICATOR_SIZE}
+                style={{ marginRight: 8, marginTop: 1 }}
+            />
+        );
     }
 
     return (

@@ -10,7 +10,7 @@ export default function TimestampDetail({
 }: TimestampDetailProps) {
     const intl = useIntl();
 
-    const loading = useEntityStatusStore((state) => state.getLoading());
+    const hydrating = useEntityStatusStore((state) => !state.hydrated);
 
     const content = time
         ? `${intl.formatDate(time, {
@@ -28,7 +28,9 @@ export default function TimestampDetail({
     return (
         <DetailWrapper
             headerMessageId={headerMessageId}
-            Loading={loading ? <Skeleton height={21} width={75} /> : undefined}
+            Hydrating={
+                hydrating ? <Skeleton height={21} width={75} /> : undefined
+            }
         >
             <Typography>{content}</Typography>
         </DetailWrapper>

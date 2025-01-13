@@ -6,7 +6,7 @@ import { DetailWrapperProps } from './types';
 export default function DetailWrapper({
     children,
     headerMessageId,
-    Loading,
+    Hydrating,
 }: DetailWrapperProps) {
     const intl = useIntl();
 
@@ -22,7 +22,7 @@ export default function DetailWrapper({
                 {intl.formatMessage({ id: headerMessageId })}
             </Typography>
 
-            {Loading ?? children}
+            {Hydrating ?? children}
         </Box>
     );
 }

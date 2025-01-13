@@ -15,7 +15,7 @@ export interface BaseDetailProps {
 
 export interface DetailWrapperProps extends BaseComponentProps {
     headerMessageId: string;
-    Loading?: ReactNode;
+    Hydrating?: ReactNode;
 }
 
 export interface NumericDetailProps extends BaseDetailProps {
