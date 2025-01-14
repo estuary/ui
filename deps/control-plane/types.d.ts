@@ -1,3 +1,5 @@
+// Local API documentation can be found here: http://localhost:8675/api/v1/docs
+
 type ControllerStatus =
     | CaptureControllerStatus
     | CollectionControllerStatus
@@ -5,9 +7,8 @@ type ControllerStatus =
     | TestControllerStatus
     | BaseControllerStatus;
 
-// Status of the activation of the task in the data-plane.
 interface ActivationStatus {
-    last_activated?: string; // The build id that was last activated in the data plane. If this is less than the `last_build_id` of the controlled spec, then an activation is still pending.
+    last_activated?: string;
 }
 
 interface AutoDiscoverFailure {
