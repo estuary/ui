@@ -131,6 +131,24 @@ export interface ResourceConfigPointers {
     ['x_delta_updates']: string | undefined;
 }
 
+export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
+    const response = {
+        ...arg,
+    };
+
+    // These are optional locally and in the spec.
+    //  But when calling WASM we want to make sure they're always there
+    if (!response.deltaUpdates) {
+        response.deltaUpdates = false;
+    }
+
+    if (!response.targetSchema) {
+        response.targetSchema = 'leaveEmpty';
+    }
+
+    return response;
+};
+
 export const getResourceConfigPointers = (
     schema: any
 ): ResourceConfigPointers | null => {
@@ -158,10 +176,10 @@ export const generateMaterializationResourceSpec = (
         // TODO (web flow wasm - source capture)
         // We need to do some better error handling here
         const response = update_materialization_resource_spec({
-            sourceCapture,
             resourceSpecPointers,
             collectionName,
             resourceSpec: {},
+            sourceCapture: prepareSourceCaptureForServer(sourceCapture),
         });
 
         if (!response) {
