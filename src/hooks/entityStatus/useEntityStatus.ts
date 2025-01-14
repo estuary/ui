@@ -48,6 +48,11 @@ export default function useEntityStatus(catalogName: string) {
             onError: (err) => {
                 storeResponses(undefined);
                 storeError(err);
+
+                logRocketEvent(`${CustomEvents.ENTITY_STATUS}:CallFailed`, {
+                    catalogName,
+                    error: err,
+                });
             },
             onSuccess: (responses) => {
                 if (

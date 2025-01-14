@@ -1,4 +1,6 @@
 import produce from 'immer';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -38,6 +40,8 @@ const getInitialState = (
     },
 
     setFormat: (value, invertedValue) => {
+        logRocketEvent(`${CustomEvents.ENTITY_STATUS}:ViewChanged`);
+
         set(
             produce((state: EntityStatusState) => {
                 state.format = state.format === value ? invertedValue : value;

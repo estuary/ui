@@ -1,6 +1,8 @@
 import { Button } from '@mui/material';
 import { Refresh } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 
 export default function RefreshButton() {
@@ -22,6 +24,8 @@ export default function RefreshButton() {
                 refresh().finally(() => {
                     setActive(false);
                 });
+
+                logRocketEvent(`${CustomEvents.ENTITY_STATUS}:Refresh`);
             }}
             disabled={loading}
         >

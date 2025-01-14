@@ -1,6 +1,8 @@
 import useEntityStatus from 'hooks/entityStatus/useEntityStatus';
 import { useEffect } from 'react';
 import { useMount } from 'react-use';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import { useEntityStatusStore } from './Store';
 import { HydratorProps } from './types';
 
@@ -31,6 +33,8 @@ export default function EntityStatusHydrator({
                 setHydrated(true);
                 setActive(false);
                 setHydrationError(error);
+
+                logRocketEvent(`${CustomEvents.ENTITY_STATUS}:InitFailed`);
             }
 
             setRefresh(mutate);
