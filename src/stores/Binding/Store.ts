@@ -18,7 +18,7 @@ import {
 import {
     createJSONFormDefaults,
     getResourceConfigPointers,
-    updateMaterializationResourceSpec,
+    generateMaterializationResourceSpec,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';
@@ -409,7 +409,7 @@ const getInitialState = (
                         // If we have a sourceCapture then we should use those settings to have WASM
                         //  produce some default data. This prefills certain settings the same way the
                         //  backend would when new bindings are added.
-                        prefilledData = updateMaterializationResourceSpec(
+                        prefilledData = generateMaterializationResourceSpec(
                             sourceCapture,
                             state.resourceConfigPointers,
                             collectionName

@@ -149,19 +149,19 @@ export const getResourceConfigPointers = (
     }
 };
 
-export const updateMaterializationResourceSpec = (
-    source_capture: SourceCaptureDef,
-    resource_spec_pointers: ResourceConfigPointers,
-    collection_name: string
+export const generateMaterializationResourceSpec = (
+    sourceCapture: SourceCaptureDef,
+    resourceSpecPointers: ResourceConfigPointers,
+    collectionName: string
 ) => {
     try {
         // TODO (web flow wasm - source capture)
         // We need to do some better error handling here
         const response = update_materialization_resource_spec({
-            source_capture,
-            resource_spec: {},
-            resource_spec_pointers,
-            collection_name,
+            sourceCapture,
+            resourceSpecPointers,
+            collectionName,
+            resourceSpec: {},
         });
 
         if (!response) {
