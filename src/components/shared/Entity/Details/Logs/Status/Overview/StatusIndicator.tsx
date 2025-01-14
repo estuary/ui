@@ -41,7 +41,9 @@ export default function StatusIndicator({ status }: StatusIndicatorProps) {
                 }}
             />
 
-            {/* <Typography
+            {/* TODO (entity-status): Remove if and when it is decided supplementary text
+                  will not be displayed alongside the status indicator.
+            <Typography
                 style={{
                     color:
                         theme.palette.mode === 'light'

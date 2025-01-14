@@ -134,6 +134,8 @@ export const CommonMessages: Record<string, string> = {
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
     'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
 
+    // TODO (entity-status): Reassess once a decision is made regarding the language
+    //   used to contextualize entity status.
     // Status
     'status.error.high': `High`,
     'status.error.low': `Low`,

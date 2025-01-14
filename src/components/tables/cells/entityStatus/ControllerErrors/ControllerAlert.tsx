@@ -13,8 +13,6 @@ import { useState } from 'react';
 import { unescapeString } from 'utils/misc-utils';
 import { ControllerAlertProps } from './types';
 
-// const NEW_LINE = '\r\n';
-
 export default function ControllerAlert({
     error,
     hideBorder,

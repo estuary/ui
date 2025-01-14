@@ -22,6 +22,7 @@ export const Data: Record<string, string> = {
     'data.in': `{type} In`,
     'data.out': `{type} Out`,
     'data.connectorImage': `Connector Image`,
+    'data.details': `Details`,
     'data.event': `Event`,
     'data.actions': `Actions`,
     'data.active': `Active`,

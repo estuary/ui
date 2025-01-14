@@ -24,13 +24,16 @@ export default function EntityStatusHydrator({
 
     useEffect(() => {
         if (!hydrated) {
-            if (error) {
+            if (data) {
+                setHydrated(true);
+                setActive(false);
+            } else if (error) {
+                setHydrated(true);
+                setActive(false);
                 setHydrationError(error);
             }
 
             setRefresh(mutate);
-            setHydrated(true);
-            setActive(false);
         }
     }, [
         data,
