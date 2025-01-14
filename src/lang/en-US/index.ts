@@ -1,4 +1,5 @@
 import { AdminPage } from './AdminPage';
+import { Authentication } from './Authentication';
 import { CTAs } from './CTAs';
 import { Captures } from './Captures';
 import { CommonMessages } from './CommonMessages';
@@ -7,7 +8,6 @@ import { Errors } from './Errors';
 import { EntityTable } from './EntityTable';
 import { Fetchers } from './Fetchers';
 import { Graphs } from './Graphs';
-import { LoggingIn } from './LoggingIn';
 import { Materializations } from './Materializations';
 import { MonacoEditor } from './MonacoEditor';
 import { Transforms } from './Transforms';
@@ -41,7 +41,7 @@ const enUSMessages: Record<string, string> = {
     ...Graphs,
     ...HomePage,
     ...JsonForms,
-    ...LoggingIn,
+    ...Authentication,
     ...Materializations,
     ...MonacoEditor,
     ...Navigation,

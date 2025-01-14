@@ -1,8 +1,9 @@
+import { authenticatedRoutes } from 'app/routes';
 import { CommonMessages } from './CommonMessages';
 import { CTAs } from './CTAs';
 import { Navigation } from './Navigation';
 
-export const LoggingIn: Record<string, string> = {
+export const Authentication: Record<string, string> = {
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
     'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
     'login.userNotFound.onRefresh':
@@ -109,6 +110,11 @@ export const LoggingIn: Record<string, string> = {
     'tenant.marketplace.error.message': `A problem was encountered connecting the Google Marketplace subscription to the requested tenant.`,
 
     'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
+
+    'tenant.usedSso.title': `Successfully Authenticated`,
+    'tenant.usedSso.message': `Your account was created successfully and can be added to your organization's ${CommonMessages.company} tenant.`,
+    'tenant.usedSso.instructions': `To do so, ask an ${CommonMessages.company} admin at your company to go to the URL below and create an invite link which they can share with you.`,
+    'tenant.usedSso.instructions.fullPath': `${window.location.origin}${authenticatedRoutes.admin.accessGrants.fullPath}`,
 
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,
