@@ -21,7 +21,6 @@ import {
     generateMaterializationResourceSpec,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
-import { stringifyJSON } from 'services/stringify';
 import { CustomEvents } from 'services/types';
 import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
 import { BindingStoreNames } from 'stores/names';
@@ -807,7 +806,7 @@ const getInitialState = (
                 //   anything in a store and probably should never do that... maybe.
                 //  Might not be a huge deal to do this twice but something to think about.
                 const resourceConfigPointers = getResourceConfigPointers({
-                    spec: stringifyJSON(resolved),
+                    spec: resolved,
                 });
 
                 if (!resourceConfigPointers) {
