@@ -1,4 +1,4 @@
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBinding_sourceCaptureFlags } from 'stores/Binding/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
 import SourceCaptureChipOption from './SourceCaptureChipOption';
 
@@ -6,13 +6,10 @@ function SourceCaptureChipOptionalSettings() {
     const sourceCaptureDefinition =
         useSourceCaptureStore_sourceCaptureDefinition();
 
-    const [
+    const {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
-    ] = useBindingStore((state) => [
-        state.sourceCaptureDeltaUpdatesSupported,
-        state.sourceCaptureTargetSchemaSupported,
-    ]);
+    } = useBinding_sourceCaptureFlags();
 
     if (
         (sourceCaptureDeltaUpdatesSupported ||

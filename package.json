@@ -30,7 +30,8 @@
         "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
         "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty",
         "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
-        "generate-supabase-types": "node ./scripts/generateSupabaseTypes"
+        "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
+        "use-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
