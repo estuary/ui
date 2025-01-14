@@ -1,4 +1,3 @@
-import { update_materialization_resource_spec } from '@estuary/flow-web';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
@@ -19,6 +18,7 @@ import {
 import {
     createJSONFormDefaults,
     getResourceConfigPointers,
+    updateMaterializationResourceSpec,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';
@@ -404,29 +404,22 @@ const getInitialState = (
 
                     initializeBinding(state, collectionName, bindingUUID);
 
-                    let prefilledData = {};
-                    if (sourceCapture) {
+                    let prefilledData;
+                    if (sourceCapture && state.resourceConfigPointers) {
                         // If we have a sourceCapture then we should use those settings to have WASM
                         //  produce some default data. This prefills certain settings the same way the
                         //  backend would when new bindings are added.
-                        const defaultSchema =
-                            update_materialization_resource_spec({
-                                source_capture: sourceCapture,
-                                resource_spec: {},
-                                resource_spec_pointers:
-                                    state.resourceConfigPointers,
-                                collection_name: collectionName,
-                            });
-
-                        // TODO (web flow wasm - source capture)
-                        // We need to do some better error handling here
-                        prefilledData = JSON.parse(defaultSchema);
+                        prefilledData = updateMaterializationResourceSpec(
+                            sourceCapture,
+                            state.resourceConfigPointers,
+                            collectionName
+                        );
                     }
 
                     const jsonFormDefaults = createJSONFormDefaults(
                         state.resourceSchema,
                         collectionName,
-                        prefilledData
+                        prefilledData ?? {}
                     );
 
                     state.resourceConfigs[bindingUUID] = {

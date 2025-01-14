@@ -1,7 +1,10 @@
-import { get_resource_config_pointers } from '@estuary/flow-web';
+import {
+    get_resource_config_pointers,
+    update_materialization_resource_spec,
+} from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
-import { DefaultAjvResponse, Schema } from 'types';
+import { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -139,6 +142,33 @@ export const getResourceConfigPointers = (
         }
 
         return response.pointers;
+
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        return null;
+    }
+};
+
+export const updateMaterializationResourceSpec = (
+    source_capture: SourceCaptureDef,
+    resource_spec_pointers: ResourceConfigPointers,
+    collection_name: string
+) => {
+    try {
+        // TODO (web flow wasm - source capture)
+        // We need to do some better error handling here
+        const response = update_materialization_resource_spec({
+            source_capture,
+            resource_spec: {},
+            resource_spec_pointers,
+            collection_name,
+        });
+
+        if (!response) {
+            return null;
+        }
+
+        return JSON.parse(response);
 
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
