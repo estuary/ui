@@ -12,11 +12,17 @@ const STORE_KEY = 'entity-status';
 
 const getInitialEntityStatusData = (): Pick<
     EntityStatusState,
-    'format' | 'lastUpdated' | 'loading' | 'responses' | 'serverError'
+    | 'format'
+    | 'lastUpdated'
+    | 'loading'
+    | 'refresh'
+    | 'responses'
+    | 'serverError'
 > => ({
     format: 'dashboard',
     lastUpdated: null,
     loading: false,
+    refresh: () => new Promise(() => undefined),
     responses: null,
     serverError: null,
 });
@@ -69,6 +75,16 @@ const getInitialState = (
             }),
             false,
             'Loading set'
+        );
+    },
+
+    setRefresh: (value) => {
+        set(
+            produce((state: EntityStatusState) => {
+                state.refresh = value;
+            }),
+            false,
+            'Refresh set'
         );
     },
 

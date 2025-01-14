@@ -62,5 +62,5 @@ export default function useEntityStatus(catalogName: string) {
         }
     );
 
-    return { data, error, refresh: () => mutate() };
+    return { data, error, mutate };
 }

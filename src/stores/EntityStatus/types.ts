@@ -1,6 +1,7 @@
 import { EntityStatusResponse } from 'deps/control-plane/types';
 import { DateTime } from 'luxon';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
+import { KeyedMutator } from 'swr';
 import { BaseComponentProps } from 'types';
 
 interface ApiError {
@@ -16,6 +17,7 @@ export interface EntityStatusState extends StoreWithHydration {
     getSingleResponse: (
         catalogName: string
     ) => EntityStatusResponse | undefined;
+    refresh: () => Promise<EntityStatusResponse[] | undefined>;
     resetState: () => void;
     responses: EntityStatusResponse[] | null;
     serverError: ApiError | null;
@@ -25,6 +27,7 @@ export interface EntityStatusState extends StoreWithHydration {
     ) => void;
     setLastUpdated: (value: EntityStatusState['lastUpdated']) => void;
     setLoading: (value: EntityStatusState['loading']) => void;
+    setRefresh: (value: KeyedMutator<EntityStatusResponse[]>) => void;
     setResponses: (value: EntityStatusResponse[] | undefined) => void;
     setServerError: (value: EntityStatusState['serverError']) => void;
 }

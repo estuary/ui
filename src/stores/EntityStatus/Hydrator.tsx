@@ -8,15 +8,15 @@ export default function EntityStatusHydrator({
     catalogName,
     children,
 }: HydratorProps) {
-    const { data, error, refresh } = useEntityStatus(catalogName);
+    const { data, error, mutate } = useEntityStatus(catalogName);
 
     const hydrated = useEntityStatusStore((state) => state.hydrated);
+    const setActive = useEntityStatusStore((state) => state.setActive);
     const setHydrated = useEntityStatusStore((state) => state.setHydrated);
     const setHydrationError = useEntityStatusStore(
         (state) => state.setHydrationError
     );
-
-    const setActive = useEntityStatusStore((state) => state.setActive);
+    const setRefresh = useEntityStatusStore((state) => state.setRefresh);
 
     useMount(() => {
         setActive(true);
@@ -24,22 +24,23 @@ export default function EntityStatusHydrator({
 
     useEffect(() => {
         if (!hydrated) {
-            if (data) {
-                setHydrated(true);
-                setActive(false);
-            } else if (error) {
-                setHydrated(true);
+            if (error) {
                 setHydrationError(error);
             }
+
+            setRefresh(mutate);
+            setHydrated(true);
+            setActive(false);
         }
     }, [
         data,
         error,
         hydrated,
-        refresh,
+        mutate,
         setActive,
         setHydrated,
         setHydrationError,
+        setRefresh,
     ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
