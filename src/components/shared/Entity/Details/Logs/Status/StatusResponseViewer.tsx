@@ -23,22 +23,29 @@ export default function StatusResponseViewer() {
         null
     );
 
+    const loading = useEntityStatusStore(
+        (state) => !state.hydrated || state.active
+    );
     const response = useEntityStatusStore((state) =>
         state.getSingleResponse(catalogName)
     );
 
-    if (response) {
-        return (
-            <Paper sx={{ width: '100%' }} variant="outlined">
-                <Box
-                    sx={{
-                        ...editorToolBarSx,
-                        minHeight: DEFAULT_TOOLBAR_HEIGHT,
-                    }}
-                />
+    if (loading) {
+        return <MonacoEditorSkeleton editorHeight={EDITOR_HEIGHT} />;
+    }
 
-                <Divider />
+    return (
+        <Paper sx={{ width: '100%' }} variant="outlined">
+            <Box
+                sx={{
+                    ...editorToolBarSx,
+                    minHeight: DEFAULT_TOOLBAR_HEIGHT,
+                }}
+            />
 
+            <Divider />
+
+            {response ? (
                 <Editor
                     defaultLanguage="json"
                     height={EDITOR_HEIGHT}
@@ -63,9 +70,9 @@ export default function StatusResponseViewer() {
                     theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
                     value={stringifyJSON(response)}
                 />
-            </Paper>
-        );
-    } else {
-        return <MonacoEditorSkeleton editorHeight={EDITOR_HEIGHT} />;
-    }
+            ) : (
+                <Box height={EDITOR_HEIGHT} />
+            )}
+        </Paper>
+    );
 }
