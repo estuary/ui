@@ -9,6 +9,7 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';
+import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
 import { hasLength } from 'utils/misc-utils';
@@ -26,9 +27,7 @@ export default function StatusResponseViewer() {
     const loading = useEntityStatusStore(
         (state) => !state.hydrated || state.active
     );
-    const response = useEntityStatusStore((state) =>
-        state.getSingleResponse(catalogName)
-    );
+    const response = useEntityStatusStore_singleResponse(catalogName);
 
     if (loading) {
         return <MonacoEditorSkeleton editorHeight={EDITOR_HEIGHT} />;

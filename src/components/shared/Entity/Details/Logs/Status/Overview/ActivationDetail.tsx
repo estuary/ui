@@ -3,11 +3,12 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import {
-    getDataPlaneActivationStatus,
-    isEntityControllerStatus,
-} from 'utils/entityStatus-utils';
+    useEntityStatusStore_lastActivated,
+    useEntityStatusStore_singleResponse,
+} from 'stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'stores/EntityStatus/Store';
+import { getDataPlaneActivationStatus } from 'utils/entityStatus-utils';
 import DetailWrapper from './DetailWrapper';
 import { BaseDetailProps } from './types';
 
@@ -17,23 +18,9 @@ export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const intl = useIntl();
 
     const hydrating = useEntityStatusStore((state) => !state.hydrated);
-
-    const lastActivated = useEntityStatusStore((state) => {
-        const response = state.getSingleResponse(catalogName);
-
-        if (
-            !response?.controller_status ||
-            !isEntityControllerStatus(response.controller_status)
-        ) {
-            return undefined;
-        }
-
-        return response.controller_status.activation?.last_activated;
-    });
-
-    const lastBuildId = useEntityStatusStore(
-        (state) => state.getSingleResponse(catalogName)?.last_build_id
-    );
+    const lastActivated = useEntityStatusStore_lastActivated(catalogName);
+    const lastBuildId =
+        useEntityStatusStore_singleResponse(catalogName)?.last_build_id;
 
     const contentMessageId = getDataPlaneActivationStatus(
         lastActivated,

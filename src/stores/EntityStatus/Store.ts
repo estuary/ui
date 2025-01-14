@@ -28,15 +28,10 @@ const getInitialStateData = () => ({
 
 const getInitialState = (
     set: NamedSet<EntityStatusState>,
-    get: StoreApi<EntityStatusState>['getState']
+    _get: StoreApi<EntityStatusState>['getState']
 ): EntityStatusState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
-
-    getSingleResponse: (catalogName) =>
-        get()
-            .responses?.filter((datum) => datum.catalog_name === catalogName)
-            .at(0),
 
     resetState: () => {
         set(getInitialStateData(), false, 'State reset');

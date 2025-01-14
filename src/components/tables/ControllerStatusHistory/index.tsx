@@ -8,11 +8,10 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
-import { isEntityControllerStatus } from 'utils/entityStatus-utils';
-import { useShallow } from 'zustand/react/shallow';
 import Rows from './Rows';
 
 export const optionalColumnIntlKeys = {
@@ -51,16 +50,8 @@ export default function ControllerStatusHistoryTable() {
 
     const intl = useIntl();
 
-    const history: PublicationInfo[] | null | undefined = useEntityStatusStore(
-        useShallow((state) => {
-            const response = state.getSingleResponse(catalogName);
-
-            return response?.controller_status &&
-                isEntityControllerStatus(response.controller_status)
-                ? response.controller_status.publications?.history
-                : [];
-        })
-    );
+    const history: PublicationInfo[] | null | undefined =
+        useEntityStatusStore_recentHistory(catalogName);
 
     const dataFetching = useEntityStatusStore(
         (state) => !state.hydrated || state.active

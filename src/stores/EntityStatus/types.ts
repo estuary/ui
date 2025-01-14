@@ -13,9 +13,6 @@ interface ApiError {
 export interface EntityStatusState extends StoreWithHydration {
     format: 'code' | 'dashboard';
     lastUpdated: DateTime | null;
-    getSingleResponse: (
-        catalogName: string
-    ) => EntityStatusResponse | undefined;
     refresh: () => Promise<EntityStatusResponse[] | undefined>;
     resetState: () => void;
     responses: EntityStatusResponse[] | null;

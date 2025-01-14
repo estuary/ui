@@ -1,39 +1,19 @@
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { isCaptureControllerStatus } from 'utils/entityStatus-utils';
+import {
+    useEntityStatusStore_autoDiscoverFailure,
+    useEntityStatusStore_autoDiscoverLastSuccess,
+} from 'stores/EntityStatus/hooks';
 import AutoDiscoverChanges from './AutoDiscoverChanges';
 import TimestampDetail from './TimestampDetail';
 
 export default function AutoDiscoverOutcome() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const failure = useEntityStatusStore((state) => {
-        const response = state.getSingleResponse(catalogName);
-
-        if (
-            !response ||
-            !isCaptureControllerStatus(response.controller_status)
-        ) {
-            return undefined;
-        }
-
-        return response.controller_status.auto_discover?.failure;
-    });
-
-    const lastSuccess = useEntityStatusStore((state) => {
-        const response = state.getSingleResponse(catalogName);
-
-        if (
-            !response ||
-            !isCaptureControllerStatus(response.controller_status)
-        ) {
-            return undefined;
-        }
-
-        return response.controller_status.auto_discover?.last_success;
-    });
+    const failure = useEntityStatusStore_autoDiscoverFailure(catalogName);
+    const lastSuccess =
+        useEntityStatusStore_autoDiscoverLastSuccess(catalogName);
 
     if (failure) {
         return (
