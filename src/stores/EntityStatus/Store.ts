@@ -12,12 +12,13 @@ const STORE_KEY = 'entity-status';
 
 const getInitialEntityStatusData = (): Pick<
     EntityStatusState,
-    'format' | 'lastUpdated' | 'loading' | 'responses'
+    'format' | 'lastUpdated' | 'loading' | 'responses' | 'serverError'
 > => ({
     format: 'dashboard',
     lastUpdated: null,
     loading: false,
     responses: null,
+    serverError: null,
 });
 
 const getInitialStateData = () => ({
@@ -62,29 +63,37 @@ const getInitialState = (
     },
 
     setLoading: (value) => {
-        const action = value ? 'Loading' : 'Loaded';
-
         set(
             produce((state: EntityStatusState) => {
                 state.loading = value;
             }),
             false,
-            action
+            'Loading set'
         );
     },
 
     setResponses: (value) => {
-        if (get().responses === null) {
-            get().setHydrated(true);
-            get().setActive(false);
-        }
-
         set(
             produce((state: EntityStatusState) => {
-                state.responses = value;
+                if (
+                    value ||
+                    (!state.hydrated && typeof value === 'undefined')
+                ) {
+                    state.responses = value ?? [];
+                }
             }),
             false,
             'Responses set'
+        );
+    },
+
+    setServerError: (value) => {
+        set(
+            produce((state: EntityStatusState) => {
+                state.serverError = value;
+            }),
+            false,
+            'Server error set'
         );
     },
 });

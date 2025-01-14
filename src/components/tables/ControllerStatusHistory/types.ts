@@ -10,7 +10,3 @@ export interface RowsProps {
     data: PublicationInfo[];
     sortDirection: SortDirection;
 }
-
-export interface TableProps {
-    serverErrorExists: boolean;
-}

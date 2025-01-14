@@ -25,7 +25,7 @@ export default function SectionViews() {
                     })}
                 </Typography>
 
-                <ControllerStatusHistoryTable serverErrorExists={false} />
+                <ControllerStatusHistoryTable />
             </>
         );
     } else {

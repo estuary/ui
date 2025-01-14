@@ -27,6 +27,7 @@ export default function useEntityStatus(catalogName: string) {
         (state) => state.setLastUpdated
     );
     const storeResponses = useEntityStatusStore((state) => state.setResponses);
+    const storeError = useEntityStatusStore((state) => state.setServerError);
 
     const authorizedPrefix = grants.some((grant) =>
         catalogName.startsWith(grant)
@@ -38,12 +39,16 @@ export default function useEntityStatus(catalogName: string) {
         });
     }
 
-    const { data, mutate } = useSWR(
+    const { data, error, mutate } = useSWR(
         session?.access_token && authorizedPrefix
             ? [catalogName, session.access_token]
             : null,
         statusFetcher,
         {
+            onError: (err) => {
+                storeResponses(undefined);
+                storeError(err);
+            },
             onSuccess: (responses) => {
                 if (
                     responses.length === 1 &&
@@ -51,10 +56,11 @@ export default function useEntityStatus(catalogName: string) {
                 ) {
                     storeResponses(responses);
                     setLastUpdated(DateTime.now());
+                    storeError(null);
                 }
             },
         }
     );
 
-    return { data, refresh: () => mutate() };
+    return { data, error, refresh: () => mutate() };
 }

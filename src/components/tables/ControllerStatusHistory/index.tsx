@@ -12,8 +12,8 @@ import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 import { isEntityControllerStatus } from 'utils/entityStatus-utils';
+import { useShallow } from 'zustand/react/shallow';
 import Rows from './Rows';
-import { TableProps } from './types';
 
 export const optionalColumnIntlKeys = {
     pointer: 'data.pointer',
@@ -46,26 +46,28 @@ const evaluateColumnsToShow = (columnsToHide: string[]) =>
             : true
     );
 
-export default function ControllerStatusHistoryTable({
-    serverErrorExists,
-}: TableProps) {
+export default function ControllerStatusHistoryTable() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const intl = useIntl();
 
     const history: PublicationInfo[] | null | undefined = useEntityStatusStore(
-        (state) => {
+        useShallow((state) => {
             const response = state.getSingleResponse(catalogName);
 
             return response?.controller_status &&
                 isEntityControllerStatus(response.controller_status)
                 ? response.controller_status.publications?.history
                 : [];
-        }
+        })
     );
 
     const dataFetching = useEntityStatusStore(
         (state) => !state.hydrated || state.loading
+    );
+
+    const errorExists = useEntityStatusStore((state) =>
+        Boolean(state.hydrationErrorsExist || state.serverError)
     );
 
     const [tableState, setTableState] = useState<TableState>({
@@ -99,7 +101,7 @@ export default function ControllerStatusHistoryTable({
                 status: TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [dataFetching, history]);
+    }, [dataFetching, history, setTableState]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
@@ -146,7 +148,7 @@ export default function ControllerStatusHistoryTable({
                     columns={columnsToShow}
                     noExistingDataContentIds={{
                         header: 'details.ops.status.table.empty.header',
-                        message: serverErrorExists
+                        message: errorExists
                             ? 'details.ops.status.table.error.message'
                             : 'details.ops.status.table.empty.message',
                         disableDoclink: true,
@@ -154,7 +156,7 @@ export default function ControllerStatusHistoryTable({
                     tableState={tableState}
                     loading={loading}
                     rows={
-                        !serverErrorExists &&
+                        !errorExists &&
                         !loading &&
                         history &&
                         history.length > 0 ? (

@@ -28,7 +28,7 @@ export const Details: Record<string, string> = {
     'details.ops.status.table.header': `Recent Controller Events`,
     'details.ops.status.table.empty.header': `No history found`,
     'details.ops.status.table.empty.message': `Click "Refresh" to fetch the latest controller events.`,
-    'details.ops.status.table.error.message': `There was an error attempting to fetch the list of fields.`,
+    'details.ops.status.table.error.message': `There was an error attempting to fetch controller status events.`,
 
     'details.settings.notifications.header': `Notification Settings`,
     'details.settings.notifications.alert.userNotSubscribed.message': `You are not subscribed to notifications for this tenant. If you would like to receive notifications for this task, {button} to subscribe.`,
