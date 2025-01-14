@@ -1,8 +1,6 @@
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
-import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import BackfillButton from './BackfillButton';
 import SectionWrapper from './SectionWrapper';
 import { BackfillProps } from './types';
@@ -27,12 +25,6 @@ export default function Backfill({
                         />
                     }
                 />
-            ) : null}
-
-            {entityType === 'materialization' ? (
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange bindingIndex={bindingIndex} />
-                </ErrorBoundryWrapper>
             ) : null}
         </SectionWrapper>
     ) : null;

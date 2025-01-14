@@ -272,7 +272,7 @@ function FieldSelectionViewer({
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ my: 3 }}>
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                 <Stack spacing={1}>
                     <Stack style={{ alignItems: 'center' }} direction="row">
