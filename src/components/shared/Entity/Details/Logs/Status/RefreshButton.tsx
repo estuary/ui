@@ -6,23 +6,24 @@ import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 export default function RefreshButton() {
     const intl = useIntl();
 
-    const hydrating = useEntityStatusStore((state) => !state.hydrated);
-    const loading = useEntityStatusStore((state) => state.loading);
+    const loading = useEntityStatusStore(
+        (state) => !state.hydrated || state.active
+    );
     const refresh = useEntityStatusStore((state) => state.refresh);
-    const setLoading = useEntityStatusStore((state) => state.setLoading);
+    const setActive = useEntityStatusStore((state) => state.setActive);
 
     return (
         <Button
             variant="text"
             startIcon={<Refresh style={{ fontSize: 12 }} />}
             onClick={() => {
-                setLoading(true);
+                setActive(true);
 
                 refresh().finally(() => {
-                    setLoading(false);
+                    setActive(false);
                 });
             }}
-            disabled={hydrating || loading}
+            disabled={loading}
         >
             {intl.formatMessage({ id: 'cta.refresh' })}
         </Button>

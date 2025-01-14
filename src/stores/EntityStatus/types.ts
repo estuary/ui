@@ -13,7 +13,6 @@ interface ApiError {
 export interface EntityStatusState extends StoreWithHydration {
     format: 'code' | 'dashboard';
     lastUpdated: DateTime | null;
-    loading: boolean;
     getSingleResponse: (
         catalogName: string
     ) => EntityStatusResponse | undefined;
@@ -26,7 +25,6 @@ export interface EntityStatusState extends StoreWithHydration {
         invertedValue: EntityStatusState['format']
     ) => void;
     setLastUpdated: (value: EntityStatusState['lastUpdated']) => void;
-    setLoading: (value: EntityStatusState['loading']) => void;
     setRefresh: (value: KeyedMutator<EntityStatusResponse[]>) => void;
     setResponses: (value: EntityStatusResponse[] | undefined) => void;
     setServerError: (value: EntityStatusState['serverError']) => void;

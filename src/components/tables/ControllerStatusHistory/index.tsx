@@ -63,7 +63,7 @@ export default function ControllerStatusHistoryTable() {
     );
 
     const dataFetching = useEntityStatusStore(
-        (state) => !state.hydrated || state.loading
+        (state) => !state.hydrated || state.active
     );
 
     const errorExists = useEntityStatusStore((state) =>
