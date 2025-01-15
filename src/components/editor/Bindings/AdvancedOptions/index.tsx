@@ -1,10 +1,11 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
-import { useIntl } from 'react-intl';
-import OnIncompatibleSchemaChange from './OnIncompatibleSchemaChange';
-import TimeTravel from './TimeTravel';
+import { useBindingStore } from 'stores/Binding/Store';
+import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
+import TimeTravel from '../TimeTravel';
+import Header from './Header';
 import { AdvancedOptionsProps } from './types';
 
 export default function AdvancedOptions({
@@ -12,9 +13,17 @@ export default function AdvancedOptions({
     bindingUUID,
     collectionName,
 }: AdvancedOptionsProps) {
-    const intl = useIntl();
-
     const entityType = useEntityType();
+
+    const fullSourceErrorExists = useBindingStore((state) => {
+        const fullSourceErrors = state.fullSourceConfigs[bindingUUID]?.errors;
+
+        if (!fullSourceErrors) {
+            return false;
+        }
+
+        return fullSourceErrors.length > 0;
+    });
 
     if (entityType !== 'materialization') {
         return null;
@@ -22,13 +31,8 @@ export default function AdvancedOptions({
 
     return (
         <WrapperWithHeader
-            header={
-                <Typography variant="formSectionHeader">
-                    {intl.formatMessage({
-                        id: 'workflows.advancedSettings.title',
-                    })}
-                </Typography>
-            }
+            forceOpen={fullSourceErrorExists}
+            header={<Header errorsExist={fullSourceErrorExists} />}
             hideBorder
             mountClosed
         >
