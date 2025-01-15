@@ -25,14 +25,27 @@ export default function AdvancedOptions({
         return fullSourceErrors.length > 0;
     });
 
+    const onIncompatibleSchemaChangeErrorExists = useBindingStore(
+        (state) => state.onIncompatibleSchemaChangeErrorExists.binding
+    );
+
     if (entityType !== 'materialization') {
         return null;
     }
 
     return (
         <WrapperWithHeader
-            forceOpen={fullSourceErrorExists}
-            header={<Header errorsExist={fullSourceErrorExists} />}
+            forceOpen={
+                fullSourceErrorExists || onIncompatibleSchemaChangeErrorExists
+            }
+            header={
+                <Header
+                    errorsExist={
+                        fullSourceErrorExists ||
+                        onIncompatibleSchemaChangeErrorExists
+                    }
+                />
+            }
             hideBorder
             mountClosed
         >
