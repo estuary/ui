@@ -1,14 +1,12 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
+import AdvancedOptions from 'components/editor/Bindings/AdvancedOptions';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import OnIncompatibleSchemaChange from 'components/editor/Bindings/OnIncompatibleSchemaChange';
-import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingIndex,
     useBinding_hydrated,
@@ -29,8 +27,6 @@ function ResourceConfig({
     refreshRequired,
     readOnly = false,
 }: Props) {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const hydrated = useBinding_hydrated();
@@ -87,32 +83,11 @@ function ResourceConfig({
                 />
             ) : null}
 
-            {entityType === 'materialization' ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography variant="formSectionHeader">
-                            {intl.formatMessage({
-                                id: 'workflows.advancedSettings.title',
-                            })}
-                        </Typography>
-                    }
-                    hideBorder
-                    mountClosed
-                >
-                    <Stack spacing={4}>
-                        <ErrorBoundryWrapper>
-                            <OnIncompatibleSchemaChange
-                                bindingIndex={draftedBindingIndex}
-                            />
-                        </ErrorBoundryWrapper>
-
-                        <TimeTravel
-                            bindingUUID={bindingUUID}
-                            collectionName={collectionName}
-                        />
-                    </Stack>
-                </WrapperWithHeader>
-            ) : null}
+            <AdvancedOptions
+                bindingIndex={draftedBindingIndex}
+                bindingUUID={bindingUUID}
+                collectionName={collectionName}
+            />
         </>
     );
 }
