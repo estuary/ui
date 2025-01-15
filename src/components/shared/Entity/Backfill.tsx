@@ -1,12 +1,9 @@
-import { Typography } from '@mui/material';
 import BackfillButton from 'components/editor/Bindings/Backfill/BackfillButton';
 import SectionWrapper from 'components/editor/Bindings/Backfill/SectionWrapper';
+import AdvancedOptions from 'components/materialization/AdvancedOptions';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useIntl } from 'react-intl';
-import OnIncompatibleSchemaChange from '../../materialization/OnIncompatibleSchemaChange';
-import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
-import WrapperWithHeader from './WrapperWithHeader';
 
 export default function Backfill() {
     const intl = useIntl();
@@ -24,23 +21,7 @@ export default function Backfill() {
                 />
             ) : null}
 
-            {entityType === 'materialization' ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'workflows.advancedSettings.title',
-                            })}
-                        </Typography>
-                    }
-                    hideBorder
-                    mountClosed
-                >
-                    <ErrorBoundryWrapper>
-                        <OnIncompatibleSchemaChange />
-                    </ErrorBoundryWrapper>
-                </WrapperWithHeader>
-            ) : null}
+            <AdvancedOptions />
         </SectionWrapper>
     ) : null;
 }
