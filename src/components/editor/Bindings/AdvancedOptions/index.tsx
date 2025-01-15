@@ -1,11 +1,11 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
+import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import TimeTravel from '../TimeTravel';
-import Header from './Header';
 import { AdvancedOptionsProps } from './types';
 
 export default function AdvancedOptions({
@@ -13,6 +13,8 @@ export default function AdvancedOptions({
     bindingUUID,
     collectionName,
 }: AdvancedOptionsProps) {
+    const intl = useIntl();
+
     const entityType = useEntityType();
 
     const fullSourceErrorExists = useBindingStore((state) => {
@@ -39,12 +41,11 @@ export default function AdvancedOptions({
                 fullSourceErrorExists || onIncompatibleSchemaChangeErrorExists
             }
             header={
-                <Header
-                    errorsExist={
-                        fullSourceErrorExists ||
-                        onIncompatibleSchemaChangeErrorExists
-                    }
-                />
+                <Typography variant="formSectionHeader">
+                    {intl.formatMessage({
+                        id: 'workflows.advancedSettings.title',
+                    })}
+                </Typography>
             }
             hideBorder
             mountClosed

@@ -3,7 +3,3 @@ export interface AdvancedOptionsProps {
     bindingUUID: string;
     collectionName: string;
 }
-
-export interface HeaderProps {
-    errorsExist: boolean;
-}
