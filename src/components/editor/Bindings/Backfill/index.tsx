@@ -14,18 +14,16 @@ export default function Backfill({
 
     const showBackfillButton = isEdit && bindingIndex > -1 && collectionEnabled;
 
-    return showBackfillButton || entityType === 'materialization' ? (
+    return showBackfillButton ? (
         <SectionWrapper>
-            {showBackfillButton ? (
-                <BackfillButton
-                    bindingIndex={bindingIndex}
-                    description={
-                        <FormattedMessage
-                            id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
-                        />
-                    }
-                />
-            ) : null}
+            <BackfillButton
+                bindingIndex={bindingIndex}
+                description={
+                    <FormattedMessage
+                        id={`workflows.collectionSelector.manualBackfill.message.${entityType}`}
+                    />
+                }
+            />
         </SectionWrapper>
     ) : null;
 }
