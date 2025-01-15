@@ -89,15 +89,15 @@ function ResourceConfig({
 
             {entityType === 'materialization' ? (
                 <WrapperWithHeader
-                    mountClosed
-                    hideBorder
                     header={
-                        <Typography>
+                        <Typography variant="formSectionHeader">
                             {intl.formatMessage({
                                 id: 'workflows.advancedSettings.title',
                             })}
                         </Typography>
                     }
+                    hideBorder
+                    mountClosed
                 >
                     <Stack spacing={4}>
                         <ErrorBoundryWrapper>

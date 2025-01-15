@@ -26,8 +26,6 @@ export default function Backfill() {
 
             {entityType === 'materialization' ? (
                 <WrapperWithHeader
-                    mountClosed
-                    hideBorder
                     header={
                         <Typography>
                             {intl.formatMessage({
@@ -35,6 +33,8 @@ export default function Backfill() {
                             })}
                         </Typography>
                     }
+                    hideBorder
+                    mountClosed
                 >
                     <ErrorBoundryWrapper>
                         <OnIncompatibleSchemaChange />
