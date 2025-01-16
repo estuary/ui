@@ -12,10 +12,14 @@ function EvolvedAlert() {
             {intl.formatMessage(
                 { id: 'workflows.collectionSelector.evolvedCollections.alert' },
                 {
-                    itemType: intl.formatMessage({
-                        id: ENTITY_SETTINGS[entityType].bindingTermId,
-                    }),
-                    count: 0,
+                    itemType: intl.formatMessage(
+                        {
+                            id: ENTITY_SETTINGS[entityType].bindingTermId,
+                        },
+                        {
+                            count: 0,
+                        }
+                    ),
                 }
             )}
         </AlertBox>
