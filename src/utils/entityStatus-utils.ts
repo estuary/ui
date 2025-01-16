@@ -14,7 +14,7 @@ import {
     EntityControllerStatus,
     EntityStatusResponse,
     JobStatus,
-} from 'deps/control-plane/types';
+} from 'types/controlPlane';
 
 type MuiColorId =
     | 'default'

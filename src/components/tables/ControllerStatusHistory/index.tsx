@@ -2,7 +2,6 @@ import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import { useDisplayTableColumns } from 'context/TableSettings';
-import { PublicationInfo } from 'deps/control-plane/types';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -12,6 +11,7 @@ import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { PublicationInfo } from 'types/controlPlane';
 import Rows from './Rows';
 
 export const optionalColumnIntlKeys = {

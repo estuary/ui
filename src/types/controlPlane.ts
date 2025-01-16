@@ -1,13 +1,13 @@
 // Local API documentation can be found here: http://localhost:8675/api/v1/docs
 
-type ControllerStatus =
+export type ControllerStatus =
     | CaptureControllerStatus
     | CollectionControllerStatus
     | MaterializationControllerStatus
     | TestControllerStatus
     | BaseControllerStatus;
 
-interface ActivationStatus {
+export interface ActivationStatus {
     last_activated?: string;
 }
 
@@ -17,7 +17,7 @@ interface AutoDiscoverFailure {
     last_outcome: AutoDiscoverOutcome;
 }
 
-interface AutoDiscoverOutcome {
+export interface AutoDiscoverOutcome {
     ts: string;
     added?: DiscoverChange[];
     errors?: Error[];
@@ -27,7 +27,7 @@ interface AutoDiscoverOutcome {
     removed?: DiscoverChange[];
 }
 
-interface AutoDiscoverStatus {
+export interface AutoDiscoverStatus {
     failure?: AutoDiscoverFailure | null;
     interval?: string | null;
     last_success?: AutoDiscoverOutcome | null;
@@ -96,7 +96,8 @@ export interface JobStatus {
     type: string;
 }
 
-export interface MaterializationControllerStatus extends EntityControllerStatus {
+export interface MaterializationControllerStatus
+    extends EntityControllerStatus {
     source_capture?: SourceCaptureStatus | null;
 }
 
