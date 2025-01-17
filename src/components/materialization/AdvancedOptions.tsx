@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
@@ -20,21 +20,23 @@ export default function AdvancedOptions() {
     }
 
     return (
-        <WrapperWithHeader
-            forceOpen={onIncompatibleSchemaChangeErrorExists}
-            header={
-                <Typography>
-                    {intl.formatMessage({
-                        id: 'workflows.advancedSettings.title',
-                    })}
-                </Typography>
-            }
-            hideBorder
-            mountClosed
-        >
-            <ErrorBoundryWrapper>
-                <OnIncompatibleSchemaChange />
-            </ErrorBoundryWrapper>
-        </WrapperWithHeader>
+        <Box style={{ maxWidth: 850 }}>
+            <WrapperWithHeader
+                forceOpen={onIncompatibleSchemaChangeErrorExists}
+                header={
+                    <Typography variant="formSectionHeader">
+                        {intl.formatMessage({
+                            id: 'workflows.advancedSettings.title',
+                        })}
+                    </Typography>
+                }
+                hideBorder
+                mountClosed
+            >
+                <ErrorBoundryWrapper>
+                    <OnIncompatibleSchemaChange />
+                </ErrorBoundryWrapper>
+            </WrapperWithHeader>
+        </Box>
     );
 }
