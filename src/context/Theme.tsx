@@ -474,6 +474,7 @@ export const detailsPanelBgColor = {
     dark: sample_grey[900],
 };
 
+// TODO (entity-status): Generalize the name of shardStatusDefaultColor.
 export const shardStatusDefaultColor = {
     light: '#C4D3E9',
     dark: '#E1E9F4',
@@ -489,6 +490,17 @@ export const tableRowActive__Background = {
 export const tableRowActive_Finished__Background = {
     light: 'rgba(225, 233, 244, 0.5)',
     dark: 'rgba(196, 211, 233, 0.7)',
+};
+
+export const diminishedTextColor = {
+    light: '#54585E',
+    dark: '#B6BCC4',
+};
+
+// RGB translation of #F7F9FC.
+export const menuBackgroundColor = {
+    light: '#F0F4F9',
+    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 export const truncateTextSx: SxProps<Theme> = {

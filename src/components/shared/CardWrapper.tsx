@@ -39,44 +39,47 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
                 background: semiTransparentBackground[theme.palette.mode],
                 boxShadow: defaultBoxShadow,
                 borderRadius: 3,
+                minWidth: 'min-content',
             }}
         >
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{ mb: 2, alignItems: 'center' }}
-            >
-                {message ? (
-                    <Typography
-                        sx={{
-                            ...cardHeaderSx,
-                            mb: 2,
-                            width: '100%',
-                        }}
-                        component="div"
-                    >
-                        {message}
-                    </Typography>
-                ) : null}
-
-                {tooltipMessageId ? (
-                    <Tooltip
-                        placement={belowLg ? 'bottom' : 'right'}
-                        title={intl.formatMessage({
-                            id: 'admin.billing.graph.dataByTask.tooltip',
-                        })}
-                    >
-                        <HelpCircle
-                            style={{
-                                marginBottom: 16,
-                                fontSize: 12,
-                                strokeWidth: 1,
-                                color: theme.palette.text.primary,
+            {Boolean(message || tooltipMessageId) ? (
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ mb: 2, alignItems: 'center' }}
+                >
+                    {message ? (
+                        <Typography
+                            sx={{
+                                ...cardHeaderSx,
+                                mb: 2,
+                                width: '100%',
                             }}
-                        />
-                    </Tooltip>
-                ) : null}
-            </Stack>
+                            component="div"
+                        >
+                            {message}
+                        </Typography>
+                    ) : null}
+
+                    {tooltipMessageId ? (
+                        <Tooltip
+                            placement={belowLg ? 'bottom' : 'right'}
+                            title={intl.formatMessage({
+                                id: 'admin.billing.graph.dataByTask.tooltip',
+                            })}
+                        >
+                            <HelpCircle
+                                style={{
+                                    marginBottom: 16,
+                                    fontSize: 12,
+                                    strokeWidth: 1,
+                                    color: theme.palette.text.primary,
+                                }}
+                            />
+                        </Tooltip>
+                    ) : null}
+                </Stack>
+            ) : null}
 
             {children}
         </Box>

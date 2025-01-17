@@ -23,6 +23,7 @@ export const Data: Record<string, string> = {
     'data.out': `{type} Out`,
     'data.connectorImage': `Connector Image`,
     'data.details': `Details`,
+    'data.event': `Event`,
     'data.actions': `Actions`,
     'data.active': `Active`,
     'data.dataPlane': `Data Plane`,
@@ -31,4 +32,6 @@ export const Data: Record<string, string> = {
     'data.scope': `Scope`,
     'data.gcpServiceAccount': `GCP Service Account Email`,
     'data.awsIamUserArn': `AWS IAM User ARN`,
+    'data.errors': `Errors`,
+    'data.completed': `Completed`,
 };

@@ -12,6 +12,8 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { useMemo } from 'react';
+import { useUnmount } from 'react-use';
+import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { EditorStoreNames } from 'stores/names';
 import ShardHydrator from '../Shard/Hydrator';
 
@@ -28,6 +30,14 @@ function EntityDetails() {
 
     // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
+    const resetEntityStatusState = useEntityStatusStore(
+        (state) => state.resetState
+    );
+
+    useUnmount(() => {
+        resetEntityStatusState();
+    });
 
     return (
         <LocalZustandProvider createStore={localStore}>
