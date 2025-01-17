@@ -27,6 +27,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier.`,
+    'admin.billing.message.external': ``,
     'admin.billing.error.details.header': `There was a network issue.`,
     'admin.billing.error.details.message': `There was an error fetching your billing details. ${Errors['error.tryAgain']}`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
