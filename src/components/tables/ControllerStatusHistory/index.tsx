@@ -1,23 +1,16 @@
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { useDisplayTableColumns } from 'context/TableSettings';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { TablePrefixes } from 'stores/Tables/hooks';
 import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
 import { PublicationInfo } from 'types/controlPlane';
 import Rows from './Rows';
-
-export const optionalColumnIntlKeys = {
-    pointer: 'data.pointer',
-    details: 'data.details',
-};
 
 export const columns: TableColumns[] = [
     {
@@ -37,13 +30,6 @@ export const columns: TableColumns[] = [
         headerIntlKey: 'data.errors',
     },
 ];
-
-const evaluateColumnsToShow = (columnsToHide: string[]) =>
-    columns.filter((column) =>
-        column.headerIntlKey
-            ? !columnsToHide.includes(column.headerIntlKey)
-            : true
-    );
 
 export default function ControllerStatusHistoryTable() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -96,28 +82,6 @@ export default function ControllerStatusHistoryTable() {
 
     const loading = tableState.status === TableStatuses.LOADING;
 
-    const { tableSettings } = useDisplayTableColumns();
-
-    const columnsToShow = useMemo(() => {
-        const optionalColumns = Object.values(optionalColumnIntlKeys);
-
-        if (
-            tableSettings &&
-            Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
-        ) {
-            const hiddenColumns = optionalColumns.filter(
-                (column) =>
-                    !tableSettings[
-                        TablePrefixes.fieldSelection
-                    ].shownOptionalColumns.includes(column)
-            );
-
-            return evaluateColumnsToShow(hiddenColumns);
-        }
-
-        return evaluateColumnsToShow(optionalColumns);
-    }, [tableSettings]);
-
     return (
         <TableContainer component={Box}>
             <Table
@@ -128,7 +92,7 @@ export default function ControllerStatusHistoryTable() {
                 })}
             >
                 <EntityTableHeader
-                    columns={columnsToShow}
+                    columns={columns}
                     columnToSort={columnToSort}
                     sortDirection={sortDirection}
                     headerClick={handlers.sort}
@@ -136,7 +100,7 @@ export default function ControllerStatusHistoryTable() {
                 />
 
                 <EntityTableBody
-                    columns={columnsToShow}
+                    columns={columns}
                     noExistingDataContentIds={{
                         header: 'details.ops.status.table.empty.header',
                         message: errorExists
