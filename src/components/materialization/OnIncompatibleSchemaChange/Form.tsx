@@ -57,6 +57,7 @@ export default function Form() {
     return (
         <IncompatibleSchemaChangeForm
             currentSetting={currentSetting}
+            scope="spec"
             updateDraftedSetting={updateServer}
         />
     );

@@ -95,6 +95,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
     return (
         <IncompatibleSchemaChangeForm
             currentSetting={currentSetting ? currentSetting : ''}
+            scope="binding"
             updateDraftedSetting={updateServer}
         />
     );

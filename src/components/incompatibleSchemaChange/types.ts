@@ -2,6 +2,7 @@ import { choices } from './shared';
 
 export interface BaseFormProps {
     currentSetting: any;
+    scope: 'binding' | 'spec';
     updateDraftedSetting: Function;
 }
 

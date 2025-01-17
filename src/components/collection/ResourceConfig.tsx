@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import ResourceConfigForm from 'components/collection/ResourceConfigForm';
+import AdvancedOptions from 'components/editor/Bindings/AdvancedOptions';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import TimeTravel from 'components/editor/Bindings/TimeTravel';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
@@ -83,12 +83,11 @@ function ResourceConfig({
                 />
             ) : null}
 
-            {entityType === 'materialization' ? (
-                <TimeTravel
-                    bindingUUID={bindingUUID}
-                    collectionName={collectionName}
-                />
-            ) : null}
+            <AdvancedOptions
+                bindingIndex={draftedBindingIndex}
+                bindingUUID={bindingUUID}
+                collectionName={collectionName}
+            />
         </>
     );
 }

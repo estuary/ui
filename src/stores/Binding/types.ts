@@ -128,6 +128,14 @@ export interface BindingState
         value: string | undefined,
         bindingUUID: string | null
     ) => void;
+    onIncompatibleSchemaChangeErrorExists: {
+        binding: boolean;
+        spec: boolean;
+    };
+    setOnIncompatibleSchemaChangeErrorExists: (
+        value: boolean,
+        key: 'binding' | 'spec'
+    ) => void;
 
     // Resource Config
     resourceConfigs: ResourceConfigDictionary;

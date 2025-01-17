@@ -11,18 +11,24 @@ import useSupportedOptions from 'hooks/OnIncompatibleSchemaChange/useSupportedOp
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { stringifyJSON } from 'services/stringify';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { autoCompleteDefaultProps } from './shared';
 import { BaseFormProps } from './types';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,
+    scope,
     updateDraftedSetting,
 }: BaseFormProps) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');
     const [invalidSetting, setInvalidSetting] = useState(false);
+
+    const setOnIncompatibleSchemaChangeErrorExists = useBindingStore(
+        (state) => state.setOnIncompatibleSchemaChangeErrorExists
+    );
 
     const formActive = useFormStateStore_isActive();
 
@@ -55,6 +61,10 @@ export default function IncompatibleSchemaChangeForm({
         setInputValue(selection.label);
         setInvalidSetting(false);
     }, [currentSetting, selection]);
+
+    useEffect(() => {
+        setOnIncompatibleSchemaChangeErrorExists(invalidSetting, scope);
+    }, [invalidSetting, scope, setOnIncompatibleSchemaChangeErrorExists]);
 
     return (
         <Stack spacing={1}>
