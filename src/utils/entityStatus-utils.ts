@@ -154,19 +154,3 @@ export const getDataPlaneActivationStatus = (
 
     return lastActivated === lastBuildId ? 'common.upToDate' : 'common.pending';
 };
-
-export const formatInteger = (originalValue: number) => {
-    const digitCount = originalValue.toString().length;
-
-    if (digitCount < 4) {
-        return originalValue.toString();
-    }
-
-    if (digitCount < 7) {
-        const formattedValue = originalValue / 1000;
-
-        return `${formattedValue.toFixed(2)}k`;
-    }
-
-    return '999k+';
-};
