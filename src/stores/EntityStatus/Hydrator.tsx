@@ -21,7 +21,9 @@ export default function EntityStatusHydrator({
     const setRefresh = useEntityStatusStore((state) => state.setRefresh);
 
     useMount(() => {
-        setActive(true);
+        if (!hydrated) {
+            setActive(true);
+        }
     });
 
     useEffect(() => {
