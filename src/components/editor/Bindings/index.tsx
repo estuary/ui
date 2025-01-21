@@ -12,6 +12,7 @@ import { LocalZustandProvider } from 'context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 
+import AdvancedOptions from 'components/materialization/AdvancedOptions';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
 import { ReactNode, useEffect, useMemo } from 'react';
@@ -109,6 +110,8 @@ function BindingsMultiEditor({
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
                 <Backfill />
+
+                <AdvancedOptions />
             </Stack>
 
             <ListAndDetails
