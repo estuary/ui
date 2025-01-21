@@ -13,7 +13,7 @@ function TimeTravel({ bindingUUID, collectionName }: Props) {
             <Stack>
                 <Stack spacing={1} sx={{ mb: 2 }}>
                     <Stack direction="row">
-                        <Typography variant="formSectionHeader">
+                        <Typography style={{ fontWeight: 500 }}>
                             <FormattedMessage id="notBeforeNotAfter.header" />
                         </Typography>
                     </Stack>

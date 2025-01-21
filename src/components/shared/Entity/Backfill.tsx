@@ -3,8 +3,6 @@ import SectionWrapper from 'components/editor/Bindings/Backfill/SectionWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useIntl } from 'react-intl';
-import OnIncompatibleSchemaChange from '../../materialization/OnIncompatibleSchemaChange';
-import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 export default function Backfill() {
     const intl = useIntl();
@@ -12,21 +10,17 @@ export default function Backfill() {
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
-    return isEdit || entityType === 'materialization' ? (
-        <SectionWrapper>
-            {isEdit ? (
-                <BackfillButton
-                    description={intl.formatMessage({
-                        id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,
-                    })}
-                />
-            ) : null}
+    if (!isEdit) {
+        return null;
+    }
 
-            {entityType === 'materialization' ? (
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange />
-                </ErrorBoundryWrapper>
-            ) : null}
+    return (
+        <SectionWrapper>
+            <BackfillButton
+                description={intl.formatMessage({
+                    id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,
+                })}
+            />
         </SectionWrapper>
-    ) : null;
+    );
 }
