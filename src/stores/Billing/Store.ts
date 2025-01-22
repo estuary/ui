@@ -22,14 +22,12 @@ const getInitialStateData = (): Pick<
     | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
     | 'selectedInvoiceId'
-    | 'externalPaymentMethod'
 > => {
     return {
         selectedInvoiceId: null,
         invoices: [],
         invoicesInitialized: false,
         dataByTaskGraphDetails: [],
-        externalPaymentMethod: null,
         paymentMethodExists: null,
     };
 };
@@ -114,17 +112,11 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
             );
         },
 
-        setPaymentMethodData: (value) => {
+        setPaymentMethodExists: (value) => {
             set(
                 produce((state: BillingState) => {
-                    const methodsExist = isArray(value) && hasLength(value);
-
-                    state.paymentMethodExists = methodsExist;
-                    state.externalPaymentMethod =
-                        methodsExist &&
-                        value.some(
-                            (datum) => datum.payment_provider === 'external'
-                        );
+                    state.paymentMethodExists =
+                        isArray(value) && hasLength(value);
                 }),
                 false,
                 'Payment Exists Updated'

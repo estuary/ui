@@ -68,8 +68,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const setPaymentMethodData = useBillingStore(
-        (state) => state.setPaymentMethodData
+    const setPaymentMethodExists = useBillingStore(
+        (state) => state.setPaymentMethodExists
     );
 
     const [refreshCounter, setRefreshCounter] = useState(0);
@@ -128,9 +128,9 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     useEffect(() => {
         if (!methodsLoading) {
-            setPaymentMethodData(methods);
+            setPaymentMethodExists(methods);
         }
-    }, [setPaymentMethodData, methods, methodsLoading]);
+    }, [setPaymentMethodExists, methods, methodsLoading]);
 
     // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
     //   when proper error handling is in place.
