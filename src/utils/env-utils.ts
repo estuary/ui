@@ -207,3 +207,16 @@ export const getDocsSettings = () => {
 
     return settings;
 };
+
+export const getEntityStatusSettings = () => {
+    const entityStatusBaseEndpoint = import.meta.env
+        .VITE_ENTITY_STATUS_BASE_URL;
+
+    if (entityStatusBaseEndpoint) {
+        return { entityStatusBaseEndpoint };
+    } else {
+        throw new Error(
+            'Missing endpoint to access entity status: VITE_ENTITY_STATUS_BASE_URL'
+        );
+    }
+};

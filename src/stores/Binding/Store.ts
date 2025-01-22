@@ -164,6 +164,7 @@ const getInitialMiscData = (): Pick<
     | 'discoveredCollections'
     | 'evolvedCollections'
     | 'onIncompatibleSchemaChange'
+    | 'onIncompatibleSchemaChangeErrorExists'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -185,6 +186,10 @@ const getInitialMiscData = (): Pick<
     discoveredCollections: [],
     evolvedCollections: [],
     onIncompatibleSchemaChange: undefined,
+    onIncompatibleSchemaChangeErrorExists: {
+        binding: false,
+        spec: false,
+    },
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],
@@ -923,6 +928,16 @@ const getInitialState = (
             }),
             false,
             'Current binding changed'
+        );
+    },
+
+    setOnIncompatibleSchemaChangeErrorExists: (value, key) => {
+        set(
+            produce((state: BindingState) => {
+                state.onIncompatibleSchemaChangeErrorExists[key] = value;
+            }),
+            false,
+            'On Incompatible Schema Change Error Exists Set'
         );
     },
 

@@ -5,6 +5,7 @@ import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import JournalAlerts from 'components/journals/Alerts';
 import AlertBox from 'components/shared/AlertBox';
 import CardWrapper from 'components/shared/CardWrapper';
+import useIsCollectionDerivation from 'components/shared/Entity/Details/useIsCollectionDerivation';
 import Error from 'components/shared/Error';
 import {
     useJournalData,
@@ -18,6 +19,7 @@ import { FormattedMessage } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { hasLength } from 'utils/misc-utils';
 import ListViewSkeleton from './ListViewSkeleton';
+import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
 
 interface Props {
     collectionName: string;
@@ -36,6 +38,8 @@ export function DataPreview({ collectionName }: Props) {
     // const toggleMode = (_event: any, newValue: Views) => {
     //     setPreviewMode(newValue);
     // };
+
+    const isDerivation = useIsCollectionDerivation();
 
     const { error: tenantHidesError, hide } =
         useTenantHidesDataPreview(collectionName);
@@ -132,7 +136,13 @@ export function DataPreview({ collectionName }: Props) {
                     <JournalAlerts
                         journalData={journalData}
                         journalsData={journalsData}
-                        notFoundTitleMessage="collectionsPreview.notFound.message"
+                        notFoundTitleMessage={
+                            isDerivation ? (
+                                'collectionsPreview.notFound.message.derivation'
+                            ) : (
+                                <NoCollectionJournalsAlert />
+                            )
+                        }
                     />
                 ) : null}
 
