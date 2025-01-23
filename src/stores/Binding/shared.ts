@@ -293,7 +293,7 @@ export const hydrateSpecificationDependentState = async (
     return null;
 };
 
-const getInitialBindingData = (): Pick<
+export const getInitialBindingData = (): Pick<
     BindingState,
     'bindingErrorsExist' | 'bindings' | 'currentBinding'
 > => ({
@@ -315,6 +315,7 @@ export const getInitialMiscData = (): Pick<
     | 'discoveredCollections'
     | 'evolvedCollections'
     | 'onIncompatibleSchemaChange'
+    | 'onIncompatibleSchemaChangeErrorExists'
     | 'rediscoveryRequired'
     | 'resourceConfigErrorsExist'
     | 'resourceConfigErrors'
@@ -335,6 +336,10 @@ export const getInitialMiscData = (): Pick<
     discoveredCollections: [],
     evolvedCollections: [],
     onIncompatibleSchemaChange: undefined,
+    onIncompatibleSchemaChangeErrorExists: {
+        binding: false,
+        spec: false,
+    },
     rediscoveryRequired: false,
     resourceConfigErrorsExist: false,
     resourceConfigErrors: [],

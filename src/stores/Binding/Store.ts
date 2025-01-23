@@ -17,8 +17,8 @@ import {
 } from 'lodash';
 import {
     createJSONFormDefaults,
-    getResourceConfigPointers,
     generateMaterializationResourceSpec,
+    getResourceConfigPointers,
 } from 'services/ajv';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
@@ -784,6 +784,16 @@ const getInitialState = (
             }),
             false,
             'Current binding changed'
+        );
+    },
+
+    setOnIncompatibleSchemaChangeErrorExists: (value, key) => {
+        set(
+            produce((state: BindingState) => {
+                state.onIncompatibleSchemaChangeErrorExists[key] = value;
+            }),
+            false,
+            'On Incompatible Schema Change Error Exists Set'
         );
     },
 
