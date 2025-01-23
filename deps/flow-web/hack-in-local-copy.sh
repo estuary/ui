@@ -2,7 +2,7 @@
 
 # Check if exactly one argument is passed
 if [ $# -ne 1 ]; then
-    echo "Please provide the path to flow (ex: /home/travis/code/flow)"
+    echo "Please provide the path to flow (ex: /home/user/repos/flow)"
     exit 1
 fi
 
