@@ -143,21 +143,15 @@ const isAdvancedConfig = (schema: JsonSchema): boolean => {
     return schema[ADVANCED] === true;
 };
 
-// Nullable is only supported for anyOf and oneOf. This is manually checked
-//  because allOf will also return true for a combinator check. After that we only
-//  support when there is exactly two types. This is mainly here to help render
-//  pydantic inputs better.
-const getNullableType = (schema: JsonSchema): null | string => {
-    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
-
-    if (combinatorVal === null) {
-        return null;
-    }
-
-    const types = combinatorVal.map(({ type }) => type);
-
-    if (types.length === 2 && types.includes('null')) {
-        const response = types.filter((val) => {
+const getTypeOtherThanNull = (
+    fieldTypes: (string | string[] | undefined)[]
+): null | string => {
+    if (
+        Array.isArray(fieldTypes) &&
+        fieldTypes.length === 2 &&
+        fieldTypes.includes('null')
+    ) {
+        const response = fieldTypes.filter((val) => {
             if (!val || Array.isArray(val)) {
                 return false;
             }
@@ -173,6 +167,20 @@ const getNullableType = (schema: JsonSchema): null | string => {
     }
 
     return null;
+};
+
+// Nullable is only supported for anyOf and oneOf. This is manually checked
+//  because allOf will also return true for a combinator check. After that we only
+//  support when there is exactly two types. This is mainly here to help render
+//  pydantic inputs better.
+const getNullableType = (schema: JsonSchema): null | string => {
+    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
+
+    if (combinatorVal === null) {
+        return null;
+    }
+
+    return getTypeOtherThanNull(combinatorVal.map(({ type }) => type));
 };
 
 const isOAuthConfig = (schema: JsonSchema): boolean =>
@@ -555,6 +563,14 @@ const generateUISchema = (
 
     if (types.length > 1) {
         const controlObject: ControlElement = createControlElement(currentRef);
+
+        // Some fields are 1 type OR null so check this so we
+        //  can use our custom renderer to clear these values properly
+        const nullableType = getTypeOtherThanNull(types);
+        if (nullableType) {
+            addNullableField(controlObject, nullableType);
+        }
+
         schemaElements.push(controlObject);
         return controlObject;
     }
