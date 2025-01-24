@@ -18,7 +18,7 @@ export const nullableControlTester: RankedTester = rankWith(
 );
 
 const NullableControlRenderer = (props: any) => {
-    const { uischema } = props;
+    const { handleChange, uischema } = props;
     const { options } = uischema;
 
     const InputComponent = useMemo(() => {
@@ -45,7 +45,14 @@ const NullableControlRenderer = (props: any) => {
         return null;
     }
 
-    return <InputComponent {...props} />;
+    return (
+        <InputComponent
+            {...props}
+            handleChange={(path, val) => {
+                handleChange(path, val ?? null);
+            }}
+        />
+    );
 };
 
 export const NullableControl = withJsonFormsControlProps(
