@@ -1,42 +1,32 @@
 import { Typography } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import useTrialStorageOnly from 'hooks/useTrialStorageOnly';
-import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useBinding_collections } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import {
+    useBinding_resourceConfigOfMetaBindingProperty,
+    useBinding_resourceConfigs,
+} from 'stores/Binding/hooks';
 import { TrialOnlyPrefixAlertProps } from './types';
 
 export default function TrialOnlyPrefixAlert({
+    bindingUUID,
     messageId,
 }: TrialOnlyPrefixAlertProps) {
     const intl = useIntl();
 
-    const bindingsHydrated = useBindingStore((state) => state.hydrated);
-    const collections = useBinding_collections();
+    const resourceConfigs = useBinding_resourceConfigs();
+    const bindingSourceBackfillRecommended =
+        useBinding_resourceConfigOfMetaBindingProperty(
+            bindingUUID,
+            'sourceBackfillRecommended'
+        );
 
-    const trialStorageOnlyTenantsExist = useTenantStore((state) =>
-        hasLength(state.trialStorageOnly)
-    );
-
-    const getTrialOnlyPrefixes = useTrialStorageOnly();
-
-    useEffect(() => {
-        if (bindingsHydrated) {
-            const prefixes = collections.map((collection) =>
-                stripPathing(collection, true)
-            );
-
-            getTrialOnlyPrefixes(prefixes).then(
-                () => {},
-                () => {}
-            );
-        }
-    }, [bindingsHydrated, collections, getTrialOnlyPrefixes]);
-
-    if (!bindingsHydrated || !trialStorageOnlyTenantsExist) {
+    if (
+        (bindingUUID && !bindingSourceBackfillRecommended) ||
+        (!bindingUUID &&
+            Object.values(resourceConfigs).some(
+                (config) => !config.meta.sourceBackfillRecommended
+            ))
+    ) {
         return null;
     }
 

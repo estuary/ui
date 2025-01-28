@@ -7,7 +7,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
-import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
 import CatalogEditor from 'components/shared/Entity/CatalogEditor';
 import DetailsForm from 'components/shared/Entity/DetailsForm';
 import EndpointConfig from 'components/shared/Entity/EndpointConfig';
@@ -186,12 +185,6 @@ function EntityEdit({
                                 />
                             ) : null}
                         </Collapse>
-
-                        {entityType === 'materialization' ? (
-                            <Box style={{ marginBottom: 16 }}>
-                                <TrialOnlyPrefixAlert messageId="workflows.error.oldBoundCollection.generic" />
-                            </Box>
-                        ) : null}
 
                         <IncompatibleCollections />
 

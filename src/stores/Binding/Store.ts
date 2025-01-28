@@ -849,7 +849,11 @@ const getInitialState = (
         set(newState, false, 'Binding State Reset');
     },
 
-    setBackfilledBindings: (increment, targetBindingUUID) => {
+    setBackfilledBindings: (
+        increment,
+        targetBindingUUID,
+        trialOnlyPrefixes
+    ) => {
         set(
             produce((state: BindingState) => {
                 const existingBindingUUIDs = Object.keys(state.resourceConfigs);
@@ -869,6 +873,19 @@ const getInitialState = (
                     hasLength(existingBindingUUIDs) &&
                     existingBindingUUIDs.length ===
                         state.backfilledBindings.length;
+
+                if (trialOnlyPrefixes && trialOnlyPrefixes.length > 0) {
+                    existingBindingUUIDs.forEach((uuid) => {
+                        state.resourceConfigs[
+                            uuid
+                        ].meta.sourceBackfillRecommended =
+                            trialOnlyPrefixes.some((prefix) =>
+                                state.resourceConfigs[
+                                    uuid
+                                ].meta.collectionName.startsWith(prefix)
+                            ) && state.backfilledBindings.includes(uuid);
+                    });
+                }
             }),
             false,
             'Backfilled Collections Set'

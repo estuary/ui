@@ -72,6 +72,7 @@ function ResourceConfig({
 
             <Backfill
                 bindingIndex={draftedBindingIndex}
+                bindingUUID={bindingUUID}
                 collectionEnabled={!collectionDisabled}
             />
 

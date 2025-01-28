@@ -26,6 +26,7 @@ export interface ResourceConfig extends JsonFormsData {
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
+        sourceBackfillRecommended?: boolean;
     };
 }
 
@@ -86,7 +87,8 @@ export interface BindingState
     backfilledBindings: string[];
     setBackfilledBindings: (
         increment: BooleanString,
-        targetBindingUUID?: string
+        targetBindingUUID?: string,
+        trialOnlyPrefixes?: string[]
     ) => void;
 
     backfillAllBindings: boolean;
