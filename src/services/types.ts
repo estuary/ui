@@ -63,6 +63,7 @@ export enum CustomEvents {
     SUPABASE_CALL_UNAUTHENTICATED = 'Supabase_Call_Unauthenticated',
     SWR_LOADING_SLOW = 'SWR_Loading_Slow',
     TRANSLATION_KEY_MISSING = 'Translation_Key_Missing',
+    TRIAL_STORAGE_UNKNOWN = 'TrialStorage:Unknown',
     UPDATE_AVAILABLE = 'Update_Available',
     URL_FORMAT_ERROR = 'URLFormatError',
 }
