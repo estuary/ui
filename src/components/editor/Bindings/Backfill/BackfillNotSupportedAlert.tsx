@@ -4,7 +4,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
 
-function BackfillNotSupportedWarning() {
+function BackfillNotSupportedAlert() {
     const intl = useIntl();
     const entityType = useEntityType();
 
@@ -26,4 +26,4 @@ function BackfillNotSupportedWarning() {
     );
 }
 
-export default BackfillNotSupportedWarning;
+export default BackfillNotSupportedAlert;
