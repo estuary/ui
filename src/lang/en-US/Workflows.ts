@@ -79,7 +79,7 @@ export const Workflows: Record<string, string> = {
 
     'workflows.collectionSelector.manualBackfill.header': `Backfill`,
     'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn’t support backfills.`,
-    'workflows.collectionSelector.manualBackfill.notSupported.message': `Please reach out to {docLink} for help with a backfill.`,
+    'workflows.collectionSelector.manualBackfill.notSupported.message': `Please {docLink} for help with a backfill.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docLink': `${CTAs['cta.support']}`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docPath': `${CommonMessages['support.email']}`,
 
