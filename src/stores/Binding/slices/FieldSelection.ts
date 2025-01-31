@@ -1,36 +1,44 @@
 import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import produce from 'immer';
+import { Schema } from 'types';
 import { NamedSet } from 'zustand/middleware';
 import { BindingState } from '../types';
 
 export interface FieldSelection {
-    [field: string]: FieldSelectionType | null;
+    mode: FieldSelectionType | null;
+    meta?: Schema;
+}
+
+export interface ExpandedFieldSelection extends FieldSelection {
+    field: string;
 }
 
 export interface FieldSelectionDictionary {
-    [uuid: string]: FieldSelection;
+    [field: string]: FieldSelection;
+}
+
+interface BindingFieldSelections {
+    [uuid: string]: FieldSelectionDictionary;
 }
 
 export interface StoreWithFieldSelection {
     recommendFields: { [uuid: string]: boolean };
     setRecommendFields: (bindingUUID: string, value: boolean) => void;
 
-    selections: FieldSelectionDictionary;
+    selections: BindingFieldSelections;
     initializeSelections: (
         bindingUUID: string,
-        selection: {
-            field: string;
-            selectionType: FieldSelectionType | null;
-        }[]
+        selections: ExpandedFieldSelection[]
     ) => void;
     setSingleSelection: (
         bindingUUID: string,
         field: string,
-        selectionType: FieldSelectionType | null
+        mode: FieldSelection['mode'],
+        meta?: FieldSelection['meta']
     ) => void;
     setMultiSelection: (
         bindingUUID: string,
-        updatedFields: FieldSelection
+        updatedFields: FieldSelectionDictionary
     ) => void;
 
     selectionSaving: boolean;
@@ -60,10 +68,10 @@ export const getStoreWithFieldSelectionSettings = (
     initializeSelections: (bindingUUID, selections) => {
         set(
             produce((state: BindingState) => {
-                selections.forEach(({ field, selectionType }) => {
+                selections.forEach(({ field, mode, meta }) => {
                     state.selections[bindingUUID] = {
                         ...state.selections[bindingUUID],
-                        [field]: selectionType,
+                        [field]: { mode, meta },
                     };
                 });
             }),
@@ -121,12 +129,12 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSingleSelection: (bindingUUID, field, selectionType) => {
+    setSingleSelection: (bindingUUID, field, mode, meta) => {
         set(
             produce((state: BindingState) => {
                 state.selections[bindingUUID] = {
                     ...state.selections[bindingUUID],
-                    [field]: selectionType,
+                    [field]: { mode, meta },
                 };
 
                 if (!state.selectionSaving) {
