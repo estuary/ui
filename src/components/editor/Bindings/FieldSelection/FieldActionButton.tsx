@@ -4,7 +4,7 @@ import {
     useBinding_recommendFields,
     useBinding_setMultiSelection,
 } from 'stores/Binding/hooks';
-import { FieldSelection } from 'stores/Binding/slices/FieldSelection';
+import { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
 import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
 import { CompositeProjection, FieldSelectionType } from './types';
 
@@ -21,9 +21,9 @@ const evaluateUpdatedFields = (
     recommended: boolean,
     selectedValue: FieldSelectionType
 ) => {
-    const updatedFields: FieldSelection = {};
+    const updatedFields: FieldSelectionDictionary = {};
 
-    projections.forEach(({ field, constraint }) => {
+    projections.forEach(({ field, constraint, selectionMetadata }) => {
         const includeRequired = constraint
             ? evaluateRequiredIncludedFields(constraint.type)
             : false;
@@ -37,7 +37,7 @@ const evaluateUpdatedFields = (
                     : selectedValue;
         }
 
-        updatedFields[field] = selectionType;
+        updatedFields[field] = { meta: selectionMetadata, mode: selectionType };
     });
 
     return updatedFields;

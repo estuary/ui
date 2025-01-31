@@ -1,9 +1,10 @@
 import { Box } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import { useEntityType } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
 
-function BackfillNotSupportedWarning() {
+function BackfillNotSupportedAlert() {
     const intl = useIntl();
     const entityType = useEntityType();
 
@@ -19,15 +20,10 @@ function BackfillNotSupportedWarning() {
                     { entityType }
                 )}
             >
-                {intl.formatMessage(
-                    {
-                        id: 'workflows.collectionSelector.manualBackfill.notSupported.message',
-                    },
-                    { entityType }
-                )}
+                <MessageWithLink messageID="workflows.collectionSelector.manualBackfill.notSupported.message" />
             </AlertBox>
         </Box>
     );
 }
 
-export default BackfillNotSupportedWarning;
+export default BackfillNotSupportedAlert;
