@@ -43,7 +43,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     // Form State Store
     const formActive = useFormStateStore_isActive();
 
-    const selectedValue = useMemo(
+    const selection = useMemo(
         () =>
             Object.hasOwn(selections, bindingUUID)
                 ? selections[bindingUUID][field]
@@ -59,10 +59,10 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     const excludeRequired = evaluateRequiredExcludedFields(constraint.type);
 
     const coloredIncludeButton =
-        selectedValue === 'default' && includeRecommended;
+        selection?.mode === 'default' && includeRecommended;
 
     const coloredExcludeButton =
-        selectedValue === 'default' && !includeRecommended;
+        selection?.mode === 'default' && !includeRecommended;
 
     if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
         return null;
@@ -77,7 +77,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
             >
                 <FieldActionButton
                     messageId="fieldSelection.table.cta.includeField"
-                    selectedValue={selectedValue}
+                    selectedValue={selection?.mode ?? null}
                     value="include"
                     coloredDefaultState={coloredIncludeButton}
                     disabled={
@@ -87,24 +87,29 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     }
                     onClick={() => {
                         const singleValue =
-                            selectedValue !== 'include' || includeRequired
+                            selection?.mode !== 'include' || includeRequired
                                 ? 'include'
                                 : null;
 
                         const selectionType = evaluateSelectionType(
                             recommendFields[bindingUUID],
                             'include',
-                            selectedValue,
+                            selection?.mode ?? null,
                             singleValue
                         );
 
-                        setSingleSelection(bindingUUID, field, selectionType);
+                        setSingleSelection(
+                            bindingUUID,
+                            field,
+                            selectionType,
+                            selection?.meta
+                        );
                     }}
                 />
 
                 <FieldActionButton
                     messageId="fieldSelection.table.cta.excludeField"
-                    selectedValue={selectedValue}
+                    selectedValue={selection?.mode ?? null}
                     value="exclude"
                     coloredDefaultState={coloredExcludeButton}
                     disabled={
@@ -114,14 +119,14 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     }
                     onClick={() => {
                         const singleValue =
-                            selectedValue !== 'exclude' || excludeRequired
+                            selection?.mode !== 'exclude' || excludeRequired
                                 ? 'exclude'
                                 : null;
 
                         const selectionType = evaluateSelectionType(
                             recommendFields[bindingUUID],
                             'exclude',
-                            selectedValue,
+                            selection?.mode ?? null,
                             singleValue
                         );
 
