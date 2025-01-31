@@ -11,6 +11,7 @@ import {
     useBinding_recommendFields,
     useBinding_selections,
 } from 'stores/Binding/hooks';
+import { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
 import { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
@@ -51,19 +52,23 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     include: {},
                 };
 
-                const includedFields: string[] = Object.entries(
-                    selections[bindingUUID]
-                )
+                const includedFields: Pick<
+                    ExpandedFieldSelection,
+                    'field' | 'meta'
+                >[] = Object.entries(selections[bindingUUID])
                     .filter(
-                        ([_field, selectionType]) => selectionType === 'include'
+                        ([_field, selection]) => selection.mode === 'include'
                     )
-                    .map(([field]) => field);
+                    .map(([field, selection]) => ({
+                        field,
+                        meta: selection.meta,
+                    }));
 
                 const excludedFields: string[] = Object.entries(
                     selections[bindingUUID]
                 )
                     .filter(
-                        ([_field, selectionType]) => selectionType === 'exclude'
+                        ([_field, selection]) => selection.mode === 'exclude'
                     )
                     .map(([field]) => field);
 
@@ -76,8 +81,8 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     if (hasLength(includedFields)) {
                         const formattedFields: Schema = {};
 
-                        includedFields.forEach((field) => {
-                            formattedFields[field] = {};
+                        includedFields.forEach(({ field, meta }) => {
+                            formattedFields[field] = meta ?? {};
                         });
 
                         spec.bindings[bindingIndex].fields.include =

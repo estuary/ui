@@ -24,6 +24,7 @@ import {
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
 } from 'stores/Binding/hooks';
+import { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -67,12 +68,14 @@ const mapConstraintsToProjections = (
             : null;
 
         let selectionType: FieldSelectionType | null = 'default';
+        let selectionMetadata: Schema | undefined;
 
         if (fieldMetadata) {
             const { recommended, include, exclude } = fieldMetadata;
 
             if (include && Object.hasOwn(include, field)) {
                 selectionType = 'include';
+                selectionMetadata = include[field];
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
@@ -93,6 +96,7 @@ const mapConstraintsToProjections = (
             inference,
             ptr,
             constraint,
+            selectionMetadata,
             selectionType,
         };
     });
@@ -198,12 +202,18 @@ function FieldSelectionViewer({
                                 evaluatedFieldMetadata
                             );
 
-                        const selections = compositeProjections.map(
-                            ({ field, selectionType }) => ({
-                                field,
-                                selectionType,
-                            })
-                        );
+                        const selections: ExpandedFieldSelection[] =
+                            compositeProjections.map(
+                                ({
+                                    field,
+                                    selectionMetadata,
+                                    selectionType,
+                                }) => ({
+                                    field,
+                                    meta: selectionMetadata,
+                                    mode: selectionType,
+                                })
+                            );
 
                         initializeSelections(bindingUUID, selections);
                         setData(compositeProjections);
