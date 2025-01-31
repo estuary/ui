@@ -849,11 +849,7 @@ const getInitialState = (
         set(newState, false, 'Binding State Reset');
     },
 
-    setBackfilledBindings: (
-        increment,
-        targetBindingUUID,
-        trialOnlyPrefixes
-    ) => {
+    setBackfilledBindings: (increment, targetBindingUUID) => {
         set(
             produce((state: BindingState) => {
                 const existingBindingUUIDs = Object.keys(state.resourceConfigs);
@@ -873,19 +869,6 @@ const getInitialState = (
                     hasLength(existingBindingUUIDs) &&
                     existingBindingUUIDs.length ===
                         state.backfilledBindings.length;
-
-                if (trialOnlyPrefixes && trialOnlyPrefixes.length > 0) {
-                    existingBindingUUIDs.forEach((uuid) => {
-                        state.resourceConfigs[
-                            uuid
-                        ].meta.sourceBackfillRecommended =
-                            trialOnlyPrefixes.some((prefix) =>
-                                state.resourceConfigs[
-                                    uuid
-                                ].meta.collectionName.startsWith(prefix)
-                            ) && state.backfilledBindings.includes(uuid);
-                    });
-                }
             }),
             false,
             'Backfilled Collections Set'
@@ -1024,6 +1007,45 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    setSourceBackfillRecommended: (values) => {
+        if (!hasLength(values)) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                const targetCollections = values.map(
+                    ({ catalog_name }) => catalog_name
+                );
+
+                const resourceMap: { [collection: string]: string[] } = {};
+
+                Object.entries(state.resourceConfigs)
+                    .filter(([_uuid, config]) =>
+                        targetCollections.includes(config.meta.collectionName)
+                    )
+                    .forEach(([uuid, config]) => {
+                        const { collectionName } = config.meta;
+
+                        if (Object.keys(resourceMap).includes(collectionName)) {
+                            resourceMap[collectionName].push(uuid);
+                        } else {
+                            resourceMap[collectionName] = [uuid];
+                        }
+                    });
+
+                values.forEach(({ catalog_name }) => {
+                    resourceMap[catalog_name].forEach((uuid) => {
+                        state.resourceConfigs[uuid].meta.trialOnlyStorage =
+                            true;
+                    });
+                });
+            }),
+            false,
+            'Source Backfill Recommended Set'
         );
     },
 
@@ -1183,6 +1205,8 @@ const getInitialState = (
                     meta: {
                         collectionName: targetCollection,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        trialOnlyStorage:
+                            targetResourceConfig.meta.trialOnlyStorage,
                     },
                 };
 

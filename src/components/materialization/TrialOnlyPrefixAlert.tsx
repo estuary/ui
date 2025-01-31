@@ -10,22 +10,23 @@ import { TrialOnlyPrefixAlertProps } from './types';
 export default function TrialOnlyPrefixAlert({
     bindingUUID,
     messageId,
+    triggered,
 }: TrialOnlyPrefixAlertProps) {
     const intl = useIntl();
 
     const resourceConfigs = useBinding_resourceConfigs();
-    const bindingSourceBackfillRecommended =
-        useBinding_resourceConfigOfMetaBindingProperty(
-            bindingUUID,
-            'sourceBackfillRecommended'
-        );
+    const trialOnlyStorage = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'trialOnlyStorage'
+    );
 
     if (
-        (bindingUUID && !bindingSourceBackfillRecommended) ||
+        (bindingUUID && !trialOnlyStorage) ||
         (!bindingUUID &&
-            Object.values(resourceConfigs).some(
-                (config) => !config.meta.sourceBackfillRecommended
-            ))
+            Object.values(resourceConfigs).every(
+                (config) => !config.meta.trialOnlyStorage
+            )) ||
+        !triggered
     ) {
         return null;
     }

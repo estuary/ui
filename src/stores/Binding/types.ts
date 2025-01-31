@@ -1,4 +1,5 @@
 import { EvolvedCollections } from 'api/evolutions';
+import { TrialCollectionQuery } from 'api/liveSpecsExt';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
@@ -26,7 +27,7 @@ export interface ResourceConfig extends JsonFormsData {
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
-        sourceBackfillRecommended?: boolean;
+        trialOnlyStorage?: boolean;
     };
 }
 
@@ -87,8 +88,7 @@ export interface BindingState
     backfilledBindings: string[];
     setBackfilledBindings: (
         increment: BooleanString,
-        targetBindingUUID?: string,
-        trialOnlyPrefixes?: string[]
+        targetBindingUUID?: string
     ) => void;
 
     backfillAllBindings: boolean;
@@ -108,6 +108,8 @@ export interface BindingState
     // Control if backfill is allowed in the UI for a connector
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
+
+    setSourceBackfillRecommended: (values: TrialCollectionQuery[]) => void;
 
     // Control sourceCapture optional settings
     sourceCaptureTargetSchemaSupported: boolean;

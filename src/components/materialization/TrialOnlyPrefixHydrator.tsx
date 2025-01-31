@@ -1,20 +1,24 @@
+import { getTrialCollections } from 'api/liveSpecsExt';
 import useTrialStorageOnly from 'hooks/useTrialStorageOnly';
 import { difference } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useBinding_collections } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
+import { useTrialMetadataStore } from 'stores/TrialMetadata/Store';
 import { BaseComponentProps } from 'types';
-import { stripPathing } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function TrialOnlyPrefixHydrator({
     children,
 }: BaseComponentProps) {
     const bindingsHydrated = useBindingStore((state) => state.hydrated);
+    const setSourceBackfillRecommended = useBindingStore(
+        (state) => state.setSourceBackfillRecommended
+    );
     const collections = useBinding_collections();
 
-    const trialOnlyPrefixes = useTenantStore(
+    const trialOnlyPrefixes = useTrialMetadataStore(
         useShallow((state) => state.trialStorageOnly)
     );
 
@@ -32,11 +36,29 @@ export default function TrialOnlyPrefixHydrator({
     useEffect(() => {
         if (bindingsHydrated) {
             getTrialOnlyPrefixes(newPrefixes).then(
-                () => {},
+                (trialPrefixes) => {
+                    if (hasLength(trialPrefixes)) {
+                        getTrialCollections(trialPrefixes).then(
+                            (response) => {
+                                if (response.error) {
+                                    return;
+                                }
+
+                                setSourceBackfillRecommended(response.data);
+                            },
+                            () => {}
+                        );
+                    }
+                },
                 () => {}
             );
         }
-    }, [bindingsHydrated, getTrialOnlyPrefixes, newPrefixes]);
+    }, [
+        bindingsHydrated,
+        getTrialOnlyPrefixes,
+        newPrefixes,
+        setSourceBackfillRecommended,
+    ]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

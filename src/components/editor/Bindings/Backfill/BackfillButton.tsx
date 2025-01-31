@@ -20,9 +20,7 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { useTenantStore } from 'stores/Tenant/Store';
 import { BindingMetadata } from 'types';
-import { useShallow } from 'zustand/react/shallow';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
@@ -62,11 +60,6 @@ function BackfillButton({
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
-
-    // Tenant Store
-    const trialOnlyPrefixes = useTenantStore(
-        useShallow((state) => state.trialStorageOnly)
-    );
 
     const disabled =
         formActive ||
@@ -157,11 +150,7 @@ function BackfillButton({
                             ? currentBindingUUID
                             : undefined;
 
-                        setBackfilledBindings(
-                            increment,
-                            targetBindingUUID,
-                            trialOnlyPrefixes
-                        );
+                        setBackfilledBindings(increment, targetBindingUUID);
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -184,7 +173,6 @@ function BackfillButton({
             evaluateServerDifferences,
             setBackfilledBindings,
             setFormState,
-            trialOnlyPrefixes,
             updateBackfillCounter,
         ]
     );

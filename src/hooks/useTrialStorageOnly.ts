@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { useTenantStore } from 'stores/Tenant/Store';
+import { useTrialMetadataStore } from 'stores/TrialMetadata/Store';
 import { hasLength } from 'utils/misc-utils';
 
 const ESTUARY_TRIAL_STORAGE = {
@@ -36,7 +36,7 @@ const getTrialStorageOnlyPrefixes = async (
 export default function useTrialStorageOnly() {
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
-    const addTrialStorageOnly = useTenantStore(
+    const addTrialStorageOnly = useTrialMetadataStore(
         (state) => state.addTrialStorageOnly
     );
 
@@ -54,13 +54,13 @@ export default function useTrialStorageOnly() {
                 return [];
             }
 
-            const trialOnlyPrefixes = await getTrialStorageOnlyPrefixes(
+            const trialPrefixes = await getTrialStorageOnlyPrefixes(
                 filteredPrefixes
             );
 
-            addTrialStorageOnly(trialOnlyPrefixes);
+            addTrialStorageOnly(trialPrefixes);
 
-            return trialOnlyPrefixes;
+            return trialPrefixes;
         },
         [addTrialStorageOnly, objectRoles]
     );
