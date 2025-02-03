@@ -666,8 +666,6 @@ const generateUISchema = (
         addNullableField(controlObject, nullableType);
     }
 
-    // First see if we have a nullableType so that we do not need to worry about
-    //  sorting the types array when it can be nullable
     switch (nullableType ?? types[0]) {
         case 'object': // object items will be handled by the object control itself
         /* falls through */
