@@ -1010,7 +1010,7 @@ const getInitialState = (
         );
     },
 
-    setSourceBackfillRecommended: (values) => {
+    setTrialOnlyStorage: (values) => {
         if (!hasLength(values)) {
             return;
         }

@@ -16,7 +16,6 @@ import { useCallback, useEffect } from 'react';
 import { CustomEvents } from 'services/types';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
-import TrialOnlyPrefixHydrator from '../TrialOnlyPrefixHydrator';
 
 function MaterializationCreate() {
     usePageTitle({
@@ -59,30 +58,27 @@ function MaterializationCreate() {
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <TrialOnlyPrefixHydrator>
-                    <EntityCreate
-                        entityType={entityType}
-                        draftSpecMetadata={draftSpecsMetadata}
-                        toolbar={
-                            <EntityToolbar
-                                GenerateButton={
-                                    <MaterializeGenerateButton
-                                        disabled={!hasConnectors}
-                                    />
-                                }
-                                primaryButtonProps={{
-                                    disabled: !draftId,
-                                    logEvent:
-                                        CustomEvents.MATERIALIZATION_CREATE,
-                                }}
-                                secondaryButtonProps={{
-                                    disabled: !hasConnectors,
-                                    logEvent: CustomEvents.MATERIALIZATION_TEST,
-                                }}
-                            />
-                        }
-                    />
-                </TrialOnlyPrefixHydrator>
+                <EntityCreate
+                    entityType={entityType}
+                    draftSpecMetadata={draftSpecsMetadata}
+                    toolbar={
+                        <EntityToolbar
+                            GenerateButton={
+                                <MaterializeGenerateButton
+                                    disabled={!hasConnectors}
+                                />
+                            }
+                            primaryButtonProps={{
+                                disabled: !draftId,
+                                logEvent: CustomEvents.MATERIALIZATION_CREATE,
+                            }}
+                            secondaryButtonProps={{
+                                disabled: !hasConnectors,
+                                logEvent: CustomEvents.MATERIALIZATION_TEST,
+                            }}
+                        />
+                    }
+                />
             </MutateDraftSpecProvider>
         </WorkflowHydrator>
     );

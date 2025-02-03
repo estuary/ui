@@ -109,7 +109,7 @@ export interface BindingState
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
-    setSourceBackfillRecommended: (values: TrialCollectionQuery[]) => void;
+    setTrialOnlyStorage: (values: TrialCollectionQuery[]) => void;
 
     // Control sourceCapture optional settings
     sourceCaptureTargetSchemaSupported: boolean;
