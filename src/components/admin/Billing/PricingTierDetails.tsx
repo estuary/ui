@@ -7,22 +7,33 @@ import { useTenantStore } from 'stores/Tenant/Store';
 
 function PricingTierDetails() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const externalPaymentMethod = useTenantUsesExternalPayment(selectedTenant);
+    const [externalPaymentMethod, marketPlaceProvider] =
+        useTenantUsesExternalPayment(selectedTenant);
 
     const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const paymentMethodExists = useBillingStore(
         (state) => state.paymentMethodExists
     );
 
-    const messageId = useMemo(
-        () =>
-            externalPaymentMethod
-                ? 'admin.billing.message.external'
-                : paymentMethodExists
-                ? 'admin.billing.message.paidTier'
-                : 'admin.billing.message.freeTier',
-        [externalPaymentMethod, paymentMethodExists]
-    );
+    const messageId = useMemo(() => {
+        if (externalPaymentMethod) {
+            if (marketPlaceProvider === 'gcp') {
+                return 'something goes here';
+            }
+
+            if (marketPlaceProvider === 'aws') {
+                return 'something goes here';
+            }
+
+            return 'admin.billing.message.external';
+        }
+
+        if (paymentMethodExists) {
+            return 'admin.billing.message.paidTier';
+        }
+
+        return 'admin.billing.message.freeTier';
+    }, [externalPaymentMethod, marketPlaceProvider, paymentMethodExists]);
 
     if (!billingStoreHydrated || typeof paymentMethodExists !== 'boolean') {
         return (

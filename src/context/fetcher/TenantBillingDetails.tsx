@@ -66,17 +66,28 @@ export const useTenantBillingDetails = () => {
     return useContext(TenantContext);
 };
 
-export const useTenantUsesExternalPayment = (selectedTenant: string) => {
+export const useTenantUsesExternalPayment = (
+    selectedTenant: string
+): [boolean, string | null] => {
     const { tenantBillingDetails } = useTenantBillingDetails();
 
     return useMemo(() => {
-        return !tenantBillingDetails
-            ? false
-            : tenantBillingDetails.some((tenantBillingDetail) => {
-                  return (
-                      tenantBillingDetail.tenant === selectedTenant &&
-                      tenantBillingDetail.payment_provider === 'external'
-                  );
-              });
+        if (!tenantBillingDetails) {
+            return [false, null];
+        }
+
+        const selectedTenantDetails = tenantBillingDetails.find(
+            (tenantBillingDetail) =>
+                tenantBillingDetail.tenant === selectedTenant
+        );
+
+        const marketplaceProvider = selectedTenantDetails?.gcm_account_id
+            ? 'gcp'
+            : null; //add aws support
+
+        return [
+            Boolean(selectedTenantDetails?.payment_provider === 'external'),
+            marketplaceProvider,
+        ];
     }, [selectedTenant, tenantBillingDetails]);
 };
