@@ -634,14 +634,7 @@ const generateUISchema = (
     // Then we check if it is password. If it is we set the proper format. While inside that we check for
     // multi line and set the format option so the MutliLineSecret renderer will pick it up.
     // After that we check if it is just multiline.
-
     const controlObject: ControlElement = createControlElement(currentRef);
-
-    // See if we need to mark the control as nullable. This is separate from the
-    //  big block because this could apply to anything
-    if (nullableType) {
-        addNullableField(controlObject, nullableType);
-    }
 
     // Now check if the string needs any special handling when rendering the control
     if (nullableType === 'string' || jsonSchema.type === 'string') {
@@ -659,6 +652,18 @@ const generateUISchema = (
         } else if (schemaHasFormat('time', jsonSchema)) {
             addOption(controlObject, Options.format, Formats.time);
         }
+    }
+
+    // See if we need to mark the control as nullable. This is separate from the
+    //  big block because this could apply to almost anything
+    if (
+        nullableType &&
+        // "Nullable" fields only render with default renderers so we need to know if
+        //  the control is a multi line secret so we can skip adding the "nullable" option
+        //  and just use our custom renderer
+        !Boolean(controlObject.options?.[Options.multiLineSecret])
+    ) {
+        addNullableField(controlObject, nullableType);
     }
 
     // First see if we have a nullableType so that we do not need to worry about
