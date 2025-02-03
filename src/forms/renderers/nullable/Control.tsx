@@ -21,6 +21,8 @@ const NullableControlRenderer = (props: any) => {
     const { handleChange, uischema } = props;
     const { options } = uischema;
 
+    console.log('>>>>> NullableControlRenderer', uischema);
+
     const InputComponent = useMemo(() => {
         const nullableType: AllowedNullable = options
             ? options[Options.nullable]
