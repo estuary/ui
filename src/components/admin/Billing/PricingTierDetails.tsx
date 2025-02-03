@@ -18,11 +18,11 @@ function PricingTierDetails() {
     const messageId = useMemo(() => {
         if (externalPaymentMethod) {
             if (marketPlaceProvider === 'gcp') {
-                return 'something goes here';
+                return 'admin.billing.message.external.gcp';
             }
 
             if (marketPlaceProvider === 'aws') {
-                return 'something goes here';
+                return 'admin.billing.message.external.aws';
             }
 
             return 'admin.billing.message.external';
