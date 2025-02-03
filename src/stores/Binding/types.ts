@@ -24,6 +24,7 @@ export interface ResourceConfig extends JsonFormsData {
     meta: {
         collectionName: string;
         bindingIndex: number;
+        added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
@@ -149,7 +150,8 @@ export interface BindingState
     // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
-        disableOmit?: boolean
+        disableOmit?: boolean,
+        trackAddition?: boolean
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and

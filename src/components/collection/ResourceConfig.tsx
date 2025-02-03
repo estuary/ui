@@ -4,6 +4,7 @@ import AdvancedOptions from 'components/editor/Bindings/AdvancedOptions';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
+import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
@@ -46,8 +47,23 @@ function ResourceConfig({
         'disable'
     );
 
+    const collectionAdded = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'added'
+    );
+
     return (
         <>
+            {entityType === 'materialization' ? (
+                <Box style={{ marginBottom: 16 }}>
+                    <TrialOnlyPrefixAlert
+                        bindingUUID={bindingUUID}
+                        messageId="workflows.error.oldBoundCollection.added"
+                        triggered={Boolean(collectionAdded)}
+                    />
+                </Box>
+            ) : null}
+
             <Typography
                 component="div"
                 sx={{ mb: 2 }}

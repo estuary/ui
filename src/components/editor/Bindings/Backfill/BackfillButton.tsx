@@ -56,6 +56,10 @@ function BackfillButton({
     const setBackfilledBindings = useBinding_setBackfilledBindings();
     const backfillSupported = useBinding_backfillSupported();
 
+    const setTrialOnlyStorage = useBindingStore(
+        (state) => state.setTrialOnlyStorage
+    );
+
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
@@ -153,9 +157,16 @@ function BackfillButton({
                             : undefined;
 
                         setBackfilledBindings(increment, targetBindingUUID);
+
                         evaluateTrialCollections(
                             bindingMetadata.map(({ collection }) => collection)
+                        ).then(
+                            (response) => {
+                                setTrialOnlyStorage(response);
+                            },
+                            () => {}
                         );
+
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -179,6 +190,7 @@ function BackfillButton({
             evaluateTrialCollections,
             setBackfilledBindings,
             setFormState,
+            setTrialOnlyStorage,
             updateBackfillCounter,
         ]
     );

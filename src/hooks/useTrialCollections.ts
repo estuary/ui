@@ -4,16 +4,12 @@ import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBinding_collections } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
 import { useTrialMetadataStore } from 'stores/TrialMetadata/Store';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import useTrialStorageOnly from './useTrialStorageOnly';
 
 export default function useTrialCollections() {
-    const setTrialOnlyStorage = useBindingStore(
-        (state) => state.setTrialOnlyStorage
-    );
     const collections = useBinding_collections();
 
     const storedTrialPrefixes = useTrialMetadataStore(
@@ -53,15 +49,8 @@ export default function useTrialCollections() {
                 return [];
             }
 
-            setTrialOnlyStorage(data);
-
             return data;
         },
-        [
-            existingPrefixes,
-            getTrialOnlyPrefixes,
-            setTrialOnlyStorage,
-            storedTrialPrefixes,
-        ]
+        [existingPrefixes, getTrialOnlyPrefixes, storedTrialPrefixes]
     );
 }

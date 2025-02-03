@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
+import useTrialCollections from 'hooks/useTrialCollections';
 
 import { FormattedMessage } from 'react-intl';
 import {
@@ -8,6 +9,7 @@ import {
     useBinding_prefillResourceConfigs,
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { hasLength } from 'utils/misc-utils';
 
 import { useStore } from 'zustand';
@@ -18,6 +20,12 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         (state) => {
             return [state.selected];
         }
+    );
+
+    const evaluateTrialCollections = useTrialCollections();
+
+    const setTrialOnlyStorage = useBindingStore(
+        (state) => state.setTrialOnlyStorage
     );
 
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
@@ -33,9 +41,15 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             };
         });
 
-        prefillResourceConfigs(
-            value.map(({ name }) => name),
-            true
+        const collections = value.map(({ name }) => name);
+
+        prefillResourceConfigs(collections, true, true);
+
+        evaluateTrialCollections(collections).then(
+            (response) => {
+                setTrialOnlyStorage(response);
+            },
+            () => {}
         );
 
         if (value.length > 0 && hasLength(discoveredCollections)) {

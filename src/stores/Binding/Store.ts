@@ -519,7 +519,7 @@ const getInitialState = (
         );
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit) => {
+    prefillResourceConfigs: (targetCollections, disableOmit, trackAddition) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -568,8 +568,9 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
-                            collectionName,
+                            added: trackAddition,
                             bindingIndex: reducedBindingCount + index,
+                            collectionName,
                         },
                     };
                 });
@@ -1203,8 +1204,9 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
-                        collectionName: targetCollection,
+                        added: targetResourceConfig.meta.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        collectionName: targetCollection,
                         trialOnlyStorage:
                             targetResourceConfig.meta.trialOnlyStorage,
                     },
