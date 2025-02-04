@@ -19,7 +19,8 @@ function SchemaMode() {
                 control={
                     <Switch
                         size="small"
-                        value={targetSchema}
+                        // Need to make sure undefined isn't passed here or else it thinks it is controlled
+                        value={targetSchema ?? 'leaveEmpty'}
                         checked={targetSchema === 'fromSourceName'}
                         disabled={formActive}
                         onChange={(event, checked) => {
