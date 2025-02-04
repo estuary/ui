@@ -81,12 +81,18 @@ export const useTenantUsesExternalPayment = (
                 tenantBillingDetail.tenant === selectedTenant
         );
 
-        const marketplaceProvider = selectedTenantDetails?.gcm_account_id
-            ? 'gcp'
-            : null; //add aws support
+        let marketplaceProvider = null;
+
+        if (selectedTenantDetails?.gcm_account_id) {
+            marketplaceProvider = 'gcp';
+        }
+
+        // TODO (marketplace) add support for AWS which is currently handled manually
+        //      https://github.com/estuary/flow/issues/1921 needs completed so we know
+        //      how to handle this.
 
         return [
-            Boolean(selectedTenantDetails?.payment_provider === 'external'),
+            Boolean(selectedTenantDetails?.payment_provider !== 'stripe'),
             marketplaceProvider,
         ];
     }, [selectedTenant, tenantBillingDetails]);
