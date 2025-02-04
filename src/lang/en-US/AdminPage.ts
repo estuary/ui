@@ -26,7 +26,7 @@ export const AdminPage: Record<string, string> = {
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
-    'admin.billing.message.paidTier': `Cloud tier.`,
+    'admin.billing.message.paidTier': `Cloud tier`,
     'admin.billing.message.external': ` `,
     'admin.billing.message.external.gcp': `GCP Marketplace`,
     'admin.billing.message.external.aws': `AWS Marketplace`,
