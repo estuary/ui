@@ -161,6 +161,28 @@ function CollectionSelectorList({
         [isCapture]
     );
 
+    const selectBinding = useCallback(
+        (id: any) => {
+            if (!setCurrentBinding) {
+                return;
+            }
+
+            // TODO (JSONForms) This is hacky but it works.
+            // It clears out the current binding before switching.
+            //  If a user is typing quickly in a form and then selects a
+            //  different binding VERY quickly it could cause the updates
+            //  to go into the wrong form.
+            setCurrentBinding(null);
+
+            if (typeof id === 'string') {
+                hackyTimeout.current = window.setTimeout(() => {
+                    setCurrentBinding(id);
+                });
+            }
+        },
+        [setCurrentBinding]
+    );
+
     const columns = useMemo(() => {
         const response: GridColDef[] = [
             {
@@ -316,7 +338,6 @@ function CollectionSelectorList({
                 apiRef={apiRef}
                 columns={columns}
                 components={{ NoRowsOverlay: SelectorEmpty }}
-                disableColumnFilter //prevents the filter icon from showing up
                 disableColumnMenu
                 disableColumnSelector
                 disableRowSelectionOnClick={!selectionEnabled}
@@ -341,18 +362,7 @@ function CollectionSelectorList({
                             field === COLLECTION_SELECTOR_TOGGLE_COL) &&
                         id !== currentBindingUUID
                     ) {
-                        // TODO (JSONForms) This is hacky but it works.
-                        // It clears out the current binding before switching.
-                        //  If a user is typing quickly in a form and then selects a
-                        //  different binding VERY quickly it could cause the updates
-                        //  to go into the wrong form.
-                        setCurrentBinding(null);
-
-                        if (typeof id === 'string') {
-                            hackyTimeout.current = window.setTimeout(() => {
-                                setCurrentBinding(id);
-                            });
-                        }
+                        selectBinding(id);
                     }
                 }}
             />
