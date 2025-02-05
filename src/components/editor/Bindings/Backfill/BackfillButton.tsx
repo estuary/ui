@@ -56,8 +56,8 @@ function BackfillButton({
     const setBackfilledBindings = useBinding_setBackfilledBindings();
     const backfillSupported = useBinding_backfillSupported();
 
-    const setTrialOnlyStorage = useBindingStore(
-        (state) => state.setTrialOnlyStorage
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
     );
 
     // Draft Editor Store
@@ -162,7 +162,7 @@ function BackfillButton({
                             bindingMetadata.map(({ collection }) => collection)
                         ).then(
                             (response) => {
-                                setTrialOnlyStorage(response);
+                                setCollectionMetadata(response);
                             },
                             () => {}
                         );
@@ -189,8 +189,8 @@ function BackfillButton({
             evaluateServerDifferences,
             evaluateTrialCollections,
             setBackfilledBindings,
+            setCollectionMetadata,
             setFormState,
-            setTrialOnlyStorage,
             updateBackfillCounter,
         ]
     );

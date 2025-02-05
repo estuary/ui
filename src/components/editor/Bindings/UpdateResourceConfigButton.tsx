@@ -24,8 +24,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const evaluateTrialCollections = useTrialCollections();
 
-    const setTrialOnlyStorage = useBindingStore(
-        (state) => state.setTrialOnlyStorage
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
     );
 
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
@@ -47,7 +47,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
         evaluateTrialCollections(collections).then(
             (response) => {
-                setTrialOnlyStorage(response);
+                setCollectionMetadata(response);
             },
             () => {}
         );

@@ -1011,40 +1011,15 @@ const getInitialState = (
         );
     },
 
-    setTrialOnlyStorage: (values) => {
+    setCollectionMetadata: (values) => {
         if (!hasLength(values)) {
             return;
         }
 
         set(
             produce((state: BindingState) => {
-                const targetCollections = values.map(
-                    ({ catalog_name }) => catalog_name
-                );
-
-                const mappedBindingUUIDs: { [collection: string]: string[] } =
-                    {};
-
-                Object.entries(state.resourceConfigs)
-                    .filter(([_uuid, config]) =>
-                        targetCollections.includes(config.meta.collectionName)
-                    )
-                    .forEach(([uuid, config]) => {
-                        const { collectionName } = config.meta;
-
-                        if (
-                            Object.keys(mappedBindingUUIDs).includes(
-                                collectionName
-                            )
-                        ) {
-                            mappedBindingUUIDs[collectionName].push(uuid);
-                        } else {
-                            mappedBindingUUIDs[collectionName] = [uuid];
-                        }
-                    });
-
                 values.forEach(({ catalog_name, updated_at }) => {
-                    mappedBindingUUIDs[catalog_name].forEach((uuid) => {
+                    state.bindings[catalog_name].forEach((uuid) => {
                         state.resourceConfigs[uuid].meta.trialOnlyStorage =
                             true;
 

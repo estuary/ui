@@ -21,8 +21,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const { existingSourceCapture, updateDraft } = useSourceCapture();
     const evaluateTrialCollections = useTrialCollections();
 
-    const setTrialOnlyStorage = useBindingStore(
-        (state) => state.setTrialOnlyStorage
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
     );
     const [
         sourceCaptureDeltaUpdatesSupported,
@@ -91,7 +91,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                             selectedRow.writes_to as string[]
                         );
 
-                    setTrialOnlyStorage(trialCollectionResponse);
+                    setCollectionMetadata(trialCollectionResponse);
                 }
             }
 
