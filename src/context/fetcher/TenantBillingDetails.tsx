@@ -66,17 +66,34 @@ export const useTenantBillingDetails = () => {
     return useContext(TenantContext);
 };
 
-export const useTenantUsesExternalPayment = (selectedTenant: string) => {
+export const useTenantUsesExternalPayment = (
+    selectedTenant: string
+): [boolean, string | null] => {
     const { tenantBillingDetails } = useTenantBillingDetails();
 
     return useMemo(() => {
-        return !tenantBillingDetails
-            ? false
-            : tenantBillingDetails.some((tenantBillingDetail) => {
-                  return (
-                      tenantBillingDetail.tenant === selectedTenant &&
-                      tenantBillingDetail.payment_provider === 'external'
-                  );
-              });
+        if (!tenantBillingDetails) {
+            return [false, null];
+        }
+
+        const selectedTenantDetails = tenantBillingDetails.find(
+            (tenantBillingDetail) =>
+                tenantBillingDetail.tenant === selectedTenant
+        );
+
+        let marketplaceProvider = null;
+
+        if (selectedTenantDetails?.gcm_account_id) {
+            marketplaceProvider = 'gcp';
+        }
+
+        // TODO (marketplace) add support for AWS which is currently handled manually
+        //      https://github.com/estuary/flow/issues/1921 needs completed so we know
+        //      how to handle this.
+
+        return [
+            Boolean(selectedTenantDetails?.payment_provider !== 'stripe'),
+            marketplaceProvider,
+        ];
     }, [selectedTenant, tenantBillingDetails]);
 };
