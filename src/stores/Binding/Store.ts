@@ -1022,7 +1022,8 @@ const getInitialState = (
                     ({ catalog_name }) => catalog_name
                 );
 
-                const resourceMap: { [collection: string]: string[] } = {};
+                const mappedBindingUUIDs: { [collection: string]: string[] } =
+                    {};
 
                 Object.entries(state.resourceConfigs)
                     .filter(([_uuid, config]) =>
@@ -1031,22 +1032,28 @@ const getInitialState = (
                     .forEach(([uuid, config]) => {
                         const { collectionName } = config.meta;
 
-                        if (Object.keys(resourceMap).includes(collectionName)) {
-                            resourceMap[collectionName].push(uuid);
+                        if (
+                            Object.keys(mappedBindingUUIDs).includes(
+                                collectionName
+                            )
+                        ) {
+                            mappedBindingUUIDs[collectionName].push(uuid);
                         } else {
-                            resourceMap[collectionName] = [uuid];
+                            mappedBindingUUIDs[collectionName] = [uuid];
                         }
                     });
 
-                values.forEach(({ catalog_name }) => {
-                    resourceMap[catalog_name].forEach((uuid) => {
+                values.forEach(({ catalog_name, updated_at }) => {
+                    mappedBindingUUIDs[catalog_name].forEach((uuid) => {
                         state.resourceConfigs[uuid].meta.trialOnlyStorage =
                             true;
+
+                        state.resourceConfigs[uuid].meta.updatedAt = updated_at;
                     });
                 });
             }),
             false,
-            'Source Backfill Recommended Set'
+            'Trial Only Storage Set'
         );
     },
 
@@ -1209,6 +1216,7 @@ const getInitialState = (
                         collectionName: targetCollection,
                         trialOnlyStorage:
                             targetResourceConfig.meta.trialOnlyStorage,
+                        updatedAt: targetResourceConfig.meta.updatedAt,
                     },
                 };
 

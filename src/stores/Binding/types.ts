@@ -29,6 +29,7 @@ export interface ResourceConfig extends JsonFormsData {
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
         trialOnlyStorage?: boolean;
+        updatedAt?: string;
     };
 }
 

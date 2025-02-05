@@ -3,7 +3,7 @@ import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAler
 import { useEntityType } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+import { hasLength } from 'utils/misc-utils';
 import { SectionWrapperProps } from './types';
 
 export default function SectionWrapper({
@@ -15,9 +15,6 @@ export default function SectionWrapper({
 
     const entityType = useEntityType();
 
-    const backfillAllBindings = useBindingStore(
-        (state) => state.backfillAllBindings
-    );
     const backfilledBindings = useBinding_backfilledBindings();
 
     return (
@@ -36,7 +33,7 @@ export default function SectionWrapper({
                         triggered={
                             bindingUUID
                                 ? backfilledBindings.includes(bindingUUID)
-                                : backfillAllBindings
+                                : hasLength(backfilledBindings)
                         }
                     />
                 ) : null}
