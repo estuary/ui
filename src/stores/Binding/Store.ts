@@ -5,6 +5,7 @@ import {
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
+import { isBeforeTrialInterval } from 'components/materialization/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import produce from 'immer';
@@ -1020,10 +1021,17 @@ const getInitialState = (
             produce((state: BindingState) => {
                 values.forEach(({ catalog_name, updated_at }) => {
                     state.bindings[catalog_name].forEach((uuid) => {
-                        state.resourceConfigs[uuid].meta.trialOnlyStorage =
-                            true;
+                        const triggered =
+                            state.backfilledBindings.includes(uuid) ||
+                            state.resourceConfigs[uuid].meta.added;
 
-                        state.resourceConfigs[uuid].meta.updatedAt = updated_at;
+                        state.resourceConfigs[uuid].meta = {
+                            ...state.resourceConfigs[uuid].meta,
+                            sourceBackfillRecommended:
+                                triggered && isBeforeTrialInterval(updated_at),
+                            trialOnlyStorage: true,
+                            updatedAt: updated_at,
+                        };
                     });
                 });
             }),
@@ -1189,6 +1197,8 @@ const getInitialState = (
                         added: targetResourceConfig.meta.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         collectionName: targetCollection,
+                        sourceBackfillRecommended:
+                            targetResourceConfig.meta.sourceBackfillRecommended,
                         trialOnlyStorage:
                             targetResourceConfig.meta.trialOnlyStorage,
                         updatedAt: targetResourceConfig.meta.updatedAt,

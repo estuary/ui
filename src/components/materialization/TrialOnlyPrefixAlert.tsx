@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledBindings,
-    useBinding_resourceConfigOfMetaBindingProperty,
     useBinding_resourceConfigs,
 } from 'stores/Binding/hooks';
 import { isBeforeTrialInterval } from './shared';
@@ -19,33 +18,10 @@ export default function TrialOnlyPrefixAlert({
 
     const backfilledBindings = useBinding_backfilledBindings();
     const resourceConfigs = useBinding_resourceConfigs();
-    const trialOnlyStorage = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
-        'trialOnlyStorage'
-    );
-    const updatedAt = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
-        'updatedAt'
-    );
 
-    const hideBindingLevelAlert = useMemo(
+    const hideTopLevelAlert = useMemo(
         () =>
-            Boolean(
-                bindingUUID &&
-                    (!trialOnlyStorage ||
-                        (trialOnlyStorage &&
-                            !isBeforeTrialInterval(
-                                typeof updatedAt === 'string'
-                                    ? updatedAt
-                                    : undefined
-                            )))
-            ),
-        [bindingUUID, trialOnlyStorage, updatedAt]
-    );
-
-    if (
-        hideBindingLevelAlert ||
-        (!bindingUUID &&
+            !bindingUUID &&
             backfilledBindings.every((uuid) => {
                 const config = resourceConfigs[uuid];
 
@@ -53,9 +29,11 @@ export default function TrialOnlyPrefixAlert({
                     !config.meta.trialOnlyStorage ||
                     !isBeforeTrialInterval(config.meta.updatedAt)
                 );
-            })) ||
-        !triggered
-    ) {
+            }),
+        [backfilledBindings, bindingUUID, resourceConfigs]
+    );
+
+    if (hideTopLevelAlert || !triggered) {
         return null;
     }
 

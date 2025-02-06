@@ -3,6 +3,7 @@ import { WarningCircle } from 'iconoir-react';
 import {
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
+    useBinding_resourceConfigOfMetaBindingProperty,
 } from 'stores/Binding/hooks';
 
 interface Props {
@@ -22,14 +23,28 @@ function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
         'errors'
     );
 
-    if (bindingErrors?.length > 0 || configErrors?.length > 0) {
+    const sourceBackfillRecommended =
+        useBinding_resourceConfigOfMetaBindingProperty(
+            bindingUUID,
+            'sourceBackfillRecommended'
+        );
+
+    if (
+        bindingErrors?.length > 0 ||
+        configErrors?.length > 0 ||
+        Boolean(sourceBackfillRecommended)
+    ) {
         return (
             <Typography>
                 <WarningCircle
                     style={{
                         marginRight: 4,
                         fontSize: 12,
-                        color: theme.palette.error.main,
+                        color:
+                            bindingErrors?.length > 0 ||
+                            configErrors?.length > 0
+                                ? theme.palette.error.main
+                                : theme.palette.warning.main,
                     }}
                 />
             </Typography>
