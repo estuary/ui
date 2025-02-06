@@ -31,6 +31,7 @@ import CollectionSelectorHeaderToggle from './Header/Toggle';
 import {
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
     getCollectionSelector,
 } from './shared';
@@ -196,7 +197,7 @@ function CollectionSelectorList({
             response.unshift({
                 cellClassName: cellClass_noPadding,
                 headerClassName: cellClass_noPadding,
-                field: 'disable',
+                field: COLLECTION_SELECTOR_TOGGLE_COL,
                 sortable: false,
                 minWidth: 110,
                 maxWidth: 125,
@@ -315,7 +316,6 @@ function CollectionSelectorList({
                 apiRef={apiRef}
                 columns={columns}
                 components={{ NoRowsOverlay: SelectorEmpty }}
-                disableColumnFilter //prevents the filter icon from showing up
                 disableColumnMenu
                 disableColumnSelector
                 disableRowSelectionOnClick={!selectionEnabled}
@@ -336,7 +336,8 @@ function CollectionSelectorList({
                     if (
                         selectionEnabled &&
                         (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
-                            field === COLLECTION_SELECTOR_NAME_COL) &&
+                            field === COLLECTION_SELECTOR_NAME_COL ||
+                            field === COLLECTION_SELECTOR_TOGGLE_COL) &&
                         id !== currentBindingUUID
                     ) {
                         // TODO (JSONForms) This is hacky but it works.
