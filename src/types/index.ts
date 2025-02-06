@@ -152,6 +152,7 @@ export interface StorageMappings {
     updated_at: string;
 }
 
+// TODO (marketplace) we may expand these in the future
 export type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface Tenants {
