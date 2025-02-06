@@ -79,8 +79,21 @@ const addTitle = (
     return group;
 };
 
-const isMultilineText = (schema: JsonSchema): boolean => {
-    if (schema.type === 'string' && Object.hasOwn(schema, 'multiline')) {
+type DateTimeFormats = 'date' | 'date-time' | 'time';
+const schemaHasFormat = (
+    format: DateTimeFormats,
+    schema: JsonSchema
+): boolean => {
+    if (Object.hasOwn(schema, 'format')) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return schema['format'] === format;
+    } else {
+        return false;
+    }
+};
+
+const schemaHasMultilineProp = (schema: JsonSchema): boolean => {
+    if (Object.hasOwn(schema, 'multiline')) {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         return schema['multiline'] === true;
     } else {
@@ -88,38 +101,10 @@ const isMultilineText = (schema: JsonSchema): boolean => {
     }
 };
 
-const isDateText = (schema: JsonSchema): boolean => {
-    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['format'] === 'date';
-    } else {
-        return false;
-    }
-};
-
-const isDateTimeText = (schema: JsonSchema): boolean => {
-    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['format'] === 'date-time';
-    } else {
-        return false;
-    }
-};
-
-const isTimeText = (schema: JsonSchema): boolean => {
-    if (schema.type === 'string' && Object.hasOwn(schema, 'format')) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['format'] === 'time';
-    } else {
-        return false;
-    }
-};
-
-const isSecretText = (schema: JsonSchema): boolean => {
+const schemaHasSecretProp = (schema: JsonSchema): boolean => {
     if (
-        schema.type === 'string' &&
-        (Object.hasOwn(schema, 'secret') ||
-            Object.hasOwn(schema, 'airbyte_secret'))
+        Object.hasOwn(schema, 'secret') ||
+        Object.hasOwn(schema, 'airbyte_secret')
     ) {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         return schema['secret'] === true || schema['airbyte_secret'] === true;
@@ -143,21 +128,15 @@ const isAdvancedConfig = (schema: JsonSchema): boolean => {
     return schema[ADVANCED] === true;
 };
 
-// Nullable is only supported for anyOf and oneOf. This is manually checked
-//  because allOf will also return true for a combinator check. After that we only
-//  support when there is exactly two types. This is mainly here to help render
-//  pydantic inputs better.
-const getNullableType = (schema: JsonSchema): null | string => {
-    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
-
-    if (combinatorVal === null) {
-        return null;
-    }
-
-    const types = combinatorVal.map(({ type }) => type);
-
-    if (types.length === 2 && types.includes('null')) {
-        const response = types.filter((val) => {
+const getTypeOtherThanNull = (
+    fieldTypes: (string | string[] | undefined)[]
+): null | string => {
+    if (
+        Array.isArray(fieldTypes) &&
+        fieldTypes.length === 2 &&
+        fieldTypes.includes('null')
+    ) {
+        const response = fieldTypes.filter((val) => {
             if (!val || Array.isArray(val)) {
                 return false;
             }
@@ -173,6 +152,20 @@ const getNullableType = (schema: JsonSchema): null | string => {
     }
 
     return null;
+};
+
+// This is only supported for anyOf and oneOf. This is manually checked
+//  because allOf will also return true for a combinator check. After that we only
+//  support when there is exactly two types. This is mainly here to help render
+//  pydantic inputs better.
+const getNullableType = (schema: JsonSchema): null | string => {
+    const combinatorVal = schema.anyOf ?? schema.oneOf ?? null;
+
+    if (combinatorVal === null) {
+        return null;
+    }
+
+    return getTypeOtherThanNull(combinatorVal.map(({ type }) => type));
 };
 
 const isOAuthConfig = (schema: JsonSchema): boolean =>
@@ -553,7 +546,14 @@ const generateUISchema = (
         };
     }
 
-    if (types.length > 1) {
+    // We're here so it means we are not rendering a combinator and rendering a control
+    //  We need to fetch the nullableType. This only fetched the type if the array length
+    //  is exactly 2 and we can pull a proper type off one of the values
+    const nullableType = getTypeOtherThanNull(types);
+
+    // If we have multiple types and one is not null then go ahead and render a control
+    //  that way JSONForms can handle rendering the two types
+    if (types.length > 1 && !nullableType) {
         const controlObject: ControlElement = createControlElement(currentRef);
         schemaElements.push(controlObject);
         return controlObject;
@@ -634,24 +634,39 @@ const generateUISchema = (
     // Then we check if it is password. If it is we set the proper format. While inside that we check for
     // multi line and set the format option so the MutliLineSecret renderer will pick it up.
     // After that we check if it is just multiline.
-
     const controlObject: ControlElement = createControlElement(currentRef);
-    if (isSecretText(jsonSchema)) {
-        addOption(controlObject, Options.format, Formats.password);
-        if (isMultilineText(jsonSchema)) {
-            addOption(controlObject, Options.multiLineSecret, true);
+
+    // Now check if the string needs any special handling when rendering the control
+    if (nullableType === 'string' || jsonSchema.type === 'string') {
+        if (schemaHasSecretProp(jsonSchema)) {
+            addOption(controlObject, Options.format, Formats.password);
+            if (schemaHasMultilineProp(jsonSchema)) {
+                addOption(controlObject, Options.multiLineSecret, true);
+            }
+        } else if (schemaHasMultilineProp(jsonSchema)) {
+            addOption(controlObject, Options.multi, true);
+        } else if (schemaHasFormat('date-time', jsonSchema)) {
+            addOption(controlObject, Options.format, Formats.dateTime);
+        } else if (schemaHasFormat('date', jsonSchema)) {
+            addOption(controlObject, Options.format, Formats.date);
+        } else if (schemaHasFormat('time', jsonSchema)) {
+            addOption(controlObject, Options.format, Formats.time);
         }
-    } else if (isMultilineText(jsonSchema)) {
-        addOption(controlObject, Options.multi, true);
-    } else if (isDateTimeText(jsonSchema)) {
-        addOption(controlObject, Options.format, Formats.dateTime);
-    } else if (isDateText(jsonSchema)) {
-        addOption(controlObject, Options.format, Formats.date);
-    } else if (isTimeText(jsonSchema)) {
-        addOption(controlObject, Options.format, Formats.time);
     }
 
-    switch (types[0]) {
+    // See if we need to mark the control as nullable. This is separate from the
+    //  big block because this could apply to almost anything
+    if (
+        nullableType &&
+        // "Nullable" fields only render with default renderers so we need to know if
+        //  the control is a multi line secret so we can skip adding the "nullable" option
+        //  and just use our custom renderer
+        !Boolean(controlObject.options?.[Options.multiLineSecret])
+    ) {
+        addNullableField(controlObject, nullableType);
+    }
+
+    switch (nullableType ?? types[0]) {
         case 'object': // object items will be handled by the object control itself
         /* falls through */
         case 'array': // array items will be handled by the array control itself
