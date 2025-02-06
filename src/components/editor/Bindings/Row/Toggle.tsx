@@ -28,8 +28,7 @@ function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
             disabled={disableButton}
             sx={dataGridEntireCellButtonStyling}
             variant="text"
-            onClick={(event) => {
-                event.stopPropagation();
+            onClick={() => {
                 toggleDisable(bindingUUID);
             }}
         >
