@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom';
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
-    DATA_PLANE = 'dataPlaneOption',
     DATA_PLANE_ID = 'dataPlaneId',
     DRAFT_ID = 'draftId',
     FORCED_SHARD_ENABLE = 'forcedEnable',
