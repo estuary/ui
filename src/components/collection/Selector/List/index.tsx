@@ -159,7 +159,7 @@ function CollectionSelectorList({
             return;
         }
 
-        if (previousFilterValue !== '') {
+        if (previousFilterValue !== '' && Boolean(rows[0])) {
             setCurrentBinding(rows[0][COLLECTION_SELECTOR_UUID_COL]);
         }
     }, [filteredRows, previousFilterValue, rows, setCurrentBinding]);
