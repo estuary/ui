@@ -70,14 +70,13 @@ export default function useFormFields(
         return {
             elements: [
                 {
-                    elements:
-                        dataPlaneUISchema && !detailsHydrationErrorsExist
-                            ? [
-                                  connectorUISchema,
-                                  catalogNameUISchema,
-                                  dataPlaneUISchema,
-                              ]
-                            : [connectorUISchema, catalogNameUISchema],
+                    elements: !detailsHydrationErrorsExist
+                        ? [
+                              connectorUISchema,
+                              catalogNameUISchema,
+                              dataPlaneUISchema,
+                          ]
+                        : [connectorUISchema, catalogNameUISchema],
                     type: 'HorizontalLayout',
                 },
             ],

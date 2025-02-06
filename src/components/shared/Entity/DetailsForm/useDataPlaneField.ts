@@ -19,9 +19,6 @@ interface OneOfElement {
 export default function useDataPlaneField(
     entityType: EntityWithCreateWorkflow
 ) {
-    const dataPlaneOption = useGlobalSearchParams(
-        GlobalSearchParams.DATA_PLANE
-    );
     const dataPlaneIdInURL = useGlobalSearchParams(
         GlobalSearchParams.DATA_PLANE_ID
     );
@@ -52,7 +49,7 @@ export default function useDataPlaneField(
             });
         }
 
-        return dataPlaneOption === 'show_option' && hasLength(dataPlanesOneOf)
+        return hasLength(dataPlanesOneOf)
             ? {
                   [DATA_PLANE_SCOPE]: {
                       description: intl.formatMessage({
@@ -63,26 +60,11 @@ export default function useDataPlaneField(
                   },
               }
             : null;
-    }, [dataPlaneOption, intl, options]);
-
-    const dataPlaneUISchema = useMemo(() => {
-        return dataPlaneOption === 'show_option'
-            ? {
-                  label: intl.formatMessage({
-                      id: 'workflows.dataPlane.label',
-                  }),
-                  scope: `#/properties/${DATA_PLANE_SCOPE}`,
-                  type: 'Control',
-              }
-            : null;
-    }, [dataPlaneOption, intl]);
+    }, [intl, options]);
 
     const evaluateDataPlane = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
-            if (
-                dataPlaneOption === 'show_option' &&
-                selectedDataPlaneId !== storedDataPlaneId
-            ) {
+            if (selectedDataPlaneId !== storedDataPlaneId) {
                 const selectedOption = options.find(
                     (option) => option.id === (selectedDataPlaneId ?? '')
                 );
@@ -109,7 +91,6 @@ export default function useDataPlaneField(
         },
         [
             dataPlaneIdInURL,
-            dataPlaneOption,
             entityType,
             navigateToCreate,
             options,
@@ -121,7 +102,13 @@ export default function useDataPlaneField(
 
     return {
         dataPlaneSchema,
-        dataPlaneUISchema,
+        dataPlaneUISchema: {
+            label: intl.formatMessage({
+                id: 'workflows.dataPlane.label',
+            }),
+            scope: `#/properties/${DATA_PLANE_SCOPE}`,
+            type: 'Control',
+        },
         evaluateDataPlane,
     };
 }
