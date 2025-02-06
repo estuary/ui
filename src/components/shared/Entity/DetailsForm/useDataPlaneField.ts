@@ -49,17 +49,15 @@ export default function useDataPlaneField(
             });
         }
 
-        return hasLength(dataPlanesOneOf)
-            ? {
-                  [DATA_PLANE_SCOPE]: {
-                      description: intl.formatMessage({
-                          id: 'workflows.dataPlane.description',
-                      }),
-                      oneOf: dataPlanesOneOf,
-                      type: 'object',
-                  },
-              }
-            : null;
+        return {
+            [DATA_PLANE_SCOPE]: {
+                description: intl.formatMessage({
+                    id: 'workflows.dataPlane.description',
+                }),
+                oneOf: dataPlanesOneOf,
+                type: 'object',
+            },
+        };
     }, [intl, options]);
 
     const evaluateDataPlane = useCallback(
