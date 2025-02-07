@@ -1,11 +1,9 @@
 import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import { createEditorStore } from 'components/editor/Store/create';
-import { createExistingEntityStore } from 'components/shared/Entity/ExistingEntityCards/Store/create';
 import { createFormStateStore } from 'stores/FormState/Store';
 import {
     BindingsEditorStoreNames,
     EditorStoreNames,
-    ExistingEntityStoreNames,
     FormStateStoreNames,
     SchemaEvolutionStoreNames,
     SelectTableStoreNames,
@@ -31,11 +29,6 @@ const invariableStores = {
     ),
     [EditorStoreNames.MATERIALIZATION]: createEditorStore(
         EditorStoreNames.MATERIALIZATION
-    ),
-
-    // Existing Entity Store - used only in create workflows
-    [ExistingEntityStoreNames.GENERAL]: createExistingEntityStore(
-        ExistingEntityStoreNames.GENERAL
     ),
 
     // Form State Store
