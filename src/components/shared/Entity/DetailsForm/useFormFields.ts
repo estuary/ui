@@ -17,9 +17,6 @@ export default function useFormFields(
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
-    const detailsHydrationErrorsExist = useDetailsFormStore(
-        (state) => state.hydrationErrorsExist
-    );
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
@@ -34,29 +31,18 @@ export default function useFormFields(
     const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
         useDataPlaneField(entityType);
 
-    const schema = useMemo(() => {
-        const baseProperties = {
-            [CATALOG_NAME_SCOPE]: { type: 'string' },
-            [CONNECTOR_IMAGE_SCOPE]: connectorSchema,
-        };
-
-        const baseRequirements = [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE];
-
-        return dataPlaneSchema && !detailsHydrationErrorsExist
-            ? {
-                  properties: {
-                      ...baseProperties,
-                      ...dataPlaneSchema,
-                  },
-                  required: baseRequirements,
-                  type: 'object',
-              }
-            : {
-                  properties: baseProperties,
-                  required: baseRequirements,
-                  type: 'object',
-              };
-    }, [connectorSchema, dataPlaneSchema, detailsHydrationErrorsExist]);
+    const schema = useMemo(
+        () => ({
+            properties: {
+                [CATALOG_NAME_SCOPE]: { type: 'string' },
+                [CONNECTOR_IMAGE_SCOPE]: connectorSchema,
+                ...dataPlaneSchema,
+            },
+            required: [CATALOG_NAME_SCOPE, CONNECTOR_IMAGE_SCOPE],
+            type: 'object',
+        }),
+        [connectorSchema, dataPlaneSchema]
+    );
 
     const uiSchema = useMemo(() => {
         const catalogNameUISchema = {
@@ -70,25 +56,17 @@ export default function useFormFields(
         return {
             elements: [
                 {
-                    elements:
-                        dataPlaneUISchema && !detailsHydrationErrorsExist
-                            ? [
-                                  connectorUISchema,
-                                  catalogNameUISchema,
-                                  dataPlaneUISchema,
-                              ]
-                            : [connectorUISchema, catalogNameUISchema],
+                    elements: [
+                        connectorUISchema,
+                        catalogNameUISchema,
+                        dataPlaneUISchema,
+                    ],
                     type: 'HorizontalLayout',
                 },
             ],
             type: 'VerticalLayout',
         };
-    }, [
-        connectorUISchema,
-        dataPlaneUISchema,
-        detailsHydrationErrorsExist,
-        intl,
-    ]);
+    }, [connectorUISchema, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
         const selectedDataPlaneId = details.data.dataPlane?.id;
