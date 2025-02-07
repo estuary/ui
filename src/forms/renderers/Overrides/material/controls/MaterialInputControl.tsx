@@ -40,17 +40,17 @@ export interface WithInput {
 }
 
 interface Props {
-    inputEvents: {
+    inputEvents?: {
         keyDown: (event?: any) => any;
         focus: (event?: any) => any;
     };
 }
 
-// ONLY USE THIS WHEN YOU NEED TO CONTROL FOCUS.
 // Customizations:
 //  1. inputEvents
 //    Allows you to pass in a focus function that fires when the input is focused
-//
+//  2. FormControl disable-able :
+//    This uses the `enabled` flag to set `disable` on form control so labels and helper text show as disabled
 export const CustomMaterialInputControl = (
     props: Props & ControlProps & WithInput
 ) => {
@@ -58,6 +58,7 @@ export const CustomMaterialInputControl = (
     const {
         id,
         description,
+        enabled,
         errors,
         label,
         uischema,
@@ -88,24 +89,38 @@ export const CustomMaterialInputControl = (
     return (
         <Hidden xsUp={!visible}>
             <FormControl
+                disabled={!enabled}
                 fullWidth={!appliedUiSchemaOptions.trim}
                 id={id}
                 variant="standard"
                 onBlur={onBlur}
-                onFocus={(event) => {
-                    if (endsWith(event.target.id, CLEAR_BUTTON_ID_SUFFIX)) {
-                        // Clear button was clicked so we do not want to fire the focus event
-                        // Return here so we do not fire the focus events. This way when a user
-                        //  clicks on the reset button the date picker is not opened right up
-                        return;
-                    }
+                onFocus={
+                    inputEvents
+                        ? (event) => {
+                              if (
+                                  endsWith(
+                                      event.target.id,
+                                      CLEAR_BUTTON_ID_SUFFIX
+                                  )
+                              ) {
+                                  // Clear button was clicked so we do not want to fire the focus event
+                                  // Return here so we do not fire the focus events. This way when a user
+                                  //  clicks on the reset button the date picker is not opened right up
+                                  return;
+                              }
 
-                    inputEvents.focus();
-                    onFocus();
-                }}
-                onKeyDown={() => {
-                    inputEvents.keyDown();
-                }}
+                              inputEvents.focus();
+                              onFocus();
+                          }
+                        : undefined
+                }
+                onKeyDown={
+                    inputEvents
+                        ? () => {
+                              inputEvents.keyDown();
+                          }
+                        : undefined
+                }
             >
                 <InputLabel
                     htmlFor={`${id}-input`}
