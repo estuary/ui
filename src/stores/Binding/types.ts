@@ -189,6 +189,7 @@ export interface BindingState
         editWorkflow: boolean,
         entityType: Entity,
         connectorTagId: string,
+        getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;
 

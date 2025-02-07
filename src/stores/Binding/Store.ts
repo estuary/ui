@@ -8,6 +8,7 @@ import {
 import { isBeforeTrialInterval } from 'components/materialization/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { evaluateTrialCollections } from 'hooks/useTrialCollections';
 import produce from 'immer';
 import {
     difference,
@@ -89,6 +90,7 @@ const hydrateSpecificationDependentState = async (
     entityType: Entity,
     fallbackInterval: string | null,
     get: StoreApi<BindingState>['getState'],
+    getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
 ): Promise<PostgrestError | null> => {
@@ -139,6 +141,14 @@ const hydrateSpecificationDependentState = async (
             liveSpec?.onIncompatibleSchemaChange
         );
     }
+
+    const trialCollections = await evaluateTrialCollections(
+        Object.keys(get().bindings),
+        getTrialOnlyPrefixes,
+        []
+    );
+
+    get().setCollectionMetadata(trialCollections);
 
     return null;
 };
@@ -356,6 +366,7 @@ const getInitialState = (
         editWorkflow,
         entityType,
         connectorTagId,
+        getTrialOnlyPrefixes,
         rehydrating
     ) => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -400,6 +411,7 @@ const getInitialState = (
                 entityType,
                 fallbackInterval,
                 get,
+                getTrialOnlyPrefixes,
                 liveSpecs[0].spec,
                 searchParams
             );
