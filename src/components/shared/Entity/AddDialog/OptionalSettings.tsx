@@ -2,18 +2,15 @@ import { Stack, Typography } from '@mui/material';
 import DeltaUpdates from 'components/editor/Bindings/DeltaUpdates';
 import SchemaMode from 'components/editor/Bindings/SchemaMode';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBinding_sourceCaptureFlags } from 'stores/Binding/hooks';
 
 function OptionalSettings() {
     const intl = useIntl();
 
-    const [
+    const {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
-    ] = useBindingStore((state) => [
-        state.sourceCaptureDeltaUpdatesSupported,
-        state.sourceCaptureTargetSchemaSupported,
-    ]);
+    } = useBinding_sourceCaptureFlags();
 
     if (
         !sourceCaptureDeltaUpdatesSupported &&

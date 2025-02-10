@@ -36,7 +36,10 @@
         "spdx-ranges": "2.1.1",
 
         "// Public Domain": "0.0.0",
-        "jsonify": "0.0.1"
+        "jsonify": "0.0.1",
+
+        "// BSL": "0.0.0",
+        "flow-web": "0.5.0"
     },
     "ignore": [{ "prefix": "@estuary" }]
 }

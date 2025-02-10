@@ -300,6 +300,11 @@ export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     spec: any;
 }
 
+export interface DefaultAjvResponse {
+    data: any;
+    errors: any[];
+}
+
 export interface MarketPlaceVerifyResponse {
     data: any;
     error: any;

@@ -22,9 +22,10 @@ function DeltaUpdates() {
                         <Switch
                             size="small"
                             value={Boolean(deltaUpdates)}
-                            checked={deltaUpdates}
+                            checked={Boolean(deltaUpdates)}
                             disabled={formActive}
                             onChange={(event, checked) => {
+                                console.log('checked', checked);
                                 setDeltaUpdates(checked);
                             }}
                         />
