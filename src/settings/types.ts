@@ -20,6 +20,8 @@ export interface EntitySetting {
     bindingTermId: string;
     pluralId: string;
     routes: {
+        create: string;
+        createNew: string;
         details: string;
         viewAll: string;
     };

@@ -15,6 +15,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
+            create: authenticatedRoutes.captures.create.fullPath,
+            createNew: authenticatedRoutes.captures.create.new.fullPath,
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,
         },
@@ -44,6 +46,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
+            create: authenticatedRoutes.collections.create.fullPath,
+            createNew: authenticatedRoutes.collections.create.new.fullPath,
             details: authenticatedRoutes.collections.details.overview.fullPath,
             viewAll: authenticatedRoutes.collections.fullPath,
         },
@@ -71,6 +75,9 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {
+            create: authenticatedRoutes.materializations.create.fullPath,
+            createNew: authenticatedRoutes.materializations.create.new.fullPath,
+
             details:
                 authenticatedRoutes.materializations.details.overview.fullPath,
             viewAll: authenticatedRoutes.materializations.fullPath,
