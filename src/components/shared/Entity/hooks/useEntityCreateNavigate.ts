@@ -55,10 +55,7 @@ export default function useEntityCreateNavigate() {
             navigate(
                 newSearchParams
                     ? getPathWithParams(newPath, newSearchParams)
-                    : newPath,
-                {
-                    replace,
-                }
+                    : newPath
             );
         },
         [appendSearchParams, navigate]
