@@ -113,6 +113,9 @@ export default function useConnectorField(
         }),
         scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
         type: 'Control',
+        options: {
+            readOnly: true,
+        },
     };
 
     const evaluateConnector = useCallback(
