@@ -43,7 +43,7 @@ export default function useEntityCreateNavigate() {
 
             const newPath: string = advanceToForm
                 ? ENTITY_SETTINGS[entity].routes.createNew
-                : ENTITY_SETTINGS[entity].routes.create;
+                : ENTITY_SETTINGS[entity].routes.connectorSelect;
 
             navigate(
                 newSearchParams
