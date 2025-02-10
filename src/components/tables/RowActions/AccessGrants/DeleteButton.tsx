@@ -5,11 +5,11 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import RevokeGrant from './RevokeGrant';
 
@@ -111,7 +111,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                 disabled={!selectionsExist}
                 onClick={handlers.showConfirmationDialog}
             >
-                <FormattedMessage id="cta.revoke" />
+                <FormattedMessage id="cta.remove" />
             </Button>
 
             <Dialog open={showProgress} maxWidth="md">
@@ -124,9 +124,9 @@ function DeleteButton({ selectTableStoreName }: Props) {
                                 key={`revoke-grant-${index}`}
                                 grant={item}
                                 onFinish={onFinish}
-                                runningMessageID="common.revoking"
+                                runningMessageID="common.removing"
                                 selectTableStoreName={selectTableStoreName}
-                                successMessageID="common.revoked"
+                                successMessageID="common.removed"
                             />
                         )}
                     />

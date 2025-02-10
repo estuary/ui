@@ -1,18 +1,18 @@
 import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
+import SafeLoadingButton from 'components/SafeLoadingButton';
 import Error from 'components/shared/Error';
 import { sample_blue } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { WarningCircle } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import SafeLoadingButton from 'components/SafeLoadingButton';
 
 interface Props {
     id: string;
@@ -63,7 +63,7 @@ function RevokeTokenButton({ id }: Props) {
                     onClick={revokeToken}
                     variant="text"
                 >
-                    <FormattedMessage id="cta.revoke" />
+                    <FormattedMessage id="cta.remove" />
                 </SafeLoadingButton>
 
                 {error ? (

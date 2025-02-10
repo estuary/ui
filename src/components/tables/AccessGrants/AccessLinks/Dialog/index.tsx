@@ -65,10 +65,6 @@ function PrefixInvitationDialog({ open, setOpen }: Props) {
             </DialogTitle>
 
             <DialogContent>
-                {/* <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.users.prefixInvitation.message" />
-                </Typography> */}
-
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>
                         <Error
