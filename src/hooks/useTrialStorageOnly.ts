@@ -19,7 +19,7 @@ const getTrialStorageOnlyPrefixes = async (
     const { data, error } = await getStorageMappingStores(prefixes);
 
     if (error || !data) {
-        logRocketEvent(CustomEvents.TRIAL_STORAGE_UNKNOWN, { prefixes, error });
+        logRocketEvent(CustomEvents.TRIAL_STORAGE, { prefixes, error });
 
         return [];
     }

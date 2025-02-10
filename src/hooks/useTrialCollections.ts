@@ -23,6 +23,9 @@ export const evaluateTrialCollections = async (
         ? difference(targetPrefixes, storedTrialPrefixes)
         : [];
 
+    // There is an implicit dependency on this function as it keeps the
+    // trial metadata store state in sync whenever trial collections need
+    // to be evaluated.
     if (hasLength(newPrefixes)) {
         await getTrialOnlyPrefixes(newPrefixes);
     }
@@ -30,7 +33,7 @@ export const evaluateTrialCollections = async (
     const { data, error } = await getTrialCollections(targetPrefixes);
 
     if (error) {
-        logRocketEvent(CustomEvents.TRIAL_STORAGE_COLLECTION_ERROR, {
+        logRocketEvent(CustomEvents.TRIAL_STORAGE, {
             prefixes: targetPrefixes,
             error,
         });
