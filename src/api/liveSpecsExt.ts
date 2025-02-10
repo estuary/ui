@@ -1,6 +1,7 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/GlobalProviders';
 import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 import {
     CONNECTOR_IMAGE,
@@ -429,6 +430,44 @@ const getLiveSpecShards = (tenant: string, entityType: Entity) => {
         .eq('spec_type', entityType);
 };
 
+export interface TrialCollectionQuery {
+    catalog_name: string;
+    updated_at: string;
+}
+
+const getTrialCollections = async (prefixes: string[]) => {
+    const limiter = pLimit(3);
+    const promises: Promise<PostgrestResponse<TrialCollectionQuery>>[] = [];
+    let index = 0;
+
+    const promiseGenerator = (idx: number) => {
+        const trialThreshold = DateTime.utc().minus({ days: 20 });
+        const prefixFilter = prefixes
+            .slice(idx, idx + CHUNK_SIZE)
+            .map((prefix) => `catalog_name.like.${prefix}%`)
+            .join(',');
+
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select('catalog_name,updated_at')
+            .or(prefixFilter)
+            .eq('spec_type', 'collection')
+            .lt('updated_at', trialThreshold);
+    };
+
+    while (index < prefixes.length) {
+        const prom = promiseGenerator(index);
+        promises.push(limiter(() => prom));
+
+        index = index + CHUNK_SIZE;
+    }
+
+    const response = await Promise.all(promises);
+    const errors = response.filter((r) => r.error);
+
+    return errors[0] ?? { data: response.flatMap((r) => r.data) };
+};
+
 const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
 export const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
 export interface LiveSpecsExt_Related {
@@ -482,4 +521,5 @@ export {
     getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getTrialCollections,
 };

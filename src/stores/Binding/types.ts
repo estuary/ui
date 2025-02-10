@@ -1,4 +1,5 @@
 import { EvolvedCollections } from 'api/evolutions';
+import { TrialCollectionQuery } from 'api/liveSpecsExt';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
@@ -23,9 +24,13 @@ export interface ResourceConfig extends JsonFormsData {
     meta: {
         collectionName: string;
         bindingIndex: number;
+        added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
+        sourceBackfillRecommended?: boolean;
+        trialOnlyStorage?: boolean;
+        updatedAt?: string;
     };
 }
 
@@ -107,6 +112,8 @@ export interface BindingState
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
+    setCollectionMetadata: (values: TrialCollectionQuery[]) => void;
+
     // Control sourceCapture optional settings
     sourceCaptureTargetSchemaSupported: boolean;
     sourceCaptureDeltaUpdatesSupported: boolean;
@@ -145,7 +152,8 @@ export interface BindingState
     // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
-        disableOmit?: boolean
+        disableOmit?: boolean,
+        trackAddition?: boolean
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and
@@ -181,6 +189,7 @@ export interface BindingState
         editWorkflow: boolean,
         entityType: Entity,
         connectorTagId: string,
+        getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;
 

@@ -2,6 +2,8 @@ import { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/GlobalProviders';
 import {
     defaultTableFilter,
+    handleFailure,
+    handleSuccess,
     Pagination,
     RPCS,
     SortingProps,
@@ -51,6 +53,20 @@ const getStorageMapping = (catalog_prefix: string) => {
         .returns<StorageMappings[]>();
 };
 
+const getStorageMappingStores = async (prefixes: string[]) => {
+    return supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.STORAGE_MAPPINGS)
+                .select('catalog_prefix,spec')
+                .in('catalog_prefix', prefixes),
+        'getStorageMappingStores'
+    ).then(
+        handleSuccess<Pick<StorageMappings, 'catalog_prefix' | 'spec'>[]>,
+        handleFailure
+    );
+};
+
 const republishPrefix = async (prefix: string) => {
     return supabaseRetry<PostgrestSingleResponse<string>>(
         () =>
@@ -61,4 +77,9 @@ const republishPrefix = async (prefix: string) => {
     );
 };
 
-export { getStorageMapping, getStorageMappings, republishPrefix };
+export {
+    getStorageMapping,
+    getStorageMappingStores,
+    getStorageMappings,
+    republishPrefix,
+};

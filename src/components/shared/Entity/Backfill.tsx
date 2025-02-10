@@ -15,7 +15,7 @@ export default function Backfill() {
     }
 
     return (
-        <SectionWrapper>
+        <SectionWrapper alertMessageId="workflows.error.oldBoundCollection.backfillAll">
             <BackfillButton
                 description={intl.formatMessage({
                     id: `workflows.collectionSelector.manualBackfill.message.${entityType}.allBindings`,

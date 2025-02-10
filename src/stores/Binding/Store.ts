@@ -5,8 +5,10 @@ import {
     getLiveSpecsByLiveSpecId,
     getSchema_Resource,
 } from 'api/hydration';
+import { isBeforeTrialInterval } from 'components/materialization/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { evaluateTrialCollections } from 'hooks/useTrialCollections';
 import produce from 'immer';
 import {
     difference,
@@ -88,6 +90,7 @@ const hydrateSpecificationDependentState = async (
     entityType: Entity,
     fallbackInterval: string | null,
     get: StoreApi<BindingState>['getState'],
+    getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
 ): Promise<PostgrestError | null> => {
@@ -138,6 +141,14 @@ const hydrateSpecificationDependentState = async (
             liveSpec?.onIncompatibleSchemaChange
         );
     }
+
+    const trialCollections = await evaluateTrialCollections(
+        Object.keys(get().bindings),
+        getTrialOnlyPrefixes,
+        []
+    );
+
+    get().setCollectionMetadata(trialCollections);
 
     return null;
 };
@@ -355,6 +366,7 @@ const getInitialState = (
         editWorkflow,
         entityType,
         connectorTagId,
+        getTrialOnlyPrefixes,
         rehydrating
     ) => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -399,6 +411,7 @@ const getInitialState = (
                 entityType,
                 fallbackInterval,
                 get,
+                getTrialOnlyPrefixes,
                 liveSpecs[0].spec,
                 searchParams
             );
@@ -519,7 +532,7 @@ const getInitialState = (
         );
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit) => {
+    prefillResourceConfigs: (targetCollections, disableOmit, trackAddition) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -568,8 +581,9 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
-                            collectionName,
+                            added: trackAddition,
                             bindingIndex: reducedBindingCount + index,
+                            collectionName,
                         },
                     };
                 });
@@ -1010,6 +1024,34 @@ const getInitialState = (
         );
     },
 
+    setCollectionMetadata: (values) => {
+        if (!hasLength(values)) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                values.forEach(({ catalog_name, updated_at }) => {
+                    state.bindings[catalog_name].forEach((uuid) => {
+                        const triggered =
+                            state.backfilledBindings.includes(uuid) ||
+                            state.resourceConfigs[uuid].meta.added;
+
+                        state.resourceConfigs[uuid].meta = {
+                            ...state.resourceConfigs[uuid].meta,
+                            sourceBackfillRecommended:
+                                triggered && isBeforeTrialInterval(updated_at),
+                            trialOnlyStorage: true,
+                            updatedAt: updated_at,
+                        };
+                    });
+                });
+            }),
+            false,
+            'Trial Only Storage Set'
+        );
+    },
+
     setSpecOnIncompatibleSchemaChange: (value) => {
         set(
             produce((state: BindingState) => {
@@ -1164,8 +1206,14 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
-                        collectionName: targetCollection,
+                        added: targetResourceConfig.meta.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        collectionName: targetCollection,
+                        sourceBackfillRecommended:
+                            targetResourceConfig.meta.sourceBackfillRecommended,
+                        trialOnlyStorage:
+                            targetResourceConfig.meta.trialOnlyStorage,
+                        updatedAt: targetResourceConfig.meta.updatedAt,
                     },
                 };
 

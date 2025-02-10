@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
+import useTrialCollections from 'hooks/useTrialCollections';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -38,6 +39,7 @@ function BackfillButton({
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     const workflow = useEntityWorkflow();
+    const evaluateTrialCollections = useTrialCollections();
 
     const evolvedCollections = useBindingStore(
         (state) => state.evolvedCollections
@@ -53,6 +55,10 @@ function BackfillButton({
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
     const backfillSupported = useBinding_backfillSupported();
+
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
+    );
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -151,6 +157,16 @@ function BackfillButton({
                             : undefined;
 
                         setBackfilledBindings(increment, targetBindingUUID);
+
+                        evaluateTrialCollections(
+                            bindingMetadata.map(({ collection }) => collection)
+                        ).then(
+                            (response) => {
+                                setCollectionMetadata(response);
+                            },
+                            () => {}
+                        );
+
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -171,7 +187,9 @@ function BackfillButton({
             currentCollection,
             draftSpec,
             evaluateServerDifferences,
+            evaluateTrialCollections,
             setBackfilledBindings,
+            setCollectionMetadata,
             setFormState,
             updateBackfillCounter,
         ]

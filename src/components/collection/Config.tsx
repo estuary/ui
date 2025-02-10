@@ -14,6 +14,7 @@ import {
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 
 interface Props {
@@ -36,6 +37,11 @@ function CollectionConfig({
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
+    const sourceBackfillRecommended = useBindingStore((state) =>
+        Object.values(state.resourceConfigs).some(
+            (config) => config.meta.sourceBackfillRecommended
+        )
+    );
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -45,7 +51,7 @@ function CollectionConfig({
         resourceConfigErrorsExist ||
         fullSourceErrorsExist;
 
-    const hasWarnings = bindingErrorsExist;
+    const hasWarnings = bindingErrorsExist || sourceBackfillRecommended;
 
     return (
         <WrapperWithHeader

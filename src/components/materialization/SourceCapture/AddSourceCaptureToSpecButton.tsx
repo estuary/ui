@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
+import useTrialCollections from 'hooks/useTrialCollections';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
@@ -18,7 +19,11 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     );
 
     const { existingSourceCapture, updateDraft } = useSourceCapture();
+    const evaluateTrialCollections = useTrialCollections();
 
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
+    );
     const [
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
@@ -79,7 +84,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
-                    prefillResourceConfigs(selectedRow.writes_to, true);
+                    prefillResourceConfigs(selectedRow.writes_to, true, true);
+
+                    const trialCollectionResponse =
+                        await evaluateTrialCollections(
+                            selectedRow.writes_to as string[]
+                        );
+
+                    setCollectionMetadata(trialCollectionResponse);
                 }
             }
 
