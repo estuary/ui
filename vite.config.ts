@@ -89,6 +89,9 @@ export default defineConfig({
         setupFiles: ['./src/setupTests.ts'],
         testTimeout: 10000, // more time for auto retries
         restoreMocks: true,
+        deps: {
+            inline: ['@estuary/flow-web'],
+        },
         exclude: [
             '**/playwright-tests/**',
 
