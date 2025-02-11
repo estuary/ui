@@ -46,7 +46,7 @@ export const CTAs: Record<string, string> = {
     'cta.add': `Add`,
     'cta.transform': `Transform`,
     'cta.back': `Back`,
-    'cta.revoke': `Revoke`,
+    'cta.remove': `Remove`,
     'cta.goToDetails': `See Details`,
     'cta.goToAll': `See all`,
     // These are dynamically created in the Save button
