@@ -23,11 +23,14 @@ export default function TrialOnlyPrefixAlert({
         () =>
             !bindingUUID &&
             backfilledBindings.every((uuid) => {
-                const config = resourceConfigs[uuid];
+                const config = Object.keys(resourceConfigs).includes(uuid)
+                    ? resourceConfigs[uuid]
+                    : undefined;
 
                 return (
-                    !config.meta.trialOnlyStorage ||
-                    !isBeforeTrialInterval(config.meta.updatedAt)
+                    config &&
+                    (!config.meta.trialOnlyStorage ||
+                        !isBeforeTrialInterval(config.meta.updatedAt))
                 );
             }),
         [backfilledBindings, bindingUUID, resourceConfigs]
