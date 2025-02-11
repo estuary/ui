@@ -6,13 +6,13 @@ import { CustomEvents } from 'services/types';
 import { useTrialMetadataStore } from 'stores/TrialMetadata/Store';
 import { hasLength, stripPathing } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
-import useTrialStorageOnly from './useTrialStorageOnly';
+import useTrialPrefixes from './useTrialPrefixes';
 
 // This function was created and exported so the binding store hydrator
 // can use the same logic to evaluate trial collection as the core hook.
 export const evaluateTrialCollections = async (
     catalogNames: string[] | undefined,
-    getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
+    storeTrialPrefixes: (prefixes: string[]) => Promise<string[]>,
     storedTrialPrefixes: string[]
 ) => {
     const targetPrefixes = catalogNames
@@ -27,7 +27,7 @@ export const evaluateTrialCollections = async (
     // trial metadata store state in sync whenever trial collections need
     // to be evaluated.
     if (hasLength(newPrefixes)) {
-        await getTrialOnlyPrefixes(newPrefixes);
+        await storeTrialPrefixes(newPrefixes);
     }
 
     const { data, error } = await getTrialCollections(targetPrefixes);
@@ -49,18 +49,18 @@ export default function useTrialCollections() {
         useShallow((state) => state.trialStorageOnly)
     );
 
-    const getTrialOnlyPrefixes = useTrialStorageOnly();
+    const storeTrialOnlyPrefixes = useTrialPrefixes();
 
     return useCallback(
         async (catalogNames?: string[]) => {
             const trialCollections = await evaluateTrialCollections(
                 catalogNames,
-                getTrialOnlyPrefixes,
+                storeTrialOnlyPrefixes,
                 storedTrialPrefixes
             );
 
             return trialCollections;
         },
-        [getTrialOnlyPrefixes, storedTrialPrefixes]
+        [storeTrialOnlyPrefixes, storedTrialPrefixes]
     );
 }

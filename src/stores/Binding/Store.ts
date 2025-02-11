@@ -7,8 +7,8 @@ import {
 } from 'api/hydration';
 import { isBeforeTrialInterval } from 'components/materialization/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { evaluateTrialCollections } from 'hooks/trialStorage/useTrialCollections';
 import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
-import { evaluateTrialCollections } from 'hooks/useTrialCollections';
 import produce from 'immer';
 import {
     difference,

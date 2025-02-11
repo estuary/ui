@@ -13,9 +13,7 @@ const ESTUARY_TRIAL_STORAGE = {
     prefix: 'collection-data/',
 };
 
-const getTrialStorageOnlyPrefixes = async (
-    prefixes: string[]
-): Promise<string[]> => {
+const getTrialPrefixes = async (prefixes: string[]): Promise<string[]> => {
     const { data, error } = await getStorageMappingStores(prefixes);
 
     if (error || !data) {
@@ -33,10 +31,10 @@ const getTrialStorageOnlyPrefixes = async (
         .map(({ catalog_prefix }) => catalog_prefix);
 };
 
-export default function useTrialStorageOnly() {
+export default function useTrialPrefixes() {
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
-    const addTrialStorageOnly = useTrialMetadataStore(
+    const addTrialPrefix = useTrialMetadataStore(
         (state) => state.addTrialStorageOnly
     );
 
@@ -54,14 +52,12 @@ export default function useTrialStorageOnly() {
                 return [];
             }
 
-            const trialPrefixes = await getTrialStorageOnlyPrefixes(
-                filteredPrefixes
-            );
+            const trialPrefixes = await getTrialPrefixes(filteredPrefixes);
 
-            addTrialStorageOnly(trialPrefixes);
+            addTrialPrefix(trialPrefixes);
 
             return trialPrefixes;
         },
-        [addTrialStorageOnly, objectRoles]
+        [addTrialPrefix, objectRoles]
     );
 }
