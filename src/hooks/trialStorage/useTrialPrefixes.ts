@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { useTrialMetadataStore } from 'stores/TrialMetadata/Store';
 import { hasLength } from 'utils/misc-utils';
 
 const ESTUARY_TRIAL_STORAGE = {
@@ -34,10 +33,6 @@ const getTrialPrefixes = async (prefixes: string[]): Promise<string[]> => {
 export default function useTrialPrefixes() {
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
-    const addTrialPrefix = useTrialMetadataStore(
-        (state) => state.addTrialStorageOnly
-    );
-
     return useCallback(
         async (prefixes: string[]) => {
             if (!hasLength(prefixes)) {
@@ -54,10 +49,8 @@ export default function useTrialPrefixes() {
 
             const trialPrefixes = await getTrialPrefixes(filteredPrefixes);
 
-            addTrialPrefix(trialPrefixes);
-
             return trialPrefixes;
         },
-        [addTrialPrefix, objectRoles]
+        [objectRoles]
     );
 }

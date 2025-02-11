@@ -144,8 +144,7 @@ const hydrateSpecificationDependentState = async (
 
     const trialCollections = await evaluateTrialCollections(
         Object.keys(get().bindings),
-        getTrialOnlyPrefixes,
-        []
+        getTrialOnlyPrefixes
     );
 
     get().setCollectionMetadata(trialCollections);
