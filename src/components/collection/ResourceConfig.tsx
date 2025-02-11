@@ -47,6 +47,11 @@ function ResourceConfig({
         'disable'
     );
 
+    const trialCollection = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'trialOnlyStorage'
+    );
+
     const collectionAdded = useBinding_resourceConfigOfMetaBindingProperty(
         bindingUUID,
         'added'
@@ -59,7 +64,7 @@ function ResourceConfig({
                     <TrialOnlyPrefixAlert
                         bindingUUID={bindingUUID}
                         messageId="workflows.error.oldBoundCollection.added"
-                        triggered={Boolean(collectionAdded)}
+                        triggered={Boolean(trialCollection && collectionAdded)}
                     />
                 </Box>
             ) : null}

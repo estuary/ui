@@ -16,13 +16,16 @@ export const evaluateTrialCollections = async (
         ? uniq(catalogNames.map((name) => stripPathing(name, true)))
         : [];
 
-    if (!hasLength(prefixes)) {
+    if (!hasLength(prefixes) || !catalogNames) {
         return [];
     }
 
     const trialPrefixes = await getTrialPrefixes(prefixes);
 
-    const { data, error } = await getTrialCollections(trialPrefixes);
+    const { data, error } = await getTrialCollections(
+        trialPrefixes,
+        catalogNames
+    );
 
     if (error) {
         logRocketEvent(CustomEvents.TRIAL_STORAGE, {

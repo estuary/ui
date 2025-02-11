@@ -435,27 +435,34 @@ export interface TrialCollectionQuery {
     updated_at: string;
 }
 
-const getTrialCollections = async (prefixes: string[]) => {
+const getTrialCollections = async (
+    trialPrefixes: string[],
+    catalogNames: string[]
+) => {
     const limiter = pLimit(3);
     const promises: Promise<PostgrestResponse<TrialCollectionQuery>>[] = [];
     let index = 0;
 
+    const trialCollections = catalogNames.filter((name) =>
+        trialPrefixes.some((prefix) => name.startsWith(prefix))
+    );
+
     const promiseGenerator = (idx: number) => {
         const trialThreshold = DateTime.utc().minus({ days: 20 });
-        const prefixFilter = prefixes
+        const catalogNameFilter = trialCollections
             .slice(idx, idx + CHUNK_SIZE)
-            .map((prefix) => `catalog_name.like.${prefix}%`)
+            .map((name) => `catalog_name.eq.${name}`)
             .join(',');
 
         return supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select('catalog_name,updated_at')
-            .or(prefixFilter)
+            .or(catalogNameFilter)
             .eq('spec_type', 'collection')
             .lt('updated_at', trialThreshold);
     };
 
-    while (index < prefixes.length) {
+    while (index < trialCollections.length) {
         const prom = promiseGenerator(index);
         promises.push(limiter(() => prom));
 
