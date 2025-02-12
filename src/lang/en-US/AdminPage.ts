@@ -164,7 +164,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
     'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,
     'storageMappings.dialog.generate.providerOption.GCS': `Google Cloud Storage`,
-    'storageMappings.dialog.generate.providerOption.S3': `Amazon Simple Storage Service`,
+    'storageMappings.dialog.generate.providerOption.S3': `Amazon S3`,
     'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,

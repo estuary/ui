@@ -43,7 +43,7 @@ const gcsProviderSchema = {
 };
 
 const s3ProviderSchema = {
-    title: 'Amazon Simple Storage Service.',
+    title: 'Amazon S3.',
     examples: [
         {
             bucket: 'my-bucket',
