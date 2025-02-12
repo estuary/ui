@@ -1,15 +1,7 @@
-import { expect, test, Page } from '@playwright/test';
-import { beforeEach } from 'node:test';
+import { expect, Page, test } from '@playwright/test';
 import { AuthProps } from '../helpers/types';
 import { USERS } from '../helpers/users';
-import {
-    defaultLocalStorage,
-    defaultPageSetup,
-    emailDomain,
-    inituser,
-    startSessionWithUser,
-    saveAndPublish,
-} from '../helpers/utils';
+import { defaultPageSetup } from '../helpers/utils';
 
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
@@ -158,7 +150,7 @@ test.describe.serial('Admin:', () => {
                 await page.getByRole('combobox', { name: 'Provider' }).click();
                 await page
                     .getByRole('option', {
-                        name: 'Amazon Simple Storage Service',
+                        name: 'Amazon S3',
                     })
                     .click();
                 await expect(page.getByLabel('Bucket *')).toBeVisible();

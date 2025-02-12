@@ -32,10 +32,10 @@ import {
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import { DataPlaneAutoComplete } from './DataPlaneSelector/AutoComplete';
+import { CustomMaterialInputControl } from './Overrides/material/controls/MaterialInputControl';
 
 export const DATA_PLANE_SCOPE = 'dataPlane';
 
@@ -44,11 +44,12 @@ export const dataPlaneTester: RankedTester = rankWith(
     and(isOneOfEnumControl, scopeEndsWith(DATA_PLANE_SCOPE))
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const DataPlaneRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
-    return <MaterialInputControl {...props} input={DataPlaneAutoComplete} />;
+    return (
+        <CustomMaterialInputControl {...props} input={DataPlaneAutoComplete} />
+    );
 };
 
 export const DataPlane = withJsonFormsOneOfEnumProps(DataPlaneRenderer);

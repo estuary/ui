@@ -203,7 +203,11 @@ export const getDereffedSchema = async (val: any) => {
 };
 
 export const configCanBeEmpty = (schema: any) => {
-    return Boolean(!schema?.properties || isEmpty(schema?.properties));
+    if (!schema) {
+        return false;
+    }
+
+    return Boolean(!schema.properties || isEmpty(schema.properties));
 };
 
 export const isReactElement = (value: ReactNode): value is ReactElement =>

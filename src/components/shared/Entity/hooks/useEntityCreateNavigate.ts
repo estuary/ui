@@ -1,9 +1,9 @@
-import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
+import { ENTITY_SETTINGS } from 'settings/entity';
 import { EntityWithCreateWorkflow } from 'types';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
@@ -41,24 +41,14 @@ export default function useEntityCreateNavigate() {
                 ? appendSearchParams(searchParamConfig)
                 : null;
 
-            let newPath: string | null = null;
-            if (entity === 'capture') {
-                newPath = advanceToForm
-                    ? authenticatedRoutes.captures.create.new.fullPath
-                    : authenticatedRoutes.captures.create.fullPath;
-            } else {
-                newPath = advanceToForm
-                    ? authenticatedRoutes.materializations.create.new.fullPath
-                    : authenticatedRoutes.materializations.create.fullPath;
-            }
+            const newPath: string = advanceToForm
+                ? ENTITY_SETTINGS[entity].routes.createNew
+                : ENTITY_SETTINGS[entity].routes.connectorSelect;
 
             navigate(
                 newSearchParams
                     ? getPathWithParams(newPath, newSearchParams)
-                    : newPath,
-                {
-                    replace,
-                }
+                    : newPath
             );
         },
         [appendSearchParams, navigate]
