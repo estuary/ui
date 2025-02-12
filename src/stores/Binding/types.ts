@@ -2,9 +2,16 @@ import { EvolvedCollections } from 'api/evolutions';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
+import { ResourceConfigPointers } from 'services/ajv';
 import { CallSupabaseResponse } from 'services/supabase';
 import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
+import {
+    Entity,
+    EntityWorkflow,
+    JsonFormsData,
+    Schema,
+    SourceCaptureDef,
+} from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 
@@ -108,8 +115,7 @@ export interface BindingState
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
     // Control sourceCapture optional settings
-    sourceCaptureTargetSchemaSupported: boolean;
-    sourceCaptureDeltaUpdatesSupported: boolean;
+    resourceConfigPointers?: ResourceConfigPointers;
 
     // Capture interval
     captureInterval: string | null;
@@ -145,7 +151,8 @@ export interface BindingState
     // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
-        disableOmit?: boolean
+        disableOmit?: boolean,
+        sourceCapture?: SourceCaptureDef
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and

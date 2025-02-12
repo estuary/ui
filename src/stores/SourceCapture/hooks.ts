@@ -1,18 +1,15 @@
 import { useCallback } from 'react';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBinding_sourceCaptureFlags } from 'stores/Binding/hooks';
 import { SourceCaptureDef } from 'types';
 import { useShallow } from 'zustand/react/shallow';
 import { useSourceCaptureStore } from './Store';
 
 export const useSourceCaptureStore_sourceCaptureDefinition =
     (): SourceCaptureDef | null => {
-        const [
+        const {
             sourceCaptureDeltaUpdatesSupported,
             sourceCaptureTargetSchemaSupported,
-        ] = useBindingStore((state) => [
-            state.sourceCaptureDeltaUpdatesSupported,
-            state.sourceCaptureTargetSchemaSupported,
-        ]);
+        } = useBinding_sourceCaptureFlags();
 
         return useSourceCaptureStore(
             useShallow((state) => {
