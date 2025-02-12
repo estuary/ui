@@ -91,7 +91,7 @@ export const CommonMessages: Record<string, string> = {
     'entityPrefix.description': `Prefix for the entity name.`,
     'entityName.label': `Name`,
     'connector.label': `Connector`,
-    'connector.description': `Choose the external system you're connecting to.`,
+    'connector.description': `The external system you're connecting to.`,
     'description.label': `Details`,
     'description.description': `Describe your changes or why you're changing things.`,
 
