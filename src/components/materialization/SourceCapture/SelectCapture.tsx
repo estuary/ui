@@ -31,16 +31,19 @@ function SelectCapture() {
 
     const [open, setOpen] = useState<boolean>(false);
     const toggleDialog = (args: any) => {
+        const opening = typeof args === 'boolean' ? args : !open;
+
         // On create default settings when going to set the
         //  source capture for the first time
-        if (!isEdit && !sourceCapture) {
+        // Make sure we ONLY do this when OPENING
+        if (!isEdit && !sourceCapture && opening) {
             setSourceCaptureDefinition({
                 capture: '',
                 deltaUpdates: false,
                 targetSchema: 'fromSourceName',
             });
         }
-        setOpen(typeof args === 'boolean' ? args : !open);
+        setOpen(opening);
     };
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();

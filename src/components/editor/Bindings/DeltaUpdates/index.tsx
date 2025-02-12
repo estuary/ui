@@ -25,7 +25,6 @@ function DeltaUpdates() {
                             checked={Boolean(deltaUpdates)}
                             disabled={formActive}
                             onChange={(event, checked) => {
-                                console.log('checked', checked);
                                 setDeltaUpdates(checked);
                             }}
                         />
