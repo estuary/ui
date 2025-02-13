@@ -28,22 +28,18 @@ function BindingsSelectorErrorIndicator({
         'sourceBackfillRecommended'
     );
 
-    if (
-        bindingErrors?.length > 0 ||
-        configErrors?.length > 0 ||
-        Boolean(sourceBackfillRecommended)
-    ) {
+    const errorExists = bindingErrors?.length > 0 || configErrors?.length > 0;
+
+    if (errorExists || Boolean(sourceBackfillRecommended)) {
         return (
             <Typography>
                 <WarningCircle
                     style={{
                         marginRight: 4,
                         fontSize: 12,
-                        color:
-                            bindingErrors?.length > 0 ||
-                            configErrors?.length > 0
-                                ? theme.palette.error.main
-                                : theme.palette.warning.main,
+                        color: errorExists
+                            ? theme.palette.error.main
+                            : theme.palette.warning.main,
                     }}
                 />
             </Typography>
