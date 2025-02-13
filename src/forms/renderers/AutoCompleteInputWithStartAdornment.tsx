@@ -1,8 +1,9 @@
 import { AutocompleteRenderInputParams, Box, Input } from '@mui/material';
+import { ReactNode } from 'react';
 
 interface Props {
     textFieldProps: AutocompleteRenderInputParams;
-    icon: any | undefined;
+    icon: ReactNode | undefined;
 }
 
 function AutoCompleteInputWithStartAdornment({ icon, textFieldProps }: Props) {
