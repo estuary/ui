@@ -1,16 +1,16 @@
 import { Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import {
+    useBinding_collectionMetadataProperty,
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
-    useBinding_resourceConfigOfMetaBindingProperty,
 } from 'stores/Binding/hooks';
+import { ErrorIndicatorProps } from './types';
 
-interface Props {
-    bindingUUID: string;
-}
-
-function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
+function BindingsSelectorErrorIndicator({
+    bindingUUID,
+    collection,
+}: ErrorIndicatorProps) {
     const theme = useTheme();
 
     const configErrors = useBinding_resourceConfigOfBindingProperty(
@@ -23,11 +23,10 @@ function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
         'errors'
     );
 
-    const sourceBackfillRecommended =
-        useBinding_resourceConfigOfMetaBindingProperty(
-            bindingUUID,
-            'sourceBackfillRecommended'
-        );
+    const sourceBackfillRecommended = useBinding_collectionMetadataProperty(
+        collection,
+        'sourceBackfillRecommended'
+    );
 
     if (
         bindingErrors?.length > 0 ||

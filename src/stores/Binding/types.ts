@@ -9,6 +9,17 @@ import { Entity, EntityWorkflow, JsonFormsData, Schema } from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 
+export interface CollectionMetadata {
+    added?: boolean;
+    sourceBackfillRecommended?: boolean;
+    trialStorage?: boolean;
+    updatedAt?: string;
+}
+
+interface CollectionMetadataDictionary {
+    [collection: string]: CollectionMetadata;
+}
+
 export interface BindingMetadata {
     uuid: string;
     collection: string;
@@ -24,13 +35,9 @@ export interface ResourceConfig extends JsonFormsData {
     meta: {
         collectionName: string;
         bindingIndex: number;
-        added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
-        sourceBackfillRecommended?: boolean;
-        trialOnlyStorage?: boolean;
-        updatedAt?: string;
     };
 }
 
@@ -112,7 +119,11 @@ export interface BindingState
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
-    setCollectionMetadata: (values: TrialCollectionQuery[]) => void;
+    collectionMetadata: CollectionMetadataDictionary;
+    setCollectionMetadata: (
+        values: TrialCollectionQuery[],
+        trackAddition?: boolean
+    ) => void;
 
     // Control sourceCapture optional settings
     sourceCaptureTargetSchemaSupported: boolean;
@@ -152,8 +163,7 @@ export interface BindingState
     // and bindings are added to the specification via the collection selector.
     prefillResourceConfigs: (
         targetCollections: string[],
-        disableOmit?: boolean,
-        trackAddition?: boolean
+        disableOmit?: boolean
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and

@@ -1,29 +1,47 @@
 import { Box, Stack, Typography } from '@mui/material';
+import { isBeforeTrialInterval } from 'components/materialization/shared';
 import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
 import { useEntityType } from 'context/EntityContext';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    useBinding_backfilledBindings,
-    useBinding_resourceConfigOfMetaBindingProperty,
+    useBinding_backfilledCollections,
+    useBinding_collectionMetadataProperty,
 } from 'stores/Binding/hooks';
-import { hasLength } from 'utils/misc-utils';
+import { useBindingStore } from 'stores/Binding/Store';
+import { useShallow } from 'zustand/react/shallow';
 import { SectionWrapperProps } from './types';
 
 export default function SectionWrapper({
     alertMessageId,
-    bindingUUID,
     children,
+    collection,
 }: SectionWrapperProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
 
-    const backfilledBindings = useBinding_backfilledBindings();
-    const bindingSourceBackfillRecommended =
-        useBinding_resourceConfigOfMetaBindingProperty(
-            bindingUUID,
-            'sourceBackfillRecommended'
-        );
+    const bindingLevelAlertTriggered = useBinding_collectionMetadataProperty(
+        collection,
+        'sourceBackfillRecommended'
+    );
+    const backfilledCollections = useBinding_backfilledCollections();
+    const collectionMetadata = useBindingStore(
+        useShallow((state) => state.collectionMetadata)
+    );
+
+    const topLevelAlertTriggered = useMemo(
+        () =>
+            !collection &&
+            backfilledCollections.some((name) => {
+                return (
+                    Object.keys(collectionMetadata).includes(name) &&
+                    collectionMetadata[name].trialStorage &&
+                    isBeforeTrialInterval(collectionMetadata[name].updatedAt)
+                );
+            }),
+        [backfilledCollections, collection, collectionMetadata]
+    );
 
     return (
         <Box sx={{ mb: 4, mt: 3 }}>
@@ -36,12 +54,11 @@ export default function SectionWrapper({
 
                 {entityType === 'materialization' ? (
                     <TrialOnlyPrefixAlert
-                        bindingUUID={bindingUUID}
                         messageId={alertMessageId}
                         triggered={
-                            bindingUUID
-                                ? Boolean(bindingSourceBackfillRecommended)
-                                : hasLength(backfilledBindings)
+                            collection
+                                ? Boolean(bindingLevelAlertTriggered)
+                                : topLevelAlertTriggered
                         }
                     />
                 ) : null}

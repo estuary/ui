@@ -14,7 +14,6 @@ import {
 } from 'components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';
@@ -57,8 +56,6 @@ const ENTITY_TYPE = 'materialization';
 function useGenerateCatalog() {
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
-
-    const getTrialCollections = useTrialCollections();
 
     // Details Form Store
     const detailsFormsErrorsExist = useDetailsFormStore(
@@ -127,10 +124,6 @@ function useGenerateCatalog() {
 
     const specIncompatibleSchemaChange = useBindingStore(
         (state) => state.onIncompatibleSchemaChange
-    );
-
-    const setCollectionMetadata = useBindingStore(
-        (state) => state.setCollectionMetadata
     );
 
     // Source Capture Store
@@ -297,12 +290,6 @@ function useGenerateCatalog() {
                     true
                 );
 
-                const trialCollections = await getTrialCollections(
-                    Object.keys(bindings)
-                );
-
-                setCollectionMetadata(trialCollections);
-
                 // Mutate the draft first so that we are not running
                 //  update _after_ the form is showing as "done"
                 await mutateDraftSpecs();
@@ -356,7 +343,6 @@ function useGenerateCatalog() {
             endpointSchema,
             fullSourceConfigs,
             fullSourceErrorsExist,
-            getTrialCollections,
             imageConnectorId,
             imageConnectorTagId,
             persistedDraftId,
@@ -370,7 +356,6 @@ function useGenerateCatalog() {
             serverEndpointConfigData,
             serverUpdateRequired,
             setCatalogName,
-            setCollectionMetadata,
             setDraftId,
             setDraftedEntityName,
             setEncryptedEndpointConfig,

@@ -2,24 +2,22 @@ import { Button, Typography } from '@mui/material';
 import { typographyTruncation } from 'context/Theme';
 import { stripPathing } from 'utils/misc-utils';
 import BindingsSelectorErrorIndicator from './ErrorIndicator';
-
-interface RowProps {
-    bindingUUID: string;
-    collection: string;
-    shortenName?: boolean;
-}
+import { SelectorNameProps } from './types';
 
 function BindingsSelectorName({
     bindingUUID,
     collection,
     shortenName,
-}: RowProps) {
+}: SelectorNameProps) {
     return (
         <Button
             variant="text"
             disableFocusRipple
             startIcon={
-                <BindingsSelectorErrorIndicator bindingUUID={bindingUUID} />
+                <BindingsSelectorErrorIndicator
+                    bindingUUID={bindingUUID}
+                    collection={collection}
+                />
             }
             sx={{
                 'color': (theme) => theme.palette.text.primary,

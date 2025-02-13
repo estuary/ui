@@ -38,8 +38,8 @@ function CollectionConfig({
     const bindingErrorsExist = useBinding_bindingErrorsExist();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
     const sourceBackfillRecommended = useBindingStore((state) =>
-        Object.values(state.resourceConfigs).some(
-            (config) => config.meta.sourceBackfillRecommended
+        Object.values(state.collectionMetadata).some(
+            (meta) => meta.sourceBackfillRecommended
         )
     );
 

@@ -7,7 +7,7 @@ import { BackfillProps } from './types';
 
 export default function Backfill({
     bindingIndex,
-    bindingUUID,
+    collection,
     collectionEnabled,
 }: BackfillProps) {
     const entityType = useEntityType();
@@ -18,7 +18,7 @@ export default function Backfill({
     return showBackfillButton ? (
         <SectionWrapper
             alertMessageId="workflows.error.oldBoundCollection.backfill"
-            bindingUUID={bindingUUID}
+            collection={collection}
         >
             <BackfillButton
                 bindingIndex={bindingIndex}

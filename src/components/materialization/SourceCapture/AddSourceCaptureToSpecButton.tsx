@@ -84,14 +84,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
-                    prefillResourceConfigs(selectedRow.writes_to, true, true);
+                    prefillResourceConfigs(selectedRow.writes_to, true);
 
                     const trialCollectionResponse =
                         await evaluateTrialCollections(
                             selectedRow.writes_to as string[]
                         );
 
-                    setCollectionMetadata(trialCollectionResponse);
+                    setCollectionMetadata(trialCollectionResponse, true);
                 }
             }
 

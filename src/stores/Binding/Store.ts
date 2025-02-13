@@ -48,6 +48,7 @@ import {
     initializeCurrentBinding,
     populateResourceConfigErrors,
     sortResourceConfigs,
+    updateCollectionMetadata,
     whatChanged,
 } from './shared';
 import {
@@ -90,7 +91,6 @@ const hydrateSpecificationDependentState = async (
     entityType: Entity,
     fallbackInterval: string | null,
     get: StoreApi<BindingState>['getState'],
-    getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
 ): Promise<PostgrestError | null> => {
@@ -142,13 +142,6 @@ const hydrateSpecificationDependentState = async (
         );
     }
 
-    const trialCollections = await evaluateTrialCollections(
-        Object.keys(get().bindings),
-        getTrialOnlyPrefixes
-    );
-
-    get().setCollectionMetadata(trialCollections);
-
     return null;
 };
 
@@ -169,6 +162,7 @@ const getInitialMiscData = (): Pick<
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
     | 'captureInterval'
+    | 'collectionMetadata'
     | 'collectionsRequiringRediscovery'
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
@@ -191,6 +185,7 @@ const getInitialMiscData = (): Pick<
     backfillSupported: true,
     backfilledBindings: [],
     captureInterval: null,
+    collectionMetadata: {},
     collectionsRequiringRediscovery: [],
     defaultCaptureInterval: null,
     discoveredCollections: [],
@@ -410,7 +405,6 @@ const getInitialState = (
                 entityType,
                 fallbackInterval,
                 get,
-                getTrialOnlyPrefixes,
                 liveSpecs[0].spec,
                 searchParams
             );
@@ -419,6 +413,17 @@ const getInitialState = (
                 get().setHydrationErrorsExist(true);
 
                 return Promise.reject(draftSpecError.message);
+            }
+
+            const boundCollections = Object.keys(get().bindings);
+
+            if (hasLength(boundCollections)) {
+                const trialCollections = await evaluateTrialCollections(
+                    Object.keys(boundCollections),
+                    getTrialOnlyPrefixes
+                );
+
+                get().setCollectionMetadata(trialCollections);
             }
         } else {
             get().setCaptureInterval(
@@ -531,7 +536,7 @@ const getInitialState = (
         );
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, trackAddition) => {
+    prefillResourceConfigs: (targetCollections, disableOmit) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -580,7 +585,6 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
-                            added: trackAddition,
                             bindingIndex: reducedBindingCount + index,
                             collectionName,
                         },
@@ -922,6 +926,42 @@ const getInitialState = (
         );
     },
 
+    setCollectionMetadata: (values, trackAddition) => {
+        if (!hasLength(values)) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                const backfilledCollections = state.backfilledBindings.map(
+                    (uuid) => state.resourceConfigs[uuid].meta.collectionName
+                );
+
+                values.forEach(({ catalog_name, updated_at }) => {
+                    const added =
+                        trackAddition ||
+                        (Object.keys(state.collectionMetadata).includes(
+                            catalog_name
+                        ) &&
+                            state.collectionMetadata[catalog_name].added);
+
+                    const triggered =
+                        backfilledCollections.includes(catalog_name) || added;
+
+                    updateCollectionMetadata(state, catalog_name, {
+                        added,
+                        sourceBackfillRecommended:
+                            triggered && isBeforeTrialInterval(updated_at),
+                        trialStorage: true,
+                        updatedAt: updated_at,
+                    });
+                });
+            }),
+            false,
+            'Collection Metadata Set'
+        );
+    },
+
     setCurrentBinding: (bindingUUID) => {
         set(
             produce((state: BindingState) => {
@@ -1020,34 +1060,6 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
-        );
-    },
-
-    setCollectionMetadata: (values) => {
-        if (!hasLength(values)) {
-            return;
-        }
-
-        set(
-            produce((state: BindingState) => {
-                values.forEach(({ catalog_name, updated_at }) => {
-                    state.bindings[catalog_name].forEach((uuid) => {
-                        const triggered =
-                            state.backfilledBindings.includes(uuid) ||
-                            state.resourceConfigs[uuid].meta.added;
-
-                        state.resourceConfigs[uuid].meta = {
-                            ...state.resourceConfigs[uuid].meta,
-                            sourceBackfillRecommended:
-                                triggered && isBeforeTrialInterval(updated_at),
-                            trialOnlyStorage: true,
-                            updatedAt: updated_at,
-                        };
-                    });
-                });
-            }),
-            false,
-            'Trial Only Storage Set'
         );
     },
 
@@ -1205,14 +1217,8 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
-                        added: targetResourceConfig.meta.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         collectionName: targetCollection,
-                        sourceBackfillRecommended:
-                            targetResourceConfig.meta.sourceBackfillRecommended,
-                        trialOnlyStorage:
-                            targetResourceConfig.meta.trialOnlyStorage,
-                        updatedAt: targetResourceConfig.meta.updatedAt,
                     },
                 };
 

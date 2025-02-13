@@ -9,6 +9,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_collectionMetadataProperty,
     useBinding_currentBindingIndex,
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
@@ -47,13 +48,13 @@ function ResourceConfig({
         'disable'
     );
 
-    const trialCollection = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
-        'trialOnlyStorage'
+    const trialCollection = useBinding_collectionMetadataProperty(
+        collectionName,
+        'trialStorage'
     );
 
-    const collectionAdded = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
+    const collectionAdded = useBinding_collectionMetadataProperty(
+        collectionName,
         'added'
     );
 
@@ -62,7 +63,6 @@ function ResourceConfig({
             {entityType === 'materialization' ? (
                 <Box style={{ marginBottom: 16 }}>
                     <TrialOnlyPrefixAlert
-                        bindingUUID={bindingUUID}
                         messageId="workflows.error.oldBoundCollection.added"
                         triggered={Boolean(trialCollection && collectionAdded)}
                     />
@@ -93,7 +93,7 @@ function ResourceConfig({
 
             <Backfill
                 bindingIndex={draftedBindingIndex}
-                bindingUUID={bindingUUID}
+                collection={collectionName}
                 collectionEnabled={!collectionDisabled}
             />
 

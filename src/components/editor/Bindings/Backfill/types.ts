@@ -17,10 +17,10 @@ export interface BackfillDataflowOptionProps {
 export interface BackfillProps {
     bindingIndex: number;
     collectionEnabled: boolean;
-    bindingUUID?: string;
+    collection?: string;
 }
 
 export interface SectionWrapperProps extends BaseComponentProps {
     alertMessageId: string;
-    bindingUUID?: string;
+    collection?: string;
 }

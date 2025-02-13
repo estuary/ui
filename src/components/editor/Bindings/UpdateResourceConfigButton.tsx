@@ -43,11 +43,11 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
         const collections = value.map(({ name }) => name);
 
-        prefillResourceConfigs(collections, true, true);
+        prefillResourceConfigs(collections, true);
 
         evaluateTrialCollections(collections).then(
             (response) => {
-                setCollectionMetadata(response);
+                setCollectionMetadata(response, true);
             },
             () => {}
         );
