@@ -104,7 +104,7 @@ export const ConnectorAutoComplete = (
             renderInput={(textFieldProps) => (
                 <AutoCompleteInputWithStartAdornment
                     textFieldProps={textFieldProps}
-                    icon={
+                    startAdornment={
                         currentOption ? (
                             <ConnectorIcon
                                 iconPath={currentOption.value.iconPath}

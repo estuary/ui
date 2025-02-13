@@ -3,11 +3,13 @@ import { ReactNode } from 'react';
 
 interface Props {
     textFieldProps: AutocompleteRenderInputParams;
-    icon: ReactNode | undefined;
+    startAdornment: ReactNode | undefined;
 }
 
-function AutoCompleteInputWithStartAdornment({ icon, textFieldProps }: Props) {
-    textFieldProps.InputProps.startAdornment = icon;
+function AutoCompleteInputWithStartAdornment({
+    startAdornment: icon,
+    textFieldProps,
+}: Props) {
     if (icon) {
         textFieldProps.InputProps.startAdornment = (
             <Box style={{ paddingRight: 5 }}>{icon}</Box>

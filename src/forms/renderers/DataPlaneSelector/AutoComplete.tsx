@@ -119,7 +119,7 @@ export const DataPlaneAutoComplete = ({
             renderInput={(textFieldProps) => (
                 <AutoCompleteInputWithStartAdornment
                     textFieldProps={textFieldProps}
-                    icon={
+                    startAdornment={
                         currentOption ? (
                             <DataPlaneIcon
                                 provider={
