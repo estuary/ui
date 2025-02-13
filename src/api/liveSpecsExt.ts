@@ -23,8 +23,11 @@ import {
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
 } from 'types';
+import { getTrialDuration } from 'utils/env-utils';
 import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
 import { getCountSettings } from 'utils/table-utils';
+
+const { trialDuration } = getTrialDuration();
 
 const baseColumns = [
     'catalog_name',
@@ -448,7 +451,9 @@ const getTrialCollections = async (
     );
 
     const promiseGenerator = (idx: number) => {
-        const trialThreshold = DateTime.utc().minus({ days: 20 });
+        const trialThreshold = DateTime.utc().minus({
+            days: trialDuration,
+        });
         const catalogNameFilter = trialCollections
             .slice(idx, idx + CHUNK_SIZE)
             .map((name) => `catalog_name.eq.${name}`)

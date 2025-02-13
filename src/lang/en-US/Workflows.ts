@@ -10,9 +10,9 @@ export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
-    'workflows.error.oldBoundCollection.added': `Your account uses Estuary's Trial bucket which includes 20 days of storage and this collection is older than that. To ensure you have all data, please also backfill this collection from the source after adding it to the materialization.`,
-    'workflows.error.oldBoundCollection.backfillAll': `Your account uses Estuary's Trial bucket which includes 20 days of storage. There are collections bound to this materialization that are older than that.`,
-    'workflows.error.oldBoundCollection.backfill': `Your account uses Estuary's Trial bucket which includes 20 days of storage and this collection is older than that. Data will be missing if you backfill from the materialization so we recommend backfilling from the source.`,
+    'workflows.error.oldBoundCollection.added': `Your account uses Estuary's Trial bucket which includes {trialDuration} days of storage and this collection is older than that. To ensure you have all data, please also backfill this collection from the source after adding it to the materialization.`,
+    'workflows.error.oldBoundCollection.backfillAll': `Your account uses Estuary's Trial bucket which includes {trialDuration} days of storage. There are collections bound to this materialization that are older than that.`,
+    'workflows.error.oldBoundCollection.backfill': `Your account uses Estuary's Trial bucket which includes {trialDuration} days of storage and this collection is older than that. Data will be missing if you backfill from the materialization so we recommend backfilling from the source.`,
 
     'workflows.initTask.alert.title.initFailed': `Form Initialization Error`,
     'workflows.initTask.alert.message.initFailed': `An issue was encountered initializing the form. Try refreshing the page and if the issue persists {docLink}.`,
