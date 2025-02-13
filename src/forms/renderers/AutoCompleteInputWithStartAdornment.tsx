@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 interface Props {
     textFieldProps: AutocompleteRenderInputParams;
-    startAdornment: ReactNode | undefined;
+    startAdornment: ReactNode | null;
 }
 
 function AutoCompleteInputWithStartAdornment({
