@@ -9,7 +9,7 @@ function AutoCompleteInputWithStartAdornment({ icon, textFieldProps }: Props) {
     textFieldProps.InputProps.startAdornment = icon;
     if (icon) {
         textFieldProps.InputProps.startAdornment = (
-            <Box style={{ paddingRight: 10 }}>{icon}</Box>
+            <Box style={{ paddingRight: 5 }}>{icon}</Box>
         );
     }
 
