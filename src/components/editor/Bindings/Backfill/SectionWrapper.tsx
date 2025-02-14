@@ -35,9 +35,9 @@ export default function SectionWrapper({
         () =>
             !collection &&
             backfilledCollections.some((name) => {
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 return (
-                    collectionMetadata[name].trialStorage &&
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    collectionMetadata[name]?.trialStorage &&
                     isBeforeTrialInterval(collectionMetadata[name].updatedAt)
                 );
             }),

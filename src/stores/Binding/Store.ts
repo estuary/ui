@@ -937,10 +937,10 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                     const added = defaultAdded
                         ? defaultAdded
-                        : state.collectionMetadata[catalog_name].added;
+                        : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                          state.collectionMetadata[catalog_name]?.added;
 
                     state.collectionMetadata[catalog_name] = {
                         added,
