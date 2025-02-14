@@ -220,13 +220,3 @@ export const getEntityStatusSettings = () => {
         );
     }
 };
-
-export const getTrialDuration = () => {
-    const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
-
-    if (trialDuration) {
-        return { trialDuration };
-    } else {
-        throw new Error('Missing trial duration: VITE_TRIAL_DURATION');
-    }
-};

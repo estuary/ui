@@ -23,11 +23,10 @@ import {
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
 } from 'types';
-import { getTrialDuration } from 'utils/env-utils';
 import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
 import { getCountSettings } from 'utils/table-utils';
 
-const { trialDuration } = getTrialDuration();
+const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 
 const baseColumns = [
     'catalog_name',
