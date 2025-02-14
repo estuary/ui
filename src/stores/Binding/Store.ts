@@ -37,7 +37,11 @@ import { Entity, Schema } from 'types';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { formatCaptureInterval, parsePostgresInterval } from 'utils/time-utils';
-import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+} from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -59,7 +63,12 @@ import {
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from './slices/TimeTravel';
-import { BindingMetadata, BindingState, ResourceConfig } from './types';
+import {
+    BindingChanges,
+    BindingMetadata,
+    BindingState,
+    ResourceConfig,
+} from './types';
 
 const STORE_KEY = 'Bindings';
 
@@ -92,8 +101,13 @@ const hydrateSpecificationDependentState = async (
     get: StoreApi<BindingState>['getState'],
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
-): Promise<PostgrestError | null> => {
+): Promise<{
+    bindingChanges: BindingChanges;
+    error: PostgrestError | null;
+}> => {
     const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
+
+    let bindingChanges: BindingChanges = { addedCollections: [] };
 
     if (draftId) {
         const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
@@ -102,15 +116,16 @@ const hydrateSpecificationDependentState = async (
         );
 
         if (error || !draftSpecs || draftSpecs.length === 0) {
-            return (
-                error ?? {
+            return {
+                bindingChanges,
+                error: error ?? {
                     ...BASE_ERROR,
                     message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
-                }
-            );
+                },
+            };
         }
 
-        get().prefillBindingDependentState(
+        bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
             draftSpecs[0].spec.bindings
@@ -129,7 +144,10 @@ const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec?.onIncompatibleSchemaChange
         );
     } else {
-        get().prefillBindingDependentState(entityType, liveSpec.bindings);
+        bindingChanges = get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings
+        );
 
         get().setCaptureInterval(
             liveSpec?.interval ?? fallbackInterval,
@@ -141,7 +159,7 @@ const hydrateSpecificationDependentState = async (
         );
     }
 
-    return null;
+    return { bindingChanges, error: null };
 };
 
 const getInitialBindingData = (): Pick<
@@ -399,19 +417,20 @@ const getInitialState = (
                 );
             }
 
-            const draftSpecError = await hydrateSpecificationDependentState(
-                connectorTagResponse?.default_capture_interval,
-                entityType,
-                fallbackInterval,
-                get,
-                liveSpecs[0].spec,
-                searchParams
-            );
+            const specHydrationResponse =
+                await hydrateSpecificationDependentState(
+                    connectorTagResponse?.default_capture_interval,
+                    entityType,
+                    fallbackInterval,
+                    get,
+                    liveSpecs[0].spec,
+                    searchParams
+                );
 
-            if (draftSpecError) {
+            if (specHydrationResponse.error) {
                 get().setHydrationErrorsExist(true);
 
-                return Promise.reject(draftSpecError.message);
+                return Promise.reject(specHydrationResponse.error.message);
             }
 
             const boundCollections = Object.keys(get().bindings);
@@ -422,7 +441,10 @@ const getInitialState = (
                     getTrialOnlyPrefixes
                 );
 
-                get().setCollectionMetadata(trialCollections);
+                get().setCollectionMetadata(
+                    trialCollections,
+                    specHydrationResponse.bindingChanges.addedCollections
+                );
             }
         } else {
             get().setCaptureInterval(
@@ -533,6 +555,17 @@ const getInitialState = (
             false,
             'Binding dependent state prefilled'
         );
+
+        return {
+            addedCollections: draftedBindings
+                ? difference(
+                      draftedBindings.map((binding) =>
+                          getCollectionName(binding)
+                      ),
+                      liveBindings.map((binding) => getCollectionName(binding))
+                  )
+                : [],
+        };
     },
 
     prefillResourceConfigs: (targetCollections, disableOmit) => {
@@ -925,7 +958,7 @@ const getInitialState = (
         );
     },
 
-    setCollectionMetadata: (values, defaultAdded) => {
+    setCollectionMetadata: (values, addedCollections) => {
         if (!hasLength(values)) {
             return;
         }
@@ -937,10 +970,10 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    const added = defaultAdded
-                        ? defaultAdded
-                        : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                          state.collectionMetadata[catalog_name]?.added;
+                    const added =
+                        addedCollections.includes(catalog_name) ||
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        state.collectionMetadata[catalog_name]?.added;
 
                     state.collectionMetadata[catalog_name] = {
                         added,

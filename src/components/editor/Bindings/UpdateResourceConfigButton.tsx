@@ -47,7 +47,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
         evaluateTrialCollections(collections).then(
             (response) => {
-                setCollectionMetadata(response, true);
+                setCollectionMetadata(response, collections);
             },
             () => {}
         );

@@ -45,6 +45,10 @@ export interface ResourceConfigDictionary {
     [uuid: string]: ResourceConfig;
 }
 
+export interface BindingChanges {
+    addedCollections: string[];
+}
+
 export interface BindingState
     extends StoreWithHydration,
         StoreWithFieldSelection,
@@ -59,7 +63,7 @@ export interface BindingState
         liveBindings: Schema[],
         draftedBindings?: Schema[],
         rehydrating?: boolean
-    ) => void;
+    ) => BindingChanges;
 
     // The analog of resource config store action, `preFillEmptyCollections`.
     addEmptyBindings: (
@@ -122,7 +126,7 @@ export interface BindingState
     collectionMetadata: CollectionMetadataDictionary;
     setCollectionMetadata: (
         values: TrialCollectionQuery[],
-        defaultAdded?: boolean
+        addedCollections: string[]
     ) => void;
 
     // Control sourceCapture optional settings

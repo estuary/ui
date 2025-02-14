@@ -91,7 +91,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                             selectedRow.writes_to as string[]
                         );
 
-                    setCollectionMetadata(trialCollectionResponse, true);
+                    setCollectionMetadata(
+                        trialCollectionResponse,
+                        selectedRow.writes_to as string[]
+                    );
                 }
             }
 

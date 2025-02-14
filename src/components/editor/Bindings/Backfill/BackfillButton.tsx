@@ -162,7 +162,7 @@ function BackfillButton({
                             bindingMetadata.map(({ collection }) => collection)
                         ).then(
                             (response) => {
-                                setCollectionMetadata(response);
+                                setCollectionMetadata(response, []);
                             },
                             () => {}
                         );
