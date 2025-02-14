@@ -942,13 +942,12 @@ const getInitialState = (
                         ? defaultAdded
                         : state.collectionMetadata[catalog_name].added;
 
-                    const triggered =
-                        backfilledCollections.includes(catalog_name) || added;
-
                     state.collectionMetadata[catalog_name] = {
                         added,
                         sourceBackfillRecommended:
-                            triggered && isBeforeTrialInterval(updated_at),
+                            isBeforeTrialInterval(updated_at) &&
+                            (added ||
+                                backfilledCollections.includes(catalog_name)),
                         trialStorage: true,
                         updatedAt: updated_at,
                     };
