@@ -48,7 +48,6 @@ import {
     initializeCurrentBinding,
     populateResourceConfigErrors,
     sortResourceConfigs,
-    updateCollectionMetadata,
     whatChanged,
 } from './shared';
 import {
@@ -419,7 +418,7 @@ const getInitialState = (
 
             if (hasLength(boundCollections)) {
                 const trialCollections = await evaluateTrialCollections(
-                    Object.keys(boundCollections),
+                    boundCollections,
                     getTrialOnlyPrefixes
                 );
 
@@ -926,7 +925,7 @@ const getInitialState = (
         );
     },
 
-    setCollectionMetadata: (values, trackAddition) => {
+    setCollectionMetadata: (values, defaultAdded) => {
         if (!hasLength(values)) {
             return;
         }
@@ -938,23 +937,21 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    const added =
-                        trackAddition ||
-                        (Object.keys(state.collectionMetadata).includes(
-                            catalog_name
-                        ) &&
-                            state.collectionMetadata[catalog_name].added);
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    const added = defaultAdded
+                        ? defaultAdded
+                        : state.collectionMetadata[catalog_name].added;
 
                     const triggered =
                         backfilledCollections.includes(catalog_name) || added;
 
-                    updateCollectionMetadata(state, catalog_name, {
+                    state.collectionMetadata[catalog_name] = {
                         added,
                         sourceBackfillRecommended:
                             triggered && isBeforeTrialInterval(updated_at),
                         trialStorage: true,
                         updatedAt: updated_at,
-                    });
+                    };
                 });
             }),
             false,

@@ -21,10 +21,11 @@ export default function SectionWrapper({
 
     const entityType = useEntityType();
 
-    const bindingLevelAlertTriggered = useBinding_collectionMetadataProperty(
-        collection,
-        'sourceBackfillRecommended'
-    );
+    const bindingSourceBackfillRecommended =
+        useBinding_collectionMetadataProperty(
+            collection,
+            'sourceBackfillRecommended'
+        );
     const backfilledCollections = useBinding_backfilledCollections();
     const collectionMetadata = useBindingStore(
         useShallow((state) => state.collectionMetadata)
@@ -34,8 +35,8 @@ export default function SectionWrapper({
         () =>
             !collection &&
             backfilledCollections.some((name) => {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 return (
-                    Object.keys(collectionMetadata).includes(name) &&
                     collectionMetadata[name].trialStorage &&
                     isBeforeTrialInterval(collectionMetadata[name].updatedAt)
                 );
@@ -57,7 +58,12 @@ export default function SectionWrapper({
                         messageId={alertMessageId}
                         triggered={
                             collection
-                                ? Boolean(bindingLevelAlertTriggered)
+                                ? Boolean(
+                                      bindingSourceBackfillRecommended &&
+                                          backfilledCollections.includes(
+                                              collection
+                                          )
+                                  )
                                 : topLevelAlertTriggered
                         }
                     />

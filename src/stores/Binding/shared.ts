@@ -4,7 +4,6 @@ import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
 import {
     Bindings,
     BindingState,
-    CollectionMetadata,
     ResourceConfig,
     ResourceConfigDictionary,
 } from './types';
@@ -87,22 +86,6 @@ export const sortResourceConfigs = (
         });
 
     return sortedResources;
-};
-
-export const updateCollectionMetadata = (
-    state: BindingState,
-    collection: string,
-    metadata: CollectionMetadata
-) => {
-    if (Object.keys(state.collectionMetadata).includes(collection)) {
-        Object.entries(metadata).forEach(([property, value]) => {
-            state.collectionMetadata[collection][property] = value;
-        });
-
-        return;
-    }
-
-    state.collectionMetadata[collection] = metadata;
 };
 
 export const initializeBinding = (

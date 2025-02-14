@@ -122,7 +122,7 @@ export interface BindingState
     collectionMetadata: CollectionMetadataDictionary;
     setCollectionMetadata: (
         values: TrialCollectionQuery[],
-        trackAddition?: boolean
+        defaultAdded?: boolean
     ) => void;
 
     // Control sourceCapture optional settings
