@@ -6,7 +6,7 @@ import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useIntl } from 'react-intl';
 import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
-import SectionAlert from './SectionAlert';
+import SectionAlertIndicator from './SectionAlertIndicator';
 import { CollectionConfigProps } from './types';
 
 function CollectionConfig({
@@ -20,7 +20,10 @@ function CollectionConfig({
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
 
     return (
-        <WrapperWithHeader hideBorder={hideBorder} header={<SectionAlert />}>
+        <WrapperWithHeader
+            hideBorder={hideBorder}
+            header={<SectionAlertIndicator />}
+        >
             <ErrorBoundryWrapper>
                 {bindingHydrationErrorsExist ? (
                     <AlertBox

@@ -10,7 +10,7 @@ import {
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
 
-export default function SectionAlert() {
+export default function SectionAlertIndicator() {
     const intl = useIntl();
     const theme = useTheme();
 
