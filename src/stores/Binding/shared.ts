@@ -1,7 +1,21 @@
+import { PostgrestError } from '@supabase/postgrest-js';
+import { getDraftSpecsByDraftId } from 'api/draftSpecs';
+import { getSchema_Resource } from 'api/hydration';
+import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import { difference, intersection } from 'lodash';
+import { BASE_ERROR } from 'services/supabase';
+import { getInitialHydrationData } from 'stores/extensions/Hydration';
 import { populateErrors } from 'stores/utils';
+import { Entity, Schema } from 'types';
+import { hasLength } from 'utils/misc-utils';
+import { formatCaptureInterval } from 'utils/time-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
+import { StoreApi } from 'zustand';
+import { getInitialFieldSelectionData } from './slices/FieldSelection';
+import { getInitialTimeTravelData } from './slices/TimeTravel';
 import {
+    BindingChanges,
     Bindings,
     BindingState,
     ResourceConfig,
@@ -196,3 +210,162 @@ export const initializeAndGenerateUUID = (
         UUID,
     };
 };
+
+export const STORE_KEY = 'Bindings';
+
+export const hydrateConnectorTagDependentState = async (
+    connectorTagId: string,
+    get: StoreApi<BindingState>['getState']
+): Promise<Schema | null> => {
+    if (!hasLength(connectorTagId)) {
+        return null;
+    }
+
+    const { data, error } = await getSchema_Resource(connectorTagId);
+
+    if (error) {
+        get().setHydrationErrorsExist(true);
+    } else if (data?.resource_spec_schema) {
+        const schema = data.resource_spec_schema as unknown as Schema;
+        await get().setResourceSchema(schema);
+
+        get().setBackfillSupported(!Boolean(data.disable_backfill));
+    }
+
+    return data;
+};
+
+export const hydrateSpecificationDependentState = async (
+    defaultInterval: string | null | undefined,
+    entityType: Entity,
+    fallbackInterval: string | null,
+    get: StoreApi<BindingState>['getState'],
+    liveSpec: LiveSpecsExtQuery['spec'],
+    searchParams: URLSearchParams
+): Promise<{
+    bindingChanges: BindingChanges;
+    error: PostgrestError | null;
+}> => {
+    const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
+
+    let bindingChanges: BindingChanges = { addedCollections: [] };
+
+    if (draftId) {
+        const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
+            draftId,
+            entityType
+        );
+
+        if (error || !draftSpecs || draftSpecs.length === 0) {
+            return {
+                bindingChanges,
+                error: error ?? {
+                    ...BASE_ERROR,
+                    message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
+                },
+            };
+        }
+
+        bindingChanges = get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings,
+            draftSpecs[0].spec.bindings
+        );
+
+        const targetInterval = draftSpecs[0].spec?.interval;
+
+        get().setCaptureInterval(
+            targetInterval
+                ? formatCaptureInterval(targetInterval)
+                : fallbackInterval,
+            defaultInterval
+        );
+
+        get().setSpecOnIncompatibleSchemaChange(
+            draftSpecs[0].spec?.onIncompatibleSchemaChange
+        );
+    } else {
+        bindingChanges = get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings
+        );
+
+        get().setCaptureInterval(
+            liveSpec?.interval ?? fallbackInterval,
+            defaultInterval
+        );
+
+        get().setSpecOnIncompatibleSchemaChange(
+            liveSpec?.onIncompatibleSchemaChange
+        );
+    }
+
+    return { bindingChanges, error: null };
+};
+
+export const getInitialBindingData = (): Pick<
+    BindingState,
+    'bindingErrorsExist' | 'bindings' | 'currentBinding'
+> => ({
+    bindingErrorsExist: false,
+    bindings: {},
+    currentBinding: null,
+});
+
+export const getInitialMiscData = (): Pick<
+    BindingState,
+    | 'backfilledBindings'
+    | 'backfillAllBindings'
+    | 'backfillDataFlow'
+    | 'backfillDataFlowTarget'
+    | 'backfillSupported'
+    | 'captureInterval'
+    | 'collectionMetadata'
+    | 'collectionsRequiringRediscovery'
+    | 'defaultCaptureInterval'
+    | 'discoveredCollections'
+    | 'evolvedCollections'
+    | 'onIncompatibleSchemaChange'
+    | 'onIncompatibleSchemaChangeErrorExists'
+    | 'rediscoveryRequired'
+    | 'resourceConfigErrorsExist'
+    | 'resourceConfigErrors'
+    | 'resourceConfigs'
+    | 'resourceSchema'
+    | 'restrictedDiscoveredCollections'
+    | 'serverUpdateRequired'
+    | 'resourceConfigPointers'
+> => ({
+    backfillAllBindings: false,
+    backfillDataFlowTarget: null,
+    backfillDataFlow: false,
+    backfillSupported: true,
+    backfilledBindings: [],
+    captureInterval: null,
+    collectionMetadata: {},
+    collectionsRequiringRediscovery: [],
+    defaultCaptureInterval: null,
+    discoveredCollections: [],
+    evolvedCollections: [],
+    onIncompatibleSchemaChange: undefined,
+    onIncompatibleSchemaChangeErrorExists: {
+        binding: false,
+        spec: false,
+    },
+    rediscoveryRequired: false,
+    resourceConfigErrorsExist: false,
+    resourceConfigErrors: [],
+    resourceConfigs: {},
+    resourceSchema: {},
+    restrictedDiscoveredCollections: [],
+    serverUpdateRequired: false,
+    resourceConfigPointers: undefined,
+});
+
+export const getInitialStoreData = () => ({
+    ...getInitialBindingData(),
+    ...getInitialFieldSelectionData(),
+    ...getInitialHydrationData(),
+    ...getInitialMiscData(),
+    ...getInitialTimeTravelData(),
+});

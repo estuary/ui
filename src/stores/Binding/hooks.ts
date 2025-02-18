@@ -1,3 +1,4 @@
+import { hasLength } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import {
     getCollectionNames,
@@ -367,4 +368,16 @@ export const useBinding_collectionsBeingBackfilled = () =>
                     .collectionName;
             });
         })
+    );
+
+export const useBinding_sourceCaptureFlags = () =>
+    useBindingStore(
+        useShallow((state) => ({
+            sourceCaptureDeltaUpdatesSupported: hasLength(
+                state.resourceConfigPointers?.x_delta_updates
+            ),
+            sourceCaptureTargetSchemaSupported: hasLength(
+                state.resourceConfigPointers?.x_schema_name
+            ),
+        }))
     );

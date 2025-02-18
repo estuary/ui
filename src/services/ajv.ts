@@ -1,5 +1,10 @@
+import {
+    get_resource_config_pointers,
+    update_materialization_resource_spec,
+} from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
+import { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 
@@ -82,17 +87,21 @@ function defaultResourceSchema(resourceSchema: any, collection: string) {
     }
 }
 
+export function createJSONFormDefaults(jsonSchema: any): DefaultAjvResponse;
 export function createJSONFormDefaults(
     jsonSchema: any,
-    collection?: string
-): {
-    data: any;
-    errors: any[];
-} {
+    collection: string,
+    dataDefaults: Schema
+): DefaultAjvResponse;
+export function createJSONFormDefaults(
+    jsonSchema: any,
+    collection?: string,
+    dataDefaults?: Schema
+): DefaultAjvResponse {
     // We start with an empty object, and then validate it to set any default values.
     // Note that this requires all parent properties to also specify a `default` in the json
     // schema.
-    const data = {};
+    const data = dataDefaults ?? {};
 
     // Get the schema we want.
     //  If collection then we want to generate a Resource Schema
@@ -114,42 +123,73 @@ export function createJSONFormDefaults(
     return { data, errors };
 }
 
-// TODO (web flow wasm) This should be fetched with WASM code
-//  waiting on https://github.com/estuary/flow/issues/1760
+// TODO (web flow wasm - source capture)
+// Maybe we can get this type from wasm?
 export interface ResourceConfigPointers {
-    [Annotations.defaultResourceConfigName]?: boolean;
-    [Annotations.targetSchema]?: boolean;
-    [Annotations.deltaUpdates]?: boolean;
+    ['x_collection_name']: string | undefined;
+    ['x_schema_name']: string | undefined;
+    ['x_delta_updates']: string | undefined;
 }
 
-export const findKeysInObject = (
-    obj: Record<string, any>,
-    keysToFind: string[],
-    results: ResourceConfigPointers = {}
-): ResourceConfigPointers => {
-    // Iterate over each key in the object
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const value = obj[key];
+export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
+    const response = {
+        ...arg,
+    };
 
-            // Check if the key is one of the keys we're searching for
-            if (keysToFind.includes(key)) {
-                results[key] = value;
-            }
-
-            // If the value is an object, recurse into it
-            if (value && typeof value === 'object') {
-                findKeysInObject(value, keysToFind, results);
-            }
-        }
+    // These are optional locally and in the spec.
+    //  But when calling WASM we want to make sure they're always there
+    if (!response.deltaUpdates) {
+        response.deltaUpdates = false;
     }
 
-    return results;
+    if (!response.targetSchema) {
+        response.targetSchema = 'leaveEmpty';
+    }
+
+    return response;
 };
 
-export const getResourceConfigPointers = (schema: any) =>
-    findKeysInObject(schema, [
-        Annotations.defaultResourceConfigName,
-        Annotations.targetSchema,
-        Annotations.deltaUpdates,
-    ]);
+export const getResourceConfigPointers = (
+    schema: any
+): ResourceConfigPointers | null => {
+    try {
+        const response = get_resource_config_pointers(schema);
+
+        if (!response.pointers) {
+            return null;
+        }
+
+        return response.pointers;
+
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        return null;
+    }
+};
+
+export const generateMaterializationResourceSpec = (
+    sourceCapture: SourceCaptureDef,
+    resourceSpecPointers: ResourceConfigPointers,
+    collectionName: string
+) => {
+    try {
+        // TODO (web flow wasm - source capture)
+        // We need to do some better error handling here
+        const response = update_materialization_resource_spec({
+            resourceSpecPointers,
+            collectionName,
+            resourceSpec: {},
+            sourceCapture: prepareSourceCaptureForServer(sourceCapture),
+        });
+
+        if (!response) {
+            return null;
+        }
+
+        return JSON.parse(response);
+
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        return null;
+    }
+};

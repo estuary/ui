@@ -2,6 +2,8 @@ import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 import { useShowSidePanelDocs } from 'context/SidePanelDocs';
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import SidePanelIframe from './Iframe';
 
 interface Props {
@@ -42,6 +44,9 @@ function DocsSidePanel({ show }: Props) {
                 <IconButton
                     size="small"
                     onClick={() => {
+                        logRocketEvent(CustomEvents.HELP_DOCS, {
+                            show: false,
+                        });
                         setShowDocs(false);
                     }}
                     sx={{ color: (theme) => theme.palette.text.primary }}

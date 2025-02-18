@@ -32,10 +32,10 @@ import {
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { MaterialInputControl } from '@jsonforms/material-renderers';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import { ConnectorAutoComplete } from 'forms/renderers/ConnectorSelect/AutoComplete';
+import { CustomMaterialInputControl } from './Overrides/material/controls/MaterialInputControl';
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 
@@ -44,11 +44,12 @@ export const connectorTypeTester: RankedTester = rankWith(
     and(isOneOfEnumControl, scopeEndsWith(CONNECTOR_IMAGE_SCOPE))
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const ConnectorTypeRenderer = (
     props: ControlProps & OwnPropsOfEnum & WithOptionLabel
 ) => {
-    return <MaterialInputControl {...props} input={ConnectorAutoComplete} />;
+    return (
+        <CustomMaterialInputControl {...props} input={ConnectorAutoComplete} />
+    );
 };
 
 export const ConnectorType = withJsonFormsOneOfEnumProps(ConnectorTypeRenderer);

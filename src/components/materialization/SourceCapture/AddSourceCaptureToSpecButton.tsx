@@ -3,7 +3,10 @@ import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_prefillResourceConfigs } from 'stores/Binding/hooks';
+import {
+    useBinding_prefillResourceConfigs,
+    useBinding_sourceCaptureFlags,
+} from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { SourceCaptureDef } from 'types';
@@ -24,13 +27,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const setCollectionMetadata = useBindingStore(
         (state) => state.setCollectionMetadata
     );
-    const [
+    const {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
-    ] = useBindingStore((state) => [
-        state.sourceCaptureDeltaUpdatesSupported,
-        state.sourceCaptureTargetSchemaSupported,
-    ]);
+    } = useBinding_sourceCaptureFlags();
 
     const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
         useSourceCaptureStore((state) => [
@@ -84,7 +84,11 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 setSourceCapture(updatedSourceCapture.capture);
 
                 if (selectedRow?.writes_to) {
-                    prefillResourceConfigs(selectedRow.writes_to, true);
+                    prefillResourceConfigs(
+                        selectedRow.writes_to,
+                        true,
+                        updatedSourceCapture
+                    );
 
                     const trialCollectionResponse =
                         await evaluateTrialCollections(

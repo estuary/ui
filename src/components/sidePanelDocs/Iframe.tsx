@@ -72,7 +72,7 @@ function SidePanelIframe({ show }: Props) {
     }, [docsURL, iframeCurrent, setAnimateOpening, show]);
 
     // Make sure we don't include an iframe unless we actually need it
-    if (!hasLength(docsURL)) {
+    if (!hasLength(docsURL) || !show) {
         return null;
     }
 
