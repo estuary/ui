@@ -1,89 +1,36 @@
-import { Typography, useTheme } from '@mui/material';
+import { Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
 import AlertBox from 'components/shared/AlertBox';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { WarningCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
-import {
-    useBinding_bindingErrorsExist,
-    useBinding_fullSourceErrorsExist,
-    useBinding_hydrationErrorsExist,
-    useBinding_resourceConfigErrorsExist,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
-
-interface Props {
-    draftSpecs: DraftSpecQuery[];
-    readOnly?: boolean;
-    hideBorder?: boolean;
-    RediscoverButton?: ReactNode;
-}
+import { useIntl } from 'react-intl';
+import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
+import SectionAlert from './SectionAlert';
+import { CollectionConfigProps } from './types';
 
 function CollectionConfig({
     draftSpecs,
     readOnly = false,
     hideBorder,
     RediscoverButton,
-}: Props) {
-    const theme = useTheme();
+}: CollectionConfigProps) {
+    const intl = useIntl();
 
-    // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
-    const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
-    const bindingErrorsExist = useBinding_bindingErrorsExist();
-    const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
-    const sourceBackfillRecommended = useBindingStore((state) =>
-        Object.values(state.collectionMetadata).some(
-            (meta) => meta.sourceBackfillRecommended
-        )
-    );
-
-    // Form State Store
-    const messagePrefix = useFormStateStore_messagePrefix();
-
-    const hasErrors =
-        bindingHydrationErrorsExist ||
-        resourceConfigErrorsExist ||
-        fullSourceErrorsExist;
-
-    const hasWarnings = bindingErrorsExist || sourceBackfillRecommended;
 
     return (
-        <WrapperWithHeader
-            hideBorder={hideBorder}
-            header={
-                <>
-                    {hasErrors || hasWarnings ? (
-                        <WarningCircle
-                            style={{
-                                marginRight: 4,
-                                fontSize: 12,
-                                color: hasErrors
-                                    ? theme.palette.error.main
-                                    : theme.palette.warning.main,
-                            }}
-                        />
-                    ) : null}
-
-                    <Typography variant="subtitle1">
-                        <FormattedMessage
-                            id={`${messagePrefix}.collections.heading`}
-                        />
-                    </Typography>
-                </>
-            }
-        >
+        <WrapperWithHeader hideBorder={hideBorder} header={<SectionAlert />}>
             <ErrorBoundryWrapper>
                 {bindingHydrationErrorsExist ? (
                     <AlertBox
                         severity="error"
                         title={
-                            <FormattedMessage id="workflows.error.initFormSection" />
+                            <Typography component="span">
+                                {intl.formatMessage({
+                                    id: 'workflows.error.initFormSection',
+                                })}
+                            </Typography>
                         }
                         short
                     >
