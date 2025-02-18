@@ -45,6 +45,7 @@ import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
+import { ISO_8601_DURATION_RE } from 'validation';
 import {
     ADVANCED,
     allowedNullableTypes,
@@ -80,8 +81,10 @@ const addTitle = (
 };
 
 type DateTimeFormats = 'date' | 'date-time' | 'time';
+type HandledFormats = 'duration';
+
 const schemaHasFormat = (
-    format: DateTimeFormats,
+    format: DateTimeFormats | HandledFormats,
     schema: JsonSchema
 ): boolean => {
     if (Object.hasOwn(schema, 'format')) {
@@ -432,7 +435,10 @@ const generateUISchema = (
     rootGenerating: boolean,
     rootSchema?: JsonSchema
 ): UISchemaElement => {
+    console.log(`${jsonSchema.description} >>>>>`, jsonSchema.pattern);
+
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
+        console.log('calling generate 21222 >>>>>', jsonSchema);
         return generateUISchema(
             resolveSchema(
                 rootSchema as JsonSchema,
@@ -614,6 +620,7 @@ const generateUISchema = (
                     );
                 }
 
+                console.log('calling generateUISchema >>>>>', value);
                 return generateUISchema(
                     value,
                     layout.elements,
@@ -651,6 +658,8 @@ const generateUISchema = (
             addOption(controlObject, Options.format, Formats.date);
         } else if (schemaHasFormat('time', jsonSchema)) {
             addOption(controlObject, Options.format, Formats.time);
+        } else if (schemaHasFormat('duration', jsonSchema)) {
+            jsonSchema.pattern ??= ISO_8601_DURATION_RE.toString();
         }
     }
 

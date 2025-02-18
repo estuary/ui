@@ -39,6 +39,10 @@ function EndpointConfigForm({ readOnly }: Props) {
 
     const categoryLikeSchema = useMemo(() => {
         if (!isEmpty(endpointSchema)) {
+            console.log(
+                'calling custom_generateDefaultUISchema >>>>>',
+                endpointSchema
+            );
             return custom_generateDefaultUISchema(endpointSchema);
         } else {
             return null;
