@@ -86,37 +86,32 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
                 return (
                     <Input
                         {...textFieldProps.InputProps}
-                        inputProps={textFieldProps.inputProps}
+                        inputProps={{
+                            ...textFieldProps.inputProps,
+                            style: {
+                                ...(textFieldProps.inputProps.style ?? {}),
+                                textTransform: 'uppercase',
+                            },
+                        }}
                         fullWidth={textFieldProps.fullWidth}
                         disabled={textFieldProps.disabled}
-                        defaultValue={data}
-                        value={inputValue}
+                        style={{ textTransform: 'uppercase' }}
                     />
                 );
             }}
-            slotProps={{
-                popper: {
-                    sx: {
-                        '& .MuiAutocomplete-listbox': {
-                            p: 0,
-                        },
-                    },
-                },
-            }}
+            includeInputInList
             sx={{
                 mt: 2,
             }}
             value={currentOption}
             onInputChange={(_event, newInputValue) => {
-                console.log('newInputValue', newInputValue);
+                // Do NOT set the input value to upper case. This can cause the
+                //  cursor to move to the end of the string. We handle showing
+                //  uppercase with styling
+                setInputValue(newInputValue);
 
-                const newInputValueUpper = newInputValue
-                    ? newInputValue.toUpperCase()
-                    : '';
+                const newInputValueUpper = newInputValue.toUpperCase();
 
-                // Do ahead and make sure the input is updated and show to the user
-                //  that was are upper casing the input
-                setInputValue(newInputValueUpper);
                 handleChange(
                     path,
                     // See if we need to format the string and if so just assume they are entering TIME
