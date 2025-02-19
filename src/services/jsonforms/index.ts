@@ -45,7 +45,7 @@ import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
 import JsonRefs from 'json-refs';
-import { ISO_8601_DURATION_RE } from 'validation';
+import { ISO_8601_DURATION_PATTERN } from 'validation';
 import {
     ADVANCED,
     allowedNullableTypes,
@@ -659,7 +659,7 @@ const generateUISchema = (
         } else if (schemaHasFormat('time', jsonSchema)) {
             addOption(controlObject, Options.format, Formats.time);
         } else if (schemaHasFormat('duration', jsonSchema)) {
-            jsonSchema.pattern ??= ISO_8601_DURATION_RE.toString();
+            jsonSchema.pattern ??= ISO_8601_DURATION_PATTERN;
         }
     }
 

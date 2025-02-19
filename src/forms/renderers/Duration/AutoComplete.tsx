@@ -32,7 +32,7 @@ import {
     FilterOptionsState,
     Input,
 } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { ISO_8601_DURATION_RE } from 'validation';
 
 export interface WithOptionLabel {
@@ -67,9 +67,10 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
 
     const [inputValue, setInputValue] = React.useState(data);
 
-    console.log('props', props);
-    console.log('data', data);
-    console.log('inputValue', inputValue);
+    const currentOption = useMemo(
+        () => (DURATION_OPTIONS.includes(data) ? data : null),
+        [data]
+    );
 
     return (
         <Autocomplete
@@ -80,34 +81,16 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
             fullWidth
             id={id}
             inputValue={inputValue}
-            onInputChange={(_event, newInputValue) => {
-                console.log('newInputValue', newInputValue);
-
-                const newInputValueUpper = newInputValue
-                    ? newInputValue.toUpperCase()
-                    : '';
-
-                // Do ahead and make sure the input is updated and show to the user
-                //  that was are upper casing the input
-                setInputValue(newInputValueUpper);
-
-                handleChange(
-                    path,
-                    // See if we need to format the string and if so just assume they are entering TIME
-                    ISO_8601_DURATION_RE.test(newInputValueUpper)
-                        ? newInputValueUpper
-                        : `PT${newInputValueUpper}`
-                );
-            }}
+            options={DURATION_OPTIONS}
             renderInput={(textFieldProps) => {
-                console.log('textFieldProps', textFieldProps);
-
                 return (
                     <Input
                         {...textFieldProps.InputProps}
                         inputProps={textFieldProps.inputProps}
                         fullWidth={textFieldProps.fullWidth}
                         disabled={textFieldProps.disabled}
+                        defaultValue={data}
+                        value={inputValue}
                     />
                 );
             }}
@@ -123,8 +106,27 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
             sx={{
                 mt: 2,
             }}
-            options={DURATION_OPTIONS}
-            // value={currentOption}
+            value={currentOption}
+            onInputChange={(_event, newInputValue) => {
+                console.log('newInputValue', newInputValue);
+
+                const newInputValueUpper = newInputValue
+                    ? newInputValue.toUpperCase()
+                    : '';
+
+                // Do ahead and make sure the input is updated and show to the user
+                //  that was are upper casing the input
+                setInputValue(newInputValueUpper);
+                handleChange(
+                    path,
+                    // See if we need to format the string and if so just assume they are entering TIME
+                    `${
+                        ISO_8601_DURATION_RE.test(newInputValueUpper)
+                            ? ''
+                            : 'PT'
+                    }${newInputValueUpper}`
+                );
+            }}
         />
     );
 };

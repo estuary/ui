@@ -10,12 +10,18 @@ export const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
 export const NUMERIC_RE = RegExp(`^[0-9]+$`);
 export const POSTGRES_INTERVAL_RE = new RegExp(`^[0-9]{2}:[0-9]{2}:[0-9]{2}$`);
 export const DURATION_RE = new RegExp(/^[0-9]+(h|m|s){1}$/);
-export const ISO_8601_DURATION_RE = new RegExp(
-    // /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/
-    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
-);
 export const CAPTURE_INTERVAL_RE = new RegExp(
     /^([0-9]+h)? ?([0-9]+m)? ?([0-9]+s)?$/
+);
+export const ISO_8601_DURATION_RE = new RegExp(
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
+);
+export const ISO_8601_DURATION_RE_STRING = ISO_8601_DURATION_RE.toString();
+// Need the pattern with the slashes removed for JSON Forms. Passing a pattern string in was not working as
+// the escaped characters kept getting removed
+export const ISO_8601_DURATION_PATTERN = ISO_8601_DURATION_RE_STRING.substring(
+    1,
+    ISO_8601_DURATION_RE_STRING.length - 1
 );
 
 // Based on the patterns connectors use for date time
