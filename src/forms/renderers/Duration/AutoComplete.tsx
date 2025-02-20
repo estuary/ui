@@ -32,7 +32,8 @@ import {
     FilterOptionsState,
     Input,
 } from '@mui/material';
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
+import { detectAutoCompleteInputReset } from 'utils/mui-utils';
 import { ISO_8601_DURATION_RE } from 'validation';
 
 export interface WithOptionLabel {
@@ -65,36 +66,53 @@ const DURATION_OPTIONS = [
 export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
     const { data, className, id, enabled, path, handleChange } = props;
 
+    const position = useRef({
+        beforeStart: 0,
+        beforeEnd: 0,
+    });
     const [inputValue, setInputValue] = React.useState(data);
+    const inputRef = useRef<any | null>(null);
 
     const currentOption = useMemo(
         () => (DURATION_OPTIONS.includes(data) ? data : null),
         [data]
     );
 
+    useLayoutEffect(() => {
+        // Make sure the cursor stays where we want it
+        inputRef.current?.setSelectionRange?.(
+            position.current.beforeStart,
+            position.current.beforeEnd
+        );
+    }, [inputValue]);
+
     return (
         <Autocomplete
             autoComplete
+            blurOnSelect
             className={className}
             disabled={!enabled}
             freeSolo
             fullWidth
             id={id}
             inputValue={inputValue}
+            ref={inputRef}
             options={DURATION_OPTIONS}
-            renderInput={(textFieldProps) => {
+            renderInput={({ InputProps, disabled, fullWidth, inputProps }) => {
+                // We want to use MUI's ref because they are using that to handle
+                //  some interactions for us
+                if (!inputRef.current) {
+                    inputRef.current = InputProps.ref;
+                }
+
                 return (
                     <Input
-                        {...textFieldProps.InputProps}
+                        {...InputProps}
                         inputProps={{
-                            ...textFieldProps.inputProps,
-                            style: {
-                                ...(textFieldProps.inputProps.style ?? {}),
-                                textTransform: 'uppercase',
-                            },
+                            ...inputProps,
                         }}
-                        fullWidth={textFieldProps.fullWidth}
-                        disabled={textFieldProps.disabled}
+                        fullWidth={fullWidth}
+                        disabled={disabled}
                         style={{ textTransform: 'uppercase' }}
                     />
                 );
@@ -104,22 +122,45 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
                 mt: 2,
             }}
             value={currentOption}
-            onInputChange={(_event, newInputValue) => {
-                // Do NOT set the input value to upper case. This can cause the
-                //  cursor to move to the end of the string. We handle showing
-                //  uppercase with styling
-                setInputValue(newInputValue);
+            onInputChange={(event, newInputValue, reason) => {
+                // If the user is typing we want to upper case since the duration pattern is all
+                //  capital letters. If they select one we should just leave it
+                const newInputValueUpper = detectAutoCompleteInputReset(reason)
+                    ? newInputValue
+                    : newInputValue.toUpperCase();
 
-                const newInputValueUpper = newInputValue.toUpperCase();
+                setInputValue(newInputValueUpper);
 
+                // If the input is cleared out for any reason so ahead and set null
+                //  so we know the field is empty
+                if (newInputValueUpper === '') {
+                    setInputValue(newInputValue);
+                    handleChange(path, null);
+                    return;
+                }
+
+                // @ts-expect-error these props were always there and we are using a normal input
+                // Just adding an if here because the typing seems wrong from MUI but want to be safe
+                if (event.target.selectionStart && event.target.selectionEnd) {
+                    // Save off where the cursor was when they typed so we can put it back
+                    //  since we are upper casing the input value
+                    position.current = {
+                        // @ts-expect-error see up above
+                        beforeStart: event.target.selectionStart,
+
+                        // @ts-expect-error see up above
+                        beforeEnd: event.target.selectionEnd,
+                    };
+                }
+
+                // Updating with the proper value and see if we need to make it match the duration format
                 handleChange(
                     path,
-                    // See if we need to format the string and if so just assume they are entering TIME
                     `${
                         ISO_8601_DURATION_RE.test(newInputValueUpper)
                             ? ''
                             : 'PT'
-                    }${newInputValueUpper}`
+                    }${newInputValueUpper}`.toUpperCase()
                 );
             }}
         />
