@@ -151,16 +151,14 @@ function BackfillButton({
                     increment,
                     bindingMetadata
                 ).then(
-                    () => {
+                    (processedCollections) => {
                         const targetBindingUUID = singleBindingUpdate
                             ? currentBindingUUID
                             : undefined;
 
                         setBackfilledBindings(increment, targetBindingUUID);
 
-                        evaluateTrialCollections(
-                            bindingMetadata.map(({ collection }) => collection)
-                        ).then(
+                        evaluateTrialCollections(processedCollections).then(
                             (response) => {
                                 setCollectionMetadata(response, []);
                             },

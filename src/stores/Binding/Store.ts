@@ -820,6 +820,7 @@ const getInitialState = (
                         sourceBackfillRecommended:
                             isBeforeTrialInterval(updated_at) &&
                             (added ||
+                                state.backfillAllBindings ||
                                 backfilledCollections.includes(catalog_name)),
                         trialStorage: true,
                         updatedAt: updated_at,

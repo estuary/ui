@@ -135,7 +135,15 @@ function useUpdateBackfillCounter() {
                 return Promise.reject(updateResponse.error);
             }
 
-            return mutateDraftSpecs();
+            const mutateResponse = await mutateDraftSpecs();
+
+            if (!mutateResponse) {
+                return Promise.reject();
+            }
+
+            return bindingMetadataExists
+                ? bindingMetadata.map(({ collection }) => collection)
+                : Object.keys(bindings);
         },
         [
             backfilledBindings,
