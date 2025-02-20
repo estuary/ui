@@ -33,10 +33,10 @@ import {
     MenuList,
     Typography,
 } from '@mui/material';
-import merge from 'lodash/merge';
+import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
 import React, { ReactNode, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import DataPlaneInput from './Input';
+import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 import Option from './Option';
 
 export interface WithOptionLabel {
@@ -61,23 +61,20 @@ export const DataPlaneAutoComplete = ({
     className,
     id,
     enabled,
-    uischema,
     path,
     options,
-    config,
     handleChange,
     getOptionLabel,
     filterOptions,
 }: EnumCellProps & WithClassname & WithOptionLabel) => {
     const intl = useIntl();
 
-    const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
     const currentOption = useMemo(
         () =>
             options?.find((option) => {
                 return areOptionsEqual(option.value, data);
-            }) ?? null,
+            }) ?? undefined,
         [data, options]
     );
 
@@ -87,6 +84,7 @@ export const DataPlaneAutoComplete = ({
             className={className}
             clearOnBlur
             disabled={!enabled}
+            disableClearable
             filterOptions={filterOptions}
             fullWidth
             getOptionLabel={getOptionLabel ?? ((option) => option.label)}
@@ -118,17 +116,21 @@ export const DataPlaneAutoComplete = ({
                     <MenuList style={{ padding: 0 }}>{children}</MenuList>
                 </li>
             )}
-            renderInput={({ inputProps, InputProps }) => {
-                return (
-                    <DataPlaneInput
-                        inputProps={inputProps}
-                        InputProps={InputProps}
-                        appliedUiSchemaOptions={appliedUiSchemaOptions}
-                        enabled={enabled}
-                        currentOption={currentOption}
-                    />
-                );
-            }}
+            renderInput={(textFieldProps) => (
+                <AutoCompleteInputWithStartAdornment
+                    textFieldProps={textFieldProps}
+                    startAdornment={
+                        currentOption ? (
+                            <DataPlaneIcon
+                                provider={
+                                    currentOption.value.dataPlaneName.provider
+                                }
+                                scope={currentOption.value.scope}
+                            />
+                        ) : null
+                    }
+                />
+            )}
             renderOption={(renderOptionProps, option) => {
                 return (
                     <Option
