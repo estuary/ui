@@ -1,5 +1,5 @@
 import { Container, Paper, Snackbar, useTheme } from '@mui/material';
-import Topbar from 'components/navigation/TopBar';
+import TopBar from 'components/navigation/TopBar';
 import { paperBackground } from 'context/Theme';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import useNotificationStore, {
@@ -108,7 +108,7 @@ function PageContainer({ children, hideBackground }: Props) {
                 </Snackbar>
             ) : null}
 
-            <Topbar />
+            <TopBar />
 
             <Paper
                 sx={{

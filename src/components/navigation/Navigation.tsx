@@ -23,17 +23,16 @@ import {
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { useTopBarStore } from 'stores/TopBar/Store';
 import ListItemLink from './ListItemLink';
-
-interface NavigationProps {
-    open: boolean;
-    width: number;
-    onNavigationToggle: Function;
-}
+import { BANNER_HEIGHT } from './shared';
+import { NavigationProps } from './types';
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
+
+    const bannerOpen = useTopBarStore((state) => state.bannerOpen);
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -70,6 +69,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 sx={{
                     height: '100%',
                     justifyContent: 'space-between',
+                    marginTop: bannerOpen
+                        ? `${BANNER_HEIGHT - 8}px`
+                        : undefined,
                     overflowX: 'hidden',
                 }}
             >
