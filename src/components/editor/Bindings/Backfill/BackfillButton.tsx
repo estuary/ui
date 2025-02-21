@@ -22,6 +22,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
@@ -58,6 +59,9 @@ function BackfillButton({
 
     const setCollectionMetadata = useBindingStore(
         (state) => state.setCollectionMetadata
+    );
+    const setSourceBackfillRecommended = useBindingStore(
+        (state) => state.setSourceBackfillRecommended
     );
 
     // Draft Editor Store
@@ -167,6 +171,13 @@ function BackfillButton({
                             () => {}
                         );
 
+                        if (hasLength(changes.counterDecremented)) {
+                            setSourceBackfillRecommended(
+                                changes.counterDecremented,
+                                false
+                            );
+                        }
+
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -191,6 +202,7 @@ function BackfillButton({
             setBackfilledBindings,
             setCollectionMetadata,
             setFormState,
+            setSourceBackfillRecommended,
             updateBackfillCounter,
         ]
     );

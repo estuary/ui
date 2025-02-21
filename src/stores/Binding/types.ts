@@ -135,6 +135,10 @@ export interface BindingState
         values: TrialCollectionQuery[],
         addedCollections: string[]
     ) => void;
+    setSourceBackfillRecommended: (
+        collections: string[],
+        value: CollectionMetadata['sourceBackfillRecommended']
+    ) => void;
 
     // Control sourceCapture optional settings
     resourceConfigPointers?: ResourceConfigPointers;

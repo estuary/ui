@@ -939,6 +939,20 @@ const getInitialState = (
         );
     },
 
+    setSourceBackfillRecommended: (collections, value) => {
+        set(
+            produce((state: BindingState) => {
+                collections.forEach((collection) => {
+                    state.collectionMetadata[
+                        collection
+                    ].sourceBackfillRecommended = value;
+                });
+            }),
+            false,
+            'Source Backfill Recommended Set'
+        );
+    },
+
     setSpecOnIncompatibleSchemaChange: (value) => {
         set(
             produce((state: BindingState) => {
