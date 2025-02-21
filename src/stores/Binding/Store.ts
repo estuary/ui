@@ -798,6 +798,9 @@ const getInitialState = (
         );
     },
 
+    // The store action, setCollectionMetadata, is only called to process
+    // and store the response of getTrialCollections. Therefore every value
+    // corresponds to a collection under a trial-only prefix.
     setCollectionMetadata: (values, addedCollections) => {
         if (!hasLength(values)) {
             return;
