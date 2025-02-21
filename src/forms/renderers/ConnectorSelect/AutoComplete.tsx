@@ -31,10 +31,10 @@ import {
     AutocompleteRenderOptionState,
     FilterOptionsState,
 } from '@mui/material';
-import ConnectorInput from 'forms/renderers/ConnectorSelect/Input';
+import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
-import merge from 'lodash/merge';
 import React, { ReactNode, useMemo } from 'react';
+import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;
@@ -61,22 +61,19 @@ export const ConnectorAutoComplete = (
         className,
         id,
         enabled,
-        uischema,
         path,
         options,
-        config,
         handleChange,
         getOptionLabel,
         filterOptions,
     } = props;
 
-    const appliedUiSchemaOptions = merge({}, config, uischema.options);
     const [inputValue, setInputValue] = React.useState('');
     const currentOption = useMemo(
         () =>
             options?.find((option) => {
                 return areOptionsEqual(option.value, data);
-            }) ?? null,
+            }) ?? undefined,
         [data, options]
     );
 
@@ -87,6 +84,7 @@ export const ConnectorAutoComplete = (
             className={className}
             id={id}
             disabled={!enabled}
+            disableClearable
             value={currentOption}
             inputValue={inputValue}
             onChange={(_event: any, newValue: EnumOption | null) => {
@@ -103,17 +101,18 @@ export const ConnectorAutoComplete = (
                 marginTop: 2,
             }}
             filterOptions={filterOptions}
-            renderInput={({ inputProps, InputProps }) => {
-                return (
-                    <ConnectorInput
-                        inputProps={inputProps}
-                        InputProps={InputProps}
-                        appliedUiSchemaOptions={appliedUiSchemaOptions}
-                        enabled={enabled}
-                        currentOption={currentOption}
-                    />
-                );
-            }}
+            renderInput={(textFieldProps) => (
+                <AutoCompleteInputWithStartAdornment
+                    textFieldProps={textFieldProps}
+                    startAdornment={
+                        currentOption ? (
+                            <ConnectorIcon
+                                iconPath={currentOption.value.iconPath}
+                            />
+                        ) : null
+                    }
+                />
+            )}
             renderOption={(renderOptionProps, option) => {
                 return (
                     <ConnectorOption
