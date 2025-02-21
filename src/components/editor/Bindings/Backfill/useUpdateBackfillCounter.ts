@@ -17,6 +17,11 @@ import {
     useEditorStore_queryResponse_mutate,
 } from '../../Store/hooks';
 
+interface BackfillChangeSummary {
+    counterDecremented: string[];
+    counterIncremented: string[];
+}
+
 const evaluateBackfillCounter = (
     binding: Schema,
     increment: BooleanString
@@ -79,11 +84,19 @@ function useUpdateBackfillCounter() {
                 });
             }
 
+            const response: BackfillChangeSummary = {
+                counterDecremented: [],
+                counterIncremented: [],
+            };
             const spec: Schema = draftSpec.spec;
 
             if (bindingMetadataExists) {
-                bindingMetadata.forEach(({ bindingIndex }) => {
+                bindingMetadata.forEach(({ bindingIndex, collection }) => {
                     if (bindingIndex > -1) {
+                        increment === 'true'
+                            ? response.counterIncremented.push(collection)
+                            : response.counterDecremented.push(collection);
+
                         spec.bindings[bindingIndex].backfill =
                             evaluateBackfillCounter(
                                 spec.bindings[bindingIndex],
@@ -112,6 +125,14 @@ function useUpdateBackfillCounter() {
                                     backfilled && increment === 'false';
 
                                 if (shouldIncrement || shouldDecrement) {
+                                    increment === 'true'
+                                        ? response.counterIncremented.push(
+                                              collection
+                                          )
+                                        : response.counterDecremented.push(
+                                              collection
+                                          );
+
                                     spec.bindings[
                                         existingBindingIndex
                                     ].backfill = evaluateBackfillCounter(
@@ -141,9 +162,7 @@ function useUpdateBackfillCounter() {
                 return Promise.reject();
             }
 
-            return bindingMetadataExists
-                ? bindingMetadata.map(({ collection }) => collection)
-                : Object.keys(bindings);
+            return response;
         },
         [
             backfilledBindings,
