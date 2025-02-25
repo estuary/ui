@@ -162,20 +162,22 @@ function BackfillButton({
 
                         setBackfilledBindings(increment, targetBindingUUID);
 
-                        evaluateTrialCollections(
-                            changes.counterIncremented
-                        ).then(
-                            (response) => {
-                                setCollectionMetadata(response, []);
-                            },
-                            () => {}
-                        );
-
-                        if (hasLength(changes.counterDecremented)) {
-                            setSourceBackfillRecommended(
-                                changes.counterDecremented,
-                                false
+                        if (workflow === 'materialization_edit') {
+                            evaluateTrialCollections(
+                                changes.counterIncremented
+                            ).then(
+                                (response) => {
+                                    setCollectionMetadata(response, []);
+                                },
+                                () => {}
                             );
+
+                            if (hasLength(changes.counterDecremented)) {
+                                setSourceBackfillRecommended(
+                                    changes.counterDecremented,
+                                    false
+                                );
+                            }
                         }
 
                         setFormState({ status: FormStatus.UPDATED });
@@ -204,6 +206,7 @@ function BackfillButton({
             setFormState,
             setSourceBackfillRecommended,
             updateBackfillCounter,
+            workflow,
         ]
     );
 
