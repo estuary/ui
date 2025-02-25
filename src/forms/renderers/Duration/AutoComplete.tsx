@@ -63,9 +63,15 @@ const DURATION_OPTIONS = [
     '12h',
 ];
 
-export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
-    const { data, className, id, enabled, path, handleChange } = props;
-
+export const DurationAutoComplete = ({
+    className,
+    data,
+    enabled,
+    handleChange,
+    id,
+    path,
+    schema,
+}: ControlProps & WithClassname) => {
     const position = useRef({
         beforeStart: 0,
         beforeEnd: 0,
@@ -123,6 +129,14 @@ export const DurationAutoComplete = (props: ControlProps & WithClassname) => {
             }}
             value={currentOption}
             onInputChange={(event, newInputValue, reason) => {
+                // TODO (jsonforms default) we need to set this so we can keep
+                //  the data and inputValue in sync easily.
+                if (reason === 'clear' && schema.default) {
+                    setInputValue(schema.default);
+                    handleChange(path, schema.default);
+                    return;
+                }
+
                 // If the user is typing we want to upper case since the duration pattern is all
                 //  capital letters. If they select one we should just leave it
                 const newInputValueUpper = detectAutoCompleteInputReset(reason)
