@@ -17,6 +17,11 @@ import {
     useEditorStore_queryResponse_mutate,
 } from '../../Store/hooks';
 
+interface BackfillChangeSummary {
+    counterDecremented: string[];
+    counterIncremented: string[];
+}
+
 const evaluateBackfillCounter = (
     binding: Schema,
     increment: BooleanString
@@ -79,11 +84,22 @@ function useUpdateBackfillCounter() {
                 });
             }
 
+            const response: BackfillChangeSummary = {
+                counterDecremented: [],
+                counterIncremented: [],
+            };
+            const targetChangeSummaryProp: keyof BackfillChangeSummary =
+                increment === 'true'
+                    ? 'counterIncremented'
+                    : 'counterDecremented';
+
             const spec: Schema = draftSpec.spec;
 
             if (bindingMetadataExists) {
-                bindingMetadata.forEach(({ bindingIndex }) => {
+                bindingMetadata.forEach(({ bindingIndex, collection }) => {
                     if (bindingIndex > -1) {
+                        response[targetChangeSummaryProp].push(collection);
+
                         spec.bindings[bindingIndex].backfill =
                             evaluateBackfillCounter(
                                 spec.bindings[bindingIndex],
@@ -112,6 +128,10 @@ function useUpdateBackfillCounter() {
                                     backfilled && increment === 'false';
 
                                 if (shouldIncrement || shouldDecrement) {
+                                    response[targetChangeSummaryProp].push(
+                                        collection
+                                    );
+
                                     spec.bindings[
                                         existingBindingIndex
                                     ].backfill = evaluateBackfillCounter(
@@ -135,7 +155,13 @@ function useUpdateBackfillCounter() {
                 return Promise.reject(updateResponse.error);
             }
 
-            return mutateDraftSpecs();
+            const mutateResponse = await mutateDraftSpecs();
+
+            if (!mutateResponse) {
+                return Promise.reject();
+            }
+
+            return response;
         },
         [
             backfilledBindings,

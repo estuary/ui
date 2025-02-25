@@ -7,6 +7,7 @@ import { BackfillProps } from './types';
 
 export default function Backfill({
     bindingIndex,
+    collection,
     collectionEnabled,
 }: BackfillProps) {
     const entityType = useEntityType();
@@ -15,7 +16,10 @@ export default function Backfill({
     const showBackfillButton = isEdit && bindingIndex > -1 && collectionEnabled;
 
     return showBackfillButton ? (
-        <SectionWrapper>
+        <SectionWrapper
+            alertMessageId="workflows.error.oldBoundCollection.backfill"
+            collection={collection}
+        >
             <BackfillButton
                 bindingIndex={bindingIndex}
                 description={
