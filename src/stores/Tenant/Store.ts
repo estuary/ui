@@ -1,9 +1,9 @@
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools, persist } from 'zustand/middleware';
-import { TenantState } from './types';
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet, persist } from 'zustand/middleware';
 import { persistOptions } from './shared';
+import { TenantState } from './types';
 
 const getInitialStateData = (): Pick<TenantState, 'selectedTenant'> => ({
     selectedTenant: '',

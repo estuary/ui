@@ -1,4 +1,5 @@
 import { EvolvedCollections } from 'api/evolutions';
+import { TrialCollectionQuery } from 'api/liveSpecsExt';
 import { BooleanString } from 'components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
@@ -14,6 +15,17 @@ import {
 } from 'types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
+
+export interface CollectionMetadata {
+    added?: boolean;
+    sourceBackfillRecommended?: boolean;
+    trialStorage?: boolean;
+    updatedAt?: string;
+}
+
+interface CollectionMetadataDictionary {
+    [collection: string]: CollectionMetadata;
+}
 
 export interface BindingMetadata {
     uuid: string;
@@ -40,6 +52,10 @@ export interface ResourceConfigDictionary {
     [uuid: string]: ResourceConfig;
 }
 
+export interface BindingChanges {
+    addedCollections: string[];
+}
+
 export interface BindingState
     extends StoreWithHydration,
         StoreWithFieldSelection,
@@ -54,7 +70,7 @@ export interface BindingState
         liveBindings: Schema[],
         draftedBindings?: Schema[],
         rehydrating?: boolean
-    ) => void;
+    ) => BindingChanges;
 
     // The analog of resource config store action, `preFillEmptyCollections`.
     addEmptyBindings: (
@@ -113,6 +129,16 @@ export interface BindingState
     // Control if backfill is allowed in the UI for a connector
     backfillSupported: boolean;
     setBackfillSupported: (val: BindingState['backfillSupported']) => void;
+
+    collectionMetadata: CollectionMetadataDictionary;
+    setCollectionMetadata: (
+        values: TrialCollectionQuery[],
+        addedCollections: string[]
+    ) => void;
+    setSourceBackfillRecommended: (
+        collections: string[],
+        value: CollectionMetadata['sourceBackfillRecommended']
+    ) => void;
 
     // Control sourceCapture optional settings
     resourceConfigPointers?: ResourceConfigPointers;
@@ -188,6 +214,7 @@ export interface BindingState
         editWorkflow: boolean,
         entityType: Entity,
         connectorTagId: string,
+        getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;
 
