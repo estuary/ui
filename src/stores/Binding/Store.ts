@@ -267,7 +267,10 @@ const getInitialState = (
 
             const boundCollections = Object.keys(get().bindings);
 
-            if (hasLength(boundCollections)) {
+            if (
+                entityType === 'materialization' &&
+                hasLength(boundCollections)
+            ) {
                 const trialCollections = await evaluateTrialCollections(
                     boundCollections,
                     getTrialOnlyPrefixes
