@@ -88,14 +88,17 @@ function useUpdateBackfillCounter() {
                 counterDecremented: [],
                 counterIncremented: [],
             };
+            const targetChangeSummaryProp: keyof BackfillChangeSummary =
+                increment === 'true'
+                    ? 'counterIncremented'
+                    : 'counterDecremented';
+
             const spec: Schema = draftSpec.spec;
 
             if (bindingMetadataExists) {
                 bindingMetadata.forEach(({ bindingIndex, collection }) => {
                     if (bindingIndex > -1) {
-                        increment === 'true'
-                            ? response.counterIncremented.push(collection)
-                            : response.counterDecremented.push(collection);
+                        response[targetChangeSummaryProp].push(collection);
 
                         spec.bindings[bindingIndex].backfill =
                             evaluateBackfillCounter(
@@ -125,13 +128,9 @@ function useUpdateBackfillCounter() {
                                     backfilled && increment === 'false';
 
                                 if (shouldIncrement || shouldDecrement) {
-                                    increment === 'true'
-                                        ? response.counterIncremented.push(
-                                              collection
-                                          )
-                                        : response.counterDecremented.push(
-                                              collection
-                                          );
+                                    response[targetChangeSummaryProp].push(
+                                        collection
+                                    );
 
                                     spec.bindings[
                                         existingBindingIndex
