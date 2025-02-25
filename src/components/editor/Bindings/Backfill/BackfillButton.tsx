@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
 import { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
+import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -21,6 +22,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { BindingMetadata } from 'types';
+import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';
@@ -38,6 +40,7 @@ function BackfillButton({
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     const workflow = useEntityWorkflow();
+    const evaluateTrialCollections = useTrialCollections();
 
     const evolvedCollections = useBindingStore(
         (state) => state.evolvedCollections
@@ -53,6 +56,13 @@ function BackfillButton({
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
     const backfillSupported = useBinding_backfillSupported();
+
+    const setCollectionMetadata = useBindingStore(
+        (state) => state.setCollectionMetadata
+    );
+    const setSourceBackfillRecommended = useBindingStore(
+        (state) => state.setSourceBackfillRecommended
+    );
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -145,12 +155,29 @@ function BackfillButton({
                     increment,
                     bindingMetadata
                 ).then(
-                    () => {
+                    (changes) => {
                         const targetBindingUUID = singleBindingUpdate
                             ? currentBindingUUID
                             : undefined;
 
                         setBackfilledBindings(increment, targetBindingUUID);
+
+                        evaluateTrialCollections(
+                            changes.counterIncremented
+                        ).then(
+                            (response) => {
+                                setCollectionMetadata(response, []);
+                            },
+                            () => {}
+                        );
+
+                        if (hasLength(changes.counterDecremented)) {
+                            setSourceBackfillRecommended(
+                                changes.counterDecremented,
+                                false
+                            );
+                        }
+
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -171,8 +198,11 @@ function BackfillButton({
             currentCollection,
             draftSpec,
             evaluateServerDifferences,
+            evaluateTrialCollections,
             setBackfilledBindings,
+            setCollectionMetadata,
             setFormState,
+            setSourceBackfillRecommended,
             updateBackfillCounter,
         ]
     );

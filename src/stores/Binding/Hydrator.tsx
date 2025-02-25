@@ -1,5 +1,6 @@
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
+import useTrialPrefixes from 'hooks/trialStorage/useTrialPrefixes';
 import { useEffect, useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -20,6 +21,8 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
+
+    const getTrialPrefixes = useTrialPrefixes();
 
     const connectorTagId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.id
@@ -44,6 +47,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 editWorkflow,
                 entityType,
                 connectorTagId,
+                getTrialPrefixes,
                 rehydrating.current
             )
                 .then(
@@ -77,6 +81,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         connectorTagId,
         editWorkflow,
         entityType,
+        getTrialPrefixes,
         hydrateState,
         setActive,
         setHydrated,

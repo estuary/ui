@@ -15,6 +15,7 @@ import { StoreApi } from 'zustand';
 import { getInitialFieldSelectionData } from './slices/FieldSelection';
 import { getInitialTimeTravelData } from './slices/TimeTravel';
 import {
+    BindingChanges,
     Bindings,
     BindingState,
     ResourceConfig,
@@ -241,8 +242,13 @@ export const hydrateSpecificationDependentState = async (
     get: StoreApi<BindingState>['getState'],
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
-): Promise<PostgrestError | null> => {
+): Promise<{
+    bindingChanges: BindingChanges;
+    error: PostgrestError | null;
+}> => {
     const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
+
+    let bindingChanges: BindingChanges = { addedCollections: [] };
 
     if (draftId) {
         const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
@@ -251,15 +257,16 @@ export const hydrateSpecificationDependentState = async (
         );
 
         if (error || !draftSpecs || draftSpecs.length === 0) {
-            return (
-                error ?? {
+            return {
+                bindingChanges,
+                error: error ?? {
                     ...BASE_ERROR,
                     message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
-                }
-            );
+                },
+            };
         }
 
-        get().prefillBindingDependentState(
+        bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
             draftSpecs[0].spec.bindings
@@ -278,7 +285,10 @@ export const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec?.onIncompatibleSchemaChange
         );
     } else {
-        get().prefillBindingDependentState(entityType, liveSpec.bindings);
+        bindingChanges = get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings
+        );
 
         get().setCaptureInterval(
             liveSpec?.interval ?? fallbackInterval,
@@ -290,7 +300,7 @@ export const hydrateSpecificationDependentState = async (
         );
     }
 
-    return null;
+    return { bindingChanges, error: null };
 };
 
 export const getInitialBindingData = (): Pick<
@@ -310,6 +320,7 @@ export const getInitialMiscData = (): Pick<
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
     | 'captureInterval'
+    | 'collectionMetadata'
     | 'collectionsRequiringRediscovery'
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
@@ -331,6 +342,7 @@ export const getInitialMiscData = (): Pick<
     backfillSupported: true,
     backfilledBindings: [],
     captureInterval: null,
+    collectionMetadata: {},
     collectionsRequiringRediscovery: [],
     defaultCaptureInterval: null,
     discoveredCollections: [],

@@ -4,10 +4,12 @@ import AdvancedOptions from 'components/editor/Bindings/AdvancedOptions';
 import Backfill from 'components/editor/Bindings/Backfill';
 import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
+import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 import {
+    useBinding_collectionMetadataProperty,
     useBinding_currentBindingIndex,
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
@@ -46,8 +48,27 @@ function ResourceConfig({
         'disable'
     );
 
+    const trialCollection = useBinding_collectionMetadataProperty(
+        collectionName,
+        'trialStorage'
+    );
+
+    const collectionAdded = useBinding_collectionMetadataProperty(
+        collectionName,
+        'added'
+    );
+
     return (
         <>
+            {entityType === 'materialization' ? (
+                <Box style={{ marginBottom: 16 }}>
+                    <TrialOnlyPrefixAlert
+                        messageId="workflows.error.oldBoundCollection.added"
+                        triggered={Boolean(trialCollection && collectionAdded)}
+                    />
+                </Box>
+            ) : null}
+
             <Typography
                 component="div"
                 sx={{ mb: 2 }}
@@ -72,6 +93,7 @@ function ResourceConfig({
 
             <Backfill
                 bindingIndex={draftedBindingIndex}
+                collection={collectionName}
                 collectionEnabled={!collectionDisabled}
             />
 

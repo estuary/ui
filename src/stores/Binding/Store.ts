@@ -2,7 +2,9 @@ import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
 } from 'api/hydration';
+import { isBeforeTrialInterval } from 'components/materialization/shared';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { evaluateTrialCollections } from 'hooks/trialStorage/useTrialCollections';
 import produce from 'immer';
 import {
     difference,
@@ -27,7 +29,11 @@ import { BindingStoreNames } from 'stores/names';
 import { getDereffedSchema, hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { parsePostgresInterval } from 'utils/time-utils';
-import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+} from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -203,6 +209,7 @@ const getInitialState = (
         editWorkflow,
         entityType,
         connectorTagId,
+        getTrialOnlyPrefixes,
         rehydrating
     ) => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -242,19 +249,34 @@ const getInitialState = (
                 );
             }
 
-            const draftSpecError = await hydrateSpecificationDependentState(
-                connectorTagResponse?.default_capture_interval,
-                entityType,
-                fallbackInterval,
-                get,
-                liveSpecs[0].spec,
-                searchParams
-            );
+            const specHydrationResponse =
+                await hydrateSpecificationDependentState(
+                    connectorTagResponse?.default_capture_interval,
+                    entityType,
+                    fallbackInterval,
+                    get,
+                    liveSpecs[0].spec,
+                    searchParams
+                );
 
-            if (draftSpecError) {
+            if (specHydrationResponse.error) {
                 get().setHydrationErrorsExist(true);
 
-                return Promise.reject(draftSpecError.message);
+                return Promise.reject(specHydrationResponse.error.message);
+            }
+
+            const boundCollections = Object.keys(get().bindings);
+
+            if (hasLength(boundCollections)) {
+                const trialCollections = await evaluateTrialCollections(
+                    boundCollections,
+                    getTrialOnlyPrefixes
+                );
+
+                get().setCollectionMetadata(
+                    trialCollections,
+                    specHydrationResponse.bindingChanges.addedCollections
+                );
             }
         } else {
             get().setCaptureInterval(
@@ -365,6 +387,17 @@ const getInitialState = (
             false,
             'Binding dependent state prefilled'
         );
+
+        return {
+            addedCollections: draftedBindings
+                ? difference(
+                      draftedBindings.map((binding) =>
+                          getCollectionName(binding)
+                      ),
+                      liveBindings.map((binding) => getCollectionName(binding))
+                  )
+                : [],
+        };
     },
 
     prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
@@ -424,8 +457,8 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
-                            collectionName,
                             bindingIndex: reducedBindingCount + index,
+                            collectionName,
                         },
                     };
                 });
@@ -765,6 +798,43 @@ const getInitialState = (
         );
     },
 
+    // The store action, setCollectionMetadata, is only called to process
+    // and store the response of getTrialCollections. Therefore every value
+    // corresponds to a collection under a trial-only prefix.
+    setCollectionMetadata: (values, addedCollections) => {
+        if (!hasLength(values)) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                const backfilledCollections = state.backfilledBindings.map(
+                    (uuid) => state.resourceConfigs[uuid].meta.collectionName
+                );
+
+                values.forEach(({ catalog_name, updated_at }) => {
+                    const added =
+                        addedCollections.includes(catalog_name) ||
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        state.collectionMetadata[catalog_name]?.added;
+
+                    state.collectionMetadata[catalog_name] = {
+                        added,
+                        sourceBackfillRecommended:
+                            isBeforeTrialInterval(updated_at) &&
+                            (added ||
+                                state.backfillAllBindings ||
+                                backfilledCollections.includes(catalog_name)),
+                        trialStorage: true,
+                        updatedAt: updated_at,
+                    };
+                });
+            }),
+            false,
+            'Collection Metadata Set'
+        );
+    },
+
     setCurrentBinding: (bindingUUID) => {
         set(
             produce((state: BindingState) => {
@@ -866,6 +936,20 @@ const getInitialState = (
             }),
             false,
             'Server Update Required Flag Changed'
+        );
+    },
+
+    setSourceBackfillRecommended: (collections, value) => {
+        set(
+            produce((state: BindingState) => {
+                collections.forEach((collection) => {
+                    state.collectionMetadata[
+                        collection
+                    ].sourceBackfillRecommended = value;
+                });
+            }),
+            false,
+            'Source Backfill Recommended Set'
         );
     },
 
@@ -1023,8 +1107,8 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
-                        collectionName: targetCollection,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        collectionName: targetCollection,
                     },
                 };
 
