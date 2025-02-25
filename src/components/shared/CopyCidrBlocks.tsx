@@ -24,7 +24,7 @@ function CopyCidrBlocks({ cidrBlocks }: Props) {
     );
 
     const [selection, setSelection] = useLocalStorage(
-        LocalStorageKeys.ADMIN_CIDR_BLOCK_CHOICE,
+        LocalStorageKeys.CIDR_BLOCK_CHOICE,
         selectOptions[0]
     );
 

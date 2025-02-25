@@ -15,7 +15,7 @@ const DataPlaneScopeContext = createContext<DataPlaneScope | null>(null);
 const DataPlaneScopeContextProvider = ({ children }: BaseComponentProps) => {
     const [defaultDataPlane, setDefaultDataPlane] =
         useLocalStorage<DataPlaneScopes>(
-            LocalStorageKeys.ADMIN_DATAPLANE_CHOICE,
+            LocalStorageKeys.DATAPLANE_CHOICE,
             defaultOption
         );
 

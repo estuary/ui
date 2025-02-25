@@ -1,7 +1,7 @@
 export enum LocalStorageKeys {
     COLOR_MODE = 'estuary.color-mode',
-    ADMIN_DATAPLANE_CHOICE = 'estuary.admin-dataplane-choice',
-    ADMIN_CIDR_BLOCK_CHOICE = 'estuary.admin-cidr-block-choice',
+    DATAPLANE_CHOICE = 'estuary.dataplane-choice',
+    CIDR_BLOCK_CHOICE = 'estuary.cidr-block-choice',
     DASHBOARD_WELCOME = 'estuary.dashboard-welcome',
     MARKETPLACE_VERIFY = 'estuary.marketplace-verify',
     NAVIGATION_SETTINGS = 'estuary.navigation-settings',
