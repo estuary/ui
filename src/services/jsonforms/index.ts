@@ -435,10 +435,7 @@ const generateUISchema = (
     rootGenerating: boolean,
     rootSchema?: JsonSchema
 ): UISchemaElement => {
-    console.log(`${jsonSchema.description} >>>>>`, jsonSchema.pattern);
-
     if (!isEmpty(jsonSchema) && jsonSchema.$ref !== undefined) {
-        console.log('calling generate 21222 >>>>>', jsonSchema);
         return generateUISchema(
             resolveSchema(
                 rootSchema as JsonSchema,
@@ -620,7 +617,6 @@ const generateUISchema = (
                     );
                 }
 
-                console.log('calling generateUISchema >>>>>', value);
                 return generateUISchema(
                     value,
                     layout.elements,
