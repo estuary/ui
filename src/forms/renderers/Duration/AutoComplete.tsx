@@ -116,7 +116,6 @@ export const DurationAutoComplete = ({
                         }}
                         fullWidth={fullWidth}
                         disabled={disabled}
-                        style={{ textTransform: 'uppercase' }}
                     />
                 );
             }}
