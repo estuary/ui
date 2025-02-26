@@ -161,6 +161,9 @@ export const DurationAutoComplete = ({
                 }
 
                 // Updating with the proper value and see if we need to make it match the duration format
+                // Sadly there is a M for month and M for minute so this is not _super_ perfect. However,
+                //  I am guessing if a user wants a custom duration they know how to type in the format
+                //  themselves.
                 handleChange(
                     path,
                     `${
