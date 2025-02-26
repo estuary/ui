@@ -66,7 +66,7 @@ function ConnectorTiles({ protocolPreset }: ConnectorTilesProps) {
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(row.connector_tags[0].protocol, {
             id: row.connector_tags[0].connector_id,
-            advanceToForm: row.connector_tags[0].protocol === 'capture',
+            advanceToForm: true,
         });
     };
 
