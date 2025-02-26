@@ -49,19 +49,27 @@ export interface WithOptionLabel {
     ): EnumOption[];
 }
 
+const DURATION_TIME_PREFIX = 'PT';
 const DURATION_OPTIONS = [
-    '0s',
-    '30s',
-    '1m',
-    '5m',
-    '15m',
-    '30m',
-    '1h',
-    '2h',
-    '4h',
-    '6h',
-    '12h',
+    { label: '0s', id: `${DURATION_TIME_PREFIX}0S` },
+    { label: '30s', id: `${DURATION_TIME_PREFIX}30S` },
+    { label: '1m', id: `${DURATION_TIME_PREFIX}1M` },
+    { label: '5m', id: `${DURATION_TIME_PREFIX}5M` },
+    { label: '15m', id: `${DURATION_TIME_PREFIX}15M` },
+    { label: '30m', id: `${DURATION_TIME_PREFIX}30M` },
+    { label: '1h', id: `${DURATION_TIME_PREFIX}1H` },
+    { label: '2h', id: `${DURATION_TIME_PREFIX}2H` },
+    { label: '4h', id: `${DURATION_TIME_PREFIX}4H` },
+    { label: '6h', id: `${DURATION_TIME_PREFIX}6H` },
+    { label: '12h', id: `${DURATION_TIME_PREFIX}12H` },
 ];
+
+const areOptionsEqual = (option?: any, value?: any) => {
+    return (
+        (option?.id ?? option).toLowerCase() ===
+        (value?.id ?? value).toLowerCase()
+    );
+};
 
 export const DurationAutoComplete = ({
     className,
@@ -73,7 +81,9 @@ export const DurationAutoComplete = ({
     schema,
 }: ControlProps & WithClassname) => {
     const currentOption = useMemo(
-        () => (DURATION_OPTIONS.includes(data) ? data : null),
+        () =>
+            DURATION_OPTIONS.find((option) => areOptionsEqual(option, data)) ??
+            null,
         [data]
     );
 
@@ -101,9 +111,16 @@ export const DurationAutoComplete = ({
             freeSolo
             fullWidth
             id={id}
+            includeInputInList
             inputValue={inputValue}
+            isOptionEqualToValue={areOptionsEqual}
+            openOnFocus
             options={DURATION_OPTIONS}
-            ref={inputRef} // This is not great... but needed to control the cursor
+            ref={inputRef} // This is not great as this is internal... but needed to control the cursor
+            sx={{
+                mt: 2,
+            }}
+            value={currentOption}
             renderInput={({ InputProps, disabled, fullWidth, inputProps }) => {
                 // We need to make sure we got a ref that can resolve to find the `input`
                 //  we are looking for. So if that is not there yet overwrite whatever
@@ -124,11 +141,6 @@ export const DurationAutoComplete = ({
                     />
                 );
             }}
-            includeInputInList
-            sx={{
-                mt: 2,
-            }}
-            value={currentOption}
             onInputChange={(event, newInputValue, reason) => {
                 if (reason === 'clear' && schema.default) {
                     // TODO (jsonforms default) we need to set this so we can keep
@@ -154,9 +166,16 @@ export const DurationAutoComplete = ({
 
                 setInputValue(newInputValueUpper);
 
-                // @ts-expect-error these props were always there and we are using a normal input
                 // Just adding an if here because the typing seems wrong from MUI but want to be safe
-                if (event.target.selectionStart && event.target.selectionEnd) {
+                //  Also - the event ***100%*** came in null for me - the typing is messed up
+                if (
+                    // @ts-expect-error these props were always there and we are using a normal input
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    event?.target.selectionStart &&
+                    // @ts-expect-error these props were always there and we are using a normal input
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    event?.target.selectionEnd
+                ) {
                     // Save off where the cursor was when they typed so we can put it back
                     //  since we are upper casing the input value
                     position.current = {
