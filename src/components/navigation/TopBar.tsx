@@ -8,8 +8,9 @@ import PageTitle from 'components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'components/UpdateAlert';
 import { zIndexIncrement } from 'context/Theme';
+import Banner from './Banner';
 
-const Topbar = () => {
+const TopBar = () => {
     const theme = useTheme();
 
     return (
@@ -48,8 +49,10 @@ const Topbar = () => {
                     <SidePanelDocsOpenButton />
                 </Stack>
             </Toolbar>
+
+            <Banner />
         </MuiAppBar>
     );
 };
 
-export default Topbar;
+export default TopBar;

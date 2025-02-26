@@ -269,6 +269,16 @@ export const errorColoredOutline_hovered = {
     dark: `1px solid #CA3B55`,
 };
 
+export const warningColoredOutline_hovered = {
+    light: `1px solid #F5D75E`,
+    dark: `1px solid #F57C00`,
+};
+
+export const infoColoredOutline_hovered = {
+    light: `1px solid #4FD6FF`,
+    dark: `1px solid #0288D1`,
+};
+
 export const jsonViewTheme: {
     light: ThemeKeys;
     dark: ThemeKeys;
@@ -376,6 +386,36 @@ export const semiTransparentBackground_teal = {
 export const semiTransparentBackground_purple = {
     light: '#F7F3FF',
     dark: 'rgba(214, 194, 255, 0.12)',
+};
+
+// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
+export const semiTransparentBackground_primary = {
+    light: 'rgba(58, 86, 202, 0.3)',
+    dark: 'rgba(186, 205, 253, 0.3)',
+};
+
+// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
+export const semiTransparentBackground_success = {
+    light: 'rgba(42, 121, 66, 0.5)',
+    dark: 'rgba(102, 187, 106, 0.5)',
+};
+
+// RGB translation of #CA3B55.
+export const semiTransparentBackground_error = {
+    light: 'rgba(202, 59, 85, 0.5)',
+    dark: 'rgba(202, 59, 85, 0.5)',
+};
+
+// Light is an RGB translation of #F5D75E; Dark is an RGB translation of #F57C00.
+export const semiTransparentBackground_warning = {
+    light: 'rgba(245, 215, 94, 0.5)',
+    dark: 'rgba(245, 124, 0, 0.5)',
+};
+
+// Light is an RGB translation of #4FD6FF; Dark is an RGB translation of #0288D1.
+export const semiTransparentBackground_info = {
+    light: 'rgba(79, 214, 255, 0.5)',
+    dark: 'rgba(2, 136, 209, 0.5)',
 };
 
 export const primaryColoredBackground_hovered = {
