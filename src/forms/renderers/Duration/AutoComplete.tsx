@@ -148,7 +148,7 @@ export const DurationAutoComplete = ({
                 // Save off where the cursor was when they typed so we can put it back since we are upper casing the input value
                 // Why all the ts comments?
                 //      1. Just adding an if here because the typing seems wrong from MUI but want to be safe
-                //      2. The event ***100%*** came in null for me - the typing is messed up
+                //      2. The event ***100%*** came in null during initial loading - the typing is messed up
                 if (
                     // @ts-expect-error these props were always there and we are using a normal input
                     event?.target.selectionStart &&
