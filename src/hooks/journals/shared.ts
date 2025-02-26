@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { parseJournalDocuments } from 'data-plane-gateway';
 import { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import { logRocketConsole } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { INCREMENT } from 'utils/dataPlane-utils';
 import { journalStatusIsError } from 'utils/misc-utils';
@@ -71,6 +71,13 @@ export async function loadDocuments({
 
     if (clientResponse.err()) {
         const clientError = clientResponse.unwrap_err();
+
+        if (!Boolean(clientError.body.message)) {
+            logRocketEvent(CustomEvents.JOURNAL_DATA, {
+                missingErrorStatus: 'clientError',
+            });
+        }
+
         throw new Error(clientError.body.message);
     }
 
@@ -91,6 +98,11 @@ export async function loadDocuments({
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (journalStatusIsError(metadataResponse?.status)) {
+        if (!Boolean(metadataResponse.status)) {
+            logRocketEvent(CustomEvents.JOURNAL_DATA, {
+                missingErrorStatus: 'metadataResponse',
+            });
+        }
         throw new Error(metadataResponse.status);
     }
 
