@@ -29,7 +29,6 @@
 import { ControlProps, WithClassname } from '@jsonforms/core';
 import { Autocomplete, Input } from '@mui/material';
 import React, { useLayoutEffect, useMemo, useRef } from 'react';
-import { detectAutoCompleteInputReset } from 'utils/mui-utils';
 import { ISO_8601_DURATION_RE } from 'validation';
 
 const DURATION_TIME_PREFIX = 'PT';
@@ -138,10 +137,8 @@ export const DurationAutoComplete = ({
                 }
 
                 // If the user is typing we want to upper case since the duration pattern is all
-                //  capital letters. If they select one we should just leave it
-                const newInputValueUpper = detectAutoCompleteInputReset(reason)
-                    ? newInputValue
-                    : newInputValue.toUpperCase();
+                //  capital letters.
+                const newInputValueUpper = newInputValue.toUpperCase();
 
                 setInputValue(newInputValueUpper);
 
@@ -170,7 +167,7 @@ export const DurationAutoComplete = ({
                         ISO_8601_DURATION_RE.test(newInputValueUpper)
                             ? ''
                             : 'PT'
-                    }${newInputValueUpper}`.toUpperCase()
+                    }${newInputValueUpper}`
                 );
             }}
         />
