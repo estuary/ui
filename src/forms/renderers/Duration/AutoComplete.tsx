@@ -65,10 +65,7 @@ const DURATION_OPTIONS = [
 ];
 
 const areOptionsEqual = (option?: any, value?: any) => {
-    return (
-        (option?.id ?? option).toLowerCase() ===
-        (value?.id ?? value).toLowerCase()
-    );
+    return (option?.id ?? option) === (value?.id ?? value);
 };
 
 export const DurationAutoComplete = ({
