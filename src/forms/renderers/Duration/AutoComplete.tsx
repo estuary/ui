@@ -72,43 +72,44 @@ export const DurationAutoComplete = ({
     path,
     schema,
 }: ControlProps & WithClassname) => {
-    const position = useRef({
-        beforeStart: 0,
-        beforeEnd: 0,
-    });
-    const [inputValue, setInputValue] = React.useState(data);
-    const inputRef = useRef<any | null>(null);
-
     const currentOption = useMemo(
         () => (DURATION_OPTIONS.includes(data) ? data : null),
         [data]
     );
 
+    const [inputValue, setInputValue] = React.useState(data);
+    const inputRef = useRef<any | null>(null);
+    const position = useRef({
+        beforeStart: 0,
+        beforeEnd: 0,
+    });
     useLayoutEffect(() => {
         // Make sure the cursor stays where we want it
-        inputRef.current?.setSelectionRange?.(
-            position.current.beforeStart,
-            position.current.beforeEnd
-        );
+        inputRef.current
+            ?.querySelector?.('input')
+            .setSelectionRange?.(
+                position.current.beforeStart,
+                position.current.beforeEnd
+            );
     }, [inputValue]);
 
     return (
         <Autocomplete
             autoComplete
-            blurOnSelect
             className={className}
             disabled={!enabled}
             freeSolo
             fullWidth
             id={id}
             inputValue={inputValue}
-            ref={inputRef}
             options={DURATION_OPTIONS}
+            ref={inputRef} // This is not great... but needed to control the cursor
             renderInput={({ InputProps, disabled, fullWidth, inputProps }) => {
-                // We want to use MUI's ref because they are using that to handle
-                //  some interactions for us
-                if (!inputRef.current) {
-                    inputRef.current = InputProps.ref;
+                // We need to make sure we got a ref that can resolve to find the `input`
+                //  we are looking for. So if that is not there yet overwrite whatever
+                //  is in the current ref. This is kind of an overkill approach.
+                if (!inputRef.current?.querySelector && inputProps.ref) {
+                    inputRef.current = inputProps.ref;
                 }
 
                 return (
@@ -129,11 +130,19 @@ export const DurationAutoComplete = ({
             }}
             value={currentOption}
             onInputChange={(event, newInputValue, reason) => {
-                // TODO (jsonforms default) we need to set this so we can keep
-                //  the data and inputValue in sync easily.
                 if (reason === 'clear' && schema.default) {
+                    // TODO (jsonforms default) we need to set this so we can keep
+                    //  the data and inputValue in sync easily. Otherwise the user
+                    //  could not tell that the value was put back as the default
+                    //  because the input would have stayed empty.
                     setInputValue(schema.default);
                     handleChange(path, schema.default);
+
+                    // Reset the cursor position as well
+                    position.current = {
+                        beforeStart: schema.default.length,
+                        beforeEnd: schema.default.length,
+                    };
                     return;
                 }
 
@@ -144,14 +153,6 @@ export const DurationAutoComplete = ({
                     : newInputValue.toUpperCase();
 
                 setInputValue(newInputValueUpper);
-
-                // If the input is cleared out for any reason so ahead and set null
-                //  so we know the field is empty
-                if (newInputValueUpper === '') {
-                    setInputValue(newInputValue);
-                    handleChange(path, null);
-                    return;
-                }
 
                 // @ts-expect-error these props were always there and we are using a normal input
                 // Just adding an if here because the typing seems wrong from MUI but want to be safe
