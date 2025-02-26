@@ -25,29 +25,11 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { ControlProps, EnumOption, WithClassname } from '@jsonforms/core';
-import {
-    Autocomplete,
-    AutocompleteRenderOptionState,
-    FilterOptionsState,
-    Input,
-} from '@mui/material';
-import React, { ReactNode, useLayoutEffect, useMemo, useRef } from 'react';
+import { ControlProps, WithClassname } from '@jsonforms/core';
+import { Autocomplete, Input } from '@mui/material';
+import React, { useLayoutEffect, useMemo, useRef } from 'react';
 import { detectAutoCompleteInputReset } from 'utils/mui-utils';
 import { ISO_8601_DURATION_RE } from 'validation';
-
-export interface WithOptionLabel {
-    getOptionLabel?(option: EnumOption): string;
-    renderOption?(
-        props: React.HTMLAttributes<HTMLLIElement>,
-        option: EnumOption,
-        state: AutocompleteRenderOptionState
-    ): ReactNode;
-    filterOptions?(
-        options: EnumOption[],
-        state: FilterOptionsState<EnumOption>
-    ): EnumOption[];
-}
 
 const DURATION_TIME_PREFIX = 'PT';
 const DURATION_OPTIONS = [
