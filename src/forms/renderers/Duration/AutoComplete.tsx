@@ -67,13 +67,17 @@ export const DurationAutoComplete = ({
     );
 
     const [inputValue, setInputValue] = React.useState(data);
+
+    // These all handle controlling the cursor position so it does not
+    //  auto move to the end when a user types a lower case letter and
+    //  we upper case it.
+    // https://giacomocerquone.com/blog/keep-input-cursor-still/
     const inputRef = useRef<any | null>(null);
     const position = useRef({
         beforeStart: 0,
         beforeEnd: 0,
     });
     useLayoutEffect(() => {
-        // Make sure the cursor stays where we want it
         inputRef.current
             ?.querySelector?.('input')
             .setSelectionRange?.(
@@ -142,7 +146,6 @@ export const DurationAutoComplete = ({
 
                 setInputValue(newInputValueUpper);
 
-                // Save off where the cursor was when they typed so we can put it back since we are upper casing the input value
                 // Why all the ts comments?
                 //      1. Just adding an if here because the typing seems wrong from MUI but want to be safe
                 //      2. The event ***100%*** came in null during initial loading - the typing is messed up
