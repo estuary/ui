@@ -1,14 +1,11 @@
 import { Box } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
 import AlertBox from 'components/shared/AlertBox';
-import useCidrBlocks from 'hooks/useCidrBlocks';
+import CopyCidrBlocks from 'components/shared/CopyCidrBlocks';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 
 function SshEndpointInfo() {
     const intl = useIntl();
-
-    const cidrBlocks = useCidrBlocks();
 
     const dataPlaneCidrBlocks = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.cidrBlocks
@@ -27,14 +24,7 @@ function SshEndpointInfo() {
                     id: 'informational.sshEndpoint.title',
                 })}
             >
-                <Box
-                    sx={{
-                        maxWidth: 'fit-content',
-                        minWidth: 'fit-content',
-                    }}
-                >
-                    <SingleLineCode value={cidrBlocks(dataPlaneCidrBlocks)} />
-                </Box>
+                <CopyCidrBlocks cidrBlocks={dataPlaneCidrBlocks} />
             </AlertBox>
         </Box>
     );
