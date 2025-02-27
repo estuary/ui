@@ -32,6 +32,7 @@ const getGrants = (
                     count: getCountSettings(pagination),
                 }
             )
+            .neq('object_role', 'ops/dp/public/') // We rarely ever want users altering this
             .neq('subject_role', null),
         ['subject_role', 'object_role'],
         searchQuery,
