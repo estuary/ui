@@ -26,13 +26,13 @@ const getGrants = (
             subject_role, 
             object_role, 
             capability,
-            updated_at
+            updated_at,
+            detail
         `,
                 {
                     count: getCountSettings(pagination),
                 }
             )
-            .neq('object_role', 'ops/dp/public/') // We rarely ever want users altering this
             .neq('subject_role', null),
         ['subject_role', 'object_role'],
         searchQuery,
@@ -57,7 +57,8 @@ const getGrants_Users = (
                 user_avatar_url,
                 user_full_name,
                 user_email,
-                updated_at
+                updated_at,
+                detail
             `,
             {
                 count: 'exact',

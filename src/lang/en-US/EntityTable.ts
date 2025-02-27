@@ -17,6 +17,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
+    'entityTable.data.detail': `Detail`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
     'entityTable.data.catalogPrefix': `Catalog Prefix`,
