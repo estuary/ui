@@ -7,19 +7,20 @@ import { ENTITY_SETTINGS } from 'settings/entity';
 import { EntityWithCreateWorkflow } from 'types';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
+export interface HookEntityCreateNavigateProps {
+    advanceToForm?: boolean;
+    dataPlaneId?: string | null;
+    id?: string | null | undefined;
+}
+
 export default function useEntityCreateNavigate() {
     const navigate = useNavigate();
     const appendSearchParams = useSearchParamAppend();
 
-    // TODO (optimization): Consider bundling the boolean input parameters in an "options" object
-    //   to enhance code readability when they are passed in.
     return useCallback(
         (
             entity: EntityWithCreateWorkflow,
-            id?: string | null | undefined,
-            replace?: boolean,
-            advanceToForm?: boolean,
-            dataPlaneId?: string | null
+            { id, advanceToForm, dataPlaneId }: HookEntityCreateNavigateProps
         ) => {
             const searchParamConfig: { [param: string]: any } = {};
 

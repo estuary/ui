@@ -77,13 +77,11 @@ export default function useDataPlaneField(
                     setEntityNameChanged(details.data.entityName);
 
                     // TODO (data-plane): Set search param of interest instead of using navigate function.
-                    navigateToCreate(
-                        entityType,
-                        details.data.connectorImage.connectorId,
-                        true,
-                        true,
-                        selectedDataPlaneId ?? null
-                    );
+                    navigateToCreate(entityType, {
+                        id: details.data.connectorImage.connectorId,
+                        advanceToForm: true,
+                        dataPlaneId: selectedDataPlaneId ?? null,
+                    });
                 }
             }
         },

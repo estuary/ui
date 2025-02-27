@@ -32,7 +32,6 @@ import ConnectorsSkeleton from './Skeleton';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
-    replaceOnNavigate?: boolean;
 }
 
 const intlConfig: TableIntlConfig = {
@@ -40,10 +39,7 @@ const intlConfig: TableIntlConfig = {
     message: 'connectors.main.message2',
 };
 
-function ConnectorTiles({
-    protocolPreset,
-    replaceOnNavigate,
-}: ConnectorTilesProps) {
+function ConnectorTiles({ protocolPreset }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
 
@@ -68,12 +64,10 @@ function ConnectorTiles({
     const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
-        navigateToCreate(
-            row.connector_tags[0].protocol,
-            row.connector_tags[0].connector_id,
-            replaceOnNavigate,
-            row.connector_tags[0].protocol === 'capture'
-        );
+        navigateToCreate(row.connector_tags[0].protocol, {
+            id: row.connector_tags[0].connector_id,
+            advanceToForm: true,
+        });
     };
 
     useEffect(() => {
