@@ -15,6 +15,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { getPathWithParams } from 'utils/misc-utils';
+import { RowConfirmation } from '../AccessGrants/types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
@@ -24,9 +25,7 @@ function DisableButton() {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState<boolean>(false);
-    const [targets, setTargets] = useState<
-        { directiveId: string; accessLink: string }[]
-    >([]);
+    const [targets, setTargets] = useState<RowConfirmation[]>([]);
 
     const setAllSelected = useZustandStore<
         SelectableTableStore,
@@ -42,23 +41,23 @@ function DisableButton() {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const selectedAccessLinks: string[] = [];
+            const selectedAccessLinks: RowConfirmation[] = [];
             const selectedDirectiveIds: string[] = [];
-            const selectedLinkConfigs: {
-                directiveId: string;
-                accessLink: string;
-            }[] = [];
+            const selectedLinkConfigs: RowConfirmation[] = [];
 
             selectedRows.forEach((value, key) => {
                 const accessLink = getPathWithParams(baseURL, {
                     [GlobalSearchParams.GRANT_TOKEN]: value,
                 });
 
-                selectedAccessLinks.push(accessLink);
+                selectedAccessLinks.push({
+                    id: key,
+                    message: accessLink,
+                });
 
                 selectedDirectiveIds.push(key);
 
-                selectedLinkConfigs.push({ directiveId: key, accessLink });
+                selectedLinkConfigs.push({ id: key, message: accessLink });
             });
 
             confirmationModalContext

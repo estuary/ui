@@ -8,11 +8,12 @@ import {
 } from '@mui/material';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { RowConfirmation } from './AccessGrants/types';
 
 interface Props {
-    selectedEntities: any[];
+    selectedEntities: RowConfirmation[];
     renderComponent: (
-        item: any,
+        item: RowConfirmation,
         index: number,
         onFinish: (response: any) => void
     ) => ReactNode;

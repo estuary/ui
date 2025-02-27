@@ -81,4 +81,9 @@ export const EntityTable: Record<string, string> = {
     'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
     'entityTable.collections.missing.message.docLink': `collections`,
     'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
+
+    'row.actions.extra.confirmation.title': `Extra Attention Required`,
+    'row.actions.extra.confirmation.message': `Please review the selection below as they can cause issues with the application. If you are unsure please contact {docLink}.`,
+    'row.actions.extra.confirmation.message.docLink': `support@estuary.dev`,
+    'row.actions.extra.confirmation.message.docPath': `${CommonMessages['support.email']}`,
 };

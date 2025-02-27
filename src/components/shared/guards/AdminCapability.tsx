@@ -35,6 +35,7 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
     if (!atLeastOneAdminTenant) {
         return (
             <AlertBox
+                short={false}
                 severity="error"
                 title={<FormattedMessage id="workflows.guards.admin.title" />}
             >

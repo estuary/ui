@@ -43,7 +43,7 @@ function Error({
         <Box sx={{ width: '100%' }}>
             <AlertBox
                 severity={severity ?? 'error'}
-                short={condensed}
+                short={Boolean(condensed)}
                 hideIcon={hideIcon}
                 title={
                     !hideTitle ? (

@@ -10,6 +10,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
+import { RowConfirmation } from '../AccessGrants/types';
 import { SettingMetadata } from './NestedListItem';
 
 interface Props {
@@ -38,7 +39,7 @@ function RowActionButton({
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
-    const [targets, setTargets] = useState<any[]>([]);
+    const [targets, setTargets] = useState<RowConfirmation[]>([]);
 
     const selectedRows = useZustandStore<
         SelectableTableStore,
@@ -68,11 +69,14 @@ function RowActionButton({
     const handlers = {
         action: () => {
             if (hasSelections) {
-                const selectedNames: string[] = [];
+                const selectedNames: RowConfirmation[] = [];
                 const selectedSpecs: any[] = [];
 
                 selectedRows.forEach((_value: any, key: string) => {
-                    selectedNames.push(rows.get(key).catalog_name);
+                    selectedNames.push({
+                        id: key,
+                        message: rows.get(key).catalog_name,
+                    });
                     selectedSpecs.push(rows.get(key));
                 });
 

@@ -26,3 +26,8 @@ export interface SharedProgressProps {
     successMessageID: string;
     state: ProgressStates;
 }
+
+export interface ConfirmationAlertProps {
+    messageId: string;
+    potentiallyDangerousUpdate?: boolean;
+}

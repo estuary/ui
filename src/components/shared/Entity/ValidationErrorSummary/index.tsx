@@ -81,7 +81,12 @@ function ValidationErrorSummary({
 
     return show ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
-            <AlertBox severity="error" hideIcon={hideIcon} ref={scrollToTarget}>
+            <AlertBox
+                short={false}
+                severity="error"
+                hideIcon={hideIcon}
+                ref={scrollToTarget}
+            >
                 <AlertTitle>
                     <FormattedMessage
                         id={headerMessageId ?? defaultHeaderMessageId}

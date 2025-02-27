@@ -1,11 +1,15 @@
-import { List, ListItem, Typography } from '@mui/material';
-import { ReactNode } from 'react';
+import { Divider, List, ListItem, Stack, Typography } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
+import AlertBox from 'components/shared/AlertBox';
+import { ReactNode, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
+import { RowConfirmation } from '../AccessGrants/types';
 import NestedListItem, { SettingMetadata } from './NestedListItem';
 
 interface RowActionConfirmationProps {
     message: ReactNode;
-    selected: any; //SelectableTableStore['selected'];
+    selected: RowConfirmation[]; //SelectableTableStore['selected'];
     selectableTableStoreName?:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -20,23 +24,35 @@ function RowActionConfirmation({
     selectableTableStoreName,
     settings,
 }: RowActionConfirmationProps) {
+    const intl = useIntl();
+
+    const potentiallyDangerousUpdates = useMemo(
+        () => selected.filter(({ highlight }) => highlight),
+        [selected]
+    );
+
+    const normalUpdates = useMemo(
+        () => selected.filter(({ highlight }) => !highlight),
+        [selected]
+    );
+
     const renderListItems =
         settings && settings.length > 0 && selectableTableStoreName
-            ? (value: string) => (
+            ? (item: RowConfirmation) => (
                   <NestedListItem
-                      key={`confirmation-selected-items-${value}`}
-                      catalogName={value}
+                      key={`confirmation-selected-items-${item.message}`}
+                      catalogName={item.message}
                       selectableTableStoreName={selectableTableStoreName}
                       settings={settings}
                   />
               )
-            : (value: string) => (
+            : (item: RowConfirmation) => (
                   <ListItem
                       component="div"
-                      key={`confirmation-selected-items-${value}`}
+                      key={`confirmation-selected-items-${item.message}`}
                   >
-                      <Typography component="span" sx={{ fontWeight: 500 }}>
-                          {value}
+                      <Typography component="span" style={{ fontWeight: 500 }}>
+                          {item.message}
                       </Typography>
                   </ListItem>
               );
@@ -45,7 +61,27 @@ function RowActionConfirmation({
         <>
             {message}
 
-            <List component="div">{selected.map(renderListItems)}</List>
+            <List component="div">{normalUpdates.map(renderListItems)}</List>
+
+            {potentiallyDangerousUpdates.length > 0 ? (
+                <Stack spacing={2}>
+                    <Divider />
+                    <AlertBox
+                        short
+                        severity="error"
+                        title={intl.formatMessage({
+                            id: 'row.actions.extra.confirmation.title',
+                        })}
+                    >
+                        <Typography component="div">
+                            <MessageWithLink messageID="row.actions.extra.confirmation.message" />
+                        </Typography>
+                    </AlertBox>
+                    <List component="div">
+                        {potentiallyDangerousUpdates.map(renderListItems)}
+                    </List>
+                </Stack>
+            ) : null}
         </>
     );
 }

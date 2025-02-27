@@ -8,11 +8,12 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { RowConfirmation } from '../AccessGrants/types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
 export interface Props {
-    linkConfig: { directiveId: string; accessLink: string };
+    linkConfig: RowConfirmation;
     runningMessageID: string;
     successMessageID: string;
     onFinish: (response: any) => void;
@@ -56,13 +57,8 @@ function DisableDirective({
     );
 
     useEffect(() => {
-        void disableInvitation(
-            linkConfig.directiveId,
-            setProgress,
-            setError,
-            onFinish
-        );
-    }, [onFinish, setProgress, linkConfig.directiveId]);
+        void disableInvitation(linkConfig.id, setProgress, setError, onFinish);
+    }, [onFinish, setProgress, linkConfig.id]);
 
     useEffect(() => {
         if (progress === ProgressStates.SUCCESS) {
@@ -73,7 +69,7 @@ function DisableDirective({
     return (
         <Progress
             progress={progress}
-            item={linkConfig.accessLink}
+            item={linkConfig.message}
             runningMessageID={runningMessageID}
             successMessageID={successMessageID}
             error={error}

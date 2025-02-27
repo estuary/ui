@@ -2,16 +2,19 @@ import { Button, Dialog } from '@mui/material';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
 import { useConfirmationModalContext } from 'context/Confirmation';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
+import { useShallow } from 'zustand/react/shallow';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import RevokeGrant from './RevokeGrant';
+import { RowConfirmation } from './types';
 
 interface Props {
     selectTableStoreName:
@@ -22,12 +25,35 @@ interface Props {
 function DeleteButton({ selectTableStoreName }: Props) {
     const intl = useIntl();
 
+    const userEmail = useUserStore(
+        useShallow((state) => state.userDetails?.email)
+    );
+
+    const potentiallyDangerousUpdate = useCallback(
+        (value: any) => {
+            if (value.object_role === 'ops/dp/public/') {
+                return true;
+            }
+
+            if (value.capability === 'admin') {
+                if (value.subject_role === value.object_role) {
+                    return true;
+                }
+
+                if (userEmail && value.user_email === userEmail) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+        [userEmail]
+    );
+
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState<boolean>(false);
-    const [targets, setTargets] = useState<{ id: string; message: string }[]>(
-        []
-    );
+    const [targets, setTargets] = useState<RowConfirmation[]>([]);
 
     const setAllSelected = useZustandStore<
         SelectableTableStore,
@@ -43,7 +69,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const grants: { id: string; message: string }[] = [];
+            const grants: RowConfirmation[] = [];
 
             selectedRows.forEach((value, _key) => {
                 if (
@@ -58,6 +84,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
                     grants.push({
                         id: value.id,
+                        highlight: potentiallyDangerousUpdate(value),
                         message: intl.formatMessage(
                             { id: 'admin.users.confirmation.listItem' },
                             { identifier, capability: value.capability }
@@ -66,6 +93,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                 } else {
                     grants.push({
                         id: value.id,
+                        highlight: potentiallyDangerousUpdate(value),
                         message: intl.formatMessage(
                             { id: 'admin.prefix.confirmation.listItem' },
                             {
@@ -82,10 +110,10 @@ function DeleteButton({ selectTableStoreName }: Props) {
                 ?.showConfirmation({
                     message: (
                         <RowActionConfirmation
-                            selected={grants.map(({ message }) => message)}
                             message={
                                 <ConfirmationAlert messageId="admin.grants.confirmation.alert" />
                             }
+                            selected={grants}
                         />
                     ),
                 })
