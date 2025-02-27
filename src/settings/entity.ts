@@ -78,7 +78,6 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             connectorSelect:
                 authenticatedRoutes.materializations.create.fullPath,
             createNew: authenticatedRoutes.materializations.create.new.fullPath,
-
             details:
                 authenticatedRoutes.materializations.details.overview.fullPath,
             viewAll: authenticatedRoutes.materializations.fullPath,
