@@ -13,7 +13,8 @@ export const JsonForms: Record<string, string> = {
     'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'informational.sshEndpoint.title': `All Estuary traffic comes from a group of IPs that can be whitelisted:`,
-    'informational.sshEndpoint.ip': `34.121.207.128, 35.226.75.135, 34.68.62.148`,
+    'informational.sshEndpoint.ipv4': `34.121.207.128, 35.226.75.135, 34.68.62.148`,
+    'informational.sshEndpoint.ipv6': `does not support IPv6`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 
     // OAuth
