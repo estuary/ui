@@ -182,6 +182,7 @@ const getInitialState = (
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
+                        console.log('uuid maker 1');
                         initializeAndGenerateUUID(state, binding, index);
                     }
                 );
@@ -385,7 +386,11 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, sortedResourceConfigs);
+                initializeCurrentBinding(
+                    state,
+                    sortedResourceConfigs,
+                    rehydrating // mainly for field selection refresh so the select binding is not lost
+                );
             }),
             false,
             'Binding dependent state prefilled'
