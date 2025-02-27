@@ -73,7 +73,7 @@ export const Authentication: Record<string, string> = {
 
     // Tenant
     'tenant.heading': `Let's get started`,
-    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
+    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,

@@ -76,7 +76,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
-    'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.description': `Enter your payment information. You won’t be charged until your account usage exceeds free tier limits.`,
     'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
     'admin.billing.paymentMethods.cta.addPaymentMethod.error': `There was an issue attempting to get a token from Stripe. You cannot currently add a payment method. ${Errors['error.tryAgain']}`,
     'admin.billing.paymentMethods.table.label.cardType': `Type`,

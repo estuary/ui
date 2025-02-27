@@ -74,8 +74,8 @@ export const EntityTable: Record<string, string> = {
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 
     // Entity Selector / Add Dialog
-    'entityTable.captures.missing.header': `You currently have no captures.  Click the captures icon on the menu bar to get started.`,
-    'entityTable.materializations.missing.header': `You currently have no materializations.  Click the materializations icon on the menu bar to get started.`,
+    'entityTable.captures.missing.header': `You currently have no captures. Click the captures icon on the menu bar to get started.`,
+    'entityTable.materializations.missing.header': `You currently have no materializations. Click the materializations icon on the menu bar to get started.`,
 
     'entityTable.collections.missing.header': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
     'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
@@ -83,7 +83,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 
     'row.actions.extra.confirmation.title': `Extra Attention Required`,
-    'row.actions.extra.confirmation.message': `Please review the selection below as they can cause issues with the application. If you are unsure please contact {docLink}.`,
+    'row.actions.extra.confirmation.message': `Please review the selection below as these changes can cause issues with the application. If you are unsure please contact {docLink}.`,
     'row.actions.extra.confirmation.message.docLink': `support@estuary.dev`,
     'row.actions.extra.confirmation.message.docPath': `${CommonMessages['support.email']}`,
 };

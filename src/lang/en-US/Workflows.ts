@@ -121,7 +121,7 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
-    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
+    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization. Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
     'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
@@ -180,7 +180,7 @@ export const Workflows: Record<string, string> = {
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related materializations`,
-    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found.  Pick one manually or skip this step.`,
+    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found. Pick one manually or skip this step.`,
     'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
@@ -254,7 +254,7 @@ export const Workflows: Record<string, string> = {
 
     // Time Travel
     'notBeforeNotAfter.header': `Time Travel`,
-    'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
+    'notBeforeNotAfter.message': `Include only data from before or after a specific time period. This should only be used when first setting up your destination or it will not have an effect.`,
     'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
     'notAfter.input.label': `Not After`,
     'notAfter.input.description': `only include data from before this time (UTC)`,
