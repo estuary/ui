@@ -182,7 +182,6 @@ const getInitialState = (
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
-                        console.log('uuid maker 1');
                         initializeAndGenerateUUID(state, binding, index);
                     }
                 );
