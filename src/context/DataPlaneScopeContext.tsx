@@ -1,21 +1,33 @@
 import { createContext, useCallback, useContext, useState } from 'react';
+import { useLocalStorage } from 'react-use';
 import { DataPlaneScopes } from 'stores/DetailsForm/types';
 import { BaseComponentProps } from 'types';
+import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 interface DataPlaneScope {
     dataPlaneScope: DataPlaneScopes;
     toggleScope: Function;
 }
 
+const defaultOption: DataPlaneScopes = 'private';
 const DataPlaneScopeContext = createContext<DataPlaneScope | null>(null);
 
 const DataPlaneScopeContextProvider = ({ children }: BaseComponentProps) => {
-    const [dataPlaneScope, setDataPlaneScope] =
-        useState<DataPlaneScopes>('private');
+    const [defaultDataPlane, setDefaultDataPlane] =
+        useLocalStorage<DataPlaneScopes>(
+            LocalStorageKeys.DATAPLANE_CHOICE,
+            defaultOption
+        );
+
+    const [dataPlaneScope, setDataPlaneScope] = useState<DataPlaneScopes>(
+        defaultDataPlane ?? defaultOption
+    );
 
     const toggleScope = useCallback(() => {
-        setDataPlaneScope(dataPlaneScope === 'public' ? 'private' : 'public');
-    }, [dataPlaneScope]);
+        const newVal = dataPlaneScope === 'public' ? 'private' : 'public';
+        setDataPlaneScope(newVal);
+        setDefaultDataPlane(newVal);
+    }, [dataPlaneScope, setDefaultDataPlane]);
 
     return (
         <DataPlaneScopeContext.Provider value={{ dataPlaneScope, toggleScope }}>
