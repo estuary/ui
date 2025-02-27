@@ -100,7 +100,6 @@ export const AdminPage: Record<string, string> = {
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
-    'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
     'admin.prefix.issueGrant.label.capability': `Capability`,
     'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
     'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
