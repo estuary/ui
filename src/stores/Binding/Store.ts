@@ -267,7 +267,10 @@ const getInitialState = (
 
             const boundCollections = Object.keys(get().bindings);
 
-            if (hasLength(boundCollections)) {
+            if (
+                entityType === 'materialization' &&
+                hasLength(boundCollections)
+            ) {
                 const trialCollections = await evaluateTrialCollections(
                     boundCollections,
                     getTrialOnlyPrefixes
@@ -943,9 +946,12 @@ const getInitialState = (
         set(
             produce((state: BindingState) => {
                 collections.forEach((collection) => {
-                    state.collectionMetadata[
-                        collection
-                    ].sourceBackfillRecommended = value;
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    if (state.collectionMetadata?.[collection]) {
+                        state.collectionMetadata[
+                            collection
+                        ].sourceBackfillRecommended = value;
+                    }
                 });
             }),
             false,
