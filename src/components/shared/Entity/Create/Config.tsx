@@ -19,7 +19,10 @@ function EntityCreateConfig({ entityType }: Props) {
 
     useEffect(() => {
         if (connectorId) {
-            navigateToCreate(entityType, connectorId, true, true);
+            navigateToCreate(entityType, {
+                id: connectorId,
+                advanceToForm: true,
+            });
         }
     }, [navigateToCreate, connectorId, entityType]);
 
@@ -29,7 +32,7 @@ function EntityCreateConfig({ entityType }: Props) {
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>
 
-            <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
+            <ConnectorTiles protocolPreset={entityType} />
         </Collapse>
     );
 }

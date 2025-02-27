@@ -946,9 +946,12 @@ const getInitialState = (
         set(
             produce((state: BindingState) => {
                 collections.forEach((collection) => {
-                    state.collectionMetadata[
-                        collection
-                    ].sourceBackfillRecommended = value;
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    if (state.collectionMetadata?.[collection]) {
+                        state.collectionMetadata[
+                            collection
+                        ].sourceBackfillRecommended = value;
+                    }
                 });
             }),
             false,
