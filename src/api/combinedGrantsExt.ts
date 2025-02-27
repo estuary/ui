@@ -57,8 +57,7 @@ const getGrants_Users = (
                 user_avatar_url,
                 user_full_name,
                 user_email,
-                updated_at,
-                detail
+                updated_at
             `,
             {
                 count: 'exact',
