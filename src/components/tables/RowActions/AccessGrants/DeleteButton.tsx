@@ -45,6 +45,12 @@ function DeleteButton({ selectTableStoreName }: Props) {
                 }
             }
 
+            if (value.capability === 'write') {
+                if (value.subject_role === value.object_role) {
+                    return true;
+                }
+            }
+
             return false;
         },
         [userEmail]
