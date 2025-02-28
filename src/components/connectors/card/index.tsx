@@ -47,7 +47,11 @@ function ConnectorCard({
                                 marginBottom: recommended ? 1 : 2,
                             }}
                         >
-                            <Box
+                            <Stack
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
                                 sx={
                                     recommended
                                         ? {
@@ -59,21 +63,14 @@ function ConnectorCard({
                                         : connectorImageBackgroundSx
                                 }
                             >
-                                <Stack
-                                    sx={{
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Box>{logo}</Box>
+                                {logo}
 
-                                    {docsUrl ? (
-                                        <ExternalLink link={docsUrl}>
-                                            <FormattedMessage id="terms.documentation" />
-                                        </ExternalLink>
-                                    ) : null}
-                                </Stack>
-                            </Box>
+                                {docsUrl ? (
+                                    <ExternalLink link={docsUrl}>
+                                        <FormattedMessage id="terms.documentation" />
+                                    </ExternalLink>
+                                ) : null}
+                            </Stack>
 
                             {recommended ? (
                                 <Box
