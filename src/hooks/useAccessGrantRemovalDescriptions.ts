@@ -1,7 +1,18 @@
 import { useUserStore } from 'context/User/useUserContextStore';
-import { useCallback } from 'react';
-import { ESTUARY_SUPPORT_ROLE } from 'utils/misc-utils';
+import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
+import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import { BaseGrant, Grant_UserExt } from 'types';
+import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
+
+type MessageIdWhereVals =
+    | 'finalEmail'
+    | 'email'
+    | 'ownEmail'
+    | 'ownTenant'
+    | 'support'
+    | 'tenant';
 
 export type AccessGrantRemovalType = 'dangerous' | 'normal';
 
@@ -10,176 +21,65 @@ export type AccessGrantRemovalDescription =
     | undefined;
 
 function useAccessGrantRemovalDescriptions() {
+    const intl = useIntl();
     const userEmail = useUserStore(
         useShallow((state) => state.userDetails?.email)
     );
 
-    const describeDangerousRemovals = useCallback(
-        (value: any): AccessGrantRemovalDescription => {
-            const removalType: AccessGrantRemovalType = 'dangerous';
+    const adminable = useEntitiesStore_capabilities_adminable();
 
-            const updatingTenantLevelSharing = Boolean(value.subject_role);
+    const probablyNewUser = useMemo(() => adminable.length === 1, [adminable]);
 
-            if (value.object_role === 'ops/dp/public/') {
-                return [
-                    removalType,
-                    `The tenant's will not be able to write to the public dataplane.`,
-                ];
+    console.log('adminable', adminable);
+
+    const describeAccessGrantRemovals = useCallback(
+        (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
+            console.log('describeAccessGrantRemovals', value);
+
+            // Sett good initial defaults and then override down below if some more important is found
+            let where: MessageIdWhereVals = isGrant_UserExt(value)
+                ? userEmail
+                    ? 'ownEmail'
+                    : 'email'
+                : 'tenant';
+            let what: string | null = value.capability;
+            let removalType: AccessGrantRemovalType = 'normal';
+
+            if (probablyNewUser && where === 'ownEmail') {
+                // Removing their only access - and will be logged out right away
+                removalType = 'dangerous';
+                where = 'finalEmail';
+            } else if (value.object_role === 'ops/dp/public/') {
+                // Removing any access to public dataplane
+                removalType = 'dangerous';
+                what = 'dataPlane';
+                where = 'ownTenant';
+            } else if (where === 'tenant') {
+                if (value.subject_role === value.object_role) {
+                    // Removing some access a tenant has to ITSELF
+                    removalType = 'dangerous';
+                    where = 'ownTenant';
+                } else if (value.subject_role === ESTUARY_SUPPORT_ROLE) {
+                    // Removing support from a tenant
+                    where = 'support';
+                }
+            } else if (where === 'ownEmail') {
+                // Removing their own email - but they have access to other stuff
+                removalType = 'dangerous';
             }
 
-            if (value.capability === 'admin') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role === value.object_role) {
-                        return [
-                            removalType,
-                            `The tenant will not be able to administrate itself.`,
-                        ];
-                    }
-                }
-
-                if (userEmail && value.user_email === userEmail) {
-                    return [
-                        removalType,
-                        'You will no longer have admin access to this tenant. Creating entities, adding/removing users, managing settings, and more could all be impacted.',
-                    ];
-                }
-            }
-
-            if (value.capability === 'write') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role === value.object_role) {
-                        return [
-                            removalType,
-                            `The tenant will not be able to write anything to itself. Captures could fail.`,
-                        ];
-                    }
-                }
-
-                if (userEmail && value.user_email === userEmail) {
-                    return [
-                        removalType,
-                        'You will not be able to create new entities in this tenant.',
-                    ];
-                }
-            }
-
-            if (value.capability === 'read') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role === value.object_role) {
-                        return [
-                            removalType,
-                            `The tenant will not be able to read from itself. Materializations could fail.`,
-                        ];
-                    }
-                }
-
-                if (userEmail && value.user_email === userEmail) {
-                    return [
-                        removalType,
-                        'You will not be able to see anything in the tenant.',
-                    ];
-                }
-            }
-
-            return undefined;
+            return [
+                removalType,
+                intl.formatMessage({
+                    id: `accessGrants.descriptions.removing.${what}.${where}`,
+                }),
+            ];
         },
-        [userEmail]
-    );
-
-    const describeNormalRemovals = useCallback(
-        (value: any): AccessGrantRemovalDescription => {
-            const removalType: AccessGrantRemovalType = 'normal';
-
-            const updatingTenantLevelSharing = Boolean(value.subject_role);
-
-            if (value.capability === 'admin') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role === ESTUARY_SUPPORT_ROLE) {
-                        return [
-                            removalType,
-                            `Estuary Support staff will no longer be able to help manage the tenant.`,
-                        ];
-                    }
-
-                    if (value.subject_role !== value.object_role) {
-                        return [
-                            removalType,
-                            `This will remove one tenant's ability to manage another tenant.`,
-                        ];
-                    }
-                }
-
-                if (value.user_email) {
-                    return [
-                        removalType,
-                        `This will remove a user's admin access to a tenant.`,
-                    ];
-                }
-            }
-
-            if (value.capability === 'write') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role !== value.object_role) {
-                        return [
-                            removalType,
-                            `This will remove one tenant's ability to write another tenant.`,
-                        ];
-                    }
-                }
-
-                if (value.user_email) {
-                    return [
-                        removalType,
-                        `This will remove a user's admin access to a tenant.`,
-                    ];
-                }
-            }
-
-            if (value.capability === 'read') {
-                if (updatingTenantLevelSharing) {
-                    if (value.subject_role !== value.object_role) {
-                        return [
-                            removalType,
-                            `This will remove one tenant's ability to read from another tenant.`,
-                        ];
-                    }
-                }
-
-                if (value.user_email) {
-                    return [
-                        removalType,
-                        `This will remove a user's admin access to a tenant.`,
-                    ];
-                }
-            }
-
-            return undefined;
-        },
-        []
-    );
-
-    const describeAllRemovals = useCallback(
-        (value: any): AccessGrantRemovalDescription => {
-            const dangerousDescription = describeDangerousRemovals(value);
-            if (dangerousDescription) {
-                return dangerousDescription;
-            }
-
-            const normalDescription = describeNormalRemovals(value);
-
-            if (normalDescription) {
-                return normalDescription;
-            }
-
-            return undefined;
-        },
-        [describeDangerousRemovals, describeNormalRemovals]
+        [intl, probablyNewUser, userEmail]
     );
 
     return {
-        describeAllRemovals,
-        describeDangerousRemovals,
-        describeNormalRemovals,
+        describeAllRemovals: describeAccessGrantRemovals,
     };
 }
 

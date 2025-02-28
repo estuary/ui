@@ -53,7 +53,7 @@ function RowActionConfirmation({
                   index: number
               ) => (
                   <NestedListItem
-                      key={`confirmation-selected-items-${index}`}
+                      key={`confirmation-selected-items-${item.message}-${index}`}
                       catalogName={item.message}
                       selectableTableStoreName={selectableTableStoreName}
                       settings={settings}
@@ -65,7 +65,7 @@ function RowActionConfirmation({
               ) => (
                   <ListItem
                       component="div"
-                      key={`confirmation-selected-items-${index}`}
+                      key={`confirmation-selected-items-${item.message}-${index}`}
                   >
                       <Stack direction="row" style={{ width: '100%' }}>
                           <Typography
@@ -103,7 +103,7 @@ function RowActionConfirmation({
                 <Box sx={{ ml: 2 }}>
                     {message}
                     <List component="div">
-                        <ListItem component="div">
+                        <ListItem component="div" key="normal-action-header">
                             <Stack direction="row" style={{ width: '100%' }}>
                                 <Typography
                                     component="span"
@@ -169,7 +169,10 @@ function RowActionConfirmation({
                             </Typography>
 
                             <List component="div">
-                                <ListItem component="div">
+                                <ListItem
+                                    component="div"
+                                    key="dangerous-action-header"
+                                >
                                     <Stack
                                         direction="row"
                                         style={{ width: '100%' }}
