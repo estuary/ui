@@ -171,6 +171,11 @@ function EndpointConfig({
                 //  and pass it along (to save a tiny bit of processing)
                 const defaultConfig = createJSONFormDefaults(schema);
                 setEndpointConfig(defaultConfig);
+
+                // TODO (endpoint header errors / server update required)
+                // I think this is a mistake when initially loading create. As the previous endpoint config
+                //  at that point is nothing. This extra call causes some issues with showing the error
+                //  notification properly. But it feels like removing this is a pretty big change.
                 setPreviousEndpointConfig(defaultConfig);
             }
         };
