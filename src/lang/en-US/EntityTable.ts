@@ -82,8 +82,12 @@ export const EntityTable: Record<string, string> = {
     'entityTable.collections.missing.message.docLink': `collections`,
     'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 
+    'row.actions.extra.confirmation.header1': `What is changing?`,
+    'row.actions.extra.confirmation.header2': `What will happen?`,
+
     'row.actions.extra.confirmation.title': `Extra Attention Required`,
-    'row.actions.extra.confirmation.message': `Please review the selection below as these changes can cause issues with the application. If you are unsure please contact {docLink}.`,
-    'row.actions.extra.confirmation.message.docLink': `support@estuary.dev`,
-    'row.actions.extra.confirmation.message.docPath': `${CommonMessages['support.email']}`,
+    'row.actions.extra.confirmation.message': `The following changes may break the application. Please review them and ensure they are in fact what you want to have happen.`,
+    'row.actions.extra.confirmation.instructions': `If you are unsure please contact {docLink}.`,
+    'row.actions.extra.confirmation.instructions.docLink': `support@estuary.dev`,
+    'row.actions.extra.confirmation.instructions.docPath': `${CommonMessages['support.email']}`,
 };

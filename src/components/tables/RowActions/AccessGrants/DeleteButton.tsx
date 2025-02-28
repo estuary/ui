@@ -32,26 +32,26 @@ function DeleteButton({ selectTableStoreName }: Props) {
     const potentiallyDangerousUpdate = useCallback(
         (value: any) => {
             if (value.object_role === 'ops/dp/public/') {
-                return true;
+                return `This will remove the tenant's ability to write to the public dataplane.`;
             }
 
             if (value.capability === 'admin') {
                 if (value.subject_role === value.object_role) {
-                    return true;
+                    return `This will remove the tenant's ability to administrate itself.`;
                 }
 
                 if (userEmail && value.user_email === userEmail) {
-                    return true;
+                    return 'This will remove your own admin access.';
                 }
             }
 
             if (value.capability === 'write') {
                 if (value.subject_role === value.object_role) {
-                    return true;
+                    return `This will remove the tenant's ability to write to itself.`;
                 }
             }
 
-            return false;
+            return undefined;
         },
         [userEmail]
     );
@@ -114,6 +114,9 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
             confirmationModalContext
                 ?.showConfirmation({
+                    dialogProps: {
+                        maxWidth: 'lg',
+                    },
                     message: (
                         <RowActionConfirmation
                             message={

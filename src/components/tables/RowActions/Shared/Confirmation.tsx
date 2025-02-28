@@ -1,6 +1,7 @@
-import { Divider, List, ListItem, Stack, Typography } from '@mui/material';
+import { Box, Divider, List, ListItem, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
+import { alertColorsReversed } from 'context/Theme';
 import { ReactNode, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
@@ -27,12 +28,12 @@ function RowActionConfirmation({
     const intl = useIntl();
 
     const potentiallyDangerousUpdates = useMemo(
-        () => selected.filter(({ highlight }) => highlight),
+        () => selected.filter(({ highlight }) => Boolean(highlight)),
         [selected]
     );
 
     const normalUpdates = useMemo(
-        () => selected.filter(({ highlight }) => !highlight),
+        () => selected.filter(({ highlight }) => Boolean(!highlight)),
         [selected]
     );
 
@@ -51,9 +52,28 @@ function RowActionConfirmation({
                       component="div"
                       key={`confirmation-selected-items-${item.message}`}
                   >
-                      <Typography component="span" style={{ fontWeight: 500 }}>
-                          {item.message}
-                      </Typography>
+                      <Stack direction="row" style={{ width: '100%' }}>
+                          <Typography component="span" style={{ width: '50%' }}>
+                              {item.message}
+                          </Typography>
+
+                          {!item.highlight ? null : (
+                              // There is default styling that prevents setting margin on root stack items :shrug
+                              <Box style={{ fontWeight: 500, width: '50%' }}>
+                                  <Typography
+                                      component="span"
+                                      sx={{
+                                          color: (theme) =>
+                                              alertColorsReversed.error[
+                                                  theme.palette.mode
+                                              ],
+                                      }}
+                                  >
+                                      {item.highlight}
+                                  </Typography>
+                              </Box>
+                          )}
+                      </Stack>
                   </ListItem>
               );
 
@@ -64,23 +84,58 @@ function RowActionConfirmation({
             <List component="div">{normalUpdates.map(renderListItems)}</List>
 
             {potentiallyDangerousUpdates.length > 0 ? (
-                <Stack spacing={2}>
-                    <Divider />
-                    <AlertBox
-                        short
-                        severity="error"
-                        title={intl.formatMessage({
-                            id: 'row.actions.extra.confirmation.title',
-                        })}
-                    >
-                        <Typography component="div">
-                            <MessageWithLink messageID="row.actions.extra.confirmation.message" />
+                <AlertBox severity="error" short={true} hideIcon>
+                    <Stack spacing={2}>
+                        <Typography variant="h6">
+                            {intl.formatMessage({
+                                id: 'row.actions.extra.confirmation.title',
+                            })}
                         </Typography>
-                    </AlertBox>
-                    <List component="div">
-                        {potentiallyDangerousUpdates.map(renderListItems)}
-                    </List>
-                </Stack>
+                        <Typography component="div">
+                            {intl.formatMessage({
+                                id: 'row.actions.extra.confirmation.message',
+                            })}
+                        </Typography>
+                        <Typography component="div">
+                            <MessageWithLink messageID="row.actions.extra.confirmation.instructions" />
+                        </Typography>
+                        <Divider />
+
+                        <List component="div">
+                            <ListItem component="div">
+                                <Stack
+                                    direction="row"
+                                    style={{ width: '100%' }}
+                                >
+                                    <Typography
+                                        component="span"
+                                        style={{
+                                            fontWeight: 500,
+                                            width: '50%',
+                                        }}
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'row.actions.extra.confirmation.header1',
+                                        })}
+                                    </Typography>
+
+                                    <Typography
+                                        component="span"
+                                        style={{
+                                            fontWeight: 500,
+                                            width: '50%',
+                                        }}
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'row.actions.extra.confirmation.header2',
+                                        })}
+                                    </Typography>
+                                </Stack>
+                            </ListItem>
+                            {potentiallyDangerousUpdates.map(renderListItems)}
+                        </List>
+                    </Stack>
+                </AlertBox>
             ) : null}
         </>
     );
