@@ -38,7 +38,7 @@ function useAccessGrantRemovalDescriptions() {
 
             // Sett good initial defaults and then override down below if some more important is found
             let where: MessageIdWhereVals = isGrant_UserExt(value)
-                ? userEmail
+                ? value.user_email === userEmail
                     ? 'ownEmail'
                     : 'email'
                 : 'tenant';
