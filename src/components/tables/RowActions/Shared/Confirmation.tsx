@@ -85,7 +85,7 @@ function RowActionConfirmation({
 
             {potentiallyDangerousUpdates.length > 0 ? (
                 <AlertBox severity="error" short={true} hideIcon>
-                    <Stack spacing={2}>
+                    <Stack spacing={1}>
                         <Typography variant="h6">
                             {intl.formatMessage({
                                 id: 'row.actions.extra.confirmation.title',
@@ -99,7 +99,6 @@ function RowActionConfirmation({
                         <Typography component="div">
                             <MessageWithLink messageID="row.actions.extra.confirmation.instructions" />
                         </Typography>
-                        <Divider />
 
                         <List component="div">
                             <ListItem component="div">
@@ -132,7 +131,15 @@ function RowActionConfirmation({
                                     </Typography>
                                 </Stack>
                             </ListItem>
-                            {potentiallyDangerousUpdates.map(renderListItems)}
+                            <Divider />
+                            {potentiallyDangerousUpdates.map((item) => {
+                                return (
+                                    <>
+                                        {renderListItems(item)}
+                                        <Divider />
+                                    </>
+                                );
+                            })}
                         </List>
                     </Stack>
                 </AlertBox>

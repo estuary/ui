@@ -86,7 +86,7 @@ export const EntityTable: Record<string, string> = {
     'row.actions.extra.confirmation.header2': `What will happen?`,
 
     'row.actions.extra.confirmation.title': `Extra Attention Required`,
-    'row.actions.extra.confirmation.message': `The following changes may break the application. Please review them and ensure they are in fact what you want to have happen.`,
+    'row.actions.extra.confirmation.message': `The following changes may cause interuptions to service. Please review them and ensure they are what you want to have happen.`,
     'row.actions.extra.confirmation.instructions': `If you are unsure please contact {docLink}.`,
     'row.actions.extra.confirmation.instructions.docLink': `support@estuary.dev`,
     'row.actions.extra.confirmation.instructions.docPath': `${CommonMessages['support.email']}`,
