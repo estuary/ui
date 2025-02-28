@@ -40,6 +40,7 @@ export enum CustomEvents {
     LAZY_LOADING = 'Lazy Loading',
     LOGIN = 'Login',
     LOGS_DOCUMENT_COUNT = 'Logs:Document:Count',
+    JOURNAL_DATA = 'JournalData',
     JOURNAL_DATA_STATUS = 'JournalData:Status',
     JOURNAL_DATA_MAX_BYTES_NOT_ENOUGH = 'JournalData:MaxBytesNotEnough',
     JSON_FORMS_NULLABLE_UNSUPPORTED = 'JsonForms:Nullable:Unsupported',
