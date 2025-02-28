@@ -2,16 +2,17 @@ import { Button, Dialog } from '@mui/material';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
 import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
 import { useConfirmationModalContext } from 'context/Confirmation';
-import { useUserStore } from 'context/User/useUserContextStore';
 import { useZustandStore } from 'context/Zustand/provider';
-import { useCallback, useState } from 'react';
+import useAccessGrantRemovalDescriptions, {
+    AccessGrantRemovalDescription,
+} from 'hooks/useAccessGrantRemovalDescriptions';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { useShallow } from 'zustand/react/shallow';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import RevokeGrant from './RevokeGrant';
 import { RowConfirmation } from './types';
@@ -25,36 +26,7 @@ interface Props {
 function DeleteButton({ selectTableStoreName }: Props) {
     const intl = useIntl();
 
-    const userEmail = useUserStore(
-        useShallow((state) => state.userDetails?.email)
-    );
-
-    const potentiallyDangerousUpdate = useCallback(
-        (value: any) => {
-            if (value.object_role === 'ops/dp/public/') {
-                return `This will remove the tenant's ability to write to the public dataplane.`;
-            }
-
-            if (value.capability === 'admin') {
-                if (value.subject_role === value.object_role) {
-                    return `This will remove the tenant's ability to administrate itself.`;
-                }
-
-                if (userEmail && value.user_email === userEmail) {
-                    return 'This will remove your own admin access.';
-                }
-            }
-
-            if (value.capability === 'write') {
-                if (value.subject_role === value.object_role) {
-                    return `This will remove the tenant's ability to write to itself.`;
-                }
-            }
-
-            return undefined;
-        },
-        [userEmail]
-    );
+    const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
     const confirmationModalContext = useConfirmationModalContext();
 
@@ -75,7 +47,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const grants: RowConfirmation[] = [];
+            const grants: RowConfirmation<AccessGrantRemovalDescription>[] = [];
 
             selectedRows.forEach((value, _key) => {
                 if (
@@ -90,7 +62,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
                     grants.push({
                         id: value.id,
-                        highlight: potentiallyDangerousUpdate(value),
+                        details: describeAllRemovals(value),
                         message: intl.formatMessage(
                             { id: 'admin.users.confirmation.listItem' },
                             { identifier, capability: value.capability }
@@ -99,7 +71,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                 } else {
                     grants.push({
                         id: value.id,
-                        highlight: potentiallyDangerousUpdate(value),
+                        details: describeAllRemovals(value),
                         message: intl.formatMessage(
                             { id: 'admin.prefix.confirmation.listItem' },
                             {
