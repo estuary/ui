@@ -96,7 +96,7 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
-    'admin.users.confirmation.listItem': `{identifier} with {capability} access.`,
+    'admin.users.confirmation.listItem': `{identifier} with {capability} access to {objectRole}`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,

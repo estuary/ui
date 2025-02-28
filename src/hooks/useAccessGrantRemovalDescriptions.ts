@@ -23,7 +23,7 @@ function useAccessGrantRemovalDescriptions() {
             if (value.object_role === 'ops/dp/public/') {
                 return [
                     removalType,
-                    `This will remove the tenant's ability to write to the public dataplane.`,
+                    `The tenant's will not be able to write to the public dataplane.`,
                 ];
             }
 
@@ -32,7 +32,7 @@ function useAccessGrantRemovalDescriptions() {
                     if (value.subject_role === value.object_role) {
                         return [
                             removalType,
-                            `This will remove the tenant's ability to administrate itself.`,
+                            `The tenant will not be able to administrate itself.`,
                         ];
                     }
                 }
@@ -40,7 +40,7 @@ function useAccessGrantRemovalDescriptions() {
                 if (userEmail && value.user_email === userEmail) {
                     return [
                         removalType,
-                        'This will remove your own admin access to the tenant.',
+                        'You will no longer have admin access to this tenant. Creating entities, adding/removing users, managing settings, and more could all be impacted.',
                     ];
                 }
             }
@@ -50,7 +50,7 @@ function useAccessGrantRemovalDescriptions() {
                     if (value.subject_role === value.object_role) {
                         return [
                             removalType,
-                            `This will remove the tenant's ability to write to itself.`,
+                            `The tenant will not be able to write anything to itself. Captures could fail.`,
                         ];
                     }
                 }
@@ -58,7 +58,7 @@ function useAccessGrantRemovalDescriptions() {
                 if (userEmail && value.user_email === userEmail) {
                     return [
                         removalType,
-                        'This will remove your own write access to the tenant.',
+                        'You will not be able to create new entities in this tenant.',
                     ];
                 }
             }
@@ -68,7 +68,7 @@ function useAccessGrantRemovalDescriptions() {
                     if (value.subject_role === value.object_role) {
                         return [
                             removalType,
-                            `This will remove the tenant's ability to read from itself.`,
+                            `The tenant will not be able to read from itself. Materializations could fail.`,
                         ];
                     }
                 }
@@ -76,7 +76,7 @@ function useAccessGrantRemovalDescriptions() {
                 if (userEmail && value.user_email === userEmail) {
                     return [
                         removalType,
-                        'This will remove your own read access to the tenant.',
+                        'You will not be able to see anything in the tenant.',
                     ];
                 }
             }
@@ -97,14 +97,14 @@ function useAccessGrantRemovalDescriptions() {
                     if (value.subject_role === ESTUARY_SUPPORT_ROLE) {
                         return [
                             removalType,
-                            `Estuary Support staff will no longer be able to administrate the tenant.`,
+                            `Estuary Support staff will no longer be able to help manage the tenant.`,
                         ];
                     }
 
                     if (value.subject_role !== value.object_role) {
                         return [
                             removalType,
-                            `This will remove one tenant's ability to administrate another tenant.`,
+                            `This will remove one tenant's ability to manage another tenant.`,
                         ];
                     }
                 }

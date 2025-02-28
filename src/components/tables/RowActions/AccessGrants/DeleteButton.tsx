@@ -65,7 +65,11 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         details: describeAllRemovals(value),
                         message: intl.formatMessage(
                             { id: 'admin.users.confirmation.listItem' },
-                            { identifier, capability: value.capability }
+                            {
+                                identifier,
+                                capability: value.capability,
+                                objectRole: value.object_role,
+                            }
                         ),
                     });
                 } else {
