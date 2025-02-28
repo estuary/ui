@@ -115,6 +115,10 @@ function CollectionSelectorList({
         []
     );
     useEffect(() => {
+        // TODO (keep current binding) we need to handle filtering better.
+        //  Waiting on us to handle client side filtering on our own first.
+        //  After that we should make sure the thing we're selecting is actually
+        //  visible with the filters enabled.
         if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
     }, [currentBindingUUID]);
 

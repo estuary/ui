@@ -385,7 +385,11 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
-                initializeCurrentBinding(state, sortedResourceConfigs);
+                initializeCurrentBinding(
+                    state,
+                    sortedResourceConfigs,
+                    rehydrating // mainly for field selection refresh so the select binding is not lost
+                );
             }),
             false,
             'Binding dependent state prefilled'

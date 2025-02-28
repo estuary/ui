@@ -118,18 +118,31 @@ export const initializeBinding = (
 
 export const initializeCurrentBinding = (
     state: BindingState,
-    resourceConfigs: ResourceConfigDictionary
+    resourceConfigs: ResourceConfigDictionary,
+    maintainPreviousCurrentBinding?: boolean
 ) => {
-    const initialConfig = Object.entries(resourceConfigs).at(0);
+    const allResourceConfigs = Object.entries(resourceConfigs);
+    const initialConfig = allResourceConfigs.at(0);
 
-    if (initialConfig) {
-        const [bindingUUID, resourceConfig] = initialConfig;
-
-        state.currentBinding = {
-            uuid: bindingUUID,
-            collection: resourceConfig.meta.collectionName,
-        };
+    if (!initialConfig) {
+        return;
     }
+
+    // We will just match based on name and that is not perfect but good enough
+    //  since very few use cases of duplication bindings exist.
+    let preferredConfig;
+    if (maintainPreviousCurrentBinding && state.currentBinding) {
+        preferredConfig = allResourceConfigs.find(
+            ([_uuid, datum]) =>
+                datum.meta.collectionName === state.currentBinding?.collection
+        );
+    }
+
+    const [bindingUUID, resourceConfig] = preferredConfig ?? initialConfig;
+    state.currentBinding = {
+        uuid: bindingUUID,
+        collection: resourceConfig.meta.collectionName,
+    };
 };
 
 export const getResourceConfig = (
