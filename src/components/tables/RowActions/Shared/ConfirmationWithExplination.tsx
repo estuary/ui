@@ -1,4 +1,13 @@
-import { Box, Divider, List, ListItem, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import { alertColorsReversed } from 'context/Theme';
@@ -17,6 +26,7 @@ function ConfirmationWithExplination({
     selected,
 }: ConfirmationWithExplinationProps) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const { dangerous: potentiallyDangerousUpdates, normal: normalUpdates } =
         useMemo(() => {
@@ -36,45 +46,34 @@ function ConfirmationWithExplination({
 
     const renderListItems = (item: AccessGrantRowConfirmation) => {
         const dangerous = item.details[0] === 'dangerous';
-        return (
-            <Stack component="tr" direction="row" style={{ width: '100%' }}>
-                <Typography
-                    component="td"
-                    style={{
-                        width: leftSideWidth,
-                    }}
-                >
-                    {item.message}
-                </Typography>
 
-                <Stack
-                    component="td"
-                    direction="row"
-                    spacing={1}
+        const color = dangerous
+            ? alertColorsReversed.warning[theme.palette.mode]
+            : undefined;
+        const fontWeight = dangerous ? 500 : undefined;
+
+        return (
+            <>
+                <TableCell>{item.message}</TableCell>
+
+                <TableCell
                     sx={{
-                        alignItems: 'center',
-                        width: rightSideWidth,
-                        color: dangerous
-                            ? (theme) =>
-                                  alertColorsReversed.warning[
-                                      theme.palette.mode
-                                  ]
-                            : undefined,
+                        color,
+                        fontWeight,
                     }}
                 >
-                    <Typography component="span">
-                        {dangerous ? <WarningTriangle /> : null}
-                    </Typography>
-                    <Typography
-                        component="span"
-                        sx={{
-                            fontWeight: dangerous ? 500 : undefined,
-                        }}
-                    >
-                        {item.details[1]}
-                    </Typography>
-                </Stack>
-            </Stack>
+                    {dangerous ? <WarningTriangle /> : null}
+                </TableCell>
+
+                <TableCell
+                    sx={{
+                        color,
+                        fontWeight,
+                    }}
+                >
+                    {item.details[1]}
+                </TableCell>
+            </>
         );
     };
 
@@ -100,66 +99,45 @@ function ConfirmationWithExplination({
                 message
             )}
 
-            <List component="table" sx={{ ml: 2 }}>
-                <ListItem component="thead">
-                    <Stack
-                        component="tr"
-                        direction="row"
-                        style={{ width: '100%' }}
-                    >
-                        <Typography
-                            component="th"
-                            style={{
-                                fontWeight: 500,
-                                width: leftSideWidth,
-                            }}
-                        >
+            <Table size="small" sx={{ ml: 2 }}>
+                <TableHead>
+                    <TableRow style={{ width: '100%' }}>
+                        <TableCell style={{ width: leftSideWidth }}>
                             {intl.formatMessage({
                                 id: 'accessGrants.actions.extra.confirmation.header1',
                             })}
-                        </Typography>
-
-                        <Typography
-                            component="th"
-                            style={{
-                                fontWeight: 500,
-                                width: rightSideWidth,
-                            }}
-                        >
+                        </TableCell>
+                        <TableCell />
+                        <TableCell style={{ width: rightSideWidth }}>
                             {intl.formatMessage({
                                 id: 'accessGrants.actions.extra.confirmation.header2',
                             })}
-                        </Typography>
-                    </Stack>
-                </ListItem>
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
 
-                {normalUpdates.map((item, index) => {
-                    return (
-                        <ListItem
-                            component="tbody"
-                            key={`confirmation-normal-items-${item.id}-${index}`}
-                        >
-                            {renderListItems(item)}
-                        </ListItem>
-                    );
-                })}
+                <TableBody>
+                    {normalUpdates.map((item, index) => {
+                        return (
+                            <TableRow
+                                key={`confirmation-normal-items-${item.id}-${index}`}
+                            >
+                                {renderListItems(item)}
+                            </TableRow>
+                        );
+                    })}
 
-                {potentiallyDangerousUpdates.length > 0 ? (
-                    <>
-                        <Divider sx={{ borderWidth: 1.5 }} />
-                        {potentiallyDangerousUpdates.map((item, index) => {
-                            return (
-                                <ListItem
-                                    component="tbody"
-                                    key={`confirmation-warning-items-${item.id}-${index}`}
-                                >
-                                    {renderListItems(item)}
-                                </ListItem>
-                            );
-                        })}
-                    </>
-                ) : null}
-            </List>
+                    {potentiallyDangerousUpdates.map((item, index) => {
+                        return (
+                            <TableRow
+                                key={`confirmation-warning-items-${item.id}-${index}`}
+                            >
+                                {renderListItems(item)}
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
         </Box>
     );
 }
