@@ -45,7 +45,7 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.actions.extra.confirmation.whatIsChanging.access': `access for`,
 
     'accessGrants.actions.extra.confirmation.title': `Extra Attention Required`,
-    'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your data flow to fail. Please reach out to {docLink} if you have questions.`,
+    'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your data flows to fail. Please reach out to {docLink} if you have questions.`,
     'accessGrants.actions.extra.confirmation.instructions.docLink': `support@estuary.dev`,
     'accessGrants.actions.extra.confirmation.instructions.docPath': `${CommonMessages['support.email']}`,
 
