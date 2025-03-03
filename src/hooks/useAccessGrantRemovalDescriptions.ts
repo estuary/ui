@@ -34,8 +34,6 @@ function useAccessGrantRemovalDescriptions() {
 
     const describeAccessGrantRemovals = useCallback(
         (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
-            console.log('describeAccessGrantRemovals', value);
-
             let what: string | null = value.capability;
             let removalType: AccessGrantRemovalType = 'normal';
             let grantScope: GrantScopeMessageIdSuffix;
