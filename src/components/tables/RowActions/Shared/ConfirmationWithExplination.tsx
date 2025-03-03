@@ -34,54 +34,47 @@ function ConfirmationWithExplination({
             return response;
         }, [selected]);
 
-    const renderListItems = (
-        item: AccessGrantRowConfirmation,
-        index: number
-    ) => {
+    const renderListItems = (item: AccessGrantRowConfirmation) => {
         const dangerous = item.details[0] === 'dangerous';
         return (
-            <ListItem
-                component="div"
-                key={`confirmation-selected-items-${item.message}-${index}`}
-            >
-                <Stack direction="row" style={{ width: '100%' }}>
-                    <Typography
-                        component="div"
-                        style={{
-                            width: leftSideWidth,
-                        }}
-                    >
-                        {item.message}
-                    </Typography>
+            <Stack component="tr" direction="row" style={{ width: '100%' }}>
+                <Typography
+                    component="td"
+                    style={{
+                        width: leftSideWidth,
+                    }}
+                >
+                    {item.message}
+                </Typography>
 
-                    <Stack
+                <Stack
+                    component="td"
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                        alignItems: 'center',
+                        width: rightSideWidth,
+                        color: dangerous
+                            ? (theme) =>
+                                  alertColorsReversed.warning[
+                                      theme.palette.mode
+                                  ]
+                            : undefined,
+                    }}
+                >
+                    <Typography component="span">
+                        {dangerous ? <WarningTriangle /> : null}
+                    </Typography>
+                    <Typography
                         component="span"
-                        direction="row"
-                        spacing={1}
                         sx={{
-                            alignItems: 'center',
-                            width: rightSideWidth,
-                            color: dangerous
-                                ? (theme) =>
-                                      alertColorsReversed.warning[
-                                          theme.palette.mode
-                                      ]
-                                : undefined,
+                            fontWeight: dangerous ? 500 : undefined,
                         }}
                     >
-                        <Typography>
-                            {dangerous ? <WarningTriangle /> : null}
-                        </Typography>
-                        <Typography
-                            sx={{
-                                fontWeight: dangerous ? 500 : undefined,
-                            }}
-                        >
-                            {item.details[1]}
-                        </Typography>
-                    </Stack>
+                        {item.details[1]}
+                    </Typography>
                 </Stack>
-            </ListItem>
+            </Stack>
         );
     };
 
@@ -107,14 +100,15 @@ function ConfirmationWithExplination({
                 message
             )}
 
-            <List component="div" sx={{ ml: 2 }}>
-                <ListItem
-                    component="div"
-                    key="confirmation-explination-table-header"
-                >
-                    <Stack direction="row" style={{ width: '100%' }}>
+            <List component="table" sx={{ ml: 2 }}>
+                <ListItem component="thead">
+                    <Stack
+                        component="tr"
+                        direction="row"
+                        style={{ width: '100%' }}
+                    >
                         <Typography
-                            component="span"
+                            component="th"
                             style={{
                                 fontWeight: 500,
                                 width: leftSideWidth,
@@ -126,7 +120,7 @@ function ConfirmationWithExplination({
                         </Typography>
 
                         <Typography
-                            component="span"
+                            component="th"
                             style={{
                                 fontWeight: 500,
                                 width: rightSideWidth,
@@ -138,27 +132,29 @@ function ConfirmationWithExplination({
                         </Typography>
                     </Stack>
                 </ListItem>
-                <Divider sx={{ borderWidth: 2 }} />
 
                 {normalUpdates.map((item, index) => {
                     return (
-                        <>
-                            {renderListItems(item, index)}
-                            {index !== normalUpdates.length - 1 ? (
-                                <Divider />
-                            ) : null}
-                        </>
+                        <ListItem
+                            component="tbody"
+                            key={`confirmation-normal-items-${item.id}-${index}`}
+                        >
+                            {renderListItems(item)}
+                        </ListItem>
                     );
                 })}
+
                 {potentiallyDangerousUpdates.length > 0 ? (
                     <>
                         <Divider sx={{ borderWidth: 1.5 }} />
                         {potentiallyDangerousUpdates.map((item, index) => {
                             return (
-                                <>
-                                    {renderListItems(item, index)}
-                                    <Divider />
-                                </>
+                                <ListItem
+                                    component="tbody"
+                                    key={`confirmation-warning-items-${item.id}-${index}`}
+                                >
+                                    {renderListItems(item)}
+                                </ListItem>
                             );
                         })}
                     </>
