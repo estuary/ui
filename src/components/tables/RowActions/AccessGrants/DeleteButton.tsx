@@ -47,40 +47,26 @@ function DeleteButton({ selectTableStoreName }: Props) {
             const grants: AccessGrantRowConfirmation[] = [];
 
             selectedRows.forEach((value, _key) => {
-                if (
+                const identifier =
                     selectTableStoreName ===
                     SelectTableStoreNames.ACCESS_GRANTS_USERS
-                ) {
-                    const identifier: string =
-                        value?.user_full_name ??
-                        value?.user_email ??
-                        value?.subject_role ??
-                        'User';
+                        ? value?.user_full_name ??
+                          value?.user_email ??
+                          value?.subject_role ??
+                          'User'
+                        : value.subject_role;
 
-                    grants.push({
-                        id: value.id,
-                        details: describeAllRemovals(value),
-                        message: (
-                            <GrantWhatIsChanging
-                                capability={value.capability}
-                                identifier={identifier}
-                                grantScope={value.object_role}
-                            />
-                        ),
-                    });
-                } else {
-                    grants.push({
-                        id: value.id,
-                        details: describeAllRemovals(value),
-                        message: (
-                            <GrantWhatIsChanging
-                                capability={value.capability}
-                                identifier={value.subject_role}
-                                grantScope={value.object_role}
-                            />
-                        ),
-                    });
-                }
+                grants.push({
+                    id: value.id,
+                    details: describeAllRemovals(value),
+                    message: (
+                        <GrantWhatIsChanging
+                            capability={value.capability}
+                            identifier={identifier}
+                            grantScope={value.object_role}
+                        />
+                    ),
+                });
             });
 
             confirmationModalContext
