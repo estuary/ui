@@ -63,7 +63,7 @@ function useAccessGrantRemovalDescriptions() {
             // Some things are dangerous so mark those
             if (
                 grantScope === 'ownEmail' || // Removing their own email - but they have access to other stuff
-                grantScope === 'finalEmail' // Removing their only access - and will be logged out right away
+                grantScope === 'finalEmail' // Removing their only access - and might have to enter a new tenant
             ) {
                 removalType = 'dangerous';
             } else if (value.object_role === 'ops/dp/public/') {
@@ -74,6 +74,7 @@ function useAccessGrantRemovalDescriptions() {
                 // Removing some access a tenant has to ITSELF
                 removalType = 'dangerous';
             } else if (grantScope === 'support') {
+                // Removing support can just make life hard on user
                 removalType = 'dangerous';
             }
 
