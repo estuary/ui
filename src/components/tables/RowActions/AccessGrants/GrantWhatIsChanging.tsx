@@ -17,7 +17,7 @@ function GrantWhatIsChanging({
             sx={{
                 'flexWrap': 'wrap',
                 'lineBreak': 'anywhere',
-                '& span:nth-child(odd)': {
+                '& span:nth-of-type(odd)': {
                     fontWeight: 500,
                 },
             }}

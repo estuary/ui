@@ -1,7 +1,10 @@
 import { useUserStore } from 'context/User/useUserContextStore';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
+import {
+    useEntitiesStore_capabilities_adminable,
+    useEntitiesStore_capabilities_readable,
+} from 'stores/Entities/hooks';
 import { BaseGrant, Grant_UserExt } from 'types';
 import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
@@ -25,10 +28,9 @@ function useAccessGrantRemovalDescriptions() {
     );
 
     const adminable = useEntitiesStore_capabilities_adminable();
-
-    const probablyNewUser = useMemo(() => adminable.length === 1, [adminable]);
-
-    console.log('adminable', adminable);
+    const readable = useEntitiesStore_capabilities_readable();
+    const singleAdmin = useMemo(() => adminable.length === 1, [adminable]);
+    const singleReadable = useMemo(() => readable.length === 1, [readable]);
 
     const describeAccessGrantRemovals = useCallback(
         (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
@@ -41,7 +43,10 @@ function useAccessGrantRemovalDescriptions() {
             // Figure out what the of the grant is
             if (isGrant_UserExt(value)) {
                 if (value.user_email === userEmail) {
-                    if (probablyNewUser) {
+                    if (
+                        (singleAdmin && what === 'admin') ||
+                        (singleReadable && what === 'read')
+                    ) {
                         grantScope = 'finalEmail';
                     } else {
                         grantScope = 'ownEmail';
@@ -81,7 +86,7 @@ function useAccessGrantRemovalDescriptions() {
                 }),
             ];
         },
-        [intl, probablyNewUser, userEmail]
+        [intl, singleAdmin, singleReadable, userEmail]
     );
 
     return {

@@ -61,8 +61,8 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.descriptions.removing.read.email': `${prefixes.email} see anything on the tenant.`,
 
     // When a user removes their own email and it is the last one they have
+    //  We do not check if they are removing their final "write"
     'accessGrants.descriptions.removing.admin.finalEmail': `${prefixes.finalEmail} create or manage ${suffixes.finalEmail}`,
-    'accessGrants.descriptions.removing.write.finalEmail': `${prefixes.finalEmail} create ${suffixes.finalEmail}`,
     'accessGrants.descriptions.removing.read.finalEmail': `${prefixes.finalEmail} view ${suffixes.finalEmail}`,
 
     // When a user removes their own email

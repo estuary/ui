@@ -18,9 +18,6 @@ import { useIntl } from 'react-intl';
 import { AccessGrantRowConfirmation } from '../AccessGrants/types';
 import { ConfirmationWithExplinationProps } from './types';
 
-const leftSideWidth = '50%';
-const rightSideWidth = '50%';
-
 function ConfirmationWithExplination({
     message,
     selected,
@@ -60,6 +57,8 @@ function ConfirmationWithExplination({
                     sx={{
                         color,
                         fontWeight,
+                        pr: 0,
+                        textAlign: 'right',
                     }}
                 >
                     {dangerous ? <WarningTriangle /> : null}
@@ -102,13 +101,13 @@ function ConfirmationWithExplination({
             <Table size="small" sx={{ ml: 2 }}>
                 <TableHead>
                     <TableRow style={{ width: '100%' }}>
-                        <TableCell style={{ width: leftSideWidth }}>
+                        <TableCell style={{ width: '50%' }}>
                             {intl.formatMessage({
                                 id: 'accessGrants.actions.extra.confirmation.whatIsChanging',
                             })}
                         </TableCell>
                         <TableCell />
-                        <TableCell style={{ width: rightSideWidth }}>
+                        <TableCell style={{ width: '50%' }}>
                             {intl.formatMessage({
                                 id: 'accessGrants.actions.extra.confirmation.whatThatMeans',
                             })}
