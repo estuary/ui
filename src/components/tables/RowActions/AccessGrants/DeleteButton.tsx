@@ -11,7 +11,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
-import ConfirmationWithExplinationTable from '../Shared/ConfirmationWithExplinationTable';
+import ConfirmationWithExplination from '../Shared/ConfirmationWithExplination';
 import GrantListItemForTenant from './GrantListItemForTenant';
 import GrantListItemForUser from './GrantListItemForUser';
 import RevokeGrant from './RevokeGrant';
@@ -90,7 +90,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         maxWidth: 'lg',
                     },
                     message: (
-                        <ConfirmationWithExplinationTable
+                        <ConfirmationWithExplination
                             message={
                                 <ConfirmationAlert messageId="admin.grants.confirmation.alert" />
                             }

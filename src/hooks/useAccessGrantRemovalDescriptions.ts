@@ -16,9 +16,7 @@ type GrantScopeMessageIdSuffix =
 
 export type AccessGrantRemovalType = 'dangerous' | 'normal';
 
-export type AccessGrantRemovalDescription =
-    | [AccessGrantRemovalType, string]
-    | undefined;
+export type AccessGrantRemovalDescription = [AccessGrantRemovalType, string];
 
 function useAccessGrantRemovalDescriptions() {
     const intl = useIntl();

@@ -2,7 +2,6 @@ import { AccessGrantRemovalDescription } from 'hooks/useAccessGrantRemovalDescri
 import { ReactNode } from 'react';
 import { RowConfirmation } from '../types';
 
-export type AccessGrantRowConfirmation = RowConfirmation<
-    ReactNode,
-    AccessGrantRemovalDescription
->;
+export interface AccessGrantRowConfirmation extends RowConfirmation<ReactNode> {
+    details: AccessGrantRemovalDescription;
+}

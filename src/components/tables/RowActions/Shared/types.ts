@@ -68,7 +68,7 @@ export interface RowActionButtonProps {
 }
 
 // Mainly for Access Grants and Data Sharing
-export interface ConfirmationWithExplinationTableProps {
+export interface ConfirmationWithExplinationProps {
     message: string | ReactNode;
     selected: AccessGrantRowConfirmation[];
 }

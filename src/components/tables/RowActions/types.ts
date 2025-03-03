@@ -1,10 +1,9 @@
 import { SelectTableStoreNames } from 'stores/names';
 import { ReactNode } from 'react';
 
-export interface RowConfirmation<M = string, D = null> {
+export interface RowConfirmation<M = string> {
     id: string;
     message: M;
-    details?: D;
 }
 
 export type RowActionSupportedTableStoreName =
