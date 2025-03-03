@@ -70,6 +70,8 @@ function useAccessGrantRemovalDescriptions() {
             } else if (grantScope === 'ownTenant') {
                 // Removing some access a tenant has to ITSELF
                 removalType = 'dangerous';
+            } else if (grantScope === 'support') {
+                removalType = 'dangerous';
             }
 
             return [
