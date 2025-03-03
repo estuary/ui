@@ -39,8 +39,10 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.table.accessLinks.label.actions': `Actions`,
     'accessGrants.table.accessLinks.delete.confirm': `All items will be disabled and this action cannot be undone. Please review the list to continue.`,
 
-    'accessGrants.actions.extra.confirmation.header1': `What is changing?`,
-    'accessGrants.actions.extra.confirmation.header2': `What will happen?`,
+    'accessGrants.actions.extra.confirmation.whatThatMeans': `What will happen?`,
+    'accessGrants.actions.extra.confirmation.whatIsChanging': `What is changing?`,
+    'accessGrants.actions.extra.confirmation.whatIsChanging.removing': `removing`,
+    'accessGrants.actions.extra.confirmation.whatIsChanging.access': `access for`,
 
     'accessGrants.actions.extra.confirmation.title': `Extra Attention Required`,
     'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your data flow to fail. Please reach out to {docLink} if you have questions.`,

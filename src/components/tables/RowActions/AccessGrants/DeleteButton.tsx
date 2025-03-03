@@ -12,8 +12,7 @@ import {
 } from 'stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import ConfirmationWithExplination from '../Shared/ConfirmationWithExplination';
-import GrantListItemForTenant from './GrantListItemForTenant';
-import GrantListItemForUser from './GrantListItemForUser';
+import GrantWhatIsChanging from './GrantWhatIsChanging';
 import RevokeGrant from './RevokeGrant';
 import { AccessGrantRowConfirmation } from './types';
 
@@ -62,10 +61,10 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         id: value.id,
                         details: describeAllRemovals(value),
                         message: (
-                            <GrantListItemForUser
-                                identifier={identifier}
+                            <GrantWhatIsChanging
                                 capability={value.capability}
-                                objectRole={value.object_role}
+                                identifier={identifier}
+                                grantScope={value.object_role}
                             />
                         ),
                     });
@@ -74,10 +73,10 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         id: value.id,
                         details: describeAllRemovals(value),
                         message: (
-                            <GrantListItemForTenant
+                            <GrantWhatIsChanging
                                 capability={value.capability}
-                                objectRole={value.object_role}
-                                subjectRole={value.subject_role}
+                                identifier={value.subject_role}
+                                grantScope={value.object_role}
                             />
                         ),
                     });

@@ -44,7 +44,7 @@ function ConfirmationWithExplination({
             return response;
         }, [selected]);
 
-    const renderListItems = (item: AccessGrantRowConfirmation) => {
+    const renderTableRowContent = (item: AccessGrantRowConfirmation) => {
         const dangerous = item.details[0] === 'dangerous';
 
         const color = dangerous
@@ -104,13 +104,13 @@ function ConfirmationWithExplination({
                     <TableRow style={{ width: '100%' }}>
                         <TableCell style={{ width: leftSideWidth }}>
                             {intl.formatMessage({
-                                id: 'accessGrants.actions.extra.confirmation.header1',
+                                id: 'accessGrants.actions.extra.confirmation.whatIsChanging',
                             })}
                         </TableCell>
                         <TableCell />
                         <TableCell style={{ width: rightSideWidth }}>
                             {intl.formatMessage({
-                                id: 'accessGrants.actions.extra.confirmation.header2',
+                                id: 'accessGrants.actions.extra.confirmation.whatThatMeans',
                             })}
                         </TableCell>
                     </TableRow>
@@ -122,7 +122,7 @@ function ConfirmationWithExplination({
                             <TableRow
                                 key={`confirmation-normal-items-${item.id}-${index}`}
                             >
-                                {renderListItems(item)}
+                                {renderTableRowContent(item)}
                             </TableRow>
                         );
                     })}
@@ -132,7 +132,7 @@ function ConfirmationWithExplination({
                             <TableRow
                                 key={`confirmation-warning-items-${item.id}-${index}`}
                             >
-                                {renderListItems(item)}
+                                {renderTableRowContent(item)}
                             </TableRow>
                         );
                     })}
