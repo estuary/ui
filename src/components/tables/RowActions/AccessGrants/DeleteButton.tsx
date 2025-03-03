@@ -87,7 +87,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
             confirmationModalContext
                 ?.showConfirmation({
                     dialogProps: {
-                        maxWidth: 'lg',
+                        maxWidth: 'md',
                     },
                     message: (
                         <ConfirmationWithExplination
