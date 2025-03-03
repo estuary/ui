@@ -96,7 +96,6 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
-    'admin.users.confirmation.listItem': `{identifier} with {capability} access to {objectRole}`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
@@ -107,7 +106,6 @@ export const AdminPage: Record<string, string> = {
     'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
     'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
-    'admin.prefix.confirmation.listItem': `{subjectRole} having {capability} over {objectRole}`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
