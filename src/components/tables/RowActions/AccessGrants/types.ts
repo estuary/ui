@@ -1,5 +1,6 @@
 import { AccessGrantRemovalDescription } from 'hooks/useAccessGrantRemovalDescriptions';
 import { ReactNode } from 'react';
+import { Capability } from 'types';
 import { RowConfirmation } from '../types';
 
 export interface AccessGrantRowConfirmation extends RowConfirmation<ReactNode> {
@@ -8,6 +9,6 @@ export interface AccessGrantRowConfirmation extends RowConfirmation<ReactNode> {
 
 export interface GrantWhatIsChangingProps {
     identifier: string;
-    capability: string;
+    capability: Capability;
     grantScope: string;
 }
