@@ -63,8 +63,6 @@ export interface RowActionButtonProps {
         onFinish: (response: any) => void
     ) => ReactNode;
     selectableTableStoreName: RowActionSupportedTableStoreName;
-    // confirmationMessage?: ReactNode;
-    // settings?: SettingMetadata[];
 }
 
 // Mainly for Access Grants and Data Sharing
