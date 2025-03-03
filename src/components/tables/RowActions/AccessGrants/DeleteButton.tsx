@@ -1,21 +1,21 @@
 import { Button, Dialog } from '@mui/material';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
-import useAccessGrantRemovalDescriptions, {
-    AccessGrantRemovalDescription,
-} from 'hooks/useAccessGrantRemovalDescriptions';
+import useAccessGrantRemovalDescriptions from 'hooks/useAccessGrantRemovalDescriptions';
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
+import ConfirmationWithExplinationTable from '../Shared/ConfirmationWithExplinationTable';
+import GrantListItemForTenant from './GrantListItemForTenant';
+import GrantListItemForUser from './GrantListItemForUser';
 import RevokeGrant from './RevokeGrant';
-import { RowConfirmation } from './types';
+import { AccessGrantRowConfirmation } from './types';
 
 interface Props {
     selectTableStoreName:
@@ -24,14 +24,12 @@ interface Props {
 }
 
 function DeleteButton({ selectTableStoreName }: Props) {
-    const intl = useIntl();
-
     const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState<boolean>(false);
-    const [targets, setTargets] = useState<RowConfirmation[]>([]);
+    const [targets, setTargets] = useState<AccessGrantRowConfirmation[]>([]);
 
     const setAllSelected = useZustandStore<
         SelectableTableStore,
@@ -47,7 +45,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const grants: RowConfirmation<AccessGrantRemovalDescription>[] = [];
+            const grants: AccessGrantRowConfirmation[] = [];
 
             selectedRows.forEach((value, _key) => {
                 if (
@@ -63,26 +61,24 @@ function DeleteButton({ selectTableStoreName }: Props) {
                     grants.push({
                         id: value.id,
                         details: describeAllRemovals(value),
-                        message: intl.formatMessage(
-                            { id: 'admin.users.confirmation.listItem' },
-                            {
-                                identifier,
-                                capability: value.capability,
-                                objectRole: value.object_role,
-                            }
+                        message: (
+                            <GrantListItemForUser
+                                identifier={identifier}
+                                capability={value.capability}
+                                objectRole={value.object_role}
+                            />
                         ),
                     });
                 } else {
                     grants.push({
                         id: value.id,
                         details: describeAllRemovals(value),
-                        message: intl.formatMessage(
-                            { id: 'admin.prefix.confirmation.listItem' },
-                            {
-                                subjectRole: value.subject_role,
-                                capability: value.capability,
-                                objectRole: value.object_role,
-                            }
+                        message: (
+                            <GrantListItemForTenant
+                                capability={value.capability}
+                                objectRole={value.object_role}
+                                subjectRole={value.subject_role}
+                            />
                         ),
                     });
                 }
@@ -94,7 +90,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         maxWidth: 'lg',
                     },
                     message: (
-                        <RowActionConfirmation
+                        <ConfirmationWithExplinationTable
                             message={
                                 <ConfirmationAlert messageId="admin.grants.confirmation.alert" />
                             }
@@ -130,9 +126,13 @@ function DeleteButton({ selectTableStoreName }: Props) {
             <Dialog open={showProgress} maxWidth="md">
                 {targets.length > 0 ? (
                     <ProgressDialog
-                        selectedEntities={targets}
                         finished={handlers.resetState}
-                        renderComponent={(item, index, onFinish) => (
+                        selectedEntities={targets}
+                        renderComponent={(
+                            item: AccessGrantRowConfirmation,
+                            index,
+                            onFinish
+                        ) => (
                             <RevokeGrant
                                 key={`revoke-grant-${index}`}
                                 grant={item}

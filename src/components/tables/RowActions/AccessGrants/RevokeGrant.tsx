@@ -11,10 +11,10 @@ import {
 import { SelectTableStoreNames } from 'stores/names';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import Progress from './Progress';
-import { RowConfirmation } from './types';
+import { AccessGrantRowConfirmation } from './types';
 
 export interface Props {
-    grant: RowConfirmation;
+    grant: AccessGrantRowConfirmation;
     onFinish: (response: any) => void;
     runningMessageID: string;
     selectTableStoreName:

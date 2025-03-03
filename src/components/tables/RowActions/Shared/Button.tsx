@@ -1,41 +1,22 @@
 import { Button, Dialog } from '@mui/material';
 import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
 import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { RowConfirmation } from '../AccessGrants/types';
-import { SettingMetadata } from './NestedListItem';
-
-interface Props {
-    messageID: string;
-    renderProgress: (
-        item: any,
-        index: number,
-        onFinish: (response: any) => void
-    ) => ReactNode;
-    selectableTableStoreName:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-    confirmationMessage?: ReactNode;
-    settings?: SettingMetadata[];
-}
+import { RowConfirmation } from '../types';
+import { RowActionButtonProps } from './types';
 
 function RowActionButton({
     messageID,
+    renderConfirmationMessage,
     renderProgress,
     selectableTableStoreName,
-    confirmationMessage,
-    settings,
-}: Props) {
+}: RowActionButtonProps) {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
@@ -69,29 +50,17 @@ function RowActionButton({
     const handlers = {
         action: () => {
             if (hasSelections) {
-                const selectedNames: RowConfirmation[] = [];
+                const selectedNames: string[] = [];
                 const selectedSpecs: any[] = [];
 
                 selectedRows.forEach((_value: any, key: string) => {
-                    selectedNames.push({
-                        id: key,
-                        message: rows.get(key).catalog_name,
-                    });
+                    selectedNames.push(rows.get(key).catalog_name);
                     selectedSpecs.push(rows.get(key));
                 });
 
                 confirmationModalContext
                     ?.showConfirmation({
-                        message: (
-                            <RowActionConfirmation
-                                selected={selectedNames}
-                                message={confirmationMessage}
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
-                                settings={settings}
-                            />
-                        ),
+                        message: renderConfirmationMessage(selectedNames),
                     })
                     .then(async (confirmed: any) => {
                         if (confirmed) {

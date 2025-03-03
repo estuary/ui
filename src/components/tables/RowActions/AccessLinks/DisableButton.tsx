@@ -15,7 +15,7 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import { getPathWithParams } from 'utils/misc-utils';
-import { RowConfirmation } from '../AccessGrants/types';
+import { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

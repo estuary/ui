@@ -6,7 +6,7 @@ import { BaseGrant, Grant_UserExt } from 'types';
 import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 
-type MessageIdWhereVals =
+type GrantScopeMessageIdSuffix =
     | 'finalEmail'
     | 'email'
     | 'ownEmail'
@@ -36,42 +36,48 @@ function useAccessGrantRemovalDescriptions() {
         (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
             console.log('describeAccessGrantRemovals', value);
 
-            // Sett good initial defaults and then override down below if some more important is found
-            let where: MessageIdWhereVals = isGrant_UserExt(value)
-                ? value.user_email === userEmail
-                    ? 'ownEmail'
-                    : 'email'
-                : 'tenant';
             let what: string | null = value.capability;
             let removalType: AccessGrantRemovalType = 'normal';
+            let grantScope: GrantScopeMessageIdSuffix;
 
-            if (probablyNewUser && where === 'ownEmail') {
-                // Removing their only access - and will be logged out right away
+            // Figure out what the of the grant is
+            if (isGrant_UserExt(value)) {
+                if (value.user_email === userEmail) {
+                    if (probablyNewUser) {
+                        grantScope = 'finalEmail';
+                    } else {
+                        grantScope = 'ownEmail';
+                    }
+                } else {
+                    grantScope = 'email';
+                }
+            } else if (value.subject_role === value.object_role) {
+                grantScope = 'ownTenant';
+            } else if (value.subject_role === ESTUARY_SUPPORT_ROLE) {
+                grantScope = 'support';
+            } else {
+                grantScope = 'tenant';
+            }
+
+            // Some things are dangerous so mark those
+            if (
+                grantScope === 'ownEmail' || // Removing their own email - but they have access to other stuff
+                grantScope === 'finalEmail' // Removing their only access - and will be logged out right away
+            ) {
                 removalType = 'dangerous';
-                where = 'finalEmail';
             } else if (value.object_role === 'ops/dp/public/') {
                 // Removing any access to public dataplane
                 removalType = 'dangerous';
                 what = 'dataPlane';
-                where = 'ownTenant';
-            } else if (where === 'tenant') {
-                if (value.subject_role === value.object_role) {
-                    // Removing some access a tenant has to ITSELF
-                    removalType = 'dangerous';
-                    where = 'ownTenant';
-                } else if (value.subject_role === ESTUARY_SUPPORT_ROLE) {
-                    // Removing support from a tenant
-                    where = 'support';
-                }
-            } else if (where === 'ownEmail') {
-                // Removing their own email - but they have access to other stuff
+            } else if (grantScope === 'ownTenant') {
+                // Removing some access a tenant has to ITSELF
                 removalType = 'dangerous';
             }
 
             return [
                 removalType,
                 intl.formatMessage({
-                    id: `accessGrants.descriptions.removing.${what}.${where}`,
+                    id: `accessGrants.descriptions.removing.${what}.${grantScope}`,
                 }),
             ];
         },

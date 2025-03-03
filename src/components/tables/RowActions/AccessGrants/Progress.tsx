@@ -7,12 +7,13 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ProgressStates } from '../Shared/types';
 
 interface Props {
     error: any | null;
-    item: string;
+    item: string | ReactNode;
     progress: ProgressStates;
     runningMessageID: string;
     successMessageID: string;

@@ -196,32 +196,31 @@ export const AdminPage: Record<string, string> = {
     'accessGrants.actions.extra.confirmation.header2': `What will happen?`,
 
     'accessGrants.actions.extra.confirmation.title': `Extra Attention Required`,
-    'accessGrants.actions.extra.confirmation.message': `The following changes may cause interuptions to service. Please review them and ensure they are what you want to have happen.`,
-    'accessGrants.actions.extra.confirmation.instructions': `If you are unsure please contact {docLink}.`,
+    'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your data flow to fail. Please reach out to {docLink} if you have questions.`,
     'accessGrants.actions.extra.confirmation.instructions.docLink': `support@estuary.dev`,
     'accessGrants.actions.extra.confirmation.instructions.docPath': `${CommonMessages['support.email']}`,
 
     // There are dynamically built up in useAccessGrantRemovalDescriptions
     // Allowed values are listed in the hook with the type MessageIdWhereVals
-    'accessGrants.descriptions.removing.dataPlane.ownTenant': `The tenant's will not be able to write to the public dataplane.`,
+    'accessGrants.descriptions.removing.dataPlane.tenant': `The tenant will no longer be able to write to the public dataplane.`,
 
-    'accessGrants.descriptions.removing.admin.finalEmail': `This is your only admin access. Removing this will mean you have no ability to create or manage anything in the app.`,
-    'accessGrants.descriptions.removing.write.finalEmail': `This is your only write access. Removing this will mean you have no ability to create anything in the app.`,
-    'accessGrants.descriptions.removing.read.finalEmail': `This is your only read access. Removing this will mean you cannot see anything in the app.`,
+    'accessGrants.descriptions.removing.admin.finalEmail': `This is your only admin access. You will have no ability to create or manage anything in the app.`,
+    'accessGrants.descriptions.removing.write.finalEmail': `This is your only write access. You will have no ability to create anything in the app.`,
+    'accessGrants.descriptions.removing.read.finalEmail': `This is your only read access. You will have nothing to view in the app.`,
 
-    'accessGrants.descriptions.removing.admin.email': `The user will no longer be able to adding/removing users or managing settings. Their ability to see, edit, and create entities may also be impacted.`,
+    'accessGrants.descriptions.removing.admin.email': `The user will no longer be able to add/remove users or manage settings. Their ability to see, edit, and create entities may also be impacted.`,
     'accessGrants.descriptions.removing.admin.ownEmail': `You will no longer have admin access to this tenant. Creating entities, adding/removing users, managing settings, and more could all be impacted.`,
     'accessGrants.descriptions.removing.admin.ownTenant': `The tenant will not be able to administrate itself.`,
     'accessGrants.descriptions.removing.admin.support': `Estuary Support staff will no longer be able to help manage the tenant.`,
     'accessGrants.descriptions.removing.admin.tenant': `This will remove one tenant's ability to manage another tenant.`,
 
-    'accessGrants.descriptions.removing.write.email': `This will remove a user's admin access to a tenant.`,
+    'accessGrants.descriptions.removing.write.email': `The user will no longer be able to make new entities on the tenant.`,
     'accessGrants.descriptions.removing.write.ownEmail': `You will not be able to create new entities in this tenant.`,
     'accessGrants.descriptions.removing.write.ownTenant': `The tenant will not be able to write anything to itself. Captures could fail.`,
     'accessGrants.descriptions.removing.write.support': `Estuary Support staff will no longer be able to make new entities on your behalf`,
     'accessGrants.descriptions.removing.write.tenant': `This will remove one tenant's ability to write another tenant.`,
 
-    'accessGrants.descriptions.removing.read.email': `This will remove a user's ability to see anything on the tenant.`,
+    'accessGrants.descriptions.removing.read.email': `The user will no longer be able to see anything on the tenant.`,
     'accessGrants.descriptions.removing.read.ownEmail': `You will not be able to create new entities in this tenant.`,
     'accessGrants.descriptions.removing.read.ownTenant': `The tenant will not be able to read from itself. Materializations could fail.`,
     'accessGrants.descriptions.removing.read.support': `Estuary Support staff will no longer be able to see your tenant in the app.`,

@@ -1,14 +1,37 @@
 import { SelectTableStoreNames } from 'stores/names';
+import { ReactNode } from 'react';
+
+export interface RowConfirmation<M = string, D = null> {
+    id: string;
+    message: M;
+    details?: D;
+}
+
+export type RowActionSupportedTableStoreName =
+    | SelectTableStoreNames.CAPTURE
+    | SelectTableStoreNames.COLLECTION
+    | SelectTableStoreNames.ENTITY_SELECTOR
+    | SelectTableStoreNames.MATERIALIZATION;
 
 export interface RowSelectorProps {
     hideActions?: boolean;
     selectKeyValueName?: string;
-    selectableTableStoreName?:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
+    selectableTableStoreName?: RowActionSupportedTableStoreName;
     showMaterialize?: boolean;
     showSelectedCount?: boolean;
     showTransform?: boolean;
+}
+
+export interface DeleteButtonProps {
+    selectableTableStoreName: RowActionSupportedTableStoreName;
+}
+
+export interface ProgressDialogProps {
+    selectedEntities: any[];
+    renderComponent: (
+        item: any,
+        index: number,
+        onFinish: (response: any) => void
+    ) => ReactNode;
+    finished: Function;
 }

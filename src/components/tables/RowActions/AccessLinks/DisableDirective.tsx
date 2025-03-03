@@ -8,11 +8,11 @@ import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { RowConfirmation } from '../AccessGrants/types';
+import { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
-export interface Props {
+export interface DisableDirectiveProps {
     linkConfig: RowConfirmation;
     runningMessageID: string;
     successMessageID: string;
@@ -42,7 +42,7 @@ function DisableDirective({
     runningMessageID,
     successMessageID,
     onFinish,
-}: Props) {
+}: DisableDirectiveProps) {
     const [progress, setProgress] = useState<ProgressStates>(
         ProgressStates.RUNNING
     );

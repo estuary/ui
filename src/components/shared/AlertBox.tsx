@@ -1,6 +1,11 @@
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
-import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
+import {
+    CheckCircle,
+    InfoCircle,
+    WarningHexagon,
+    WarningTriangle,
+} from 'iconoir-react';
 import { forwardRef, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { AlertBoxProps } from './types';
@@ -76,8 +81,8 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
             severity={severity}
             variant="outlined"
             iconMapping={{
-                error: <WarningCircle style={iconComponentStyling} />,
-                warning: <WarningCircle style={iconComponentStyling} />,
+                error: <WarningHexagon style={iconComponentStyling} />,
+                warning: <WarningTriangle style={iconComponentStyling} />,
                 info: <InfoCircle style={iconComponentStyling} />,
                 success: <CheckCircle style={iconComponentStyling} />,
             }}
