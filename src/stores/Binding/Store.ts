@@ -384,6 +384,10 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
+                state.backfillAllBindings =
+                    state.backfilledBindings.length ===
+                    Object.keys(state.resourceConfigs).length;
+
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
                     state,

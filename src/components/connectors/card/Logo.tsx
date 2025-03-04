@@ -23,8 +23,8 @@ function ConnectorLogo({
                 loading="lazy"
                 alt=""
                 style={{
-                    width: 'auto',
                     maxHeight: maxHeight ?? 75,
+                    maxWidth: '100%',
                     padding: padding ?? '0 1rem',
                 }}
             />
