@@ -4,6 +4,7 @@ import AdminApi from 'components/admin/Api';
 import AdminBilling from 'components/admin/Billing';
 import AdminConnectors from 'components/admin/Connectors';
 import AdminSettings from 'components/admin/Settings';
+import { ErrorImporting } from 'components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'context/Authenticated';
 import { DashboardWelcomeProvider } from 'context/DashboardWelcome';
 import { EntityContextProvider } from 'context/EntityContext';
@@ -13,23 +14,22 @@ import Admin from 'pages/Admin';
 import Auth from 'pages/Auth';
 import Collections from 'pages/Collections';
 import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
-import HomePage from 'pages/Home';
 import TestJsonForms from 'pages/dev/TestJsonForms';
 import PageNotFound from 'pages/error/PageNotFound';
+import HomePage from 'pages/Home';
 import BasicLogin from 'pages/login/Basic';
 import EnterpriseLogin from 'pages/login/Enterprise';
 import MarketplaceCallback from 'pages/marketplace/Callback';
 import MarketplaceVerification from 'pages/marketplace/Verification';
 import { lazy, Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import {
+    createBrowserRouter,
+    createRoutesFromElements,
     Route,
     RouterProvider,
     Routes,
-    createBrowserRouter,
-    createRoutesFromElements,
 } from 'react-router-dom';
-import { ErrorImporting } from 'components/shared/ErrorImporting';
-import { ErrorBoundary } from 'react-error-boundary';
 import Authenticated from './Authenticated';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import CapturesTable from './CapturesTable';
@@ -39,6 +39,10 @@ import RequireAuth from './RequireAuth';
 // Capture
 const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
 const CaptureCreateNewRoute = lazy(() => import('./CaptureCreateNew'));
+const CaptureExpressCreateRoute = lazy(() => import('./CaptureExpressCreate'));
+const CaptureExpressCreateNewRoute = lazy(
+    () => import('./CaptureExpressCreateNew')
+);
 const CaptureDetailsRoute = lazy(() => import('./CaptureDetails'));
 const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
 
@@ -348,6 +352,37 @@ const router = createBrowserRouter(
                                 >
                                     <Suspense fallback={null}>
                                         <CaptureCreateNewRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.captures.createExpress.path
+                            }
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureExpressCreateRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.captures.createExpress.new
+                                    .path
+                            }
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureExpressCreateNewRoute />
                                     </Suspense>
                                 </ErrorBoundary>
                             }

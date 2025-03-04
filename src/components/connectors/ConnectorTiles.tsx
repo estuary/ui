@@ -16,12 +16,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
-import {
-    EntityWithCreateWorkflow,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
+import { TableIntlConfig, TableState, TableStatuses } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 import ConnectorCardDetails from './card/Details';
@@ -29,10 +24,7 @@ import ConnectorLogo from './card/Logo';
 import ConnectorCardTitle from './card/Title';
 import ConnectorRequestTile from './ConnectorRequestTile';
 import ConnectorsSkeleton from './Skeleton';
-
-interface ConnectorTilesProps {
-    protocolPreset?: EntityWithCreateWorkflow;
-}
+import { ConnectorTilesProps } from './types';
 
 const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',

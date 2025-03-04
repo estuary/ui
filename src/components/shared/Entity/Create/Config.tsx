@@ -6,13 +6,9 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+import { EntityCreateConfigProps } from './types';
 
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-}
-
-function EntityCreateConfig({ entityType }: Props) {
+function EntityCreateConfig({ entityType }: EntityCreateConfigProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const navigateToCreate = useEntityCreateNavigate();
