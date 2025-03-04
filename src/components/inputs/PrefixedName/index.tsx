@@ -211,7 +211,14 @@ function PrefixedName({
                 required={!allowBlankName}
                 value={name}
                 size={size ?? 'small'}
-                sx={{ borderRadius: 3 }}
+                sx={{
+                    'borderRadius': 3,
+                    // This prevents nested names from showing the inner input as outlined
+                    '& div > fieldset.MuiOutlinedInput-notchedOutline': {
+                        border:
+                            variantString === 'outlined' ? 'none' : undefined,
+                    },
+                }}
                 onChange={(event) => {
                     handlers.setName(event.target.value);
                 }}

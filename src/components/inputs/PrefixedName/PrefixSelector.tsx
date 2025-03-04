@@ -28,6 +28,7 @@ function PrefixSelector({
             id={labelId}
             onChange={(_event, newValue) => onChange(newValue)}
             options={options}
+            value={value}
             componentsProps={{
                 paper: {
                     sx: {
@@ -35,7 +36,6 @@ function PrefixSelector({
                     },
                 },
             }}
-            value={value}
             renderInput={({
                 InputProps,
                 ...params
@@ -44,6 +44,9 @@ function PrefixSelector({
                     {...params}
                     InputProps={{
                         ...InputProps,
+                        // This throws an error for _some_ reason and I do not know why
+                        //  as it works and is needed so there isn't a "double underline"
+                        //  when using this in the create/edit workflows
                         disableUnderline: variantString === 'standard',
                         sx: { borderRadius: 3 },
                     }}
