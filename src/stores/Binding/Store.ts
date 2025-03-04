@@ -375,9 +375,6 @@ const getInitialState = (
                             state.backfilledBindings.push(UUID);
                         }
 
-                        console.log(collection);
-                        console.log(liveBindingIndex);
-
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (state.collectionMetadata?.[collection]) {
                             state.collectionMetadata[
