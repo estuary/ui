@@ -841,10 +841,12 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    const added =
+                    const previouslyBound =
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        !state.collectionMetadata[catalog_name]
-                            .previouslyBound &&
+                        state.collectionMetadata[catalog_name]?.previouslyBound;
+
+                    const added =
+                        !previouslyBound &&
                         (addedCollections.includes(catalog_name) ||
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                             state.collectionMetadata[catalog_name]?.added);
