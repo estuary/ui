@@ -360,11 +360,6 @@ const getInitialState = (
                             targetBindingIndex
                         );
 
-                        state.collectionMetadata[collection].previouslyBound =
-                            liveBindingIndex > -1;
-
-                        state.collectionMetadata;
-
                         const liveBackfillCounter =
                             liveBindingIndex > -1
                                 ? getBackfillCounter(
@@ -378,6 +373,23 @@ const getInitialState = (
                                 draftedBackfillCounter > 0)
                         ) {
                             state.backfilledBindings.push(UUID);
+                        }
+
+                        console.log(collection);
+                        console.log(liveBindingIndex);
+
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        if (state.collectionMetadata?.[collection]) {
+                            state.collectionMetadata[
+                                collection
+                            ].previouslyBound = liveBindingIndex > -1;
+                        } else {
+                            state.collectionMetadata = {
+                                ...state.collectionMetadata,
+                                [collection]: {
+                                    previouslyBound: liveBindingIndex > -1,
+                                },
+                            };
                         }
                     }
                 });
@@ -830,9 +842,12 @@ const getInitialState = (
 
                 values.forEach(({ catalog_name, updated_at }) => {
                     const added =
-                        addedCollections.includes(catalog_name) ||
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        state.collectionMetadata[catalog_name]?.added;
+                        !state.collectionMetadata[catalog_name]
+                            .previouslyBound &&
+                        (addedCollections.includes(catalog_name) ||
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                            state.collectionMetadata[catalog_name]?.added);
 
                     state.collectionMetadata[catalog_name] = {
                         ...state.collectionMetadata[catalog_name],
