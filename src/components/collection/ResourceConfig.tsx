@@ -53,6 +53,11 @@ function ResourceConfig({
         'trialStorage'
     );
 
+    const collectionPreviouslyBound = useBinding_collectionMetadataProperty(
+        collectionName,
+        'previouslyBound'
+    );
+
     const collectionAdded = useBinding_collectionMetadataProperty(
         collectionName,
         'added'
@@ -64,7 +69,11 @@ function ResourceConfig({
                 <Box style={{ marginBottom: 16 }}>
                     <TrialOnlyPrefixAlert
                         messageId="workflows.error.oldBoundCollection.added"
-                        triggered={Boolean(trialCollection && collectionAdded)}
+                        triggered={Boolean(
+                            !collectionPreviouslyBound &&
+                                trialCollection &&
+                                collectionAdded
+                        )}
                     />
                 </Box>
             ) : null}

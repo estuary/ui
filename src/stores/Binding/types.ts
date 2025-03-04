@@ -18,6 +18,7 @@ import { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface CollectionMetadata {
     added?: boolean;
+    previouslyBound?: boolean;
     sourceBackfillRecommended?: boolean;
     trialStorage?: boolean;
     updatedAt?: string;

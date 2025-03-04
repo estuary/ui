@@ -360,6 +360,11 @@ const getInitialState = (
                             targetBindingIndex
                         );
 
+                        state.collectionMetadata[collection].previouslyBound =
+                            liveBindingIndex > -1;
+
+                        state.collectionMetadata;
+
                         const liveBackfillCounter =
                             liveBindingIndex > -1
                                 ? getBackfillCounter(
@@ -830,6 +835,7 @@ const getInitialState = (
                         state.collectionMetadata[catalog_name]?.added;
 
                     state.collectionMetadata[catalog_name] = {
+                        ...state.collectionMetadata[catalog_name],
                         added,
                         sourceBackfillRecommended:
                             isBeforeTrialInterval(updated_at) &&
