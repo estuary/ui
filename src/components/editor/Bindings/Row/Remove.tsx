@@ -57,12 +57,15 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
                 }
             }
 
-            // We need to reset this before actully fully removing so that the component is not unmounted
+            // We need to reset this before actually fully removing so that the component is not unmounted
             setRemoving(false);
 
             removeBinding(binding);
             removeFullSourceConfig(uuid);
-            resetCollectionMetadata([binding.collection], []);
+
+            if (workflow === 'materialization_edit') {
+                resetCollectionMetadata([binding.collection], []);
+            }
 
             if (
                 workflow === 'capture_edit' &&

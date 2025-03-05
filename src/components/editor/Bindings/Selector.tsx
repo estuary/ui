@@ -68,7 +68,10 @@ function BindingSelector({
     const handlers = {
         removeBindings: (rows: any[]) => {
             removeBindings(rows, workflow, task);
-            resetCollectionMetadata([], rows);
+
+            if (workflow === 'materialization_edit') {
+                resetCollectionMetadata([], rows);
+            }
 
             const publishedCollections =
                 hasLength(discoveredCollections) && hasLength(collections)
