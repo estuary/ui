@@ -47,6 +47,7 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
+    resetPartialCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
     whatChanged,
@@ -728,6 +729,33 @@ const getInitialState = (
             }),
             false,
             'Discovered bindings removed'
+        );
+    },
+
+    resetCollectionMetadata: (targetCollections, targetBindingUUIDs) => {
+        set(
+            produce((state: BindingState) => {
+                if (hasLength(targetCollections)) {
+                    resetPartialCollectionMetadata(state, targetCollections);
+                } else if (hasLength(targetBindingUUIDs)) {
+                    const evaluatedCollections = Object.entries(
+                        state.resourceConfigs
+                    )
+                        .filter(([uuid, _resourceConfig]) =>
+                            targetBindingUUIDs.includes(uuid)
+                        )
+                        .map(
+                            ([_uuid, resourceConfig]) =>
+                                resourceConfig.meta.collectionName
+                        );
+
+                    resetPartialCollectionMetadata(state, evaluatedCollections);
+                } else {
+                    resetPartialCollectionMetadata(state);
+                }
+            }),
+            false,
+            'Collection Metadata Reset'
         );
     },
 

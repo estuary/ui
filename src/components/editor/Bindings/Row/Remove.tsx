@@ -9,6 +9,7 @@ import {
     useBinding_removeFullSourceConfig,
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -26,6 +27,9 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
 
     const removeBinding = useBinding_removeBinding();
     const discoveredCollections = useBinding_discoveredCollections();
+    const resetCollectionMetadata = useBindingStore(
+        (state) => state.resetCollectionMetadata
+    );
 
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
@@ -58,6 +62,7 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
 
             removeBinding(binding);
             removeFullSourceConfig(uuid);
+            resetCollectionMetadata([binding.collection], []);
 
             if (
                 workflow === 'capture_edit' &&

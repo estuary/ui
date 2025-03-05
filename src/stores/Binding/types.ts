@@ -140,6 +140,10 @@ export interface BindingState
         collections: string[],
         value: CollectionMetadata['sourceBackfillRecommended']
     ) => void;
+    resetCollectionMetadata: (
+        targetCollections: string[],
+        targetBindingUUIDs: string[]
+    ) => void;
 
     // Control sourceCapture optional settings
     resourceConfigPointers?: ResourceConfigPointers;
