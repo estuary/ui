@@ -211,7 +211,12 @@ function PrefixedName({
                 required={!allowBlankName}
                 value={name}
                 size={size ?? 'small'}
-                sx={{ borderRadius: 3 }}
+                sx={{
+                    'borderRadius': 3,
+                    '& div > div > fieldset.MuiOutlinedInput-notchedOutline': {
+                        border: 'none',
+                    },
+                }}
                 onChange={(event) => {
                     handlers.setName(event.target.value);
                 }}
