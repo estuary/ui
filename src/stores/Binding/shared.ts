@@ -49,8 +49,12 @@ export const resetPartialCollectionMetadata = (
 ) => {
     if (targetCollections) {
         targetCollections.forEach((collection) => {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (state.collectionMetadata?.[collection]) {
+            if (
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                state.collectionMetadata?.[collection] &&
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                !state.bindings?.[collection]
+            ) {
                 state.collectionMetadata[collection].added = false;
                 state.collectionMetadata[collection].sourceBackfillRecommended =
                     false;
