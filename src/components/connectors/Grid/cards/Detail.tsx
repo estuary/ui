@@ -1,17 +1,14 @@
 import { Stack, Typography } from '@mui/material';
+import { MessageComponentProps } from './types';
 
-interface Props {
-    description: string;
-}
-
-function ConnectorCardDetails({ description }: Props) {
+function Detail({ content }: MessageComponentProps) {
     return (
         <Stack direction="column" spacing={1} sx={{ alignItems: 'baseline' }}>
             <Typography align="left" component="div" variant="subtitle1">
-                {description}
+                {content}
             </Typography>
         </Stack>
     );
 }
 
-export default ConnectorCardDetails;
+export default Detail;

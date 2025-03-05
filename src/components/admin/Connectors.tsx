@@ -1,7 +1,7 @@
 import { Stack, Toolbar, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AdminTabs from 'components/admin/Tabs';
-import ConnectorTiles from 'components/connectors/ConnectorTiles';
+import ConnectorGrid from 'components/connectors/Grid';
 import usePageTitle from 'hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
@@ -22,7 +22,7 @@ const AdminConnectors = () => {
                 </Stack>
             </Toolbar>
 
-            <ConnectorTiles />
+            <ConnectorGrid />
         </>
     );
 };

@@ -1,21 +1,12 @@
 import { NetworkLeft } from 'iconoir-react';
+import { LogoProps } from './types';
 
-interface Props {
-    imageSrc: string | null | undefined;
-    maxHeight?: number;
-    padding?: string | number;
-    unknownConnectorIconConfig?: {
-        width: string | number;
-        fontSize: string | number;
-    };
-}
-
-function ConnectorLogo({
+function Logo({
     imageSrc,
     maxHeight,
     padding,
     unknownConnectorIconConfig,
-}: Props) {
+}: LogoProps) {
     if (imageSrc) {
         return (
             <img
@@ -41,4 +32,4 @@ function ConnectorLogo({
     }
 }
 
-export default ConnectorLogo;
+export default Logo;

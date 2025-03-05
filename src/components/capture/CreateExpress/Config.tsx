@@ -11,5 +11,5 @@ export default function CaptureExpressCreateConfig() {
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
 
-    return <EntityCreateConfig entityType={entityType} />;
+    return <EntityCreateConfig condensed entityType={entityType} />;
 }

@@ -6,34 +6,27 @@ import {
     connectorImageBackgroundSx,
     sample_grey,
 } from 'context/Theme';
-import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { CardProps } from './types';
 
-interface Props {
-    logo: ReactNode;
-    details: ReactNode;
-    title: ReactNode;
-    clickHandler?: () => void;
-    cta?: ReactNode;
-    docsUrl?: string;
-    externalLink?: { href: string; target: string; rel: string };
-    recommended?: boolean;
-    specType?: string;
-}
-function ConnectorCard({
-    cta,
-    docsUrl,
-    logo,
-    title,
-    details,
-    recommended,
+export default function LegacyCard({
     clickHandler,
+    CTA,
+    Detail,
+    docsUrl,
+    entityType,
     externalLink,
-    specType,
-}: Props) {
+    Logo,
+    Title,
+    recommended,
+}: CardProps) {
     return (
         <Grid item xs={2} md={4} lg={2} xl={2}>
-            <Tile clickHandler={clickHandler} externalLink={externalLink}>
+            <Tile
+                clickHandler={clickHandler}
+                externalLink={externalLink}
+                fullHeight
+            >
                 <Stack
                     sx={{
                         mb: 3,
@@ -63,7 +56,7 @@ function ConnectorCard({
                                         : connectorImageBackgroundSx
                                 }
                             >
-                                {logo}
+                                {Logo}
 
                                 {docsUrl ? (
                                     <ExternalLink link={docsUrl}>
@@ -90,12 +83,12 @@ function ConnectorCard({
                             ) : null}
                         </Stack>
 
-                        {title}
+                        {Title}
 
-                        {details}
+                        {Detail}
                     </Box>
 
-                    {specType ? (
+                    {entityType ? (
                         <Typography
                             component="div"
                             sx={{
@@ -110,15 +103,13 @@ function ConnectorCard({
                                 borderRadius: 2,
                             }}
                         >
-                            <FormattedMessage id={`terms.${specType}`} />
+                            <FormattedMessage id={`terms.${entityType}`} />
                         </Typography>
                     ) : null}
 
-                    {cta}
+                    {CTA}
                 </Stack>
             </Tile>
         </Grid>
     );
 }
-
-export default ConnectorCard;

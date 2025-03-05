@@ -1,5 +1,5 @@
 import { Collapse, Typography } from '@mui/material';
-import ConnectorTiles from 'components/connectors/ConnectorTiles';
+import ConnectorGrid from 'components/connectors/Grid';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -8,7 +8,10 @@ import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { EntityCreateConfigProps } from './types';
 
-function EntityCreateConfig({ entityType }: EntityCreateConfigProps) {
+function EntityCreateConfig({
+    condensed,
+    entityType,
+}: EntityCreateConfigProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const navigateToCreate = useEntityCreateNavigate();
@@ -28,7 +31,7 @@ function EntityCreateConfig({ entityType }: EntityCreateConfigProps) {
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>
 
-            <ConnectorTiles protocolPreset={entityType} />
+            <ConnectorGrid condensed={condensed} protocolPreset={entityType} />
         </Collapse>
     );
 }
