@@ -377,6 +377,9 @@ const getInitialState = (
 
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (state.collectionMetadata?.[collection]) {
+                            // This condition only exists as a safeguard in the event this action
+                            // is called outside of hydration.
+
                             state.collectionMetadata[
                                 collection
                             ].previouslyBound = liveBindingIndex > -1;
