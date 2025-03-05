@@ -2,29 +2,10 @@ import { Grid, Toolbar } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SearchField from 'components/shared/toolbar/SearchField';
 import { debounce } from 'lodash';
-import {
-    ChangeEvent,
-    Dispatch,
-    SetStateAction,
-    SyntheticEvent,
-    useRef,
-} from 'react';
+import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { Entity } from 'types';
 import useConstant from 'use-constant';
-
-interface Props {
-    belowMd: boolean;
-    gridSpacing: number;
-    hideProtocol?: boolean;
-    setProtocol: Dispatch<SetStateAction<string | null>>;
-    setSearchQuery: Dispatch<SetStateAction<string | null>>;
-}
-
-interface ProtocolOption {
-    protocol: Entity | null;
-    message: string;
-}
+import { ConnectorToolbarProps, ProtocolOption } from './types';
 
 function ConnectorToolbar({
     belowMd,
@@ -32,7 +13,7 @@ function ConnectorToolbar({
     hideProtocol,
     setProtocol,
     setSearchQuery,
-}: Props) {
+}: ConnectorToolbarProps) {
     const intl = useIntl();
     const isFiltering = useRef(false);
 

@@ -11,3 +11,15 @@ export interface AlertBoxProps extends BaseComponentProps {
     short?: boolean;
     title?: string | ReactNode;
 }
+
+interface ButtonLinkAttributes {
+    href: string;
+    target: string;
+    rel: string;
+}
+
+export interface TileProps extends BaseComponentProps {
+    clickHandler?: () => void;
+    externalLink?: ButtonLinkAttributes;
+    fullHeight?: boolean;
+}

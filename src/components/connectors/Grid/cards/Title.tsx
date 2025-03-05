@@ -1,21 +1,18 @@
 import { Typography } from '@mui/material';
+import { MessageComponentProps } from './types';
 
-interface Props {
-    title: string;
-}
-
-function ConnectorCardTitle({ title }: Props) {
+function Title({ content, marginBottom }: MessageComponentProps) {
     return (
         <Typography
             component="div"
-            marginBottom={1}
+            marginBottom={marginBottom ?? 1}
             fontSize={18}
             fontWeight="400"
             align="left"
         >
-            {title}
+            {content}
         </Typography>
     );
 }
 
-export default ConnectorCardTitle;
+export default Title;

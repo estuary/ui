@@ -1,18 +1,17 @@
 import { Collapse, Typography } from '@mui/material';
-import ConnectorTiles from 'components/connectors/ConnectorTiles';
+import ConnectorGrid from 'components/connectors/Grid';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+import { EntityCreateConfigProps } from './types';
 
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-}
-
-function EntityCreateConfig({ entityType }: Props) {
+function EntityCreateConfig({
+    condensed,
+    entityType,
+}: EntityCreateConfigProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const navigateToCreate = useEntityCreateNavigate();
@@ -32,7 +31,7 @@ function EntityCreateConfig({ entityType }: Props) {
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>
 
-            <ConnectorTiles protocolPreset={entityType} />
+            <ConnectorGrid condensed={condensed} protocolPreset={entityType} />
         </Collapse>
     );
 }
