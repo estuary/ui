@@ -10,6 +10,7 @@ import {
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
+import { fireGtmEvent } from 'services/gtm';
 import { Entity } from 'types';
 import useConstant from 'use-constant';
 
@@ -73,6 +74,9 @@ function ConnectorToolbar({
                 isFiltering.current = hasQuery;
 
                 setSearchQuery(hasQuery ? filterQuery : null);
+                fireGtmEvent('Connector_Search', {
+                    filterQuery,
+                });
             },
             750
         ),
