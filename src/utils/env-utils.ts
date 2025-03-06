@@ -195,7 +195,9 @@ export const getGoogleTageManagerSettings = () => {
         id: import.meta.env.VITE_GOOGLE_TAG_MANAGER_ID,
     };
 
-    return settings;
+    return {
+        allowedToRun: Boolean(isProduction && settings.enabled && settings.id),
+    };
 };
 
 export const getDocsSettings = () => {
