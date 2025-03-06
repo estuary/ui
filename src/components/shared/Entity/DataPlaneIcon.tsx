@@ -2,6 +2,7 @@ import { Avatar, Box, PaletteMode, useTheme } from '@mui/material';
 import { DataPlaneIconProps } from 'components/shared/Entity/types';
 import { semiTransparentBackground_oneLayerElevated } from 'context/Theme';
 import { Lock, QuestionMark } from 'iconoir-react';
+import azureLogo from 'images/data-plane-providers/10018-icon-service-Azure-A.svg';
 import awsLogo from 'images/data-plane-providers/aws.png';
 import awsLogoWhite from 'images/data-plane-providers/aws_logo-white.png';
 import gcpLogo from 'images/data-plane-providers/google_cloud.png';
@@ -14,6 +15,10 @@ const getProviderIconPath = (
 ) => {
     if (provider === 'aws') {
         return colorMode === 'light' ? awsLogo : awsLogoWhite;
+    }
+
+    if (provider === 'az') {
+        return azureLogo;
     }
 
     if (provider === 'gcp') {
