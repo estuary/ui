@@ -403,8 +403,9 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.backfillAllBindings =
+                    state.backfilledBindings.length > 0 &&
                     state.backfilledBindings.length ===
-                    Object.keys(state.resourceConfigs).length;
+                        Object.keys(state.resourceConfigs).length;
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
@@ -735,12 +736,13 @@ const getInitialState = (
     resetCollectionMetadata: (targetCollections, targetBindingUUIDs) => {
         set(
             produce((state: BindingState) => {
-                if (hasLength(targetCollections)) {
-                    resetPartialCollectionMetadata(state, targetCollections);
-                } else if (hasLength(targetBindingUUIDs)) {
-                    const evaluatedCollections = Object.entries(
-                        state.resourceConfigs
-                    )
+                let evaluatedCollections = targetCollections;
+
+                if (
+                    !hasLength(evaluatedCollections) &&
+                    hasLength(targetBindingUUIDs)
+                ) {
+                    evaluatedCollections = Object.entries(state.resourceConfigs)
                         .filter(([uuid, _resourceConfig]) =>
                             targetBindingUUIDs.includes(uuid)
                         )
@@ -748,11 +750,14 @@ const getInitialState = (
                             ([_uuid, resourceConfig]) =>
                                 resourceConfig.meta.collectionName
                         );
-
-                    resetPartialCollectionMetadata(state, evaluatedCollections);
-                } else {
-                    resetPartialCollectionMetadata(state);
                 }
+
+                resetPartialCollectionMetadata(
+                    state,
+                    hasLength(evaluatedCollections)
+                        ? evaluatedCollections
+                        : undefined
+                );
             }),
             false,
             'Collection Metadata Reset'

@@ -47,24 +47,11 @@ export const resetPartialCollectionMetadata = (
     state: BindingState,
     targetCollections?: string[]
 ) => {
-    if (targetCollections) {
-        targetCollections.forEach((collection) => {
-            if (
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                state.collectionMetadata?.[collection] &&
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                !state.bindings?.[collection]
-            ) {
-                state.collectionMetadata[collection].added = false;
-                state.collectionMetadata[collection].sourceBackfillRecommended =
-                    false;
-            }
-        });
-
-        return;
-    }
-
     Object.keys(state.collectionMetadata).forEach((collection) => {
+        if (targetCollections && !targetCollections.includes(collection)) {
+            return;
+        }
+
         state.collectionMetadata[collection].added = false;
         state.collectionMetadata[collection].sourceBackfillRecommended = false;
     });
