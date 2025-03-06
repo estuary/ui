@@ -46,8 +46,8 @@ import {
     initializeAndGenerateUUID,
     initializeBinding,
     initializeCurrentBinding,
+    overridePartialCollectionMetadata,
     populateResourceConfigErrors,
-    resetPartialCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
     whatChanged,
@@ -777,7 +777,7 @@ const getInitialState = (
                         );
                 }
 
-                resetPartialCollectionMetadata(
+                overridePartialCollectionMetadata(
                     state,
                     hasLength(evaluatedCollections)
                         ? evaluatedCollections

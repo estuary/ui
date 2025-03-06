@@ -43,17 +43,31 @@ export const getEnabledCollectionNames = (
         .map(({ meta }) => meta.collectionName);
 };
 
-export const resetPartialCollectionMetadata = (
+const resetPartialCollectionMetadata = (
+    state: BindingState,
+    collection: string
+) => {
+    state.collectionMetadata[collection].added = false;
+    state.collectionMetadata[collection].sourceBackfillRecommended = false;
+};
+
+export const overridePartialCollectionMetadata = (
     state: BindingState,
     targetCollections?: string[]
 ) => {
-    Object.keys(state.collectionMetadata).forEach((collection) => {
-        if (targetCollections && !targetCollections.includes(collection)) {
-            return;
-        }
+    if (targetCollections) {
+        targetCollections.forEach((collection) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (state.collectionMetadata?.[collection]) {
+                resetPartialCollectionMetadata(state, collection);
+            }
+        });
 
-        state.collectionMetadata[collection].added = false;
-        state.collectionMetadata[collection].sourceBackfillRecommended = false;
+        return;
+    }
+
+    Object.keys(state.collectionMetadata).forEach((collection) => {
+        resetPartialCollectionMetadata(state, collection);
     });
 };
 
