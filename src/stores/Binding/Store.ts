@@ -614,7 +614,8 @@ const getInitialState = (
                 state.resourceConfigs = evaluatedResourceConfigs;
                 populateResourceConfigErrors(state, evaluatedResourceConfigs);
 
-                // Repopulate the bindings dictionary and update the value of the current binding.
+                // Repopulate the bindings dictionary, update the value of the current binding,
+                // and update the backfill-related state.
                 const mappedUUIDsAndResourceConfigs = Object.entries(
                     evaluatedResourceConfigs
                 );
@@ -637,9 +638,22 @@ const getInitialState = (
                         uuid,
                         collection: resourceConfig.meta.collectionName,
                     };
+
+                    state.backfilledBindings =
+                        mappedUUIDsAndResourceConfigs.map(
+                            ([bindingUUID, _resourceConfig]) => bindingUUID
+                        );
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length > 0 &&
+                        state.backfilledBindings.length ===
+                            Object.keys(state.resourceConfigs).length;
                 } else {
                     state.bindings = {};
                     state.currentBinding = null;
+
+                    state.backfillAllBindings = false;
+                    state.backfilledBindings = [];
                 }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
