@@ -51,7 +51,7 @@ const resetPartialCollectionMetadata = (
     state.collectionMetadata[collection].sourceBackfillRecommended = false;
 };
 
-export const overridePartialCollectionMetadata = (
+export const rollbackPartialCollectionMetadata = (
     state: BindingState,
     targetCollections?: string[]
 ) => {
