@@ -580,6 +580,17 @@ const getInitialState = (
                             : null;
                     }
 
+                    // Update backfill-related state.
+                    state.backfilledBindings =
+                        mappedUUIDsAndResourceConfigs.map(
+                            ([bindingUUID, _resourceConfig]) => bindingUUID
+                        );
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length > 0 &&
+                        state.backfilledBindings.length ===
+                            Object.keys(state.resourceConfigs).length;
+
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
 
