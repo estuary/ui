@@ -47,7 +47,7 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
-    rollbackPartialCollectionMetadata,
+    resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
     whatChanged,
@@ -777,7 +777,7 @@ const getInitialState = (
                         );
                 }
 
-                rollbackPartialCollectionMetadata(
+                resetCollectionMetadata(
                     state,
                     hasLength(evaluatedCollections)
                         ? evaluatedCollections
