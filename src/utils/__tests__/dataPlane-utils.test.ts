@@ -37,6 +37,16 @@ describe('formatDataPlaneName', () => {
                 whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
             })
         ).toBe('aws: eu-west-1 c2');
+
+        expect(
+            formatDataPlaneName({
+                cluster: 'c1',
+                prefix: '',
+                provider: 'az',
+                region: 'westus',
+                whole: 'ops/dp/public/az-westus-c1',
+            })
+        ).toBe('az: westus c1');
     });
 
     test('returns unformatted name when data plane name does not include a provider', () => {
@@ -156,6 +166,16 @@ describe('parseDataPlaneName', () => {
             provider: 'local',
             region: 'cluster',
             whole: 'ops/dp/private/melk/local-cluster',
+        });
+
+        expect(
+            parseDataPlaneName('ops/dp/private/melk/az-eastus-c8', 'private')
+        ).toStrictEqual({
+            cluster: 'c8',
+            prefix: 'melk/',
+            provider: 'az',
+            region: 'eastus',
+            whole: 'ops/dp/private/melk/az-eastus-c8',
         });
     });
 
