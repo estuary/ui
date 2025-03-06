@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_prefillResourceConfigs,
@@ -14,6 +15,8 @@ import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
+    const [updating, setUpdating] = useState(false);
+
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
         (state) => {
@@ -44,6 +47,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
     const close = async () => {
+        setUpdating(true);
+
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
         const updatedSourceCaptureName = selectedRow
             ? selectedRow.catalog_name
@@ -83,7 +88,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             if (nameUpdated) {
                 setSourceCapture(updatedSourceCapture.capture);
 
-                if (selectedRow?.writes_to) {
+                if (
+                    selectedRow?.writes_to &&
+                    selectedRow?.writes_to.length > 0
+                ) {
                     prefillResourceConfigs(
                         selectedRow.writes_to,
                         true,
@@ -105,11 +113,12 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             await updateDraft(updatedSourceCapture);
         }
 
+        setUpdating(false);
         toggle(false);
     };
 
     return (
-        <Button variant="contained" onClick={close}>
+        <Button variant="contained" onClick={close} disabled={updating}>
             <FormattedMessage id="cta.continue" />
         </Button>
     );
