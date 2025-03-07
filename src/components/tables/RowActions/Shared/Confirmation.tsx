@@ -1,18 +1,6 @@
 import { List, ListItem, Typography } from '@mui/material';
-import { ReactNode } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
-import NestedListItem, { SettingMetadata } from './NestedListItem';
-
-interface RowActionConfirmationProps {
-    message: ReactNode;
-    selected: any; //SelectableTableStore['selected'];
-    selectableTableStoreName?:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-    settings?: SettingMetadata[];
-}
+import NestedListItem from './NestedListItem';
+import { RowActionConfirmationProps } from './types';
 
 function RowActionConfirmation({
     message,

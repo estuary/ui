@@ -38,6 +38,10 @@ export const prefixTableColumns = [
         headerIntlKey: 'entityTable.data.capability',
     },
     {
+        field: 'detail',
+        headerIntlKey: 'entityTable.data.detail',
+    },
+    {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
     },
@@ -64,6 +68,8 @@ function Row({ row, selected, setSelected }: RowProps) {
             )}
 
             <TableCell>{row.capability}</TableCell>
+
+            <TableCell>{row.detail}</TableCell>
 
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>

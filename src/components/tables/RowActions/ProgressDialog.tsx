@@ -6,24 +6,15 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-
-interface Props {
-    selectedEntities: any[];
-    renderComponent: (
-        item: any,
-        index: number,
-        onFinish: (response: any) => void
-    ) => ReactNode;
-    finished: Function;
-}
+import { ProgressDialogProps } from './types';
 
 function ProgressDialog({
     selectedEntities,
     finished,
     renderComponent,
-}: Props) {
+}: ProgressDialogProps) {
     const inProgressCount = useRef(selectedEntities.length);
     const [done, setDone] = useState(false);
     const [finishedCount, setFinishedCount] = useState(0);

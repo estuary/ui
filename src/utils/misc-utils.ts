@@ -9,6 +9,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'services/jsonforms';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
+import { BaseGrant, Grant_UserExt } from 'types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -222,3 +223,7 @@ export const isPostgrestFetcher = (
     | PostgrestFilterBuilder<any, any, any, any, any>
     | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
+
+export const isGrant_UserExt = (
+    value: Grant_UserExt | BaseGrant
+): value is Grant_UserExt => isObject(value) && 'user_email' in value;

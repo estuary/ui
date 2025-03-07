@@ -141,7 +141,9 @@ const TestJsonForms = () => {
                     }}
                 >
                     {error !== null ? (
-                        <AlertBox severity="error">{error}</AlertBox>
+                        <AlertBox short={false} severity="error">
+                            {error}
+                        </AlertBox>
                     ) : null}
 
                     <JsonForms

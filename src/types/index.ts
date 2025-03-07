@@ -263,7 +263,7 @@ export interface InferredSchemas {
 }
 
 export interface BaseGrant {
-    capability: string;
+    capability: Capability;
     object_role: string;
     subject_role: string;
 }

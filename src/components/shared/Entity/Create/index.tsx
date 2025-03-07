@@ -186,7 +186,7 @@ function EntityCreate({
             </Collapse>
 
             {!isValidating && connectorTags.length === 0 ? (
-                <AlertBox severity="warning">
+                <AlertBox short={false} severity="warning">
                     <FormattedMessage
                         id={`${messagePrefix}.missingConnectors`}
                     />
