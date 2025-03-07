@@ -43,6 +43,34 @@ export const getEnabledCollectionNames = (
         .map(({ meta }) => meta.collectionName);
 };
 
+const resetSingleCollectionMetadata = (
+    state: BindingState,
+    collection: string
+) => {
+    state.collectionMetadata[collection].added = false;
+    state.collectionMetadata[collection].sourceBackfillRecommended = false;
+};
+
+export const resetCollectionMetadata = (
+    state: BindingState,
+    targetCollections?: string[]
+) => {
+    if (targetCollections) {
+        targetCollections.forEach((collection) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (state.collectionMetadata?.[collection]) {
+                resetSingleCollectionMetadata(state, collection);
+            }
+        });
+
+        return;
+    }
+
+    Object.keys(state.collectionMetadata).forEach((collection) => {
+        resetSingleCollectionMetadata(state, collection);
+    });
+};
+
 export const populateResourceConfigErrors = (
     state: BindingState,
     resourceConfigs: ResourceConfigDictionary

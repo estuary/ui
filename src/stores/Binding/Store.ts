@@ -47,6 +47,7 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
+    resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
     whatChanged,
@@ -374,6 +375,23 @@ const getInitialState = (
                         ) {
                             state.backfilledBindings.push(UUID);
                         }
+
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        if (state.collectionMetadata?.[collection]) {
+                            // This condition only exists as a safeguard in the event this action
+                            // is called outside of hydration.
+
+                            state.collectionMetadata[
+                                collection
+                            ].previouslyBound = liveBindingIndex > -1;
+                        } else {
+                            state.collectionMetadata = {
+                                ...state.collectionMetadata,
+                                [collection]: {
+                                    previouslyBound: liveBindingIndex > -1,
+                                },
+                            };
+                        }
                     }
                 });
 
@@ -385,8 +403,9 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.backfillAllBindings =
+                    state.backfilledBindings.length > 0 &&
                     state.backfilledBindings.length ===
-                    Object.keys(state.resourceConfigs).length;
+                        Object.keys(state.resourceConfigs).length;
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
@@ -561,6 +580,17 @@ const getInitialState = (
                             : null;
                     }
 
+                    // Update backfill-related state.
+                    state.backfilledBindings =
+                        mappedUUIDsAndResourceConfigs.map(
+                            ([bindingUUID, _resourceConfig]) => bindingUUID
+                        );
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length > 0 &&
+                        state.backfilledBindings.length ===
+                            Object.keys(state.resourceConfigs).length;
+
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
 
@@ -595,7 +625,8 @@ const getInitialState = (
                 state.resourceConfigs = evaluatedResourceConfigs;
                 populateResourceConfigErrors(state, evaluatedResourceConfigs);
 
-                // Repopulate the bindings dictionary and update the value of the current binding.
+                // Repopulate the bindings dictionary, update the value of the current binding,
+                // and update the backfill-related state.
                 const mappedUUIDsAndResourceConfigs = Object.entries(
                     evaluatedResourceConfigs
                 );
@@ -618,9 +649,22 @@ const getInitialState = (
                         uuid,
                         collection: resourceConfig.meta.collectionName,
                     };
+
+                    state.backfilledBindings =
+                        mappedUUIDsAndResourceConfigs.map(
+                            ([bindingUUID, _resourceConfig]) => bindingUUID
+                        );
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length > 0 &&
+                        state.backfilledBindings.length ===
+                            Object.keys(state.resourceConfigs).length;
                 } else {
                     state.bindings = {};
                     state.currentBinding = null;
+
+                    state.backfillAllBindings = false;
+                    state.backfilledBindings = [];
                 }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
@@ -711,6 +755,37 @@ const getInitialState = (
             }),
             false,
             'Discovered bindings removed'
+        );
+    },
+
+    resetCollectionMetadata: (targetCollections, targetBindingUUIDs) => {
+        set(
+            produce((state: BindingState) => {
+                let evaluatedCollections = targetCollections;
+
+                if (
+                    !hasLength(evaluatedCollections) &&
+                    hasLength(targetBindingUUIDs)
+                ) {
+                    evaluatedCollections = Object.entries(state.resourceConfigs)
+                        .filter(([uuid, _resourceConfig]) =>
+                            targetBindingUUIDs.includes(uuid)
+                        )
+                        .map(
+                            ([_uuid, resourceConfig]) =>
+                                resourceConfig.meta.collectionName
+                        );
+                }
+
+                resetCollectionMetadata(
+                    state,
+                    hasLength(evaluatedCollections)
+                        ? evaluatedCollections
+                        : undefined
+                );
+            }),
+            false,
+            'Collection Metadata Reset'
         );
     },
 
@@ -824,12 +899,18 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    const added =
-                        addedCollections.includes(catalog_name) ||
+                    const previouslyBound =
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        state.collectionMetadata[catalog_name]?.added;
+                        state.collectionMetadata[catalog_name]?.previouslyBound;
+
+                    const added =
+                        !previouslyBound &&
+                        (addedCollections.includes(catalog_name) ||
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                            state.collectionMetadata[catalog_name]?.added);
 
                     state.collectionMetadata[catalog_name] = {
+                        ...state.collectionMetadata[catalog_name],
                         added,
                         sourceBackfillRecommended:
                             isBeforeTrialInterval(updated_at) &&

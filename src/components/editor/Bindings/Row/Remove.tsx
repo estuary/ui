@@ -9,6 +9,7 @@ import {
     useBinding_removeFullSourceConfig,
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
 
@@ -26,6 +27,9 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
 
     const removeBinding = useBinding_removeBinding();
     const discoveredCollections = useBinding_discoveredCollections();
+    const resetCollectionMetadata = useBindingStore(
+        (state) => state.resetCollectionMetadata
+    );
 
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
@@ -53,11 +57,15 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
                 }
             }
 
-            // We need to reset this before actully fully removing so that the component is not unmounted
+            // We need to reset this before actually fully removing so that the component is not unmounted
             setRemoving(false);
 
             removeBinding(binding);
             removeFullSourceConfig(uuid);
+
+            if (workflow === 'materialization_edit') {
+                resetCollectionMetadata([binding.collection], []);
+            }
 
             if (
                 workflow === 'capture_edit' &&
