@@ -3,6 +3,8 @@ import { AlertColor, SxProps } from '@mui/material';
 import { ReactNode } from 'react';
 import { BaseComponentProps } from 'types';
 
+// TODO (AlertBox) we defaulted short to false at the start. That was a mistake
+//  so we need to get `short` to default to `true` soon.
 export interface AlertBoxProps extends BaseComponentProps {
     severity: AlertColor;
     short: boolean; // Forcing this on... but do not want to change all calls right now
