@@ -11,18 +11,15 @@ import {
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
-import ConfirmationWithExplination from '../Shared/ConfirmationWithExplination';
+import ConfirmationWithExplanation from '../Shared/ConfirmationWithExplination';
 import GrantWhatIsChanging from './GrantWhatIsChanging';
 import RevokeGrant from './RevokeGrant';
-import { AccessGrantRowConfirmation } from './types';
+import {
+    AccessGrantDeleteButtonProps,
+    AccessGrantRowConfirmation,
+} from './types';
 
-interface Props {
-    selectTableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_USERS
-        | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-}
-
-function DeleteButton({ selectTableStoreName }: Props) {
+function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
     const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
     const confirmationModalContext = useConfirmationModalContext();
@@ -75,7 +72,7 @@ function DeleteButton({ selectTableStoreName }: Props) {
                         maxWidth: 'md',
                     },
                     message: (
-                        <ConfirmationWithExplination
+                        <ConfirmationWithExplanation
                             message={
                                 <ConfirmationAlert messageId="admin.grants.confirmation.alert" />
                             }

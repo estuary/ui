@@ -16,12 +16,12 @@ import { WarningTriangle } from 'iconoir-react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { ConfirmationWithExplinationProps } from './types';
+import { ConfirmationWithExplanationProps } from './types';
 
-function ConfirmationWithExplination({
+function ConfirmationWithExplanation({
     message,
     selected,
-}: ConfirmationWithExplinationProps) {
+}: ConfirmationWithExplanationProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -141,4 +141,4 @@ function ConfirmationWithExplination({
     );
 }
 
-export default ConfirmationWithExplination;
+export default ConfirmationWithExplanation;
