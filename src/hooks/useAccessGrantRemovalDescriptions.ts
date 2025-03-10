@@ -37,7 +37,7 @@ function useAccessGrantRemovalDescriptions() {
 
     const describeAccessGrantRemovals = useCallback(
         (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
-            let what: string | null = value.capability;
+            let target: string | null = value.capability;
             let removalType: AccessGrantRemovalSeverity = 'normal';
             let grantScope: GrantScopeMessageIdSuffix;
 
@@ -45,8 +45,8 @@ function useAccessGrantRemovalDescriptions() {
             if (isGrant_UserExt(value)) {
                 if (value.user_email === userEmail) {
                     if (
-                        (singleAdmin && what === 'admin') ||
-                        (singleReadable && what === 'read')
+                        (singleAdmin && target === 'admin') ||
+                        (singleReadable && target === 'read')
                     ) {
                         grantScope = 'finalEmail';
                     } else {
@@ -72,7 +72,7 @@ function useAccessGrantRemovalDescriptions() {
             } else if (value.object_role === 'ops/dp/public/') {
                 // Removing any access to public dataplane
                 removalType = 'dangerous';
-                what = 'dataPlane';
+                target = 'dataPlane';
             } else if (grantScope === 'ownTenant') {
                 // Removing some access a tenant has to ITSELF
                 removalType = 'dangerous';
@@ -84,7 +84,7 @@ function useAccessGrantRemovalDescriptions() {
             return [
                 removalType,
                 intl.formatMessage({
-                    id: `accessGrants.descriptions.removing.${what}.${grantScope}`,
+                    id: `accessGrants.descriptions.removing.${target}.${grantScope}`,
                 }),
             ];
         },
