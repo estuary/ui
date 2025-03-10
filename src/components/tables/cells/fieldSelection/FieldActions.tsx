@@ -51,18 +51,16 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
         [bindingUUID, field, selections]
     );
 
-    const includeRequired = evaluateRequiredIncludedFields(constraint.type);
-    const includeRecommended = evaluateRecommendedIncludedFields(
-        constraint.type
-    );
+    const fieldRequired = evaluateRequiredIncludedFields(constraint.type);
+    const fieldRecommended = evaluateRecommendedIncludedFields(constraint.type);
 
     const excludeRequired = evaluateRequiredExcludedFields(constraint.type);
 
     const coloredIncludeButton =
-        selection?.mode === 'default' && includeRecommended;
+        selection?.mode === 'default' && fieldRecommended;
 
     const coloredExcludeButton =
-        selection?.mode === 'default' && !includeRecommended;
+        selection?.mode === 'default' && !fieldRecommended;
 
     if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
         return null;
@@ -78,22 +76,22 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                 <FieldActionButton
                     messageId="fieldSelection.table.cta.includeField"
                     selectedValue={selection?.mode ?? null}
-                    value="include"
+                    value="require"
                     coloredDefaultState={coloredIncludeButton}
                     disabled={
                         formActive ||
                         excludeRequired ||
-                        (includeRequired && !recommendFields)
+                        (fieldRequired && !recommendFields)
                     }
                     onClick={() => {
                         const singleValue =
-                            selection?.mode !== 'include' || includeRequired
-                                ? 'include'
+                            selection?.mode !== 'require' || fieldRequired
+                                ? 'require'
                                 : null;
 
                         const selectionType = evaluateSelectionType(
                             recommendFields[bindingUUID],
-                            'include',
+                            'require',
                             selection?.mode ?? null,
                             singleValue
                         );
@@ -114,7 +112,7 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     coloredDefaultState={coloredExcludeButton}
                     disabled={
                         formActive ||
-                        includeRequired ||
+                        fieldRequired ||
                         (excludeRequired && !recommendFields)
                     }
                     onClick={() => {

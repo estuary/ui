@@ -31,24 +31,24 @@ interface Props {
 
 const getBackgroundColor = (value: FieldSelectionType, disabled?: boolean) => {
     if (disabled) {
-        return value === 'include'
+        return value === 'require'
             ? successOutlinedButtonBackground_disabled
             : errorOutlinedButtonBackground_disabled;
     }
 
-    return value === 'include'
+    return value === 'require'
         ? successOutlinedButtonBackground
         : errorOutlinedButtonBackground;
 };
 
 const getOutline = (value: FieldSelectionType, disabled?: boolean) => {
     if (disabled) {
-        return value === 'include'
+        return value === 'require'
             ? successColoredOutline_disabled
             : errorColoredOutline_disabled;
     }
 
-    return value === 'include' ? successColoredOutline : errorColoredOutline;
+    return value === 'require' ? successColoredOutline : errorColoredOutline;
 };
 
 const getTextColor = (
@@ -57,12 +57,12 @@ const getTextColor = (
     disabled?: boolean
 ) => {
     if (disabled) {
-        return value === 'include'
+        return value === 'require'
             ? disabledButtonText_success[theme.palette.mode]
             : disabledButtonText_error;
     }
 
-    return value === 'include'
+    return value === 'require'
         ? successButtonText[theme.palette.mode]
         : theme.palette.error.main;
 };
@@ -94,7 +94,7 @@ function FieldActionButton({
     const theme = useTheme();
 
     const hoveredOutline =
-        value === 'include'
+        value === 'require'
             ? successColoredOutline_hovered
             : errorColoredOutline_hovered;
 

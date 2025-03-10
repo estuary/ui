@@ -47,8 +47,9 @@ interface Props {
 
 interface FieldMetadata {
     recommended: boolean;
-    include?: { [field: string]: any };
     exclude?: string[];
+    include?: { [field: string]: any };
+    require?: { [field: string]: any };
 }
 
 const mapConstraintsToProjections = (
@@ -71,20 +72,23 @@ const mapConstraintsToProjections = (
         let selectionMetadata: Schema | undefined;
 
         if (fieldMetadata) {
-            const { recommended, include, exclude } = fieldMetadata;
+            const { exclude, include, recommended, require } = fieldMetadata;
 
-            if (include && Object.hasOwn(include, field)) {
-                selectionType = 'include';
+            if (include?.[field]) {
+                selectionType = 'require';
                 selectionMetadata = include[field];
+            } else if (require?.[field]) {
+                selectionType = 'require';
+                selectionMetadata = require[field];
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
-                const includeRequired = evaluateRequiredIncludedFields(
+                const fieldRequired = evaluateRequiredIncludedFields(
                     constraint.type
                 );
 
-                selectionType = includeRequired
-                    ? 'include'
+                selectionType = fieldRequired
+                    ? 'require'
                     : evaluateRequiredExcludedFields(constraint.type)
                     ? 'exclude'
                     : null;

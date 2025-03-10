@@ -24,15 +24,15 @@ const evaluateUpdatedFields = (
     const updatedFields: FieldSelectionDictionary = {};
 
     projections.forEach(({ field, constraint, selectionMetadata }) => {
-        const includeRequired = constraint
+        const fieldRequired = constraint
             ? evaluateRequiredIncludedFields(constraint.type)
             : false;
 
-        let selectionType = includeRequired ? 'include' : selectedValue;
+        let selectionType = fieldRequired ? 'require' : selectedValue;
 
         if (recommended) {
             selectionType =
-                selectedValue === 'exclude' && includeRequired
+                selectedValue === 'exclude' && fieldRequired
                     ? 'default'
                     : selectedValue;
         }
