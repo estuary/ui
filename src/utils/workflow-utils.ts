@@ -373,7 +373,7 @@ export const modifyExistingCaptureDraftSpec = async (
 };
 
 // Common materialization field selection checks
-export const evaluateRequiredIncludedFields = (
+export const isRequireOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (
@@ -382,18 +382,15 @@ export const evaluateRequiredIncludedFields = (
     );
 };
 
-export const evaluateRecommendedIncludedFields = (
+export const isRecommendedField = (
     constraintType: ConstraintTypes
 ): boolean => {
-    const includeRequired = evaluateRequiredIncludedFields(constraintType);
+    const required = isRequireOnlyField(constraintType);
 
-    return (
-        includeRequired ||
-        constraintType === ConstraintTypes.LOCATION_RECOMMENDED
-    );
+    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
 };
 
-export const evaluateRequiredExcludedFields = (
+export const isExcludeOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (

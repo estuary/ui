@@ -14,9 +14,9 @@ import {
 } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import {
-    evaluateRecommendedIncludedFields,
-    evaluateRequiredExcludedFields,
-    evaluateRequiredIncludedFields,
+    isExcludeOnlyField,
+    isRecommendedField,
+    isRequireOnlyField,
 } from 'utils/workflow-utils';
 
 interface Props {
@@ -51,10 +51,10 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
         [bindingUUID, field, selections]
     );
 
-    const fieldRequired = evaluateRequiredIncludedFields(constraint.type);
-    const fieldRecommended = evaluateRecommendedIncludedFields(constraint.type);
+    const requireOnly = isRequireOnlyField(constraint.type);
+    const fieldRecommended = isRecommendedField(constraint.type);
 
-    const excludeRequired = evaluateRequiredExcludedFields(constraint.type);
+    const excludeOnly = isExcludeOnlyField(constraint.type);
 
     const coloredIncludeButton =
         selection?.mode === 'default' && fieldRecommended;
@@ -80,12 +80,12 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     coloredDefaultState={coloredIncludeButton}
                     disabled={
                         formActive ||
-                        excludeRequired ||
-                        (fieldRequired && !recommendFields)
+                        excludeOnly ||
+                        (requireOnly && !recommendFields)
                     }
                     onClick={() => {
                         const singleValue =
-                            selection?.mode !== 'require' || fieldRequired
+                            selection?.mode !== 'require' || requireOnly
                                 ? 'require'
                                 : null;
 
@@ -112,12 +112,12 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                     coloredDefaultState={coloredExcludeButton}
                     disabled={
                         formActive ||
-                        fieldRequired ||
-                        (excludeRequired && !recommendFields)
+                        requireOnly ||
+                        (excludeOnly && !recommendFields)
                     }
                     onClick={() => {
                         const singleValue =
-                            selection?.mode !== 'exclude' || excludeRequired
+                            selection?.mode !== 'exclude' || excludeOnly
                                 ? 'exclude'
                                 : null;
 

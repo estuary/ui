@@ -33,9 +33,9 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
 import {
-    evaluateRequiredExcludedFields,
-    evaluateRequiredIncludedFields,
     getBindingIndex,
+    isExcludeOnlyField,
+    isRequireOnlyField,
 } from 'utils/workflow-utils';
 import RefreshStatus from './RefreshStatus';
 
@@ -83,13 +83,9 @@ const mapConstraintsToProjections = (
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
             } else if (!recommended && constraint) {
-                const fieldRequired = evaluateRequiredIncludedFields(
-                    constraint.type
-                );
-
-                selectionType = fieldRequired
+                selectionType = isRequireOnlyField(constraint.type)
                     ? 'require'
-                    : evaluateRequiredExcludedFields(constraint.type)
+                    : isExcludeOnlyField(constraint.type)
                     ? 'exclude'
                     : null;
             }
