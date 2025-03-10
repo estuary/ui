@@ -17,9 +17,12 @@ type GrantScopeMessageIdSuffix =
     | 'support'
     | 'tenant';
 
-export type AccessGrantRemovalType = 'dangerous' | 'normal';
+export type AccessGrantRemovalSeverity = 'dangerous' | 'normal';
 
-export type AccessGrantRemovalDescription = [AccessGrantRemovalType, string];
+export type AccessGrantRemovalDescription = [
+    AccessGrantRemovalSeverity,
+    string,
+];
 
 function useAccessGrantRemovalDescriptions() {
     const intl = useIntl();
@@ -35,7 +38,7 @@ function useAccessGrantRemovalDescriptions() {
     const describeAccessGrantRemovals = useCallback(
         (value: Grant_UserExt | BaseGrant): AccessGrantRemovalDescription => {
             let what: string | null = value.capability;
-            let removalType: AccessGrantRemovalType = 'normal';
+            let removalType: AccessGrantRemovalSeverity = 'normal';
             let grantScope: GrantScopeMessageIdSuffix;
 
             // Figure out what the of the grant is

@@ -11,7 +11,7 @@ import {
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import { alertColorsReversed } from 'context/Theme';
-import { AccessGrantRemovalType } from 'hooks/useAccessGrantRemovalDescriptions';
+import { AccessGrantRemovalSeverity } from 'hooks/useAccessGrantRemovalDescriptions';
 import { WarningTriangle } from 'iconoir-react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,7 +28,7 @@ function ConfirmationWithExplanation({
     const { dangerous: potentiallyDangerousUpdates, normal: normalUpdates } =
         useMemo(() => {
             const response: {
-                [k in AccessGrantRemovalType]: AccessGrantRowConfirmation[];
+                [k in AccessGrantRemovalSeverity]: AccessGrantRowConfirmation[];
             } = {
                 dangerous: [],
                 normal: [],
