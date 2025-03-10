@@ -18,6 +18,7 @@ import { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface CollectionMetadata {
     added?: boolean;
+    previouslyBound?: boolean;
     sourceBackfillRecommended?: boolean;
     trialStorage?: boolean;
     updatedAt?: string;
@@ -138,6 +139,10 @@ export interface BindingState
     setSourceBackfillRecommended: (
         collections: string[],
         value: CollectionMetadata['sourceBackfillRecommended']
+    ) => void;
+    resetCollectionMetadata: (
+        targetCollections: string[],
+        targetBindingUUIDs: string[]
     ) => void;
 
     // Control sourceCapture optional settings

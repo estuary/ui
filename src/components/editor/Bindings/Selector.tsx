@@ -17,6 +17,7 @@ import {
     useBinding_setCurrentBinding,
     useBinding_toggleDisable,
 } from 'stores/Binding/hooks';
+import { useBindingStore } from 'stores/Binding/Store';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
@@ -60,10 +61,17 @@ function BindingSelector({
     const discoveredCollections = useBinding_discoveredCollections();
     const removeBindings = useBinding_removeBindings();
     const toggleCollections = useBinding_toggleDisable();
+    const resetCollectionMetadata = useBindingStore(
+        (state) => state.resetCollectionMetadata
+    );
 
     const handlers = {
         removeBindings: (rows: any[]) => {
             removeBindings(rows, workflow, task);
+
+            if (workflow === 'materialization_edit') {
+                resetCollectionMetadata([], rows);
+            }
 
             const publishedCollections =
                 hasLength(discoveredCollections) && hasLength(collections)
