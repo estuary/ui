@@ -237,6 +237,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.cta.excludeAllFields': `Exclude All`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
+    'fieldSelection.table.cta.requireField': `Require`,
+    'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
     'fieldSelection.table.error.message': `There was an error attempting to fetch the list of fields.`,
