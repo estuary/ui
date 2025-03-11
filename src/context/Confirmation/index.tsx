@@ -76,6 +76,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 onClose={handlers.dismiss}
                 aria-labelledby={LABEL_ID}
                 aria-describedby={DESCRIPTION_ID}
+                {...(settings.dialogProps ?? {})}
             >
                 <DialogTitle id={LABEL_ID}>
                     <FormattedMessage id={settings.title} />

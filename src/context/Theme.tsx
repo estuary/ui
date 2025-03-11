@@ -1,5 +1,6 @@
 import { ThemeKeys } from '@microlink/react-json-view';
 import {
+    AlertColor,
     createTheme,
     PaletteOptions,
     SxProps,
@@ -414,6 +415,15 @@ export const alertTextPrimary = {
     dark: 'rgb(255, 255, 255)',
 };
 export const alertBackground = paperBackground;
+
+export const alertColorsReversed: {
+    [k in AlertColor]: { light: string; dark: string };
+} = {
+    success: { light: 'success.dark', dark: 'success.light' },
+    info: { light: 'info.dark', dark: 'info.light' },
+    warning: { light: 'warning.dark', dark: 'warning.light' },
+    error: { light: 'error.dark', dark: 'error.light' },
+};
 
 export const monacoEditorHeaderBackground = {
     light: 'white',
