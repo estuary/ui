@@ -190,6 +190,7 @@ function EntityEdit({
 
                         {draftInitializationError ? (
                             <AlertBox
+                                short={false}
                                 severity={draftInitializationError.severity}
                                 sx={{
                                     mb: 2,

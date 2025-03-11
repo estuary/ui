@@ -26,7 +26,8 @@ const getGrants = (
             subject_role, 
             object_role, 
             capability,
-            updated_at
+            updated_at,
+            detail
         `,
                 {
                     count: getCountSettings(pagination),
