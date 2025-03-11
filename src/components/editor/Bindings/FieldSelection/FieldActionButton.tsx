@@ -5,7 +5,7 @@ import {
     useBinding_setMultiSelection,
 } from 'stores/Binding/hooks';
 import { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
-import { evaluateRequiredIncludedFields } from 'utils/workflow-utils';
+import { isRequireOnlyField } from 'utils/workflow-utils';
 import { CompositeProjection, FieldSelectionType } from './types';
 
 interface Props {
@@ -24,15 +24,15 @@ const evaluateUpdatedFields = (
     const updatedFields: FieldSelectionDictionary = {};
 
     projections.forEach(({ field, constraint, selectionMetadata }) => {
-        const includeRequired = constraint
-            ? evaluateRequiredIncludedFields(constraint.type)
+        const required = constraint
+            ? isRequireOnlyField(constraint.type)
             : false;
 
-        let selectionType = includeRequired ? 'include' : selectedValue;
+        let selectionType = required ? 'require' : selectedValue;
 
         if (recommended) {
             selectionType =
-                selectedValue === 'exclude' && includeRequired
+                selectedValue === 'exclude' && required
                     ? 'default'
                     : selectedValue;
         }

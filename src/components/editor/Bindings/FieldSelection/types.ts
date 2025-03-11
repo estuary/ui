@@ -59,7 +59,7 @@ export interface ValidationResponse_Binding {
     resourcePath: string[];
 }
 
-export type FieldSelectionType = 'default' | 'include' | 'exclude';
+export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
 export interface TranslatedConstraint {
     type: ConstraintTypes;
