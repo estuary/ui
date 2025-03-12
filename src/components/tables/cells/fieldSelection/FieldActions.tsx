@@ -69,32 +69,6 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                 sx={outlinedToggleButtonGroupStyling}
             >
                 <FieldActionButton
-                    messageId="fieldSelection.table.cta.selectField"
-                    selectedValue={selection?.mode ?? null}
-                    value="default"
-                    coloredDefaultState={coloredSelectButton}
-                    disabled={formActive || !recommendFields[bindingUUID]}
-                    onClick={() => {
-                        const singleValue =
-                            selection?.mode !== 'default' ? 'default' : null;
-
-                        const selectionType = evaluateSelectionType(
-                            recommendFields[bindingUUID],
-                            'default',
-                            selection?.mode ?? null,
-                            singleValue
-                        );
-
-                        setSingleSelection(
-                            bindingUUID,
-                            field,
-                            selectionType,
-                            selection?.meta
-                        );
-                    }}
-                />
-
-                <FieldActionButton
                     messageId="fieldSelection.table.cta.requireField"
                     selectedValue={selection?.mode ?? null}
                     value="require"
@@ -144,6 +118,32 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                         );
 
                         setSingleSelection(bindingUUID, field, selectionType);
+                    }}
+                />
+
+                <FieldActionButton
+                    messageId="fieldSelection.table.cta.selectField"
+                    selectedValue={selection?.mode ?? null}
+                    value="default"
+                    coloredDefaultState={coloredSelectButton}
+                    disabled={formActive || !recommendFields[bindingUUID]}
+                    onClick={() => {
+                        const singleValue =
+                            selection?.mode !== 'default' ? 'default' : null;
+
+                        const selectionType = evaluateSelectionType(
+                            recommendFields[bindingUUID],
+                            'default',
+                            selection?.mode ?? null,
+                            singleValue
+                        );
+
+                        setSingleSelection(
+                            bindingUUID,
+                            field,
+                            selectionType,
+                            selection?.meta
+                        );
                     }}
                 />
             </ToggleButtonGroup>
