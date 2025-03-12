@@ -69,35 +69,6 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                 sx={outlinedToggleButtonGroupStyling}
             >
                 <FieldActionButton
-                    messageId="fieldSelection.table.cta.requireField"
-                    selectedValue={selection?.mode ?? null}
-                    value="require"
-                    disabled={
-                        formActive ||
-                        excludeOnly ||
-                        (requireOnly && !recommendFields)
-                    }
-                    onClick={() => {
-                        const singleValue =
-                            selection?.mode !== 'require' ? 'require' : null;
-
-                        const selectionType = evaluateSelectionType(
-                            recommendFields[bindingUUID],
-                            'require',
-                            selection?.mode ?? null,
-                            singleValue
-                        );
-
-                        setSingleSelection(
-                            bindingUUID,
-                            field,
-                            selectionType,
-                            selection?.meta
-                        );
-                    }}
-                />
-
-                <FieldActionButton
                     messageId="fieldSelection.table.cta.excludeField"
                     selectedValue={selection?.mode ?? null}
                     value="exclude"
@@ -134,6 +105,35 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
                         const selectionType = evaluateSelectionType(
                             recommendFields[bindingUUID],
                             'default',
+                            selection?.mode ?? null,
+                            singleValue
+                        );
+
+                        setSingleSelection(
+                            bindingUUID,
+                            field,
+                            selectionType,
+                            selection?.meta
+                        );
+                    }}
+                />
+
+                <FieldActionButton
+                    messageId="fieldSelection.table.cta.requireField"
+                    selectedValue={selection?.mode ?? null}
+                    value="require"
+                    disabled={
+                        formActive ||
+                        excludeOnly ||
+                        (requireOnly && !recommendFields)
+                    }
+                    onClick={() => {
+                        const singleValue =
+                            selection?.mode !== 'require' ? 'require' : null;
+
+                        const selectionType = evaluateSelectionType(
+                            recommendFields[bindingUUID],
+                            'require',
                             selection?.mode ?? null,
                             singleValue
                         );
