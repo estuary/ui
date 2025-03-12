@@ -74,9 +74,13 @@ function ConnectorToolbar({
                 isFiltering.current = hasQuery;
 
                 setSearchQuery(hasQuery ? filterQuery : null);
-                fireGtmEvent('Connector_Search', {
-                    filterQuery,
-                });
+
+                // Only fire the event if there is a query to send back
+                if (hasQuery) {
+                    fireGtmEvent('Connector_Search', {
+                        filterQuery,
+                    });
+                }
             },
             750
         ),
