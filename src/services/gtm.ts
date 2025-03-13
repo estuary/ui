@@ -11,8 +11,8 @@ export const fireGtmEvent = (event: EVENTS, data: Schema | undefined = {}) => {
     if (allowedToRun) {
         window.dataLayer = window.dataLayer ?? [];
         window.dataLayer.push({
-            ...data,
             event,
+            ...data,
         });
     }
 };
