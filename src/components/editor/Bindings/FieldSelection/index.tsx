@@ -32,11 +32,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
-import {
-    getBindingIndex,
-    isExcludeOnlyField,
-    isRequireOnlyField,
-} from 'utils/workflow-utils';
+import { getBindingIndex } from 'utils/workflow-utils';
 import RefreshStatus from './RefreshStatus';
 
 interface Props {
@@ -82,12 +78,8 @@ const mapConstraintsToProjections = (
                 selectionMetadata = require[field];
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
-            } else if (!recommended && constraint) {
-                selectionType = isRequireOnlyField(constraint.type)
-                    ? 'require'
-                    : isExcludeOnlyField(constraint.type)
-                    ? 'exclude'
-                    : null;
+            } else if (typeof recommended === 'boolean' && !recommended) {
+                selectionType = null;
             }
         }
 

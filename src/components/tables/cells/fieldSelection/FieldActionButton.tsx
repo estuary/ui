@@ -31,24 +31,24 @@ interface Props {
 
 const getBackgroundColor = (value: FieldSelectionType, disabled?: boolean) => {
     if (disabled) {
-        return value === 'require'
-            ? successOutlinedButtonBackground_disabled
-            : errorOutlinedButtonBackground_disabled;
+        return value === 'exclude'
+            ? errorOutlinedButtonBackground_disabled
+            : successOutlinedButtonBackground_disabled;
     }
 
-    return value === 'require'
-        ? successOutlinedButtonBackground
-        : errorOutlinedButtonBackground;
+    return value === 'exclude'
+        ? errorOutlinedButtonBackground
+        : successOutlinedButtonBackground;
 };
 
 const getOutline = (value: FieldSelectionType, disabled?: boolean) => {
     if (disabled) {
-        return value === 'require'
-            ? successColoredOutline_disabled
-            : errorColoredOutline_disabled;
+        return value === 'exclude'
+            ? errorColoredOutline_disabled
+            : successColoredOutline_disabled;
     }
 
-    return value === 'require' ? successColoredOutline : errorColoredOutline;
+    return value === 'exclude' ? errorColoredOutline : successColoredOutline;
 };
 
 const getTextColor = (
@@ -57,14 +57,14 @@ const getTextColor = (
     disabled?: boolean
 ) => {
     if (disabled) {
-        return value === 'require'
-            ? disabledButtonText_success[theme.palette.mode]
-            : disabledButtonText_error;
+        return value === 'exclude'
+            ? disabledButtonText_error
+            : disabledButtonText_success[theme.palette.mode];
     }
 
-    return value === 'require'
-        ? successButtonText[theme.palette.mode]
-        : theme.palette.error.main;
+    return value === 'exclude'
+        ? theme.palette.error.main
+        : successButtonText[theme.palette.mode];
 };
 
 const getBaseSx = (
@@ -94,9 +94,9 @@ function FieldActionButton({
     const theme = useTheme();
 
     const hoveredOutline =
-        value === 'require'
-            ? successColoredOutline_hovered
-            : errorColoredOutline_hovered;
+        value === 'exclude'
+            ? errorColoredOutline_hovered
+            : successColoredOutline_hovered;
 
     const baseSx = getBaseSx(theme, value, disabled);
 
