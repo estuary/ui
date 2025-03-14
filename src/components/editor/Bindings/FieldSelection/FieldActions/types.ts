@@ -6,10 +6,10 @@ export interface BaseProps {
     projections: CompositeProjection[] | null | undefined;
 }
 
-export interface MenuActionsProps extends BaseProps {
+export interface MenuActionProps extends BaseProps {
     closeMenu: () => void;
 }
 
-export interface SaveButtonProps extends BaseProps {
+export interface SaveButtonProps extends MenuActionProps {
     selectedValue: FieldSelectionType;
 }

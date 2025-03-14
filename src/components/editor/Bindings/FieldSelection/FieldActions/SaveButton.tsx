@@ -11,6 +11,7 @@ import { SaveButtonProps } from './types';
 
 export default function SaveButton({
     bindingUUID,
+    closeMenu,
     loading,
     projections,
     selectedValue,
@@ -34,6 +35,7 @@ export default function SaveButton({
                     );
 
                     setMultiSelection(bindingUUID, updatedFields);
+                    closeMenu();
                 }
             }}
             size="small"

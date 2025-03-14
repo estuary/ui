@@ -2,14 +2,14 @@ import { Box, Button, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import SaveButton from './SaveButton';
-import { MenuActionsProps } from './types';
+import { MenuActionProps } from './types';
 
 export default function MenuActions({
     bindingUUID,
     closeMenu,
     loading,
     projections,
-}: MenuActionsProps) {
+}: MenuActionProps) {
     const intl = useIntl();
 
     const selectionAlgorithm = useBindingStore(
@@ -35,6 +35,7 @@ export default function MenuActions({
 
             <SaveButton
                 bindingUUID={bindingUUID}
+                closeMenu={closeMenu}
                 loading={loading}
                 projections={projections}
                 selectedValue={
