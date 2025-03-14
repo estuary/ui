@@ -4,6 +4,8 @@ import { Schema } from 'types';
 import { NamedSet } from 'zustand/middleware';
 import { BindingState } from '../types';
 
+export type SelectionAlgorithm = 'excludeAll' | 'recommended';
+
 export interface FieldSelection {
     mode: FieldSelectionType | null;
     meta?: Schema;
@@ -46,16 +48,26 @@ export interface StoreWithFieldSelection {
         value: StoreWithFieldSelection['selectionSaving']
     ) => void;
 
+    selectionAlgorithm: SelectionAlgorithm | null;
+    setSelectionAlgorithm: (
+        value: StoreWithFieldSelection['selectionAlgorithm']
+    ) => void;
+
     searchQuery: string | null;
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
 
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    'recommendFields' | 'searchQuery' | 'selectionSaving' | 'selections'
+    | 'recommendFields'
+    | 'searchQuery'
+    | 'selectionAlgorithm'
+    | 'selectionSaving'
+    | 'selections'
 > => ({
     recommendFields: {},
     searchQuery: null,
+    selectionAlgorithm: null,
     selectionSaving: false,
     selections: {},
 });
@@ -97,6 +109,16 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Search Query Set'
+        );
+    },
+
+    setSelectionAlgorithm: (value) => {
+        set(
+            produce((state: BindingState) => {
+                state.selectionAlgorithm = value;
+            }),
+            false,
+            'Selection Algorithm Set'
         );
     },
 
