@@ -1,3 +1,4 @@
+import { SelectionAlgorithm } from 'stores/Binding/slices/FieldSelection';
 import { CompositeProjection, FieldSelectionType } from '../types';
 
 export interface BaseProps {
@@ -8,6 +9,12 @@ export interface BaseProps {
 
 export interface MenuActionProps extends BaseProps {
     closeMenu: () => void;
+}
+
+export interface MenuOptionProps {
+    descriptionId: string;
+    labelId: string;
+    value: SelectionAlgorithm;
 }
 
 export interface SaveButtonProps extends MenuActionProps {
