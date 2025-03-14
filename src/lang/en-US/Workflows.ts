@@ -248,7 +248,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.recommended.label': `Default`,
     'fieldSelection.massActionMenu.recommended.description': `Allow the connector to dynamically select fields`,
     'fieldSelection.massActionMenu.excludeAll.label': `Exclude All`,
-    'fieldSelection.massActionMenu.excludeAll.description': `Exclude all non-essential fields`,
+    'fieldSelection.massActionMenu.excludeAll.description': `Exclude non-essential fields`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
