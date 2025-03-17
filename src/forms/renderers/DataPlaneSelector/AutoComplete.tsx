@@ -29,11 +29,15 @@ import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
+    Box,
     FilterOptionsState,
     MenuList,
+    Stack,
     Typography,
 } from '@mui/material';
 import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
+import { defaultOutline_hovered } from 'context/Theme';
+
 import React, { ReactNode, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
@@ -116,21 +120,51 @@ export const DataPlaneAutoComplete = ({
                     <MenuList style={{ padding: 0 }}>{children}</MenuList>
                 </li>
             )}
-            renderInput={(textFieldProps) => (
-                <AutoCompleteInputWithStartAdornment
-                    textFieldProps={textFieldProps}
-                    startAdornment={
-                        currentOption ? (
-                            <DataPlaneIcon
-                                provider={
-                                    currentOption.value.dataPlaneName.provider
-                                }
-                                scope={currentOption.value.scope}
-                            />
-                        ) : null
-                    }
-                />
-            )}
+            renderInput={(textFieldProps) => {
+                return (
+                    <AutoCompleteInputWithStartAdornment
+                        textFieldProps={textFieldProps}
+                        startAdornment={
+                            currentOption ? (
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    {currentOption.value.dataPlaneName
+                                        .prefix ? (
+                                        <Box
+                                            sx={{
+                                                borderRight: (theme) =>
+                                                    defaultOutline_hovered[
+                                                        theme.palette.mode
+                                                    ],
+                                                fontsize: 9,
+                                                pr: 1,
+                                            }}
+                                        >
+                                            {
+                                                currentOption.value
+                                                    .dataPlaneName.prefix
+                                            }
+                                        </Box>
+                                    ) : null}
+
+                                    <DataPlaneIcon
+                                        provider={
+                                            currentOption.value.dataPlaneName
+                                                .provider
+                                        }
+                                        scope={currentOption.value.scope}
+                                    />
+                                </Stack>
+                            ) : null
+                        }
+                    />
+                );
+            }}
             renderOption={(renderOptionProps, option) => {
                 return (
                     <Option
