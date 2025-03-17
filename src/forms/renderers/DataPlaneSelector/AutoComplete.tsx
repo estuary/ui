@@ -136,7 +136,7 @@ export const DataPlaneAutoComplete = ({
                     <Option
                         renderOptionProps={renderOptionProps}
                         option={option}
-                        key={option.label}
+                        key={option.value.id}
                     />
                 );
             }}
