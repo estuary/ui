@@ -41,20 +41,18 @@ function DisableButton() {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const selectedAccessLinks: RowConfirmation[] = [];
+            const selectedAccessLinks: string[] = [];
             const selectedDirectiveIds: string[] = [];
+            const selectedLinkConfigs: RowConfirmation[] = [];
 
             selectedRows.forEach((value, key) => {
                 const accessLink = getPathWithParams(baseURL, {
                     [GlobalSearchParams.GRANT_TOKEN]: value,
                 });
 
-                selectedAccessLinks.push({
-                    id: key,
-                    message: accessLink,
-                });
-
+                selectedAccessLinks.push(accessLink);
                 selectedDirectiveIds.push(key);
+                selectedLinkConfigs.push({ id: key, message: accessLink });
             });
 
             confirmationModalContext
@@ -69,7 +67,7 @@ function DisableButton() {
                 .then(async (confirmed: any) => {
                     if (confirmed) {
                         setShowProgress(true);
-                        setTargets(selectedAccessLinks);
+                        setTargets(selectedLinkConfigs);
                     }
                 })
                 .catch(() => {});
