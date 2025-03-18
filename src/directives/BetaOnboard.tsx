@@ -130,7 +130,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
             >
                 <RegistrationProgress step={2} loading={saving} />
 
-                <HeaderMessage smallLogo isRegister={true} />
+                <HeaderMessage isRegister />
 
                 {nameMissing ? (
                     <Box sx={{ maxWidth: 424 }}>

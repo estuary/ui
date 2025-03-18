@@ -41,7 +41,6 @@ const LoginWrapper = ({
                 <LoginTabs handleChange={handleChange} tabIndex={tabIndex} />
 
                 <HeaderMessage
-                    smallLogo
                     headerMessageId={headerMessageId}
                     isRegister={isRegister}
                 />

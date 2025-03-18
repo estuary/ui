@@ -114,7 +114,6 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
 
                 <HeaderMessage
                     isRegister
-                    smallLogo
                     headerMessageId={
                         !outdated ? 'legal.heading' : 'legal.heading.outdated'
                     }
