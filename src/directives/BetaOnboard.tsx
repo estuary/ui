@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import RegistrationProgress from 'app/guards/RegistrationProgress';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import CustomerQuote from 'directives/Onboard/CustomerQuote';
@@ -143,6 +144,8 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     >
                         <FormattedMessage id="tenant.heading" />
                     </Typography>
+
+                    <RegistrationProgress step={2} loading={saving} />
 
                     {nameMissing ? (
                         <Box sx={{ maxWidth: 424 }}>

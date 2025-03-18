@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
+import RegistrationProgress from 'app/guards/RegistrationProgress';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
@@ -104,6 +105,8 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     alignItems: 'center',
                 }}
             >
+                <RegistrationProgress step={1} loading={saving} />
+
                 <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
                     <FormattedMessage
                         id={
