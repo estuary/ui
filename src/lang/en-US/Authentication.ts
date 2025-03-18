@@ -24,7 +24,9 @@ export const Authentication: Record<string, string> = {
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
-    'login.sso.register.message.help': `To register with Single Sign-On {docLink}.`,
+    'login.sso.separator': `Or to register with Single Sign-On`,
+
+    'login.sso.register.message.help': `{docLink}`,
     'login.sso.register.message.help.docLink': `${CTAs['cta.contactUs']}`,
     'login.sso.register.message.help.docPath': `${Navigation['helpMenu.contact.link']}`,
 
@@ -72,7 +74,6 @@ export const Authentication: Record<string, string> = {
     'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 
     // Tenant
-    'tenant.heading': `Get started with ${CommonMessages.productName}`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
@@ -80,7 +81,7 @@ export const Authentication: Record<string, string> = {
 
     'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
-    'tenant.errorMessage.empty': `You must provide a name before continuing.`,
+    'tenant.errorMessage.empty': `You must provide an organization name before continuing.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,

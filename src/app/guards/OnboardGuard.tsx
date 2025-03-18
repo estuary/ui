@@ -34,7 +34,7 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return null;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
-            <FullPageWrapper fullWidth={true}>
+            <FullPageWrapper>
                 <LocalZustandProvider createStore={localStore}>
                     <BetaOnboard
                         directive={directive}

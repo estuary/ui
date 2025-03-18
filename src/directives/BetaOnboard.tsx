@@ -1,17 +1,10 @@
-import {
-    Box,
-    Stack,
-    Toolbar,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
+import { Box, Button, Stack, Toolbar, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
-import CustomerQuote from 'directives/Onboard/CustomerQuote';
+import { supabaseClient } from 'context/GlobalProviders';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
@@ -23,8 +16,9 @@ import {
 } from 'directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import HeaderMessage from 'pages/login/HeaderMessage';
 import { useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
 import { hasLength } from 'utils/misc-utils';
@@ -48,8 +42,7 @@ const submit_onboard = async (
 };
 
 const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
-    const theme = useTheme();
-    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+    const intl = useIntl();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -124,88 +117,92 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     useUnmount(() => resetOnboardingState());
 
     return (
-        <Stack direction="row">
-            <CustomerQuote hideQuote={belowMd} />
+        <>
+            <Stack
+                spacing={2}
+                sx={{
+                    mt: 1,
+                    mb: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <RegistrationProgress step={2} loading={saving} />
 
-            <Stack sx={{ width: belowMd ? '100%' : '50%' }}>
+                <HeaderMessage smallLogo isRegister={true} />
+
+                {nameMissing ? (
+                    <Box sx={{ maxWidth: 424 }}>
+                        <AlertBox
+                            short
+                            severity="error"
+                            title={<FormattedMessage id="error.title" />}
+                        >
+                            <Typography>
+                                {intl.formatMessage({
+                                    id: 'tenant.errorMessage.empty',
+                                })}
+                            </Typography>
+                        </AlertBox>
+                    </Box>
+                ) : null}
+
+                {serverError ? (
+                    <Box sx={{ maxWidth: 424 }}>
+                        <AlertBox
+                            severity="error"
+                            short
+                            title={intl.formatMessage({ id: 'common.fail' })}
+                        >
+                            {serverError}
+                        </AlertBox>
+                    </Box>
+                ) : null}
+            </Stack>
+
+            <form noValidate onSubmit={handlers.submit}>
                 <Stack
-                    spacing={2}
+                    spacing={3}
                     sx={{
-                        mt: 1,
-                        mb: 2,
+                        width: '100%',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'left',
+                        justifyContent: 'center',
                     }}
                 >
-                    <Typography
-                        variant="h5"
-                        align={belowMd ? 'center' : 'left'}
-                        sx={{ mb: 1.5 }}
-                    >
-                        <FormattedMessage id="tenant.heading" />
-                    </Typography>
+                    <OrganizationNameField forceError={nameAlreadyUsed} />
 
-                    <RegistrationProgress step={2} loading={saving} />
+                    <OnboardingSurvey />
 
-                    {nameMissing ? (
-                        <Box sx={{ maxWidth: 424 }}>
-                            <AlertBox
-                                short
-                                severity="error"
-                                title={<FormattedMessage id="error.title" />}
-                            >
-                                <FormattedMessage id="tenant.errorMessage.empty" />
-                            </AlertBox>
-                        </Box>
-                    ) : null}
-
-                    {serverError ? (
-                        <Box sx={{ maxWidth: 424 }}>
-                            <AlertBox
-                                severity="error"
-                                short
-                                title={<FormattedMessage id="common.fail" />}
-                            >
-                                {serverError}
-                            </AlertBox>
-                        </Box>
-                    ) : null}
-                </Stack>
-
-                <form noValidate onSubmit={handlers.submit}>
-                    <Stack
-                        spacing={3}
+                    <Toolbar
+                        disableGutters
                         sx={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'left',
-                            justifyContent: 'center',
+                            justifyContent: 'space-between',
                         }}
                     >
-                        <OrganizationNameField forceError={nameAlreadyUsed} />
-
-                        <OnboardingSurvey />
-
-                        <Toolbar
-                            disableGutters
-                            sx={{
-                                justifyContent: belowMd ? 'center' : 'flex-end',
+                        <Button
+                            disabled={saving}
+                            variant="outlined"
+                            onClick={async () => {
+                                await supabaseClient.auth.signOut();
                             }}
                         >
-                            <SafeLoadingButton
-                                type="submit"
-                                variant="contained"
-                                loading={saving}
-                                disabled={saving}
-                            >
-                                <FormattedMessage id="cta.registerFinish" />
-                            </SafeLoadingButton>
-                        </Toolbar>
-                    </Stack>
-                </form>
-            </Stack>
-        </Stack>
+                            {intl.formatMessage({ id: 'cta.cancel' })}
+                        </Button>
+                        <SafeLoadingButton
+                            type="submit"
+                            variant="contained"
+                            loading={saving}
+                            disabled={saving}
+                        >
+                            {intl.formatMessage({ id: 'cta.registerFinish' })}
+                        </SafeLoadingButton>
+                    </Toolbar>
+                </Stack>
+            </form>
+        </>
     );
 };
 

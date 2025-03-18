@@ -1,15 +1,9 @@
-import { Box, useTheme } from '@mui/material';
-import customerQuoteDark from 'images/customer_quote-dark.png';
-import customerQuoteLight from 'images/customer_quote-light.png';
-import { useIntl } from 'react-intl';
+import { Box } from '@mui/material';
 
 interface Props {
     hideQuote: boolean;
 }
 function CustomerQuote({ hideQuote }: Props) {
-    const theme = useTheme();
-    const intl = useIntl();
-
     if (hideQuote) {
         return null;
     } else {
@@ -23,15 +17,7 @@ function CustomerQuote({ hideQuote }: Props) {
                     justifyContent: 'center',
                 }}
             >
-                <img
-                    src={
-                        theme.palette.mode === 'light'
-                            ? customerQuoteLight
-                            : customerQuoteDark
-                    }
-                    width="85%"
-                    alt={intl.formatMessage({ id: 'company' })}
-                />
+                new quote here
             </Box>
         );
     }

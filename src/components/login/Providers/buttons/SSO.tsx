@@ -1,12 +1,13 @@
 import { Box, Button, useTheme } from '@mui/material';
 import { loginButtonStyling } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { unauthenticatedRoutes } from 'app/routes';
 import { Lock } from 'iconoir-react';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { LoginProps } from '../types';
 
 function SSOButton({ isRegister }: LoginProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
     if (isRegister) {
@@ -31,7 +32,7 @@ function SSOButton({ isRegister }: LoginProps) {
             variant="text"
             href={unauthenticatedRoutes.sso.login.fullPath}
         >
-            <FormattedMessage id="cta.login.sso" />
+            {intl.formatMessage({ id: 'cta.login.sso' })}
         </Button>
     );
 }
