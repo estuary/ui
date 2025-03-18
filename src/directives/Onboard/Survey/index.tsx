@@ -1,11 +1,12 @@
 import {
+    Chip,
     FormControl,
     FormControlLabel,
     FormLabel,
     Radio,
     RadioGroup,
-    TextField,
 } from '@mui/material';
+import { chipOutlinedStyling } from 'context/Theme';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
@@ -58,37 +59,61 @@ function OnboardingSurvey() {
 
     return (
         <FormControl>
-            <FormLabel id="origin" required sx={{ mb: 1, fontSize: 16 }}>
+            <FormLabel
+                id="survey-radio-buttons-group-label"
+                required
+                sx={{ mb: 1, fontSize: 16 }}
+            >
                 <FormattedMessage id="tenant.origin.radioGroup.label" />
             </FormLabel>
 
             <RadioGroup
                 aria-labelledby="survey-radio-buttons-group-label"
-                name="radio-buttons-group"
+                name="survey-radio-buttons-group"
                 onChange={handlers.updateSurveyOrigin}
-                sx={{ width: 'fit-content' }}
-            >
-                {originOptions.map((option, index) => (
-                    <FormControlLabel
-                        key={`${option}-${index}`}
-                        value={option}
-                        control={<Radio size="small" />}
-                        label={option}
-                    />
-                ))}
-            </RadioGroup>
-
-            <TextField
-                size="small"
-                onBlur={(event) =>
-                    handlers.updateSurveyDetails(event.target.value)
-                }
+                row
                 sx={{
-                    'maxWidth': 400,
-                    'ml': 3,
-                    '& .MuiInputBase-root': { borderRadius: 3 },
+                    'gap': 1,
+                    '& .MuiFormControlLabel-root': {
+                        ml: 0,
+                        mr: 0,
+                    },
+                    '& .MuiChip-root': {
+                        p: 1,
+                    },
+                    '& .MuiRadio-root': {
+                        display: 'none',
+                        visibility: 'hidden',
+                    },
                 }}
-            />
+            >
+                {originOptions.map((option, index) => {
+                    const currentOption = surveyResponse.origin === option;
+
+                    return (
+                        <FormControlLabel
+                            disableTypography
+                            key={`${option}-${index}`}
+                            value={option}
+                            control={<Radio size="small" />}
+                            label={
+                                <Chip
+                                    component="span"
+                                    color={
+                                        currentOption ? 'primary' : undefined
+                                    }
+                                    variant="outlined"
+                                    label={option}
+                                    sx={{
+                                        ...chipOutlinedStyling,
+                                        p: 0,
+                                    }}
+                                />
+                            }
+                        />
+                    );
+                })}
+            </RadioGroup>
         </FormControl>
     );
 }

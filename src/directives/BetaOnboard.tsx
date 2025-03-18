@@ -190,9 +190,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         <Toolbar
                             disableGutters
                             sx={{
-                                justifyContent: belowMd
-                                    ? 'center'
-                                    : 'flex-start',
+                                justifyContent: belowMd ? 'center' : 'flex-end',
                             }}
                         >
                             <SafeLoadingButton
@@ -201,7 +199,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                 loading={saving}
                                 disabled={saving}
                             >
-                                <FormattedMessage id="cta.continue" />
+                                <FormattedMessage id="cta.registerFinish" />
                             </SafeLoadingButton>
                         </Toolbar>
                     </Stack>

@@ -72,7 +72,7 @@ export const Authentication: Record<string, string> = {
     'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 
     // Tenant
-    'tenant.heading': `Let's get started`,
+    'tenant.heading': `Get started with ${CommonMessages.productName}`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
@@ -85,14 +85,20 @@ export const Authentication: Record<string, string> = {
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 
-    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
-    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.origin.radioGroup.label': `Where did you hear about ${CommonMessages.company}?`,
+    'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
+
+    // 'tenant.origin.radio.socialMedia.label': `Social Media`,
+    // 'tenant.origin.radio.ads.label': `Online Ads`,
+    // 'tenant.origin.radio.content.label': `Blogs`,
+    // 'tenant.origin.radio.networking.label': `Word of Mouth`,
+
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
-    'tenant.origin.radio.referral.label': `Referral by a Partner`,
+    'tenant.origin.radio.referral.label': `Word of Mouth`,
     'tenant.origin.radio.youTube.label': `YouTube`,
     'tenant.origin.radio.email.label': `Email`,
     'tenant.origin.radio.gitHub.label': `GitHub`,
-    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
+    'tenant.origin.radio.paidAdvertising.label': `Online Ads`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.header': `Tenant shared with you`,
