@@ -86,6 +86,8 @@ export const Authentication: Record<string, string> = {
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 
+    'tenant.customer.quote': `We're a big fan of Estuary's real-time, no code model. It's magic that we're getting real time data without much effort and we don't have to spend time thinking about broken pipelines. We're also experiences fantastic support!`,
+
     'tenant.origin.radioGroup.label': `Where did you hear about ${CommonMessages.company}?`,
     'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
 

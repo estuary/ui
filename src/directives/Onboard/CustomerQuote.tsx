@@ -1,24 +1,75 @@
-import { Box } from '@mui/material';
+import {
+    Box,
+    Card,
+    Stack,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+import { QuoteSolid } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+import customerLogo from 'images/FP-Logo_Wordmark_Pos_RGB.svg';
 
-interface Props {
-    hideQuote: boolean;
-}
-function CustomerQuote({ hideQuote }: Props) {
-    if (hideQuote) {
+function CustomerQuote() {
+    const theme = useTheme();
+    const intl = useIntl();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
+
+    if (belowMd) {
         return null;
     } else {
         return (
-            <Box
+            <Card
+                color="secondary"
+                elevation={0}
                 sx={{
-                    width: '50%',
-                    mr: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    // backgroundColor: '#e5e5e6',
+                    borderRadius: 10,
+                    backgroundColor: 'action.selected',
+                    opacity: 0.8,
                 }}
             >
-                new quote here
-            </Box>
+                <Stack
+                    sx={{
+                        alignItems: 'flex-start',
+                        px: 3,
+                    }}
+                >
+                    <Typography
+                        color="primary"
+                        sx={{
+                            transform: 'rotate(180deg)',
+                        }}
+                    >
+                        <QuoteSolid style={{ fontSize: 70 }} />
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: '#777b82',
+                            fontSize: 30,
+                            mt: 1,
+                            pl: 1.5,
+                        }}
+                    >
+                        {`"${intl.formatMessage({
+                            id: 'tenant.customer.quote',
+                        })}"`}
+                    </Typography>
+                    <Box
+                        sx={{
+                            mt: 3,
+                        }}
+                    >
+                        <img
+                            src={customerLogo}
+                            height="36px"
+                            width="100px"
+                            alt={intl.formatMessage({ id: 'company' })}
+                        />
+                    </Box>
+                </Stack>
+            </Card>
         );
     }
 }
