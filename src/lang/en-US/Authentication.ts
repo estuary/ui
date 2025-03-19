@@ -89,19 +89,13 @@ export const Authentication: Record<string, string> = {
     'tenant.customer.quote': `We're a big fan of Estuary's real-time, no code model. It's magic that we're getting real time data without much effort and we don't have to spend time thinking about broken pipelines. We've also experienced fantastic support!`,
 
     'tenant.origin.radioGroup.label': `Where did you hear about ${CommonMessages.company}?`,
+
     'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
-
-    // 'tenant.origin.radio.socialMedia.label': `Social Media`,
-    // 'tenant.origin.radio.ads.label': `Online Ads`,
-    // 'tenant.origin.radio.content.label': `Blogs`,
-    // 'tenant.origin.radio.networking.label': `Word of Mouth`,
-
-    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
-    'tenant.origin.radio.referral.label': `Word of Mouth`,
-    'tenant.origin.radio.youTube.label': `YouTube`,
-    'tenant.origin.radio.email.label': `Email`,
-    'tenant.origin.radio.gitHub.label': `GitHub`,
+    'tenant.origin.radio.socialMedia.label': `Social Media`,
     'tenant.origin.radio.paidAdvertising.label': `Online Ads`,
+    'tenant.origin.radio.content.label': `Blog`,
+    'tenant.origin.radio.referral.label': `Word of Mouth`,
+    'tenant.origin.radio.webinar.label': `Webinar`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.header': `Tenant shared with you`,

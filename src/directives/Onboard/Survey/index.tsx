@@ -32,12 +32,11 @@ function OnboardingSurvey() {
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.youTube.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.gitHub.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.socialMedia.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.paidAdvertising.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.content.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.webinar.label' }),
         surveyOptionOther,
     ]);
 
@@ -89,6 +88,8 @@ function OnboardingSurvey() {
             >
                 {originOptions.map((option, index) => {
                     const currentOption = surveyResponse.origin === option;
+
+                    console.log('option', option);
 
                     return (
                         <FormControlLabel
