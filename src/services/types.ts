@@ -31,6 +31,7 @@ export enum CustomEvents {
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',
     ERROR_MISSING_MESSAGE = 'Error_Missing_Message',
+    FIELD_SELECTION = 'FieldSelection',
     FIELD_SELECTION_REFRESH_AUTO = 'Field_Selection_Refresh:Auto',
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
     FORM_STATE_PREVENTED = 'FormState:Prevented',

@@ -7,6 +7,8 @@ import {
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { useMemo } from 'react';
+import { logRocketEvent } from 'services/shared';
+import { CustomEvents } from 'services/types';
 import {
     useBinding_recommendFields,
     useBinding_selections,
@@ -31,7 +33,18 @@ const evaluateSelectionType = (
     toggleValue: FieldSelectionType,
     selectedValue: FieldSelectionType | null,
     targetValue: FieldSelectionType | null
-) => (selectedValue === toggleValue && recommended ? 'default' : targetValue);
+) => {
+    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+        recommended,
+        selectedValue,
+        targetValue,
+        toggleValue,
+    });
+
+    return selectedValue === toggleValue && recommended
+        ? 'default'
+        : targetValue;
+};
 
 function FieldActions({ bindingUUID, field, constraint }: Props) {
     // Bindings Editor Store
