@@ -41,7 +41,7 @@ function DisableButton() {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const selectedAccessLinks: RowConfirmation[] = [];
+            const selectedAccessLinks: string[] = [];
             const selectedDirectiveIds: string[] = [];
             const selectedLinkConfigs: RowConfirmation[] = [];
 
@@ -50,13 +50,8 @@ function DisableButton() {
                     [GlobalSearchParams.GRANT_TOKEN]: value,
                 });
 
-                selectedAccessLinks.push({
-                    id: key,
-                    message: accessLink,
-                });
-
+                selectedAccessLinks.push(accessLink);
                 selectedDirectiveIds.push(key);
-
                 selectedLinkConfigs.push({ id: key, message: accessLink });
             });
 

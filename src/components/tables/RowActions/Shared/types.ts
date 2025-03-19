@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { TableActionSettings } from 'stores/Tables/Store';
 import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { RowActionSupportedTableStoreName } from '../types';
+import { RowActionSupportedTableStoreName, RowConfirmation } from '../types';
 
 export const ProgressFinished = 60;
 
@@ -48,7 +48,7 @@ export interface NestedListItemProps {
 
 export interface RowActionConfirmationProps {
     message: any;
-    selected: any; //SelectableTableStore['selected'];
+    selected: string[] | RowConfirmation[]; //SelectableTableStore['selected'];
     selectableTableStoreName?: RowActionSupportedTableStoreName;
     settings?: SettingMetadata[];
     detailTable?: boolean;
