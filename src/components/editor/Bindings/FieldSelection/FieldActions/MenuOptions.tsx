@@ -1,9 +1,12 @@
 import { RadioGroup } from '@mui/material';
+import RadioMenuItem from 'components/shared/RadioMenuItem';
+import { useIntl } from 'react-intl';
 import { SelectionAlgorithm } from 'stores/Binding/slices/FieldSelection';
 import { useBindingStore } from 'stores/Binding/Store';
-import MenuOption from './MenuOption';
 
 export default function MenuOptions() {
+    const intl = useIntl();
+
     const selectionAlgorithm = useBindingStore(
         (state) => state.selectionAlgorithm
     );
@@ -19,15 +22,23 @@ export default function MenuOptions() {
             value={selectionAlgorithm}
             style={{ maxWidth: 320, textWrap: 'wrap' }}
         >
-            <MenuOption
-                descriptionId="fieldSelection.massActionMenu.recommended.description"
-                labelId="fieldSelection.massActionMenu.recommended.label"
+            <RadioMenuItem
+                description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.recommended.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.recommended.label',
+                })}
                 value="recommended"
             />
 
-            <MenuOption
-                descriptionId="fieldSelection.massActionMenu.excludeAll.description"
-                labelId="fieldSelection.massActionMenu.excludeAll.label"
+            <RadioMenuItem
+                description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.excludeAll.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.excludeAll.label',
+                })}
                 value="excludeAll"
             />
         </RadioGroup>

@@ -219,7 +219,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.selectAlgorithm': `Presets`,
+    'fieldSelection.cta.selectAlgorithm': `Heuristics`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,

@@ -1,14 +1,11 @@
 import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
-import { useIntl } from 'react-intl';
-import { MenuOptionProps } from './types';
+import { RadioMenuItemProps } from './types';
 
-export default function MenuOption({
-    descriptionId,
-    labelId,
+export default function RadioMenuItem({
+    description,
+    label,
     value,
-}: MenuOptionProps) {
-    const intl = useIntl();
-
+}: RadioMenuItemProps) {
     return (
         <FormControlLabel
             value={value}
@@ -21,9 +18,7 @@ export default function MenuOption({
                             fontWeight: 500,
                         }}
                     >
-                        {intl.formatMessage({
-                            id: labelId,
-                        })}
+                        {label}
                     </Typography>
 
                     <Typography
@@ -34,9 +29,7 @@ export default function MenuOption({
                             },
                         }}
                     >
-                        {intl.formatMessage({
-                            id: descriptionId,
-                        })}
+                        {description}
                     </Typography>
                 </Box>
             }

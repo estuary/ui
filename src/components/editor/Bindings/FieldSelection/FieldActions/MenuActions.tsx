@@ -38,9 +38,7 @@ export default function MenuActions({
                 closeMenu={closeMenu}
                 loading={loading}
                 projections={projections}
-                selectedValue={
-                    selectionAlgorithm === 'excludeAll' ? 'exclude' : 'default'
-                }
+                selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>
     );

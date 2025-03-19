@@ -14,7 +14,7 @@ export default function SaveButton({
     closeMenu,
     loading,
     projections,
-    selectedValue,
+    selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();
 
@@ -25,9 +25,19 @@ export default function SaveButton({
 
     return (
         <Button
-            disabled={loading || formActive || !hasLength(projections)}
+            disabled={
+                loading ||
+                formActive ||
+                !hasLength(projections) ||
+                !selectedAlgorithm
+            }
             onClick={() => {
-                if (projections) {
+                if (projections && selectedAlgorithm) {
+                    const selectedValue =
+                        selectedAlgorithm === 'excludeAll'
+                            ? 'exclude'
+                            : 'default';
+
                     const updatedFields = evaluateUpdatedFields(
                         projections,
                         recommended[bindingUUID],
