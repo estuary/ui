@@ -124,8 +124,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     mt: 1,
                     mb: 2,
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    alignItems: 'left',
                 }}
             >
                 <RegistrationProgress step={2} loading={saving} />
@@ -153,7 +152,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         <AlertBox
                             severity="error"
                             short
-                            title={intl.formatMessage({ id: 'common.fail' })}
+                            title={intl.formatMessage({
+                                id: 'common.fail',
+                            })}
                         >
                             {serverError}
                         </AlertBox>
@@ -197,7 +198,9 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                             loading={saving}
                             disabled={saving}
                         >
-                            {intl.formatMessage({ id: 'cta.registerFinish' })}
+                            {intl.formatMessage({
+                                id: 'cta.registerFinish',
+                            })}
                         </SafeLoadingButton>
                     </Toolbar>
                 </Stack>

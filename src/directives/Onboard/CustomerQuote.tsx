@@ -1,14 +1,7 @@
-import {
-    Box,
-    Card,
-    Stack,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
-import { QuoteSolid } from 'iconoir-react';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { useIntl } from 'react-intl';
-import customerLogo from 'images/FP-Logo_Wordmark_Pos_RGB.svg';
+import customerQuoteDark from 'images/customer_quote-dark.png';
+import customerQuoteLight from 'images/customer_quote-light.png';
 
 function CustomerQuote() {
     const theme = useTheme();
@@ -19,57 +12,68 @@ function CustomerQuote() {
         return null;
     } else {
         return (
-            <Card
-                color="secondary"
-                elevation={0}
+            // TODO (customer quote) should switch this to HTML to load faster
+            // <Stack
+            //     sx={{
+            //         alignItems: 'flex-start',
+
+            //         px: 3,
+            //     }}
+            // >
+            //     <Typography
+            //         color="primary"
+            //         sx={{
+            //             transform: 'rotate(180deg)',
+            //         }}
+            //     >
+            //         <QuoteSolid style={{ fontSize: 50 }} />
+            //     </Typography>
+            //     <Typography
+            //         variant="body2"
+            //         sx={{
+            //             color: '#777b82',
+            //             fontSize: 28,
+            //             mt: 1,
+            //             pl: 1.5,
+            //         }}
+            //     >
+            //         {`"${intl.formatMessage({
+            //             id: 'tenant.customer.quote',
+            //         })}"`}
+            //     </Typography>
+            //     <Box
+            //         sx={{
+            //             mt: 3,
+            //         }}
+            //     >
+            //         <img
+            //             src={customerLogo}
+            //             height="36px"
+            //             width="100px"
+            //             alt={intl.formatMessage({ id: 'company' })}
+            //         />
+            //     </Box>
+            // </Stack>
+            <Box
                 sx={{
-                    // backgroundColor: '#e5e5e6',
-                    borderRadius: 10,
-                    backgroundColor: 'action.selected',
-                    opacity: 0.8,
+                    height: '100%',
+                    width: '100%',
+                    mr: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                 }}
             >
-                <Stack
-                    sx={{
-                        alignItems: 'flex-start',
-                        px: 3,
-                    }}
-                >
-                    <Typography
-                        color="primary"
-                        sx={{
-                            transform: 'rotate(180deg)',
-                        }}
-                    >
-                        <QuoteSolid style={{ fontSize: 70 }} />
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            color: '#777b82',
-                            fontSize: 30,
-                            mt: 1,
-                            pl: 1.5,
-                        }}
-                    >
-                        {`"${intl.formatMessage({
-                            id: 'tenant.customer.quote',
-                        })}"`}
-                    </Typography>
-                    <Box
-                        sx={{
-                            mt: 3,
-                        }}
-                    >
-                        <img
-                            src={customerLogo}
-                            height="36px"
-                            width="100px"
-                            alt={intl.formatMessage({ id: 'company' })}
-                        />
-                    </Box>
-                </Stack>
-            </Card>
+                <img
+                    src={
+                        theme.palette.mode === 'light'
+                            ? customerQuoteLight
+                            : customerQuoteDark
+                    }
+                    width="85%"
+                    alt={intl.formatMessage({ id: 'tenant.customer.quote' })}
+                />
+            </Box>
         );
     }
 }

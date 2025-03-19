@@ -38,10 +38,10 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return (
             <FullPageWrapper fullWidth>
                 <Grid container spacing={2} sx={{ width: '100%' }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={0} md={6}>
                         <CustomerQuote />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <LocalZustandProvider createStore={localStore}>
                             <BetaOnboard
                                 directive={directive}
