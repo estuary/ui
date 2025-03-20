@@ -19,9 +19,10 @@ interface Props {
 }
 
 // TODO (accessibility) this menu is not acessible and we have some options
-// 1. wait for https://github.com/mui/material-ui/issues/43330 to be fixed
-// 2. Write some tricky CSS in the parent that allows things to look the way they do but have all the items have a `MenuItem` around them
-// 3. Overhaul the entire approach to this menu and redesign it to somehow not need menu... let's not do this one
+//  - wait for https://github.com/mui/material-ui/issues/43330 to be fixed
+//  - Write some tricky CSS in the parent that allows things to look the way they do but have all the items have a `MenuItem` around them
+//  - fork MUI's Menu just for these and disable the up/down keyboard interactions
+//  - Overhaul the entire approach to this menu and redesign it to somehow not need menu... let's not do this one
 function ScopeMenuContent({
     closeMenu,
     initialScope,
