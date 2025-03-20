@@ -110,7 +110,11 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     alignItems: 'center',
                 }}
             >
-                <RegistrationProgress step={1} loading={saving} />
+                <RegistrationProgress
+                    step={1}
+                    loading={saving}
+                    status={status}
+                />
 
                 <HeaderMessage
                     isRegister

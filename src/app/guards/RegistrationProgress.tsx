@@ -3,7 +3,15 @@ import { RegistrationProgressProps } from './types';
 
 const TOTAL_STEPS = 2;
 
-function RegistrationProgress({ loading, step }: RegistrationProgressProps) {
+function RegistrationProgress({
+    loading,
+    status,
+    step,
+}: RegistrationProgressProps) {
+    if (status === 'outdated') {
+        return null;
+    }
+
     return (
         <Stack sx={{ pb: 1, width: '100%' }}>
             <Typography>

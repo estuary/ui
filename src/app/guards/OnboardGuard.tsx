@@ -37,7 +37,12 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
             <FullPageWrapper fullWidth>
-                <Grid container spacing={2} sx={{ width: '100%' }}>
+                <Grid
+                    container
+                    sx={{
+                        p: 2,
+                    }}
+                >
                     <Grid item xs={0} md={6}>
                         <CustomerQuote />
                     </Grid>

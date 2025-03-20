@@ -26,8 +26,7 @@ export const Authentication: Record<string, string> = {
 
     'login.sso.separator': `Or to register with Single Sign-On`,
 
-    'login.sso.register.message.help': `{docLink}`,
-    'login.sso.register.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.register.message.help': `${CTAs['cta.contactUs']}`,
     'login.sso.register.message.help.docPath': `${Navigation['helpMenu.contact.link']}`,
 
     'login.sso.message.help': `To enable Single Sign-On on your account {docLink}.`,

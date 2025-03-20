@@ -17,7 +17,7 @@ import {
 import OnboardingSurvey from 'directives/Onboard/Survey';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import HeaderMessage from 'pages/login/HeaderMessage';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
@@ -41,7 +41,7 @@ const submit_onboard = async (
     );
 };
 
-const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
+const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const intl = useIntl();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -54,6 +54,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     const surveyResponse = useOnboardingStore_surveyResponse();
     const resetOnboardingState = useOnboardingStore_resetState();
 
+    const [nameAlreadyTaken, setNameAlreadyTaken] = useState(false);
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -97,19 +98,26 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         void mutate();
                     },
                     async (payload: any) => {
+                        const tenantAlreadyTaken = Boolean(
+                            payload?.job_status?.error?.includes(nameTaken)
+                        );
+
+                        // Handle tracking right away
+                        fireGtmEvent('RegisterFailed', {
+                            tenantAlreadyTaken,
+                            tenant: requestedTenant,
+                        });
                         trackEvent(`${directiveName}:Error`, directive);
+
+                        // Update local state
                         setSaving(false);
-                        setServerError(payload.job_status.error);
+                        setServerError(payload?.job_status?.error);
+                        setNameAlreadyTaken(tenantAlreadyTaken);
                     }
                 );
             }
         },
     };
-
-    const nameAlreadyUsed = useMemo(
-        () => serverError?.includes(nameTaken),
-        [serverError]
-    );
 
     useMount(() => {
         trackEvent(`${directiveName}:Viewed`);
@@ -119,7 +127,7 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
     return (
         <>
             <Stack
-                spacing={2}
+                spacing={3}
                 sx={{
                     mt: 1,
                     mb: 2,
@@ -127,12 +135,30 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                     alignItems: 'left',
                 }}
             >
-                <RegistrationProgress step={2} loading={saving} />
+                <RegistrationProgress
+                    step={2}
+                    loading={saving}
+                    status={status}
+                />
 
                 <HeaderMessage isRegister />
 
+                {serverError ? (
+                    <Box>
+                        <AlertBox
+                            severity="error"
+                            short
+                            title={intl.formatMessage({
+                                id: 'common.fail',
+                            })}
+                        >
+                            {serverError}
+                        </AlertBox>
+                    </Box>
+                ) : null}
+
                 {nameMissing ? (
-                    <Box sx={{ maxWidth: 424 }}>
+                    <Box>
                         <AlertBox
                             short
                             severity="error"
@@ -143,20 +169,6 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                                     id: 'tenant.errorMessage.empty',
                                 })}
                             </Typography>
-                        </AlertBox>
-                    </Box>
-                ) : null}
-
-                {serverError ? (
-                    <Box sx={{ maxWidth: 424 }}>
-                        <AlertBox
-                            severity="error"
-                            short
-                            title={intl.formatMessage({
-                                id: 'common.fail',
-                            })}
-                        >
-                            {serverError}
                         </AlertBox>
                     </Box>
                 ) : null}
@@ -171,9 +183,10 @@ const BetaOnboard = ({ directive, mutate }: DirectiveProps) => {
                         flexDirection: 'column',
                         alignItems: 'left',
                         justifyContent: 'center',
+                        mt: 5,
                     }}
                 >
-                    <OrganizationNameField forceError={nameAlreadyUsed} />
+                    <OrganizationNameField forceError={nameAlreadyTaken} />
 
                     <OnboardingSurvey />
 

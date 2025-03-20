@@ -5,7 +5,7 @@ import { HeaderMessageProps } from './types';
 
 function HeaderMessage({ isRegister, headerMessageId }: HeaderMessageProps) {
     return (
-        <Stack spacing={2} sx={{ alignItems: 'center', pb: 2 }}>
+        <Stack spacing={2} sx={{ alignItems: 'center' }}>
             <Logo width={25} />
 
             <Typography component="h1" align="center" variant="h5">
