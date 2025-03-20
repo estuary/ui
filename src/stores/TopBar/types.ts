@@ -7,5 +7,8 @@ export interface TopBarState {
     headerLink: string | undefined;
     setHeaderLink: (val: TopBarState['headerLink']) => void;
 
+    bannerOpen: boolean;
+    setBannerOpen: (value: TopBarState['bannerOpen']) => void;
+
     resetState: () => void;
 }
