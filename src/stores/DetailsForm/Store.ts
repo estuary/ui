@@ -300,7 +300,6 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         logRocketConsole('DetailsFormHydrator>hydrateState', {
-            active: get().active,
             connectorId,
             createWorkflow,
             dataPlaneId,
