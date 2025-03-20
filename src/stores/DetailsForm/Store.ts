@@ -359,6 +359,9 @@ export const getInitialState = (
                 );
 
                 if (connectorImage && dataPlane === null) {
+                    logRocketConsole(
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
+                    );
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -372,7 +375,7 @@ export const getInitialState = (
                     });
                 } else if (connectorImage && dataPlane !== null) {
                     logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector&setDetails_dataPlane'
                     );
 
                     get().setDetails_connector(connectorImage);
