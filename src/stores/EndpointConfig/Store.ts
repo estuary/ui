@@ -221,8 +221,7 @@ const getInitialState = (
             active: get().active,
         });
 
-        // get().active &&
-        if (connectorTagId && connectorTagId.length > 0) {
+        if (get().active && connectorTagId && connectorTagId.length > 0) {
             logRocketConsole(
                 'EndpointConfigHydrator>hydrateState>fetch>getSchema_Endpoint',
                 {
