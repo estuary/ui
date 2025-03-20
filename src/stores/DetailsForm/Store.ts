@@ -4,7 +4,7 @@ import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { logRocketEvent } from 'services/shared';
+import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import {
@@ -39,6 +39,9 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
+    logRocketConsole('DetailsFormHydrator>getConnectorImage', {
+        connectorId,
+    });
     const { data, error } = await getConnectors_detailsForm(connectorId);
 
     if (!error && data && data.length > 0) {
@@ -190,6 +193,9 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 if (connectorImage.id === '') {
+                    logRocketConsole(
+                        'DetailsFormHydrator>setDetails_connector>resetting'
+                    );
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 } else {
@@ -293,10 +299,24 @@ export const getInitialState = (
             workflow === 'capture_create' ||
             workflow === 'materialization_create';
 
+        logRocketConsole('DetailsFormHydrator>hydrateState', {
+            active: get().active,
+            connectorId,
+            createWorkflow,
+            dataPlaneId,
+            liveSpecId,
+            searchParams: searchParams.toString(),
+            workflow,
+        });
+
         if (connectorId) {
             let dataPlaneOptions: DataPlaneOption[] = [];
 
             const dataPlaneResponse = await getDataPlaneOptions();
+
+            logRocketConsole(
+                'DetailsFormHydrator>hydrateState>getDataPlaneOptions'
+            );
 
             if (
                 !dataPlaneResponse.error &&
@@ -307,6 +327,9 @@ export const getInitialState = (
                     generateDataPlaneOption
                 );
 
+                logRocketConsole(
+                    'DetailsFormHydrator>hydrateState>setDataPlaneOptions'
+                );
                 get().setDataPlaneOptions(dataPlaneOptions);
             } else {
                 get().setHydrationError(
@@ -316,8 +339,23 @@ export const getInitialState = (
             }
 
             if (createWorkflow) {
+                logRocketConsole(
+                    'DetailsFormHydrator>hydrateState>createWorkflow',
+                    {
+                        active: get().active,
+                    }
+                );
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
+
+                logRocketConsole(
+                    'DetailsFormHydrator>hydrateState>createWorkflow>fetched',
+                    {
+                        active: get().active,
+                        connectorId: connectorImage?.connectorId,
+                        connectorImageId: connectorImage?.id,
+                    }
+                );
 
                 if (!isProduction && connectorImage && dataPlane === null) {
                     get().setDetails_connector(connectorImage);
@@ -332,6 +370,10 @@ export const getInitialState = (
                         errors,
                     });
                 } else if (connectorImage && dataPlane !== null) {
+                    logRocketConsole(
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
+                    );
+
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -345,6 +387,9 @@ export const getInitialState = (
                         errors,
                     });
                 } else {
+                    logRocketConsole(
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setHydrationErrorsExist'
+                    );
                     get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {
@@ -403,6 +448,13 @@ export const getInitialState = (
                 });
                 get().setHydrationErrorsExist(true);
             }
+        } else {
+            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
+            // TODO (details hydration) should really show an error here
+            // get().setHydrationError(
+            //     'Unable to locate selected connector. If the issue persists, please contact support.'
+            // );
+            // get().setHydrationErrorsExist(true);
         }
     },
 
