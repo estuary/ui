@@ -1,4 +1,5 @@
 import { FormControl, FormLabel, RadioGroup } from '@mui/material';
+import { hiddenButAccessibleRadio } from 'context/Theme';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
@@ -66,18 +67,14 @@ function OnboardingSurvey() {
                 onChange={handlers.updateSurveyOrigin}
                 row
                 sx={{
-                    'rowGap': 1,
+                    ...hiddenButAccessibleRadio,
+                    'gap': 1,
                     '& .MuiFormControlLabel-root': {
                         ml: 0,
                         mr: 0,
                     },
                     '& .MuiChip-root': {
                         p: 1,
-                    },
-                    '& .MuiRadio-root, & .MuiRadio-root input': {
-                        height: 0,
-                        width: 0,
-                        opacity: 0,
                     },
                 }}
             >
