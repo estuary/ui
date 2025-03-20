@@ -25,7 +25,7 @@ import {
 } from 'stores/extensions/Hydration';
 import { getConnectorMetadata } from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
+import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
@@ -358,7 +358,10 @@ export const getInitialState = (
                     }
                 );
 
-                if (!isProduction && connectorImage && dataPlane === null) {
+                if (connectorImage && dataPlane === null) {
+                    logRocketConsole(
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
+                    );
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -372,7 +375,7 @@ export const getInitialState = (
                     });
                 } else if (connectorImage && dataPlane !== null) {
                     logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
+                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector&setDetails_dataPlane'
                     );
 
                     get().setDetails_connector(connectorImage);
