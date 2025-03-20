@@ -1,12 +1,4 @@
-import {
-    Chip,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-} from '@mui/material';
-import { chipOutlinedStyling } from 'context/Theme';
+import { FormControl, FormLabel, RadioGroup } from '@mui/material';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
@@ -15,11 +7,7 @@ import {
 import { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
-
-export interface SurveyResponse {
-    origin: string;
-    details: string;
-}
+import OriginOption from './OriginOption';
 
 function OnboardingSurvey() {
     const intl = useIntl();
@@ -57,8 +45,14 @@ function OnboardingSurvey() {
     };
 
     return (
-        <FormControl>
+        <FormControl
+            component="fieldset"
+            sx={{
+                border: 'none',
+            }}
+        >
             <FormLabel
+                component="legend"
                 id="survey-radio-buttons-group-label"
                 required
                 sx={{ mb: 1, fontSize: 16 }}
@@ -72,7 +66,7 @@ function OnboardingSurvey() {
                 onChange={handlers.updateSurveyOrigin}
                 row
                 sx={{
-                    'gap': 1,
+                    'rowGap': 1,
                     '& .MuiFormControlLabel-root': {
                         ml: 0,
                         mr: 0,
@@ -80,37 +74,18 @@ function OnboardingSurvey() {
                     '& .MuiChip-root': {
                         p: 1,
                     },
-                    '& .MuiRadio-root': {
-                        display: 'none',
-                        visibility: 'hidden',
+                    '& .MuiRadio-root, & .MuiRadio-root input': {
+                        height: 0,
+                        width: 0,
+                        opacity: 0,
                     },
                 }}
             >
                 {originOptions.map((option, index) => {
-                    const currentOption = surveyResponse.origin === option;
-
-                    console.log('option', option);
-
                     return (
-                        <FormControlLabel
-                            disableTypography
+                        <OriginOption
+                            option={option}
                             key={`${option}-${index}`}
-                            value={option}
-                            control={<Radio size="small" />}
-                            label={
-                                <Chip
-                                    component="span"
-                                    color={
-                                        currentOption ? 'primary' : undefined
-                                    }
-                                    variant="outlined"
-                                    label={option}
-                                    sx={{
-                                        ...chipOutlinedStyling,
-                                        p: 0,
-                                    }}
-                                />
-                            }
                         />
                     );
                 })}
