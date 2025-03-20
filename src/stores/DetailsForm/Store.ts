@@ -25,7 +25,7 @@ import {
 } from 'stores/extensions/Hydration';
 import { getConnectorMetadata } from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
+import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
@@ -358,7 +358,7 @@ export const getInitialState = (
                     }
                 );
 
-                if (!isProduction && connectorImage && dataPlane === null) {
+                if (connectorImage && dataPlane === null) {
                     get().setDetails_connector(connectorImage);
 
                     const {
