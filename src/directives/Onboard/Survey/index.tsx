@@ -81,7 +81,7 @@ function OnboardingSurvey() {
                 {originOptions.map((option, index) => {
                     return (
                         <OriginOption
-                            option={option}
+                            optionLabel={option}
                             key={`${option}-${index}`}
                         />
                     );

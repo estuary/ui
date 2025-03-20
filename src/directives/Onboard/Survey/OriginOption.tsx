@@ -3,7 +3,7 @@ import { chipOutlinedStyling } from 'context/Theme';
 import { useOnboardingStore_surveyResponse } from 'directives/Onboard/Store/hooks';
 import { OriginOptionProps } from './types';
 
-function OriginOption({ option }: OriginOptionProps) {
+function OriginOption({ optionLabel: option }: OriginOptionProps) {
     const surveyResponse = useOnboardingStore_surveyResponse();
     const currentOption = surveyResponse.origin === option;
 
