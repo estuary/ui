@@ -56,12 +56,11 @@ function CustomerQuote() {
             // </Stack>
             <Box
                 sx={{
-                    height: '100%',
-                    width: '100%',
-                    mr: 2,
-                    display: 'flex',
                     alignItems: 'center',
+                    display: 'flex',
+                    height: '100%',
                     justifyContent: 'center',
+                    width: '100%',
                 }}
             >
                 <img
