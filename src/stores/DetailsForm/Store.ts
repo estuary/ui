@@ -339,20 +339,22 @@ export const getInitialState = (
 
             if (createWorkflow) {
                 logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow',
-                    {
-                        active: get().active,
-                    }
+                    'DetailsFormHydrator>hydrateState>createWorkflow'
                 );
                 const connectorImage = await getConnectorImage(connectorId);
-                const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
-
                 logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow>fetched',
+                    'DetailsFormHydrator>hydrateState>createWorkflow>getConnectorImage',
                     {
-                        active: get().active,
                         connectorId: connectorImage?.connectorId,
                         connectorImageId: connectorImage?.id,
+                    }
+                );
+
+                const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
+                logRocketConsole(
+                    'DetailsFormHydrator>hydrateState>createWorkflow>getDataPlane',
+                    {
+                        dataPlaneName: dataPlane?.dataPlaneName,
                     }
                 );
 
