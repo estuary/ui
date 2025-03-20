@@ -1,13 +1,16 @@
 import { LinearProgress, Stack, Typography } from '@mui/material';
+import { useIntl } from 'react-intl';
 import { RegistrationProgressProps } from './types';
 
-const TOTAL_STEPS = 2;
+const totalSteps = 2;
 
 function RegistrationProgress({
     loading,
     status,
     step,
 }: RegistrationProgressProps) {
+    const intl = useIntl();
+
     if (status === 'outdated') {
         return null;
     }
@@ -15,11 +18,17 @@ function RegistrationProgress({
     return (
         <Stack sx={{ pb: 1, width: '100%' }}>
             <Typography>
-                Step {step} of {TOTAL_STEPS}
+                {intl.formatMessage(
+                    { id: 'login.progress.indicator' },
+                    {
+                        step,
+                        totalSteps,
+                    }
+                )}
             </Typography>
             <LinearProgress
                 variant={loading ? 'indeterminate' : 'determinate'}
-                value={Math.floor(((step - 1) / TOTAL_STEPS) * 100)}
+                value={Math.floor(((step - 1) / totalSteps) * 100)}
             />
         </Stack>
     );

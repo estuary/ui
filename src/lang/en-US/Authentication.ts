@@ -57,6 +57,8 @@ export const Authentication: Record<string, string> = {
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 
+    'login.progress.indicator': 'Step {step} of {totalSteps}',
+
     'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 
     // Legal
