@@ -118,6 +118,9 @@ function EndpointConfig({
             //  connector schema changes should be backwards compatible (as of Q1 2024)
             resetConfig = false;
         } else {
+            // TODO (create load) this should not be true anymore. The user cannot change the connector
+            //  but without this the create flow will not load in.
+
             // In create if the schema changed it probably means the user selected
             //  a different connector in the dropdown. So we need to clear out data
             //  and update the schema

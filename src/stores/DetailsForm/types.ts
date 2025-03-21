@@ -45,6 +45,14 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
     };
 }
 
+// TODO (search params) - need to stop getting search params from within zustand
+//  should pass in with optiosn like this one
+// export interface DetailsHydrateOptions {
+//     connectorId: string | null;
+//     dataPlaneId: string | null;
+//     liveSpecId: string | null;
+// }
+
 export interface DetailsFormState
     extends StoreWithHydration,
         StoreWithCustomErrors {
