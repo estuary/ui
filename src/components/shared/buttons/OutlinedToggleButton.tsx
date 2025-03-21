@@ -23,10 +23,13 @@ const OutlinedToggleButton = styled(ToggleButton)(({
         [`&.${toggleButtonClasses.selected}`]: {
             'backgroundColor': theme.palette[colorKey].alpha_12,
             'border': `1px solid ${theme.palette[colorKey].alpha_50}`,
-            'color': theme.palette[colorKey].dark,
+            'color':
+                theme.palette.mode === 'light'
+                    ? theme.palette[colorKey].dark
+                    : theme.palette[colorKey].main,
             '&:hover': {
                 border: `1px solid ${
-                    colorKey === 'success'
+                    colorKey === 'success' && theme.palette.mode === 'light'
                         ? theme.palette[colorKey].dark
                         : theme.palette[colorKey].main
                 }`,
