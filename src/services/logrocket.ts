@@ -2,6 +2,7 @@ import { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
+import setupLogRocketReact from 'logrocket-react';
 import {
     DEFAULT_FILTER,
     getUserDetails,
@@ -201,6 +202,7 @@ export const initLogRocket = () => {
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
+        setupLogRocketReact(LogRocket);
     }
 };
 

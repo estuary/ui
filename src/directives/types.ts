@@ -14,6 +14,11 @@ export interface Directives {
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
+export interface ActionsProps {
+    primaryMessageId: string;
+    saving: boolean;
+}
+
 export type DirectiveStates =
     | 'unfulfilled'
     | 'in progress'
@@ -61,6 +66,9 @@ export interface DirectiveSettings<T> {
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null
     ) => DirectiveStates;
+    // TODO (RegistrationProgress) - we need to know if a directive was used during the current session (this can be just in memory)
+    //  so we need to store off if the user used something. That way we know which directive is which step in the process.
+    // updatedThisSession: boolean;
 }
 
 export interface DirectiveProps {

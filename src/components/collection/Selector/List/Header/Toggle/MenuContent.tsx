@@ -18,6 +18,11 @@ interface Props {
     updateScope: (event: SyntheticEvent, newScope: Scopes) => void;
 }
 
+// TODO (accessibility) this menu is not acessible and we have some options
+//  - wait for https://github.com/mui/material-ui/issues/43330 to be fixed
+//  - Write some tricky CSS in the parent that allows things to look the way they do but have all the items have a `MenuItem` around them
+//  - fork MUI's Menu just for these and disable the up/down keyboard interactions
+//  - Overhaul the entire approach to this menu and redesign it to somehow not need menu... let's not do this one
 function ScopeMenuContent({
     closeMenu,
     initialScope,

@@ -3,7 +3,11 @@ import { getGoogleTageManagerSettings } from 'utils/env-utils';
 
 // GTM is loaded/initialized in index.html
 
-type EVENTS = 'Connector_Search' | 'Register' | 'Payment_Entered';
+type EVENTS =
+    | 'Connector_Search'
+    | 'Register'
+    | 'RegisterFailed'
+    | 'Payment_Entered';
 
 const { allowedToRun } = getGoogleTageManagerSettings();
 

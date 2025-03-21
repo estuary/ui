@@ -5,6 +5,8 @@ import { createOnboardingStore } from 'directives/Onboard/Store/create';
 import { useMemo } from 'react';
 import { OnboardingStoreNames } from 'stores/names';
 import { BaseComponentProps } from 'types';
+import CustomerQuote from 'directives/Onboard/CustomerQuote';
+import { Grid } from '@mui/material';
 import useDirectiveGuard from './hooks';
 
 const SELECTED_DIRECTIVE = 'betaOnboard';
@@ -34,14 +36,26 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return null;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
-            <FullPageWrapper fullWidth={true}>
-                <LocalZustandProvider createStore={localStore}>
-                    <BetaOnboard
-                        directive={directive}
-                        status={status}
-                        mutate={grantsMutate}
-                    />
-                </LocalZustandProvider>
+            <FullPageWrapper fullWidth>
+                <Grid
+                    container
+                    sx={{
+                        p: 2,
+                    }}
+                >
+                    <Grid item xs={0} md={6}>
+                        <CustomerQuote />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <LocalZustandProvider createStore={localStore}>
+                            <BetaOnboard
+                                directive={directive}
+                                status={status}
+                                mutate={grantsMutate}
+                            />
+                        </LocalZustandProvider>
+                    </Grid>
+                </Grid>
             </FullPageWrapper>
         );
     } else {

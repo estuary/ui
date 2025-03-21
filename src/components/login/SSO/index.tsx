@@ -10,7 +10,7 @@ import { supabaseClient } from 'context/GlobalProviders';
 import React, { useState } from 'react';
 import AlertBox from 'components/shared/AlertBox';
 import { useSnackbar, VariantType } from 'notistack';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { hasLength } from 'utils/misc-utils';
@@ -109,14 +109,14 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     return (
         <Stack direction="column" spacing={3} style={{ width: '100%' }}>
             <Typography>
-                <FormattedMessage id="login.sso.header" />
+                {intl.formatMessage({ id: 'login.sso.header' })}
             </Typography>
             {submitError ? (
                 <Box>
                     <AlertBox severity="error" short>
                         <Typography>{submitError}</Typography>
                         <Typography>
-                            <FormattedMessage id="error.tryAgain" />
+                            {intl.formatMessage({ id: 'error.tryAgain' })}
                         </Typography>
                     </AlertBox>
                 </Box>
@@ -126,11 +126,11 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                 <form
                     onSubmit={handlers.submit}
                     style={{
-                        width: '100%',
+                        alignItems: 'center',
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
                         justifyContent: 'center',
+                        width: '100%',
                     }}
                 >
                     <TextField
@@ -154,11 +154,13 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
                     <Button
                         disabled={loading}
+                        fullWidth
                         name="SSO Sign In"
+                        size="large"
                         type="submit"
                         sx={{ mt: 3 }}
                     >
-                        <FormattedMessage id="cta.login.sso" />
+                        {intl.formatMessage({ id: 'cta.login.sso' })}
                     </Button>
                 </form>
             </Box>
