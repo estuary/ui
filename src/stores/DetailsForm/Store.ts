@@ -4,7 +4,7 @@ import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import {
@@ -39,9 +39,6 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    logRocketConsole('DetailsFormHydrator>getConnectorImage', {
-        connectorId,
-    });
     const { data, error } = await getConnectors_detailsForm(connectorId);
 
     if (!error && data && data.length > 0) {
@@ -212,9 +209,6 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 if (connectorImage.id === '') {
-                    logRocketConsole(
-                        'DetailsFormHydrator>setDetails_connector>resetting'
-                    );
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 } else {
@@ -317,15 +311,6 @@ export const getInitialState = (
         const createWorkflow =
             workflow === 'capture_create' ||
             workflow === 'materialization_create';
-
-        logRocketConsole('DetailsFormHydrator>hydrateState', {
-            connectorId,
-            createWorkflow,
-            dataPlaneId,
-            liveSpecId,
-            searchParams: searchParams.toString(),
-            workflow,
-        });
 
         if (connectorId) {
             let dataPlaneOptions: DataPlaneOption[] = [];
