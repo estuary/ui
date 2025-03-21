@@ -1,6 +1,7 @@
 import { ThemeKeys } from '@microlink/react-json-view';
 import {
     AlertColor,
+    alpha,
     createTheme,
     PaletteOptions,
     SxProps,
@@ -39,6 +40,22 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 //         sampleProp: true;
 //     }
 // }
+
+declare module '@mui/material/styles' {
+    interface PaletteColor {
+        alpha_05?: string;
+        alpha_12?: string;
+        alpha_26?: string;
+        alpha_50?: string;
+    }
+
+    interface SimplePaletteColorOptions {
+        alpha_05?: string;
+        alpha_12?: string;
+        alpha_26?: string;
+        alpha_50?: string;
+    }
+}
 
 declare module '@mui/material/styles' {
     interface TypographyVariants {
@@ -129,19 +146,39 @@ const lightMode: PaletteOptions = {
     },
     contrastThreshold,
     error: {
+        alpha_05: alpha(errorMain, 0.05),
+        alpha_12: alpha(errorMain, 0.12),
+        alpha_26: alpha(errorMain, 0.26),
+        alpha_50: alpha(errorMain, 0.5),
         main: errorMain,
     },
     info: {
+        alpha_05: alpha(infoMain, 0.05),
+        alpha_12: alpha(infoMain, 0.12),
+        alpha_26: alpha(infoMain, 0.26),
+        alpha_50: alpha(infoMain, 0.5),
         main: infoMain,
     },
     mode: 'light',
     primary: {
+        alpha_05: alpha(sample_blue[600], 0.05),
+        alpha_12: alpha(sample_blue[600], 0.12),
+        alpha_26: alpha(sample_blue[600], 0.26),
+        alpha_50: alpha(sample_blue[600], 0.5),
         main: sample_blue[600],
     },
     secondary: {
+        alpha_05: alpha(sample_blue[800], 0.05),
+        alpha_12: alpha(sample_blue[800], 0.12),
+        alpha_26: alpha(sample_blue[800], 0.26),
+        alpha_50: alpha(sample_blue[800], 0.5),
         main: sample_blue[800],
     },
     success: {
+        alpha_05: alpha(successDark, 0.05),
+        alpha_12: alpha(successDark, 0.12),
+        alpha_26: alpha(successDark, 0.26),
+        alpha_50: alpha(successDark, 0.5),
         main: successMain,
         dark: successDark,
     },
@@ -150,6 +187,13 @@ const lightMode: PaletteOptions = {
         secondary: sample_blue[800],
     },
     tonalOffset,
+    warning: {
+        alpha_05: alpha('#ED6C02', 0.05),
+        alpha_12: alpha('#ED6C02', 0.12),
+        alpha_26: alpha('#ED6C02', 0.26),
+        alpha_50: alpha('#ED6C02', 0.5),
+        main: '#ED6C02',
+    },
 };
 
 const darkMode: PaletteOptions = {
@@ -159,9 +203,15 @@ const darkMode: PaletteOptions = {
     contrastThreshold,
     mode: 'dark',
     primary: {
+        alpha_05: alpha(sample_blue[200], 0.05),
+        alpha_12: alpha(sample_blue[200], 0.12),
+        alpha_50: alpha(sample_blue[200], 0.5),
         main: sample_blue[200],
     },
     secondary: {
+        alpha_05: alpha(sample_blue[400], 0.05),
+        alpha_12: alpha(sample_blue[400], 0.12),
+        alpha_50: alpha(sample_blue[400], 0.5),
         main: sample_blue[400],
     },
     text: {
@@ -169,6 +219,13 @@ const darkMode: PaletteOptions = {
         secondary: sample_grey[500],
     },
     tonalOffset,
+    warning: {
+        alpha_05: alpha('#F57C00', 0.05),
+        alpha_12: alpha('#F57C00', 0.12),
+        alpha_26: alpha('#F57C00', 0.26),
+        alpha_50: alpha('#F57C00', 0.5),
+        main: '#F57C00',
+    },
 };
 
 // TODO (zindex) We should make a helper or something to help manage zindex.

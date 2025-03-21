@@ -225,7 +225,7 @@ function BackfillButton({
 
             <Stack direction="row" spacing={2}>
                 <BooleanToggleButton
-                    size={bindingIndex === -1 ? 'large' : undefined}
+                    size="small"
                     selected={Boolean(selected || reversioned)}
                     disabled={disabled || reversioned}
                     onClick={(event, checked: string) => {
