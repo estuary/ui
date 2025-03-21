@@ -17,6 +17,7 @@ export enum CustomEvents {
     CAPTURE_MATERIALIZE_SUCCESS = 'Capture_Materialize_Success',
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
+    CONNECTOR_VERSION_MISSING = 'Connector_Version:Missing',
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
     DATA_PLANE_SELECTOR = 'Data_Pane_Selector',
     DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
