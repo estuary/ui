@@ -5,8 +5,8 @@
     "main": "index.js",
     "private": true,
     "engines": {
-        "node": "20.10.0",
-        "npm": "10.2.3"
+        "node": "^20",
+        "npm": "^10"
     },
     "scripts": {
         "build": "vite build",
