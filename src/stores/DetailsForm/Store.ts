@@ -68,6 +68,25 @@ const getDataPlane = (
         return selectedOption;
     }
 
+    // TODO (private data plane) - we need to add support for allowing tenants to configure their
+    //  preferred data plane.
+
+    // If we are not trying to find a specific data plane and there is only one option
+    //  and it is private we are pretty safe in prefilling that one.
+    if (
+        !dataPlaneId &&
+        dataPlaneOptions.length === 1 &&
+        dataPlaneOptions[0].dataPlaneName.whole.includes(
+            DATA_PLANE_SETTINGS.private.prefix
+        )
+    ) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            defaultedPrivate: true,
+        });
+        return dataPlaneOptions[0];
+    }
+
+    // Try to find the default public data plane
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
@@ -313,10 +332,6 @@ export const getInitialState = (
 
             const dataPlaneResponse = await getDataPlaneOptions();
 
-            logRocketConsole(
-                'DetailsFormHydrator>hydrateState>getDataPlaneOptions'
-            );
-
             if (
                 !dataPlaneResponse.error &&
                 dataPlaneResponse.data &&
@@ -326,9 +341,6 @@ export const getInitialState = (
                     generateDataPlaneOption
                 );
 
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>setDataPlaneOptions'
-                );
                 get().setDataPlaneOptions(dataPlaneOptions);
             } else {
                 get().setHydrationError(
@@ -338,30 +350,10 @@ export const getInitialState = (
             }
 
             if (createWorkflow) {
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow'
-                );
                 const connectorImage = await getConnectorImage(connectorId);
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow>getConnectorImage',
-                    {
-                        connectorId: connectorImage?.connectorId,
-                        connectorImageId: connectorImage?.id,
-                    }
-                );
-
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow>getDataPlane',
-                    {
-                        dataPlaneName: dataPlane?.dataPlaneName,
-                    }
-                );
 
                 if (connectorImage && dataPlane === null) {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
-                    );
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -374,10 +366,6 @@ export const getInitialState = (
                         errors,
                     });
                 } else if (connectorImage && dataPlane !== null) {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector&setDetails_dataPlane'
-                    );
-
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -391,9 +379,6 @@ export const getInitialState = (
                         errors,
                     });
                 } else {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setHydrationErrorsExist'
-                    );
                     get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {
