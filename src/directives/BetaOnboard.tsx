@@ -1,10 +1,8 @@
-import { Box, Button, Stack, Toolbar, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
-import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
-import { supabaseClient } from 'context/GlobalProviders';
 import OrganizationNameField from 'directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
@@ -22,6 +20,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 import { fireGtmEvent } from 'services/gtm';
 import { hasLength } from 'utils/misc-utils';
+import Actions from './Actions';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
@@ -192,32 +191,10 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
 
                     <OnboardingSurvey />
 
-                    <Toolbar
-                        disableGutters
-                        sx={{
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Button
-                            disabled={saving}
-                            variant="outlined"
-                            onClick={async () => {
-                                await supabaseClient.auth.signOut();
-                            }}
-                        >
-                            {intl.formatMessage({ id: 'cta.cancel' })}
-                        </Button>
-                        <SafeLoadingButton
-                            type="submit"
-                            variant="contained"
-                            loading={saving}
-                            disabled={saving}
-                        >
-                            {intl.formatMessage({
-                                id: 'cta.registerFinish',
-                            })}
-                        </SafeLoadingButton>
-                    </Toolbar>
+                    <Actions
+                        saving={saving}
+                        primaryMessageId="cta.registerFinish"
+                    />
                 </Stack>
             </form>
         </>

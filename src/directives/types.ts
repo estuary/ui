@@ -14,6 +14,11 @@ export interface Directives {
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
+export interface ActionsProps {
+    primaryMessageId: string;
+    saving: boolean;
+}
+
 export type DirectiveStates =
     | 'unfulfilled'
     | 'in progress'

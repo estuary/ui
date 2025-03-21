@@ -1,25 +1,22 @@
 import {
-    Button,
     Checkbox,
     FormControl,
     FormControlLabel,
     Stack,
-    Toolbar,
     Typography,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
-import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
-import { supabaseClient } from 'context/GlobalProviders';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import HeaderMessage from 'pages/login/HeaderMessage';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { getUrls } from 'utils/env-utils';
+import Actions from './Actions';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
     jobStatusQuery,
@@ -196,31 +193,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     />
                 </FormControl>
 
-                <Toolbar
-                    disableGutters
-                    sx={{
-                        justifyContent: 'space-between',
-                        width: '100%',
-                    }}
-                >
-                    <Button
-                        disabled={saving}
-                        variant="outlined"
-                        onClick={async () => {
-                            await supabaseClient.auth.signOut();
-                        }}
-                    >
-                        {intl.formatMessage({ id: 'cta.cancel' })}
-                    </Button>
-                    <SafeLoadingButton
-                        type="submit"
-                        variant="contained"
-                        loading={saving}
-                        disabled={saving}
-                    >
-                        {intl.formatMessage({ id: 'cta.continue' })}
-                    </SafeLoadingButton>
-                </Toolbar>
+                <Actions saving={saving} primaryMessageId="cta.continue" />
             </form>
         </>
     );
