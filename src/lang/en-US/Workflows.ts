@@ -219,7 +219,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.selectAlgorithm': `Heuristics`,
+    'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
@@ -245,8 +245,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
     'fieldSelection.table.label.filter': `Filter fields`,
-    'fieldSelection.massActionMenu.recommended.label': `Default`,
-    'fieldSelection.massActionMenu.recommended.description': `Allow the connector to dynamically select fields`,
+    'fieldSelection.massActionMenu.recommended.label': `Select Scalars`,
+    'fieldSelection.massActionMenu.recommended.description': `Select essential, scalar fields`,
     'fieldSelection.massActionMenu.excludeAll.label': `Exclude All`,
     'fieldSelection.massActionMenu.excludeAll.description': `Exclude non-essential fields`,
 
