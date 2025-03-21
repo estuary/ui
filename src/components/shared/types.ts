@@ -14,3 +14,9 @@ export interface AlertBoxProps extends BaseComponentProps {
     onClose?: () => void;
     title?: string | ReactNode;
 }
+
+export interface RadioMenuItemProps {
+    description: string;
+    label: string;
+    value: string;
+}

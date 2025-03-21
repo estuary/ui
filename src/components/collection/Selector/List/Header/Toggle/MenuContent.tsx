@@ -1,8 +1,8 @@
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
+import RadioMenuItem from 'components/shared/RadioMenuItem';
 import { useEntityType } from 'context/EntityContext';
 import { SyntheticEvent, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import ScopeMenuItem from './MenuItem';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Scopes } from './types';
 
 interface MenuOption {
@@ -25,6 +25,7 @@ function ScopeMenuContent({
     menuOptions,
     updateScope,
 }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const [scope, setScope] = useState(initialScope);
@@ -36,26 +37,22 @@ function ScopeMenuContent({
                 value={scope}
                 style={{ maxWidth: 320, textWrap: 'wrap' }}
             >
-                <ScopeMenuItem
-                    desc={
-                        <FormattedMessage
-                            id={menuOptions[0].desc}
-                            values={{ itemType, entityType }}
-                        />
-                    }
-                    scope="all"
-                    title={<FormattedMessage id={menuOptions[0].title} />}
+                <RadioMenuItem
+                    description={intl.formatMessage(
+                        { id: menuOptions[0].desc },
+                        { itemType, entityType }
+                    )}
+                    label={intl.formatMessage({ id: menuOptions[0].title })}
+                    value="all"
                 />
 
-                <ScopeMenuItem
-                    desc={
-                        <FormattedMessage
-                            id={menuOptions[1].desc}
-                            values={{ itemType, entityType }}
-                        />
-                    }
-                    scope="page"
-                    title={<FormattedMessage id={menuOptions[1].title} />}
+                <RadioMenuItem
+                    description={intl.formatMessage(
+                        { id: menuOptions[1].desc },
+                        { itemType, entityType }
+                    )}
+                    label={intl.formatMessage({ id: menuOptions[1].title })}
+                    value="page"
                 />
             </RadioGroup>
 
