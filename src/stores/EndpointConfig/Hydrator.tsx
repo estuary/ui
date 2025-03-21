@@ -29,13 +29,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const hydrateState = useEndpointConfig_hydrateState();
     const setActive = useEndpointConfig_setActive();
 
-    logRocketConsole('EndpointConfigHydrator', {
-        runHydration: Boolean(runHydration.current),
-        hydrated,
-        connectorTagId,
-        entityType,
-    });
-
     useEffect(() => {
         if (
             runHydration.current &&
