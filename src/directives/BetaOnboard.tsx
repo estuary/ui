@@ -26,7 +26,7 @@ import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
-const nameTaken = 'is already in use';
+const NAME_TAKEN_MESSAGE = 'is already in use';
 
 const submit_onboard = async (
     requestedTenant: string,
@@ -54,7 +54,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const surveyResponse = useOnboardingStore_surveyResponse();
     const resetOnboardingState = useOnboardingStore_resetState();
 
-    const [nameAlreadyTaken, setNameAlreadyTaken] = useState(false);
+    const [nameTaken, setNameTaken] = useState(false);
     const [saving, setSaving] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -98,13 +98,15 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         void mutate();
                     },
                     async (payload: any) => {
-                        const tenantAlreadyTaken = Boolean(
-                            payload?.job_status?.error?.includes(nameTaken)
+                        const tenantTaken = Boolean(
+                            payload?.job_status?.error?.includes(
+                                NAME_TAKEN_MESSAGE
+                            )
                         );
 
                         // Handle tracking right away
                         fireGtmEvent('RegisterFailed', {
-                            tenantAlreadyTaken,
+                            tenantAlreadyTaken: tenantTaken,
                             tenant: requestedTenant,
                         });
                         trackEvent(`${directiveName}:Error`, directive);
@@ -112,7 +114,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         // Update local state
                         setSaving(false);
                         setServerError(payload?.job_status?.error);
-                        setNameAlreadyTaken(tenantAlreadyTaken);
+                        setNameTaken(tenantTaken);
                     }
                 );
             }
@@ -186,7 +188,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         mt: 5,
                     }}
                 >
-                    <OrganizationNameField forceError={nameAlreadyTaken} />
+                    <OrganizationNameField forceError={nameTaken} />
 
                     <OnboardingSurvey />
 
