@@ -23,7 +23,7 @@ export const useEntitiesStore_capabilities_readable = () => {
     );
 };
 
-export const useEntitiesStore_capabilities_writeable = () => {
+export const useEntitiesStore_capabilities_writable = () => {
     return useEntitiesStore(
         useShallow((state) => [
             ...new Set([

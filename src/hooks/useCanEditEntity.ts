@@ -1,7 +1,7 @@
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useMemo } from 'react';
-import { useEntitiesStore_capabilities_writeable } from 'stores/Entities/hooks';
+import { useEntitiesStore_capabilities_writable } from 'stores/Entities/hooks';
 
 function useCanEditEntity() {
     const isEdit = useEntityWorkflow_Editing();
@@ -10,7 +10,7 @@ function useCanEditEntity() {
         (state) => state.details.data.entityName
     );
 
-    const grants = useEntitiesStore_capabilities_writeable();
+    const grants = useEntitiesStore_capabilities_writable();
 
     return useMemo(
         () =>
