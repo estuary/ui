@@ -1,11 +1,5 @@
-import {
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-    TextField,
-} from '@mui/material';
+import { FormControl, FormLabel, RadioGroup } from '@mui/material';
+import { hiddenButAccessibleRadio } from 'context/Theme';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
@@ -14,11 +8,7 @@ import {
 import { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
-
-export interface SurveyResponse {
-    origin: string;
-    details: string;
-}
+import OriginOption from './OriginOption';
 
 function OnboardingSurvey() {
     const intl = useIntl();
@@ -31,12 +21,11 @@ function OnboardingSurvey() {
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.youTube.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.email.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.gitHub.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.socialMedia.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.paidAdvertising.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.content.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.webinar.label' }),
         surveyOptionOther,
     ]);
 
@@ -57,38 +46,47 @@ function OnboardingSurvey() {
     };
 
     return (
-        <FormControl>
-            <FormLabel id="origin" required sx={{ mb: 1, fontSize: 16 }}>
+        <FormControl
+            component="fieldset"
+            sx={{
+                border: 'none',
+            }}
+        >
+            <FormLabel
+                component="legend"
+                id="survey-radio-buttons-group-label"
+                required
+                sx={{ mb: 1, fontSize: 16 }}
+            >
                 <FormattedMessage id="tenant.origin.radioGroup.label" />
             </FormLabel>
 
             <RadioGroup
                 aria-labelledby="survey-radio-buttons-group-label"
-                name="radio-buttons-group"
+                name="survey-radio-buttons-group"
                 onChange={handlers.updateSurveyOrigin}
-                sx={{ width: 'fit-content' }}
-            >
-                {originOptions.map((option, index) => (
-                    <FormControlLabel
-                        key={`${option}-${index}`}
-                        value={option}
-                        control={<Radio size="small" />}
-                        label={option}
-                    />
-                ))}
-            </RadioGroup>
-
-            <TextField
-                size="small"
-                onBlur={(event) =>
-                    handlers.updateSurveyDetails(event.target.value)
-                }
+                row
                 sx={{
-                    'maxWidth': 400,
-                    'ml': 3,
-                    '& .MuiInputBase-root': { borderRadius: 3 },
+                    ...hiddenButAccessibleRadio,
+                    'gap': 1,
+                    '& .MuiFormControlLabel-root': {
+                        ml: 0,
+                        mr: 0,
+                    },
+                    '& .MuiChip-root': {
+                        p: 1,
+                    },
                 }}
-            />
+            >
+                {originOptions.map((option, index) => {
+                    return (
+                        <OriginOption
+                            optionLabel={option}
+                            key={`${option}-${index}`}
+                        />
+                    );
+                })}
+            </RadioGroup>
         </FormControl>
     );
 }
