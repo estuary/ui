@@ -1,4 +1,5 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { BaseComponentProps, Entity } from 'types';
 
 interface Props extends BaseComponentProps {
@@ -27,4 +28,27 @@ const useEntityType = () => {
     return context;
 };
 
-export { EntityContextProvider, useEntityType };
+const useEntityTypeTranslated = () => {
+    const intl = useIntl();
+
+    const entityTypeValue = useEntityType();
+
+    return useMemo(() => {
+        switch (entityTypeValue) {
+            case 'capture':
+                return intl.formatMessage({ id: 'terms.capture' });
+                break;
+            case 'materialization':
+                return intl.formatMessage({ id: 'terms.materialization' });
+                break;
+            case 'collection':
+                return intl.formatMessage({ id: 'terms.transformation' });
+                break;
+            default:
+                return intl.formatMessage({ id: 'terms.entity' });
+                break;
+        }
+    }, [entityTypeValue, intl]);
+};
+
+export { EntityContextProvider, useEntityType, useEntityTypeTranslated };
