@@ -1,4 +1,4 @@
-import { Box, Fade, SxProps, Theme } from '@mui/material';
+import { Box, Fade } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import LinearProgressTimed from 'components/progress/LinearProgressTimed';
 import {
@@ -7,8 +7,6 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { EntityToolbarProgressProps } from '../types';
-
-export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 function HeaderProgress({ waitTimes }: EntityToolbarProgressProps) {
     const generateWaitTime = waitTimes?.generate;

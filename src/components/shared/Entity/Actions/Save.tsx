@@ -3,7 +3,8 @@ import {
     useEditorStore_id,
     useEditorStore_isSaving,
 } from 'components/editor/Store/hooks';
-import { buttonSx } from 'components/shared/Entity/Header';
+import { entityHeaderButtonSx } from 'context/Theme';
+
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
@@ -29,7 +30,7 @@ function EntityCreateSave({
     return (
         <Button
             disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
+            sx={entityHeaderButtonSx}
             onClick={async () => {
                 await save(draftId);
             }}

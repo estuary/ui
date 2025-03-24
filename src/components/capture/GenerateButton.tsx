@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { buttonSx } from 'components/shared/Entity/Header';
+import { entityHeaderButtonSx } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -82,7 +82,7 @@ function CaptureGenerateButton({
         <Button
             onClick={processFormData}
             disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
+            sx={entityHeaderButtonSx}
         >
             <FormattedMessage id="cta.generateCatalog.capture" />
         </Button>

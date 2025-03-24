@@ -1,11 +1,9 @@
-import { Stack, SxProps, Theme } from '@mui/material';
+import { Stack } from '@mui/material';
 import EditCapabilityGuard from 'components/shared/guards/EditCapability';
 import HeaderLogs from '../HeaderLogs';
 import { EntityToolbarProps } from '../types';
 import HeaderActions from './Actions';
 import HeaderProgress from './Progress';
-
-export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 function EntityToolbar({
     GenerateButton,

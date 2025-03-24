@@ -1,4 +1,4 @@
-import { Stack, SxProps, Theme, Toolbar } from '@mui/material';
+import { Stack, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
@@ -6,8 +6,6 @@ import EntitySaveButton from '../Actions/SaveButton';
 import EntityTestButton from '../Actions/TestButton';
 import EntityViewDetails from '../Actions/ViewDetails';
 import { EntityToolbarActionProps } from '../types';
-
-export const buttonSx: SxProps<Theme> = { ml: 1 };
 
 function HeaderActions({
     GenerateButton,
