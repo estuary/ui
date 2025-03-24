@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Toolbar } from '@mui/material';
 import EditCapabilityGuard from 'components/shared/guards/EditCapability';
 import HeaderLogs from '../HeaderLogs';
 import { EntityToolbarProps } from '../types';
@@ -17,13 +17,15 @@ function EntityToolbar({
     return (
         <EditCapabilityGuard>
             <Stack spacing={2} sx={{ mb: 1 }}>
-                <HeaderActions
-                    GenerateButton={GenerateButton}
-                    PrimaryButtonComponent={PrimaryButtonComponent}
-                    SecondaryButtonComponent={SecondaryButtonComponent}
-                    primaryButtonProps={primaryButtonProps}
-                    secondaryButtonProps={secondaryButtonProps}
-                />
+                <Toolbar disableGutters>
+                    <HeaderActions
+                        GenerateButton={GenerateButton}
+                        PrimaryButtonComponent={PrimaryButtonComponent}
+                        SecondaryButtonComponent={SecondaryButtonComponent}
+                        primaryButtonProps={primaryButtonProps}
+                        secondaryButtonProps={secondaryButtonProps}
+                    />
+                </Toolbar>
 
                 <HeaderProgress waitTimes={waitTimes} />
 

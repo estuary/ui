@@ -1,4 +1,4 @@
-import { Stack, Toolbar } from '@mui/material';
+import { Stack } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { truncateTextSx } from 'context/Theme';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
@@ -26,32 +26,30 @@ function HeaderActions({
     const SecondaryButton = SecondaryButtonComponent ?? EntityTestButton;
 
     return (
-        <Toolbar disableGutters>
-            <Stack
-                direction="row"
-                alignItems="center"
-                sx={{
-                    'ml': 'auto',
-                    // TODO (typing) - should udpate the global typings
-                    //  to allow them to be nested in other `sx` props
-                    '& > button': truncateTextSx as any,
-                }}
-            >
-                {draftId ? (
-                    saved ? (
-                        <EntityViewDetails />
-                    ) : (
-                        <>
-                            <SecondaryButton {...secondaryButtonProps} />
-
-                            <PrimaryButton {...primaryButtonProps} />
-                        </>
-                    )
+        <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+                'ml': 'auto',
+                // TODO (typing) - should update the global typings
+                //  to allow them to be nested in other `sx` props
+                '& > button': truncateTextSx as any,
+            }}
+        >
+            {draftId ? (
+                saved ? (
+                    <EntityViewDetails />
                 ) : (
-                    GenerateButton
-                )}
-            </Stack>
-        </Toolbar>
+                    <>
+                        <SecondaryButton {...secondaryButtonProps} />
+
+                        <PrimaryButton {...primaryButtonProps} />
+                    </>
+                )
+            ) : (
+                GenerateButton
+            )}
+        </Stack>
     );
 }
 
