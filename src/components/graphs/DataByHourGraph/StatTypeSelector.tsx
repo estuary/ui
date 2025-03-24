@@ -1,6 +1,5 @@
-import { ToggleButtonGroup } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
+import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
 import { FormattedMessage } from 'react-intl';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
@@ -11,11 +10,7 @@ function StatTypeSelector() {
     ]);
 
     return (
-        <ToggleButtonGroup
-            size="small"
-            exclusive
-            sx={outlinedToggleButtonGroupStyling}
-        >
+        <OutlinedToggleButtonGroup size="small" exclusive>
             <OutlinedToggleButton
                 size="small"
                 value="bytes"
@@ -33,7 +28,7 @@ function StatTypeSelector() {
             >
                 <FormattedMessage id="data.docs" />
             </OutlinedToggleButton>
-        </ToggleButtonGroup>
+        </OutlinedToggleButtonGroup>
     );
 }
 

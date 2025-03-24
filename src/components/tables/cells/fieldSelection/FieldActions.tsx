@@ -1,21 +1,17 @@
-import { TableCell, ToggleButtonGroup } from '@mui/material';
+import { TableCell } from '@mui/material';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
-import useOnFieldActionClick from 'hooks/fieldSelection/useOnFieldActionClick';
+import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import {
     useBinding_recommendFields,
     useBinding_selections,
 } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { isExcludeOnlyField, isRequireOnlyField } from 'utils/workflow-utils';
+import FieldActionButton from './FieldActionButton';
 import { FieldActionsProps } from './types';
 
 function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
-    const intl = useIntl();
-
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
     const selections = useBinding_selections();
@@ -31,8 +27,6 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
         [bindingUUID, field, selections]
     );
 
-    const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
-
     const requireOnly = isRequireOnlyField(constraint.type);
     const excludeOnly = isExcludeOnlyField(constraint.type);
 
@@ -42,60 +36,47 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
 
     return (
         <TableCell>
-            <ToggleButtonGroup
+            <OutlinedToggleButtonGroup
+                buttonSelector=".toggle-button"
+                disabled={formActive}
                 exclusive
                 size="small"
-                sx={outlinedToggleButtonGroupStyling}
                 value={selection?.mode}
             >
-                <OutlinedToggleButton
+                <FieldActionButton
+                    bindingUUID={bindingUUID}
                     color="success"
-                    disabled={formActive || !recommendFields[bindingUUID]}
-                    onClick={(_event, value) =>
-                        updateSingleSelection(value, selection)
-                    }
-                    size="small"
+                    constraint={constraint}
+                    disabled={!recommendFields[bindingUUID]}
+                    field={field}
+                    labelId="fieldSelection.table.cta.selectField"
+                    selection={selection}
                     value="default"
-                >
-                    {intl.formatMessage({
-                        id: 'fieldSelection.table.cta.selectField',
-                    })}
-                </OutlinedToggleButton>
+                />
 
-                <OutlinedToggleButton
+                <FieldActionButton
+                    bindingUUID={bindingUUID}
                     color="warning"
+                    constraint={constraint}
+                    disabled={excludeOnly || (requireOnly && !recommendFields)}
+                    field={field}
+                    labelId="fieldSelection.table.cta.requireField"
+                    selection={selection}
                     value="require"
-                    disabled={
-                        formActive ||
-                        excludeOnly ||
-                        (requireOnly && !recommendFields)
-                    }
-                    onClick={(_event, value) =>
-                        updateSingleSelection(value, selection)
-                    }
-                >
-                    {intl.formatMessage({
-                        id: 'fieldSelection.table.cta.requireField',
-                    })}
-                </OutlinedToggleButton>
+                />
 
-                <OutlinedToggleButton
+                <FieldActionButton
+                    bindingUUID={bindingUUID}
                     color="error"
+                    constraint={constraint}
+                    disabled={requireOnly || (excludeOnly && !recommendFields)}
+                    field={field}
+                    labelId="fieldSelection.table.cta.excludeField"
+                    selection={selection}
+                    tooltipPlacement="bottom-end"
                     value="exclude"
-                    disabled={
-                        formActive ||
-                        requireOnly ||
-                        (excludeOnly && !recommendFields)
-                    }
-                    onClick={(_event, value) =>
-                        updateSingleSelection(value, selection)
-                    }
-                >
-                    {intl.formatMessage({
-                        id: 'fieldSelection.table.cta.excludeField',
-                    })}
-                </OutlinedToggleButton>
-            </ToggleButtonGroup>
+                />
+            </OutlinedToggleButtonGroup>
         </TableCell>
     );
 }

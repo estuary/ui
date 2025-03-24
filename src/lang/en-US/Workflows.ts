@@ -249,7 +249,14 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
+    'fieldSelection.table.label.translated.fieldRequired': `field is required`,
+    'fieldSelection.table.label.translated.locationRequired': `location is required`,
+    'fieldSelection.table.label.translated.locationRecommended': `location is recommended`,
+    'fieldSelection.table.label.translated.fieldOptional': `field is optional`,
+    'fieldSelection.table.label.translated.fieldForbidden': `field is forbidden`,
+    'fieldSelection.table.label.translated.unsatisfiable': `field is unsatisfiable`,
     'fieldSelection.table.label.filter': `Filter fields`,
+    'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
