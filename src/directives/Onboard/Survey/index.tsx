@@ -21,11 +21,13 @@ function OnboardingSurvey() {
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
-        intl.formatMessage({ id: 'tenant.origin.radio.socialMedia.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.paidAdvertising.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.content.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.referral.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.webinar.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.reddit.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
+        intl.formatMessage({ id: 'tenant.origin.radio.socialMedia.label' }),
         surveyOptionOther,
     ]);
 
