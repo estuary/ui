@@ -328,6 +328,20 @@ export const editorToolBarSx: SxProps<Theme> = {
     alignItems: 'center',
 };
 
+export const hiddenButAccessibleInput: SxProps<Theme> = {
+    position: 'fixed',
+    opacity: 0,
+    pointerEvents: 'none',
+};
+
+export const hiddenButAccessibleRadio: SxProps<Theme> = {
+    '& .MuiRadio-root, & .MuiRadio-root input': {
+        position: 'fixed',
+        opacity: 0,
+        pointerEvents: 'none',
+    },
+};
+
 export const defaultBoxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
 

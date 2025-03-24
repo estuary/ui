@@ -7,14 +7,16 @@ import {
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import RegistrationProgress from 'app/guards/RegistrationProgress';
 import AlertBox from 'components/shared/AlertBox';
 import ExternalLink from 'components/shared/ExternalLink';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import HeaderMessage from 'pages/login/HeaderMessage';
 import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { getUrls } from 'utils/env-utils';
+import Actions from './Actions';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
     jobStatusQuery,
@@ -34,6 +36,7 @@ const submit_clickToAccept = async (directive: any) => {
 };
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
+    const intl = useIntl();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
@@ -104,23 +107,26 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     alignItems: 'center',
                 }}
             >
-                <Typography variant="h5" align="center" sx={{ mb: 1.5 }}>
-                    <FormattedMessage
-                        id={
-                            !outdated
-                                ? 'legal.heading'
-                                : 'legal.heading.outdated'
-                        }
-                    />
-                </Typography>
+                <RegistrationProgress
+                    step={1}
+                    loading={saving}
+                    status={status}
+                />
+
+                <HeaderMessage
+                    isRegister
+                    headerMessageId={
+                        !outdated ? 'legal.heading' : 'legal.heading.outdated'
+                    }
+                />
 
                 {showErrors ? (
                     <AlertBox
                         short
                         severity="error"
-                        title={<FormattedMessage id="error.title" />}
+                        title={intl.formatMessage({ id: 'error.title' })}
                     >
-                        <FormattedMessage id="legal.docs.errorMessage" />
+                        {intl.formatMessage({ id: 'legal.docs.errorMessage' })}
                     </AlertBox>
                 ) : null}
 
@@ -128,7 +134,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     <AlertBox
                         severity="error"
                         short
-                        title={<FormattedMessage id="common.fail" />}
+                        title={intl.formatMessage({ id: 'common.fail' })}
                     >
                         {serverError}
                     </AlertBox>
@@ -146,11 +152,11 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
 
                 <Stack spacing={1}>
                     <ExternalLink link={urls.privacyPolicy}>
-                        <FormattedMessage id="legal.docs.privacy" />
+                        {intl.formatMessage({ id: 'legal.docs.privacy' })}
                     </ExternalLink>
 
                     <ExternalLink link={urls.termsOfService}>
-                        <FormattedMessage id="legal.docs.terms" />
+                        {intl.formatMessage({ id: 'legal.docs.terms' })}
                     </ExternalLink>
                 </Stack>
             </Stack>
@@ -173,30 +179,21 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                         }
                         onChange={handlers.update}
                         name="accept"
-                        label={
-                            <FormattedMessage
-                                id="legal.docs.accept"
-                                values={{
-                                    privacy: (
-                                        <FormattedMessage id="legal.docs.privacy" />
-                                    ),
-                                    terms: (
-                                        <FormattedMessage id="legal.docs.terms" />
-                                    ),
-                                }}
-                            />
-                        }
+                        label={intl.formatMessage(
+                            { id: 'legal.docs.accept' },
+                            {
+                                privacy: intl.formatMessage({
+                                    id: 'legal.docs.privacy',
+                                }),
+                                terms: intl.formatMessage({
+                                    id: 'legal.docs.terms',
+                                }),
+                            }
+                        )}
                     />
                 </FormControl>
 
-                <SafeLoadingButton
-                    type="submit"
-                    variant="contained"
-                    loading={saving}
-                    disabled={saving}
-                >
-                    <FormattedMessage id="cta.continue" />
-                </SafeLoadingButton>
+                <Actions saving={saving} primaryMessageId="cta.continue" />
             </form>
         </>
     );
