@@ -97,6 +97,8 @@ export const Authentication: Record<string, string> = {
     'tenant.origin.radio.content.label': `Blog`,
     'tenant.origin.radio.referral.label': `Word of Mouth`,
     'tenant.origin.radio.webinar.label': `Webinar`,
+    'tenant.origin.radio.reddit.label': `Reddit`,
+    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.header': `Tenant shared with you`,
