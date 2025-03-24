@@ -23,6 +23,17 @@ export const useEntitiesStore_capabilities_readable = () => {
     );
 };
 
+export const useEntitiesStore_capabilities_writeable = () => {
+    return useEntitiesStore(
+        useShallow((state) => [
+            ...new Set([
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
+            ]),
+        ])
+    );
+};
+
 export const useEntitiesStore_atLeastOneAdminTenant = () => {
     return useEntitiesStore(
         useShallow((state) => state.capabilities.admin.length > 0)
