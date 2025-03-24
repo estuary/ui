@@ -1,56 +1,24 @@
 import { TableCell, ToggleButtonGroup } from '@mui/material';
-import {
-    ConstraintTypes,
-    FieldSelectionType,
-    TranslatedConstraint,
-} from 'components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
+import useOnFieldActionClick from 'hooks/fieldSelection/useOnFieldActionClick';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
 import {
     useBinding_recommendFields,
     useBinding_selections,
-    useBinding_setSingleSelection,
 } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { isExcludeOnlyField, isRequireOnlyField } from 'utils/workflow-utils';
+import { FieldActionsProps } from './types';
 
-interface Props {
-    bindingUUID: string;
-    field: string;
-    constraint: TranslatedConstraint;
-    selectionType: FieldSelectionType | null;
-}
-
-const evaluateSelectionType = (
-    recommended: boolean,
-    toggleValue: FieldSelectionType,
-    selectedValue: FieldSelectionType | null,
-    targetValue: FieldSelectionType | null
-) => {
-    logRocketEvent(CustomEvents.FIELD_SELECTION, {
-        recommended,
-        selectedValue,
-        targetValue,
-        toggleValue,
-    });
-
-    return selectedValue === toggleValue && recommended
-        ? 'default'
-        : targetValue;
-};
-
-function FieldActions({ bindingUUID, field, constraint }: Props) {
+function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
     const intl = useIntl();
 
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
-
     const selections = useBinding_selections();
-    const setSingleSelection = useBinding_setSingleSelection();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -63,6 +31,8 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
         [bindingUUID, field, selections]
     );
 
+    const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
+
     const requireOnly = isRequireOnlyField(constraint.type);
     const excludeOnly = isExcludeOnlyField(constraint.type);
 
@@ -73,32 +43,17 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
     return (
         <TableCell>
             <ToggleButtonGroup
-                size="small"
                 exclusive
+                size="small"
                 sx={outlinedToggleButtonGroupStyling}
+                value={selection?.mode}
             >
                 <OutlinedToggleButton
                     color="success"
                     disabled={formActive || !recommendFields[bindingUUID]}
-                    onClick={() => {
-                        const singleValue =
-                            selection?.mode !== 'default' ? 'default' : null;
-
-                        const selectionType = evaluateSelectionType(
-                            recommendFields[bindingUUID],
-                            'default',
-                            selection?.mode ?? null,
-                            singleValue
-                        );
-
-                        setSingleSelection(
-                            bindingUUID,
-                            field,
-                            selectionType,
-                            selection?.meta
-                        );
-                    }}
-                    selected={selection?.mode === 'default'}
+                    onClick={(_event, value) =>
+                        updateSingleSelection(value, selection)
+                    }
                     size="small"
                     value="default"
                 >
@@ -109,31 +64,15 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
 
                 <OutlinedToggleButton
                     color="warning"
-                    selected={selection?.mode === 'require'}
                     value="require"
                     disabled={
                         formActive ||
                         excludeOnly ||
                         (requireOnly && !recommendFields)
                     }
-                    onClick={() => {
-                        const singleValue =
-                            selection?.mode !== 'require' ? 'require' : null;
-
-                        const selectionType = evaluateSelectionType(
-                            recommendFields[bindingUUID],
-                            'require',
-                            selection?.mode ?? null,
-                            singleValue
-                        );
-
-                        setSingleSelection(
-                            bindingUUID,
-                            field,
-                            selectionType,
-                            selection?.meta
-                        );
-                    }}
+                    onClick={(_event, value) =>
+                        updateSingleSelection(value, selection)
+                    }
                 >
                     {intl.formatMessage({
                         id: 'fieldSelection.table.cta.requireField',
@@ -142,26 +81,15 @@ function FieldActions({ bindingUUID, field, constraint }: Props) {
 
                 <OutlinedToggleButton
                     color="error"
-                    selected={selection?.mode === 'exclude'}
                     value="exclude"
                     disabled={
                         formActive ||
                         requireOnly ||
                         (excludeOnly && !recommendFields)
                     }
-                    onClick={() => {
-                        const singleValue =
-                            selection?.mode !== 'exclude' ? 'exclude' : null;
-
-                        const selectionType = evaluateSelectionType(
-                            recommendFields[bindingUUID],
-                            'exclude',
-                            selection?.mode ?? null,
-                            singleValue
-                        );
-
-                        setSingleSelection(bindingUUID, field, selectionType);
-                    }}
+                    onClick={(_event, value) =>
+                        updateSingleSelection(value, selection)
+                    }
                 >
                     {intl.formatMessage({
                         id: 'fieldSelection.table.cta.excludeField',
