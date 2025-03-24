@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import {
     PostgrestError,
     PostgrestSingleResponse,
@@ -103,8 +103,11 @@ function AcceptGrant({
         }
     };
 
+    // TODO (RegistrationProgress) get this wired up to know what step it is and use the RegistrationProgress component
     return (
         <Stack spacing={2}>
+            {saving ? <LinearProgress variant="indeterminate" /> : null}
+
             {serverError ? (
                 <AlertBox
                     severity="error"
