@@ -51,6 +51,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                     field={field}
                     labelId="fieldSelection.table.cta.selectField"
                     selection={selection}
+                    tooltipPlacement="bottom-start"
                     value="default"
                 />
 
