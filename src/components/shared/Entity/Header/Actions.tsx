@@ -1,5 +1,6 @@
 import { Stack, Toolbar } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
+import { truncateTextSx } from 'context/Theme';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import EntitySaveButton from '../Actions/SaveButton';
@@ -31,12 +32,9 @@ function HeaderActions({
                 alignItems="center"
                 sx={{
                     'ml': 'auto',
-                    '& > button': {
-                        // TODO (theme) make this use truncateTextSx
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                    },
+                    // TODO (typing) - should udpate the global typings
+                    //  to allow them to be nested in other `sx` props
+                    '& > button': truncateTextSx as any,
                 }}
             >
                 {draftId ? (
