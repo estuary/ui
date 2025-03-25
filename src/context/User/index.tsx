@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import type { BaseComponentProps } from 'types';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
+import {
+    getUserDetails,
+    logRocketConsole,
+    logRocketEvent,
+} from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { getUserDetails } from 'services/supabase';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useUserStore } from './useUserContextStore';
 

@@ -1,5 +1,5 @@
-import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
+import { DEFAULT_FILTER } from 'services/shared';
 import { ReviewSelectionStep } from '../preSave/ReviewSelection/definition';
 import type { UpdateMaterializationStepContext } from './Publish/definition';
 import { PublishStep } from './Publish/definition';

@@ -7,9 +7,8 @@ import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWo
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
+import { DEFAULT_FILTER, logRocketEvent } from 'services/shared';
 import {
-    DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
     TABLES,

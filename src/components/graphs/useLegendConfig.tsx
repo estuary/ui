@@ -5,7 +5,7 @@ import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
 import { useMemo } from 'react';
-import { DEFAULT_FILTER } from 'services/supabase';
+import { DEFAULT_FILTER } from 'services/shared';
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,

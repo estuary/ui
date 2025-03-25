@@ -1,14 +1,11 @@
 import type { User } from '@supabase/supabase-js';
+import { OAUTH_OPERATIONS } from 'api/shared';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
-import {
-    DEFAULT_FILTER,
-    getUserDetails,
-    OAUTH_OPERATIONS,
-} from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
+import { DEFAULT_FILTER, getUserDetails } from './shared';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
