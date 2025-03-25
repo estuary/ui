@@ -581,10 +581,16 @@ const getInitialState = (
                     }
 
                     // Update backfill-related state.
-                    state.backfilledBindings =
-                        mappedUUIDsAndResourceConfigs.map(
-                            ([bindingUUID, _resourceConfig]) => bindingUUID
-                        );
+                    const evaluatedBackfilledBindings =
+                        mappedUUIDsAndResourceConfigs
+                            .map(
+                                ([bindingUUID, _resourceConfig]) => bindingUUID
+                            )
+                            .filter((bindingUUID) =>
+                                state.backfilledBindings.includes(bindingUUID)
+                            );
+
+                    state.backfilledBindings = evaluatedBackfilledBindings;
 
                     state.backfillAllBindings =
                         state.backfilledBindings.length > 0 &&
@@ -650,10 +656,16 @@ const getInitialState = (
                         collection: resourceConfig.meta.collectionName,
                     };
 
-                    state.backfilledBindings =
-                        mappedUUIDsAndResourceConfigs.map(
-                            ([bindingUUID, _resourceConfig]) => bindingUUID
-                        );
+                    const evaluatedBackfilledBindings =
+                        mappedUUIDsAndResourceConfigs
+                            .map(
+                                ([bindingUUID, _resourceConfig]) => bindingUUID
+                            )
+                            .filter((bindingUUID) =>
+                                state.backfilledBindings.includes(bindingUUID)
+                            );
+
+                    state.backfilledBindings = evaluatedBackfilledBindings;
 
                     state.backfillAllBindings =
                         state.backfilledBindings.length > 0 &&
