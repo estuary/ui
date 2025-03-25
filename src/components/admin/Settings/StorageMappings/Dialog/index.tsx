@@ -3,7 +3,7 @@ import StorageMappingActions from 'components/admin/Settings/StorageMappings/Dia
 import StorageMappingContent from 'components/admin/Settings/StorageMappings/Dialog/Content';
 import StorageMappingTitle from 'components/admin/Settings/StorageMappings/Dialog/Title';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 interface Props {
     open: boolean;

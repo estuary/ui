@@ -6,7 +6,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { EntityToolbarProgressProps } from '../types';
+import type { EntityToolbarProgressProps } from '../types';
 
 function HeaderProgress({ waitTimes }: EntityToolbarProgressProps) {
     const generateWaitTime = waitTimes?.generate;

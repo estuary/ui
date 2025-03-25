@@ -1,8 +1,9 @@
 import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
-import { SourceCaptureState } from './types';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type { SourceCaptureState } from './types';
 
 const getInitialStateData = (): Pick<
     SourceCaptureState,

@@ -11,7 +11,7 @@ import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { unescapeString } from 'utils/misc-utils';
-import { ControllerAlertProps } from './types';
+import type { ControllerAlertProps } from './types';
 
 export default function ControllerAlert({
     error,

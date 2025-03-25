@@ -3,7 +3,7 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import MaterializeLink from '../MaterializeLink';
 
 function MaterializeButton() {

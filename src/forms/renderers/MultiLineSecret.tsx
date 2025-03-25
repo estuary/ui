@@ -1,4 +1,5 @@
-import { optionIs, RankedTester, rankWith } from '@jsonforms/core';
+import type { RankedTester } from '@jsonforms/core';
+import { optionIs, rankWith } from '@jsonforms/core';
 import {
     MaterialInputControl,
     MuiInputText,

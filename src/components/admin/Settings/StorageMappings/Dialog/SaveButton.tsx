@@ -1,4 +1,4 @@
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
@@ -8,10 +8,8 @@ import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { useTenantStore } from 'stores/Tenant/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';

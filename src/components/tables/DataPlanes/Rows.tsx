@@ -1,5 +1,5 @@
 import { Box, TableCell, TableRow, useTheme } from '@mui/material';
-import { BaseDataPlaneQuery } from 'api/dataPlanes';
+import type { BaseDataPlaneQuery } from 'api/dataPlanes';
 import SingleLineCode from 'components/content/SingleLineCode';
 import CopyCidrBlocks from 'components/shared/CopyCidrBlocks';
 import DataPlane from 'components/shared/Entity/DataPlane';

@@ -1,10 +1,11 @@
-import { AlertColor, AlertTitle, Box } from '@mui/material';
-import { ReactNode } from 'react';
+import type { AlertColor } from '@mui/material';
+import { AlertTitle, Box } from '@mui/material';
+import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import AlertBox from '../AlertBox';
-import { ExternalLinkOptions } from '../ExternalLink';
+import type { ExternalLinkOptions } from '../ExternalLink';
 import Message from './Message';
-import { ErrorDetails } from './types';
+import type { ErrorDetails } from './types';
 
 export interface ErrorProps {
     condensed?: boolean;

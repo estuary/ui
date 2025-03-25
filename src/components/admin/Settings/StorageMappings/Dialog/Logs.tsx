@@ -1,4 +1,5 @@
-import { AlertColor, Typography } from '@mui/material';
+import type { AlertColor } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import Logs from 'components/logs';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';

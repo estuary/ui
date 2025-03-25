@@ -1,7 +1,9 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import {
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type {
     AlertSubscriptionQuery,
     DataProcessingAlertQuery,
+} from 'api/alerts';
+import {
     createNotificationSubscription,
     getNotificationSubscriptionForUser,
     getTaskNotification,

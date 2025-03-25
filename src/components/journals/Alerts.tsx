@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 

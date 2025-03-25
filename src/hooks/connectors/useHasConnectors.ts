@@ -3,7 +3,8 @@ import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import { ConnectorsExist, CONNECTORS_EXIST_QUERY } from './shared';
+import type { ConnectorsExist } from './shared';
+import { CONNECTORS_EXIST_QUERY } from './shared';
 
 // TODO (connectors store) - this is temporary
 // We used to check if connectors exist with a query that returned a bunch

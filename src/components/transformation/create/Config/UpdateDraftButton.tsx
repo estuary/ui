@@ -7,14 +7,12 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'components/editor/Store/hooks';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_catalogUpdating,
@@ -27,7 +25,7 @@ import {
     useTransformationCreate_updateTransformConfigs,
 } from 'stores/TransformationCreate/hooks';
 import { SelectTableStoreNames } from 'stores/names';
-import { Transform } from 'types';
+import type { Transform } from 'types';
 import { evaluateTransformConfigs } from 'utils/derivation-utils';
 import { hasLength } from 'utils/misc-utils';
 

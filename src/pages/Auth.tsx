@@ -11,7 +11,8 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'services/shared';
-import { CommonStatuses, CustomEvents } from 'services/types';
+import type { CommonStatuses } from 'services/types';
+import { CustomEvents } from 'services/types';
 
 const trackEvent = (status: CommonStatuses) => {
     logRocketEvent(CustomEvents.LOGIN, {

@@ -10,7 +10,7 @@ import {
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
-import { BindingMetadata } from 'stores/Binding/types';
+import type { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

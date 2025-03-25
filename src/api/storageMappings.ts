@@ -1,16 +1,15 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/GlobalProviders';
+import type { Pagination, SortingProps } from 'services/supabase';
 import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    Pagination,
     RPCS,
-    SortingProps,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import { StorageMappings } from 'types';
+import type { StorageMappings } from 'types';
 
 const getStorageMappings = (
     catalogPrefix: string,

@@ -5,9 +5,10 @@ import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
+import type { FormatDateOptions } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
     formatDataPlaneName,
     getDataPlaneScope,

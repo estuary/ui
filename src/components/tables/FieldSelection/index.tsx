@@ -1,7 +1,7 @@
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 import FieldActions from 'components/editor/Bindings/FieldSelection/FieldActions';
 import TableColumnSelector from 'components/editor/Bindings/FieldSelection/TableColumnSelector';
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
+import type { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
@@ -12,7 +12,8 @@ import { useBinding_searchQuery } from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { TablePrefixes } from 'stores/Tables/hooks';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import type { SortDirection, TableColumns, TableState } from 'types';
+import { TableStatuses } from 'types';
 import FieldFilter from './FieldFilter';
 
 interface Props {

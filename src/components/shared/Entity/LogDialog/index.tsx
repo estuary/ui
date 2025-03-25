@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { useFormStateStore_message } from 'stores/FormState/hooks';
 import LogDialogContent from './Content';
-import { LogDialogProps } from './types';
+import type { LogDialogProps } from './types';
 
 const TITLE_ID = 'logs-dialog-title';
 

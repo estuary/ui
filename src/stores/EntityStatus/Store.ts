@@ -6,9 +6,11 @@ import {
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { EntityStatusState } from './types';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type { EntityStatusState } from './types';
 
 const STORE_KEY = 'entity-status';
 

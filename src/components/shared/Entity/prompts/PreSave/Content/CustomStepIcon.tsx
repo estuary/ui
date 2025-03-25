@@ -1,4 +1,5 @@
-import { CircularProgress, StepIconProps, useTheme } from '@mui/material';
+import type { StepIconProps } from '@mui/material';
+import { CircularProgress, useTheme } from '@mui/material';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { pixelSize, size } from './shared';
 

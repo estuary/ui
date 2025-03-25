@@ -1,7 +1,5 @@
-import {
-    getPublicationByIdQuery,
-    PublicationJobStatus,
-} from 'api/publications';
+import type { PublicationJobStatus } from 'api/publications';
+import { getPublicationByIdQuery } from 'api/publications';
 import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';

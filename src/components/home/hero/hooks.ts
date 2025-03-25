@@ -1,6 +1,6 @@
-import { MuiTabProps } from 'types';
+import type { MuiTabProps } from 'types';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-import { TabOptions } from './types';
+import type { TabOptions } from './types';
 
 export const TABS: MuiTabProps<TabOptions>[] = [
     {

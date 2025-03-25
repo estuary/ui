@@ -1,5 +1,5 @@
-import { JournalClient } from 'data-plane-gateway';
-import { OpsLogFlowDocument } from 'types';
+import type { JournalClient } from 'data-plane-gateway';
+import type { OpsLogFlowDocument } from 'types';
 
 export type JournalRecord<B extends {} = Record<string, any>> = B & {
     _meta: {

@@ -1,14 +1,17 @@
-import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
-import { FullSourceDictionary } from 'stores/Binding/slices/TimeTravel';
-import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import type { FullSourceDictionary } from 'stores/Binding/slices/TimeTravel';
+import type {
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'stores/Binding/types';
 import {
     generateMockBinding,
     generateMockConnectorConfig,
     generateMockResourceConfig,
 } from 'test/test-utils';
-import { SourceCaptureDef } from 'types';
+import type { SourceCaptureDef } from 'types';
 import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
-import { ConnectorConfig } from '../../../deps/flow/flow';
+import type { ConnectorConfig } from '../../../deps/flow/flow';
 
 describe('getBindingIndex', () => {
     let defaultResponse: number, matchedCollection: string;

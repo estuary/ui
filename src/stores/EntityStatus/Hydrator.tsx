@@ -4,7 +4,7 @@ import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useEntityStatusStore } from './Store';
-import { HydratorProps } from './types';
+import type { HydratorProps } from './types';
 
 export default function EntityStatusHydrator({
     catalogName,

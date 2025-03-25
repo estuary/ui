@@ -1,5 +1,5 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { InvoiceLineItem } from 'api/billing';
+import type { InvoiceLineItem } from 'api/billing';
 import MonetaryValue from 'components/tables/cells/MonetaryValue';
 
 interface RowProps {

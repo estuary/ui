@@ -7,7 +7,7 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import produce from 'immer';
 import { useCallback, useMemo } from 'react';
-import { Schema } from 'types';
+import type { Schema } from 'types';
 
 function useShards() {
     const taskSpecType = useEntityType();

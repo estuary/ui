@@ -1,6 +1,6 @@
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import produce from 'immer';
-import { NamedSet } from 'zustand/middleware';
+import type { NamedSet } from 'zustand/middleware';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
 export interface StoreWithHydration {

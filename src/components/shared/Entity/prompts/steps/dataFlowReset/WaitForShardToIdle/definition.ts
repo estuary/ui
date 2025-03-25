@@ -1,5 +1,5 @@
 import { defaultStepState } from '../../../store/shared';
-import { PromptStep } from '../../../types';
+import type { PromptStep } from '../../../types';
 import WaitForShardToIdle from '.';
 
 export interface WaitForShardToIdleStepContext {

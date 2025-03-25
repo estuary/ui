@@ -3,7 +3,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
 import TimestampDetail from './TimestampDetail';
-import { BaseDetailProps } from './types';
+import type { BaseDetailProps } from './types';
 
 export default function ControllerUpdatedDetail({
     headerMessageId,

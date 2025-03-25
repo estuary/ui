@@ -1,9 +1,5 @@
-import {
-    ArrayLayoutProps,
-    optionIs,
-    RankedTester,
-    rankWith,
-} from '@jsonforms/core';
+import type { ArrayLayoutProps, RankedTester } from '@jsonforms/core';
+import { optionIs, rankWith } from '@jsonforms/core';
 import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
 import { Options } from 'types/jsonforms';
 import { Unwrapped } from '@jsonforms/material-renderers';

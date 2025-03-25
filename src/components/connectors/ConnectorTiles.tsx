@@ -11,17 +11,17 @@ import ConnectorCard from 'components/connectors/card';
 import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'context/Theme';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import type { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
-import {
+import type {
     EntityWithCreateWorkflow,
     TableIntlConfig,
     TableState,
-    TableStatuses,
 } from 'types';
+import { TableStatuses } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
 import ConnectorCardDetails from './card/Details';

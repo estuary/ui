@@ -25,20 +25,17 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
-import {
-    Autocomplete,
+import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import type {
     AutocompleteRenderOptionState,
-    Box,
     FilterOptionsState,
-    MenuList,
-    Stack,
-    Typography,
 } from '@mui/material';
+import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
 import { defaultOutline_hovered } from 'context/Theme';
 
-import React, { ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 import Option from './Option';

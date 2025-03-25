@@ -1,8 +1,7 @@
-import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
-import {
-    MaterialLayoutRenderer,
-    MaterialLayoutRendererProps,
-} from '@jsonforms/material-renderers';
+import type { RankedTester } from '@jsonforms/core';
+import { rankWith, uiTypeIs } from '@jsonforms/core';
+import type { MaterialLayoutRendererProps } from '@jsonforms/material-renderers';
+import { MaterialLayoutRenderer } from '@jsonforms/material-renderers';
 import {
     Accordion,
     AccordionDetails,

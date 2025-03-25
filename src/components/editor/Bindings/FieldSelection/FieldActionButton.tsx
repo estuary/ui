@@ -4,9 +4,9 @@ import {
     useBinding_recommendFields,
     useBinding_setMultiSelection,
 } from 'stores/Binding/hooks';
-import { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
+import type { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
 import { isRequireOnlyField } from 'utils/workflow-utils';
-import { CompositeProjection, FieldSelectionType } from './types';
+import type { CompositeProjection, FieldSelectionType } from './types';
 
 interface Props {
     bindingUUID: string;

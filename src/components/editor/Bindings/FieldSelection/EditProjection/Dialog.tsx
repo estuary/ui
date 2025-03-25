@@ -8,8 +8,8 @@ import {
     Typography,
 } from '@mui/material';
 import FieldEditor from 'components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
-import { Projection } from 'components/editor/Bindings/FieldSelection/types';
-import { Dispatch, SetStateAction } from 'react';
+import type { Projection } from 'components/editor/Bindings/FieldSelection/types';
+import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_currentCollection } from 'stores/Binding/hooks';
 

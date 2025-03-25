@@ -4,7 +4,7 @@ import { supabaseClient } from 'context/GlobalProviders';
 import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
-import { MagicLinkProps } from './types';
+import type { MagicLinkProps } from './types';
 import useRedirectPath from './useRedirectPath';
 
 const loginSettings = getLoginSettings();

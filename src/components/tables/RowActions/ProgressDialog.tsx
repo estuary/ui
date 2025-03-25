@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressDialogProps } from './types';
+import type { ProgressDialogProps } from './types';
 
 function ProgressDialog({
     selectedEntities,

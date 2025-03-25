@@ -1,4 +1,4 @@
-import { PopoverOrigin } from '@mui/material';
+import type { PopoverOrigin } from '@mui/material';
 import { hasLength } from 'utils/misc-utils';
 import { DATE_TIME_RE } from 'validation';
 

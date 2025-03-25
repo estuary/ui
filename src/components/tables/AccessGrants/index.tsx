@@ -11,7 +11,8 @@ import UserRows, {
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import TableHydrator from 'stores/Tables/Hydrator';
-import { TablePrefix, useTableState } from 'stores/Tables/hooks';
+import type { TablePrefix } from 'stores/Tables/hooks';
+import { useTableState } from 'stores/Tables/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import RowSelector from '../RowActions/AccessGrants/RowSelector';
 

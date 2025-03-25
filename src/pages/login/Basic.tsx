@@ -7,7 +7,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
-import { SupportedProvider } from 'types/authProviders';
+import type { SupportedProvider } from 'types/authProviders';
 import { getLoginSettings } from 'utils/env-utils';
 import LoginWrapper from './Wrapper';
 

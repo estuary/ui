@@ -3,10 +3,8 @@ import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton
 import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { selectableTableStoreName } from './shared';
 
 function ToggleDataPlaneScope() {

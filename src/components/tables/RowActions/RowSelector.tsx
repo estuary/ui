@@ -4,14 +4,12 @@ import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Butt
 import Materialize from 'components/tables/RowActions/Materialize';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import RowSelectorCheckBox from './RowSelectorCheckBox';
 import Transform from './Transform';
-import { RowSelectorProps } from './types';
+import type { RowSelectorProps } from './types';
 
 function RowSelector({
     hideActions,

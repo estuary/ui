@@ -27,7 +27,7 @@ import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 import BillingLoadError from './LoadError';
-import { AdminBillingProps } from './types';
+import type { AdminBillingProps } from './types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 

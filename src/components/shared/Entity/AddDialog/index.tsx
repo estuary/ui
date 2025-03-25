@@ -9,7 +9,7 @@ import {
 import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import DefaultCancelButton from './DefaultCancelButton';
-import { AddDialogProps } from './types';
+import type { AddDialogProps } from './types';
 
 function AddDialog({
     entity,

@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { BackfillDataflowOptionProps } from './types';
+import type { BackfillDataflowOptionProps } from './types';
 
 function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const intl = useIntl();

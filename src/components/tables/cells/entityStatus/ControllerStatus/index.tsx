@@ -1,6 +1,6 @@
 import { Stack, TableCell, Typography } from '@mui/material';
 import StatusIndicator from './StatusIndicator';
-import { ControllerStatusProps } from './types';
+import type { ControllerStatusProps } from './types';
 
 export default function ControllerStatus({
     detail,

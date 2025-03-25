@@ -5,8 +5,8 @@ import useGlobalSearchParams, {
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
+import type { DataPlaneOption, Details } from 'stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'types';
 import { formatDataPlaneName } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';

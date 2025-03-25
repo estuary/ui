@@ -1,4 +1,4 @@
-import { ColumnProps } from 'components/tables/EntityTable/types';
+import type { ColumnProps } from 'components/tables/EntityTable/types';
 import { useMemo } from 'react';
 import { catalogNameColumn, publishedColumn } from './shared';
 

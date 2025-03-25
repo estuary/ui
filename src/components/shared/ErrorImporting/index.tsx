@@ -7,7 +7,7 @@ import {
 } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import Error from 'components/shared/Error';
-import { FallbackProps } from 'react-error-boundary';
+import type { FallbackProps } from 'react-error-boundary';
 import { getWithExpiry, setWithExpiry } from './shared';
 
 export function ErrorImporting({ error }: FallbackProps) {

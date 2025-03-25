@@ -1,9 +1,10 @@
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
-import { SyntheticEvent, useState } from 'react';
+import type { SyntheticEvent } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ScopeMenuItem from './MenuItem';
-import { Scopes } from './types';
+import type { Scopes } from './types';
 
 interface MenuOption {
     title: string;

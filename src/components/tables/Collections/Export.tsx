@@ -1,4 +1,4 @@
-import { CollectionQueryWithStats } from 'api/liveSpecsExt';
+import type { CollectionQueryWithStats } from 'api/liveSpecsExt';
 import ExportButton from '../shared/ExportButton';
 import useCollectionExport from './useCollectionExport';
 

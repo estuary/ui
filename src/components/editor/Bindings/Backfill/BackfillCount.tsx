@@ -8,7 +8,7 @@ import {
     useBinding_evolvedCollections_count,
 } from 'stores/Binding/hooks';
 import { ENTITY_SETTINGS } from 'settings/entity';
-import { BackfillCountProps } from './types';
+import type { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();

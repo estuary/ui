@@ -8,14 +8,13 @@ import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useMemo } from 'react';
-import { PromptStep } from '../types';
+import type { PromptStep } from '../types';
 import {
     DataFlowResetSteps,
+    DefaultSteps,
     getInitialDataFlowResetContext,
 } from '../steps/dataFlowReset/shared';
-import { PublishStep } from '../steps/preSave/Publish/definition';
-import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
-import { PreSavePromptStore } from './types';
+import type { PreSavePromptStore } from './types';
 import { defaultStepState } from './shared';
 
 const getInitialState = (): Pick<
@@ -48,8 +47,7 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
                             state.context.dialogMessageId =
                                 'resetDataFlow.dialog.title';
                         } else {
-                            newSteps.push(ReviewSelectionStep);
-                            newSteps.push(PublishStep);
+                            newSteps.push(...DefaultSteps);
 
                             state.context.loggingEvent =
                                 CustomEvents.ENTITY_SAVE;

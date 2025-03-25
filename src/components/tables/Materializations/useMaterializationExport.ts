@@ -1,6 +1,6 @@
-import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
+import type { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { useCallback, useMemo } from 'react';
-import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
+import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import { formatBytes } from '../cells/stats/shared';

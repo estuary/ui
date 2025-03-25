@@ -1,6 +1,6 @@
 import FullPageError from 'components/fullPage/Error';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { useHydrateState } from './hooks';
 import { useEntitiesStore } from './Store';
 

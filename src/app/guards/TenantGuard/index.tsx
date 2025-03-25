@@ -4,7 +4,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import OnboardGuard from '../OnboardGuard';
 import SsoUserMessage from './SsoUserMessage';
 

@@ -5,7 +5,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
 import AlertBox from 'components/shared/AlertBox';
@@ -22,7 +22,7 @@ import {
     jobStatusQuery,
     trackEvent,
 } from './shared';
-import { DirectiveProps } from './types';
+import type { DirectiveProps } from './types';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';

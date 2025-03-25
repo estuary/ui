@@ -7,10 +7,8 @@ import {
     TABLES,
 } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from './shared';
+import type { ConnectorWithTagDetailQuery } from './shared';
+import { CONNECTOR_WITH_TAG_QUERY } from './shared';
 
 const defaultResponse: ConnectorWithTagDetailQuery[] = [];
 

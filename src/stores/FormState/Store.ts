@@ -1,13 +1,16 @@
 import produce from 'immer';
 import { logRocketConsole } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { MessagePrefixes } from 'types';
+import type { MessagePrefixes } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { FormStateStoreNames } from '../names';
-import { EntityFormState, FormState, FormStatus } from './types';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type { FormStateStoreNames } from '../names';
+import type { EntityFormState, FormState } from './types';
+import { FormStatus } from './types';
 
 const formActive = (status: FormStatus) => {
     return (

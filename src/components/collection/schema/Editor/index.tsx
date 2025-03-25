@@ -7,7 +7,7 @@ import {
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
 } from 'components/editor/Bindings/Store/hooks';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
+import type { AllowedScopes } from 'components/editor/MonacoEditor/types';
 import KeyAutoComplete from 'components/schema/KeyAutoComplete';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
 import { useEntityType } from 'context/EntityContext';
@@ -15,7 +15,7 @@ import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
-import { Schema } from 'types';
+import type { Schema } from 'types';
 import { getProperSchemaScope } from 'utils/schema-utils';
 import CollectionSchemaEditorSkeleton from './Skeleton';
 

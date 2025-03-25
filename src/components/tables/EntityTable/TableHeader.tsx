@@ -2,10 +2,10 @@ import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { getStickyTableCell } from 'context/Theme';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import { SortDirection } from 'types';
+import type { SelectTableStoreNames } from 'stores/names';
+import type { SortDirection } from 'types';
 import { getTableComponents } from 'utils/table-utils';
-import { ColumnProps } from './types';
+import type { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];

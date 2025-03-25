@@ -10,7 +10,8 @@ import ErrorLogs from 'components/shared/Entity/Error/Logs';
 import Error from 'components/shared/Error';
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressStates, SharedProgressProps } from './types';
+import type { SharedProgressProps } from './types';
+import { ProgressStates } from './types';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 

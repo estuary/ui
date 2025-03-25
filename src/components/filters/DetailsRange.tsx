@@ -1,5 +1,6 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
-import { DataByHourRange, DataGrains } from 'components/graphs/types';
+import type { DataByHourRange } from 'components/graphs/types';
+import { DataGrains } from 'components/graphs/types';
 import { cardHeaderSx, linkButtonSx } from 'context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';

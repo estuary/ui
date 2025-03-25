@@ -1,4 +1,4 @@
-import { InputBaseComponentProps } from '@mui/material';
+import type { InputBaseComponentProps } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'context/EntityContext';
 import { useIntl } from 'react-intl';

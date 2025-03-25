@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import { TableColumns } from 'types';
+import type { TableColumns } from 'types';
 
 export const columns: TableColumns[] = [
     {

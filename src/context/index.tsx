@@ -2,7 +2,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import IconoirProvider from 'context/Iconoir';
 import NotificationProvider from 'context/Notifications';
 import SwrConfigProvider from 'context/SWR';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import ThemeProvider from 'context/Theme';
 import ContentProvider from 'context/Content';
 import { SidePanelDocsProvider } from 'context/SidePanelDocs';

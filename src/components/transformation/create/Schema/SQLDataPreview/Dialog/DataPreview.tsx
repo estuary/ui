@@ -1,6 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { dataGridListStyling } from 'context/Theme';
-import { JournalRecord } from 'hooks/journals/types';
+import type { JournalRecord } from 'hooks/journals/types';
 import { JsonPointer } from 'json-ptr';
 import { random } from 'lodash';
 import { useEffect } from 'react';

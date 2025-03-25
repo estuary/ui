@@ -1,14 +1,11 @@
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
+import type { ListChildComponentProps } from 'react-window';
+import { VariableSizeList } from 'react-window';
+import type { OpsLogFlowDocument } from 'types';
+import { TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
-import {
-    MutableRefObject,
-    useCallback,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import type { MutableRefObject } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { isEmpty } from 'lodash';
 
 import { logRocketEvent } from 'services/shared';

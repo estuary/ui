@@ -1,5 +1,5 @@
 import { TableRow, useTheme } from '@mui/material';
-import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
+import type { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import Connector from 'components/tables/cells/Connector';
 import RowSelect from 'components/tables/cells/RowSelect';
@@ -8,7 +8,7 @@ import { useEntityType } from 'context/EntityContext';
 import { getEntityTableRowSx } from 'context/Theme';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'stores/names';
-import { StatsResponse } from 'stores/Tables/Store';
+import type { StatsResponse } from 'stores/Tables/Store';
 import EditTask from '../cells/EditTask';
 import EntityNameLink from '../cells/EntityNameLink';
 import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';

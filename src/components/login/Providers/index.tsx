@@ -2,7 +2,7 @@ import { Divider, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
 import LoginButton from './LoginButton';
-import { LoginProvidersProps } from './types';
+import type { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
 import SSOButton from './buttons/SSO';
 

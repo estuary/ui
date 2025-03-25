@@ -11,7 +11,7 @@ import {
     useJournalData,
     useJournalsForCollection,
 } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useTenantHidesDataPreview } from 'hooks/useTenants';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';

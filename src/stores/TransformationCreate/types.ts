@@ -1,4 +1,4 @@
-import { Transform_Shuffle } from 'types';
+import type { Transform_Shuffle } from 'types';
 
 type DerivationLanguage = 'sql' | 'typescript';
 

@@ -23,12 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import {
-    ControlProps,
-    isDateControl,
-    RankedTester,
-    rankWith,
-} from '@jsonforms/core';
+import type { ControlProps, RankedTester } from '@jsonforms/core';
+import { isDateControl, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Hidden, Stack } from '@mui/material';
 import DatePickerCTA from 'components/shared/pickers/DatePickerCTA';

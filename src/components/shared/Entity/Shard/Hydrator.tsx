@@ -1,5 +1,5 @@
 import useShardHydration from 'hooks/shards/useShardHydration';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import useDetailsEntityTaskTypes from '../Details/useDetailsEntityTaskTypes';
 
 interface Props extends BaseComponentProps {

@@ -7,10 +7,8 @@ import {
     useBillingTable_setHydrated,
     useBillingTable_setHydrationErrorsExist,
 } from 'stores/Tables/Billing/hooks';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 
 function TenantOptions() {
     const resetBillingState = useBillingStore((state) => state.resetState);

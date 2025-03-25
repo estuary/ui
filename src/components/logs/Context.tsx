@@ -8,7 +8,7 @@ import {
     useState,
 } from 'react';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
-import { BaseComponentProps, ViewLogs_Line } from 'types';
+import type { BaseComponentProps, ViewLogs_Line } from 'types';
 import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {

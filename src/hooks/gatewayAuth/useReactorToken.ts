@@ -1,5 +1,6 @@
 import { useUserStore } from 'context/User/useUserContextStore';
-import { decodeJwt, JWTPayload } from 'jose';
+import type { JWTPayload } from 'jose';
+import { decodeJwt } from 'jose';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
 import { authorizeTask, formatEndpointAddress } from 'utils/dataPlane-utils';

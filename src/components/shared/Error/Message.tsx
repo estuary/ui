@@ -6,9 +6,9 @@ import {
     retryAfterFailure,
 } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import { ExternalLinkOptions } from '../ExternalLink';
+import type { ExternalLinkOptions } from '../ExternalLink';
 import Instructions from './Instructions';
-import { ErrorDetails } from './types';
+import type { ErrorDetails } from './types';
 
 interface Props {
     error?: ErrorDetails;

@@ -1,6 +1,6 @@
 import { Avatar, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     stepNumber: number;

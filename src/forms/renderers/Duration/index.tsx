@@ -23,13 +23,12 @@
   THE SOFTWARE.
 */
 
+import type { ControlProps, RankedTester } from '@jsonforms/core';
 import {
     and,
-    ControlProps,
     formatIs,
     optionIs,
     or,
-    RankedTester,
     rankWith,
     uiTypeIs,
 } from '@jsonforms/core';

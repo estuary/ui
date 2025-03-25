@@ -1,7 +1,7 @@
 import { Box, Stack, useTheme } from '@mui/material';
 import { Check, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { SourceCaptureChipOptionProps } from './types';
+import type { SourceCaptureChipOptionProps } from './types';
 
 function SourceCaptureChipOption({
     enabled,

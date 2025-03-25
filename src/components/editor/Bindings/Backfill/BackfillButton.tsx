@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
-import { BooleanString } from 'components/shared/buttons/types';
+import type { BooleanString } from 'components/shared/buttons/types';
 import { useEntityWorkflow } from 'context/Workflow';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import { useCallback, useMemo } from 'react';
@@ -21,7 +21,7 @@ import {
     useFormStateStore_setFormState,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { BindingMetadata } from 'types';
+import type { BindingMetadata } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
@@ -29,7 +29,7 @@ import BackfillDataFlowOption from './BackfillDataFlowOption';
 import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
 import EvolvedAlert from './EvolvedAlert';
 import EvolvedCount from './EvolvedCount';
-import { BackfillButtonProps } from './types';
+import type { BackfillButtonProps } from './types';
 import useUpdateBackfillCounter from './useUpdateBackfillCounter';
 
 function BackfillButton({

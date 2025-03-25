@@ -21,7 +21,7 @@ import {
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import useDiscoverConfigEncrypt from './useCaptureConfigEncrypt';
 import useDiscoverDraftUpdate from './useCaptureDraftUpdate';
 import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';

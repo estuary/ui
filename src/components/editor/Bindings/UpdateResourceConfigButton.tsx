@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import { useState } from 'react';

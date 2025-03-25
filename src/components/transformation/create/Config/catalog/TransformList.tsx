@@ -1,6 +1,6 @@
 import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
 import EntityList from 'components/shared/Entity/List';
-import { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
+import type { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
 import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo, useState } from 'react';
 import { useTransformationCreate_transformConfigs } from 'stores/TransformationCreate/hooks';

@@ -1,5 +1,5 @@
 import { getTypedAutoCompleteDefaults } from 'components/shared/AutoComplete/DefaultProps';
-import { AutoCompleteOption } from './types';
+import type { AutoCompleteOption } from './types';
 
 export const choices = ['leaveEmpty', 'fromSourceName'] as const;
 

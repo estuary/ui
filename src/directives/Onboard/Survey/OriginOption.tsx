@@ -1,7 +1,7 @@
 import { Chip, FormControlLabel, Radio } from '@mui/material';
 import { chipOutlinedStyling } from 'context/Theme';
 import { useOnboardingStore_surveyResponse } from 'directives/Onboard/Store/hooks';
-import { OriginOptionProps } from './types';
+import type { OriginOptionProps } from './types';
 
 function OriginOption({ optionLabel: option }: OriginOptionProps) {
     const surveyResponse = useOnboardingStore_surveyResponse();

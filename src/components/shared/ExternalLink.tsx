@@ -1,7 +1,8 @@
-import { Button, ButtonTypeMap, SxProps } from '@mui/material';
+import type { ButtonTypeMap, SxProps } from '@mui/material';
+import { Button } from '@mui/material';
 import { linkButtonSx } from 'context/Theme';
 import { OpenNewWindow } from 'iconoir-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export interface ExternalLinkOptions {
     color?: ButtonTypeMap['props']['color'];

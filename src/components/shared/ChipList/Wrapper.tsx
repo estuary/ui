@@ -1,17 +1,11 @@
-import {
-    Box,
-    Chip as MuiChip,
-    styled,
-    SxProps,
-    Theme,
-    Tooltip,
-} from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
 import { defaultOutline, underlineTextSx } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { stripPathing } from 'utils/misc-utils';
 import LinkWrapper from '../LinkWrapper';
-import { ChipWrapperProps } from './types';
+import type { ChipWrapperProps } from './types';
 
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),

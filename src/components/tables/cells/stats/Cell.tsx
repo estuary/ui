@@ -3,7 +3,7 @@ import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx
 import { textLoadingColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { StatsCellProps } from './types';
+import type { StatsCellProps } from './types';
 
 const StatsCell = ({
     failed,

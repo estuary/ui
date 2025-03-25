@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 import { isArray } from 'lodash';
-import { RefreshTokenData } from 'types';
+import type { RefreshTokenData } from 'types';
 
 const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base';
 

@@ -11,10 +11,8 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import BindingHydrator from 'stores/Binding/Hydrator';
 import { useBinding_resetState } from 'stores/Binding/hooks';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 

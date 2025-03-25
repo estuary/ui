@@ -1,10 +1,5 @@
-import {
-    and,
-    ControlProps,
-    isStringControl,
-    RankedTester,
-    rankWith,
-} from '@jsonforms/core';
+import type { ControlProps, RankedTester } from '@jsonforms/core';
+import { and, isStringControl, rankWith } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { GridWrapper } from 'forms/renderers/responsive/GridWrapper';

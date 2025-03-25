@@ -1,6 +1,6 @@
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import useEntitySaveHelpers from '../hooks/useEntitySaveHelpers';
-import { EntityTestButtonProps } from './types';
+import type { EntityTestButtonProps } from './types';
 
 function EntityTestButton({ disabled, logEvent }: EntityTestButtonProps) {
     const { buttonDisabled, formTesting, onFailure } =

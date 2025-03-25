@@ -1,7 +1,8 @@
 import { isBefore } from 'date-fns';
-import { decodeJwt, JWTPayload } from 'jose';
+import type { JWTPayload } from 'jose';
+import { decodeJwt } from 'jose';
 import { LRUMap } from 'mnemonist';
-import { TaskAuthorizationResponse } from 'utils/dataPlane-utils';
+import type { TaskAuthorizationResponse } from 'utils/dataPlane-utils';
 
 // The limit of 10 is arbitrary.
 const taskAuthorizationCache = new LRUMap<string, TaskAuthorizationResponse>(

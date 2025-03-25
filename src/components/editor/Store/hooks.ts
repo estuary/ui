@@ -4,15 +4,16 @@ import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provid
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecQuery, useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
 import { useShallow } from 'zustand/react/shallow';
-import { EditorStoreState } from './types';
+import type { EditorStoreState } from './types';
 
 interface SelectorParams {
     localScope?: boolean;

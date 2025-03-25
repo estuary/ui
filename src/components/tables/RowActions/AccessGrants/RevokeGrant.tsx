@@ -2,16 +2,15 @@ import { deleteRoleGrant } from 'api/roleGrants';
 import { deleteUserGrant } from 'api/userGrants';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'context/Zustand/provider';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
 import { useMount } from 'react-use';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import Progress from './Progress';
-import { AccessGrantRowConfirmation } from './types';
+import type { AccessGrantRowConfirmation } from './types';
 
 export interface Props {
     grant: AccessGrantRowConfirmation;

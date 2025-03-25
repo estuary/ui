@@ -5,9 +5,9 @@ import {
     getCollections,
     getEnabledCollectionNames,
 } from './shared';
-import { FullSourceJsonForms } from './slices/TimeTravel';
+import type { FullSourceJsonForms } from './slices/TimeTravel';
 import { useBindingStore } from './Store';
-import { CollectionMetadata, ResourceConfig } from './types';
+import type { CollectionMetadata, ResourceConfig } from './types';
 
 export const useBinding_hydrated = () => {
     return useBindingStore((state) => state.hydrated);

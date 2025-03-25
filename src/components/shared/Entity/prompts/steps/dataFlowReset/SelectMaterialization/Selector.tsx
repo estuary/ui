@@ -6,12 +6,13 @@ import {
     Typography,
 } from '@mui/material';
 import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
+import type { LiveSpecsExt_Related } from 'api/liveSpecsExt';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { RelatedMaterializationSelectorProps } from './types';
+import type { RelatedMaterializationSelectorProps } from './types';
 import SelectorOption from './SelectorOption';
 import NoMaterializationsFound from './NoMaterializationsFound';
 

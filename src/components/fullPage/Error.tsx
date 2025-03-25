@@ -1,9 +1,10 @@
 import { Divider, Stack, Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import Error from 'components/shared/Error';
-import { ErrorDetails } from 'components/shared/Error/types';
+import type { ErrorDetails } from 'components/shared/Error/types';
 import FullPageWrapper from 'app/FullPageWrapper';
-import { ReactElement, useMemo } from 'react';
+import type { ReactElement } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 import { logRocketEvent } from 'services/shared';

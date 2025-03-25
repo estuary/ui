@@ -7,7 +7,7 @@ import { entityHeaderButtonSx } from 'context/Theme';
 
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { EntityCreateSaveButtonProps } from './types';
+import type { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
 function EntityCreateSave({

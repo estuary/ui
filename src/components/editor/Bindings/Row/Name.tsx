@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { typographyTruncation } from 'context/Theme';
 import { stripPathing } from 'utils/misc-utils';
 import BindingsSelectorErrorIndicator from './ErrorIndicator';
-import { SelectorNameProps } from './types';
+import type { SelectorNameProps } from './types';
 
 function BindingsSelectorName({
     bindingUUID,

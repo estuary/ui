@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { isArray, isEqual } from 'lodash';
-import { BillingState, DataVolumeByTask } from 'stores/Billing/types';
+import type { BillingState, DataVolumeByTask } from 'stores/Billing/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -13,7 +13,8 @@ import {
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,

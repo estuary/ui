@@ -4,7 +4,7 @@ import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { persistOptions } from './shared';
-import { DetailsUsageState } from './types';
+import type { DetailsUsageState } from './types';
 
 export const useDetailsUsageStore = create<DetailsUsageState>()(
     persist(

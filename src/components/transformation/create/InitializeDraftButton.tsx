@@ -20,7 +20,7 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
-import { TransformConfig } from 'stores/TransformationCreate/types';
+import type { TransformConfig } from 'stores/TransformationCreate/types';
 import {
     generateInitialSpec,
     templateTransformConfig,

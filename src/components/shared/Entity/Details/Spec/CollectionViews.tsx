@@ -8,7 +8,7 @@ import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkele
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
-import { SpecPresentation } from 'components/shared/Entity/Details/Spec/index';
+import type { SpecPresentation } from 'components/shared/Entity/Details/Spec/index';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,

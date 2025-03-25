@@ -14,7 +14,7 @@ import {
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsActive,
 } from 'stores/SchemaEvolution/hooks';
-import { Schema } from 'types';
+import type { Schema } from 'types';
 import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useAutoDiscovery() {

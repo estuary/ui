@@ -3,7 +3,7 @@ import { useBinding_recommendFields } from 'stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { hasLength } from 'utils/misc-utils';
 import FieldActionButton from './FieldActionButton';
-import { CompositeProjection } from './types';
+import type { CompositeProjection } from './types';
 
 interface Props {
     bindingUUID: string;

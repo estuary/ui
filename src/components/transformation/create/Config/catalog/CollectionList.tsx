@@ -3,10 +3,11 @@ import CatalogListItem from 'components/transformation/create/Config/catalog/Cat
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { DerivationAttribute } from 'stores/TransformationCreate/types';
+import type { ListChildComponentProps } from 'react-window';
+import { FixedSizeList } from 'react-window';
+import type { DerivationAttribute } from 'stores/TransformationCreate/types';
 import { hasLength } from 'utils/misc-utils';
-import { CatalogListContent } from './CatalogList';
+import type { CatalogListContent } from './CatalogList';
 
 interface Props {
     content: CatalogListContent[];

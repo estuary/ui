@@ -1,3 +1,4 @@
+import type { Theme } from '@mui/material';
 import {
     Box,
     Stack,
@@ -5,7 +6,6 @@ import {
     StepConnector,
     StepLabel,
     Stepper,
-    Theme,
     Typography,
     stepConnectorClasses,
     styled,

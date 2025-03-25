@@ -1,9 +1,9 @@
 import { TableCell, ToggleButtonGroup } from '@mui/material';
-import {
-    ConstraintTypes,
+import type {
     FieldSelectionType,
     TranslatedConstraint,
 } from 'components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import FieldActionButton from 'components/tables/cells/fieldSelection/FieldActionButton';
 import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { useMemo } from 'react';

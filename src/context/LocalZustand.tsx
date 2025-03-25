@@ -1,10 +1,8 @@
-import {
-    createContext as createReactContext,
-    ReactNode,
-    useContext,
-} from 'react';
-import { StoreName } from 'stores/names';
-import { StoreApi, useStore } from 'zustand';
+import type { ReactNode } from 'react';
+import { createContext as createReactContext, useContext } from 'react';
+import type { StoreName } from 'stores/names';
+import type { StoreApi } from 'zustand';
+import { useStore } from 'zustand';
 
 interface LocalZustandProviderProps {
     children: ReactNode;

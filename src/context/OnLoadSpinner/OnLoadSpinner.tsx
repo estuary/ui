@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { useOnLoadSpinner } from './OnLoadSpinnerContext';
 
 interface Props extends BaseComponentProps {

@@ -1,11 +1,12 @@
 import produce from 'immer';
 import { intersection, omit } from 'lodash';
-import { TransformCreateStoreNames } from 'stores/names';
+import type { TransformCreateStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import {
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type {
     MigrationDictionary,
     TransformConfigDictionary,
     TransformCreateState,

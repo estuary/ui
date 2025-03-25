@@ -4,7 +4,7 @@ import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
 import { SelectTableStoreNames } from 'stores/names';
 import { generateDisabledSpec } from 'utils/entity-utils';
 import RowActionConfirmation from '../Shared/Confirmation';
-import { DisableEnableButtonProps } from './types';
+import type { DisableEnableButtonProps } from './types';
 
 function DisableEnableButton({
     enabling,

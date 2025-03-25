@@ -10,7 +10,7 @@ import {
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useShallow } from 'zustand/react/shallow';
-import { SectionWrapperProps } from './types';
+import type { SectionWrapperProps } from './types';
 
 export default function SectionWrapper({
     alertMessageId,

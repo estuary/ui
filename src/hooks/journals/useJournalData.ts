@@ -14,7 +14,7 @@ import {
 } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import { loadDocuments } from './shared';
-import { LoadDocumentsOffsets } from './types';
+import type { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
 

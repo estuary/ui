@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Box, Table, TableContainer } from '@mui/material';
-import { VariableSizeList } from 'react-window';
+import type { VariableSizeList } from 'react-window';
 import { defaultOutlineColor } from 'context/Theme';
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import EntityTableHeader from '../EntityTable/TableHeader';

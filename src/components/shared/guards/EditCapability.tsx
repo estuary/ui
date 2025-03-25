@@ -2,7 +2,7 @@ import AlertBox from 'components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'context/EntityContext';
 import useCanEditEntity from 'hooks/useCanEditEntity';
 import { useIntl } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 function EditCapabilityGuard({ children }: BaseComponentProps) {
     const intl = useIntl();

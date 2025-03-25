@@ -4,7 +4,7 @@ import FullPageWrapper from 'app/FullPageWrapper';
 import { createOnboardingStore } from 'directives/Onboard/Store/create';
 import { useMemo } from 'react';
 import { OnboardingStoreNames } from 'stores/names';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import CustomerQuote from 'directives/Onboard/CustomerQuote';
 import { Grid } from '@mui/material';
 import useDirectiveGuard from './hooks';

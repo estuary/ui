@@ -1,5 +1,5 @@
 import { supabaseClient } from 'context/GlobalProviders';
-import { UserInfoSummary } from 'context/UserInfoSummary/types';
+import type { UserInfoSummary } from 'context/UserInfoSummary/types';
 import { RPCS } from 'services/supabase';
 
 export const getUserInfoSummary = () => {

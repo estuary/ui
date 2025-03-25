@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { formatHttpUrl, isHttp } from 'utils/dataPlane-utils';
 import ExternalLink from '../ExternalLink';
-import { EndpointLinkProps } from './types';
+import type { EndpointLinkProps } from './types';
 
 export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     const intl = useIntl();

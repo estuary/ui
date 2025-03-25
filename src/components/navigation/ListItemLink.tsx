@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import RouterLink from 'components/navigation/RouterLink';
 import { NavWidths } from 'context/Theme';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {

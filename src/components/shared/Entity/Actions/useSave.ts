@@ -17,7 +17,7 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { DEFAULT_FILTER } from 'services/supabase';
-import { CustomEvents } from 'services/types';
+import type { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,

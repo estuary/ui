@@ -1,6 +1,6 @@
 import { Divider, Stack } from '@mui/material';
 import NumberDetail from './NumberDetail';
-import { AutoDiscoverChangesProps } from './types';
+import type { AutoDiscoverChangesProps } from './types';
 
 export default function AutoDiscoverChanges({
     added,

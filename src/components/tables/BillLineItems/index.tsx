@@ -1,5 +1,6 @@
 import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
-import { StripeInvoice, getTenantInvoice } from 'api/billing';
+import type { StripeInvoice } from 'api/billing';
+import { getTenantInvoice } from 'api/billing';
 import Rows from 'components/tables/BillLineItems/Rows';
 import TotalLines from 'components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
@@ -11,7 +12,8 @@ import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
 import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns, TableStatuses } from 'types';
+import type { TableColumns } from 'types';
+import { TableStatuses } from 'types';
 
 export const columns: TableColumns[] = [
     {

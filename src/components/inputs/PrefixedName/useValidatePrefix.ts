@@ -1,4 +1,4 @@
-import {
+import type {
     PrefixedName_Change,
     PrefixedName_Errors,
 } from 'components/inputs/PrefixedName/types';

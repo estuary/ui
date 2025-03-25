@@ -1,10 +1,10 @@
 import { ListItemText } from '@mui/material';
-import {
-    DataGrid,
+import type {
     GridColDef,
     GridRenderCellParams,
     GridRowSelectionModel,
 } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import {
     useEditorStore_isEditing,
     useEditorStore_isSaving,

@@ -1,6 +1,6 @@
 import { useZustandStore } from 'context/Zustand/provider';
 import { GlobalStoreNames } from 'stores/names';
-import { QueuedTasksStore } from './types';
+import type { QueuedTasksStore } from './types';
 
 export const useQueuedTasksStore_publications = () => {
     return useZustandStore<QueuedTasksStore, QueuedTasksStore['publications']>(

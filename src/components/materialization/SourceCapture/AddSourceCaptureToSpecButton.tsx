@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ import {
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { SourceCaptureDef } from 'types';
+import type { SourceCaptureDef } from 'types';
 import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
 

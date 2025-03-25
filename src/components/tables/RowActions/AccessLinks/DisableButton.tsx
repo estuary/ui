@@ -10,12 +10,10 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { getPathWithParams } from 'utils/misc-utils';
-import { RowConfirmation } from '../types';
+import type { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

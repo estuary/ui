@@ -31,15 +31,9 @@
 //      the focus event and not trigger focus.
 //
 import React, { useState } from 'react';
-import { CellProps, WithClassname } from '@jsonforms/core';
-import {
-    IconButton,
-    Input,
-    InputAdornment,
-    InputBaseComponentProps,
-    InputProps,
-    useTheme,
-} from '@mui/material';
+import type { CellProps, WithClassname } from '@jsonforms/core';
+import type { InputBaseComponentProps, InputProps } from '@mui/material';
+import { IconButton, Input, InputAdornment, useTheme } from '@mui/material';
 import merge from 'lodash/merge';
 import Close from '@mui/icons-material/Close';
 import { useDebouncedChange } from '@jsonforms/material-renderers';

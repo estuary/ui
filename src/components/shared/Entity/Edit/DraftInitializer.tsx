@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 function DraftInitializer({ children }: BaseComponentProps) {
     const initializeTaskDraft = useInitializeTaskDraft();

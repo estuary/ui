@@ -5,10 +5,8 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'stores/ShardDetail/hooks';
-import {
-    ShardEntityTypes,
-    ShardStatusMessageIds,
-} from 'stores/ShardDetail/types';
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
+import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 
 interface Props {
     name: string;

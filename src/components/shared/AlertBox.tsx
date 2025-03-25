@@ -8,7 +8,7 @@ import {
 } from 'iconoir-react';
 import { forwardRef, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { AlertBoxProps } from './types';
+import type { AlertBoxProps } from './types';
 
 const SHARED_STYLING = {
     borderRadius: 2,

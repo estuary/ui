@@ -1,20 +1,20 @@
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { getDraftSpecsByDraftId } from 'api/draftSpecs';
 import { getSchema_Resource } from 'api/hydration';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import type { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
 import { difference, intersection } from 'lodash';
 import { BASE_ERROR } from 'services/supabase';
 import { getInitialHydrationData } from 'stores/extensions/Hydration';
 import { populateErrors } from 'stores/utils';
-import { Entity, Schema } from 'types';
+import type { Entity, Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { formatCaptureInterval } from 'utils/time-utils';
 import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
-import { StoreApi } from 'zustand';
+import type { StoreApi } from 'zustand';
 import { getInitialFieldSelectionData } from './slices/FieldSelection';
 import { getInitialTimeTravelData } from './slices/TimeTravel';
-import {
+import type {
     BindingChanges,
     Bindings,
     BindingState,

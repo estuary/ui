@@ -1,6 +1,6 @@
-import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import {
+import type { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
+import type { StoreWithHydration } from 'stores/extensions/Hydration';
+import type {
     EntityWithCreateWorkflow,
     EntityWorkflow,
     JsonFormsData,

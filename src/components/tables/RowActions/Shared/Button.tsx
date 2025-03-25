@@ -4,12 +4,10 @@ import { useConfirmationModalContext } from 'context/Confirmation';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { RowConfirmation } from '../types';
-import { RowActionButtonProps } from './types';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
+import type { RowConfirmation } from '../types';
+import type { RowActionButtonProps } from './types';
 
 function RowActionButton({
     messageID,

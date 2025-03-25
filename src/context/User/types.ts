@@ -1,5 +1,5 @@
-import { Session, User } from '@supabase/supabase-js';
-import { UserDetails } from 'types';
+import type { Session, User } from '@supabase/supabase-js';
+import type { UserDetails } from 'types';
 
 export interface AuthSession {
     userDetails: UserDetails | null;

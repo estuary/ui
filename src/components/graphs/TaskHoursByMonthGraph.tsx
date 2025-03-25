@@ -19,11 +19,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import useConstant from 'use-constant';
-import {
-    CARD_AREA_HEIGHT,
-    SeriesConfig,
-    stripTimeFromDate,
-} from 'utils/billing-utils';
+import type { SeriesConfig } from 'utils/billing-utils';
+import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 

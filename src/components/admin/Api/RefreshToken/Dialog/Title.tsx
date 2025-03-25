@@ -1,6 +1,6 @@
 import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useRefreshTokenStore } from '../Store/create';
 

@@ -9,7 +9,7 @@ import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
-import { LogDialogActionsProps } from './types';
+import type { LogDialogActionsProps } from './types';
 
 function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
     const entityType = useEntityType();

@@ -1,5 +1,5 @@
 import { LoopIndexContext } from './shared';
-import { LoopIndexContextProps } from './types';
+import type { LoopIndexContextProps } from './types';
 
 export const LoopIndexContextProvider = ({
     children,

@@ -1,4 +1,4 @@
-import { CustomEvents } from 'services/types';
+import type { CustomEvents } from 'services/types';
 
 export interface EntityTestButtonProps {
     disabled: boolean;

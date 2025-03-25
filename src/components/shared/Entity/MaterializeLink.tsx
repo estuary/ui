@@ -1,4 +1,5 @@
-import { Button, ButtonProps } from '@mui/material';
+import type { ButtonProps } from '@mui/material';
+import { Button } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';

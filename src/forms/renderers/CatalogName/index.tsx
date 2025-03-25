@@ -23,17 +23,16 @@
   THE SOFTWARE.
 */
 
-import {
+import type {
     ControlProps,
     OwnPropsOfEnum,
     RankedTester,
-    rankWith,
-    scopeEndsWith,
 } from '@jsonforms/core';
-import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+import { rankWith, scopeEndsWith } from '@jsonforms/core';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import PrefixedName from 'components/inputs/PrefixedName';
-import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+import type { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useCallback } from 'react';

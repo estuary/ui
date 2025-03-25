@@ -6,7 +6,7 @@ import {
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
+import type { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 import useShardsList from './useShardsList';
 import useShardStatusDefaultColor from './useShardStatusDefaultColor';
 

@@ -11,7 +11,7 @@ import {
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
 } from 'stores/EndpointConfig/hooks';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();

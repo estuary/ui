@@ -1,5 +1,6 @@
 import CollectionSelector from 'components/collection/Selector';
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_collections,

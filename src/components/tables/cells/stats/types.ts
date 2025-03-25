@@ -1,4 +1,4 @@
-import { SelectTableStoreNames } from 'stores/names';
+import type { SelectTableStoreNames } from 'stores/names';
 
 export interface BaseStatsProps {
     failed?: boolean;

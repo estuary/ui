@@ -49,6 +49,9 @@ module.exports = {
         // We should never have these unless commented and explained
         'react-hooks/exhaustive-deps': 'error',
 
+        // These really help with managing circular deps that don't matter
+        '@typescript-eslint/consistent-type-imports': 'error',
+
         // Original LoadingButton can cause issues with Google Translate
         //  https://github.com/mui/material-ui/issues/27853
         //  https://github.com/facebook/react/issues/11538

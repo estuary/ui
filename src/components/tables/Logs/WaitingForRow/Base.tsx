@@ -14,7 +14,7 @@ import { useIntersection } from 'react-use';
 
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
-import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
+import type { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;

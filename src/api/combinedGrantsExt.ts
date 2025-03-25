@@ -1,14 +1,14 @@
 import { supabaseClient } from 'context/GlobalProviders';
+import type { SortingProps } from 'services/supabase';
 import {
     defaultTableFilter,
     parsePagedFetchAllResponse,
     pagedFetchAll,
     RPCS,
-    SortingProps,
     TABLES,
     DEFAULT_PAGING_SIZE,
 } from 'services/supabase';
-import { AuthRoles, Capability, Grant_UserExt } from 'types';
+import type { AuthRoles, Capability, Grant_UserExt } from 'types';
 import { getCountSettings } from 'utils/table-utils';
 
 // Used to display prefix grants in admin page

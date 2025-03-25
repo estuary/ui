@@ -2,7 +2,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import EntityNotFound from 'pages/error/EntityNotFound';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { validateCatalogName } from 'validation';
 

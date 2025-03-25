@@ -3,7 +3,7 @@ import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { FormattedMessage } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { eChartsTooltipSX } from '../tooltips';
 

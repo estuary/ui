@@ -1,6 +1,6 @@
+import type { AutocompleteRenderInputParams } from '@mui/material';
 import {
     Autocomplete,
-    AutocompleteRenderInputParams,
     Chip,
     FormControl,
     FormHelperText,
@@ -9,13 +9,13 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
+import type { EmailDictionary } from 'components/admin/Settings/PrefixAlerts/types';
 import UserAvatar from 'components/shared/UserAvatar';
 import usePrefixAdministrators from 'hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'hooks/useUserInformationByPrefix';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Grant_UserExt } from 'types';
+import type { Grant_UserExt } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 type Values = (Grant_UserExt | string)[];

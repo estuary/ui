@@ -1,5 +1,5 @@
 import { MenuItem } from '@mui/material';
-import { StatsFilter } from 'api/stats';
+import type { StatsFilter } from 'api/stats';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

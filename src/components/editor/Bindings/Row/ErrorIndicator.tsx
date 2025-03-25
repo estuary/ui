@@ -5,7 +5,7 @@ import {
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
 } from 'stores/Binding/hooks';
-import { ErrorIndicatorProps } from './types';
+import type { ErrorIndicatorProps } from './types';
 
 function BindingsSelectorErrorIndicator({
     bindingUUID,

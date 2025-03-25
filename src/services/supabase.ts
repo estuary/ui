@@ -1,13 +1,13 @@
-import {
+import type {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { supabaseClient } from 'context/GlobalProviders';
 import { forEach, isEmpty } from 'lodash';
 import retry from 'retry';
-import {
+import type {
     JobStatus,
     SortDirection,
     SupabaseInvokeResponse,

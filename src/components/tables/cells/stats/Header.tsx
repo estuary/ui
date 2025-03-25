@@ -5,11 +5,9 @@ import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSumm
 import { useZustandStore } from 'context/Zustand/provider';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { StatsHeaderProps } from './types';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
+import type { StatsHeaderProps } from './types';
 
 const StatsHeader = ({
     selectableTableStoreName,

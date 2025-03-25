@@ -2,16 +2,16 @@ import { Grid, Toolbar } from '@mui/material';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import SearchField from 'components/shared/toolbar/SearchField';
 import { debounce } from 'lodash';
-import {
+import type {
     ChangeEvent,
     Dispatch,
     SetStateAction,
     SyntheticEvent,
-    useRef,
 } from 'react';
+import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {

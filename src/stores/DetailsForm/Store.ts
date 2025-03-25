@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import {
+import type {
     DataPlaneOption,
     Details,
     DetailsFormState,
@@ -23,17 +23,17 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import {
-    ConnectorVersionEvaluationOptions,
-    getConnectorMetadata,
-} from 'utils/connector-utils';
+import type { ConnectorVersionEvaluationOptions } from 'utils/connector-utils';
+import { getConnectorMetadata } from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { NAME_RE } from 'validation';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
 

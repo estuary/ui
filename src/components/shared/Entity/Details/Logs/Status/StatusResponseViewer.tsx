@@ -5,7 +5,7 @@ import { editorToolBarSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';

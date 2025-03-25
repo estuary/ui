@@ -3,15 +3,15 @@ import { successMain } from 'context/Theme';
 import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
 import { ShardDetailStoreNames } from 'stores/names';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getCompositeColor } from './Store';
-import {
+import type {
     ShardDetailStore,
     ShardEntityTypes,
     ShardReadDictionaryResponse,
-    ShardStatusMessageIds,
 } from './types';
+import { ShardStatusMessageIds } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {
     switch (entityType) {

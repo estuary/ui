@@ -1,8 +1,9 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
 import { supabaseClient } from 'context/GlobalProviders';
-import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
+import type { SortingProps } from 'services/supabase';
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
@@ -13,11 +14,10 @@ import {
     QUERY_PARAM_CONNECTOR_TITLE,
     SHARDS_DISABLE,
     SHARD_LABELS,
-    SortingProps,
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import {
+import type {
     CatalogStats,
     Entity,
     EntityWithCreateWorkflow,

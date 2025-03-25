@@ -6,7 +6,7 @@ import {
     connectorImageBackgroundSx,
     sample_grey,
 } from 'context/Theme';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

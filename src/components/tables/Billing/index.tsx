@@ -7,7 +7,8 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
-import { TableColumns, TableStatuses } from 'types';
+import type { TableColumns } from 'types';
+import { TableStatuses } from 'types';
 import { invoiceId } from 'utils/billing-utils';
 
 export const columns: TableColumns[] = [

@@ -8,8 +8,9 @@ import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
-import { PublicationInfo } from 'types/controlPlane';
+import type { SortDirection, TableColumns, TableState } from 'types';
+import { TableStatuses } from 'types';
+import type { PublicationInfo } from 'types/controlPlane';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [

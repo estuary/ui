@@ -14,7 +14,7 @@ import { stringifyJSON } from 'services/stringify';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { autoCompleteDefaultProps } from './shared';
-import { BaseFormProps } from './types';
+import type { BaseFormProps } from './types';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,

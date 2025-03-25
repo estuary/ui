@@ -1,5 +1,5 @@
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { PromptStepState } from '../types';
+import type { PromptStepState } from '../types';
 
 export const defaultStepState: PromptStepState = {
     error: null,

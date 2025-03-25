@@ -7,7 +7,7 @@ import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
 import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns } from 'types';
+import type { TableColumns } from 'types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
 //   however the current data model does not provide a means to reliably track

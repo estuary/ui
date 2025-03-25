@@ -1,5 +1,5 @@
 import { useHydrateEditorState } from 'components/editor/Store/hooks';
-import { BaseComponentProps, Entity } from 'types';
+import type { BaseComponentProps, Entity } from 'types';
 
 interface Props extends BaseComponentProps {
     entityType: Entity;

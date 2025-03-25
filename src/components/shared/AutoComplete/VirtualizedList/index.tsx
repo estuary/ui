@@ -1,5 +1,6 @@
 import { autoCompleteListPadding } from 'context/Theme';
-import { forwardRef, HTMLAttributes, ReactChild } from 'react';
+import type { HTMLAttributes, ReactChild } from 'react';
+import { forwardRef } from 'react';
 import { VariableSizeList } from 'react-window';
 import { useResetCache } from './hooks';
 import { OuterElement, OuterElementContext } from './OuterElement';

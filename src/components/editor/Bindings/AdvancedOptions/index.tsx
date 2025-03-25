@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import TimeTravel from '../TimeTravel';
-import { AdvancedOptionsProps } from './types';
+import type { AdvancedOptionsProps } from './types';
 
 export default function AdvancedOptions({
     bindingIndex,

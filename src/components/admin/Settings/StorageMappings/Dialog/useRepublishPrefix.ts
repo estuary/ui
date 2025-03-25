@@ -1,7 +1,5 @@
-import {
-    PublicationJobStatus,
-    getPublicationByIdQuery,
-} from 'api/publications';
+import type { PublicationJobStatus } from 'api/publications';
+import { getPublicationByIdQuery } from 'api/publications';
 import { republishPrefix } from 'api/storageMappings';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback } from 'react';

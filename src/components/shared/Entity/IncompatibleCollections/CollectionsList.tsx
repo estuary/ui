@@ -1,5 +1,5 @@
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { IncompatibleCollections } from 'api/evolutions';
+import type { IncompatibleCollections } from 'api/evolutions';
 import { useBindingsEditorStore_incompatibleCollections } from 'components/editor/Bindings/Store/hooks';
 import KeyValueList from 'components/shared/KeyValueList';
 import { HelpCircle } from 'iconoir-react';

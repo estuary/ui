@@ -6,7 +6,7 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+import type { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

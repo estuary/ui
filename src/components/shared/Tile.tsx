@@ -3,7 +3,7 @@ import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 interface TileProps extends BaseComponentProps {
     clickHandler?: () => void;

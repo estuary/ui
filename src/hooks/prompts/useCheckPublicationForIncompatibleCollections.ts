@@ -1,4 +1,4 @@
-import { IncompatibleCollections } from 'api/evolutions';
+import type { IncompatibleCollections } from 'api/evolutions';
 import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import { useCallback } from 'react';

@@ -5,7 +5,7 @@ import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
-import { Schema } from 'types';
+import type { Schema } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {

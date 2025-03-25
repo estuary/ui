@@ -5,7 +5,7 @@ import invariableStores from 'context/Zustand/invariableStores';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useStore } from 'zustand';
-import { BindingsEditorAddProps } from '../types';
+import type { BindingsEditorAddProps } from '../types';
 
 const DIALOG_ID = 'add-collection-search-dialog';
 

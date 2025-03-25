@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { intensifiedOutline } from 'context/Theme';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 function StepWrapper({ children }: BaseComponentProps) {
     return (

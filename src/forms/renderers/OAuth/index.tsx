@@ -1,4 +1,5 @@
-import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
+import type { ControlProps, RankedTester } from '@jsonforms/core';
+import { rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 import FullPageSpinner from 'components/fullPage/Spinner';

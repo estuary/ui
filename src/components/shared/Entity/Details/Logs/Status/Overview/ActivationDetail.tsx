@@ -10,7 +10,7 @@ import {
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { getDataPlaneActivationStatus } from 'utils/entityStatus-utils';
 import DetailWrapper from './DetailWrapper';
-import { BaseDetailProps } from './types';
+import type { BaseDetailProps } from './types';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

@@ -6,9 +6,8 @@ import {
     useTheme,
 } from '@mui/material';
 import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
-import CatalogList, {
-    CatalogListContent,
-} from 'components/transformation/create/Config/catalog/CatalogList';
+import type { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
+import CatalogList from 'components/transformation/create/Config/catalog/CatalogList';
 import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { isEmpty } from 'lodash';

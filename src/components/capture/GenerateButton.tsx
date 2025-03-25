@@ -1,13 +1,14 @@
 import { Button } from '@mui/material';
 import { entityHeaderButtonSx } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_rediscoveryRequired } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import useDiscoverCapture from './useDiscoverCapture';
 
 interface Props {

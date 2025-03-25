@@ -1,4 +1,4 @@
-import { RequestHandler } from 'test/server/test-server';
+import type { RequestHandler } from 'test/server/test-server';
 import { http, HttpResponse } from 'msw';
 import { SUPABASE_URL } from 'test/shared';
 

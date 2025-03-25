@@ -3,8 +3,8 @@ import { loginButtonStyling } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import { unauthenticatedRoutes } from 'app/routes';
 import { Lock, OpenNewWindow } from 'iconoir-react';
-import { HTMLAttributeAnchorTarget, ReactNode } from 'react';
-import { LoginProps } from '../types';
+import type { HTMLAttributeAnchorTarget, ReactNode } from 'react';
+import type { LoginProps } from '../types';
 
 function SSOButton({ isRegister }: LoginProps) {
     const intl = useIntl();

@@ -4,10 +4,11 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
-import { FieldFilter } from 'components/schema/types';
+import type { FieldFilter } from 'components/schema/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import type { SortDirection, TableColumns, TableState } from 'types';
+import { TableStatuses } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';

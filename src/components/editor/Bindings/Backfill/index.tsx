@@ -3,7 +3,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import BackfillButton from './BackfillButton';
 import SectionWrapper from './SectionWrapper';
-import { BackfillProps } from './types';
+import type { BackfillProps } from './types';
 
 export default function Backfill({
     bindingIndex,

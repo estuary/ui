@@ -1,17 +1,15 @@
-import {
-    DraftSpecsExtQuery_ByCatalogName,
-    modifyDraftSpec,
-} from 'api/draftSpecs';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
-import { CallSupabaseResponse } from 'services/supabase';
-import {
+import type { CallSupabaseResponse } from 'services/supabase';
+import type {
     FullSource,
     FullSourceDictionary,
 } from 'stores/Binding/slices/TimeTravel';
-import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import {
+import type { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
+import type {
     DekafConfig,
     Entity,
     EntityWithCreateWorkflow,
@@ -19,7 +17,7 @@ import {
     SourceCaptureDef,
 } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import { ConnectorConfig } from '../../deps/flow/flow';
+import type { ConnectorConfig } from '../../deps/flow/flow';
 import { isDekafEndpointConfig } from './connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,

@@ -1,20 +1,20 @@
-import { EvolvedCollections } from 'api/evolutions';
-import { TrialCollectionQuery } from 'api/liveSpecsExt';
-import { BooleanString } from 'components/shared/buttons/types';
-import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
-import { DurationObjectUnits } from 'luxon';
-import { ResourceConfigPointers } from 'services/ajv';
-import { CallSupabaseResponse } from 'services/supabase';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import {
+import type { EvolvedCollections } from 'api/evolutions';
+import type { TrialCollectionQuery } from 'api/liveSpecsExt';
+import type { BooleanString } from 'components/shared/buttons/types';
+import type { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
+import type { DurationObjectUnits } from 'luxon';
+import type { ResourceConfigPointers } from 'services/ajv';
+import type { CallSupabaseResponse } from 'services/supabase';
+import type { StoreWithHydration } from 'stores/extensions/Hydration';
+import type {
     Entity,
     EntityWorkflow,
     JsonFormsData,
     Schema,
     SourceCaptureDef,
 } from 'types';
-import { StoreWithFieldSelection } from './slices/FieldSelection';
-import { StoreWithTimeTravel } from './slices/TimeTravel';
+import type { StoreWithFieldSelection } from './slices/FieldSelection';
+import type { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface CollectionMetadata {
     added?: boolean;

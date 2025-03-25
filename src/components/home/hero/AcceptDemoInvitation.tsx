@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import useDirectiveGuard from 'app/guards/hooks';
 import MessageWithButton from 'components/content/MessageWithButton';
@@ -7,7 +7,8 @@ import Error from 'components/shared/Error';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { useEntitiesStore } from 'stores/Entities/Store';
 import { DEMO_TENANT } from 'utils/misc-utils';
 

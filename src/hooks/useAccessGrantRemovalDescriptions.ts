@@ -5,7 +5,7 @@ import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
 } from 'stores/Entities/hooks';
-import { BaseGrant, Grant_UserExt } from 'types';
+import type { BaseGrant, Grant_UserExt } from 'types';
 import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 

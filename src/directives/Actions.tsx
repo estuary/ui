@@ -2,7 +2,7 @@ import { Button, Toolbar } from '@mui/material';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useIntl } from 'react-intl';
-import { ActionsProps } from './types';
+import type { ActionsProps } from './types';
 
 const Actions = ({ primaryMessageId, saving }: ActionsProps) => {
     const intl = useIntl();

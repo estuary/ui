@@ -1,5 +1,5 @@
 import { TableCell, TableRow, Typography, useTheme } from '@mui/material';
-import { RefreshTokenQuery } from 'api/tokens';
+import type { RefreshTokenQuery } from 'api/tokens';
 import { getEntityTableRowSx } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 import TimeStamp from '../cells/TimeStamp';

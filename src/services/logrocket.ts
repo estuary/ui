@@ -1,4 +1,4 @@
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';

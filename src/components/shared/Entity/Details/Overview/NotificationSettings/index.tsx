@@ -4,7 +4,7 @@ import AlertBox from 'components/shared/AlertBox';
 import CardWrapper from 'components/shared/CardWrapper';
 import DataProcessingSetting from 'components/shared/Entity/Details/Overview/NotificationSettings/DataProcessingSetting';
 import Error from 'components/shared/Error';
-import { ErrorDetails } from 'components/shared/Error/types';
+import type { ErrorDetails } from 'components/shared/Error/types';
 import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';

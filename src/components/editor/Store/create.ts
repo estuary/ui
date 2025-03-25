@@ -2,8 +2,10 @@ import produce from 'immer';
 import { omit } from 'lodash';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { EditorStatus, EditorStoreState } from './types';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type { EditorStoreState } from './types';
+import { EditorStatus } from './types';
 
 export const isEditorActive = (status: EditorStatus) => {
     return status === EditorStatus.SAVING;

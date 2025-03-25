@@ -1,7 +1,7 @@
 import { createEntityDraft } from 'api/drafts';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
 import {
     createDraftSpec,
-    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByDraftId,
     modifyDraftSpec,
 } from 'api/draftSpecs';
@@ -45,11 +45,11 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
-import { DekafConfig } from 'types';
+import type { DekafConfig } from 'types';
 import { isDekafConnector } from 'utils/connector-utils';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 import { generateTaskSpec } from 'utils/workflow-utils';
-import { ConnectorConfig } from '../../../deps/flow/flow';
+import type { ConnectorConfig } from '../../../deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';
 

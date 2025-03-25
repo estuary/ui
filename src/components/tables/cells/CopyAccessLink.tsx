@@ -4,7 +4,8 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getPathWithParams } from 'utils/misc-utils';
-import { getButtonIcon, TransientButtonState } from 'context/Theme';
+import type { TransientButtonState } from 'context/Theme';
+import { getButtonIcon } from 'context/Theme';
 
 interface Props {
     token: string;

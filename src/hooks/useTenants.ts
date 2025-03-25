@@ -1,7 +1,7 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getTenantDetails, getTenantHidesPreview } from 'api/tenants';
 import { useMemo } from 'react';
-import { TenantPaymentDetails } from 'types';
+import type { TenantPaymentDetails } from 'types';
 import { DEMO_TENANT, hasLength, stripPathing } from 'utils/misc-utils';
 
 const defaultResponse: TenantPaymentDetails[] = [];

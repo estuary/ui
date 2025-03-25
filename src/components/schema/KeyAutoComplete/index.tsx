@@ -15,7 +15,8 @@ import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoCom
 import { useEntityType } from 'context/EntityContext';
 import { truncateTextSx } from 'context/Theme';
 import { filter, orderBy } from 'lodash';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';
 import BasicOption from './options/Basic';

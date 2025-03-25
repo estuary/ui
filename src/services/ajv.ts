@@ -4,7 +4,7 @@ import {
 } from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
-import { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
+import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 

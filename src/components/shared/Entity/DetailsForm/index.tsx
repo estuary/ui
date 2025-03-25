@@ -2,7 +2,7 @@ import ShardsEditor from 'components/editor/Shards';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
-import { Props } from 'components/shared/Entity/DetailsForm/types';
+import type { Props } from 'components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';

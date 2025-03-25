@@ -1,5 +1,5 @@
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import { WaitingForRowProps } from '../types';
+import type { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 
 function WaitingForOldLogsRow(props: WaitingForRowProps) {

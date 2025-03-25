@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { getUserDetails } from 'services/supabase';

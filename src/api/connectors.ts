@@ -1,8 +1,6 @@
 import { supabaseClient } from 'context/GlobalProviders';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/connectors/shared';
+import type { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import { CONNECTOR_WITH_TAG_QUERY } from 'hooks/connectors/shared';
 import {
     CONNECTOR_DETAILS,
     CONNECTOR_NAME,
@@ -13,7 +11,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import { SortDirection } from 'types';
+import type { SortDirection } from 'types';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
 
 // Table-specific queries

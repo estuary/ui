@@ -23,7 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { Generate, JsonSchema, Layout, UISchemaElement } from '@jsonforms/core';
+import type { JsonSchema, Layout, UISchemaElement } from '@jsonforms/core';
+import { Generate } from '@jsonforms/core';
 import { JsonFormsDispatch } from '@jsonforms/react';
 import omit from 'lodash/omit';
 import React from 'react';

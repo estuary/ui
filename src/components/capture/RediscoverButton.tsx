@@ -3,7 +3,7 @@ import useDiscoverCapture from 'components/capture/useDiscoverCapture';
 import { disabledButtonText } from 'context/Theme';
 import { RefreshDouble } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 
 interface Props {
     entityType: Entity;

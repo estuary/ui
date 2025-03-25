@@ -4,7 +4,7 @@ import {
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
 
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 function Tile({ children }: BaseComponentProps) {
     return (

@@ -13,8 +13,8 @@ import { disabledButtonText_primary } from 'context/Theme';
 import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { TablePrefixes } from 'stores/Tables/hooks';
-import { TableColumns } from 'types';
-import { WithRequiredNonNullProperty } from 'types/utils';
+import type { TableColumns } from 'types';
+import type { WithRequiredNonNullProperty } from 'types/utils';
 
 interface Props {
     columns: WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'>[];

@@ -4,8 +4,8 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
+import type { CustomError } from 'stores/extensions/CustomErrors';
 import {
-    CustomError,
     fetchErrors,
     filterErrors,
     getInitialCustomErrorsData,
@@ -15,7 +15,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { JsonFormsData, Schema } from 'types';
+import type { JsonFormsData, Schema } from 'types';
 import { getEndpointConfig } from 'utils/connector-utils';
 import {
     configCanBeEmpty,
@@ -24,9 +24,11 @@ import {
 } from 'utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { EndpointConfigState } from './types';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+import type { EndpointConfigState } from './types';
 
 const STORE_KEY = 'Endpoint Config';
 

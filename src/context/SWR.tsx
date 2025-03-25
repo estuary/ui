@@ -7,7 +7,7 @@ import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { supabaseClient } from './GlobalProviders';
 
 const DEFAULT_RETRY_COUNT = 3;

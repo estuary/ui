@@ -2,7 +2,7 @@ import FullPageError from 'components/fullPage/Error';
 import useUserInfoSummary from 'hooks/useUserInfoSummary';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { useUserInfoSummaryStore } from './useUserInfoSummaryStore';
 
 const UserInfoSummaryStoreProvider = ({ children }: BaseComponentProps) => {

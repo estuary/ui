@@ -9,7 +9,8 @@ import {
 } from '@mui/material';
 import AcceptDemoInvitation from 'components/home/hero/AcceptDemoInvitation';
 import Logo from 'components/navigation/Logo';
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'accept-demo-tenant-dialog-title';

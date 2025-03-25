@@ -1,19 +1,18 @@
+import type { SxProps, Theme } from '@mui/material';
 import {
     Grid,
     Paper,
-    SxProps,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Theme,
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { tableAlternateRowsSx } from 'context/Theme';
-import { useJournalData } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { useJournalData } from 'hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';

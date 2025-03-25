@@ -2,9 +2,10 @@ import produce from 'immer';
 import { getDocsSettings } from 'utils/env-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';
-import { SidePanelDocsState } from './types';
+import type { SidePanelDocsState } from './types';
 
 const { iframeStringInclude } = getDocsSettings();
 

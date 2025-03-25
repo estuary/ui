@@ -1,7 +1,7 @@
 import { Box, Tooltip, Typography } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { formatBytes } from 'components/tables/cells/stats/shared';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {

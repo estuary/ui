@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import { debounce } from 'lodash';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_searchQuery,

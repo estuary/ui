@@ -1,5 +1,5 @@
 import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { logRocketEvent } from 'services/shared';

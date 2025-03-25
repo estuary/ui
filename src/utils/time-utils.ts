@@ -1,4 +1,5 @@
-import { Duration, DurationObjectUnits } from 'luxon';
+import type { DurationObjectUnits } from 'luxon';
+import { Duration } from 'luxon';
 import { CAPTURE_INTERVAL_RE } from 'validation';
 import { hasLength } from './misc-utils';
 

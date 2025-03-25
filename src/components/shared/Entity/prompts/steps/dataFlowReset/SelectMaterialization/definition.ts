@@ -1,6 +1,6 @@
-import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
+import type { LiveSpecsExt_Related } from 'api/liveSpecsExt';
 import { defaultStepState } from '../../../store/shared';
-import { PromptStep } from '../../../types';
+import type { PromptStep } from '../../../types';
 import SelectMaterialization from '.';
 
 export interface SelectMaterializationStepContext {

@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
-import { GrantWhatIsChangingProps } from './types';
+import type { GrantWhatIsChangingProps } from './types';
 
 function GrantWhatIsChanging({
     identifier,

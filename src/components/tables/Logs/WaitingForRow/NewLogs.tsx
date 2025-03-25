@@ -1,5 +1,5 @@
 import { DEFAULT_POLLING } from 'context/SWR';
-import { WaitingForRowProps } from '../types';
+import type { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 
 function WaitingForNewLogsRow(props: WaitingForRowProps) {

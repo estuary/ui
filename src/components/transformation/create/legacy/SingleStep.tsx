@@ -1,8 +1,8 @@
+import type { StepperProps as StepperPropsType } from '@mui/material';
 import {
     Step,
     StepLabel,
     Stepper,
-    StepperProps as StepperPropsType,
     Typography,
     useMediaQuery,
     useTheme,

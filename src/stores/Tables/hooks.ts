@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { SortDirection } from 'types';
+import type { SortDirection } from 'types';
 import {
     JsonParam,
     NumberParam,

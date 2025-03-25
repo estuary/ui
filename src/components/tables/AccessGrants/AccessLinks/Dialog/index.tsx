@@ -7,12 +7,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import Error from 'components/shared/Error';
 import AccessLinksTable from 'components/tables/AccessGrants/AccessLinks';
 import GenerateInvitation from 'components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
 import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'share-prefix-dialog-title';

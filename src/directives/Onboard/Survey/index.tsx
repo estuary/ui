@@ -5,7 +5,7 @@ import {
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
 } from 'directives/Onboard/Store/hooks';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 import OriginOption from './OriginOption';

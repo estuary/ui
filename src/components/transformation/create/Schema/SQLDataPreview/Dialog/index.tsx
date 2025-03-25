@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import DataPreview from 'components/transformation/create/Schema/SQLDataPreview/Dialog/DataPreview';
 import { defaultOutline } from 'context/Theme';
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useTransformationCreate_name } from 'stores/TransformationCreate/hooks';
 

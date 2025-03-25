@@ -7,7 +7,7 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useIntl } from 'react-intl';
 import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
 import SectionAlertIndicator from './SectionAlertIndicator';
-import { CollectionConfigProps } from './types';
+import type { CollectionConfigProps } from './types';
 
 function CollectionConfig({
     draftSpecs,

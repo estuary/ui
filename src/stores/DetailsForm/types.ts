@@ -1,7 +1,7 @@
-import { JsonFormsCore } from '@jsonforms/core';
-import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { EntityWorkflow } from 'types';
+import type { JsonFormsCore } from '@jsonforms/core';
+import type { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
+import type { StoreWithHydration } from 'stores/extensions/Hydration';
+import type { EntityWorkflow } from 'types';
 
 export interface DataPlaneName {
     cluster: string;

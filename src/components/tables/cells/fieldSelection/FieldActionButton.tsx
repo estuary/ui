@@ -1,5 +1,6 @@
-import { SxProps, Theme, ToggleButtonProps, useTheme } from '@mui/material';
-import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import type { SxProps, Theme, ToggleButtonProps } from '@mui/material';
+import { useTheme } from '@mui/material';
+import type { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import {
     defaultOutline_hovered,

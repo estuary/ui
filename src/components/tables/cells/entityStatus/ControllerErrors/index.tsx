@@ -3,7 +3,7 @@ import AlertBox from 'components/shared/AlertBox';
 import ButtonWithPopper from 'components/shared/buttons/ButtonWithPopper';
 import { linkButtonSx } from 'context/Theme';
 import ControllerAlert from './ControllerAlert';
-import { ControllerErrorsProps } from './types';
+import type { ControllerErrorsProps } from './types';
 
 export default function ControllerErrors({
     errors,

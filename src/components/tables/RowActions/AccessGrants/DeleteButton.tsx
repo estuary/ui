@@ -6,15 +6,13 @@ import useAccessGrantRemovalDescriptions from 'hooks/useAccessGrantRemovalDescri
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import ConfirmationWithExplanation from '../Shared/ConfirmationWithExplination';
 import GrantWhatIsChanging from './GrantWhatIsChanging';
 import RevokeGrant from './RevokeGrant';
-import {
+import type {
     AccessGrantDeleteButtonProps,
     AccessGrantRowConfirmation,
 } from './types';

@@ -1,5 +1,5 @@
 import { map } from 'lodash';
-import { JsonFormsData, Schema } from 'types';
+import type { JsonFormsData, Schema } from 'types';
 
 export interface CustomError {
     instancePath: string;

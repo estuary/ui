@@ -27,14 +27,16 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import {
-    and,
+import type {
     CombinatorRendererProps,
-    createCombinatorRenderInfos,
-    isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
     RankedTester,
+} from '@jsonforms/core';
+import {
+    and,
+    createCombinatorRenderInfos,
+    isOneOfControl,
     rankWith,
     schemaMatches,
 } from '@jsonforms/core';

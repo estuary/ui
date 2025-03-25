@@ -1,6 +1,7 @@
-import { Dispatch, SetStateAction, createContext, useContext } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { createContext, useContext } from 'react';
 import { useLocalStorage } from 'react-use';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 interface SidePanelDocsState {

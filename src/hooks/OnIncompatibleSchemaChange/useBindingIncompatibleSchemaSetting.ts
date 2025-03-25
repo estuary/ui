@@ -4,7 +4,7 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
+import type { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
 import { useEntityType } from 'context/EntityContext';
 import { cloneDeep } from 'lodash';
 import { useCallback } from 'react';
@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { BASE_ERROR } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import { BindingMetadata, Schema } from 'types';
+import type { BindingMetadata, Schema } from 'types';
 import { addOrRemoveOnIncompatibleSchemaChange } from 'utils/entity-utils';
 import { hasLength } from 'utils/misc-utils';
 

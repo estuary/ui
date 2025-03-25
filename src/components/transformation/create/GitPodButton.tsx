@@ -1,4 +1,4 @@
-import { LoadingButtonProps } from '@mui/lab';
+import type { LoadingButtonProps } from '@mui/lab';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
 import { createRefreshToken } from 'api/tokens';

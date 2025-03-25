@@ -11,8 +11,8 @@ import {
     useBinding_fullSourceOfBinding,
     useBinding_updateFullSourceConfig,
 } from 'stores/Binding/hooks';
-import { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
-import { Schema } from 'types';
+import type { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
+import type { Schema } from 'types';
 import {
     getBindingIndex,
     getCollectionNameProp,

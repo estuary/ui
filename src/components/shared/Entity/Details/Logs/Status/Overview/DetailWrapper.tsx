@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { diminishedTextColor } from 'context/Theme';
 import { useIntl } from 'react-intl';
-import { DetailWrapperProps } from './types';
+import type { DetailWrapperProps } from './types';
 
 export default function DetailWrapper({
     children,

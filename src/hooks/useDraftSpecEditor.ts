@@ -7,11 +7,11 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'components/editor/Store/hooks';
-import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { debounce, get, has, isEqual, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
+import type { Entity } from 'types';
 import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useDraftSpecEditor(

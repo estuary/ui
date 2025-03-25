@@ -1,6 +1,6 @@
 import EntityCreateSave from 'components/shared/Entity/Actions/Save';
 import useEntitySaveHelpers from '../hooks/useEntitySaveHelpers';
-import { EntitySaveButtonProps } from './types';
+import type { EntitySaveButtonProps } from './types';
 
 function EntitySaveButton({ logEvent, disabled }: EntitySaveButtonProps) {
     const { onFailure, buttonDisabled, formSaving } =

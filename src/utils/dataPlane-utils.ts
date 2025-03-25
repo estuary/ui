@@ -1,17 +1,17 @@
-import { Session } from '@supabase/supabase-js';
-import { BaseDataPlaneQuery } from 'api/dataPlanes';
+import type { Session } from '@supabase/supabase-js';
+import type { BaseDataPlaneQuery } from 'api/dataPlanes';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
-import {
+import type {
     ProtocolLabelSelector,
     ProtocolListResponse,
 } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { ResponseError } from 'data-plane-gateway/types/util';
+import type { Shard } from 'data-plane-gateway/types/shard_client';
+import type { ResponseError } from 'data-plane-gateway/types/util';
 import { client } from 'services/client';
 import { logRocketConsole } from 'services/shared';
 import { DATA_PLANE_PREFIX, DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
-import { Endpoint } from 'stores/ShardDetail/types';
+import type { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
+import type { Endpoint } from 'stores/ShardDetail/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,

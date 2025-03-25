@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
-import { Shard } from 'data-plane-gateway/types/shard_client';
+import type { Shard } from 'data-plane-gateway/types/shard_client';
 import { useIntl } from 'react-intl';
 import { useEffect } from 'react';
 import { handlePollerError } from 'services/supabase';

@@ -1,7 +1,7 @@
 import { getStatsForDetails } from 'api/stats';
 import { useEntityType } from 'context/EntityContext';
 import { hasLength } from 'utils/misc-utils';
-import { CatalogStats_Details } from 'types';
+import type { CatalogStats_Details } from 'types';
 import { useMemo } from 'react';
 import { DateTime, Interval } from 'luxon';
 import { find } from 'lodash';

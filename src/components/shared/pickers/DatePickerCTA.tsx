@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { Patterns } from 'types/jsonforms';
 import { INVALID_DATE } from './shared';
-import { PickerProps } from './types';
+import type { PickerProps } from './types';
 import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 
 function DatePickerCTA(props: PickerProps) {

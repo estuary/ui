@@ -1,4 +1,4 @@
-import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
+import type { MaterializationQueryWithStats } from 'api/liveSpecsExt';
 import ExportButton from '../shared/ExportButton';
 import useMaterializationExport from './useMaterializationExport';
 

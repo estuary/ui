@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor, paperBackground } from 'context/Theme';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { useMemo } from 'react';
 
 function useTooltipConfig(): EChartsOption['tooltip'] {

@@ -13,9 +13,10 @@ import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 
 import AdvancedOptions from 'components/materialization/AdvancedOptions';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
-import { ReactNode, useEffect, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_discoveredCollections,

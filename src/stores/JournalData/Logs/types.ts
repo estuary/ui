@@ -1,8 +1,11 @@
-import { FetchMoreLogsFunction } from 'components/tables/Logs/types';
-import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'hooks/journals/types';
-import { Align } from 'react-window';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { OpsLogFlowDocument } from 'types';
+import type { FetchMoreLogsFunction } from 'components/tables/Logs/types';
+import type {
+    LoadDocumentsOffsets,
+    UseOpsLogsDocs,
+} from 'hooks/journals/types';
+import type { Align } from 'react-window';
+import type { StoreWithHydration } from 'stores/extensions/Hydration';
+import type { OpsLogFlowDocument } from 'types';
 
 export interface JournalDataLogsState extends StoreWithHydration {
     documents: OpsLogFlowDocument[] | null;

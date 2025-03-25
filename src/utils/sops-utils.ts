@@ -1,7 +1,7 @@
 import { encryptConfig } from 'api/oauth';
 import { isPlainObject } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { JsonFormsData, Schema, SupabaseInvokeResponse } from 'types';
+import type { JsonFormsData, Schema, SupabaseInvokeResponse } from 'types';
 
 const sopsKey = 'sops';
 

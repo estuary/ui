@@ -1,7 +1,5 @@
-import {
-    DraftSpecsExtQuery_ByCatalogName,
-    getDraftSpecsByCatalogName,
-} from 'api/draftSpecs';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,

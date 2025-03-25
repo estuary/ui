@@ -1,5 +1,5 @@
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
-import {
+import type {
     PostgrestError,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
@@ -12,8 +12,8 @@ import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import type { KeyedMutator } from 'swr';
+import type { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;

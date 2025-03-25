@@ -1,9 +1,9 @@
 import { UTCDate } from '@date-fns/utc';
-import { PostgrestResponse } from '@supabase/postgrest-js';
-import { DataByHourRange } from 'components/graphs/types';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { DataByHourRange } from 'components/graphs/types';
 import { supabaseClient } from 'context/GlobalProviders';
+import type { Duration } from 'date-fns';
 import {
-    Duration,
     isSaturday,
     isSunday,
     nextSaturday,
@@ -21,7 +21,7 @@ import {
     TABLES,
     TASK_STATS,
 } from 'services/supabase';
-import {
+import type {
     CatalogStats,
     CatalogStats_Billing,
     CatalogStats_Dashboard,

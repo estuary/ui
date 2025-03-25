@@ -1,24 +1,16 @@
 import { DEFAULT_FILTER } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { ReviewSelectionStep } from '../preSave/ReviewSelection/definition';
-import {
-    PublishStep,
-    UpdateMaterializationStepContext,
-} from './Publish/definition';
-import {
-    DisableCaptureStep,
-    DisableCaptureStepContext,
-} from './DisableCapture/definition';
+import type { UpdateMaterializationStepContext } from './Publish/definition';
+import { PublishStep } from './Publish/definition';
+import type { DisableCaptureStepContext } from './DisableCapture/definition';
+import { DisableCaptureStep } from './DisableCapture/definition';
 import { EnableCaptureStep } from './EnableCapture/definition';
-import {
-    SelectMaterializationStep,
-    SelectMaterializationStepContext,
-} from './SelectMaterialization/definition';
+import type { SelectMaterializationStepContext } from './SelectMaterialization/definition';
+import { SelectMaterializationStep } from './SelectMaterialization/definition';
 import { UpdateMaterializationStep } from './UpdateMaterialization/definition';
-import {
-    WaitForShardToIdleStep,
-    WaitForShardToIdleStepContext,
-} from './WaitForShardToIdle/definition';
+import type { WaitForShardToIdleStepContext } from './WaitForShardToIdle/definition';
+import { WaitForShardToIdleStep } from './WaitForShardToIdle/definition';
 
 export interface DataFlowResetContext
     extends DisableCaptureStepContext,
@@ -67,5 +59,10 @@ export const DataFlowResetSteps = [
     DataFlowSteps.waitForShardToIdle,
     DataFlowSteps.updateMaterialization,
     DataFlowSteps.enableCapture,
+    DataFlowSteps.publishStep,
+];
+
+export const DefaultSteps = [
+    DataFlowSteps.reviewSelection,
     DataFlowSteps.publishStep,
 ];

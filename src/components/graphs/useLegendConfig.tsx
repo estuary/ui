@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';

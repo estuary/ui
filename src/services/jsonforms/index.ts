@@ -23,21 +23,23 @@
   THE SOFTWARE.
 */
 
-import {
+import type {
     ControlElement,
-    deriveTypes,
-    encode,
-    Generate,
     GroupLayout,
-    isGroup,
-    isLayout,
     JsonSchema,
     LabelElement,
     Layout,
+    UISchemaElement,
+} from '@jsonforms/core';
+import {
+    deriveTypes,
+    encode,
+    Generate,
+    isGroup,
+    isLayout,
     resolveSchema,
     toDataPath,
     toDataPathSegments,
-    UISchemaElement,
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';

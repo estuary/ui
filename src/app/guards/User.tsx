@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 import 'react-reflex/styles.css';
 import { Navigate } from 'react-router';
 import { identifyUser } from 'services/logrocket';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 function UserGuard({ children }: BaseComponentProps) {
     // We only want to idenfity users once. Since the user object changes

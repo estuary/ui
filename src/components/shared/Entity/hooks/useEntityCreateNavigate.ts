@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { ENTITY_SETTINGS } from 'settings/entity';
-import { EntityWithCreateWorkflow } from 'types';
+import type { EntityWithCreateWorkflow } from 'types';
 import { getPathWithParams, hasLength } from 'utils/misc-utils';
 
 export interface HookEntityCreateNavigateProps {

@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -19,11 +19,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
-import { CatalogStats_Details } from 'types';
+import type { CatalogStats_Details } from 'types';
 import useDataByHourGraphMessages from 'hooks/useDataByHourGraphMessages';
 import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
 import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourStatType } from '../types';
+import type { DataByHourStatType } from '../types';
 import useLegendConfig from '../useLegendConfig';
 import useTooltipConfig from '../useTooltipConfig';
 

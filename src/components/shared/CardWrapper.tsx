@@ -13,9 +13,9 @@ import {
     semiTransparentBackground,
 } from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;

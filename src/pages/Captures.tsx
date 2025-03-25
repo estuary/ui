@@ -1,4 +1,5 @@
-import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import { Box, Button, Toolbar } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import CapturesTable from 'components/tables/Captures';
 import usePageTitle from 'hooks/usePageTitle';

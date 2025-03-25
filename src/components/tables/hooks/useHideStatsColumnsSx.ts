@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { SxProps, Theme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 
 function useHideStatsColumnsSxSx() {

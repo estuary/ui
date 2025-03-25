@@ -18,8 +18,9 @@ import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetai
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo } from 'react';
+import type { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+import type { ReactNode } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
@@ -34,7 +35,7 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'types';
+import type { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { devtoolsOptions } from 'utils/store-utils';
 import produce from 'immer';
-import { UserStore } from './types';
+import type { UserStore } from './types';
 
 const name = 'estuary.user-provider-store';
 

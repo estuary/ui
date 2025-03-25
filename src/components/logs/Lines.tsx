@@ -5,7 +5,7 @@ import { hasLength } from 'utils/misc-utils';
 import { useLogsContext } from './Context';
 import LogLine from './Line';
 import Spinner from './Spinner';
-import { SpinnerOptions } from './types';
+import type { SpinnerOptions } from './types';
 
 interface Props {
     height: number;

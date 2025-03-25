@@ -5,8 +5,8 @@ import {
     semiTransparentBackground_teal,
 } from 'context/Theme';
 import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
-import { Entity } from 'types';
-import { EntitySetting } from './types';
+import type { Entity } from 'types';
+import type { EntitySetting } from './types';
 
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     capture: {

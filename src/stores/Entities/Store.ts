@@ -6,9 +6,10 @@ import {
 } from 'stores/extensions/Hydration';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';
-import { EntitiesState } from './types';
+import type { EntitiesState } from './types';
 
 const getInitialStateData = (): Pick<
     EntitiesState,

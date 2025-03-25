@@ -23,11 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import {
-    ControlProps,
-    isDescriptionHidden,
-    showAsRequired,
-} from '@jsonforms/core';
+import type { ControlProps } from '@jsonforms/core';
+import { isDescriptionHidden, showAsRequired } from '@jsonforms/core';
 import { useFocus } from '@jsonforms/material-renderers';
 
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
