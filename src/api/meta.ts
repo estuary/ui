@@ -3,7 +3,7 @@ import { client } from 'services/client';
 // These are generated in vite.config.ts 'writeVersionToFile'
 interface LatestVersionDetails {
     commitId: string;
-    commitDate: string;
+    builtAt: string;
 }
 
 export const getLatestVersionDetails = () => {

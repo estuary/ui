@@ -31,7 +31,7 @@ export function UpdateAlert() {
             setHasLatest(false);
             logRocketEvent(CustomEvents.UPDATE_AVAILABLE, {
                 commitId: data.commitId,
-                commitDate: data.commitDate,
+                builtAt: data.builtAt,
             });
         }
     }, [data]);

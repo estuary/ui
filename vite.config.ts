@@ -2,7 +2,6 @@ import { defineConfig } from 'vitest/config';
 import fs from 'fs/promises';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
-import topLevelAwait from 'vite-plugin-top-level-await';
 import wasm from 'vite-plugin-wasm';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -12,30 +11,31 @@ import circleDependency from 'vite-plugin-circular-dependency';
 import { type Plugin } from 'vite';
 import path from 'path';
 import { sri } from 'vite-plugin-sri3';
-
-// TODO (vite) using require is deprecated. Need to switch to import before vite 6
-const gitCommands = require('git-rev-sync');
+import browserslistToEsbuild from 'browserslist-to-esbuild';
+import ChildProcess from 'child_process';
 
 const writeVersionToFile: () => Plugin = () => ({
     name: 'write-version-to-file',
     async config(config) {
         try {
-            // Fetch details from git
-            const commitId = gitCommands.long();
-            const commitDate = gitCommands.date();
+            const commitId = ChildProcess.execSync('git rev-parse HEAD')
+                .toString()
+                .trim();
 
             // Make sure we got something
-            if (!commitId || !commitDate) {
+            if (!commitId) {
                 console.error(`Failed to get details from git`, {
-                    commitDate,
                     commitId,
                 });
                 return;
             }
 
+            // Store off when we did the build (not used right now)
+            const builtAt = new Date();
+
             // Get the output ready
             const output = JSON.stringify({
-                commitDate,
+                builtAt,
                 commitId,
             });
 
@@ -59,7 +59,7 @@ const writeVersionToFile: () => Plugin = () => ({
             return {
                 define: {
                     ['__ESTUARY_UI_COMMIT_ID__']: JSON.stringify(commitId),
-                    ['__ESTUARY_UI_COMMIT_DATE__']: JSON.stringify(commitDate),
+                    ['__ESTUARY_UI_COMMIT_DATE__']: JSON.stringify(builtAt),
                 },
             };
         } catch (err) {
@@ -73,6 +73,7 @@ export default defineConfig({
     build: {
         assetsDir: 'static',
         outDir: './build',
+        target: browserslistToEsbuild(),
     },
 
     optimizeDeps: {
@@ -112,7 +113,6 @@ export default defineConfig({
         nodePolyfills({
             include: ['buffer', 'path', 'process', 'stream'],
         }),
-        topLevelAwait(),
 
         // Deps
         react({
