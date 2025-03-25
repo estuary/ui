@@ -28,7 +28,8 @@ const useEntityType = () => {
     return context;
 };
 
-const useEntityTypeTranslated = () => {
+// This is for WORKFLOWS only. This means "collections" = "transformations"
+const useEntityTypeTranslatedForWorkflows = () => {
     const intl = useIntl();
 
     const entityTypeValue = useEntityType();
@@ -51,4 +52,8 @@ const useEntityTypeTranslated = () => {
     }, [entityTypeValue, intl]);
 };
 
-export { EntityContextProvider, useEntityType, useEntityTypeTranslated };
+export {
+    EntityContextProvider,
+    useEntityType,
+    useEntityTypeTranslatedForWorkflows,
+};

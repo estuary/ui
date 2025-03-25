@@ -1,12 +1,12 @@
 import AlertBox from 'components/shared/AlertBox';
-import { useEntityTypeTranslated } from 'context/EntityContext';
+import { useEntityTypeTranslatedForWorkflows } from 'context/EntityContext';
 import useCanEditEntity from 'hooks/useCanEditEntity';
 import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'types';
 
 function EditCapabilityGuard({ children }: BaseComponentProps) {
     const intl = useIntl();
-    const entityType = useEntityTypeTranslated();
+    const entityType = useEntityTypeTranslatedForWorkflows();
     const canEditEntity = useCanEditEntity();
 
     if (canEditEntity === false) {

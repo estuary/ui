@@ -1,6 +1,6 @@
 import { InputBaseComponentProps } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
-import { useEntityTypeTranslated } from 'context/EntityContext';
+import { useEntityTypeTranslatedForWorkflows } from 'context/EntityContext';
 import { useIntl } from 'react-intl';
 import { useEntitiesStore_atLeastOneAdminTenant } from 'stores/Entities/hooks';
 
@@ -9,7 +9,7 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
 
     const atLeastOneAdminTenant = useEntitiesStore_atLeastOneAdminTenant();
 
-    const entityType = useEntityTypeTranslated();
+    const entityType = useEntityTypeTranslatedForWorkflows();
 
     if (!atLeastOneAdminTenant) {
         return (
