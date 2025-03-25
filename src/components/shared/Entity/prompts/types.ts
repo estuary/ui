@@ -9,7 +9,7 @@ import type { DisableCaptureStepContext } from './steps/dataFlowReset/DisableCap
 import type { SelectMaterializationStepContext } from './steps/dataFlowReset/SelectMaterialization/types';
 import type { WaitForShardToIdleStepContext } from './steps/dataFlowReset/WaitForShardToIdle/types';
 
-export type SupportedPromptMachines = 'dataFlowReset' | 'defaultSave';
+export type SupportedPrompts = 'dataFlowReset' | 'defaultSave';
 
 export interface DataFlowResetContext
     extends DisableCaptureStepContext,

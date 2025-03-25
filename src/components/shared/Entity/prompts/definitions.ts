@@ -1,11 +1,11 @@
 import { CustomEvents } from 'services/types';
 import { DataFlowSteps, PreSaveSteps } from './steps/stepDefinitions';
-import type { PromptMachineSettings, SupportedPromptMachines } from './types';
+import type { PromptMachineSettings, SupportedPrompts } from './types';
 
 // !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
 // `steps` property is run through in order.
-export const PROMPT_MACHINE_SETTINGS: {
-    [key in SupportedPromptMachines]: PromptMachineSettings;
+export const PROMPT_SETTINGS: {
+    [key in SupportedPrompts]: PromptMachineSettings;
 } = {
     dataFlowReset: {
         dialogMessageId: 'resetDataFlow.dialog.title',
