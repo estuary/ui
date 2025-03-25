@@ -8,13 +8,14 @@
         "node": ">=20",
         "npm": "^10"
     },
+    "type": "module",
     "scripts": {
         "build": "vite build",
         "format": "prettier --check '**/*.{js,jsx,ts,tsx}'",
         "format:fix": "prettier --write '**/*.{js,jsx,ts,tsx}'",
         "licenses": "licensee --errors-only",
         "lint": "eslint --ext js,jsx,ts,tsx .",
-        "lint-staged": "lint-staged --config .lint-staged.js",
+        "lint-staged": "lint-staged --config .lint-staged.cjs",
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "maintenance:off": "rm public/maintenance",
         "maintenance:on": "touch public/maintenance",
