@@ -6,7 +6,7 @@ A prompt is a `stepper` that is shown before an action is taken. The idea is to 
 
 A `prompt` is currently a dialog that is made up of `Title`, `Actions`, and `Content`(this consumes a list of `step`s to know what to render).
 
-Each `step` needs a `definition` file. This stores the interface of what data that `step` _adds_ to the context. Also, it defines a `promptstep` const which contains everything it needs to render the`step`.
+Each `step` needs a `promptstep` added to the `stepDefinitions` file. This stores a `promptstep` which contains everything it needs to render the`step`. In addition, each `step` has an _optional_ `types` files that stores the interface of what data that `step` _adds_ to the context.
 
 These `definition`s are then stored in an array. The order of the array is the order of the steps and how they will be stepped through.
 

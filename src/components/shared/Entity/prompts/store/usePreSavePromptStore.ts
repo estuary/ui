@@ -6,14 +6,11 @@ import { useShallow } from 'zustand/react/shallow';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
 import { useMemo } from 'react';
-import type { PromptStep } from '../types';
 import {
-    DataFlowResetSteps,
-    DefaultSteps,
     getInitialDataFlowResetContext,
-} from '../steps/dataFlowReset/shared';
+    SAVE_PROMPT_SETTINGS,
+} from '../shared';
 import type { PreSavePromptStore } from './types';
 import { defaultStepState } from './shared';
 
@@ -33,29 +30,16 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             ...getInitialState(),
             resetState: () => set(getInitialState(), false, 'resetState'),
 
-            initializeSteps: (backfillEnabled) =>
+            initializeSteps: (configKey) =>
                 set(
                     produce((state: PreSavePromptStore) => {
+                        state.context.loggingEvent =
+                            SAVE_PROMPT_SETTINGS[configKey].loggingEvent;
+                        state.context.dialogMessageId =
+                            SAVE_PROMPT_SETTINGS[configKey].dialogMessageId;
+                        state.steps = SAVE_PROMPT_SETTINGS[configKey].steps;
+
                         const initUUID = crypto.randomUUID();
-                        const newSteps: PromptStep[] = [];
-
-                        if (backfillEnabled) {
-                            newSteps.push(...DataFlowResetSteps);
-
-                            state.context.loggingEvent =
-                                CustomEvents.DATA_FLOW_RESET;
-                            state.context.dialogMessageId =
-                                'resetDataFlow.dialog.title';
-                        } else {
-                            newSteps.push(...DefaultSteps);
-
-                            state.context.loggingEvent =
-                                CustomEvents.ENTITY_SAVE;
-                            state.context.dialogMessageId =
-                                'preSavePrompt.dialog.title';
-                        }
-
-                        state.steps = newSteps;
                         state.initUUID = initUUID;
                         logRocketEvent(state.context.loggingEvent, {
                             step: 'init',
