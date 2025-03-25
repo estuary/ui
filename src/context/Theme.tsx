@@ -1,7 +1,6 @@
 import { ThemeKeys } from '@microlink/react-json-view';
 import {
     AlertColor,
-    alpha,
     createTheme,
     PaletteOptions,
     SxProps,
@@ -122,6 +121,51 @@ export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
 
+const rgbTranslations = {
+    dark: {
+        error: {
+            main: '228, 89, 114',
+        },
+        info: {
+            main: '41, 182, 246',
+        },
+        primary: {
+            main: '186, 205, 253',
+        },
+        secondary: {
+            main: '122, 151, 243',
+        },
+        success: {
+            main: '64, 183, 99',
+        },
+        warning: {
+            main: '245, 124, 0',
+        },
+    },
+    light: {
+        error: {
+            main: '202, 59, 85',
+        },
+        info: {
+            dark: '8, 114, 147',
+            main: '79, 214, 255',
+        },
+        primary: {
+            main: '58, 86, 202',
+        },
+        secondary: {
+            main: '25, 42, 136',
+        },
+        success: {
+            dark: '42, 121, 66',
+        },
+        warning: {
+            dark: '184, 84, 3',
+            main: '237, 108, 2',
+        },
+    },
+};
+
 // Color modifiers
 const contrastThreshold = 5;
 const tonalOffset = 0.1;
@@ -146,39 +190,40 @@ const lightMode: PaletteOptions = {
     },
     contrastThreshold,
     error: {
-        alpha_05: alpha(errorMain, 0.05),
-        alpha_12: alpha(errorMain, 0.12),
-        alpha_26: alpha(errorMain, 0.26),
-        alpha_50: alpha(errorMain, 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.error.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.error.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.error.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.error.main}, 0.50)`,
         main: errorMain,
     },
     info: {
-        alpha_05: alpha(infoMain, 0.05),
-        alpha_12: alpha(infoMain, 0.12),
-        alpha_26: alpha(infoMain, 0.26),
-        alpha_50: alpha(infoMain, 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.info.dark}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.info.dark}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.info.dark}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.info.dark}, 0.50)`,
         main: infoMain,
+        dark: '#087293',
     },
     mode: 'light',
     primary: {
-        alpha_05: alpha(sample_blue[600], 0.05),
-        alpha_12: alpha(sample_blue[600], 0.12),
-        alpha_26: alpha(sample_blue[600], 0.26),
-        alpha_50: alpha(sample_blue[600], 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.primary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.primary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.primary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.primary.main}, 0.50)`,
         main: sample_blue[600],
     },
     secondary: {
-        alpha_05: alpha(sample_blue[800], 0.05),
-        alpha_12: alpha(sample_blue[800], 0.12),
-        alpha_26: alpha(sample_blue[800], 0.26),
-        alpha_50: alpha(sample_blue[800], 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.secondary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.secondary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.secondary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.secondary.main}, 0.50)`,
         main: sample_blue[800],
     },
     success: {
-        alpha_05: alpha(successDark, 0.05),
-        alpha_12: alpha(successDark, 0.12),
-        alpha_26: alpha(successDark, 0.26),
-        alpha_50: alpha(successDark, 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.success.dark}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.success.dark}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.success.dark}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.success.dark}, 0.50)`,
         main: successMain,
         dark: successDark,
     },
@@ -188,10 +233,10 @@ const lightMode: PaletteOptions = {
     },
     tonalOffset,
     warning: {
-        alpha_05: alpha('#ED6C02', 0.05),
-        alpha_12: alpha('#ED6C02', 0.12),
-        alpha_26: alpha('#ED6C02', 0.26),
-        alpha_50: alpha('#ED6C02', 0.5),
+        alpha_05: `rgba(${rgbTranslations.light.warning.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.warning.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.warning.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.warning.main}, 0.50)`,
         main: '#ED6C02',
     },
 };
@@ -203,29 +248,38 @@ const darkMode: PaletteOptions = {
     contrastThreshold,
     mode: 'dark',
     error: {
-        alpha_05: alpha('#E45972', 0.05),
-        alpha_12: alpha('#E45972', 0.12),
-        alpha_26: alpha('#E45972', 0.26),
-        alpha_50: alpha('#E45972', 0.5),
+        alpha_05: `rgba(${rgbTranslations.dark.error.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.error.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.error.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.error.main}, 0.50)`,
         main: '#E45972',
     },
+    info: {
+        alpha_05: `rgba(${rgbTranslations.dark.info.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.info.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.info.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.info.main}, 0.50)`,
+        main: '#29B6F6',
+    },
     primary: {
-        alpha_05: alpha(sample_blue[200], 0.05),
-        alpha_12: alpha(sample_blue[200], 0.12),
-        alpha_50: alpha(sample_blue[200], 0.5),
+        alpha_05: `rgba(${rgbTranslations.dark.primary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.primary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.primary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.primary.main}, 0.50)`,
         main: sample_blue[200],
     },
     secondary: {
-        alpha_05: alpha(sample_blue[400], 0.05),
-        alpha_12: alpha(sample_blue[400], 0.12),
-        alpha_50: alpha(sample_blue[400], 0.5),
+        alpha_05: `rgba(${rgbTranslations.dark.secondary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.secondary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.secondary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.secondary.main}, 0.50)`,
         main: sample_blue[400],
     },
     success: {
-        alpha_05: alpha(successMain, 0.05),
-        alpha_12: alpha(successMain, 0.12),
-        alpha_26: alpha(successMain, 0.26),
-        alpha_50: alpha(successMain, 0.5),
+        alpha_05: `rgba(${rgbTranslations.dark.success.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.success.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.success.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.success.main}, 0.50)`,
         main: successMain,
     },
     text: {
@@ -234,10 +288,10 @@ const darkMode: PaletteOptions = {
     },
     tonalOffset,
     warning: {
-        alpha_05: alpha('#F57C00', 0.05),
-        alpha_12: alpha('#F57C00', 0.12),
-        alpha_26: alpha('#F57C00', 0.26),
-        alpha_50: alpha('#F57C00', 0.5),
+        alpha_05: `rgba(${rgbTranslations.dark.warning.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.warning.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.warning.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.warning.main}, 0.50)`,
         main: '#F57C00',
     },
 };
