@@ -1,14 +1,11 @@
-import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'services/supabase';
-import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
 import {
     FullSource,
     FullSourceDictionary,
@@ -106,6 +103,10 @@ export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
 
+// Used to mark fields that should be removed during generation. This is
+//      only here because if we set something to null and then check for nulls
+//      we might end up overwritting a value a user specifically wants a null for.
+export const REMOVE_DURING_GENERATION = undefined;
 export const getFullSource = (
     fullSource: FullSource | string | undefined,
     filterOutName?: boolean,
@@ -398,31 +399,3 @@ export const isExcludeOnlyField = (
         constraintType === ConstraintTypes.UNSATISFIABLE
     );
 };
-
-export interface ConnectorVersionEvaluationOptions {
-    connectorId: string;
-    existingImageTag: string;
-}
-
-export function evaluateConnectorVersions(
-    connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTag_Base {
-    // Return the version of the connector that is used by the existing task in an edit workflow.
-    if (options && options.connectorId === connector.id) {
-        const connectorsInUse = connector.connector_tags.filter(
-            (version) => version.image_tag === options.existingImageTag
-        );
-
-        if (hasLength(connectorsInUse)) {
-            return connectorsInUse[0];
-        }
-    }
-
-    // Return the latest version of a given connector.
-    const { connector_id, id, image_tag } = connector.connector_tags.sort(
-        (a, b) => b.image_tag.localeCompare(a.image_tag)
-    )[0];
-
-    return { connector_id, id, image_tag };
-}
