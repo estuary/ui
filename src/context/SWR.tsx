@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
@@ -7,7 +8,6 @@ import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { tokenHasIssues } from 'services/supabase';
 import { CustomEvents } from 'services/types';
 import { SWRConfig, useSWRConfig } from 'swr';
-import type { BaseComponentProps } from 'types';
 import { supabaseClient } from './GlobalProviders';
 
 const DEFAULT_RETRY_COUNT = 3;

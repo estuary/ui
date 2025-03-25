@@ -1,3 +1,4 @@
+import type { LoadDocumentsOffsets } from './types';
 import { singleCallSettings } from 'context/SWR';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
@@ -14,7 +15,6 @@ import {
 } from 'utils/dataPlane-utils';
 import { hasLength } from 'utils/misc-utils';
 import { loadDocuments } from './shared';
-import type { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
 

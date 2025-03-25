@@ -1,11 +1,11 @@
+import type { NamedSet } from 'zustand/middleware';
+import type { SidePanelDocsState } from './types';
 import produce from 'immer';
 import { getDocsSettings } from 'utils/env-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';
-import type { SidePanelDocsState } from './types';
 
 const { iframeStringInclude } = getDocsSettings();
 

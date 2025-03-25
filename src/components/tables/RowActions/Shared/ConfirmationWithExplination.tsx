@@ -1,3 +1,6 @@
+import type { AccessGrantRemovalSeverity } from 'hooks/useAccessGrantRemovalDescriptions';
+import type { AccessGrantRowConfirmation } from '../AccessGrants/types';
+import type { ConfirmationWithExplanationProps } from './types';
 import {
     Box,
     Table,
@@ -11,12 +14,9 @@ import {
 import MessageWithLink from 'components/content/MessageWithLink';
 import AlertBox from 'components/shared/AlertBox';
 import { alertColorsReversed } from 'context/Theme';
-import type { AccessGrantRemovalSeverity } from 'hooks/useAccessGrantRemovalDescriptions';
 import { WarningTriangle } from 'iconoir-react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import type { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import type { ConfirmationWithExplanationProps } from './types';
 
 function ConfirmationWithExplanation({
     message,

@@ -1,6 +1,6 @@
+import type { Entity } from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 import { TABLES } from 'services/supabase';
-import type { Entity } from 'types';
 
 interface LiveSpecFlow {
     flow_type: Entity;

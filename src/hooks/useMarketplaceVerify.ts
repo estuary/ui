@@ -1,7 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
+import type { MarketPlaceVerifyResponse } from 'types';
 import { useCallback } from 'react';
 import { client } from 'services/client';
-import type { MarketPlaceVerifyResponse } from 'types';
 import { getMarketplaceSettings } from 'utils/env-utils';
 import retry from 'retry';
 import { logRocketEvent, retryAfterFailure } from 'services/shared';

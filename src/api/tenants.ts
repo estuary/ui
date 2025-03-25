@@ -1,6 +1,6 @@
+import type { TenantHidesDataPreview, TenantPaymentDetails } from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 import { TABLES } from 'services/supabase';
-import type { TenantHidesDataPreview, TenantPaymentDetails } from 'types';
 
 const COLUMNS = ['gcm_account_id', 'payment_provider', 'tenant', 'trial_start'];
 

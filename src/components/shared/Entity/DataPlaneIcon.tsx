@@ -1,6 +1,6 @@
 import type { PaletteMode } from '@mui/material';
-import { Avatar, Box, useTheme } from '@mui/material';
 import type { DataPlaneIconProps } from 'components/shared/Entity/types';
+import { Avatar, Box, useTheme } from '@mui/material';
 import { semiTransparentBackground_oneLayerElevated } from 'context/Theme';
 import { Lock, QuestionMark } from 'iconoir-react';
 import awsLogo from 'images/data-plane-providers/aws.png';

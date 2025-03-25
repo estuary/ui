@@ -1,3 +1,4 @@
+import type { Shard } from 'data-plane-gateway/types/shard_client';
 import { useEditorStore_catalogName } from 'components/editor/Store/hooks';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
@@ -5,7 +6,6 @@ import { DateTime } from 'luxon';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { fetchShardList } from 'utils/dataPlane-utils';
 import { useQueryPoller } from 'hooks/useJobStatusPoller';
-import type { Shard } from 'data-plane-gateway/types/shard_client';
 import { useIntl } from 'react-intl';
 import { useEffect } from 'react';
 import { handlePollerError } from 'services/supabase';

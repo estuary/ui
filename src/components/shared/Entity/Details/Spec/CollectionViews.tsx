@@ -1,3 +1,4 @@
+import type { SpecPresentation } from 'components/shared/Entity/Details/Spec/index';
 import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
@@ -8,7 +9,6 @@ import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkele
 import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
 import ReadOnly from 'components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'components/schema/PropertiesViewer';
-import type { SpecPresentation } from 'components/shared/Entity/Details/Spec/index';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,

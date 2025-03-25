@@ -1,3 +1,4 @@
+import type { PromptStepState } from '../../../types';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { getLiveSpecSpec } from 'api/liveSpecsExt';
@@ -15,7 +16,6 @@ import {
 } from 'utils/workflow-utils';
 import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import type { PromptStepState } from '../../../types';
 
 function MarkMaterialization() {
     const intl = useIntl();

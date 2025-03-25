@@ -1,6 +1,6 @@
+import type { BillingTableState } from 'stores/Tables/Billing/types';
 import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';
-import type { BillingTableState } from 'stores/Tables/Billing/types';
 
 // Selector Hooks
 export const useBillingTable_hydrateContinuously = () => {

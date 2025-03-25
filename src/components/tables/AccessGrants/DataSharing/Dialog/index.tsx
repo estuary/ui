@@ -1,3 +1,5 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { Dispatch, SetStateAction } from 'react';
 import {
     Box,
     Dialog,
@@ -7,12 +9,10 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import type { PostgrestError } from '@supabase/postgrest-js';
 import AlertBox from 'components/shared/AlertBox';
 import Error from 'components/shared/Error';
 import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 import { Xmark } from 'iconoir-react';
-import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

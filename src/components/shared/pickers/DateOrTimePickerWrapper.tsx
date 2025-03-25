@@ -1,12 +1,12 @@
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from 'types';
+import type { PickerProps } from './types';
 import { Box, IconButton, Popover } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
-import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import type { BaseComponentProps } from 'types';
 import { DEFAULT_ANCHOR_ORIGIN, DEFAULT_TRANSFORM_ORIGIN } from './shared';
-import type { PickerProps } from './types';
 
 interface Props extends PickerProps, BaseComponentProps {
     icon: ReactNode;

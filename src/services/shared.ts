@@ -1,9 +1,9 @@
 import type { User } from '@supabase/supabase-js';
+import type { UserDetails } from 'types';
+import type { CustomEvents } from './types';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import type { UserDetails } from 'types';
 import { isProduction } from 'utils/env-utils';
-import type { CustomEvents } from './types';
 
 export const DEFAULT_FILTER = '__unknown__';
 export const getUserDetails = (

@@ -1,7 +1,7 @@
+import type { BaseComponentProps } from 'types';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { BaseComponentProps } from 'types';
 import GrantGuardProcessor from './Processor';
 
 function GrantGuard({ children }: BaseComponentProps) {

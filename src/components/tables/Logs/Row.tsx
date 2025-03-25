@@ -1,6 +1,6 @@
-import { Box, TableRow, useTheme } from '@mui/material';
 import type { OpsLogFlowDocument } from 'types';
 import type { CSSProperties } from 'react';
+import { Box, TableRow, useTheme } from '@mui/material';
 import { useLayoutEffect, useRef, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 import { defaultOutline_hovered } from 'context/Theme';

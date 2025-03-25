@@ -1,10 +1,10 @@
+import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
 import {
     get_resource_config_pointers,
     update_materialization_resource_spec,
 } from '@estuary/flow-web';
 import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
-import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'types';
 import { Annotations } from 'types/jsonforms';
 import { stripPathing } from 'utils/misc-utils';
 

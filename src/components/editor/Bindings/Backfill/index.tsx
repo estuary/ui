@@ -1,9 +1,9 @@
+import type { BackfillProps } from './types';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import BackfillButton from './BackfillButton';
 import SectionWrapper from './SectionWrapper';
-import type { BackfillProps } from './types';
 
 export default function Backfill({
     bindingIndex,

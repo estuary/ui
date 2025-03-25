@@ -1,3 +1,4 @@
+import type { BaseComponentProps, TenantPaymentDetails } from 'types';
 import { MAX_TENANTS } from 'api/billing';
 import FullPageError from 'components/fullPage/Error';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
@@ -5,7 +6,6 @@ import { useTenantsDetailsForPayment } from 'hooks/useTenants';
 import { createContext, useContext, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
-import type { BaseComponentProps, TenantPaymentDetails } from 'types';
 
 export interface TenantContextData {
     tenantBillingDetails: TenantPaymentDetails[] | null;

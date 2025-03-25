@@ -1,3 +1,5 @@
+import type { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
+import type { Schema } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -11,8 +13,6 @@ import {
     useBinding_fullSourceOfBinding,
     useBinding_updateFullSourceConfig,
 } from 'stores/Binding/hooks';
-import type { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
-import type { Schema } from 'types';
 import {
     getBindingIndex,
     getCollectionNameProp,

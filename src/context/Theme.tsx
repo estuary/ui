@@ -7,6 +7,7 @@ import type {
     ThemeOptions,
     TypographyProps,
 } from '@mui/material';
+import type { BaseComponentProps } from 'types';
 import {
     createTheme,
     ThemeProvider as MUIThemeProvider,
@@ -17,7 +18,6 @@ import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import CheckSquare from 'icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
-import type { BaseComponentProps } from 'types';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 

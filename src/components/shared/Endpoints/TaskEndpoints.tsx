@@ -1,3 +1,4 @@
+import type { TaskEndpointProps } from './types';
 import { Box } from '@mui/material';
 import CardWrapper from 'components/shared/CardWrapper';
 import Error from 'components/shared/Error';
@@ -5,7 +6,6 @@ import { useEntityType } from 'context/EntityContext';
 import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
 import { useIntl } from 'react-intl';
 import { EndpointLink } from './EndpointLink';
-import type { TaskEndpointProps } from './types';
 
 // TODO (task endpoints) This was designed to quickly get added to the old
 //  details panel inside the tables. It was pretty constrained in there and

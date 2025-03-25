@@ -1,5 +1,5 @@
-import { IconoirProvider as IconProvider } from 'iconoir-react';
 import type { ReactElement } from 'react';
+import { IconoirProvider as IconProvider } from 'iconoir-react';
 
 interface Props {
     children: ReactElement;

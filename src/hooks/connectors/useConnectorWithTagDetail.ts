@@ -1,3 +1,4 @@
+import type { ConnectorWithTagDetailQuery } from './shared';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
@@ -7,7 +8,6 @@ import {
     TABLES,
 } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import type { ConnectorWithTagDetailQuery } from './shared';
 import { CONNECTOR_WITH_TAG_QUERY } from './shared';
 
 const defaultResponse: ConnectorWithTagDetailQuery[] = [];

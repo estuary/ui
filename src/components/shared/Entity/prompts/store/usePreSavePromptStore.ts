@@ -1,3 +1,4 @@
+import type { PreSavePromptStore } from './types';
 import produce from 'immer';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -8,7 +9,6 @@ import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { useMemo } from 'react';
 import { getInitialDataFlowResetContext } from '../shared';
-import type { PreSavePromptStore } from './types';
 import { defaultStepState } from './shared';
 
 const getInitialState = (): Pick<

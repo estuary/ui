@@ -1,6 +1,6 @@
+import type { EntityWithCreateWorkflow } from 'types';
 import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import type { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
     ctaCallback: Function;

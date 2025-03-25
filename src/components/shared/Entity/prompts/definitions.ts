@@ -1,6 +1,6 @@
+import type { PromptMachineSettings, SupportedPrompts } from './types';
 import { CustomEvents } from 'services/types';
 import { DataFlowSteps, PreSaveSteps } from './steps/stepDefinitions';
-import type { PromptMachineSettings, SupportedPrompts } from './types';
 
 // !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
 // `steps` property is run through in order.

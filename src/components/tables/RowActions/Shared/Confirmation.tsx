@@ -1,7 +1,7 @@
-import { List, ListItem, Typography } from '@mui/material';
 import type { RowConfirmation } from '../types';
-import NestedListItem from './NestedListItem';
 import type { RowActionConfirmationProps } from './types';
+import { List, ListItem, Typography } from '@mui/material';
+import NestedListItem from './NestedListItem';
 
 // TODO (typing) - eventually we should remove supporting passing in string arrays
 //  so that we always have an `id` and `message` to use.

@@ -1,12 +1,12 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { GrantDirective_AccessLinks } from 'types';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import CopyAccessLink from 'components/tables/cells/CopyAccessLink';
 import RowSelect from 'components/tables/cells/RowSelect';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useZustandStore } from 'context/Zustand/provider';
 import { SelectTableStoreNames } from 'stores/names';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
-import type { GrantDirective_AccessLinks } from 'types';
 
 interface RowsProps {
     data: GrantDirective_AccessLinks[];

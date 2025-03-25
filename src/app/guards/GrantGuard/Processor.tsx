@@ -1,5 +1,5 @@
-import { Stack, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import { Stack, Typography } from '@mui/material';
 import { getDirectiveByToken } from 'api/directives';
 import { authenticatedRoutes } from 'app/routes';
 import MessageWithLink from 'components/content/MessageWithLink';

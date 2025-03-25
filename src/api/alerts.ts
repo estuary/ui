@@ -1,7 +1,8 @@
+import type { SortingProps } from 'services/supabase';
+import type { AlertSubscription, DataProcessingAlert } from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 import pLimit from 'p-limit';
 import { stringifyJSON } from 'services/stringify';
-import type { SortingProps } from 'services/supabase';
 import {
     defaultTableFilter,
     deleteSupabase,
@@ -12,7 +13,6 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import type { AlertSubscription, DataProcessingAlert } from 'types';
 import { CHUNK_SIZE } from 'utils/misc-utils';
 
 interface CreateObject {

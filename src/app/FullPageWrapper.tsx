@@ -1,8 +1,8 @@
+import type { BaseComponentProps } from 'types';
 import { Box, Paper, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import PageContainer from 'components/shared/PageContainer';
 import OnLoadSpinner from 'context/OnLoadSpinner/OnLoadSpinner';
 import { paperBackground } from 'context/Theme';
-import type { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     fullWidth?: boolean;

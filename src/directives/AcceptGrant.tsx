@@ -1,8 +1,10 @@
-import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import type {
     PostgrestError,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
+import type { KeyedMutator } from 'swr';
+import type { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import { submitDirective } from 'api/directives';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import AlertBox from 'components/shared/AlertBox';
@@ -12,8 +14,6 @@ import { jobStatusQuery, trackEvent } from 'directives/shared';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import type { KeyedMutator } from 'swr';
-import type { AppliedDirective, JoinedAppliedDirective } from 'types';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;

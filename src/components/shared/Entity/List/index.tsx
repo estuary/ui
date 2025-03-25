@@ -1,9 +1,9 @@
+import type { EntityListProps } from './types';
 import { Box } from '@mui/material';
 import CollectionSelector from 'components/collection/Selector';
 import CatalogList from 'components/transformation/create/Config/catalog/CatalogList';
 import CollectionList from 'components/transformation/create/Config/catalog/CollectionList';
 import { useIntl } from 'react-intl';
-import type { EntityListProps } from './types';
 
 function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
     const intl = useIntl();

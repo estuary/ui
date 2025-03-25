@@ -1,3 +1,5 @@
+import type { VariantType } from 'notistack';
+import type { DefaultLoginProps } from '../types';
 import {
     Stack,
     Box,
@@ -9,7 +11,6 @@ import {
 import { supabaseClient } from 'context/GlobalProviders';
 import React, { useState } from 'react';
 import AlertBox from 'components/shared/AlertBox';
-import type { VariantType } from 'notistack';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -17,7 +18,6 @@ import { useNavigate } from 'react-router';
 import { hasLength } from 'utils/misc-utils';
 import MessageWithLink from 'components/content/MessageWithLink';
 import useRedirectPath from '../useRedirectPath';
-import type { DefaultLoginProps } from '../types';
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);

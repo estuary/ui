@@ -1,5 +1,6 @@
-import { Box } from '@mui/material';
 import type { GridRenderCellParams } from '@mui/x-data-grid';
+import type { ReactNode } from 'react';
+import { Box } from '@mui/material';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import CollectionSelectorList from 'components/collection/Selector/List';
 import {
@@ -9,7 +10,6 @@ import {
 import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow } from 'context/Workflow';
-import type { ReactNode } from 'react';
 import {
     useBinding_collections,
     useBinding_discoveredCollections,

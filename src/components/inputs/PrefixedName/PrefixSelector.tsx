@@ -1,7 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { PrefixSelectorProps } from './types';
 import { Autocomplete, TextField } from '@mui/material';
 import { autoCompleteDefaults_Virtual_Non_Clearable } from 'components/shared/AutoComplete/DefaultProps';
-import type { PrefixSelectorProps } from './types';
 
 // This is not TenantSelector because we need extra customization
 //  eventually we should look into merging these. Initially this was

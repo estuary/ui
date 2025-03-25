@@ -1,3 +1,5 @@
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import type { Entity } from 'types';
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import {
     Box,
@@ -20,11 +22,9 @@ import {
 import { EditorStatus } from 'components/editor/Store/types';
 import { editorToolBarSx } from 'context/Theme';
 import { debounce } from 'lodash';
-import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';
-import type { Entity } from 'types';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,

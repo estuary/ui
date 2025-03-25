@@ -1,9 +1,9 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
 import type { AuthApiError } from '@supabase/supabase-js';
+import type { VariantType } from 'notistack';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
 import { isEmpty } from 'lodash';
-import type { VariantType } from 'notistack';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';

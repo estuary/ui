@@ -1,7 +1,7 @@
+import type { BaseComponentProps } from 'types';
 import { DialogTitle, IconButton } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import type { BaseComponentProps } from 'types';
 
 export interface DialogTitleProps extends BaseComponentProps {
     id: string;

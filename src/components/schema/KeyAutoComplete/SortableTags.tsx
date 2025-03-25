@@ -1,4 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core';
+import type { AutocompleteGetTagProps } from '@mui/material';
 import {
     closestCenter,
     DndContext,
@@ -17,7 +18,6 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import type { AutocompleteGetTagProps } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { keyIsValidOption } from './shared';
 import SortableTag from './SortableTag';

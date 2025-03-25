@@ -1,5 +1,5 @@
-import { useIntl } from 'react-intl';
 import type { Entity } from 'types';
+import { useIntl } from 'react-intl';
 import Statistic from './Statistic';
 import useActiveEntityCount from './useActiveEntityCount';
 

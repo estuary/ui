@@ -1,3 +1,4 @@
+import type { TableColumns } from 'types';
 import { Box, Table, TableContainer } from '@mui/material';
 import Rows from 'components/tables/Billing/Rows';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
@@ -7,7 +8,6 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
-import type { TableColumns } from 'types';
 import { TableStatuses } from 'types';
 import { invoiceId } from 'utils/billing-utils';
 

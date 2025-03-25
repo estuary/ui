@@ -1,9 +1,9 @@
+import type { Props } from 'components/shared/Entity/DetailsForm/types';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 import { Box, Stack, Typography } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 import AlertBox from 'components/shared/AlertBox';
-import type { Props } from 'components/shared/Entity/DetailsForm/types';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
 import { FormattedMessage, useIntl } from 'react-intl';
 import defaultRenderers from 'services/jsonforms/defaultRenderers';

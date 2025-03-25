@@ -1,7 +1,7 @@
+import type { BaseComponentProps } from 'types';
 import useOpsLogs from 'hooks/journals/useOpsLogs';
 
 import { useEffect } from 'react';
-import type { BaseComponentProps } from 'types';
 
 import { useJournalDataLogsStore } from './Store';
 

@@ -1,10 +1,10 @@
+import type { TransientButtonState } from 'context/Theme';
 import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
 import { unauthenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getPathWithParams } from 'utils/misc-utils';
-import type { TransientButtonState } from 'context/Theme';
 import { getButtonIcon } from 'context/Theme';
 
 interface Props {

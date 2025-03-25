@@ -1,3 +1,4 @@
+import type { Schema, SourceCaptureDef } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -9,7 +10,6 @@ import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 
-import type { Schema, SourceCaptureDef } from 'types';
 import { addOrRemoveSourceCapture, getSourceCapture } from 'utils/entity-utils';
 
 function useSourceCapture() {

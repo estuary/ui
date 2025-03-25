@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import Tile from 'components/shared/Tile';
@@ -6,7 +7,6 @@ import {
     connectorImageBackgroundSx,
     sample_grey,
 } from 'context/Theme';
-import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

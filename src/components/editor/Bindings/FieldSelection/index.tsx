@@ -1,6 +1,3 @@
-import { Box, Stack, Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import type {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -10,6 +7,11 @@ import type {
     TranslatedConstraint,
     ValidationResponse_Binding,
 } from 'components/editor/Bindings/FieldSelection/types';
+import type { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
+import type { Schema } from 'types';
+import { Box, Stack, Typography } from '@mui/material';
+import MessageWithLink from 'components/content/MessageWithLink';
+import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
 import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
@@ -24,14 +26,12 @@ import {
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
 } from 'stores/Binding/hooks';
-import type { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import type { Schema } from 'types';
 import {
     getBindingIndex,
     isExcludeOnlyField,

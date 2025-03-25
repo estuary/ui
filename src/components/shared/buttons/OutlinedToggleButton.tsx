@@ -1,4 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { OutlinedToggleButtonProps } from './types';
 import { ToggleButton, toggleButtonClasses, useTheme } from '@mui/material';
 import {
     defaultOutline,
@@ -11,7 +12,6 @@ import {
     primaryColoredOutline_disabled,
     primaryColoredOutline_hovered,
 } from 'context/Theme';
-import type { OutlinedToggleButtonProps } from './types';
 
 function OutlinedToggleButton({
     children,

@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
 import EditCommandsHeader from 'components/editor/Bindings/SchemaEdit/Commands/Header';
 import UpdateSchemaButton from 'components/editor/Bindings/SchemaEdit/Commands/UpdateSchemaButton';
-import type { ReactNode } from 'react';
 
 interface Props {
     children: ReactNode;

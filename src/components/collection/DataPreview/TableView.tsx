@@ -1,4 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { useJournalData } from 'hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import {
     Grid,
     Paper,
@@ -11,8 +13,6 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { tableAlternateRowsSx } from 'context/Theme';
-import type { useJournalData } from 'hooks/journals/useJournalData';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { hasLength } from 'utils/misc-utils';

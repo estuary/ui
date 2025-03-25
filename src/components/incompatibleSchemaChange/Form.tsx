@@ -1,3 +1,4 @@
+import type { BaseFormProps } from './types';
 import {
     Autocomplete,
     Button,
@@ -14,7 +15,6 @@ import { stringifyJSON } from 'services/stringify';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { autoCompleteDefaultProps } from './shared';
-import type { BaseFormProps } from './types';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,

@@ -1,11 +1,11 @@
+import type { AppliedDirective } from 'types';
+import type { Directives, UserClaims } from './types';
 import { supabaseClient } from 'context/GlobalProviders';
 import { isEmpty } from 'lodash';
 import { logRocketConsole, logRocketEvent } from 'services/shared';
 import { JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
 import { CustomEvents } from 'services/types';
-import type { AppliedDirective } from 'types';
 import { hasLength } from 'utils/misc-utils';
-import type { Directives, UserClaims } from './types';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
 

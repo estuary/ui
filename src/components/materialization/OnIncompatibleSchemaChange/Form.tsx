@@ -1,5 +1,5 @@
-import IncompatibleSchemaChangeForm from 'components/incompatibleSchemaChange/Form';
 import type { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
+import IncompatibleSchemaChangeForm from 'components/incompatibleSchemaChange/Form';
 import useSpecificationIncompatibleSchemaSetting from 'hooks/OnIncompatibleSchemaChange/useSpecificationIncompatibleSchemaSetting';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';

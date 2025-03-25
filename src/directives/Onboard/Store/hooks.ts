@@ -1,5 +1,5 @@
-import { useLocalZustandStore } from 'context/LocalZustand';
 import type { OnboardingState } from 'directives/Onboard/Store/types';
+import { useLocalZustandStore } from 'context/LocalZustand';
 import { OnboardingStoreNames } from 'stores/names';
 
 export const useOnboardingStore_requestedTenant = () => {

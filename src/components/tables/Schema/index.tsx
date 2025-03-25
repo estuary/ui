@@ -1,13 +1,13 @@
+import type { FieldFilter } from 'components/schema/types';
+import type { SortDirection, TableColumns, TableState } from 'types';
 import { Box, Table, TableContainer } from '@mui/material';
 import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'components/editor/Bindings/Store/hooks';
-import type { FieldFilter } from 'components/schema/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { SortDirection, TableColumns, TableState } from 'types';
 import { TableStatuses } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import EntityTableBody from '../EntityTable/TableBody';

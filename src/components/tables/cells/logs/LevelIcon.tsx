@@ -1,5 +1,5 @@
-import { Tooltip, Typography, useTheme } from '@mui/material';
 import type { LogLevels } from 'components/tables/Logs/types';
+import { Tooltip, Typography, useTheme } from '@mui/material';
 import {
     CheckCircle,
     Circle,

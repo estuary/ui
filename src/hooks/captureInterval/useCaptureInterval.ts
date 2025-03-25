@@ -1,3 +1,4 @@
+import type { Schema } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -11,7 +12,6 @@ import { CustomEvents } from 'services/types';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import type { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { formatCaptureInterval } from 'utils/time-utils';
 import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';

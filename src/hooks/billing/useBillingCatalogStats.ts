@@ -1,8 +1,8 @@
+import type { CatalogStats_Billing } from 'types';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { getStatsForBilling } from 'api/stats';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useTenantStore } from 'stores/Tenant/Store';
-import type { CatalogStats_Billing } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 const defaultResponse: CatalogStats_Billing[] = [];

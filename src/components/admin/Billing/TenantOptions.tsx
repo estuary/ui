@@ -1,3 +1,4 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import TenantSelector from 'components/shared/TenantSelector';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useCallback } from 'react';
@@ -7,7 +8,6 @@ import {
     useBillingTable_setHydrated,
     useBillingTable_setHydrationErrorsExist,
 } from 'stores/Tables/Billing/hooks';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 
 function TenantOptions() {

@@ -1,5 +1,5 @@
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import type { Dispatch, SetStateAction } from 'react';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useIntl } from 'react-intl';
 import { FREE_GB_BY_TIER } from 'utils/billing-utils';
 

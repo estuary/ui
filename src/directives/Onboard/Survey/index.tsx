@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { FormControl, FormLabel, RadioGroup } from '@mui/material';
 import { hiddenButAccessibleRadio } from 'context/Theme';
 import {
@@ -5,7 +6,6 @@ import {
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
 } from 'directives/Onboard/Store/hooks';
-import type { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';
 import OriginOption from './OriginOption';

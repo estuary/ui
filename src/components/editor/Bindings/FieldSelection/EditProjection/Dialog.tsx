@@ -1,3 +1,5 @@
+import type { Projection } from 'components/editor/Bindings/FieldSelection/types';
+import type { Dispatch, SetStateAction } from 'react';
 import {
     Button,
     Dialog,
@@ -8,8 +10,6 @@ import {
     Typography,
 } from '@mui/material';
 import FieldEditor from 'components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
-import type { Projection } from 'components/editor/Bindings/FieldSelection/types';
-import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useBinding_currentCollection } from 'stores/Binding/hooks';
 

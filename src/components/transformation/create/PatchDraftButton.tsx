@@ -1,3 +1,4 @@
+import type { Transform } from 'types';
 import { Button } from '@mui/material';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
@@ -20,7 +21,6 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'stores/TransformationCreate/hooks';
-import type { Transform } from 'types';
 
 function PatchDraftButton() {
     // Draft Editor Store

@@ -1,4 +1,5 @@
 import type { PickersLayoutProps } from '@mui/x-date-pickers';
+import type { PickerProps } from './types';
 import {
     PickersLayoutContentWrapper,
     PickersLayoutRoot,
@@ -14,7 +15,6 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { isReactElement } from 'utils/misc-utils';
 import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
-import type { PickerProps } from './types';
 import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 
 const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');

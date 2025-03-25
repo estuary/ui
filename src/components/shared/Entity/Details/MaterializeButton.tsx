@@ -1,9 +1,9 @@
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import MaterializeLink from '../MaterializeLink';
 
 function MaterializeButton() {

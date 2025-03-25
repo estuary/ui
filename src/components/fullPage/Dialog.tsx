@@ -1,7 +1,7 @@
 import type { SxProps } from '@mui/material';
+import type { BaseComponentProps } from 'types';
 import { Box, Paper } from '@mui/material';
 import { paperBackground } from 'context/Theme';
-import type { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     paperSx?: SxProps;

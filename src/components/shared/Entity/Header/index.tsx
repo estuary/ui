@@ -1,7 +1,7 @@
+import type { EntityToolbarProps } from '../types';
 import { Stack, Toolbar } from '@mui/material';
 import EditCapabilityGuard from 'components/shared/guards/EditCapability';
 import HeaderLogs from '../HeaderLogs';
-import type { EntityToolbarProps } from '../types';
 import HeaderActions from './Actions';
 import HeaderProgress from './Progress';
 

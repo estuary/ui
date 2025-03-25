@@ -1,6 +1,9 @@
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
+import type { JournalRecord } from 'hooks/journals/types';
+import type { useJournalData } from 'hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import ReactJson from '@microlink/react-json-view';
 import { Box, Grid, useTheme } from '@mui/material';
-import type { GridRowSelectionModel } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
 import ListAndDetails from 'components/editor/ListAndDetails';
 import Error from 'components/shared/Error';
@@ -9,9 +12,6 @@ import {
     jsonViewTheme,
     semiTransparentBackground,
 } from 'context/Theme';
-import type { JournalRecord } from 'hooks/journals/types';
-import type { useJournalData } from 'hooks/journals/useJournalData';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';

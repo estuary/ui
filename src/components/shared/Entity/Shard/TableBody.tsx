@@ -1,3 +1,5 @@
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
+import type { TableColumns } from 'types';
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import TableLoadingRows from 'components/tables/Loading';
 import { semiTransparentBackgroundIntensified } from 'context/Theme';
@@ -6,8 +8,6 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'stores/ShardDetail/hooks';
-import type { ShardEntityTypes } from 'stores/ShardDetail/types';
-import type { TableColumns } from 'types';
 import { getColumnKeyList } from 'utils/table-utils';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 

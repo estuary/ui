@@ -1,3 +1,11 @@
+import type {
+    DataPlaneOption,
+    Details,
+    DetailsFormState,
+} from 'stores/DetailsForm/types';
+import type { ConnectorVersionEvaluationOptions } from 'utils/connector-utils';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
 import { getConnectors_detailsForm } from 'api/connectors';
 import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
@@ -7,11 +15,6 @@ import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import type {
-    DataPlaneOption,
-    Details,
-    DetailsFormState,
-} from 'stores/DetailsForm/types';
 import {
     fetchErrors,
     filterErrors,
@@ -23,16 +26,13 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import type { ConnectorVersionEvaluationOptions } from 'utils/connector-utils';
 import { getConnectorMetadata } from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { NAME_RE } from 'validation';
-import type { StoreApi } from 'zustand';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';

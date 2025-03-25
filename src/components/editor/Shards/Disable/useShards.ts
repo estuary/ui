@@ -1,3 +1,4 @@
+import type { Schema } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -7,7 +8,6 @@ import {
 import { useEntityType } from 'context/EntityContext';
 import produce from 'immer';
 import { useCallback, useMemo } from 'react';
-import type { Schema } from 'types';
 
 function useShards() {
     const taskSpecType = useEntityType();

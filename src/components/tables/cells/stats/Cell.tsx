@@ -1,9 +1,9 @@
+import type { StatsCellProps } from './types';
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
 import { textLoadingColor } from 'context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import type { StatsCellProps } from './types';
 
 const StatsCell = ({
     failed,

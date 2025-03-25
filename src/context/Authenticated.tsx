@@ -1,6 +1,6 @@
+import type { BaseComponentProps } from 'types';
 import AppGuards from 'app/guards';
 import { ZustandProvider } from 'context/Zustand/provider';
-import type { BaseComponentProps } from 'types';
 import RequireAuth from 'context/Router/RequireAuth';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import QueryParamProvider from './QueryParam';

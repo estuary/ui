@@ -1,3 +1,4 @@
+import type { EntityWithCreateWorkflow } from 'types';
 import { Collapse, Typography } from '@mui/material';
 import ConnectorTiles from 'components/connectors/ConnectorTiles';
 import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
@@ -6,7 +7,6 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import type { EntityWithCreateWorkflow } from 'types';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

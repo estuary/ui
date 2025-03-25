@@ -1,6 +1,6 @@
+import type { BaseComponentProps } from 'types';
 import GrantGuard from 'app/guards/GrantGuard';
 import 'react-reflex/styles.css';
-import type { BaseComponentProps } from 'types';
 import LegalGuard from './LegalGuard';
 import TenantGuard from './TenantGuard';
 import UserGuard from './User';

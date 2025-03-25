@@ -1,3 +1,13 @@
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import type { Pagination } from 'services/supabase';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { SelectTableStoreNames } from 'stores/names';
+import type {
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+} from 'types';
 import {
     Box,
     Stack,
@@ -11,20 +21,10 @@ import {
 import Title from 'components/tables/Title';
 import { useZustandStore } from 'context/Zustand/provider';
 import { debounce } from 'lodash';
-import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
-import type { Pagination } from 'services/supabase';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
-import type { SelectTableStoreNames } from 'stores/names';
-import type {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState,
-} from 'types';
 import { TableStatuses } from 'types';
 import { getPagination, getStartingPage } from 'utils/table-utils';
 import EntityTableBody from './TableBody';

@@ -1,3 +1,4 @@
+import type { TransformConfig } from 'stores/TransformationCreate/types';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec } from 'api/draftSpecs';
 import { authenticatedRoutes } from 'app/routes';
@@ -20,7 +21,6 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
 } from 'stores/TransformationCreate/hooks';
-import type { TransformConfig } from 'stores/TransformationCreate/types';
 import {
     generateInitialSpec,
     templateTransformConfig,

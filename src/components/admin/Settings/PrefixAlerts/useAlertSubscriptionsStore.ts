@@ -1,10 +1,10 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import produce from 'immer';
 import type { PrefixSubscriptionDictionary } from 'utils/notification-utils';
+import type { EmailDictionary } from './types';
+import produce from 'immer';
 import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { EmailDictionary } from './types';
 
 interface AlertSubscriptionState {
     existingEmails: EmailDictionary;

@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
 import { useUserStore } from 'context/User/useUserContextStore';
 import useGlobalSearchParams, {
@@ -6,7 +7,6 @@ import useGlobalSearchParams, {
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
 import { Navigate, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'services/shared';
-import type { BaseComponentProps } from 'types';
 import { getPathWithParams } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {

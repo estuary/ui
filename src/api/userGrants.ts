@@ -1,6 +1,6 @@
+import type { UserGrantsTenantGuard } from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 import { deleteSupabase, TABLES } from 'services/supabase';
-import type { UserGrantsTenantGuard } from 'types';
 
 const getUserGrants = (userId: string) => {
     return supabaseClient

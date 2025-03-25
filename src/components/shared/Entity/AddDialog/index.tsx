@@ -1,3 +1,4 @@
+import type { AddDialogProps } from './types';
 import {
     Box,
     Dialog,
@@ -9,7 +10,6 @@ import {
 import BindingSelectorTable from 'components/collection/Selector/Table';
 import StepWrapper from 'components/transformation/create/Wrapper';
 import DefaultCancelButton from './DefaultCancelButton';
-import type { AddDialogProps } from './types';
 
 function AddDialog({
     entity,

@@ -1,9 +1,11 @@
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
+import type { Schema } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
 import {
@@ -11,8 +13,6 @@ import {
     useBinding_recommendFields,
     useBinding_selections,
 } from 'stores/Binding/hooks';
-import type { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
-import type { Schema } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
 

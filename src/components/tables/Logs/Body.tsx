@@ -1,10 +1,10 @@
-import AutoSizer from 'react-virtualized-auto-sizer';
 import type { ListChildComponentProps } from 'react-window';
-import { VariableSizeList } from 'react-window';
 import type { OpsLogFlowDocument } from 'types';
+import type { MutableRefObject } from 'react';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { VariableSizeList } from 'react-window';
 import { TableStatuses } from 'types';
 import { TableBody } from '@mui/material';
-import type { MutableRefObject } from 'react';
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { isEmpty } from 'lodash';
 

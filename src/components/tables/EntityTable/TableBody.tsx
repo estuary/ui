@@ -1,7 +1,8 @@
+import type { TableIntlConfig, TableState } from 'types';
+import type { ColumnProps } from './types';
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import type { TableIntlConfig, TableState } from 'types';
 import {
     getColumnKeyList,
     getEmptyTableHeader,
@@ -9,7 +10,6 @@ import {
     getTableComponents,
 } from 'utils/table-utils';
 import TableLoadingRows from '../Loading';
-import type { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];

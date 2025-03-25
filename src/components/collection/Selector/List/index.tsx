@@ -1,10 +1,11 @@
-import { Box, Popper } from '@mui/material';
 import type {
     GridColDef,
     GridFilterModel,
     GridRowId,
     GridRowSelectionModel,
 } from '@mui/x-data-grid';
+import type { BindingState } from 'stores/Binding/types';
+import { Box, Popper } from '@mui/material';
 import {
     DataGrid,
     gridPaginatedVisibleSortedGridRowIdsSelector,
@@ -22,7 +23,6 @@ import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
 } from 'stores/Binding/hooks';
-import type { BindingState } from 'stores/Binding/types';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import useConstant from 'use-constant';

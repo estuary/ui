@@ -1,3 +1,5 @@
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { ReactNode } from 'react';
 import { Stack, Typography, useTheme } from '@mui/material';
 import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
 import CaptureInterval from 'components/capture/Interval';
@@ -13,9 +15,7 @@ import { alternativeReflexContainerBackground } from 'context/Theme';
 import { useEntityWorkflow } from 'context/Workflow';
 
 import AdvancedOptions from 'components/materialization/AdvancedOptions';
-import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
-import type { ReactNode } from 'react';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {

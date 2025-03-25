@@ -1,10 +1,10 @@
+import type { BaseComponentProps } from 'types';
 import { useUserStore } from 'context/User/useUserContextStore';
 import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
-import type { BaseComponentProps } from 'types';
 import OnboardGuard from '../OnboardGuard';
 import SsoUserMessage from './SsoUserMessage';
 

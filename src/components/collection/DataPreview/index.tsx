@@ -1,4 +1,5 @@
 /* eslint-disable complexity */
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { Button, Stack, Typography } from '@mui/material';
 import ListView from 'components/collection/DataPreview/ListView';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
@@ -11,7 +12,6 @@ import {
     useJournalData,
     useJournalsForCollection,
 } from 'hooks/journals/useJournalData';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useTenantHidesDataPreview } from 'hooks/useTenants';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';

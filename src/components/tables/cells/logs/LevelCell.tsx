@@ -1,5 +1,5 @@
-import { Stack, TableCell } from '@mui/material';
 import type { OpsLogFlowDocument } from 'types';
+import { Stack, TableCell } from '@mui/material';
 import ExpandRowButton from './ExpandRowButton';
 import LevelIcon from './LevelIcon';
 import { BaseCellSx } from './shared';

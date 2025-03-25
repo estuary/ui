@@ -1,5 +1,6 @@
-import { TableCell, TableRow, Typography } from '@mui/material';
 import type { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
+import type { SortDirection, TableColumns } from 'types';
+import { TableCell, TableRow, Typography } from '@mui/material';
 import ChipListCell from 'components/tables/cells/ChipList';
 import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
@@ -9,7 +10,6 @@ import {
 } from 'context/Theme';
 import { orderBy } from 'lodash';
 import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
-import type { SortDirection, TableColumns } from 'types';
 import {
     basicSort_string,
     compareInitialCharacterType,

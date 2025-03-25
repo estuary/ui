@@ -1,5 +1,5 @@
-import { Box, Breadcrumbs, Typography } from '@mui/material';
 import type { KeyValue } from 'components/shared/KeyValueList';
+import { Box, Breadcrumbs, Typography } from '@mui/material';
 import KeyValueList from 'components/shared/KeyValueList';
 import useDraftSpecErrors from 'hooks/useDraftSpecErrors';
 import { FormattedMessage } from 'react-intl';

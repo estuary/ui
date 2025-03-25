@@ -1,13 +1,13 @@
+import type { Dispatch, SetStateAction } from 'react';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { RowConfirmation } from '../types';
 import { disableDirective } from 'api/directives';
 import Progress from 'components/tables/RowActions/AccessLinks/Progress';
 import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'context/Zustand/provider';
-import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
-import type { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

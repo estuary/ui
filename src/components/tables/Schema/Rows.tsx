@@ -1,7 +1,7 @@
+import type { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
 import { useMemo } from 'react';
-import type { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
 import { basicSort_string } from 'utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
 

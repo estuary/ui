@@ -1,3 +1,4 @@
+import type { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import SpinnerIcon from 'components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'components/tables/cells/logs/shared';
@@ -14,7 +15,6 @@ import { useIntersection } from 'react-use';
 
 import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
 import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
-import type { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;

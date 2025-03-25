@@ -1,9 +1,9 @@
 import type { ButtonProps } from '@mui/material';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import EditLink from '../EditLink';
 
 interface Props {

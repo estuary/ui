@@ -1,9 +1,9 @@
+import type { ConnectorsExist } from './shared';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useMemo } from 'react';
 import { TABLES } from 'services/supabase';
 import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import type { ConnectorsExist } from './shared';
 import { CONNECTORS_EXIST_QUERY } from './shared';
 
 // TODO (connectors store) - this is temporary

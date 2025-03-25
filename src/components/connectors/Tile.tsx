@@ -1,10 +1,9 @@
+import type { BaseComponentProps } from 'types';
 import { Paper, Stack } from '@mui/material';
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'context/Theme';
-
-import type { BaseComponentProps } from 'types';
 
 function Tile({ children }: BaseComponentProps) {
     return (

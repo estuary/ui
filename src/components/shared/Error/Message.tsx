@@ -1,3 +1,5 @@
+import type { ExternalLinkOptions } from '../ExternalLink';
+import type { ErrorDetails } from './types';
 import { Box, Stack, Typography } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -6,9 +8,7 @@ import {
     retryAfterFailure,
 } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import type { ExternalLinkOptions } from '../ExternalLink';
 import Instructions from './Instructions';
-import type { ErrorDetails } from './types';
 
 interface Props {
     error?: ErrorDetails;

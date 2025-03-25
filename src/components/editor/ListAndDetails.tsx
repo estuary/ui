@@ -1,8 +1,8 @@
+import type { ReactNode } from 'react';
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import { defaultOutline, reflexSplitterBackground } from 'context/Theme';
 import { MoreVert } from 'iconoir-react';
-import type { ReactNode } from 'react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { getEditorTotalHeight } from 'utils/editor-utils';
 

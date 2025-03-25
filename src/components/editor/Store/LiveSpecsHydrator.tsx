@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
@@ -9,7 +10,6 @@ import EntityNotFound from 'pages/error/EntityNotFound';
 import { useEffect } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import type { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props extends BaseComponentProps {

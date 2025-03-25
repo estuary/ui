@@ -1,3 +1,4 @@
+import type { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 import { useEffect, useMemo } from 'react';
 import {
     useShardDetail_setDefaultMessageId,
@@ -6,7 +7,6 @@ import {
     useShardDetail_setError,
     useShardDetail_setShards,
 } from 'stores/ShardDetail/hooks';
-import type { ShardStatusMessageIds } from 'stores/ShardDetail/types';
 import useShardsList from './useShardsList';
 import useShardStatusDefaultColor from './useShardStatusDefaultColor';
 

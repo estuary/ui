@@ -1,4 +1,8 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { DataProcessingAlertQuery } from 'api/alerts';
+import type { ErrorDetails } from 'components/shared/Error/types';
+import type { Dispatch, SetStateAction } from 'react';
+import type { CallSupabaseResponse } from 'services/supabase';
 import {
     Autocomplete,
     Skeleton,
@@ -7,23 +11,19 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import type { DataProcessingAlertQuery } from 'api/alerts';
 import {
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
 } from 'api/alerts';
 import useSettingIntervalOptions from 'components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
-import type { ErrorDetails } from 'components/shared/Error/types';
 import { cardHeaderSx, defaultOutline } from 'context/Theme';
 import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { CallSupabaseResponse } from 'services/supabase';
 
 interface Props {
     errored: boolean;

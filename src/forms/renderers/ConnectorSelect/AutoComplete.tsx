@@ -30,10 +30,10 @@ import type {
     AutocompleteRenderOptionState,
     FilterOptionsState,
 } from '@mui/material';
+import type { ReactNode } from 'react';
 import { Autocomplete } from '@mui/material';
 import ConnectorIcon from 'components/connectors/ConnectorIcon';
 import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
-import type { ReactNode } from 'react';
 import React, { useMemo } from 'react';
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 

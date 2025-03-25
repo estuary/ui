@@ -1,9 +1,9 @@
-import { Stack, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import type { Entity } from 'types';
+import { Stack, Typography } from '@mui/material';
 import LinkWrapper from 'components/shared/LinkWrapper';
 
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { Entity } from 'types';
 import { ENTITY_SETTINGS } from 'settings/entity';
 import ActiveEntityCount from './ActiveEntityCount';
 import Statistic from './Statistic';

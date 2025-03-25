@@ -1,3 +1,4 @@
+import type { EntityCreateSaveButtonProps } from './types';
 import { Button } from '@mui/material';
 import {
     useEditorStore_id,
@@ -7,7 +8,6 @@ import { entityHeaderButtonSx } from 'context/Theme';
 
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import type { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 
 function EntityCreateSave({

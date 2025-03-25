@@ -1,4 +1,5 @@
 import type { Provider } from '@supabase/supabase-js';
+import type { SupportedProvider } from 'types/authProviders';
 import { unauthenticatedRoutes } from 'app/routes';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
@@ -6,7 +7,6 @@ import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { getPathWithParams } from 'utils/misc-utils';
 import { useCallback, useMemo } from 'react';
-import type { SupportedProvider } from 'types/authProviders';
 import { supabaseClient } from 'context/GlobalProviders';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)

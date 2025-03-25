@@ -1,3 +1,4 @@
+import type { CustomEvents } from 'services/types';
 import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
@@ -16,7 +17,6 @@ import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { DEFAULT_FILTER, logRocketEvent } from 'services/shared';
-import type { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,

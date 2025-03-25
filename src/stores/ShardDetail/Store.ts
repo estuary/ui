@@ -1,15 +1,7 @@
-import { errorMain, successMain, warningMain } from 'context/Theme';
 import type { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import type { Shard } from 'data-plane-gateway/types/shard_client';
-import produce from 'immer';
-import { logRocketConsole } from 'services/shared';
 import type { ShardDetailStoreNames } from 'stores/names';
-import { SHARD_LABELS } from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
-import { devtools } from 'zustand/middleware';
 import type {
     EndpointsDictionary,
     ShardDetailStore,
@@ -18,6 +10,14 @@ import type {
     ShardStatusColor,
     TaskShardDetails,
 } from './types';
+import { errorMain, successMain, warningMain } from 'context/Theme';
+import produce from 'immer';
+import { logRocketConsole } from 'services/shared';
+import { SHARD_LABELS } from 'utils/dataPlane-utils';
+import { hasLength } from 'utils/misc-utils';
+import { devtoolsOptions } from 'utils/store-utils';
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { ShardStatusMessageIds, ShardStatusNoteIds } from './types';
 
 const PORT_PUBLIC_PREFIX = 'estuary.dev/port-public/';

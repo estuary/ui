@@ -1,8 +1,8 @@
+import type { TimestampDetailProps } from './types';
 import { Skeleton, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import DetailWrapper from './DetailWrapper';
-import type { TimestampDetailProps } from './types';
 
 export default function TimestampDetail({
     headerMessageId,

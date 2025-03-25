@@ -1,3 +1,4 @@
+import type { SupportedProvider } from 'types/authProviders';
 import { Box, Divider, Stack } from '@mui/material';
 import MagicLink from 'components/login/MagicLink';
 import LoginProviders from 'components/login/Providers';
@@ -7,7 +8,6 @@ import useGlobalSearchParams, {
 } from 'hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
-import type { SupportedProvider } from 'types/authProviders';
 import { getLoginSettings } from 'utils/env-utils';
 import LoginWrapper from './Wrapper';
 

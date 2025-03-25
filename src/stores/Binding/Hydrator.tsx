@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
 import useTrialPrefixes from 'hooks/trialStorage/useTrialPrefixes';
@@ -5,7 +6,6 @@ import { useEffect, useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import type { BaseComponentProps } from 'types';
 import {
     useBinding_hydrateState,
     useBinding_setActive,

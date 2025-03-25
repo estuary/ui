@@ -1,3 +1,4 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import AlertBox from 'components/shared/AlertBox';
@@ -11,7 +12,6 @@ import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import BindingHydrator from 'stores/Binding/Hydrator';
 import { useBinding_resetState } from 'stores/Binding/hooks';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { SelectTableStoreNames } from 'stores/names';

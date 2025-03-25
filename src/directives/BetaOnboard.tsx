@@ -1,5 +1,6 @@
-import { Box, Stack, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import type { DirectiveProps } from './types';
+import { Box, Stack, Typography } from '@mui/material';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
 import AlertBox from 'components/shared/AlertBox';
@@ -22,7 +23,6 @@ import { fireGtmEvent } from 'services/gtm';
 import { hasLength } from 'utils/misc-utils';
 import Actions from './Actions';
 import { jobStatusQuery, trackEvent } from './shared';
-import type { DirectiveProps } from './types';
 
 const directiveName = 'betaOnboard';
 const NAME_TAKEN_MESSAGE = 'is already in use';

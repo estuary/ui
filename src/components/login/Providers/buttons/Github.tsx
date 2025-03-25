@@ -1,7 +1,7 @@
+import type { ProviderButtonProps } from '../types';
 import { Button, useTheme } from '@mui/material';
 import { sample_grey } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
-import type { ProviderButtonProps } from '../types';
 import { defaulticonSize } from './shared';
 
 const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {

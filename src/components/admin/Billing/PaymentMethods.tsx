@@ -1,3 +1,5 @@
+import type { TableColumns } from 'types';
+import type { AdminBillingProps } from './types';
 import {
     Box,
     Stack,
@@ -26,11 +28,9 @@ import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { useBillingStore } from 'stores/Billing/Store';
 import { useTenantStore } from 'stores/Tenant/Store';
-import type { TableColumns } from 'types';
 import { getColumnKeyList } from 'utils/table-utils';
 import AddPaymentMethod from './AddPaymentMethod';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
-import type { AdminBillingProps } from './types';
 
 const columns: TableColumns[] = [
     {

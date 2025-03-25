@@ -1,5 +1,5 @@
-import { Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+import { Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

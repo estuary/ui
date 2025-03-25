@@ -1,5 +1,5 @@
-import { Box } from '@mui/material';
 import type { ExternalLinkOptions } from 'components/shared/ExternalLink';
+import { Box } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { FormattedMessage, useIntl } from 'react-intl';
 

@@ -1,9 +1,15 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
 import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { SortingProps } from 'services/supabase';
+import type {
+    CatalogStats,
+    Entity,
+    EntityWithCreateWorkflow,
+    LiveSpecsExtBaseQuery,
+} from 'types';
+import { supabaseClient } from 'context/GlobalProviders';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
-import type { SortingProps } from 'services/supabase';
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
@@ -17,12 +23,6 @@ import {
     supabaseRetry,
     TABLES,
 } from 'services/supabase';
-import type {
-    CatalogStats,
-    Entity,
-    EntityWithCreateWorkflow,
-    LiveSpecsExtBaseQuery,
-} from 'types';
 import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
 import { getCountSettings } from 'utils/table-utils';
 

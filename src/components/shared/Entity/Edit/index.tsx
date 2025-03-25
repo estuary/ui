@@ -1,3 +1,6 @@
+import type { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+import type { ReactNode } from 'react';
+import type { EntityWithCreateWorkflow } from 'types';
 import { Box, Collapse } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
@@ -17,8 +20,6 @@ import Error from 'components/shared/Error';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'hooks/useBrowserTitle';
-import type { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import type { ReactNode } from 'react';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
@@ -36,7 +37,6 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import type { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';

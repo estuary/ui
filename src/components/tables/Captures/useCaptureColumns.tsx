@@ -1,6 +1,6 @@
+import type { ColumnProps } from '../EntityTable/types';
 import { useMemo } from 'react';
 import StatsHeader from '../cells/stats/Header';
-import type { ColumnProps } from '../EntityTable/types';
 import { catalogName, connectorType, lastPublished, writesTo } from '../shared';
 
 const defaultColumns: ColumnProps[] = [

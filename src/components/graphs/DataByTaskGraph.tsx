@@ -1,3 +1,5 @@
+import type { DataVolumeByTask } from 'stores/Billing/types';
+import type { SeriesConfig } from 'utils/billing-utils';
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor } from 'context/Theme';
 import {
@@ -20,9 +22,7 @@ import { sortBy, sum, uniq } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import type { DataVolumeByTask } from 'stores/Billing/types';
 import useConstant from 'use-constant';
-import type { SeriesConfig } from 'utils/billing-utils';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,

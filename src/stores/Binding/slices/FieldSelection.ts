@@ -1,8 +1,8 @@
 import type { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
-import produce from 'immer';
 import type { Schema } from 'types';
 import type { NamedSet } from 'zustand/middleware';
 import type { BindingState } from '../types';
+import produce from 'immer';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;

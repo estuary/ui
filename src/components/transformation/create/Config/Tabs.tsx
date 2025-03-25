@@ -1,9 +1,9 @@
-import { Box, Button, Tab, Tabs } from '@mui/material';
 import type { TabOptions } from 'components/transformation/create/Config/types';
 import type { Dispatch, SetStateAction } from 'react';
+import type { MuiTabProps } from 'types';
+import { Box, Button, Tab, Tabs } from '@mui/material';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import type { MuiTabProps } from 'types';
 
 interface CatalogTabsProps {
     selectedTab: number;

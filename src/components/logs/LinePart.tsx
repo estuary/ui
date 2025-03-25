@@ -1,5 +1,5 @@
-import { styled } from '@mui/material';
 import type { ParsedSpan } from 'ansicolor';
+import { styled } from '@mui/material';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {

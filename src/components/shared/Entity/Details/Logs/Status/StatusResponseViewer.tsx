@@ -1,3 +1,4 @@
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { Editor } from '@monaco-editor/react';
 import { Box, Divider, Paper, useTheme } from '@mui/material';
 import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
@@ -5,7 +6,6 @@ import { editorToolBarSx } from 'context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { useRef } from 'react';
 import { logRocketConsole } from 'services/shared';
 import { stringifyJSON } from 'services/stringify';

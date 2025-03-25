@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { BaseComponentProps } from 'types';
 import { createContext, useContext } from 'react';
 import { useLocalStorage } from 'react-use';
-import type { BaseComponentProps } from 'types';
 import { LocalStorageKeys } from 'utils/localStorage-utils';
 
 interface DashboardWelcomeState {

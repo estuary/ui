@@ -1,5 +1,6 @@
-import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'api/tokens';
 import SafeLoadingButton from 'components/SafeLoadingButton';
 import Error from 'components/shared/Error';
@@ -9,7 +10,6 @@ import { WarningCircle } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 
 interface Props {

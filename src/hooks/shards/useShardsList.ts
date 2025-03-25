@@ -1,10 +1,10 @@
-import { useUserStore } from 'context/User/useUserContextStore';
 import type { Shard } from 'data-plane-gateway/types/shard_client';
+import type { TaskAuthorizationResponse } from 'utils/dataPlane-utils';
+import { useUserStore } from 'context/User/useUserContextStore';
 import useTaskAuthorization from 'hooks/gatewayAuth/useTaskAuthorization';
 import { useMemo } from 'react';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';
-import type { TaskAuthorizationResponse } from 'utils/dataPlane-utils';
 import { fetchShardList } from 'utils/dataPlane-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough

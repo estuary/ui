@@ -1,9 +1,18 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { UserClaims } from 'directives/types';
+import type { CallSupabaseResponse, SortingProps } from 'services/supabase';
+import type {
+    AppliedDirective,
+    Directive,
+    GrantDirective,
+    GrantDirectiveSpec,
+    GrantDirective_AccessLinks,
+    JoinedAppliedDirective,
+    Schema,
+} from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 import { DIRECTIVES } from 'directives/shared';
-import type { UserClaims } from 'directives/types';
 import { logRocketConsole } from 'services/shared';
-import type { CallSupabaseResponse, SortingProps } from 'services/supabase';
 import {
     defaultTableFilter,
     handleFailure,
@@ -14,15 +23,6 @@ import {
     TABLES,
     updateSupabase,
 } from 'services/supabase';
-import type {
-    AppliedDirective,
-    Directive,
-    GrantDirective,
-    GrantDirectiveSpec,
-    GrantDirective_AccessLinks,
-    JoinedAppliedDirective,
-    Schema,
-} from 'types';
 
 interface GrantDirective_CreateMatchData {
     catalog_prefix: string;

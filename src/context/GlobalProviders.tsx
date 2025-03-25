@@ -1,7 +1,7 @@
+import type { BaseComponentProps } from 'types';
 import { createClient } from '@supabase/supabase-js';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { initLogRocket } from 'services/logrocket';
-import type { BaseComponentProps } from 'types';
 import { enableMapSet, setAutoFreeze } from 'immer';
 import { useUserStore } from './User/useUserContextStore';
 

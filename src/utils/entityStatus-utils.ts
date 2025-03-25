@@ -1,11 +1,5 @@
 import type { PaletteMode } from '@mui/material';
 import type { SemanticColor } from 'context/Theme';
-import {
-    errorMain,
-    shardStatusDefaultColor,
-    successMain,
-    warningMain,
-} from 'context/Theme';
 import type {
     ActivationStatus,
     AutoDiscoverStatus,
@@ -15,6 +9,12 @@ import type {
     EntityStatusResponse,
     JobStatus,
 } from 'types/controlPlane';
+import {
+    errorMain,
+    shardStatusDefaultColor,
+    successMain,
+    warningMain,
+} from 'context/Theme';
 
 type MuiColorId =
     | 'default'

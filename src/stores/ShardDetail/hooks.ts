@@ -1,16 +1,16 @@
-import { useEntityType } from 'context/EntityContext';
-import { successMain } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/provider';
-import { isEmpty } from 'lodash';
-import { ShardDetailStoreNames } from 'stores/names';
 import type { Entity } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getCompositeColor } from './Store';
 import type {
     ShardDetailStore,
     ShardEntityTypes,
     ShardReadDictionaryResponse,
 } from './types';
+import { useEntityType } from 'context/EntityContext';
+import { successMain } from 'context/Theme';
+import { useZustandStore } from 'context/Zustand/provider';
+import { isEmpty } from 'lodash';
+import { ShardDetailStoreNames } from 'stores/names';
+import { hasLength } from 'utils/misc-utils';
+import { getCompositeColor } from './Store';
 import { ShardStatusMessageIds } from './types';
 
 const storeName = (entityType: Entity): ShardDetailStoreNames => {

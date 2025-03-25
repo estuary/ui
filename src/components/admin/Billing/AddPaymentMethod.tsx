@@ -1,6 +1,6 @@
+import type { Stripe } from '@stripe/stripe-js';
 import { Box, Dialog, DialogTitle } from '@mui/material';
 import { Elements } from '@stripe/react-stripe-js';
-import type { Stripe } from '@stripe/stripe-js';
 import { setTenantPrimaryPaymentMethod } from 'api/billing';
 import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
 import SafeLoadingButton from 'components/SafeLoadingButton';

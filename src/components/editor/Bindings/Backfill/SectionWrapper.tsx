@@ -1,3 +1,4 @@
+import type { SectionWrapperProps } from './types';
 import { Box, Stack, Typography } from '@mui/material';
 import { isBeforeTrialInterval } from 'components/materialization/shared';
 import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
@@ -10,7 +11,6 @@ import {
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
 import { useShallow } from 'zustand/react/shallow';
-import type { SectionWrapperProps } from './types';
 
 export default function SectionWrapper({
     alertMessageId,

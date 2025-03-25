@@ -1,6 +1,6 @@
+import type { Projection } from 'components/editor/Bindings/FieldSelection/types';
 import { Button } from '@mui/material';
 import EditProjectionDialog from 'components/editor/Bindings/FieldSelection/EditProjection/Dialog';
-import type { Projection } from 'components/editor/Bindings/FieldSelection/types';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

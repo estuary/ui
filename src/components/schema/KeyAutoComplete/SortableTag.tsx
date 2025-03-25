@@ -1,6 +1,6 @@
+import type { ChipProps } from '@mui/material';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { ChipProps } from '@mui/material';
 import { Box, Tooltip } from '@mui/material';
 import { truncateTextSx } from 'context/Theme';
 import { useIntl } from 'react-intl';

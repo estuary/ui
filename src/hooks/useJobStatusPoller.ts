@@ -2,10 +2,10 @@ import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { PollerTimeout } from 'services/supabase';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { logRocketConsole, retryAfterFailure } from 'services/shared';
-import type { PollerTimeout } from 'services/supabase';
 import {
     DEFAULT_POLLING_INTERVAL,
     handleFailure,

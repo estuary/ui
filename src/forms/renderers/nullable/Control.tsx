@@ -1,9 +1,9 @@
 import type { RankedTester } from '@jsonforms/core';
+import type { AllowedNullable } from 'services/jsonforms/shared';
 import { rankWith } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { useMemo } from 'react';
-import type { AllowedNullable } from 'services/jsonforms/shared';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { Options } from 'types/jsonforms';

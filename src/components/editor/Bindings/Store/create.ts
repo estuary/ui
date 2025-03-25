@@ -1,24 +1,24 @@
-import { extend_read_bundle, infer } from '@estuary/flow-web';
-import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { fetchInferredSchema } from 'api/inferred_schemas';
-import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import type { BindingsEditorState } from 'components/editor/Bindings/Store/types';
 import type { CollectionData } from 'components/editor/Bindings/types';
-import produce from 'immer';
-import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
-import { logRocketEvent } from 'services/shared';
-import { BindingsEditorStoreNames } from 'stores/names';
 import type {
     InferSchemaPropertyForRender,
     InferSchemaResponse,
     Schema,
 } from 'types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { extend_read_bundle, infer } from '@estuary/flow-web';
+import { getDraftSpecsByCatalogName } from 'api/draftSpecs';
+import { fetchInferredSchema } from 'api/inferred_schemas';
+import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
+import produce from 'immer';
+import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
+import { logRocketEvent } from 'services/shared';
+import { BindingsEditorStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';
 import { filterInferSchemaResponse, hasReadSchema } from 'utils/schema-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import type { StoreApi } from 'zustand';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
 const evaluateCollectionData = async (

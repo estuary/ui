@@ -1,5 +1,5 @@
-import { AlertTitle, Button, Stack, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import { AlertTitle, Button, Stack, Typography } from '@mui/material';
 import useRepublishPrefix from 'components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
 import AlertBox from 'components/shared/AlertBox';

@@ -1,8 +1,8 @@
+import type { JobStatus } from 'types';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'context/GlobalProviders';
 import { DEFAULT_POLLING } from 'context/SWR';
 import { TABLES } from 'services/supabase';
-import type { JobStatus } from 'types';
 
 export interface Publications {
     id: string;

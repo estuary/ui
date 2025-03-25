@@ -1,3 +1,4 @@
+import type { BindingMetadata } from 'stores/Binding/types';
 import { IconButton } from '@mui/material';
 import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
 import { useEntityWorkflow } from 'context/Workflow';
@@ -10,7 +11,6 @@ import {
     useBinding_setRestrictedDiscoveredCollections,
 } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
-import type { BindingMetadata } from 'stores/Binding/types';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

@@ -1,5 +1,5 @@
-import produce from 'immer';
 import type { Schema, SourceCaptureDef } from 'types';
+import produce from 'immer';
 import { hasLength, specContainsDerivation } from 'utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {

@@ -1,5 +1,5 @@
-import Box from '@mui/material/Box';
 import type { LinearProgressProps } from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import useProgressTimer from 'hooks/useProgressTimer';
 import { useState } from 'react';

@@ -1,3 +1,4 @@
+import type { BaseDetailProps } from './types';
 import { Skeleton, Typography } from '@mui/material';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -10,7 +11,6 @@ import {
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 import { getDataPlaneActivationStatus } from 'utils/entityStatus-utils';
 import DetailWrapper from './DetailWrapper';
-import type { BaseDetailProps } from './types';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

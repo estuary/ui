@@ -1,10 +1,10 @@
+import type { MagicLinkProps } from './types';
 import { Button, Stack } from '@mui/material';
 import MagicLinkInputs from 'components/login/MagicLinkInputs';
 import { supabaseClient } from 'context/GlobalProviders';
 import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { getLoginSettings } from 'utils/env-utils';
-import type { MagicLinkProps } from './types';
 import useRedirectPath from './useRedirectPath';
 
 const loginSettings = getLoginSettings();

@@ -1,3 +1,4 @@
+import type { ControllerAlertProps } from './types';
 import Editor from '@monaco-editor/react';
 import {
     Accordion,
@@ -11,7 +12,6 @@ import { defaultOutline } from 'context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { unescapeString } from 'utils/misc-utils';
-import type { ControllerAlertProps } from './types';
 
 export default function ControllerAlert({
     error,

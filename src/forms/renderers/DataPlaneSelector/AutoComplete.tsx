@@ -30,11 +30,11 @@ import type {
     AutocompleteRenderOptionState,
     FilterOptionsState,
 } from '@mui/material';
+import type { ReactNode } from 'react';
 import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
 import { defaultOutline_hovered } from 'context/Theme';
 
-import type { ReactNode } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';

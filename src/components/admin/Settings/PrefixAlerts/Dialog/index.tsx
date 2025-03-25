@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import {
     Button,
     Dialog,
@@ -11,7 +12,6 @@ import {
 } from '@mui/material';
 import SaveButton from 'components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import { Xmark } from 'iconoir-react';
-import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import EmailListField from './EmailListField';

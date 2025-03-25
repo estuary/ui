@@ -1,3 +1,5 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { DirectiveProps } from './types';
 import {
     Checkbox,
     FormControl,
@@ -5,7 +7,6 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { submitDirective } from 'api/directives';
 import RegistrationProgress from 'app/guards/RegistrationProgress';
 import AlertBox from 'components/shared/AlertBox';
@@ -22,7 +23,6 @@ import {
     jobStatusQuery,
     trackEvent,
 } from './shared';
-import type { DirectiveProps } from './types';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';

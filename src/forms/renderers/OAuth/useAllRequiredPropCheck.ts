@@ -1,7 +1,7 @@
+import type { Schema } from 'types';
 import { every, includes } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useEndpointConfig_serverUpdateRequired } from 'stores/EndpointConfig/hooks';
-import type { Schema } from 'types';
 import { Options } from 'types/jsonforms';
 import { hasLength } from 'utils/misc-utils';
 import { CLIENT_ID, CLIENT_SECRET } from './shared';

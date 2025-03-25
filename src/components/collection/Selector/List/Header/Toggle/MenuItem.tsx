@@ -1,6 +1,6 @@
-import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import type { Scopes } from './types';
+import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 
 interface Props {
     desc: ReactNode;

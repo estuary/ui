@@ -1,3 +1,4 @@
+import type { SeriesConfig } from 'utils/billing-utils';
 import { useTheme } from '@mui/material';
 import { defaultOutlineColor } from 'context/Theme';
 import {
@@ -19,7 +20,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
 import useConstant from 'use-constant';
-import type { SeriesConfig } from 'utils/billing-utils';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';

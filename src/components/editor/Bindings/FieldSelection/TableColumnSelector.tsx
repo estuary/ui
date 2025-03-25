@@ -1,10 +1,10 @@
+import type { SyntheticEvent } from 'react';
+import type { TableColumns } from 'types';
+import type { WithRequiredNonNullProperty } from 'types/utils';
 import { optionalColumnIntlKeys } from 'components/tables/FieldSelection';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
-import type { SyntheticEvent } from 'react';
 import { TablePrefixes } from 'stores/Tables/hooks';
-import type { TableColumns } from 'types';
-import type { WithRequiredNonNullProperty } from 'types/utils';
 import { hasLength } from 'utils/misc-utils';
 
 interface Props {

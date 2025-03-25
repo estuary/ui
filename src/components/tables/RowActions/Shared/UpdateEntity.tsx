@@ -1,25 +1,25 @@
+import type { CaptureQuery } from 'api/liveSpecsExt';
+import type { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { Entity } from 'types';
+import type { SharedProgressProps } from './types';
 import { createEntityDraft } from 'api/drafts';
 import {
     createDraftSpec,
     draftCollectionsEligibleForDeletion,
 } from 'api/draftSpecs';
-import type { CaptureQuery } from 'api/liveSpecsExt';
 import { getLatestLiveSpecByName } from 'api/liveSpecsExt';
 import { createPublication } from 'api/publications';
 import AlertBox from 'components/shared/AlertBox';
 import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
 import Error from 'components/shared/Error';
 import { useZustandStore } from 'context/Zustand/provider';
-import type { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
 import usePublications from 'hooks/usePublications';
 import { useEffect, useRef, useState } from 'react';
 import { jobSucceeded } from 'services/supabase';
 import { SelectTableStoreNames } from 'stores/names';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
-import type { Entity } from 'types';
 import SharedProgress from './Progress';
-import type { SharedProgressProps } from './types';
 import { ProgressStates } from './types';
 
 export interface UpdateEntityProps {

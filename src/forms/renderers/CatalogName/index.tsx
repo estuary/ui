@@ -28,11 +28,11 @@ import type {
     OwnPropsOfEnum,
     RankedTester,
 } from '@jsonforms/core';
-import { rankWith, scopeEndsWith } from '@jsonforms/core';
 import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+import type { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
+import { rankWith, scopeEndsWith } from '@jsonforms/core';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 import PrefixedName from 'components/inputs/PrefixedName';
-import type { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
 import { useEntityType } from 'context/EntityContext';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { useCallback } from 'react';

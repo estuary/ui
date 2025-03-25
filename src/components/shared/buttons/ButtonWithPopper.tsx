@@ -1,8 +1,8 @@
+import type { MouseEvent } from 'react';
+import type { ButtonWithPopperProps } from './types';
 import { Button } from '@mui/material';
 import PopperWrapper from 'components/shared/PopperWrapper';
-import type { MouseEvent } from 'react';
 import { useState } from 'react';
-import type { ButtonWithPopperProps } from './types';
 
 function ButtonWithPopper({
     buttonProps,

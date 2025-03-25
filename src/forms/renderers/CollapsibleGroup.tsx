@@ -1,6 +1,6 @@
 import type { RankedTester } from '@jsonforms/core';
-import { rankWith, uiTypeIs } from '@jsonforms/core';
 import type { MaterialLayoutRendererProps } from '@jsonforms/material-renderers';
+import { rankWith, uiTypeIs } from '@jsonforms/core';
 import { MaterialLayoutRenderer } from '@jsonforms/material-renderers';
 import {
     Accordion,

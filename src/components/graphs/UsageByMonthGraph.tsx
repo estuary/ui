@@ -1,3 +1,4 @@
+import type { EChartsOption } from 'echarts';
 import { useTheme } from '@mui/material';
 import useLegendConfig from 'components/graphs/useLegendConfig';
 import { eChartsColors } from 'context/Theme';
@@ -8,7 +9,6 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import type { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
     GridComponent,

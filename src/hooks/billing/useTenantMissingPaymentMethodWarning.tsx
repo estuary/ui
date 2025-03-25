@@ -1,5 +1,6 @@
-import { Box, Stack, Typography } from '@mui/material';
 import type { MultiplePaymentMethods } from 'api/billing';
+import type { Schema } from 'types';
+import { Box, Stack, Typography } from '@mui/material';
 import { getPaymentMethodsForTenants } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
 import { useTenantBillingDetails } from 'context/fetcher/TenantBillingDetails';
@@ -13,7 +14,6 @@ import { logRocketConsole } from 'services/shared';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'stores/NotificationStore';
-import type { Schema } from 'types';
 import { basicSort_string, getPathWithParams } from 'utils/misc-utils';
 
 const TRIAL_LENGTH = 30;

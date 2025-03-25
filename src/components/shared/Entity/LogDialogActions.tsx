@@ -1,3 +1,4 @@
+import type { LogDialogActionsProps } from './types';
 import { Box, Button, Stack } from '@mui/material';
 import { TaskEndpoint } from 'components/shared/Endpoints/TaskEndpoint';
 import Status from 'components/shared/Entity/Status';
@@ -9,7 +10,6 @@ import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
 import { hasLength } from 'utils/misc-utils';
-import type { LogDialogActionsProps } from './types';
 
 function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
     const entityType = useEntityType();

@@ -1,12 +1,12 @@
+import type { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
+import type { CompositeProjection, FieldSelectionType } from './types';
 import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_recommendFields,
     useBinding_setMultiSelection,
 } from 'stores/Binding/hooks';
-import type { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
 import { isRequireOnlyField } from 'utils/workflow-utils';
-import type { CompositeProjection, FieldSelectionType } from './types';
 
 interface Props {
     bindingUUID: string;

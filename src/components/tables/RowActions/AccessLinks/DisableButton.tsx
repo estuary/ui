@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { RowConfirmation } from '../types';
 import { Button, Dialog } from '@mui/material';
 import { unauthenticatedRoutes } from 'app/routes';
 import ConfirmationMessage from 'components/tables/RowActions/AccessLinks/ConfirmationMessage';
@@ -10,10 +12,8 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'stores/names';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { getPathWithParams } from 'utils/misc-utils';
-import type { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

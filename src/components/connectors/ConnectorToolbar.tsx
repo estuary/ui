@@ -1,17 +1,17 @@
-import { Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SearchField from 'components/shared/toolbar/SearchField';
-import { debounce } from 'lodash';
 import type {
     ChangeEvent,
     Dispatch,
     SetStateAction,
     SyntheticEvent,
 } from 'react';
+import type { Entity } from 'types';
+import { Grid, Toolbar } from '@mui/material';
+import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+import SearchField from 'components/shared/toolbar/SearchField';
+import { debounce } from 'lodash';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { fireGtmEvent } from 'services/gtm';
-import type { Entity } from 'types';
 import useConstant from 'use-constant';
 
 interface Props {

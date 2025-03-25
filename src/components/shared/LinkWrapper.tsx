@@ -1,6 +1,6 @@
+import type { BaseComponentProps } from 'types';
 import { Link, useMediaQuery, useTheme } from '@mui/material';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import type { BaseComponentProps } from 'types';
 import { OpenNewWindow } from 'iconoir-react';
 
 interface Props extends BaseComponentProps {

@@ -1,5 +1,5 @@
-import CollectionSelector from 'components/collection/Selector';
 import type { ReactNode } from 'react';
+import CollectionSelector from 'components/collection/Selector';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {

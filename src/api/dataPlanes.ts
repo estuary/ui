@@ -1,5 +1,5 @@
-import { supabaseClient } from 'context/GlobalProviders';
 import type { SortingProps } from 'services/supabase';
+import { supabaseClient } from 'context/GlobalProviders';
 import {
     defaultTableFilter,
     handleFailure,

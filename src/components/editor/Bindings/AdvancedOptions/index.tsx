@@ -1,3 +1,4 @@
+import type { AdvancedOptionsProps } from './types';
 import { Stack, Typography } from '@mui/material';
 import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
@@ -6,7 +7,6 @@ import { useIntl } from 'react-intl';
 import { useBindingStore } from 'stores/Binding/Store';
 import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import TimeTravel from '../TimeTravel';
-import type { AdvancedOptionsProps } from './types';
 
 export default function AdvancedOptions({
     bindingIndex,

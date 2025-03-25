@@ -1,3 +1,4 @@
+import type { FormState } from 'stores/FormState/types';
 import { Button } from '@mui/material';
 import { createEvolution, toEvolutionRequest } from 'api/evolutions';
 import {
@@ -31,7 +32,6 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'stores/FormState/hooks';
-import type { FormState } from 'stores/FormState/types';
 import { FormStatus } from 'stores/FormState/types';
 
 interface Props {

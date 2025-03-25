@@ -1,7 +1,7 @@
+import type { AutoCompleteOption, FieldFilter } from './types';
 import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { AutoCompleteOption, FieldFilter } from './types';
 
 interface Props {
     fieldFilter: FieldFilter;

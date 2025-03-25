@@ -1,9 +1,9 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import { ToggleButtonGroup } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
 import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { selectableTableStoreName } from './shared';
 

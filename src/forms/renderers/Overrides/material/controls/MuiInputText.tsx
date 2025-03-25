@@ -30,9 +30,9 @@
 //    Added an id to this so that the date/time/datetime inputs can check that id during
 //      the focus event and not trigger focus.
 //
-import React, { useState } from 'react';
 import type { CellProps, WithClassname } from '@jsonforms/core';
 import type { InputBaseComponentProps, InputProps } from '@mui/material';
+import React, { useState } from 'react';
 import { IconButton, Input, InputAdornment, useTheme } from '@mui/material';
 import merge from 'lodash/merge';
 import Close from '@mui/icons-material/Close';

@@ -1,3 +1,5 @@
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { DetailsOverviewProps } from './types';
 import { Grid } from '@mui/material';
 import { DataPreview } from 'components/collection/DataPreview';
 import { useEditorStore_specs } from 'components/editor/Store/hooks';
@@ -7,7 +9,6 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
 import JournalHydrator from 'stores/JournalData/Hydrator';
 import { hasLength } from 'utils/misc-utils';
@@ -15,7 +16,6 @@ import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import DetailsSection from './DetailsSection';
-import type { DetailsOverviewProps } from './types';
 
 function Overview({ name }: DetailsOverviewProps) {
     const entityType = useEntityType();

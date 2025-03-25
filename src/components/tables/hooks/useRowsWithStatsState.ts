@@ -3,12 +3,12 @@ import type {
     CollectionQueryWithStats,
     MaterializationQueryWithStats,
 } from 'api/liveSpecsExt';
+import type { SelectTableStoreNames } from 'stores/names';
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import { useZustandStore } from 'context/Zustand/provider';
 import useShardHydration from 'hooks/shards/useShardHydration';
 import { useEffect, useMemo } from 'react';
-import type { SelectTableStoreNames } from 'stores/names';
 
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 
 type Data =

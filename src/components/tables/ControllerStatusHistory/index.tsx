@@ -1,3 +1,5 @@
+import type { SortDirection, TableColumns, TableState } from 'types';
+import type { PublicationInfo } from 'types/controlPlane';
 import { Box, Table, TableContainer } from '@mui/material';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
@@ -8,9 +10,7 @@ import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import type { SortDirection, TableColumns, TableState } from 'types';
 import { TableStatuses } from 'types';
-import type { PublicationInfo } from 'types/controlPlane';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [

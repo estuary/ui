@@ -1,3 +1,4 @@
+import type { AlertBoxProps } from './types';
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
 import { alertBackground, alertTextPrimary } from 'context/Theme';
 import {
@@ -8,7 +9,6 @@ import {
 } from 'iconoir-react';
 import { forwardRef, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import type { AlertBoxProps } from './types';
 
 const SHARED_STYLING = {
     borderRadius: 2,

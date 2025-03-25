@@ -1,8 +1,8 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import { createRefreshToken } from 'api/tokens';
 import { useZustandStore } from 'context/Zustand/provider';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';

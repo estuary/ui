@@ -1,3 +1,4 @@
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 import Editor from '@monaco-editor/react';
 import {
     Accordion,
@@ -13,7 +14,6 @@ import {
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { unescapeString } from 'utils/misc-utils';
 
 interface Props {

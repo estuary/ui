@@ -1,6 +1,7 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
 import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { Entity } from 'types';
+import { supabaseClient } from 'context/GlobalProviders';
 import pLimit from 'p-limit';
 import {
     RPCS,
@@ -12,7 +13,6 @@ import {
     supabaseRetry,
     updateSupabase,
 } from 'services/supabase';
-import type { Entity } from 'types';
 import { CHUNK_SIZE } from 'utils/misc-utils';
 
 interface CreateMatchData {

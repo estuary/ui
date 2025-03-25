@@ -1,10 +1,10 @@
+import type { OpsLogFlowDocument } from 'types';
+import type { LoadDocumentsOffsets, UseOpsLogsDocs } from './types';
 import { useJournalData } from 'hooks/journals/useJournalData';
 
 import { maxBytes } from 'components/tables/Logs/shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useJournalStore from 'stores/JournalData/Store';
-import type { OpsLogFlowDocument } from 'types';
-import type { LoadDocumentsOffsets, UseOpsLogsDocs } from './types';
 
 function useOpsLogs() {
     const journalName = useJournalStore((state) => state.opsLogsJournal);

@@ -1,3 +1,4 @@
+import type { CollectionConfigProps } from './types';
 import { Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import BindingsMultiEditor from 'components/editor/Bindings';
@@ -7,7 +8,6 @@ import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
 import { useIntl } from 'react-intl';
 import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
 import SectionAlertIndicator from './SectionAlertIndicator';
-import type { CollectionConfigProps } from './types';
 
 function CollectionConfig({
     draftSpecs,

@@ -1,9 +1,9 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { Dialog } from '@mui/material';
 import StorageMappingActions from 'components/admin/Settings/StorageMappings/Dialog/Actions';
 import StorageMappingContent from 'components/admin/Settings/StorageMappings/Dialog/Content';
 import StorageMappingTitle from 'components/admin/Settings/StorageMappings/Dialog/Title';
 import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import type { Dispatch, SetStateAction } from 'react';
 
 interface Props {
     open: boolean;

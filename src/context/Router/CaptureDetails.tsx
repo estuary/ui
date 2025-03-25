@@ -1,5 +1,5 @@
-import CaptureDetails from 'components/capture/Details';
 import type { Pages } from 'components/shared/Entity/Details/context';
+import CaptureDetails from 'components/capture/Details';
 import { DetailsPageContextProvider } from 'components/shared/Entity/Details/context';
 
 interface Props {

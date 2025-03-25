@@ -31,6 +31,7 @@ import type {
     OwnPropsOfLayout,
     StatePropsOfCombinator,
 } from '@jsonforms/core';
+import type { ComponentType } from 'react';
 import {
     getUISchemas,
     mapStateToControlProps,
@@ -43,7 +44,6 @@ import {
     ctxToLayoutProps,
 } from '@jsonforms/react';
 import { getDiscriminatorIndex } from 'forms/renderers/shared';
-import type { ComponentType } from 'react';
 import React from 'react';
 import { CHILDREN_HAVE_VALUE, LAYOUT_PATH } from './shared';
 

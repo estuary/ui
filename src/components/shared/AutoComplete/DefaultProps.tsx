@@ -1,7 +1,7 @@
 import type { AutocompleteProps } from '@mui/material';
+import type React from 'react';
 import { autocompleteClasses, Popper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import type React from 'react';
 import ListboxComponent from './VirtualizedList';
 
 const PopperComponent = styled(Popper)({

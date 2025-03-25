@@ -1,3 +1,4 @@
+import type { TablePrefix } from 'stores/Tables/hooks';
 import { Box } from '@mui/material';
 import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
 import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
@@ -11,7 +12,6 @@ import UserRows, {
 import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
 import TableHydrator from 'stores/Tables/Hydrator';
-import type { TablePrefix } from 'stores/Tables/hooks';
 import { useTableState } from 'stores/Tables/hooks';
 import { SelectTableStoreNames } from 'stores/names';
 import RowSelector from '../RowActions/AccessGrants/RowSelector';

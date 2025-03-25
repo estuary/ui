@@ -1,3 +1,4 @@
+import type { FallbackProps } from 'react-error-boundary';
 import FullPageSpinner from 'components/fullPage/Spinner';
 import { useEffect, useState } from 'react';
 import {
@@ -7,7 +8,6 @@ import {
 } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import Error from 'components/shared/Error';
-import type { FallbackProps } from 'react-error-boundary';
 import { getWithExpiry, setWithExpiry } from './shared';
 
 export function ErrorImporting({ error }: FallbackProps) {

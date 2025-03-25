@@ -1,6 +1,6 @@
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { useMemo } from 'react';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { formatEndpointAddress } from 'utils/dataPlane-utils';
 import { getURL, hasLength } from 'utils/misc-utils';
 

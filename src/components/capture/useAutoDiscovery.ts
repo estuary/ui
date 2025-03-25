@@ -1,3 +1,4 @@
+import type { Schema } from 'types';
 import { modifyDraftSpec } from 'api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -14,7 +15,6 @@ import {
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsActive,
 } from 'stores/SchemaEvolution/hooks';
-import type { Schema } from 'types';
 import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
 
 function useAutoDiscovery() {

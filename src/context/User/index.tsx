@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import type { BaseComponentProps } from 'types';
+import { useEffect } from 'react';
 import {
     getUserDetails,
     logRocketConsole,

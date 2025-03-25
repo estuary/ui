@@ -1,3 +1,4 @@
+import type { Schema } from 'types';
 import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
@@ -5,7 +6,6 @@ import {
     useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
 } from 'stores/EndpointConfig/hooks';
-import type { Schema } from 'types';
 import { encryptEndpointConfig } from 'utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {

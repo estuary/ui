@@ -1,3 +1,6 @@
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import type { BindingMetadata, BindingState, ResourceConfig } from './types';
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
@@ -35,9 +38,7 @@ import {
     getCollectionName,
 } from 'utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'validation';
-import type { StoreApi } from 'zustand';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 import {
     getCollectionNames,
@@ -64,7 +65,6 @@ import {
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from './slices/TimeTravel';
-import type { BindingMetadata, BindingState, ResourceConfig } from './types';
 
 const getInitialState = (
     set: NamedSet<BindingState>,

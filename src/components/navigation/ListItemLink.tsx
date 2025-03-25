@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
     Badge,
     ListItemButton,
@@ -7,7 +8,6 @@ import {
 } from '@mui/material';
 import RouterLink from 'components/navigation/RouterLink';
 import { NavWidths } from 'context/Theme';
-import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 interface Props {

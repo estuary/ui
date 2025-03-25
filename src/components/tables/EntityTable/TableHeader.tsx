@@ -1,11 +1,11 @@
+import type { SelectTableStoreNames } from 'stores/names';
+import type { SortDirection } from 'types';
+import type { ColumnProps } from './types';
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { getStickyTableCell } from 'context/Theme';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import type { SelectTableStoreNames } from 'stores/names';
-import type { SortDirection } from 'types';
 import { getTableComponents } from 'utils/table-utils';
-import type { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];

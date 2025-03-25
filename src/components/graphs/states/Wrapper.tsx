@@ -1,9 +1,9 @@
+import type { BaseComponentProps } from 'types';
 import { Box } from '@mui/material';
 import EmptyGraphState from 'components/graphs/states/Empty';
 import GraphLoadingState from 'components/graphs/states/Loading';
 import { FormattedMessage } from 'react-intl';
 import { useBillingStore } from 'stores/Billing/Store';
-import type { BaseComponentProps } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { eChartsTooltipSX } from '../tooltips';
 

@@ -1,3 +1,5 @@
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
+import type { TableColumns } from 'types';
 import { Grid, Stack, Table, TableContainer } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import CardWrapper from 'components/shared/CardWrapper';
@@ -6,8 +8,6 @@ import ExternalLink from 'components/shared/ExternalLink';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useShardDetail_error } from 'stores/ShardDetail/hooks';
-import type { ShardEntityTypes } from 'stores/ShardDetail/types';
-import type { TableColumns } from 'types';
 import ShardAlerts from './Alerts';
 import InformationTableBody from './TableBody';
 import InformationTableFooter from './TableFooter';

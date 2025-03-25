@@ -1,6 +1,6 @@
+import type { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { Button } from '@mui/material';
 import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
-import type { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
 import invariableStores from 'context/Zustand/invariableStores';
 import { FormattedMessage } from 'react-intl';

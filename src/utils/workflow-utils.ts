@@ -1,8 +1,5 @@
 import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
-import { modifyDraftSpec } from 'api/draftSpecs';
-import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
 import type { CallSupabaseResponse } from 'services/supabase';
 import type {
     FullSource,
@@ -16,8 +13,11 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'types';
-import { hasLength } from 'utils/misc-utils';
 import type { ConnectorConfig } from '../../deps/flow/flow';
+import { hasLength } from 'utils/misc-utils';
+import { isBoolean, isEmpty } from 'lodash';
+import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
+import { modifyDraftSpec } from 'api/draftSpecs';
 import { isDekafEndpointConfig } from './connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,

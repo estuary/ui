@@ -1,7 +1,7 @@
-import { TableFooter, TablePagination, TableRow } from '@mui/material';
-import { useZustandStore } from 'context/Zustand/provider';
 import type { SelectTableStoreNames } from 'stores/names';
 import type { SelectableTableStore } from 'stores/Tables/Store';
+import { TableFooter, TablePagination, TableRow } from '@mui/material';
+import { useZustandStore } from 'context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import TablePaginationActions from '../PaginationActions';
 

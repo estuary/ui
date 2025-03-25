@@ -1,5 +1,5 @@
-import { Box, Stack, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import { Box, Stack, Typography } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 
 import { useCallback, useState } from 'react';

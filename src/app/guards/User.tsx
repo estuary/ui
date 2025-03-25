@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import { unauthenticatedRoutes } from 'app/routes';
 import { useUserStore } from 'context/User/useUserContextStore';
 import useGlobalSearchParams, {
@@ -7,7 +8,6 @@ import { useEffect, useRef } from 'react';
 import 'react-reflex/styles.css';
 import { Navigate } from 'react-router';
 import { identifyUser } from 'services/logrocket';
-import type { BaseComponentProps } from 'types';
 
 function UserGuard({ children }: BaseComponentProps) {
     // We only want to idenfity users once. Since the user object changes

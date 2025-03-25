@@ -1,5 +1,6 @@
-import { TableRow, useTheme } from '@mui/material';
 import type { CollectionQueryWithStats } from 'api/liveSpecsExt';
+import type { StatsResponse } from 'stores/Tables/Store';
+import { TableRow, useTheme } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import TimeStamp from 'components/tables/cells/TimeStamp';
 import { useEntityType } from 'context/EntityContext';
@@ -7,7 +8,6 @@ import { getEntityTableRowSx } from 'context/Theme';
 import useDetailsNavigator from 'hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'stores/names';
 
-import type { StatsResponse } from 'stores/Tables/Store';
 import EntityNameLink from '../cells/EntityNameLink';
 import RowSelect from '../cells/RowSelect';
 import Bytes from '../cells/stats/Bytes';

@@ -1,6 +1,9 @@
+import type { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import type { Details } from 'stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'types';
+import type { ConnectorVersionEvaluationOptions } from 'utils/connector-utils';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import type { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -8,9 +11,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import type { Details } from 'stores/DetailsForm/types';
-import type { EntityWithCreateWorkflow } from 'types';
-import type { ConnectorVersionEvaluationOptions } from 'utils/connector-utils';
 import {
     evaluateConnectorVersions,
     getConnectorMetadata,

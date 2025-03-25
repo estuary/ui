@@ -1,7 +1,7 @@
+import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 import { TableFooter, TablePagination, TableRow } from '@mui/material';
 import { semiTransparentBackground } from 'context/Theme';
 import { useShardDetail_readDictionary } from 'stores/ShardDetail/hooks';
-import type { ShardEntityTypes } from 'stores/ShardDetail/types';
 
 interface Props {
     page: number;

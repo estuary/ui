@@ -1,5 +1,5 @@
-import { useUserStore } from 'context/User/useUserContextStore';
 import type { JWTPayload } from 'jose';
+import { useUserStore } from 'context/User/useUserContextStore';
 import { decodeJwt } from 'jose';
 import { logRocketConsole } from 'services/shared';
 import useSWR from 'swr';

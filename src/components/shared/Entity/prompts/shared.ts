@@ -1,6 +1,6 @@
+import type { DataFlowResetContext } from './types';
 import { CustomEvents } from 'services/types';
 import { DEFAULT_FILTER } from 'services/shared';
-import type { DataFlowResetContext } from './types';
 
 export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     backfillTarget: null,

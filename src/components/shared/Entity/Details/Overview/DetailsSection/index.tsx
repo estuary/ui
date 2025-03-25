@@ -1,3 +1,5 @@
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { FormatDateOptions } from 'react-intl';
 import { CircularProgress, Skeleton, Stack } from '@mui/material';
 import ConnectorName from 'components/connectors/ConnectorName';
 import CardWrapper from 'components/shared/CardWrapper';
@@ -5,9 +7,7 @@ import DataPlane from 'components/shared/Entity/DataPlane';
 import RelatedCollections from 'components/shared/Entity/RelatedCollections';
 import ExternalLink from 'components/shared/ExternalLink';
 import KeyValueList from 'components/shared/KeyValueList';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import type { FormatDateOptions } from 'react-intl';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     formatDataPlaneName,

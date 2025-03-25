@@ -1,11 +1,11 @@
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import type { RefreshTokenState } from './types';
 import produce from 'immer';
 import { BASE_ERROR } from 'services/supabase';
 import { devtoolsOptions } from 'utils/store-utils';
-import type { StoreApi } from 'zustand';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
-import type { RefreshTokenState } from './types';
 
 const getInitialStateData = (): Pick<
     RefreshTokenState,

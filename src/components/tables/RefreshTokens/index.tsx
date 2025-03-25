@@ -1,3 +1,4 @@
+import type { TableColumns } from 'types';
 import { getRefreshTokensForTable } from 'api/tokens';
 import ConfigureRefreshTokenButton from 'components/admin/Api/RefreshToken/ConfigureTokenButton';
 import EntityTable from 'components/tables/EntityTable';
@@ -6,7 +7,6 @@ import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'stores/names';
 import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
 import TableHydrator from 'stores/Tables/Hydrator';
-import type { TableColumns } from 'types';
 
 const columns: TableColumns[] = [
     {

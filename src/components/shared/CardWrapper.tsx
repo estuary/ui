@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from 'types';
 import {
     Box,
     Stack,
@@ -13,9 +15,7 @@ import {
     semiTransparentBackground,
 } from 'context/Theme';
 import { HelpCircle } from 'iconoir-react';
-import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import type { BaseComponentProps } from 'types';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;

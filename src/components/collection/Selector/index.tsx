@@ -1,8 +1,8 @@
+import type { CollectionSelectorProps } from './types';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { defaultOutline } from 'context/Theme';
 import { useIntl } from 'react-intl';
 import BindingsEditorAdd from './Add';
-import type { CollectionSelectorProps } from './types';
 
 function CollectionSelector({
     readOnly = false,

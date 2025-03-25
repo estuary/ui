@@ -1,10 +1,10 @@
+import type { TaskEndpointProps } from './types';
 import { Box, Typography } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
 import useShardHydration from 'hooks/shards/useShardHydration';
 import { useIntl } from 'react-intl';
 import { EndpointLink } from './EndpointLink';
-import type { TaskEndpointProps } from './types';
 
 // Displays a short message, and possibly a link, if the task exposes any endpoints.
 // The intent is to keep it short so it can fit into a small space, so only a single endpoint

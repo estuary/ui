@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
+import type { NestedListItemProps } from './types';
 import {
     Checkbox,
     FormControl,
@@ -8,9 +10,7 @@ import {
 } from '@mui/material';
 import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
-import type { NestedListItemProps } from './types';
 
 function NestedListItem({
     catalogName,

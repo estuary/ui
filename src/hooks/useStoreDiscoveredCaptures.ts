@@ -1,3 +1,5 @@
+import type { Entity } from 'types';
+import type { SupabaseConfig } from 'utils/workflow-utils';
 import { getDraftSpecsBySpecType } from 'api/draftSpecs';
 import {
     useEditorStore_setId,
@@ -13,8 +15,6 @@ import { CustomEvents } from 'services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'stores/Binding/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
-import type { Entity } from 'types';
-import type { SupabaseConfig } from 'utils/workflow-utils';
 import { modifyDiscoveredDraftSpec } from 'utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {

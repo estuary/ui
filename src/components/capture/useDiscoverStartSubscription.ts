@@ -1,3 +1,4 @@
+import type { Entity } from 'types';
 import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
@@ -21,7 +22,6 @@ import {
 } from 'stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import type { Entity } from 'types';
 import { supabaseClient } from 'context/GlobalProviders';
 
 const trackEvent = (payload: any) => {

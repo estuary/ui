@@ -1,3 +1,6 @@
+import type { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+import type { ReactNode } from 'react';
+import type { EntityWithCreateWorkflow } from 'types';
 import { Box, Collapse } from '@mui/material';
 import CollectionConfig from 'components/collection/Config';
 import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
@@ -18,8 +21,6 @@ import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetai
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import type { ReactNode } from 'react';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
@@ -35,7 +36,6 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import type { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';

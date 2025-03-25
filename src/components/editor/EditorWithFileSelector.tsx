@@ -1,6 +1,6 @@
+import type { MonacoEditorProps } from 'components/editor/MonacoEditor';
 import EditorFileSelector from 'components/editor/FileSelector';
 import ListAndDetails from 'components/editor/ListAndDetails';
-import type { MonacoEditorProps } from 'components/editor/MonacoEditor';
 import MonacoEditor from 'components/editor/MonacoEditor';
 
 export interface Props extends MonacoEditorProps {

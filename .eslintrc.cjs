@@ -17,6 +17,19 @@ module.exports = {
         'import/newline-after-import': 'error',
         'import/no-duplicates': 'error',
 
+        'import/order': [
+            'error',
+            {
+                groups: [
+                    'type',
+                    // Default sort order
+                    ['builtin', 'external', 'parent', 'sibling', 'index'],
+                    'internal',
+                    'object',
+                ],
+            },
+        ],
+
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',

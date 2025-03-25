@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
     Box,
     CircularProgress,
@@ -7,7 +8,6 @@ import {
 } from '@mui/material';
 import Error from 'components/shared/Error';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
-import type { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ProgressStates } from '../Shared/types';
 

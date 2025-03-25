@@ -1,7 +1,7 @@
+import type { StandAloneTableTitleProps } from './types';
 import { Stack, Typography } from '@mui/material';
 import ExternalLink from 'components/shared/ExternalLink';
 import { useIntl } from 'react-intl';
-import type { StandAloneTableTitleProps } from './types';
 
 // Used when you want to display the title outside of the table
 //  ex: admin > settings tables

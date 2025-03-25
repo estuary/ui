@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
@@ -5,7 +6,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
-import type { BaseComponentProps } from 'types';
 import AlertBox from './AlertBox';
 
 const logErrorToLogRocket = (error: Error) => {

@@ -1,3 +1,4 @@
+import type { LoginWrapperProps } from './types';
 import { Button, Stack } from '@mui/material';
 import { unauthenticatedRoutes } from 'app/routes';
 import FullPageDialog from 'components/fullPage/Dialog';
@@ -7,7 +8,6 @@ import { FormattedMessage } from 'react-intl';
 import HeaderMessage from './HeaderMessage';
 import RegisterPerk from './Perk';
 import LoginTabs from './Tabs';
-import type { LoginWrapperProps } from './types';
 
 const LoginWrapper = ({
     children,

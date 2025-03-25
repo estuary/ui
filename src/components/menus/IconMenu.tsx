@@ -5,6 +5,7 @@ import type {
     SxProps,
     Theme,
 } from '@mui/material';
+import type { ReactNode } from 'react';
 import { Box, IconButton, Menu, Tooltip } from '@mui/material';
 import {
     defaultOutline,
@@ -12,7 +13,6 @@ import {
     paperBackground,
     paperBackgroundImage,
 } from 'context/Theme';
-import type { ReactNode } from 'react';
 import React from 'react';
 
 interface CustomPopoverPosition {

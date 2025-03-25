@@ -1,5 +1,5 @@
-import { Box, Toolbar, Typography } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
+import { Box, Toolbar, Typography } from '@mui/material';
 import { getLiveSpecs_dataPlaneAuthReq } from 'api/liveSpecsExt';
 import { authenticatedRoutes } from 'app/routes';
 import Error from 'components/shared/Error';

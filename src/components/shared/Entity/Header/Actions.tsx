@@ -1,3 +1,4 @@
+import type { EntityToolbarActionProps } from '../types';
 import { Stack } from '@mui/material';
 import { useEditorStore_id } from 'components/editor/Store/hooks';
 import { truncateTextSx } from 'context/Theme';
@@ -6,7 +7,6 @@ import { FormStatus } from 'stores/FormState/types';
 import EntitySaveButton from '../Actions/SaveButton';
 import EntityTestButton from '../Actions/TestButton';
 import EntityViewDetails from '../Actions/ViewDetails';
-import type { EntityToolbarActionProps } from '../types';
 
 function HeaderActions({
     GenerateButton,

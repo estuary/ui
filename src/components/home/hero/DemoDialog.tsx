@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import {
     Box,
     Collapse,
@@ -9,7 +10,6 @@ import {
 } from '@mui/material';
 import AcceptDemoInvitation from 'components/home/hero/AcceptDemoInvitation';
 import Logo from 'components/navigation/Logo';
-import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

@@ -1,10 +1,10 @@
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { LoginButtonProps, ProviderButtonProps } from './types';
 import { useTheme } from '@mui/material';
 import { loginButtonStyling } from 'context/Theme';
 import AzureButton from './buttons/Azure';
 import GithubButton from './buttons/Github';
 import GoogleButton from './buttons/Google';
-import type { LoginButtonProps, ProviderButtonProps } from './types';
 
 function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
     const theme = useTheme();

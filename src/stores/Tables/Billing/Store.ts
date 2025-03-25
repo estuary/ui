@@ -1,11 +1,11 @@
-import produce from 'immer';
 import type { SelectTableStoreNames } from 'stores/names';
 import type { BillingTableState } from 'stores/Tables/Billing/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import produce from 'immer';
 import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
 import { devtoolsOptions } from 'utils/store-utils';
-import type { StoreApi } from 'zustand';
 import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
 export const getInitialState = (

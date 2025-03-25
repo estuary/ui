@@ -1,3 +1,4 @@
+import type { Entity } from 'types';
 import { discover } from 'api/discovers';
 import { createEntityDraft } from 'api/drafts';
 
@@ -12,7 +13,6 @@ import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfi
 import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
 
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import type { Entity } from 'types';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import useDiscoverStartSubscription from './useDiscoverStartSubscription';

@@ -1,3 +1,4 @@
+import type { AdminBillingProps } from './types';
 import { Divider, Grid, Typography } from '@mui/material';
 import { getInvoicesBetween } from 'api/billing';
 import { authenticatedRoutes } from 'app/routes';
@@ -27,7 +28,6 @@ import { useTenantStore } from 'stores/Tenant/Store';
 import useConstant from 'use-constant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'utils/billing-utils';
 import BillingLoadError from './LoadError';
-import type { AdminBillingProps } from './types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 

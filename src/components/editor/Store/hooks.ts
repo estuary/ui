@@ -1,19 +1,19 @@
+import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { Entity } from 'types';
+import type { EditorStoreState } from './types';
 import { useEntityType } from 'context/EntityContext';
 import { useLocalZustandStore } from 'context/LocalZustand';
 import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
-import type { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
 import { useEffect } from 'react';
 import { EditorStoreNames } from 'stores/names';
-import type { Entity } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import { getBindingIndex } from 'utils/workflow-utils';
 import { useShallow } from 'zustand/react/shallow';
-import type { EditorStoreState } from './types';
 
 interface SelectorParams {
     localScope?: boolean;

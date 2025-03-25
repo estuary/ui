@@ -1,12 +1,13 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
+import type { LiveSpecsExtQuery_ByLiveSpecId } from 'api/liveSpecsExt';
+import type { Dispatch, SetStateAction } from 'react';
+import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
 import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
-import type { LiveSpecsExtQuery_ByLiveSpecId } from 'api/liveSpecsExt';
 import { getLiveSpecsByLiveSpecId } from 'api/liveSpecsExt';
 import {
     useEditorStore_setCatalogName,
@@ -19,7 +20,6 @@ import { useEntityType } from 'context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import type { Dispatch, SetStateAction } from 'react';
 import { useCallback } from 'react';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';

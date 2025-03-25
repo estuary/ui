@@ -1,4 +1,5 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { CaptureIntervalProps } from './types';
 import {
     Autocomplete,
     FormHelperText,
@@ -21,7 +22,6 @@ import {
 import { FormStatus } from 'stores/FormState/types';
 import { hasLength } from 'utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'validation';
-import type { CaptureIntervalProps } from './types';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();

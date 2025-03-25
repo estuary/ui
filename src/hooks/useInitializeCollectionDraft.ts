@@ -1,6 +1,6 @@
+import type { LiveSpecsExtQuery_ByCatalogName } from 'api/liveSpecsExt';
 import { createEntityDraft } from 'api/drafts';
 import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
-import type { LiveSpecsExtQuery_ByCatalogName } from 'api/liveSpecsExt';
 import { getLiveSpecsByCatalogName } from 'api/liveSpecsExt';
 import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
 import {

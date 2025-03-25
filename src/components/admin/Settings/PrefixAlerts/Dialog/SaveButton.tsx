@@ -1,3 +1,4 @@
+import type { SelectableTableStore } from 'stores/Tables/Store';
 import {
     createNotificationSubscription,
     deleteNotificationSubscription,
@@ -7,7 +8,6 @@ import { useZustandStore } from 'context/Zustand/provider';
 import { union } from 'lodash';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import type { SelectableTableStore } from 'stores/Tables/Store';
 import { selectableTableStoreSelectors } from 'stores/Tables/Store';
 import { SelectTableStoreNames } from 'stores/names';
 import { hasLength } from 'utils/misc-utils';

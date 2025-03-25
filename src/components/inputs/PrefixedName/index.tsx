@@ -1,3 +1,4 @@
+import type { PrefixedNameProps } from './types';
 import {
     FormControl,
     FormHelperText,
@@ -14,7 +15,6 @@ import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 import { hasLength } from 'utils/misc-utils';
-import type { PrefixedNameProps } from './types';
 import PrefixSelector from './PrefixSelector';
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);

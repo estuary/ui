@@ -1,3 +1,4 @@
+import type { BaseComponentProps } from 'types';
 import { Typography } from '@mui/material';
 import MessageWithLink from 'components/content/MessageWithLink';
 import { useEditorStore_draftInitializationError } from 'components/editor/Store/hooks';
@@ -7,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
-import type { BaseComponentProps } from 'types';
 
 function DraftInitializer({ children }: BaseComponentProps) {
     const initializeTaskDraft = useInitializeTaskDraft();
