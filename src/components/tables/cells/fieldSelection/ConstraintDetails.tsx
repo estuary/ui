@@ -1,10 +1,17 @@
 import { TableCell, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { getConstraintHeaderSettings } from './shared';
+import { constraintMessages, recoverableConstraintTypes } from './shared';
 import { ConstraintDetailsProps } from './types';
 
 function ConstraintDetails({ constraint }: ConstraintDetailsProps) {
-    const [messageId, textColor] = getConstraintHeaderSettings(constraint.type);
+    const messageId =
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        constraintMessages[constraint.type]?.id ??
+        'fieldSelection.table.label.unknown';
+
+    const textColor = recoverableConstraintTypes.includes(constraint.type)
+        ? 'success'
+        : 'error';
 
     return (
         <TableCell sx={{ minWidth: 275 }}>

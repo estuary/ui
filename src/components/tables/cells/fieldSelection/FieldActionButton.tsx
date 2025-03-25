@@ -3,7 +3,7 @@ import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton
 import useOnFieldActionClick from 'hooks/fieldSelection/useOnFieldActionClick';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isIdle } from 'stores/FormState/hooks';
-import { getConstraintMessageId, TOGGLE_BUTTON_CLASS } from './shared';
+import { constraintMessages, TOGGLE_BUTTON_CLASS } from './shared';
 import { FieldActionButtonProps } from './types';
 
 export default function FieldActionButton({
@@ -23,6 +23,11 @@ export default function FieldActionButton({
     const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
 
     if (tooltipProps && disabled && formIdle) {
+        const tooltipReasonId =
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            constraintMessages[constraint.type]?.translatedId ??
+            'fieldSelection.table.label.unknown';
+
         return (
             <Tooltip
                 {...tooltipProps}
@@ -30,7 +35,7 @@ export default function FieldActionButton({
                     { id: 'fieldSelection.table.tooltip.disabledRowAction' },
                     {
                         reason: intl.formatMessage({
-                            id: getConstraintMessageId(constraint.type),
+                            id: tooltipReasonId,
                         }),
                     }
                 )}
