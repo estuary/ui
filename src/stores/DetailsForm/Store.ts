@@ -4,7 +4,7 @@ import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
+import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
 import {
@@ -39,9 +39,6 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    logRocketConsole('DetailsFormHydrator>getConnectorImage', {
-        connectorId,
-    });
     const { data, error } = await getConnectors_detailsForm(connectorId);
 
     if (!error && data && data.length > 0) {
@@ -68,6 +65,25 @@ const getDataPlane = (
         return selectedOption;
     }
 
+    // TODO (private data plane) - we need to add support for allowing tenants to configure their
+    //  preferred data plane.
+
+    // If we are not trying to find a specific data plane and there is only one option
+    //  and it is private we are pretty safe in prefilling that one.
+    if (
+        !dataPlaneId &&
+        dataPlaneOptions.length === 1 &&
+        dataPlaneOptions[0].dataPlaneName.whole.includes(
+            DATA_PLANE_SETTINGS.private.prefix
+        )
+    ) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            defaultedPrivate: true,
+        });
+        return dataPlaneOptions[0];
+    }
+
+    // Try to find the default public data plane
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
@@ -193,9 +209,6 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 if (connectorImage.id === '') {
-                    logRocketConsole(
-                        'DetailsFormHydrator>setDetails_connector>resetting'
-                    );
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 } else {
@@ -299,23 +312,10 @@ export const getInitialState = (
             workflow === 'capture_create' ||
             workflow === 'materialization_create';
 
-        logRocketConsole('DetailsFormHydrator>hydrateState', {
-            connectorId,
-            createWorkflow,
-            dataPlaneId,
-            liveSpecId,
-            searchParams: searchParams.toString(),
-            workflow,
-        });
-
         if (connectorId) {
             let dataPlaneOptions: DataPlaneOption[] = [];
 
             const dataPlaneResponse = await getDataPlaneOptions();
-
-            logRocketConsole(
-                'DetailsFormHydrator>hydrateState>getDataPlaneOptions'
-            );
 
             if (
                 !dataPlaneResponse.error &&
@@ -326,9 +326,6 @@ export const getInitialState = (
                     generateDataPlaneOption
                 );
 
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>setDataPlaneOptions'
-                );
                 get().setDataPlaneOptions(dataPlaneOptions);
             } else {
                 get().setHydrationError(
@@ -338,30 +335,10 @@ export const getInitialState = (
             }
 
             if (createWorkflow) {
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow'
-                );
                 const connectorImage = await getConnectorImage(connectorId);
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow>getConnectorImage',
-                    {
-                        connectorId: connectorImage?.connectorId,
-                        connectorImageId: connectorImage?.id,
-                    }
-                );
-
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
-                logRocketConsole(
-                    'DetailsFormHydrator>hydrateState>createWorkflow>getDataPlane',
-                    {
-                        dataPlaneName: dataPlane?.dataPlaneName,
-                    }
-                );
 
                 if (connectorImage && dataPlane === null) {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector'
-                    );
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -374,10 +351,6 @@ export const getInitialState = (
                         errors,
                     });
                 } else if (connectorImage && dataPlane !== null) {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setDetails_connector&setDetails_dataPlane'
-                    );
-
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -391,9 +364,6 @@ export const getInitialState = (
                         errors,
                     });
                 } else {
-                    logRocketConsole(
-                        'DetailsFormHydrator>hydrateState>createWorkflow>setHydrationErrorsExist'
-                    );
                     get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {

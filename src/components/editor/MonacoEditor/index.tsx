@@ -169,11 +169,6 @@ function MonacoEditor({
 
                 // Make sure we have all the props needed to update the value
                 if (validValue && catalogName && catalogType) {
-                    logRocketConsole('editor:update:saving', {
-                        processedVal,
-                        catalogName,
-                        catalogType,
-                    });
                     setStatus(EditorStatus.SAVING, evaluatedPath);
 
                     // Check if there is a scope to update (ex: Schema editing for bindings editor)
