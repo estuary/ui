@@ -50,6 +50,7 @@ import {
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    updateBackfilledBindingState,
     whatChanged,
 } from './shared';
 import {
@@ -581,21 +582,10 @@ const getInitialState = (
                     }
 
                     // Update backfill-related state.
-                    const evaluatedBackfilledBindings =
+                    updateBackfilledBindingState(
+                        state,
                         mappedUUIDsAndResourceConfigs
-                            .map(
-                                ([bindingUUID, _resourceConfig]) => bindingUUID
-                            )
-                            .filter((bindingUUID) =>
-                                state.backfilledBindings.includes(bindingUUID)
-                            );
-
-                    state.backfilledBindings = evaluatedBackfilledBindings;
-
-                    state.backfillAllBindings =
-                        state.backfilledBindings.length > 0 &&
-                        state.backfilledBindings.length ===
-                            Object.keys(state.resourceConfigs).length;
+                    );
 
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
@@ -656,21 +646,10 @@ const getInitialState = (
                         collection: resourceConfig.meta.collectionName,
                     };
 
-                    const evaluatedBackfilledBindings =
+                    updateBackfilledBindingState(
+                        state,
                         mappedUUIDsAndResourceConfigs
-                            .map(
-                                ([bindingUUID, _resourceConfig]) => bindingUUID
-                            )
-                            .filter((bindingUUID) =>
-                                state.backfilledBindings.includes(bindingUUID)
-                            );
-
-                    state.backfilledBindings = evaluatedBackfilledBindings;
-
-                    state.backfillAllBindings =
-                        state.backfilledBindings.length > 0 &&
-                        state.backfilledBindings.length ===
-                            Object.keys(state.resourceConfigs).length;
+                    );
                 } else {
                     state.bindings = {};
                     state.currentBinding = null;
