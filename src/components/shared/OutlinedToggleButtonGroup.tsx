@@ -7,7 +7,7 @@ import {
 const OutlinedToggleButtonGroup = styled(ToggleButtonGroup)<
     ToggleButtonGroupProps & { buttonSelector?: string }
 >(({ buttonSelector }) => ({
-    [`&${buttonSelector ?? ' .MuiToggleButton-root'}`]: {
+    [`${buttonSelector ?? '& .MuiToggleButton-root'}`]: {
         '&:not(:first-of-type), &:not(:last-of-type)': {
             borderRadius: 0,
         },

@@ -37,7 +37,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
     return (
         <TableCell>
             <OutlinedToggleButtonGroup
-                buttonSelector=".toggle-button"
+                buttonSelector="&.toggle-button"
                 disabled={formActive}
                 exclusive
                 size="small"
