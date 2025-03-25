@@ -604,6 +604,8 @@ export const menuBackgroundColor = {
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
+export const entityHeaderButtonSx: SxProps<Theme> = { ml: 1 };
+
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
