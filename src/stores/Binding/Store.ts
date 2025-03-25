@@ -50,6 +50,7 @@ import {
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    updateBackfilledBindingState,
     whatChanged,
 } from './shared';
 import {
@@ -581,15 +582,10 @@ const getInitialState = (
                     }
 
                     // Update backfill-related state.
-                    state.backfilledBindings =
-                        mappedUUIDsAndResourceConfigs.map(
-                            ([bindingUUID, _resourceConfig]) => bindingUUID
-                        );
-
-                    state.backfillAllBindings =
-                        state.backfilledBindings.length > 0 &&
-                        state.backfilledBindings.length ===
-                            Object.keys(state.resourceConfigs).length;
+                    updateBackfilledBindingState(
+                        state,
+                        mappedUUIDsAndResourceConfigs
+                    );
 
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
@@ -650,15 +646,10 @@ const getInitialState = (
                         collection: resourceConfig.meta.collectionName,
                     };
 
-                    state.backfilledBindings =
-                        mappedUUIDsAndResourceConfigs.map(
-                            ([bindingUUID, _resourceConfig]) => bindingUUID
-                        );
-
-                    state.backfillAllBindings =
-                        state.backfilledBindings.length > 0 &&
-                        state.backfilledBindings.length ===
-                            Object.keys(state.resourceConfigs).length;
+                    updateBackfilledBindingState(
+                        state,
+                        mappedUUIDsAndResourceConfigs
+                    );
                 } else {
                     state.bindings = {};
                     state.currentBinding = null;

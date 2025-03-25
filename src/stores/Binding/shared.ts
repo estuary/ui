@@ -252,6 +252,25 @@ export const initializeAndGenerateUUID = (
     };
 };
 
+export const updateBackfilledBindingState = (
+    state: BindingState,
+    mappedUUIDsAndResourceConfigs: [string, ResourceConfig][]
+) => {
+    if (state.backfilledBindings.length > 0) {
+        const evaluatedBackfilledBindings = mappedUUIDsAndResourceConfigs
+            .map(([bindingUUID, _resourceConfig]) => bindingUUID)
+            .filter((bindingUUID) =>
+                state.backfilledBindings.includes(bindingUUID)
+            );
+
+        state.backfilledBindings = evaluatedBackfilledBindings;
+
+        state.backfillAllBindings =
+            state.backfilledBindings.length ===
+            Object.keys(state.resourceConfigs).length;
+    }
+};
+
 export const STORE_KEY = 'Bindings';
 
 export const hydrateConnectorTagDependentState = async (
