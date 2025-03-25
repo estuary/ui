@@ -135,6 +135,9 @@ export const Workflows: Record<string, string> = {
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 
+    'workflows.guards.edit.title': `Missing edit ${CommonMessages['terms.permissions']}`,
+    'workflows.guards.edit.message': `You do not have edit capabilities for this {entityType}. Please contact an administrator to request access.`,
+
     'workflows.advancedSettings.title': `Advanced Options`,
     'workflows.disable.autoEnabledAlert.title': `{entityType} enabled`,
     'workflows.disable.autoEnabledAlert.message': `We have automatically enabled this {entityType} to ensure we can test the connection with the endpoint.`,

@@ -1,27 +1,25 @@
-import { InputBaseComponentProps } from '@mui/material';
 import AlertBox from 'components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'context/EntityContext';
+import useCanEditEntity from 'hooks/useCanEditEntity';
 import { useIntl } from 'react-intl';
-import { useEntitiesStore_atLeastOneAdminTenant } from 'stores/Entities/hooks';
+import { BaseComponentProps } from 'types';
 
-function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
+function EditCapabilityGuard({ children }: BaseComponentProps) {
     const intl = useIntl();
-
-    const atLeastOneAdminTenant = useEntitiesStore_atLeastOneAdminTenant();
-
     const entityType = useEntityTypeTranslatedForWorkflows();
+    const canEditEntity = useCanEditEntity();
 
-    if (!atLeastOneAdminTenant) {
+    if (canEditEntity === false) {
         return (
             <AlertBox
                 short={false}
                 severity="error"
                 title={intl.formatMessage({
-                    id: 'workflows.guards.admin.title',
+                    id: 'workflows.guards.edit.title',
                 })}
             >
                 {intl.formatMessage(
-                    { id: 'workflows.guards.admin.message' },
+                    { id: 'workflows.guards.edit.message' },
                     {
                         entityType,
                     }
@@ -34,4 +32,4 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
     return <>{children}</>;
 }
 
-export default AdminCapabilityGuard;
+export default EditCapabilityGuard;

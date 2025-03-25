@@ -9,9 +9,10 @@ import {
     useEditorStore_isSaving,
     useEditorStore_queryResponse_mutate,
 } from 'components/editor/Store/hooks';
-import { buttonSx } from 'components/shared/Entity/Header';
+
 import { useEntityType } from 'context/EntityContext';
 import { supabaseClient } from 'context/GlobalProviders';
+import { entityHeaderButtonSx } from 'context/Theme';
 import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
@@ -177,7 +178,11 @@ function SchemaEvolution({ onFailure }: Props) {
         return null;
     }
     return (
-        <Button onClick={save} disabled={isSaving || formActive} sx={buttonSx}>
+        <Button
+            onClick={save}
+            disabled={isSaving || formActive}
+            sx={entityHeaderButtonSx}
+        >
             <FormattedMessage id="cta.evolve" />
         </Button>
     );

@@ -4,7 +4,6 @@ import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 import { createJSONFormDefaults } from 'services/ajv';
-import { logRocketConsole } from 'services/shared';
 import {
     CustomError,
     fetchErrors,
@@ -217,35 +216,14 @@ const getInitialState = (
             get().setServerUpdateRequired(true);
         }
 
-        logRocketConsole('EndpointConfigHydrator>hydrateState', {
-            active: get().active,
-        });
-
         if (get().active && connectorTagId && connectorTagId.length > 0) {
-            logRocketConsole(
-                'EndpointConfigHydrator>hydrateState>fetch>getSchema_Endpoint',
-                {
-                    active: get().active,
-                }
-            );
-
             const { data, error } = await getSchema_Endpoint(connectorTagId);
 
             if (error) {
-                logRocketConsole(
-                    'EndpointConfigHydrator>hydrateState>fetch>setHydrationErrorsExist',
-                    {
-                        active: get().active,
-                    }
-                );
                 get().setHydrationErrorsExist(true);
             }
 
             if (get().active && data) {
-                logRocketConsole(
-                    'EndpointConfigHydrator>hydrateState>fetch>setEndpointSchema'
-                );
-
                 await get().setEndpointSchema(
                     data.endpoint_spec_schema as unknown as Schema
                 );
