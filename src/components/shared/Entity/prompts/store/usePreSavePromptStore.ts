@@ -7,10 +7,7 @@ import { ProgressStates } from 'components/tables/RowActions/Shared/types';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
 import { logRocketEvent } from 'services/shared';
 import { useMemo } from 'react';
-import {
-    getInitialDataFlowResetContext,
-    SAVE_PROMPT_SETTINGS,
-} from '../shared';
+import { getInitialDataFlowResetContext } from '../shared';
 import type { PreSavePromptStore } from './types';
 import { defaultStepState } from './shared';
 
@@ -30,14 +27,13 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             ...getInitialState(),
             resetState: () => set(getInitialState(), false, 'resetState'),
 
-            initializeSteps: (configKey) =>
+            initializeSteps: (settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
-                        state.context.loggingEvent =
-                            SAVE_PROMPT_SETTINGS[configKey].loggingEvent;
+                        state.context.loggingEvent = settings.loggingEvent;
                         state.context.dialogMessageId =
-                            SAVE_PROMPT_SETTINGS[configKey].dialogMessageId;
-                        state.steps = SAVE_PROMPT_SETTINGS[configKey].steps;
+                            settings.dialogMessageId;
+                        state.steps = settings.steps;
 
                         const initUUID = crypto.randomUUID();
                         state.initUUID = initUUID;

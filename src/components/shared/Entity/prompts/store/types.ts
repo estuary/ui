@@ -1,6 +1,10 @@
 import type { CustomEvents } from 'services/types';
-import type { DataFlowResetContext, SAVE_PROMPT_SETTINGS } from '../shared';
-import type { PromptStep, PromptStepState } from '../types';
+import type {
+    DataFlowResetContext,
+    PromptMachineSettings,
+    PromptStep,
+    PromptStepState,
+} from '../types';
 
 export interface PreSavePromptInitSettings {
     dialogMessageId: string;
@@ -18,7 +22,7 @@ export interface PreSavePromptStore {
 
     retryStep: (step: number) => void;
     updateStep: (step: number, settings: Partial<PromptStepState>) => void;
-    initializeSteps: (settings: keyof typeof SAVE_PROMPT_SETTINGS) => void;
+    initializeSteps: (settings: PromptMachineSettings) => void;
     initUUID: string | null;
 
     activeStep: number;

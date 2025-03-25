@@ -6,9 +6,9 @@ A prompt is a `stepper` that is shown before an action is taken. The idea is to 
 
 A `prompt` is currently a dialog that is made up of `Title`, `Actions`, and `Content`(this consumes a list of `step`s to know what to render).
 
-Each `step` needs a `promptstep` added to the `stepDefinitions` file. This stores a `promptstep` which contains everything it needs to render the`step`. In addition, each `step` has an _optional_ `types` files that stores the interface of what data that `step` _adds_ to the context.
+Each `step` needs a `promptstep` added to the `definitions` file in the root. This is a dictionary of `key` and `promptstep`. The `promptStep` contains everything _required_ to render the`step`. In addition, each `step` has an _optional_ `types` files that stores the interface of what data that `step` _adds_ to the context.
 
-These `definition`s are then stored in an array. The order of the array is the order of the steps and how they will be stepped through.
+To use a `definition` it needs to be added to a `prompt machine` setting. These are all stored in `PROMPT_MACHINE_SETTINGS`. This stores what the dialog is titled, how the events are logged, and what `steps` are included. _Please Note!_ The order of the `steps` array is the order of the steps and how they will be stepped through.
 
 All this is _really_ close to a finite state machine... but missing some key features of those.
 

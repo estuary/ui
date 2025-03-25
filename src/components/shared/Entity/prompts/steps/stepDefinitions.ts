@@ -7,6 +7,23 @@ import WaitForShardToIdle from './dataFlowReset/WaitForShardToIdle';
 import UpdateMaterialization from './dataFlowReset/UpdateMaterialization';
 import EnableCapture from './dataFlowReset/EnableCapture';
 import PublishStepDataFlowReset from './dataFlowReset/Publish';
+import Publish from './preSave/Publish';
+
+export const PreSaveSteps = {
+    reviewSelection: {
+        StepComponent: ReviewSelection,
+        stepLabelMessageId: 'preSavePrompt.reviewSelection.title',
+        state: {
+            ...defaultStepState,
+            valid: true,
+        },
+    },
+    publishStep: {
+        StepComponent: Publish,
+        stepLabelMessageId: 'preSavePrompt.publish.title',
+        state: defaultStepState,
+    },
+};
 
 export const DataFlowSteps: { [key: string]: PromptStep } = {
     selectMaterialization: {
@@ -15,14 +32,6 @@ export const DataFlowSteps: { [key: string]: PromptStep } = {
         state: {
             ...defaultStepState,
             valid: false,
-        },
-    },
-    reviewSelection: {
-        StepComponent: ReviewSelection,
-        stepLabelMessageId: 'preSavePrompt.reviewSelection.title',
-        state: {
-            ...defaultStepState,
-            valid: true,
         },
     },
     disableCapture: {
