@@ -1,5 +1,7 @@
 import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
 
+export const TOGGLE_BUTTON_CLASS = 'toggle-button';
+
 export const getConstraintMessageId = (
     constraintType: ConstraintTypes
 ): string => {

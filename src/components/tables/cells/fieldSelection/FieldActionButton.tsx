@@ -3,7 +3,7 @@ import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton
 import useOnFieldActionClick from 'hooks/fieldSelection/useOnFieldActionClick';
 import { useIntl } from 'react-intl';
 import { useFormStateStore_isIdle } from 'stores/FormState/hooks';
-import { getConstraintMessageId } from './shared';
+import { getConstraintMessageId, TOGGLE_BUTTON_CLASS } from './shared';
 import { FieldActionButtonProps } from './types';
 
 export default function FieldActionButton({
@@ -35,7 +35,7 @@ export default function FieldActionButton({
                 )}
                 placement={tooltipPlacement}
             >
-                <span className="toggle-button">
+                <span className={TOGGLE_BUTTON_CLASS}>
                     <OutlinedToggleButton
                         {...props}
                         disabled={disabled}
@@ -53,7 +53,7 @@ export default function FieldActionButton({
     return (
         <OutlinedToggleButton
             {...props}
-            className="toggle-button"
+            className={TOGGLE_BUTTON_CLASS}
             disabled={disabled}
             onClick={(_event, value) => updateSingleSelection(value, selection)}
         >

@@ -9,6 +9,7 @@ import {
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
 import { isExcludeOnlyField, isRequireOnlyField } from 'utils/workflow-utils';
 import FieldActionButton from './FieldActionButton';
+import { TOGGLE_BUTTON_CLASS } from './shared';
 import { FieldActionsProps } from './types';
 
 function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
@@ -37,7 +38,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
     return (
         <TableCell>
             <OutlinedToggleButtonGroup
-                buttonSelector="&.toggle-button"
+                buttonSelector={`&.${TOGGLE_BUTTON_CLASS}`}
                 disabled={formActive}
                 exclusive
                 size="small"
