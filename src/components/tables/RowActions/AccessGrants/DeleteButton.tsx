@@ -19,6 +19,8 @@ import {
     AccessGrantRowConfirmation,
 } from './types';
 
+// TODO (capabilities) - need to see if they remove their own capabilities
+//  and then refresh local cache of access grants.
 function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
     const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
