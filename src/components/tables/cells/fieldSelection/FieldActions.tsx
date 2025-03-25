@@ -52,7 +52,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                     field={field}
                     labelId="fieldSelection.table.cta.selectField"
                     selection={selection}
-                    tooltipPlacement="bottom-start"
+                    tooltipProps={{ placement: 'bottom-start' }}
                     value="default"
                 />
 
@@ -75,7 +75,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                     field={field}
                     labelId="fieldSelection.table.cta.excludeField"
                     selection={selection}
-                    tooltipPlacement="bottom-end"
+                    tooltipProps={{ placement: 'bottom-end' }}
                     value="exclude"
                 />
             </OutlinedToggleButtonGroup>

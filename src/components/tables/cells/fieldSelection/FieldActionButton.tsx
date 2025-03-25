@@ -13,7 +13,7 @@ export default function FieldActionButton({
     field,
     labelId,
     selection,
-    tooltipPlacement,
+    tooltipProps,
     ...props
 }: FieldActionButtonProps) {
     const intl = useIntl();
@@ -22,9 +22,10 @@ export default function FieldActionButton({
 
     const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
 
-    if (disabled && formIdle) {
+    if (tooltipProps && disabled && formIdle) {
         return (
             <Tooltip
+                {...tooltipProps}
                 title={intl.formatMessage(
                     { id: 'fieldSelection.table.tooltip.disabledRowAction' },
                     {
@@ -33,7 +34,6 @@ export default function FieldActionButton({
                         }),
                     }
                 )}
-                placement={tooltipPlacement}
             >
                 <span className={TOGGLE_BUTTON_CLASS}>
                     <OutlinedToggleButton

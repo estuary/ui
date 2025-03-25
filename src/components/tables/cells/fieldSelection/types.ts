@@ -15,7 +15,7 @@ export interface FieldActionButtonProps extends ToggleButtonProps {
     field: string;
     labelId: string;
     selection: FieldSelection | null;
-    tooltipPlacement?: TooltipProps['placement'];
+    tooltipProps?: Omit<TooltipProps, 'children' | 'title'>;
 }
 
 export interface FieldActionsProps {
