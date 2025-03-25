@@ -35,7 +35,7 @@ const COLUMNS = [
     'cidr_blocks',
     'gcp_service_account_email',
     'aws_iam_user_arn',
-    // 'aws_link_endpoints', uncomment after https://github.com/estuary/flow/pull/1816 is done
+    // 'aws_link_endpoints', TODO uncomment after https://github.com/estuary/flow/pull/1816 is done
 ];
 
 const QUERY = COLUMNS.join(',');
