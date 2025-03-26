@@ -5,7 +5,11 @@ import { devtools, NamedSet } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';
 import { TopBarState } from './types';
 
-const getInitialStateData = (): Pick<TopBarState, 'header' | 'headerLink'> => ({
+const getInitialStateData = (): Pick<
+    TopBarState,
+    'bannerOpen' | 'header' | 'headerLink'
+> => ({
+    bannerOpen: false,
     header: '',
     headerLink: undefined,
 });
@@ -15,6 +19,16 @@ const getInitialState = (
     // get: StoreApi<SidePanelDocsState>['getState']
 ): TopBarState => ({
     ...getInitialStateData(),
+
+    setBannerOpen: (value) => {
+        set(
+            produce((state: TopBarState) => {
+                state.bannerOpen = value;
+            }),
+            false,
+            'Application Banner Open Set'
+        );
+    },
 
     setHeader: (val) => {
         set(
