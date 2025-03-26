@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import UnderDev from 'components/shared/UnderDev';
+import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
@@ -16,13 +17,13 @@ export default function Status() {
 
     const intl = useIntl();
 
-    // const hasSupportRole = useUserInfoSummaryStore(
-    //     (state) => state.hasSupportAccess
-    // );
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
 
-    // if (!hasSupportRole) {
-    //     return null;
-    // }
+    if (!hasSupportRole) {
+        return null;
+    }
 
     return (
         <EntityStatusHydrator catalogName={catalogName}>
