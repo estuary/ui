@@ -20,13 +20,11 @@ module.exports = {
         'import/order': [
             'error',
             {
-                groups: [
-                    'type',
-                    // Default sort order
-                    ['builtin', 'external', 'parent', 'sibling', 'index'],
-                    'internal',
-                    'object',
-                ],
+                'newlines-between': 'always',
+                'alphabetize': {
+                    order: 'asc',
+                },
+                'groups': ['type'],
             },
         ],
 
