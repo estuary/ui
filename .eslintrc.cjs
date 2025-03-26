@@ -20,11 +20,45 @@ module.exports = {
         'import/order': [
             'error',
             {
+                'groups': [
+                    'type',
+                    ['builtin', 'external'],
+                    ['internal', 'parent', 'sibling'],
+                    'index',
+                ],
+                'pathGroups': [
+                    {
+                        pattern: 'react*',
+                        group: 'external',
+                        position: 'before',
+                    },
+                    {
+                        pattern: '@mui/**',
+                        group: 'external',
+                        position: 'before',
+                    },
+                    {
+                        pattern: 'iconoir-react',
+                        group: 'external',
+                        position: 'before',
+                    },
+                    {
+                        pattern: '@jsonform',
+                        group: 'external',
+                        position: 'after',
+                    },
+                    {
+                        pattern: '@src/**',
+                        group: 'internal',
+                        position: 'before',
+                    },
+                ],
+                'pathGroupsExcludedImportTypes': ['react', '@src/'],
                 'newlines-between': 'always',
                 'alphabetize': {
                     order: 'asc',
+                    caseInsensitive: true,
                 },
-                'groups': ['type'],
             },
         ],
 
