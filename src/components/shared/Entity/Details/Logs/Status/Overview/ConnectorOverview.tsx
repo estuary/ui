@@ -28,7 +28,7 @@ export default function ConnectorOverview() {
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
                     <ConnectorStatusDetail headerMessageId="details.ops.status.overview.connector.subheaderLastStatus" />
 
-                    <ConnectorUpdatedDetail headerMessageId="details.ops.status.overview.connector.subheaderLastUpdated" />
+                    <ConnectorUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
                 </Stack>
             </CardWrapper>
         </Grid>

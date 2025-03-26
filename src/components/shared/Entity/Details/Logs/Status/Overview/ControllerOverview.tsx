@@ -28,7 +28,7 @@ export default function ControllerOverview() {
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
                     <ActivationDetail headerMessageId="details.ops.status.overview.controller.subheaderActivation" />
 
-                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.controller.subheaderLastUpdated" />
+                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
                 </Stack>
             </CardWrapper>
         </Grid>
