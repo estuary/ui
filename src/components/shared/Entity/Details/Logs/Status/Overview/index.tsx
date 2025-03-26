@@ -1,6 +1,7 @@
 import { Grid, useMediaQuery, useTheme } from '@mui/material';
 import { useEntityType } from 'context/EntityContext';
 import AutoDiscoveryOverview from './AutoDiscoveryOverview';
+import ConnectorOverview from './ConnectorOverview';
 import ControllerOverview from './ControllerOverview';
 
 const GRID_ITEM_SELECTOR = '.MuiGrid-item';
@@ -25,6 +26,8 @@ export default function Overview() {
                 },
             }}
         >
+            <ConnectorOverview />
+
             <ControllerOverview />
 
             {entityType === 'capture' ? <AutoDiscoveryOverview /> : null}
