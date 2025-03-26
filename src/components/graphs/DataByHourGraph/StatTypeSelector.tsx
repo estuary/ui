@@ -1,28 +1,25 @@
-import { ToggleButtonGroup } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
+import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
+import { useIntl } from 'react-intl';
 import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
 
 function StatTypeSelector() {
+    const intl = useIntl();
+
     const [statType, setStatType] = useDetailsUsageStore((store) => [
         store.statType,
         store.setStatType,
     ]);
 
     return (
-        <ToggleButtonGroup
-            size="small"
-            exclusive
-            sx={outlinedToggleButtonGroupStyling}
-        >
+        <OutlinedToggleButtonGroup size="small" exclusive>
             <OutlinedToggleButton
                 size="small"
                 value="bytes"
                 selected={statType === 'bytes'}
                 onClick={() => setStatType('bytes')}
             >
-                <FormattedMessage id="data.data" />
+                {intl.formatMessage({ id: 'data.data' })}
             </OutlinedToggleButton>
 
             <OutlinedToggleButton
@@ -31,9 +28,9 @@ function StatTypeSelector() {
                 selected={statType === 'docs'}
                 onClick={() => setStatType('docs')}
             >
-                <FormattedMessage id="data.docs" />
+                {intl.formatMessage({ id: 'data.docs' })}
             </OutlinedToggleButton>
-        </ToggleButtonGroup>
+        </OutlinedToggleButtonGroup>
     );
 }
 

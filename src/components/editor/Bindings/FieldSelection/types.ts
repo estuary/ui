@@ -1,4 +1,4 @@
-import { Schema } from 'types';
+import { Schema, TableColumns } from 'types';
 
 export interface Projection {
     field: string;
@@ -70,4 +70,9 @@ export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
     selectionType: FieldSelectionType | null;
     selectionMetadata?: Schema;
+}
+
+export interface TableColumnSelectorProps {
+    columns: TableColumns[];
+    loading: boolean;
 }

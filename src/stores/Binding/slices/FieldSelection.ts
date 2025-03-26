@@ -154,12 +154,15 @@ export const getStoreWithFieldSelectionSettings = (
     setSingleSelection: (bindingUUID, field, mode, meta) => {
         set(
             produce((state: BindingState) => {
+                const previousSelectionMode =
+                    state.selections[bindingUUID][field].mode;
+
                 state.selections[bindingUUID] = {
                     ...state.selections[bindingUUID],
                     [field]: { mode, meta },
                 };
 
-                if (!state.selectionSaving) {
+                if (!state.selectionSaving && previousSelectionMode !== mode) {
                     state.selectionSaving = true;
                 }
             }),
