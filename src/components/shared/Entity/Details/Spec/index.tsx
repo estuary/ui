@@ -1,9 +1,9 @@
-import { Grid, Stack, ToggleButtonGroup, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import LiveSpecEditor from 'components/editor/LiveSpec';
-import ExternalLink from 'components/shared/ExternalLink';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
+import ExternalLink from 'components/shared/ExternalLink';
+import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
 import { useEntityType } from 'context/EntityContext';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import CollectionSpecViews from './CollectionViews';
@@ -61,11 +61,7 @@ function Spec() {
                         </Stack>
 
                         {entityType === 'collection' ? (
-                            <ToggleButtonGroup
-                                size="small"
-                                exclusive
-                                sx={outlinedToggleButtonGroupStyling}
-                            >
+                            <OutlinedToggleButtonGroup size="small" exclusive>
                                 <OutlinedToggleButton
                                     size="small"
                                     value="table"
@@ -87,7 +83,7 @@ function Spec() {
                                 >
                                     <FormattedMessage id="details.spec.cta.raw" />
                                 </OutlinedToggleButton>
-                            </ToggleButtonGroup>
+                            </OutlinedToggleButtonGroup>
                         ) : null}
                     </Stack>
 

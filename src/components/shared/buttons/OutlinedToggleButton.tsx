@@ -1,85 +1,53 @@
-import {
-    SxProps,
-    Theme,
-    ToggleButton,
-    toggleButtonClasses,
-    useTheme,
-} from '@mui/material';
+import { styled, ToggleButton, toggleButtonClasses } from '@mui/material';
 import {
     defaultOutline,
+    defaultOutline_hovered,
     disabledButtonText,
-    disabledButtonText_primary,
     intensifiedOutline,
-    outlinedButtonBackground,
-    outlinedButtonBackground_disabled,
-    primaryColoredOutline,
-    primaryColoredOutline_disabled,
-    primaryColoredOutline_hovered,
 } from 'context/Theme';
-import { OutlinedToggleButtonProps } from './types';
 
-function OutlinedToggleButton({
-    children,
-    defaultStateSx,
-    disabled,
-    disabledStateSx,
-    selectedStateSx,
+const OutlinedToggleButton = styled(ToggleButton)(({
+    color,
     selected,
-    value,
-    onChange,
-    onClick,
-    ...props
-}: OutlinedToggleButtonProps) {
-    const theme = useTheme();
+    theme,
+}) => {
+    const colorKey = color ?? 'primary';
 
-    const defaultDisabledStateSx: SxProps<Theme> = selected
-        ? {
-              backgroundColor:
-                  outlinedButtonBackground_disabled[theme.palette.mode],
-              border: primaryColoredOutline_disabled[theme.palette.mode],
-              color: disabledButtonText_primary[theme.palette.mode],
-          }
-        : {
-              backgroundColor: 'none',
-              border: defaultOutline[theme.palette.mode],
-              color: disabledButtonText[theme.palette.mode],
-          };
-
-    let sx: SxProps<Theme> = {
-        px: '9px',
-        py: '3px',
-        border: intensifiedOutline[theme.palette.mode],
-        borderRadius: 2,
-        [`&.${toggleButtonClasses.selected}`]: selectedStateSx ?? {
-            'backgroundColor': outlinedButtonBackground[theme.palette.mode],
-            'border': primaryColoredOutline[theme.palette.mode],
-            'color': theme.palette.primary.main,
+    return {
+        'padding': '3px 9px',
+        'border': intensifiedOutline[theme.palette.mode],
+        'borderRadius': 4,
+        '&:hover': {
+            border: defaultOutline_hovered[theme.palette.mode],
+        },
+        [`&.${toggleButtonClasses.selected}`]: {
+            'backgroundColor': theme.palette[colorKey].alpha_12,
+            'border': `1px solid ${theme.palette[colorKey].alpha_50}`,
+            'color':
+                theme.palette.mode === 'light'
+                    ? theme.palette[colorKey].dark
+                    : theme.palette[colorKey].main,
             '&:hover': {
-                border: primaryColoredOutline_hovered[theme.palette.mode],
+                border: `1px solid ${
+                    theme.palette.mode === 'light' &&
+                    ['success', 'info'].includes(colorKey)
+                        ? theme.palette[colorKey].dark
+                        : theme.palette[colorKey].main
+                }`,
             },
         },
-        [`&.${toggleButtonClasses.disabled}`]:
-            disabledStateSx ?? defaultDisabledStateSx,
+        [`&.${toggleButtonClasses.disabled}`]: selected
+            ? {
+                  backgroundColor: theme.palette[colorKey].alpha_05,
+                  border: `1px solid ${theme.palette[colorKey].alpha_12}`,
+                  color: theme.palette[colorKey].alpha_26,
+              }
+            : {
+                  backgroundColor: 'none',
+                  border: defaultOutline[theme.palette.mode],
+                  color: disabledButtonText[theme.palette.mode],
+              },
     };
-
-    if (defaultStateSx) {
-        sx = { ...sx, ...defaultStateSx };
-    }
-
-    return (
-        <ToggleButton
-            size="small"
-            {...props}
-            value={value}
-            selected={selected}
-            disabled={disabled}
-            onChange={onChange}
-            onClick={onClick}
-            sx={sx}
-        >
-            {children}
-        </ToggleButton>
-    );
-}
+});
 
 export default OutlinedToggleButton;
