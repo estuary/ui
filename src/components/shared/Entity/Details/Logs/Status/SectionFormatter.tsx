@@ -1,6 +1,6 @@
-import { Box, ToggleButtonGroup } from '@mui/material';
+import { Box } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
+import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
 import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'stores/EntityStatus/Store';
 
@@ -12,11 +12,7 @@ export default function SectionFormatter() {
 
     return (
         <Box style={{ paddingTop: 4 }}>
-            <ToggleButtonGroup
-                size="small"
-                exclusive
-                sx={outlinedToggleButtonGroupStyling}
-            >
+            <OutlinedToggleButtonGroup size="small" exclusive>
                 <OutlinedToggleButton
                     size="small"
                     value="dashboard"
@@ -36,7 +32,7 @@ export default function SectionFormatter() {
                 >
                     {intl.formatMessage({ id: 'details.ops.status.cta.raw' })}
                 </OutlinedToggleButton>
-            </ToggleButtonGroup>
+            </OutlinedToggleButtonGroup>
         </Box>
     );
 }
