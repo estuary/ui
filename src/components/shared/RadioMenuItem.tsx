@@ -1,17 +1,14 @@
 import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
-import { ReactNode } from 'react';
-import { Scopes } from './types';
+import { RadioMenuItemProps } from './types';
 
-interface Props {
-    desc: ReactNode;
-    scope: Scopes;
-    title: ReactNode;
-}
-
-function ScopeMenuItem({ desc, scope, title }: Props) {
+export default function RadioMenuItem({
+    description,
+    label,
+    value,
+}: RadioMenuItemProps) {
     return (
         <FormControlLabel
-            value={scope}
+            value={value}
             control={<Radio size="small" />}
             label={
                 <Box style={{ padding: '8px 0px' }}>
@@ -21,7 +18,7 @@ function ScopeMenuItem({ desc, scope, title }: Props) {
                             fontWeight: 500,
                         }}
                     >
-                        {title}
+                        {label}
                     </Typography>
 
                     <Typography
@@ -32,7 +29,7 @@ function ScopeMenuItem({ desc, scope, title }: Props) {
                             },
                         }}
                     >
-                        {desc}
+                        {description}
                     </Typography>
                 </Box>
             }
@@ -40,5 +37,3 @@ function ScopeMenuItem({ desc, scope, title }: Props) {
         />
     );
 }
-
-export default ScopeMenuItem;

@@ -222,7 +222,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
+    'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
@@ -234,10 +234,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.update.failed': `Field selection update failed`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
-    'fieldSelection.table.cta.defaultField': `Default`,
-    'fieldSelection.table.cta.defaultAllFields': `Default All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
-    'fieldSelection.table.cta.excludeAllFields': `Exclude All`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.cta.requireField': `Require`,
@@ -260,6 +257,10 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.translated.unsatisfiable': `field is unsatisfiable`,
     'fieldSelection.table.label.filter': `Filter fields`,
     'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
+    'fieldSelection.massActionMenu.recommended.label': `Select Scalars`,
+    'fieldSelection.massActionMenu.recommended.description': `Select essential, scalar fields`,
+    'fieldSelection.massActionMenu.excludeAll.label': `Exclude All`,
+    'fieldSelection.massActionMenu.excludeAll.description': `Exclude non-essential fields`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
