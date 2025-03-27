@@ -128,6 +128,8 @@ export function useLiveSpecsExt_related(captureName: string) {
             .or(
                 `spec->>sourceCapture.eq.${escapeReservedCharacters(
                     captureName
+                )},spec->sourceCapture->>capture.eq.${escapeReservedCharacters(
+                    captureName
                 )}`
             )
             .returns<LiveSpecsExt_Related[]>()

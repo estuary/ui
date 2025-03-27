@@ -22,11 +22,13 @@ import { Details } from './Details';
 import { Notifications } from './Notifications';
 import { JsonForms } from './JsonForms';
 import { HomePage } from './HomePage';
+import { AccessGrants } from './AccessGrants';
 
 // We are not using the ResolvedIntlConfig['messages'] type because it can end up causing
 //  the TS error : "Expression produces a union type that is too complex to represent"
 // Since we only set messages as strings we can just use this and be safe
 const enUSMessages: Record<string, string> = {
+    ...AccessGrants,
     ...AdminPage,
     ...Captures,
     ...Collections,

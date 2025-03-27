@@ -32,11 +32,7 @@ import {
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { Schema } from 'types';
-import {
-    evaluateRequiredExcludedFields,
-    evaluateRequiredIncludedFields,
-    getBindingIndex,
-} from 'utils/workflow-utils';
+import { getBindingIndex } from 'utils/workflow-utils';
 import RefreshStatus from './RefreshStatus';
 
 interface Props {
@@ -47,8 +43,9 @@ interface Props {
 
 interface FieldMetadata {
     recommended: boolean;
-    include?: { [field: string]: any };
     exclude?: string[];
+    include?: { [field: string]: any };
+    require?: { [field: string]: any };
 }
 
 const mapConstraintsToProjections = (
@@ -71,23 +68,18 @@ const mapConstraintsToProjections = (
         let selectionMetadata: Schema | undefined;
 
         if (fieldMetadata) {
-            const { recommended, include, exclude } = fieldMetadata;
+            const { exclude, include, recommended, require } = fieldMetadata;
 
-            if (include && Object.hasOwn(include, field)) {
-                selectionType = 'include';
+            if (include?.[field]) {
+                selectionType = 'require';
                 selectionMetadata = include[field];
+            } else if (require?.[field]) {
+                selectionType = 'require';
+                selectionMetadata = require[field];
             } else if (exclude?.includes(field)) {
                 selectionType = 'exclude';
-            } else if (!recommended && constraint) {
-                const includeRequired = evaluateRequiredIncludedFields(
-                    constraint.type
-                );
-
-                selectionType = includeRequired
-                    ? 'include'
-                    : evaluateRequiredExcludedFields(constraint.type)
-                    ? 'exclude'
-                    : null;
+            } else if (typeof recommended === 'boolean' && !recommended) {
+                selectionType = null;
             }
         }
 

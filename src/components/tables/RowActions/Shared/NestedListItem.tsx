@@ -10,31 +10,15 @@ import { useZustandStore } from 'context/Zustand/provider';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
-    TableActionSettings,
     selectableTableStoreSelectors,
 } from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-
-export interface SettingMetadata {
-    messageId: string;
-    setting: keyof TableActionSettings;
-}
-
-interface Props {
-    catalogName: string;
-    selectableTableStoreName:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-    settings: SettingMetadata[];
-}
+import { NestedListItemProps } from './types';
 
 function NestedListItem({
     catalogName,
     selectableTableStoreName,
     settings,
-}: Props) {
+}: NestedListItemProps) {
     const intl = useIntl();
 
     const actionSettings = useZustandStore<

@@ -1,4 +1,4 @@
-import { optionalColumnIntlKeys } from 'components/tables/FieldSelection';
+import { optionalColumnIntlKeys } from 'components/tables/FieldSelection/shared';
 import SelectColumnMenu from 'components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'context/TableSettings';
 import { SyntheticEvent } from 'react';
@@ -6,13 +6,12 @@ import { TablePrefixes } from 'stores/Tables/hooks';
 import { TableColumns } from 'types';
 import { WithRequiredNonNullProperty } from 'types/utils';
 import { hasLength } from 'utils/misc-utils';
+import { TableColumnSelectorProps } from './types';
 
-interface Props {
-    columns: TableColumns[];
-    loading: boolean;
-}
-
-export default function TableColumnSelector({ columns, loading }: Props) {
+export default function TableColumnSelector({
+    columns,
+    loading,
+}: TableColumnSelectorProps) {
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const optionalColumns = columns.filter(

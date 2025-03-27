@@ -24,8 +24,9 @@ export const Authentication: Record<string, string> = {
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
-    'login.sso.register.message.help': `To register with Single Sign-On {docLink}.`,
-    'login.sso.register.message.help.docLink': `${CTAs['cta.contactUs']}`,
+    'login.sso.separator': `Or to register with Single Sign-On`,
+
+    'login.sso.register.message.help': `${CTAs['cta.contactUs']}`,
     'login.sso.register.message.help.docPath': `${Navigation['helpMenu.contact.link']}`,
 
     'login.sso.message.help': `To enable Single Sign-On on your account {docLink}.`,
@@ -56,6 +57,8 @@ export const Authentication: Record<string, string> = {
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 
+    'login.progress.indicator': 'Step {step} of {totalSteps}',
+
     'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 
     // Legal
@@ -72,27 +75,30 @@ export const Authentication: Record<string, string> = {
     'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 
     // Tenant
-    'tenant.heading': `Let's get started`,
-    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary.  It will only be public if you share data with other organizations.`,
+    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
     'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
 
     'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
-    'tenant.errorMessage.empty': `You must provide a name before continuing.`,
+    'tenant.errorMessage.empty': `You must provide an organization name before continuing.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 
-    'tenant.origin.radioGroup.label': `How'd you hear about us?`,
-    'tenant.origin.radio.browserSearch.label': `Search (Google, Bing, etc.)`,
+    'tenant.customer.quote': `We're a big fan of Estuary's real-time, no code model. It's magic that we're getting real time data without much effort and we don't have to spend time thinking about broken pipelines. We've also experienced fantastic support!`,
+
+    'tenant.origin.radioGroup.label': `Where did you hear about ${CommonMessages.company}?`,
+
+    'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
+    'tenant.origin.radio.socialMedia.label': `Social Media`,
+    'tenant.origin.radio.paidAdvertising.label': `Online Ads`,
+    'tenant.origin.radio.content.label': `Blog`,
+    'tenant.origin.radio.referral.label': `Word of Mouth`,
+    'tenant.origin.radio.webinar.label': `Webinar`,
+    'tenant.origin.radio.reddit.label': `Reddit`,
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
-    'tenant.origin.radio.referral.label': `Referral by a Partner`,
-    'tenant.origin.radio.youTube.label': `YouTube`,
-    'tenant.origin.radio.email.label': `Email`,
-    'tenant.origin.radio.gitHub.label': `GitHub`,
-    'tenant.origin.radio.paidAdvertising.label': `Paid Advertising`,
     'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.header': `Tenant shared with you`,

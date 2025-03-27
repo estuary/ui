@@ -36,6 +36,17 @@ export interface EntityToolbarProps {
     };
 }
 
+export type EntityToolbarActionProps = Pick<
+    EntityToolbarProps,
+    | 'GenerateButton'
+    | 'PrimaryButtonComponent'
+    | 'SecondaryButtonComponent'
+    | 'primaryButtonProps'
+    | 'secondaryButtonProps'
+>;
+
+export type EntityToolbarProgressProps = Pick<EntityToolbarProps, 'waitTimes'>;
+
 export interface LogDialogActionsProps {
     close: any;
     closeCtaKey?: string;

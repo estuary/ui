@@ -1,5 +1,6 @@
 import { ThemeKeys } from '@microlink/react-json-view';
 import {
+    AlertColor,
     createTheme,
     PaletteOptions,
     SxProps,
@@ -38,6 +39,22 @@ import { LocalStorageKeys } from 'utils/localStorage-utils';
 //         sampleProp: true;
 //     }
 // }
+
+declare module '@mui/material/styles' {
+    interface PaletteColor {
+        alpha_05?: string;
+        alpha_12?: string;
+        alpha_26?: string;
+        alpha_50?: string;
+    }
+
+    interface SimplePaletteColorOptions {
+        alpha_05?: string;
+        alpha_12?: string;
+        alpha_26?: string;
+        alpha_50?: string;
+    }
+}
 
 declare module '@mui/material/styles' {
     interface TypographyVariants {
@@ -104,6 +121,51 @@ export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
 export const infoMain: SemanticColor = '#4FD6FF';
 
+const rgbTranslations = {
+    dark: {
+        error: {
+            main: '228, 89, 114',
+        },
+        info: {
+            main: '41, 182, 246',
+        },
+        primary: {
+            main: '186, 205, 253',
+        },
+        secondary: {
+            main: '122, 151, 243',
+        },
+        success: {
+            main: '64, 183, 99',
+        },
+        warning: {
+            main: '245, 124, 0',
+        },
+    },
+    light: {
+        error: {
+            main: '202, 59, 85',
+        },
+        info: {
+            dark: '8, 114, 147',
+            main: '79, 214, 255',
+        },
+        primary: {
+            main: '58, 86, 202',
+        },
+        secondary: {
+            main: '25, 42, 136',
+        },
+        success: {
+            dark: '42, 121, 66',
+        },
+        warning: {
+            dark: '184, 84, 3',
+            main: '237, 108, 2',
+        },
+    },
+};
+
 // Color modifiers
 const contrastThreshold = 5;
 const tonalOffset = 0.1;
@@ -128,19 +190,40 @@ const lightMode: PaletteOptions = {
     },
     contrastThreshold,
     error: {
+        alpha_05: `rgba(${rgbTranslations.light.error.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.error.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.error.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.error.main}, 0.50)`,
         main: errorMain,
     },
     info: {
+        alpha_05: `rgba(${rgbTranslations.light.info.dark}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.info.dark}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.info.dark}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.info.dark}, 0.50)`,
         main: infoMain,
+        dark: '#087293',
     },
     mode: 'light',
     primary: {
+        alpha_05: `rgba(${rgbTranslations.light.primary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.primary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.primary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.primary.main}, 0.50)`,
         main: sample_blue[600],
     },
     secondary: {
+        alpha_05: `rgba(${rgbTranslations.light.secondary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.secondary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.secondary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.secondary.main}, 0.50)`,
         main: sample_blue[800],
     },
     success: {
+        alpha_05: `rgba(${rgbTranslations.light.success.dark}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.success.dark}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.success.dark}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.success.dark}, 0.50)`,
         main: successMain,
         dark: successDark,
     },
@@ -149,6 +232,13 @@ const lightMode: PaletteOptions = {
         secondary: sample_blue[800],
     },
     tonalOffset,
+    warning: {
+        alpha_05: `rgba(${rgbTranslations.light.warning.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.light.warning.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.light.warning.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.light.warning.main}, 0.50)`,
+        main: '#ED6C02',
+    },
 };
 
 const darkMode: PaletteOptions = {
@@ -157,17 +247,53 @@ const darkMode: PaletteOptions = {
     },
     contrastThreshold,
     mode: 'dark',
+    error: {
+        alpha_05: `rgba(${rgbTranslations.dark.error.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.error.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.error.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.error.main}, 0.50)`,
+        main: '#E45972',
+    },
+    info: {
+        alpha_05: `rgba(${rgbTranslations.dark.info.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.info.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.info.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.info.main}, 0.50)`,
+        main: '#29B6F6',
+    },
     primary: {
+        alpha_05: `rgba(${rgbTranslations.dark.primary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.primary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.primary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.primary.main}, 0.50)`,
         main: sample_blue[200],
     },
     secondary: {
+        alpha_05: `rgba(${rgbTranslations.dark.secondary.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.secondary.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.secondary.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.secondary.main}, 0.50)`,
         main: sample_blue[400],
+    },
+    success: {
+        alpha_05: `rgba(${rgbTranslations.dark.success.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.success.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.success.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.success.main}, 0.50)`,
+        main: successMain,
     },
     text: {
         primary: sample_grey[300],
         secondary: sample_grey[500],
     },
     tonalOffset,
+    warning: {
+        alpha_05: `rgba(${rgbTranslations.dark.warning.main}, 0.05)`,
+        alpha_12: `rgba(${rgbTranslations.dark.warning.main}, 0.12)`,
+        alpha_26: `rgba(${rgbTranslations.dark.warning.main}, 0.26)`,
+        alpha_50: `rgba(${rgbTranslations.dark.warning.main}, 0.50)`,
+        main: '#F57C00',
+    },
 };
 
 // TODO (zindex) We should make a helper or something to help manage zindex.
@@ -219,54 +345,6 @@ export const intensifiedOutline = {
 export const intensifiedOutlineThick = {
     light: `2px solid rgba(11, 19, 30, 0.25)`,
     dark: `2px solid rgba(247, 249, 252, 0.25)`,
-};
-
-// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
-export const primaryColoredOutline = {
-    light: `1px solid rgba(58, 86, 202, 0.5)`,
-    dark: `1px solid rgba(186, 205, 253, 0.5)`,
-};
-
-export const primaryColoredOutline_disabled = {
-    light: `1px solid rgba(58, 86, 202, 0.12)`,
-    dark: `1px solid rgba(186, 205, 253, 0.12)`,
-};
-
-export const primaryColoredOutline_hovered = {
-    light: `1px solid #3A56CA`,
-    dark: `1px solid #BACDFD`,
-};
-
-// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
-export const successColoredOutline = {
-    light: `1px solid rgba(42, 121, 66, 0.5)`,
-    dark: `1px solid rgba(102, 187, 106, 0.5)`,
-};
-
-export const successColoredOutline_disabled = {
-    light: `1px solid rgba(42, 121, 66, 0.12)`,
-    dark: `1px solid rgba(102, 187, 106, 0.12)`,
-};
-
-export const successColoredOutline_hovered = {
-    light: `1px solid #2A7942`,
-    dark: `1px solid #66BB6A`,
-};
-
-// RGB translation of #CA3B55.
-export const errorColoredOutline = {
-    light: `1px solid rgba(202, 59, 85, 0.5)`,
-    dark: `1px solid rgba(202, 59, 85, 0.5)`,
-};
-
-export const errorColoredOutline_disabled = {
-    light: `1px solid rgba(202, 59, 85, 0.12)`,
-    dark: `1px solid rgba(202, 59, 85, 0.12)`,
-};
-
-export const errorColoredOutline_hovered = {
-    light: `1px solid #CA3B55`,
-    dark: `1px solid #CA3B55`,
 };
 
 export const jsonViewTheme: {
@@ -325,6 +403,20 @@ export const editorToolBarSx: SxProps<Theme> = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+};
+
+export const hiddenButAccessibleInput: SxProps<Theme> = {
+    position: 'fixed',
+    opacity: 0,
+    pointerEvents: 'none',
+};
+
+export const hiddenButAccessibleRadio: SxProps<Theme> = {
+    '& .MuiRadio-root, & .MuiRadio-root input': {
+        position: 'fixed',
+        opacity: 0,
+        pointerEvents: 'none',
+    },
 };
 
 export const defaultBoxShadow =
@@ -415,6 +507,15 @@ export const alertTextPrimary = {
 };
 export const alertBackground = paperBackground;
 
+export const alertColorsReversed: {
+    [k in AlertColor]: { light: string; dark: string };
+} = {
+    success: { light: 'success.dark', dark: 'success.light' },
+    info: { light: 'info.dark', dark: 'info.light' },
+    warning: { light: 'warning.dark', dark: 'warning.light' },
+    error: { light: 'error.dark', dark: 'error.light' },
+};
+
 export const monacoEditorHeaderBackground = {
     light: 'white',
     dark: '#121212',
@@ -502,6 +603,8 @@ export const menuBackgroundColor = {
     light: '#F0F4F9',
     dark: 'rgba(247, 249, 252, 0.05)',
 };
+
+export const entityHeaderButtonSx: SxProps<Theme> = { ml: 1 };
 
 export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
@@ -647,58 +750,13 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
     };
 };
 
-// Light is an RGB translation of #3A56CA; Dark is an RGB translation of #BACDFD.
-export const outlinedButtonBackground = {
-    light: `rgba(58, 86, 202, 0.12)`,
-    dark: `rgba(186, 205, 253, 0.12)`,
-};
-
-export const outlinedButtonBackground_disabled = {
-    light: `rgba(58, 86, 202, 0.05)`,
-    dark: `rgba(186, 205, 253, 0.05)`,
-};
-
-// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
-export const successOutlinedButtonBackground = {
-    light: `rgba(42, 121, 66, 0.12)`,
-    dark: `rgba(102, 187, 106, 0.12)`,
-};
-
-export const successOutlinedButtonBackground_disabled = {
-    light: `rgba(42, 121, 66, 0.05)`,
-    dark: `rgba(102, 187, 106, 0.05)`,
-};
-
 // RGB translation of #CA3B55.
 export const errorOutlinedButtonBackground = {
     light: `rgba(202, 59, 85, 0.12)`,
     dark: `rgba(202, 59, 85, 0.12)`,
 };
 
-export const errorOutlinedButtonBackground_disabled = {
-    light: `rgba(202, 59, 85, 0.05)`,
-    dark: `rgba(202, 59, 85, 0.05)`,
-};
-
-export const successButtonText = {
-    light: '#2A7942',
-    dark: '#66BB6A',
-};
-
-export const primaryButtonText = {
-    light: 'white',
-    dark: 'rgba(0, 0, 0, 0.87)',
-};
-
-// Light is an RGB translation of #2A7942; Dark is an RGB translation of #66BB6A.
-export const disabledButtonText_success = {
-    light: `rgba(42, 121, 66, 0.26)`,
-    dark: `rgba(102, 187, 106, 0.26)`,
-};
-
-// RGB translation of #CA3B55.
-export const disabledButtonText_error = `rgba(202, 59, 85, 0.26)`;
-
+// TODO: Remove disabled button text-related style objects.
 export const disabledButtonText_primary = {
     light: `rgba(58, 86, 202, 0.26)`,
     dark: `rgba(186, 205, 253, 0.26)`,
@@ -711,33 +769,13 @@ export const disabledButtonText = {
 
 export const outlinedIconButtonStyling: SxProps<Theme> = {
     'borderRadius': 2,
-    'border': (theme) => primaryColoredOutline[theme.palette.mode],
+    'border': (theme) => `1px solid ${theme.palette.primary.alpha_50}`,
     'color': (theme) => theme.palette.primary.main,
     '&:hover': {
-        border: (theme) => primaryColoredOutline_hovered[theme.palette.mode],
+        border: (theme) => `1px solid ${theme.palette.primary.main}`,
     },
     '&.Mui-disabled': {
-        border: (theme) => primaryColoredOutline_disabled[theme.palette.mode],
-    },
-};
-
-export const outlinedToggleButtonGroupStyling: SxProps<Theme> = {
-    '& .MuiToggleButton-root': {
-        '&:not(:first-of-type), &:not(:last-of-type)': {
-            borderRadius: 0,
-        },
-        '&:first-of-type': {
-            borderTopLeftRadius: 4,
-            borderBottomLeftRadius: 4,
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-        },
-        '&:last-of-type': {
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderTopRightRadius: 4,
-            borderBottomRightRadius: 4,
-        },
+        border: (theme) => `1px solid ${theme.palette.primary.alpha_12}`,
     },
 };
 

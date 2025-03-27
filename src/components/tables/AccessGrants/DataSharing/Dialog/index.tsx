@@ -65,10 +65,6 @@ function ShareDataDialog({ open, setOpen }: Props) {
             </DialogTitle>
 
             <DialogContent>
-                {/* <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.prefix.issueGrant.message" />
-                </Typography> */}
-
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>
                         {serverError.code === '42501' ? (

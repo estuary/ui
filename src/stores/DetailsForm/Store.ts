@@ -25,7 +25,7 @@ import {
 } from 'stores/extensions/Hydration';
 import { getConnectorMetadata } from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
+import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
 import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
@@ -65,6 +65,25 @@ const getDataPlane = (
         return selectedOption;
     }
 
+    // TODO (private data plane) - we need to add support for allowing tenants to configure their
+    //  preferred data plane.
+
+    // If we are not trying to find a specific data plane and there is only one option
+    //  and it is private we are pretty safe in prefilling that one.
+    if (
+        !dataPlaneId &&
+        dataPlaneOptions.length === 1 &&
+        dataPlaneOptions[0].dataPlaneName.whole.includes(
+            DATA_PLANE_SETTINGS.private.prefix
+        )
+    ) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            defaultedPrivate: true,
+        });
+        return dataPlaneOptions[0];
+    }
+
+    // Try to find the default public data plane
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
@@ -319,7 +338,7 @@ export const getInitialState = (
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
-                if (!isProduction && connectorImage && dataPlane === null) {
+                if (connectorImage && dataPlane === null) {
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -403,6 +422,13 @@ export const getInitialState = (
                 });
                 get().setHydrationErrorsExist(true);
             }
+        } else {
+            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
+            // TODO (details hydration) should really show an error here
+            // get().setHydrationError(
+            //     'Unable to locate selected connector. If the issue persists, please contact support.'
+            // );
+            // get().setHydrationErrorsExist(true);
         }
     },
 

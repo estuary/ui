@@ -1,7 +1,6 @@
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 import FieldActions from 'components/editor/Bindings/FieldSelection/FieldActions';
 import TableColumnSelector from 'components/editor/Bindings/FieldSelection/TableColumnSelector';
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
 import EntityTableBody from 'components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
 import Rows from 'components/tables/FieldSelection/Rows';
@@ -12,52 +11,19 @@ import { useBinding_searchQuery } from 'stores/Binding/hooks';
 import { useFormStateStore_status } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
 import { TablePrefixes } from 'stores/Tables/hooks';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
+import { SortDirection, TableState, TableStatuses } from 'types';
 import FieldFilter from './FieldFilter';
+import {
+    evaluateColumnsToShow,
+    optionalColumnIntlKeys,
+    tableColumns,
+} from './shared';
+import { FieldSelectionTableProps } from './types';
 
-interface Props {
-    bindingUUID: string;
-    projections: CompositeProjection[] | null | undefined;
-}
-
-export const optionalColumnIntlKeys = {
-    pointer: 'data.pointer',
-    details: 'data.details',
-};
-
-export const columns: TableColumns[] = [
-    {
-        field: 'field',
-        headerIntlKey: 'data.field',
-        sticky: true,
-    },
-    {
-        field: 'ptr',
-        headerIntlKey: optionalColumnIntlKeys.pointer,
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.type',
-    },
-    {
-        field: 'constraint.type',
-        headerIntlKey: optionalColumnIntlKeys.details,
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.actions',
-        width: 148,
-    },
-];
-
-const evaluateColumnsToShow = (columnsToHide: string[]) =>
-    columns.filter((column) =>
-        column.headerIntlKey
-            ? !columnsToHide.includes(column.headerIntlKey)
-            : true
-    );
-
-function FieldSelectionTable({ bindingUUID, projections }: Props) {
+export default function FieldSelectionTable({
+    bindingUUID,
+    projections,
+}: FieldSelectionTableProps) {
     const intl = useIntl();
 
     const formStatus = useFormStateStore_status();
@@ -171,7 +137,10 @@ function FieldSelectionTable({ bindingUUID, projections }: Props) {
                 >
                     <FieldFilter disabled={loading} />
 
-                    <TableColumnSelector columns={columns} loading={loading} />
+                    <TableColumnSelector
+                        columns={tableColumns}
+                        loading={loading}
+                    />
                 </Stack>
             </Stack>
 
@@ -224,5 +193,3 @@ function FieldSelectionTable({ bindingUUID, projections }: Props) {
         </>
     );
 }
-
-export default FieldSelectionTable;

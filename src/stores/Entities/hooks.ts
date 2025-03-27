@@ -23,17 +23,16 @@ export const useEntitiesStore_capabilities_readable = () => {
     );
 };
 
-// Not being used right now but commenting out to make the pattern more clear
-// export const useEntitiesStore_capabilities_writable = () => {
-//     return useEntitiesStore(
-//         useShallow((state) => {
-//             return {
-//                 ...state.capabilities.admin,
-//                 ...state.capabilities.write,
-//             };
-//         })
-//     );
-// };
+export const useEntitiesStore_capabilities_writable = () => {
+    return useEntitiesStore(
+        useShallow((state) => [
+            ...new Set([
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
+            ]),
+        ])
+    );
+};
 
 export const useEntitiesStore_atLeastOneAdminTenant = () => {
     return useEntitiesStore(

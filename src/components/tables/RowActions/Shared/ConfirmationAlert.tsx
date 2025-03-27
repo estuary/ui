@@ -1,18 +1,14 @@
 import { Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
+import { ConfirmationAlertProps } from './types';
 
-interface Props {
-    messageId: string;
-}
+function ConfirmationAlert({ messageId }: ConfirmationAlertProps) {
+    const intl = useIntl();
 
-function ConfirmationAlert({ messageId }: Props) {
     return (
-        <AlertBox severity="warning" short>
-            <Typography component="div">
-                <FormattedMessage id={messageId} />
-            </Typography>
-        </AlertBox>
+        <Typography component="div">
+            {intl.formatMessage({ id: messageId })}
+        </Typography>
     );
 }
 

@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
 import invariableStores from 'context/Zustand/invariableStores';
 import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import { useState } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 import {
@@ -15,6 +16,8 @@ import { hasLength } from 'utils/misc-utils';
 import { useStore } from 'zustand';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
+    const [updating, setUpdating] = useState(false);
+
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
         (state) => {
@@ -35,6 +38,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         useBinding_setRestrictedDiscoveredCollections();
 
     const close = () => {
+        setUpdating(true);
+
         const value = Array.from(selected).map(([_id, row]) => {
             return {
                 name: row.catalog_name,
@@ -60,13 +65,14 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             }
         }
 
+        setUpdating(false);
         toggle(false);
     };
 
     return (
         <Button
             variant="contained"
-            disabled={selected.size < 1}
+            disabled={selected.size < 1 || updating}
             onClick={close}
         >
             <FormattedMessage id="cta.continue" />

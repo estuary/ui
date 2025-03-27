@@ -121,7 +121,7 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
-    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization.  Collections added to your capture will automatically be added to your materialization.`,
+    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization. Collections added to your capture will automatically be added to your materialization.`,
     'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
 
     'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
@@ -134,6 +134,9 @@ export const Workflows: Record<string, string> = {
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
+
+    'workflows.guards.edit.title': `Missing edit ${CommonMessages['terms.permissions']}`,
+    'workflows.guards.edit.message': `You do not have edit capabilities for this {entityType}. Please contact an administrator to request access.`,
 
     'workflows.advancedSettings.title': `Advanced Options`,
     'workflows.disable.autoEnabledAlert.title': `{entityType} enabled`,
@@ -180,7 +183,7 @@ export const Workflows: Record<string, string> = {
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related materializations`,
-    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found.  Pick one manually or skip this step.`,
+    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found. Pick one manually or skip this step.`,
     'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
@@ -219,7 +222,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.defaultAllFields': `Include recommended fields`,
+    'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.dialog.updateProjection.header': `Update Projection`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
@@ -231,12 +234,11 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.update.failed': `Field selection update failed`,
     'fieldSelection.table.cta.addProjection': `Add Projection`,
-    'fieldSelection.table.cta.defaultField': `Default`,
-    'fieldSelection.table.cta.defaultAllFields': `Default All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
-    'fieldSelection.table.cta.excludeAllFields': `Exclude All`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.renameField': `Rename`,
+    'fieldSelection.table.cta.requireField': `Require`,
+    'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
     'fieldSelection.table.error.message': `There was an error attempting to fetch the list of fields.`,
@@ -247,14 +249,25 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.fieldForbidden': `Field Forbidden`,
     'fieldSelection.table.label.unsatisfiable': `Unsatisfiable`,
     'fieldSelection.table.label.unknown': `Unknown`,
+    'fieldSelection.table.label.translated.fieldRequired': `field is required`,
+    'fieldSelection.table.label.translated.locationRequired': `location is required`,
+    'fieldSelection.table.label.translated.locationRecommended': `location is recommended`,
+    'fieldSelection.table.label.translated.fieldOptional': `field is optional`,
+    'fieldSelection.table.label.translated.fieldForbidden': `field is forbidden`,
+    'fieldSelection.table.label.translated.unsatisfiable': `field is unsatisfiable`,
     'fieldSelection.table.label.filter': `Filter fields`,
+    'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
+    'fieldSelection.massActionMenu.recommended.label': `Select Scalars`,
+    'fieldSelection.massActionMenu.recommended.description': `Select essential, scalar fields`,
+    'fieldSelection.massActionMenu.excludeAll.label': `Exclude All`,
+    'fieldSelection.massActionMenu.excludeAll.description': `Exclude non-essential fields`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
 
     // Time Travel
     'notBeforeNotAfter.header': `Time Travel`,
-    'notBeforeNotAfter.message': `Include only data from before or after a specific time period.  This should only be used when first setting up your destination or it will not have an effect.`,
+    'notBeforeNotAfter.message': `Include only data from before or after a specific time period. This should only be used when first setting up your destination or it will not have an effect.`,
     'notBeforeNotAfter.update.error': `Changes to draft not saved.`,
     'notAfter.input.label': `Not After`,
     'notAfter.input.description': `only include data from before this time (UTC)`,

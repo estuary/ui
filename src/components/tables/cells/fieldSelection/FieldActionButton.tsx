@@ -1,148 +1,68 @@
-import { SxProps, Theme, ToggleButtonProps, useTheme } from '@mui/material';
-import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import { Tooltip } from '@mui/material';
 import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import {
-    defaultOutline_hovered,
-    disabledButtonText_error,
-    disabledButtonText_success,
-    errorColoredOutline,
-    errorColoredOutline_disabled,
-    errorColoredOutline_hovered,
-    errorOutlinedButtonBackground,
-    errorOutlinedButtonBackground_disabled,
-    successButtonText,
-    successColoredOutline,
-    successColoredOutline_disabled,
-    successColoredOutline_hovered,
-    successOutlinedButtonBackground,
-    successOutlinedButtonBackground_disabled,
-} from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
+import useOnFieldActionClick from 'hooks/fieldSelection/useOnFieldActionClick';
+import { useIntl } from 'react-intl';
+import { useFormStateStore_isIdle } from 'stores/FormState/hooks';
+import { constraintMessages, TOGGLE_BUTTON_CLASS } from './shared';
+import { FieldActionButtonProps } from './types';
 
-interface Props {
-    messageId: string;
-    selectedValue: FieldSelectionType | null;
-    value: FieldSelectionType;
-    coloredDefaultState?: boolean;
-    disabled?: boolean;
-    onChange?: ToggleButtonProps['onChange'];
-    onClick?: ToggleButtonProps['onClick'];
-}
-
-const getBackgroundColor = (value: FieldSelectionType, disabled?: boolean) => {
-    if (disabled) {
-        return value === 'include'
-            ? successOutlinedButtonBackground_disabled
-            : errorOutlinedButtonBackground_disabled;
-    }
-
-    return value === 'include'
-        ? successOutlinedButtonBackground
-        : errorOutlinedButtonBackground;
-};
-
-const getOutline = (value: FieldSelectionType, disabled?: boolean) => {
-    if (disabled) {
-        return value === 'include'
-            ? successColoredOutline_disabled
-            : errorColoredOutline_disabled;
-    }
-
-    return value === 'include' ? successColoredOutline : errorColoredOutline;
-};
-
-const getTextColor = (
-    theme: Theme,
-    value: FieldSelectionType,
-    disabled?: boolean
-) => {
-    if (disabled) {
-        return value === 'include'
-            ? disabledButtonText_success[theme.palette.mode]
-            : disabledButtonText_error;
-    }
-
-    return value === 'include'
-        ? successButtonText[theme.palette.mode]
-        : theme.palette.error.main;
-};
-
-const getBaseSx = (
-    theme: Theme,
-    value: FieldSelectionType,
-    disabled?: boolean
-) => {
-    const backgroundColor = getBackgroundColor(value, disabled);
-    const outline = getOutline(value, disabled);
-
-    return {
-        backgroundColor: backgroundColor[theme.palette.mode],
-        border: outline[theme.palette.mode],
-        color: getTextColor(theme, value, disabled),
-    };
-};
-
-function FieldActionButton({
-    messageId,
-    selectedValue,
-    value,
-    coloredDefaultState,
+export default function FieldActionButton({
+    bindingUUID,
+    constraint,
     disabled,
-    onChange,
-    onClick,
-}: Props) {
-    const theme = useTheme();
+    field,
+    labelId,
+    selection,
+    tooltipProps,
+    ...props
+}: FieldActionButtonProps) {
+    const intl = useIntl();
 
-    const hoveredOutline =
-        value === 'include'
-            ? successColoredOutline_hovered
-            : errorColoredOutline_hovered;
+    const formIdle = useFormStateStore_isIdle();
 
-    const baseSx = getBaseSx(theme, value, disabled);
+    const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
 
-    const defaultStateSx: SxProps<Theme> = coloredDefaultState
-        ? {
-              ...baseSx,
-              '&:hover': {
-                  border: hoveredOutline[theme.palette.mode],
-              },
-          }
-        : {
-              '&:hover': {
-                  border: defaultOutline_hovered[theme.palette.mode],
-              },
-          };
+    if (tooltipProps && disabled && formIdle) {
+        const tooltipReasonId =
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            constraintMessages[constraint.type]?.translatedId ??
+            'fieldSelection.table.label.unknown';
 
-    const disabledStateSx: SxProps<Theme> = coloredDefaultState
-        ? baseSx
-        : {
-              border: `1px solid ${theme.palette.divider}`,
-          };
-
-    const selectedStateSx: SxProps<Theme> = disabled
-        ? baseSx
-        : {
-              ...baseSx,
-              '&:hover': {
-                  border: hoveredOutline[theme.palette.mode],
-              },
-          };
+        return (
+            <Tooltip
+                {...tooltipProps}
+                title={intl.formatMessage(
+                    { id: 'fieldSelection.table.tooltip.disabledRowAction' },
+                    {
+                        reason: intl.formatMessage({
+                            id: tooltipReasonId,
+                        }),
+                    }
+                )}
+            >
+                <span className={TOGGLE_BUTTON_CLASS}>
+                    <OutlinedToggleButton
+                        {...props}
+                        disabled={disabled}
+                        onClick={(_event, value) =>
+                            updateSingleSelection(value, selection)
+                        }
+                    >
+                        {intl.formatMessage({ id: labelId })}
+                    </OutlinedToggleButton>
+                </span>
+            </Tooltip>
+        );
+    }
 
     return (
         <OutlinedToggleButton
-            size="small"
-            value={value}
-            selected={selectedValue === value}
-            defaultStateSx={defaultStateSx}
+            {...props}
+            className={TOGGLE_BUTTON_CLASS}
             disabled={disabled}
-            disabledStateSx={disabledStateSx}
-            onChange={onChange}
-            onClick={onClick}
-            selectedStateSx={selectedStateSx}
+            onClick={(_event, value) => updateSingleSelection(value, selection)}
         >
-            <FormattedMessage id={messageId} />
+            {intl.formatMessage({ id: labelId })}
         </OutlinedToggleButton>
     );
 }
-
-export default FieldActionButton;

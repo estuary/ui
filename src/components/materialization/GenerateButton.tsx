@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
 
-import { buttonSx } from 'components/shared/Entity/Header';
 import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
+import { entityHeaderButtonSx } from 'context/Theme';
 import { FormattedMessage } from 'react-intl';
 
 import { useFormStateStore_isActive } from 'stores/FormState/hooks';
@@ -25,7 +25,7 @@ function MaterializeGenerateButton({ disabled }: Props) {
                 await generateCatalog(mutateDraftSpecs);
             }}
             disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
+            sx={entityHeaderButtonSx}
         >
             <FormattedMessage id="cta.generateCatalog.materialization" />
         </Button>

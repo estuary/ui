@@ -5,8 +5,8 @@
     "main": "index.js",
     "private": true,
     "engines": {
-        "node": "20.10.0",
-        "npm": "10.2.3"
+        "node": ">=20",
+        "npm": "^10"
     },
     "scripts": {
         "build": "vite build",
@@ -72,6 +72,7 @@
         "json-refs": "^3.0.15",
         "lodash": "^4.17.21",
         "logrocket": "^8.1.2",
+        "logrocket-react": "^5.0.1",
         "luxon": "^3.4.3",
         "material-ui-popup-state": "^5.0.10",
         "mnemonist": "^0.39.8",

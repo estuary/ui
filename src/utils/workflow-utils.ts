@@ -3,7 +3,10 @@ import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'api/draftSpecs';
-import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
+import {
+    ConstraintTypes,
+    FieldSelectionType,
+} from 'components/editor/Bindings/FieldSelection/types';
 import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
 import { DraftSpecQuery } from 'hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
@@ -373,7 +376,7 @@ export const modifyExistingCaptureDraftSpec = async (
 };
 
 // Common materialization field selection checks
-export const evaluateRequiredIncludedFields = (
+export const isRequireOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (
@@ -382,18 +385,15 @@ export const evaluateRequiredIncludedFields = (
     );
 };
 
-export const evaluateRecommendedIncludedFields = (
+export const isRecommendedField = (
     constraintType: ConstraintTypes
 ): boolean => {
-    const includeRequired = evaluateRequiredIncludedFields(constraintType);
+    const required = isRequireOnlyField(constraintType);
 
-    return (
-        includeRequired ||
-        constraintType === ConstraintTypes.LOCATION_RECOMMENDED
-    );
+    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
 };
 
-export const evaluateRequiredExcludedFields = (
+export const isExcludeOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (
@@ -401,6 +401,10 @@ export const evaluateRequiredExcludedFields = (
         constraintType === ConstraintTypes.UNSATISFIABLE
     );
 };
+
+export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
+    typeof value === 'string' &&
+    (value === 'default' || value === 'exclude' || value === 'require');
 
 export interface ConnectorVersionEvaluationOptions {
     connectorId: string;

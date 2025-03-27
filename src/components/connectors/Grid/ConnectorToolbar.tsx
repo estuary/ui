@@ -4,6 +4,7 @@ import SearchField from 'components/shared/toolbar/SearchField';
 import { debounce } from 'lodash';
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { fireGtmEvent } from 'services/gtm';
 import useConstant from 'use-constant';
 import { ConnectorToolbarProps, ProtocolOption } from './types';
 
@@ -54,6 +55,13 @@ function ConnectorToolbar({
                 isFiltering.current = hasQuery;
 
                 setSearchQuery(hasQuery ? filterQuery : null);
+
+                // Only fire the event if there is a query to send back
+                if (hasQuery) {
+                    fireGtmEvent('Connector_Search', {
+                        filterQuery,
+                    });
+                }
             },
             750
         ),

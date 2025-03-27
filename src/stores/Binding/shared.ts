@@ -43,6 +43,34 @@ export const getEnabledCollectionNames = (
         .map(({ meta }) => meta.collectionName);
 };
 
+const resetSingleCollectionMetadata = (
+    state: BindingState,
+    collection: string
+) => {
+    state.collectionMetadata[collection].added = false;
+    state.collectionMetadata[collection].sourceBackfillRecommended = false;
+};
+
+export const resetCollectionMetadata = (
+    state: BindingState,
+    targetCollections?: string[]
+) => {
+    if (targetCollections) {
+        targetCollections.forEach((collection) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (state.collectionMetadata?.[collection]) {
+                resetSingleCollectionMetadata(state, collection);
+            }
+        });
+
+        return;
+    }
+
+    Object.keys(state.collectionMetadata).forEach((collection) => {
+        resetSingleCollectionMetadata(state, collection);
+    });
+};
+
 export const populateResourceConfigErrors = (
     state: BindingState,
     resourceConfigs: ResourceConfigDictionary
@@ -222,6 +250,25 @@ export const initializeAndGenerateUUID = (
         collection,
         UUID,
     };
+};
+
+export const updateBackfilledBindingState = (
+    state: BindingState,
+    mappedUUIDsAndResourceConfigs: [string, ResourceConfig][]
+) => {
+    if (state.backfilledBindings.length > 0) {
+        const evaluatedBackfilledBindings = mappedUUIDsAndResourceConfigs
+            .map(([bindingUUID, _resourceConfig]) => bindingUUID)
+            .filter((bindingUUID) =>
+                state.backfilledBindings.includes(bindingUUID)
+            );
+
+        state.backfilledBindings = evaluatedBackfilledBindings;
+
+        state.backfillAllBindings =
+            state.backfilledBindings.length ===
+            Object.keys(state.resourceConfigs).length;
+    }
 };
 
 export const STORE_KEY = 'Bindings';

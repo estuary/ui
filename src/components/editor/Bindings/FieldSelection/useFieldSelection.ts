@@ -49,15 +49,15 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 spec.bindings[bindingIndex].fields = {
                     recommended,
                     exclude: [],
-                    include: {},
+                    require: {},
                 };
 
-                const includedFields: Pick<
+                const requiredFields: Pick<
                     ExpandedFieldSelection,
                     'field' | 'meta'
                 >[] = Object.entries(selections[bindingUUID])
                     .filter(
-                        ([_field, selection]) => selection.mode === 'include'
+                        ([_field, selection]) => selection.mode === 'require'
                     )
                     .map(([field, selection]) => ({
                         field,
@@ -73,24 +73,24 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     .map(([field]) => field);
 
                 if (
-                    hasLength(includedFields) ||
+                    hasLength(requiredFields) ||
                     hasLength(excludedFields) ||
                     !recommended
                 ) {
-                    // Remove the include property if no fields are marked for explicit inclusion, otherwise set the property.
-                    if (hasLength(includedFields)) {
+                    // Remove the require property if no fields are explicitly required, otherwise set the property.
+                    if (hasLength(requiredFields)) {
                         const formattedFields: Schema = {};
 
-                        includedFields.forEach(({ field, meta }) => {
+                        requiredFields.forEach(({ field, meta }) => {
                             formattedFields[field] = meta ?? {};
                         });
 
-                        spec.bindings[bindingIndex].fields.include =
+                        spec.bindings[bindingIndex].fields.require =
                             formattedFields;
                     } else {
                         spec.bindings[bindingIndex].fields = omit(
                             spec.bindings[bindingIndex].fields,
-                            'include'
+                            'require'
                         );
                     }
 
