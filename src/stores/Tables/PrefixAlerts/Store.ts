@@ -1,14 +1,19 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { PrefixAlertTableState } from 'src/stores/Tables/PrefixAlerts/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import produce from 'immer';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
-import { supabaseRetry } from 'services/supabase';
-import { SelectTableStoreNames } from 'stores/names';
-import { PrefixAlertTableState } from 'stores/Tables/PrefixAlerts/types';
-import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
-import { formatNotificationSubscriptionsByPrefix } from 'utils/notification-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
+import { supabaseRetry } from 'src/services/supabase';
+import { getInitialState as getInitialSelectTableState } from 'src/stores/Tables/Store';
+import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 export const getInitialState = (
     set: NamedSet<PrefixAlertTableState>,

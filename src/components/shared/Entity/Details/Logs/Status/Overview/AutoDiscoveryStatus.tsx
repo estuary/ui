@@ -1,10 +1,11 @@
 import { useTheme } from '@mui/material';
+
+import StatusIndicator from 'src/components/shared/Entity/Details/Logs/Status/Overview/StatusIndicator';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore_autoDiscoverFailure } from 'stores/EntityStatus/hooks';
-import { getAutoDiscoveryIndicatorState } from 'utils/entityStatus-utils';
-import StatusIndicator from './StatusIndicator';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_autoDiscoverFailure } from 'src/stores/EntityStatus/hooks';
+import { getAutoDiscoveryIndicatorState } from 'src/utils/entityStatus-utils';
 
 export default function AutoDiscoveryStatus() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

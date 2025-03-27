@@ -1,32 +1,40 @@
-import { getDraftSpecsByDraftId } from 'api/draftSpecs';
-import { getLiveSpecsByLiveSpecId, getSchema_Endpoint } from 'api/hydration';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import type { EndpointConfigState } from 'src/stores/EndpointConfig/types';
+import type { CustomError } from 'src/stores/extensions/CustomErrors';
+import type { JsonFormsData, Schema } from 'src/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { createJSONFormDefaults } from 'services/ajv';
+
+import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import {
-    CustomError,
+    getLiveSpecsByLiveSpecId,
+    getSchema_Endpoint,
+} from 'src/api/hydration';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { createJSONFormDefaults } from 'src/services/ajv';
+import {
     fetchErrors,
     filterErrors,
     getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
-} from 'stores/extensions/CustomErrors';
+} from 'src/stores/extensions/CustomErrors';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
-import { JsonFormsData, Schema } from 'types';
-import { getEndpointConfig } from 'utils/connector-utils';
+} from 'src/stores/extensions/Hydration';
+import { getEndpointConfig } from 'src/utils/connector-utils';
 import {
     configCanBeEmpty,
     getDereffedSchema,
     hasLength,
-} from 'utils/misc-utils';
-import { parseEncryptedEndpointConfig } from 'utils/sops-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { EndpointConfigState } from './types';
+} from 'src/utils/misc-utils';
+import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'Endpoint Config';
 

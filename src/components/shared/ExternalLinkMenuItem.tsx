@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
+
 import { Link, MenuItem } from '@mui/material';
+
 import { OpenNewWindow } from 'iconoir-react';
-import { ReactNode } from 'react';
 
 interface Props {
     children: ReactNode;

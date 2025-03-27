@@ -1,6 +1,8 @@
-import { defaultStepState } from '../../../store/shared';
-import { PromptStep } from '../../../types';
+import type { PromptStep } from 'src/components/shared/Entity/prompts/types';
+
 import WaitForShardToIdle from '.';
+
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
 
 export interface WaitForShardToIdleStepContext {
     timeStopped: string | null;

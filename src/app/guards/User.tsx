@@ -1,13 +1,18 @@
-import { unauthenticatedRoutes } from 'app/routes';
-import { useUserStore } from 'context/User/useUserContextStore';
+import type { BaseComponentProps } from 'src/types';
+
+import { useEffect, useRef } from 'react';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useRef } from 'react';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+
 import 'react-reflex/styles.css';
+
 import { Navigate } from 'react-router';
-import { identifyUser } from 'services/logrocket';
-import { BaseComponentProps } from 'types';
+
+import { identifyUser } from 'src/services/logrocket';
 
 function UserGuard({ children }: BaseComponentProps) {
     // We only want to idenfity users once. Since the user object changes

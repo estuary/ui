@@ -1,12 +1,16 @@
-import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
-import { NavArrowDown } from 'iconoir-react';
+import type { BaseComponentProps } from 'src/types';
+
 import { useState } from 'react';
+
+import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
+
+import { NavArrowDown } from 'iconoir-react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { BaseComponentProps } from 'types';
-import AlertBox from './AlertBox';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 const logErrorToLogRocket = (error: Error) => {
     // Let LogRocket know this was rendered since there is almost never

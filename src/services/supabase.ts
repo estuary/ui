@@ -1,20 +1,22 @@
-import {
+import type {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { User } from '@supabase/supabase-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { forEach, isEmpty } from 'lodash';
-import retry from 'retry';
-import {
+import type { User } from '@supabase/supabase-js';
+import type {
     JobStatus,
     SortDirection,
     SupabaseInvokeResponse,
     UserDetails,
-} from 'types';
-import { logRocketEvent, retryAfterFailure } from './shared';
-import { CustomEvents } from './types';
+} from 'src/types';
+
+import { forEach, isEmpty } from 'lodash';
+import retry from 'retry';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
@@ -465,8 +467,8 @@ export const handlePollerError = (failedResponse: any) => {
     return failedResponse.error === JOB_STATUS_POLLER_ERROR
         ? DEFAULT_POLLER_ERROR.error
         : failedResponse.error
-        ? failedResponse
-        : null;
+          ? failedResponse
+          : null;
 };
 
 export const JOB_TYPE_EMPTY = 'emptyDraft';

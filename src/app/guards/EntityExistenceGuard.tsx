@@ -1,13 +1,15 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
-import { useEntityType } from 'context/EntityContext';
+import type { BaseComponentProps } from 'src/types';
+
+import { useEffect } from 'react';
+
+import FullPageSpinner from 'src/components/fullPage/Spinner';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useLiveSpecsExtWithSpec } from 'hooks/useLiveSpecsExt';
-import EntityNotFound from 'pages/error/EntityNotFound';
-import { useEffect } from 'react';
-import { useFormStateStore_setLiveSpec } from 'stores/FormState/hooks';
-import { BaseComponentProps } from 'types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useLiveSpecsExtWithSpec } from 'src/hooks/useLiveSpecsExt';
+import EntityNotFound from 'src/pages/error/EntityNotFound';
+import { useFormStateStore_setLiveSpec } from 'src/stores/FormState/hooks';
 
 function EntityExistenceGuard({ children }: BaseComponentProps) {
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);

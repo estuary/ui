@@ -1,7 +1,7 @@
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-import { PublicationJobStatus } from 'api/publications';
-import { ErrorDetails } from 'components/shared/Error/types';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { PublicationJobStatus } from 'src/api/publications';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
 export interface PromptStepState {
     error: ErrorDetails | null; // Both server and client side error

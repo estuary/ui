@@ -1,5 +1,6 @@
 import { Close } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 interface Props {

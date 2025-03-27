@@ -1,29 +1,29 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { DIRECTIVES } from 'directives/shared';
-import { UserClaims } from 'directives/types';
-import { logRocketConsole } from 'services/shared';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { UserClaims } from 'src/directives/types';
+import type { CallSupabaseResponse, SortingProps } from 'src/services/supabase';
+import type {
+    AppliedDirective,
+    Directive,
+    GrantDirective,
+    GrantDirective_AccessLinks,
+    GrantDirectiveSpec,
+    JoinedAppliedDirective,
+    Schema,
+} from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DIRECTIVES } from 'src/directives/shared';
+import { logRocketConsole } from 'src/services/shared';
 import {
-    CallSupabaseResponse,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
     insertSupabase,
     RPCS,
-    SortingProps,
     supabaseRetry,
     TABLES,
     updateSupabase,
-} from 'services/supabase';
-import {
-    AppliedDirective,
-    Directive,
-    GrantDirective,
-    GrantDirectiveSpec,
-    GrantDirective_AccessLinks,
-    JoinedAppliedDirective,
-    Schema,
-} from 'types';
+} from 'src/services/supabase';
 
 interface GrantDirective_CreateMatchData {
     catalog_prefix: string;

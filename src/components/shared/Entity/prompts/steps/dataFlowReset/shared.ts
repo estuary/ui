@@ -1,24 +1,17 @@
-import { DEFAULT_FILTER } from 'services/supabase';
-import { CustomEvents } from 'services/types';
-import { ReviewSelectionStep } from '../preSave/ReviewSelection/definition';
-import {
-    PublishStep,
-    UpdateMaterializationStepContext,
-} from './Publish/definition';
-import {
-    DisableCaptureStep,
-    DisableCaptureStepContext,
-} from './DisableCapture/definition';
-import { EnableCaptureStep } from './EnableCapture/definition';
-import {
-    SelectMaterializationStep,
-    SelectMaterializationStepContext,
-} from './SelectMaterialization/definition';
-import { UpdateMaterializationStep } from './UpdateMaterialization/definition';
-import {
-    WaitForShardToIdleStep,
-    WaitForShardToIdleStepContext,
-} from './WaitForShardToIdle/definition';
+import type { DisableCaptureStepContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/DisableCapture/definition';
+import type { UpdateMaterializationStepContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/Publish/definition';
+import type { SelectMaterializationStepContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/definition';
+import type { WaitForShardToIdleStepContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/WaitForShardToIdle/definition';
+
+import { DisableCaptureStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/DisableCapture/definition';
+import { EnableCaptureStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/EnableCapture/definition';
+import { PublishStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/Publish/definition';
+import { SelectMaterializationStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/definition';
+import { UpdateMaterializationStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/UpdateMaterialization/definition';
+import { WaitForShardToIdleStep } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/WaitForShardToIdle/definition';
+import { ReviewSelectionStep } from 'src/components/shared/Entity/prompts/steps/preSave/ReviewSelection/definition';
+import { DEFAULT_FILTER } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
 
 export interface DataFlowResetContext
     extends DisableCaptureStepContext,

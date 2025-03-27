@@ -1,22 +1,25 @@
-import {
+import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { PollerTimeout } from 'src/services/supabase';
+
 import { useCallback, useMemo, useRef, useState } from 'react';
+
 import { useUnmount } from 'react-use';
-import { logRocketConsole, retryAfterFailure } from 'services/shared';
+
+import { logRocketConsole, retryAfterFailure } from 'src/services/shared';
 import {
     DEFAULT_POLLING_INTERVAL,
     handleFailure,
     JOB_STATUS_POLLER_ERROR,
-    PollerTimeout,
-} from 'services/supabase';
+} from 'src/services/supabase';
 import {
     incrementInterval,
     isPostgrestFetcher,
     timeoutCleanUp,
-} from 'utils/misc-utils';
-import { checkIfPublishIsDone } from 'utils/publication-utils';
+} from 'src/utils/misc-utils';
+import { checkIfPublishIsDone } from 'src/utils/publication-utils';
 
 export function useQueryPoller<T = any>(
     key: string,

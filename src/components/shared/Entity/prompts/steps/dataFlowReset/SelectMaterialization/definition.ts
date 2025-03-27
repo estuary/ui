@@ -1,7 +1,9 @@
-import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
-import { defaultStepState } from '../../../store/shared';
-import { PromptStep } from '../../../types';
+import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+import type { PromptStep } from 'src/components/shared/Entity/prompts/types';
+
 import SelectMaterialization from '.';
+
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
 
 export interface SelectMaterializationStepContext {
     backfillTarget: LiveSpecsExt_Related | null;

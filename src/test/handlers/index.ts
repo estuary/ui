@@ -1,6 +1,8 @@
-import { RequestHandler } from 'test/server/test-server';
+import type { RequestHandler } from 'src/test/server/test-server';
+
 import { http, HttpResponse } from 'msw';
-import { SUPABASE_URL } from 'test/shared';
+
+import { SUPABASE_URL } from 'src/test/shared';
 
 const handlers: RequestHandler[] = [];
 

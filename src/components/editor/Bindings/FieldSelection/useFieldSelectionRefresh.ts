@@ -1,9 +1,10 @@
-import useSave from 'components/shared/Entity/Actions/useSave';
-import useGenerateCatalog from 'components/materialization/useGenerateCatalog';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
 import { useCallback, useState } from 'react';
-import { CustomEvents } from 'services/types';
+
+import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
+import useSave from 'src/components/shared/Entity/Actions/useSave';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { CustomEvents } from 'src/services/types';
 
 function useFieldSelectionRefresh() {
     const [updating, setUpdating] = useState(false);

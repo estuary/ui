@@ -1,6 +1,8 @@
+import type { StatusIndicatorProps } from 'src/components/tables/cells/entityStatus/ControllerStatus/types';
+
 import { Box, useTheme } from '@mui/material';
-import { getStatusIndicatorColor } from 'utils/entityStatus-utils';
-import { StatusIndicatorProps } from './types';
+
+import { getStatusIndicatorColor } from 'src/utils/entityStatus-utils';
 
 const INDICATOR_SIZE = 16;
 

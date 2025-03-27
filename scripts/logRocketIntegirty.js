@@ -51,9 +51,8 @@ const currentIntegrity = getIntegrity(CURRENT_SHA);
         console.log('********** START **********');
 
         console.log(`fetching latest Log Rocket script from "${LATEST_URL}"`);
-        const { filePath, downloadStatus } = await downloadLatestScript(
-            LATEST_URL
-        );
+        const { filePath, downloadStatus } =
+            await downloadLatestScript(LATEST_URL);
         if (downloadStatus !== 'COMPLETE') {
             console.log(
                 '\x1b[41m',

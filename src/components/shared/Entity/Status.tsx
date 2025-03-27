@@ -1,7 +1,9 @@
 import { Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_message } from 'stores/FormState/hooks';
-import AlertBox from '../AlertBox';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import { useFormStateStore_message } from 'src/stores/FormState/hooks';
 
 function Status() {
     const { key, severity } = useFormStateStore_message();

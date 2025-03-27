@@ -1,9 +1,12 @@
-import { Box, Tab, Tabs } from '@mui/material';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useMemo, useState } from 'react';
+
+import { Box, Tab, Tabs } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import useEntityShouldShowLogs from './useEntityShouldShowLogs';
+
+import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 function DetailTabs() {
     const intl = useIntl();

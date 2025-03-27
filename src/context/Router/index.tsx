@@ -1,40 +1,42 @@
-import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import AccessGrants from 'components/admin/AccessGrants';
-import AdminApi from 'components/admin/Api';
-import AdminBilling from 'components/admin/Billing';
-import AdminConnectors from 'components/admin/Connectors';
-import AdminSettings from 'components/admin/Settings';
-import { AuthenticatedOnlyContext } from 'context/Authenticated';
-import { DashboardWelcomeProvider } from 'context/DashboardWelcome';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
-import { OAuthPopup } from 'hooks/forks/react-use-oauth2/components';
-import Admin from 'pages/Admin';
-import Auth from 'pages/Auth';
-import Collections from 'pages/Collections';
-import DataPlaneAuthReq from 'pages/DataPlaneAuthReq';
-import HomePage from 'pages/Home';
-import TestJsonForms from 'pages/dev/TestJsonForms';
-import PageNotFound from 'pages/error/PageNotFound';
-import BasicLogin from 'pages/login/Basic';
-import EnterpriseLogin from 'pages/login/Enterprise';
-import MarketplaceCallback from 'pages/marketplace/Callback';
-import MarketplaceVerification from 'pages/marketplace/Verification';
 import { lazy, Suspense } from 'react';
+
+import { ErrorBoundary } from 'react-error-boundary';
 import {
+    createBrowserRouter,
+    createRoutesFromElements,
     Route,
     RouterProvider,
     Routes,
-    createBrowserRouter,
-    createRoutesFromElements,
 } from 'react-router-dom';
-import { ErrorImporting } from 'components/shared/ErrorImporting';
-import { ErrorBoundary } from 'react-error-boundary';
-import Authenticated from './Authenticated';
-import AuthenticatedLayout from './AuthenticatedLayout';
-import CapturesTable from './CapturesTable';
-import MaterializationsTable from './MaterializationsTable';
-import RequireAuth from './RequireAuth';
+
+import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
+import AccessGrants from 'src/components/admin/AccessGrants';
+import AdminApi from 'src/components/admin/Api';
+import AdminBilling from 'src/components/admin/Billing';
+import AdminConnectors from 'src/components/admin/Connectors';
+import AdminSettings from 'src/components/admin/Settings';
+import { ErrorImporting } from 'src/components/shared/ErrorImporting';
+import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
+import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import Authenticated from 'src/context/Router/Authenticated';
+import AuthenticatedLayout from 'src/context/Router/AuthenticatedLayout';
+import CapturesTable from 'src/context/Router/CapturesTable';
+import MaterializationsTable from 'src/context/Router/MaterializationsTable';
+import RequireAuth from 'src/context/Router/RequireAuth';
+import { WorkflowContextProvider } from 'src/context/Workflow';
+import { OAuthPopup } from 'src/hooks/forks/react-use-oauth2/components';
+import Admin from 'src/pages/Admin';
+import Auth from 'src/pages/Auth';
+import Collections from 'src/pages/Collections';
+import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
+import TestJsonForms from 'src/pages/dev/TestJsonForms';
+import PageNotFound from 'src/pages/error/PageNotFound';
+import HomePage from 'src/pages/Home';
+import BasicLogin from 'src/pages/login/Basic';
+import EnterpriseLogin from 'src/pages/login/Enterprise';
+import MarketplaceCallback from 'src/pages/marketplace/Callback';
+import MarketplaceVerification from 'src/pages/marketplace/Verification';
 
 // Capture
 const CaptureCreateRoute = lazy(() => import('./CaptureCreate'));
@@ -44,7 +46,7 @@ const CaptureEditRoute = lazy(() => import('./CaptureEdit'));
 
 // Collection
 const DerivationCreateComponent = lazy(
-    () => import('components/derivation/Create')
+    () => import('src/components/derivation/Create')
 );
 const CollectionCreateRoute = lazy(() => import('./CollectionCreate'));
 const CollectionCreateNewRoute = lazy(() => import('./CollectionCreateNew'));

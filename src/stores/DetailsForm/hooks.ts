@@ -1,7 +1,7 @@
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useDetailsFormStore } from './Store';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 // Selector hooks
 export const useDetailsForm_changed_connectorId = () => {

@@ -1,23 +1,24 @@
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { Details } from 'src/stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/workflow-utils';
+
+import { useCallback, useEffect, useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
+
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
-import { getConnectorMetadata } from 'utils/connector-utils';
-import { hasLength } from 'utils/misc-utils';
-import {
-    ConnectorVersionEvaluationOptions,
-    evaluateConnectorVersions,
-} from 'utils/workflow-utils';
-import { MAC_ADDR_RE } from 'validation';
-import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDetailsForm_changed_connectorId } from 'src/stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { getConnectorMetadata } from 'src/utils/connector-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { evaluateConnectorVersions } from 'src/utils/workflow-utils';
+import { MAC_ADDR_RE } from 'src/validation';
 
 export default function useConnectorField(
     connectorTags: ConnectorWithTagDetailQuery[],

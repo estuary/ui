@@ -1,6 +1,8 @@
+import type { CustomEvents } from 'src/services/types';
+
 import LogRocket from 'logrocket';
-import { isProduction } from 'utils/env-utils';
-import { CustomEvents } from './types';
+
+import { isProduction } from 'src/utils/env-utils';
 
 export const logRocketConsole = (message: string, ...props: any[]) => {
     // Just want to be very very safe

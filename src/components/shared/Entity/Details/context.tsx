@@ -1,6 +1,7 @@
-import { authenticatedRoutes } from 'app/routes';
+import type { authenticatedRoutes } from 'src/app/routes';
+import type { BaseComponentProps } from 'src/types';
+
 import { createContext, useContext } from 'react';
-import { BaseComponentProps } from 'types';
 
 export type Pages =
     | keyof typeof authenticatedRoutes.captures.details

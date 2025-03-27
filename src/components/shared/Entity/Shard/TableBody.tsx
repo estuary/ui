@@ -1,15 +1,18 @@
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { TableColumns } from 'src/types';
+
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import TableLoadingRows from 'components/tables/Loading';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
+
 import { FormattedMessage } from 'react-intl';
+
+import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
+import TableLoadingRows from 'src/components/tables/Loading';
+import { semiTransparentBackgroundIntensified } from 'src/context/Theme';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
-} from 'stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
-import { TableColumns } from 'types';
-import { getColumnKeyList } from 'utils/table-utils';
-import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
+} from 'src/stores/ShardDetail/hooks';
+import { getColumnKeyList } from 'src/utils/table-utils';
 
 interface Props {
     page: number;

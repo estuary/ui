@@ -1,22 +1,24 @@
-import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import AlertBox from 'components/shared/AlertBox';
-import DialogTitleWithClose from 'components/shared/Dialog/TitleWithClose';
-import AdminCapabilityGuard from 'components/shared/guards/AdminCapability';
-import TransformationCreate from 'components/transformation/create';
-import { useZustandStore } from 'context/Zustand/provider';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
+
+import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { useBinding_resetState } from 'stores/Binding/hooks';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
-import { SelectTableStoreNames } from 'stores/names';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import AlertBox from 'src/components/shared/AlertBox';
+import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
+import TransformationCreate from 'src/components/transformation/create';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useBinding_resetState } from 'src/stores/Binding/hooks';
+import BindingHydrator from 'src/stores/Binding/Hydrator';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 

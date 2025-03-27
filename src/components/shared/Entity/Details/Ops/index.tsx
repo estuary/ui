@@ -1,17 +1,19 @@
 import { Box, Stack } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import Message from 'components/shared/Error/Message';
-import LogsTable from 'components/tables/Logs';
+
+import { FormattedMessage } from 'react-intl';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
+import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
+import Message from 'src/components/shared/Error/Message';
+import LogsTable from 'src/components/tables/Logs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { FormattedMessage } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import JournalHydrator from 'stores/JournalData/Hydrator';
-import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
-import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { BASE_ERROR } from 'src/services/supabase';
+import JournalHydrator from 'src/stores/JournalData/Hydrator';
+import JournalDataLogsHydrator from 'src/stores/JournalData/Logs/Hydrator';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 // TODO: Display the logs table in a loading state until the initial journal
 //   data can be fetched.

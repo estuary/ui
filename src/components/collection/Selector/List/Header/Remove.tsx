@@ -1,4 +1,5 @@
-import { Box, Tooltip, IconButton } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
+
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 

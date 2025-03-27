@@ -1,8 +1,10 @@
 import { Button, Divider, Stack, Typography } from '@mui/material';
+
 import { ReloadWindow } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 function Actions() {
     const intl = useIntl();

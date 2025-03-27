@@ -1,14 +1,15 @@
 import { Box, Skeleton } from '@mui/material';
+
 import {
     defaultOutline,
     monacoEditorHeaderBackground,
     monacoEditorWidgetBackground,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
     getEditorTotalHeight,
-} from 'utils/editor-utils';
+} from 'src/utils/editor-utils';
 
 interface JsonSchemaSkeletonProps {
     opacity?: number;

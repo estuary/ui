@@ -1,11 +1,14 @@
-import { MAX_TENANTS } from 'api/billing';
-import FullPageError from 'components/fullPage/Error';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { useTenantsDetailsForPayment } from 'hooks/useTenants';
+import type { BaseComponentProps, TenantPaymentDetails } from 'src/types';
+
 import { createContext, useContext, useMemo } from 'react';
+
 import { FormattedMessage } from 'react-intl';
-import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
-import { BaseComponentProps, TenantPaymentDetails } from 'types';
+
+import { MAX_TENANTS } from 'src/api/billing';
+import FullPageError from 'src/components/fullPage/Error';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useTenantsDetailsForPayment } from 'src/hooks/useTenants';
+import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 
 export interface TenantContextData {
     tenantBillingDetails: TenantPaymentDetails[] | null;

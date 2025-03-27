@@ -1,7 +1,9 @@
 import { Grid } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
+
 import { FormattedMessage } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import { useBillingStore } from 'src/stores/Billing/Store';
 
 function BillingLoadError() {
     const hydrationErrorsExist = useBillingStore(

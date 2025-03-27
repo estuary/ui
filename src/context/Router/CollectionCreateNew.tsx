@@ -1,7 +1,7 @@
-import DerivationCreateAlternate from 'components/derivation/Create/CreateAlternate';
-import AdminCapabilityGuard from 'components/shared/guards/AdminCapability';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
+import DerivationCreateAlternate from 'src/components/derivation/Create/CreateAlternate';
+import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import { WorkflowContextProvider } from 'src/context/Workflow';
 
 function CollectionCreateNewRoute() {
     return (

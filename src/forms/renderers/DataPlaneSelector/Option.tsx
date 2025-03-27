@@ -1,6 +1,8 @@
-import { EnumOption } from '@jsonforms/core';
+import type { EnumOption } from '@jsonforms/core';
+
 import { Stack } from '@mui/material';
-import DataPlane from 'components/shared/Entity/DataPlane';
+
+import DataPlane from 'src/components/shared/Entity/DataPlane';
 
 interface Props {
     renderOptionProps: any;

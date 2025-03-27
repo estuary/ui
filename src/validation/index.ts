@@ -1,5 +1,6 @@
-import { PrefixedName_Errors } from 'components/inputs/PrefixedName/types';
-import { hasLength } from 'utils/misc-utils';
+import type { PrefixedName_Errors } from 'src/components/inputs/PrefixedName/types';
+
+import { hasLength } from 'src/utils/misc-utils';
 
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql

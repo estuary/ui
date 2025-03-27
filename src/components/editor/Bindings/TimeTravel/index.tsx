@@ -1,6 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import TimeTravelForm from './Form';
+
+import TimeTravelForm from 'src/components/editor/Bindings/TimeTravel/Form';
 
 interface Props {
     bindingUUID: string;

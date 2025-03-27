@@ -1,10 +1,12 @@
-import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
+import type { BaseComponentProps } from 'src/types';
+
 import { Fragment } from 'react';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import { BaseComponentProps } from 'types';
+
+import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import BindingHydrator from 'src/stores/Binding/Hydrator';
+import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
+import { EndpointConfigHydrator } from 'src/stores/EndpointConfig/Hydrator';
 
 // This hydrator is here without a store so that we can start working on moving a lot of
 //  these separate stores into a single "Workflow" store for Create and Edit.

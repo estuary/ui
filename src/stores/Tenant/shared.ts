@@ -1,5 +1,5 @@
-import { TenantState } from 'stores/Tenant/types';
-import { PersistOptions } from 'zustand/middleware';
+import type { TenantState } from 'src/stores/Tenant/types';
+import type { PersistOptions } from 'zustand/middleware';
 
 // Previous persist states for testing migrations
 // v0 - {"state":{"selectedTenant":"foo/"},"version":0}

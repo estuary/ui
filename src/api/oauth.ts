@@ -1,4 +1,8 @@
-import { FUNCTIONS, invokeSupabase, OAUTH_OPERATIONS } from 'services/supabase';
+import {
+    FUNCTIONS,
+    invokeSupabase,
+    OAUTH_OPERATIONS,
+} from 'src/services/supabase';
 
 const OAUTH_URL_SUFFIX = '/oauth';
 

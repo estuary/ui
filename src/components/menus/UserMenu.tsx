@@ -1,15 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { Stack, SxProps, Typography } from '@mui/material';
+import type { SxProps } from '@mui/material';
+
+import { Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MenuItem from '@mui/material/MenuItem';
-import UserAvatar from 'components/shared/UserAvatar';
-import { supabaseClient } from 'context/GlobalProviders';
-import { useUserStore } from 'context/User/useUserContextStore';
+
+import { useShallow } from 'zustand/react/shallow';
+
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useShallow } from 'zustand/react/shallow';
-import IconMenu from './IconMenu';
+
+import IconMenu from 'src/components/menus/IconMenu';
+import UserAvatar from 'src/components/shared/UserAvatar';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 interface Props {
     iconColor: string;

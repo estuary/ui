@@ -1,13 +1,18 @@
-import { hasLength } from 'utils/misc-utils';
+import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
+import type {
+    CollectionMetadata,
+    ResourceConfig,
+} from 'src/stores/Binding/types';
+
 import { useShallow } from 'zustand/react/shallow';
+
 import {
     getCollectionNames,
     getCollections,
     getEnabledCollectionNames,
-} from './shared';
-import { FullSourceJsonForms } from './slices/TimeTravel';
-import { useBindingStore } from './Store';
-import { CollectionMetadata, ResourceConfig } from './types';
+} from 'src/stores/Binding/shared';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const useBinding_hydrated = () => {
     return useBindingStore((state) => state.hydrated);

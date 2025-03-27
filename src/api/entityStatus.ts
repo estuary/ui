@@ -1,6 +1,7 @@
-import { client } from 'services/client';
-import { EntityStatusResponse } from 'types/controlPlane';
-import { getEntityStatusSettings } from 'utils/env-utils';
+import type { EntityStatusResponse } from 'src/types/controlPlane';
+
+import { client } from 'src/services/client';
+import { getEntityStatusSettings } from 'src/utils/env-utils';
 
 const { entityStatusBaseEndpoint } = getEntityStatusSettings();
 

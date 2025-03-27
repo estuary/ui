@@ -1,18 +1,23 @@
-import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
-import invariableStores from 'context/Zustand/invariableStores';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { SourceCaptureDef } from 'src/types';
+
 import { useState } from 'react';
+
+import { Button } from '@mui/material';
+
+import { useStore } from 'zustand';
+
 import { FormattedMessage } from 'react-intl';
+
+import useSourceCapture from 'src/components/materialization/useSourceCapture';
+import invariableStores from 'src/context/Zustand/invariableStores';
+import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_prefillResourceConfigs,
     useBinding_sourceCaptureFlags,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { SourceCaptureDef } from 'types';
-import { useStore } from 'zustand';
-import useSourceCapture from '../useSourceCapture';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);

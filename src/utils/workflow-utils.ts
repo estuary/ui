@@ -1,36 +1,40 @@
-import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
-import {
-    DraftSpecsExtQuery_ByCatalogName,
-    modifyDraftSpec,
-} from 'api/draftSpecs';
-import {
-    ConstraintTypes,
-    FieldSelectionType,
-} from 'components/editor/Bindings/FieldSelection/types';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
-import { CallSupabaseResponse } from 'services/supabase';
-import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
-import {
+import type { ConnectorConfig } from 'deps/flow/flow';
+import type {
+    ConnectorsQuery_DetailsForm,
+    ConnectorTag_Base,
+} from 'src/api/connectors';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+import type {
     FullSource,
     FullSourceDictionary,
-} from 'stores/Binding/slices/TimeTravel';
-import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import {
+} from 'src/stores/Binding/slices/TimeTravel';
+import type {
+    Bindings,
+    ResourceConfigDictionary,
+} from 'src/stores/Binding/types';
+import type {
     DekafConfig,
     Entity,
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
-} from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { isDekafEndpointConfig } from './connector-utils';
+} from 'src/types';
+
+import { isBoolean, isEmpty } from 'lodash';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import { REMOVE_DURING_GENERATION } from 'src/stores/Binding/shared';
+import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
-} from './entity-utils';
+} from 'src/utils/entity-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -44,8 +48,8 @@ export const getSourceOrTarget = (binding: any) => {
     return Object.hasOwn(binding ?? {}, 'source')
         ? binding.source
         : Object.hasOwn(binding ?? {}, 'target')
-        ? binding.target
-        : binding;
+          ? binding.target
+          : binding;
 };
 
 export const getBindingAsFullSource = (binding: any) => {
@@ -211,8 +215,8 @@ export const generateTaskSpec = (
                           iteratedIndex
                       )
                     : hasLength(draftSpec.bindings)
-                    ? bindingIndex
-                    : -1;
+                      ? bindingIndex
+                      : -1;
 
                 if (existingBindingIndex > -1) {
                     // Include disable otherwise totally remove it

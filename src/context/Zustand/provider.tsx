@@ -1,8 +1,12 @@
+import type { ZustandProviderProps } from 'src/context/Zustand/types';
+import type { StoreName } from 'src/stores/names';
+import type { StoreApi } from 'zustand';
+
 import { createContext as createReactContext, useContext } from 'react';
-import { StoreName } from 'stores/names';
-import { StoreApi, useStore } from 'zustand';
-import invariableStores from './invariableStores';
-import { ZustandProviderProps } from './types';
+
+import { useStore } from 'zustand';
+
+import invariableStores from 'src/context/Zustand/invariableStores';
 
 export const ZustandContext = createReactContext<any | null>(null);
 

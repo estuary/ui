@@ -3,23 +3,22 @@
 //  truly reusable. So marking the query as `any` even thogh
 //  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
 
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { ConnectorsQuery_DetailsForm } from 'api/connectors';
-import { DraftSpecsExtQuery_ByDraftId } from 'api/draftSpecs';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
-import {
+import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import type { ConnectorConfig } from 'deps/flow/flow';
+import type { ConnectorsQuery_DetailsForm } from 'src/api/connectors';
+import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
+import type {
     ConnectorMetadata,
     DekafConnectorMetadata,
     Details,
     StandardConnectorMetadata,
-} from 'stores/DetailsForm/types';
-import { DekafConfig } from 'types';
-import { ConnectorConfig } from '../../deps/flow/flow';
-import {
-    ConnectorVersionEvaluationOptions,
-    evaluateConnectorVersions,
-} from './workflow-utils';
+} from 'src/stores/DetailsForm/types';
+import type { DekafConfig } from 'src/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/workflow-utils';
+
+import { evaluateConnectorVersions } from 'src/utils/workflow-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';

@@ -1,22 +1,26 @@
-import produce from 'immer';
+import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
+import type { PromptStep } from 'src/components/shared/Entity/prompts/types';
+
+import { useMemo } from 'react';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useMemo } from 'react';
-import { PromptStep } from '../types';
+
+import produce from 'immer';
+
 import {
     DataFlowResetSteps,
     getInitialDataFlowResetContext,
-} from '../steps/dataFlowReset/shared';
-import { PublishStep } from '../steps/preSave/Publish/definition';
-import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
-import { PreSavePromptStore } from './types';
-import { defaultStepState } from './shared';
+} from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import { PublishStep } from 'src/components/shared/Entity/prompts/steps/preSave/Publish/definition';
+import { ReviewSelectionStep } from 'src/components/shared/Entity/prompts/steps/preSave/ReviewSelection/definition';
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { logRocketEvent } from 'src/services/shared';
+import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,

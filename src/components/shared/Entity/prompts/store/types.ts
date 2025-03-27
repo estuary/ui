@@ -1,5 +1,8 @@
-import { DataFlowResetContext } from '../steps/dataFlowReset/shared';
-import { PromptStep, PromptStepState } from '../types';
+import type { DataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import type {
+    PromptStep,
+    PromptStepState,
+} from 'src/components/shared/Entity/prompts/types';
 
 // TODO (typing) would like to auto generate the `context` type somehow
 //  by combining multiple steps contexts
