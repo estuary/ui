@@ -79,7 +79,7 @@ function CaptureCreate() {
                 <EntityCreate
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
+                    Toolbar={
                         <EntityToolbar
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,

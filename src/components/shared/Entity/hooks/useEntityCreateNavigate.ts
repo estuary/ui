@@ -53,11 +53,8 @@ export default function useEntityCreateNavigate() {
                 : ENTITY_SETTINGS[entity].routes.connectorSelect;
 
             if (entity === 'capture' && expressWorkflow && advanceToForm) {
-                // TODO (powered-by-estuary): Use an error page as a fallback instead
-                //   of the standard create workflow.
-                newPath =
-                    ENTITY_SETTINGS[entity].routes.createExpress ??
-                    ENTITY_SETTINGS[entity].routes.createNew;
+                // TODO (powered-by-estuary): Use an error page as a fallback.
+                newPath = ENTITY_SETTINGS[entity].routes.createNewExpress;
             }
 
             navigate(

@@ -41,6 +41,12 @@ export default function ConnectorCards({
 
     const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
+    const RequestCard = condensed ? (
+        <div />
+    ) : (
+        <ConnectorRequestCard key="connector-tile-request" />
+    );
+
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
         navigateToCreate(row.connector_tags[0].protocol, {
             id: row.connector_tags[0].connector_id,
@@ -127,12 +133,7 @@ export default function ConnectorCards({
                         />
                     );
                 })
-                .concat(
-                    <ConnectorRequestCard
-                        key="connector-tile-request"
-                        condensed={condensed}
-                    />
-                )}
+                .concat(RequestCard)}
         </>
     );
 }

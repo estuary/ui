@@ -1,13 +1,12 @@
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import RediscoverButton from 'components/capture/RediscoverButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
-import EntityCreate from 'components/shared/Entity/Create';
+import EntityCreateExpress from 'components/shared/Entity/Create/Express';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
@@ -21,7 +20,7 @@ import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
 export default function CaptureExpressCreate() {
     usePageTitle({
-        header: authenticatedRoutes.captures.create.new.title,
+        header: authenticatedRoutes.captures.createExpress.new.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
@@ -50,8 +49,7 @@ export default function CaptureExpressCreate() {
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs } = useDraftSpecs(persistedDraftId);
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();
@@ -76,10 +74,9 @@ export default function CaptureExpressCreate() {
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <EntityCreate
+                <EntityCreateExpress
                     entityType={entityType}
-                    draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
+                    Toolbar={
                         <EntityToolbar
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,
@@ -102,12 +99,6 @@ export default function CaptureExpressCreate() {
                                     }}
                                 />
                             }
-                        />
-                    }
-                    RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
                         />
                     }
                 />
