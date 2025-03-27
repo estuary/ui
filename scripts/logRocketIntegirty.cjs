@@ -1,5 +1,6 @@
 const { createHash } = require('crypto');
 const { readFileSync, rmSync } = require('fs');
+// THIS WAS REMOVED FROM PACKAGE.JSON ADD BACK OR THIS FAILS
 const Downloader = require('nodejs-file-downloader');
 
 // EDITABLE FIELDS - START ------------------
