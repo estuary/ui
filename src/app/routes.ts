@@ -64,7 +64,7 @@ const captures = {
         fullPath: '/captures/createExpress',
         new: {
             title: 'routeTitle.captureCreate',
-            path: `create/new`,
+            path: `createExpress/new`,
             fullPath: '/captures/createExpress/new',
         },
     },

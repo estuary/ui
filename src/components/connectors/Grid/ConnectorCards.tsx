@@ -45,6 +45,7 @@ export default function ConnectorCards({
         navigateToCreate(row.connector_tags[0].protocol, {
             id: row.connector_tags[0].connector_id,
             advanceToForm: true,
+            expressWorkflow: condensed,
         });
     };
 

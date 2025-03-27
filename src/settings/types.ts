@@ -24,6 +24,7 @@ export interface EntitySetting {
         createNew: string;
         details: string;
         viewAll: string;
+        createExpress?: string;
     };
     selector: {
         noExistingDataContentIds: TableIntlConfig;

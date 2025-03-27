@@ -16,6 +16,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         pluralId: 'terms.sources.plural',
         routes: {
             connectorSelect: authenticatedRoutes.captures.create.fullPath,
+            createExpress:
+                authenticatedRoutes.captures.createExpress.new.fullPath,
             createNew: authenticatedRoutes.captures.create.new.fullPath,
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,
