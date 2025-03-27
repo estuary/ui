@@ -1,14 +1,15 @@
 import { Typography } from '@mui/material';
 import { MessageComponentProps } from './types';
 
-function Title({ content, marginBottom }: MessageComponentProps) {
+function Title({ content, height, marginBottom }: MessageComponentProps) {
     return (
         <Typography
+            align="left"
             component="div"
-            marginBottom={marginBottom ?? 1}
             fontSize={18}
             fontWeight="400"
-            align="left"
+            height={height}
+            marginBottom={marginBottom ?? 1}
         >
             {content}
         </Typography>
