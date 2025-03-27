@@ -183,7 +183,9 @@ export const inituser = async (
         console.log(`tenant:started:${name},${newTenant}`);
 
         // Create Tenant
-        await expect(page.getByText(`Let's get started`)).toBeVisible();
+        await expect(
+            page.getByText(`Get started with Estuary Flow`)
+        ).toBeVisible();
         await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
         await page.getByRole('button', { name: 'Continue' }).click();
 
