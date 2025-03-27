@@ -1,5 +1,4 @@
 import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
-import type { PromptStep } from 'src/components/shared/Entity/prompts/types';
 
 import { useMemo } from 'react';
 
@@ -9,17 +8,11 @@ import { useShallow } from 'zustand/react/shallow';
 
 import produce from 'immer';
 
-import {
-    DataFlowResetSteps,
-    getInitialDataFlowResetContext,
-} from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
-import { PublishStep } from 'src/components/shared/Entity/prompts/steps/preSave/Publish/definition';
-import { ReviewSelectionStep } from 'src/components/shared/Entity/prompts/steps/preSave/ReviewSelection/definition';
+import { getInitialDataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
 import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { logRocketEvent } from 'src/services/shared';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'src/services/supabase';
-import { CustomEvents } from 'src/services/types';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialState = (): Pick<
@@ -38,30 +31,15 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             ...getInitialState(),
             resetState: () => set(getInitialState(), false, 'resetState'),
 
-            initializeSteps: (backfillEnabled) =>
+            initializeSteps: (settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
+                        state.context.loggingEvent = settings.loggingEvent;
+                        state.context.dialogMessageId =
+                            settings.dialogMessageId;
+                        state.steps = settings.steps;
+
                         const initUUID = crypto.randomUUID();
-                        const newSteps: PromptStep[] = [];
-
-                        if (backfillEnabled) {
-                            newSteps.push(...DataFlowResetSteps);
-
-                            state.context.loggingEvent =
-                                CustomEvents.DATA_FLOW_RESET;
-                            state.context.dialogMessageId =
-                                'resetDataFlow.dialog.title';
-                        } else {
-                            newSteps.push(ReviewSelectionStep);
-                            newSteps.push(PublishStep);
-
-                            state.context.loggingEvent =
-                                CustomEvents.ENTITY_SAVE;
-                            state.context.dialogMessageId =
-                                'preSavePrompt.dialog.title';
-                        }
-
-                        state.steps = newSteps;
                         state.initUUID = initUUID;
                         logRocketEvent(state.context.loggingEvent, {
                             step: 'init',

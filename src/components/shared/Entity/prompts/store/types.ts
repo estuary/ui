@@ -1,5 +1,6 @@
-import type { DataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import type { DataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/types';
 import type {
+    PromptSettings,
     PromptStep,
     PromptStepState,
 } from 'src/components/shared/Entity/prompts/types';
@@ -14,7 +15,7 @@ export interface PreSavePromptStore {
 
     retryStep: (step: number) => void;
     updateStep: (step: number, settings: Partial<PromptStepState>) => void;
-    initializeSteps: (backfillEnabled: boolean) => void;
+    initializeSteps: (settings: PromptSettings) => void;
     initUUID: string | null;
 
     activeStep: number;
