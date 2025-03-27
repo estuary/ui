@@ -1,4 +1,4 @@
-import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
+import { Box, Button, Stack, SxProps, Theme, Toolbar } from '@mui/material';
 import { authenticatedRoutes } from 'app/routes';
 import CapturesTable from 'components/tables/Captures';
 import usePageTitle from 'hooks/usePageTitle';
@@ -26,17 +26,32 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink
-                    style={{ textDecoration: 'none' }}
-                    to={authenticatedRoutes.captures.create.fullPath}
-                >
-                    <Button
-                        size="large"
-                        startIcon={<Plus style={{ fontSize: 14 }} />}
+                <Stack direction="row" spacing={1}>
+                    <NavLink
+                        style={{ textDecoration: 'none' }}
+                        to={authenticatedRoutes.captures.create.fullPath}
                     >
-                        <FormattedMessage id="capturesTable.cta.new" />
-                    </Button>
-                </NavLink>
+                        <Button
+                            size="large"
+                            startIcon={<Plus style={{ fontSize: 14 }} />}
+                        >
+                            <FormattedMessage id="capturesTable.cta.new" />
+                        </Button>
+                    </NavLink>
+
+                    <NavLink
+                        style={{ textDecoration: 'none' }}
+                        to={authenticatedRoutes.captures.createExpress.fullPath}
+                    >
+                        <Button
+                            color="info"
+                            size="large"
+                            startIcon={<Plus style={{ fontSize: 14 }} />}
+                        >
+                            <FormattedMessage id="capturesTable.cta.new" />
+                        </Button>
+                    </NavLink>
+                </Stack>
             </Toolbar>
 
             <Box sx={boxStyling}>

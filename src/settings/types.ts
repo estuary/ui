@@ -21,6 +21,7 @@ export interface EntitySetting {
     pluralId: string;
     routes: {
         connectorSelect: string;
+        createNewExpress: string;
         createNew: string;
         details: string;
         viewAll: string;

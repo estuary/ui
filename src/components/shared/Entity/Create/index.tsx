@@ -18,8 +18,7 @@ import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetai
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { BASE_ERROR } from 'services/supabase';
 import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
@@ -34,28 +33,18 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'types';
 import { hasLength } from 'utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import ValidationErrorSummary from '../ValidationErrorSummary';
-
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-    draftSpecMetadata: Pick<
-        DraftSpecSwrMetadata,
-        'draftSpecs' | 'isValidating' | 'error'
-    >;
-    toolbar: ReactNode;
-    RediscoverButton?: ReactNode;
-}
+import { EntityCreateProps } from './types';
 
 function EntityCreate({
     entityType,
     draftSpecMetadata,
-    toolbar,
+    Toolbar: toolbar,
     RediscoverButton,
-}: Props) {
+}: EntityCreateProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { resetState } = useEntityWorkflowHelpers();
@@ -200,14 +189,9 @@ function EntityCreate({
                 </ErrorBoundryWrapper>
             ) : null}
 
-            {imageTag.connectorId ? (
-                <ErrorBoundryWrapper>
-                    <EndpointConfig
-                        connectorImage={imageTag.id}
-                        hideBorder={!displayResourceConfig}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
+            <ErrorBoundryWrapper>
+                <EndpointConfig hideBorder={!displayResourceConfig} />
+            </ErrorBoundryWrapper>
 
             {displayResourceConfig ? (
                 <ErrorBoundryWrapper>

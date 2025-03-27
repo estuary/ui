@@ -218,17 +218,12 @@ function EntityEdit({
                             </ErrorBoundryWrapper>
                         ) : null}
 
-                        {imageTag.connectorId ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    readOnly={readOnly.endpointConfigForm}
-                                    hideBorder={
-                                        !hasLength(imageTag.connectorId)
-                                    }
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig
+                                readOnly={readOnly.endpointConfigForm}
+                                hideBorder={!hasLength(imageTag.connectorId)}
+                            />
+                        </ErrorBoundryWrapper>
 
                         {hasLength(imageTag.connectorId) ? (
                             <ErrorBoundryWrapper>

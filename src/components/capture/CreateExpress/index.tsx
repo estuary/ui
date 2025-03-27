@@ -1,13 +1,12 @@
 import { authenticatedRoutes } from 'app/routes';
 import CaptureGenerateButton from 'components/capture/GenerateButton';
-import RediscoverButton from 'components/capture/RediscoverButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
 } from 'components/editor/Store/hooks';
-import EntityCreate from 'components/shared/Entity/Create';
+import EntityCreateExpress from 'components/shared/Entity/Create/Express';
 import EntityToolbar from 'components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
 import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
@@ -19,9 +18,9 @@ import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import WorkflowHydrator from 'stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
 
-function CaptureCreate() {
+export default function CaptureExpressCreate() {
     usePageTitle({
-        header: authenticatedRoutes.captures.create.new.title,
+        header: authenticatedRoutes.captures.createExpress.new.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
@@ -50,8 +49,7 @@ function CaptureCreate() {
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs } = useDraftSpecs(persistedDraftId);
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();
@@ -76,9 +74,8 @@ function CaptureCreate() {
     return (
         <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <EntityCreate
+                <EntityCreateExpress
                     entityType={entityType}
-                    draftSpecMetadata={draftSpecsMetadata}
                     Toolbar={
                         <EntityToolbar
                             waitTimes={{
@@ -104,16 +101,8 @@ function CaptureCreate() {
                             }
                         />
                     }
-                    RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                        />
-                    }
                 />
             </MutateDraftSpecProvider>
         </WorkflowHydrator>
     );
 }
-
-export default CaptureCreate;
