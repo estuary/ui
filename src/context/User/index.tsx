@@ -4,8 +4,11 @@ import { useEffect } from 'react';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { logRocketConsole, logRocketEvent } from 'src/services/shared';
-import { getUserDetails } from 'src/services/supabase';
+import {
+    getUserDetails,
+    logRocketConsole,
+    logRocketEvent,
+} from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 const UserStoreProvider = ({ children }: BaseComponentProps) => {

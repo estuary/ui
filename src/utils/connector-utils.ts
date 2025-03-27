@@ -5,7 +5,10 @@
 
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { ConnectorConfig } from 'deps/flow/flow';
-import type { ConnectorsQuery_DetailsForm } from 'src/api/connectors';
+import type {
+    ConnectorsQuery_DetailsForm,
+    ConnectorTag_Base,
+} from 'src/api/connectors';
 import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
 import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
@@ -16,9 +19,8 @@ import type {
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
 import type { DekafConfig } from 'src/types';
-import type { ConnectorVersionEvaluationOptions } from 'src/utils/workflow-utils';
 
-import { evaluateConnectorVersions } from 'src/utils/workflow-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';
@@ -88,3 +90,31 @@ export const requiredConnectorColumnsExist = <Response>(
             null
         );
 };
+
+export interface ConnectorVersionEvaluationOptions {
+    connectorId: string;
+    existingImageTag: string;
+}
+
+export function evaluateConnectorVersions(
+    connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
+    options?: ConnectorVersionEvaluationOptions
+): ConnectorTag_Base {
+    // Return the version of the connector that is used by the existing task in an edit workflow.
+    if (options && options.connectorId === connector.id) {
+        const connectorsInUse = connector.connector_tags.filter(
+            (version) => version.image_tag === options.existingImageTag
+        );
+
+        if (hasLength(connectorsInUse)) {
+            return connectorsInUse[0];
+        }
+    }
+
+    // Return the latest version of a given connector.
+    const { connector_id, id, image_tag } = connector.connector_tags.sort(
+        (a, b) => b.image_tag.localeCompare(a.image_tag)
+    )[0];
+
+    return { connector_id, id, image_tag };
+}

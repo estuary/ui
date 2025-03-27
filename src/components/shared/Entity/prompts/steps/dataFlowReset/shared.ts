@@ -1,6 +1,6 @@
 import type { DataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/types';
 
-import { DEFAULT_FILTER } from 'src/services/supabase';
+import { DEFAULT_FILTER } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({

@@ -8,7 +8,7 @@ import navArrowLeftDark from 'src/images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'src/images/graph-icons/nav-arrow-left__light.svg';
 import navArrowRightDark from 'src/images/graph-icons/nav-arrow-right__dark.svg';
 import navArrowRightLight from 'src/images/graph-icons/nav-arrow-right__light.svg';
-import { DEFAULT_FILTER } from 'src/services/supabase';
+import { DEFAULT_FILTER } from 'src/services/shared';
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,

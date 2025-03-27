@@ -11,9 +11,8 @@ import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpec
 import { supabaseClient } from 'src/context/GlobalProviders';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
-import { logRocketEvent } from 'src/services/shared';
+import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
-    DEFAULT_FILTER,
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
     TABLES,

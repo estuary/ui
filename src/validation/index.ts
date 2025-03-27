@@ -1,7 +1,5 @@
 import type { PrefixedName_Errors } from 'src/components/inputs/PrefixedName/types';
 
-import { hasLength } from 'src/utils/misc-utils';
-
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
@@ -38,7 +36,7 @@ export const validateCatalogName = (
     allowBlank?: boolean,
     allowEndSlash?: boolean
 ): PrefixedName_Errors => {
-    const isBlank = !hasLength(value);
+    const isBlank = !Boolean(value && value.length > 0);
 
     // See if this field is allowed to be blank
     if (!allowBlank && isBlank) {

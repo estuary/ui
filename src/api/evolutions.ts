@@ -1,4 +1,5 @@
-import { DEFAULT_FILTER, insertSupabase, TABLES } from 'src/services/supabase';
+import { DEFAULT_FILTER } from 'src/services/shared';
+import { insertSupabase, TABLES } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 import { suggestedName } from 'src/utils/name-utils';
 

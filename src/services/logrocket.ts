@@ -5,11 +5,8 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 
-import {
-    DEFAULT_FILTER,
-    getUserDetails,
-    OAUTH_OPERATIONS,
-} from 'src/services/supabase';
+import { OAUTH_OPERATIONS } from 'src/api/shared';
+import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
 import { getLogRocketSettings } from 'src/utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts

@@ -1,7 +1,7 @@
 import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
-import type { ConnectorVersionEvaluationOptions } from 'src/utils/workflow-utils';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 
 import { useCallback, useEffect, useMemo } from 'react';
 
@@ -15,9 +15,11 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsForm_changed_connectorId } from 'src/stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { getConnectorMetadata } from 'src/utils/connector-utils';
+import {
+    evaluateConnectorVersions,
+    getConnectorMetadata,
+} from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { evaluateConnectorVersions } from 'src/utils/workflow-utils';
 import { MAC_ADDR_RE } from 'src/validation';
 
 export default function useConnectorField(

@@ -24,11 +24,6 @@ import { hasLength } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
-// Used to mark fields that should be removed during generation. This is
-//      only here because if we set something to null and then check for nulls
-//      we might end up overwritting a value a user specifically wants a null for.
-export const REMOVE_DURING_GENERATION = undefined;
-
 export const getCollections = (configs: ResourceConfigDictionary) => {
     return Object.values(configs);
 };

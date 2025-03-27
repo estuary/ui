@@ -1,6 +1,6 @@
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { DEFAULT_FILTER } from 'src/services/shared';
 import {
-    DEFAULT_FILTER,
     insertSupabase,
     JOB_STATUS_COLUMNS,
     TABLES,

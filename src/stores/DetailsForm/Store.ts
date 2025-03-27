@@ -3,7 +3,7 @@ import type {
     Details,
     DetailsFormState,
 } from 'src/stores/DetailsForm/types';
-import type { ConnectorVersionEvaluationOptions } from 'src/utils/workflow-utils';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
