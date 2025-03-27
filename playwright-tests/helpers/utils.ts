@@ -187,7 +187,9 @@ export const inituser = async (
             page.getByText(`Get started with Estuary Flow`)
         ).toBeVisible();
         await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
-        await page.getByRole('button', { name: 'Continue' }).click();
+        await page
+            .getByRole('button', { name: 'Complete Registration' })
+            .click();
 
         updateSavedAuth(filePath, {
             tenant: newTenant,
