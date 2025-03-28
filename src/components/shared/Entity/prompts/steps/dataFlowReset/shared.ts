@@ -1,5 +1,5 @@
 import type { DataFlowResetContext } from 'components/shared/Entity/prompts/steps/dataFlowReset/types';
-import { DEFAULT_FILTER } from 'services/supabase';
+import { DEFAULT_FILTER } from 'services/shared';
 
 import { CustomEvents } from 'services/types';
 

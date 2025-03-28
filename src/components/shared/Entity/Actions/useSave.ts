@@ -15,8 +15,7 @@ import { useEntityWorkflow_Editing } from 'context/Workflow';
 import useJobStatusPoller from 'hooks/useJobStatusPoller';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { DEFAULT_FILTER } from 'services/supabase';
+import { logRocketEvent, DEFAULT_FILTER } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import {
     useBinding_collections,
