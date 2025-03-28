@@ -1,4 +1,13 @@
 import { TableRow, useTheme } from '@mui/material';
+
+import EditTask from '../cells/EditTask';
+import EntityNameLink from '../cells/EntityNameLink';
+import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+import { selectKeyValueName } from '../shared';
+
 import { CaptureQueryWithStats } from 'src/api/liveSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
 import Connector from 'src/components/tables/cells/Connector';
@@ -7,15 +16,8 @@ import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { useEntityType } from 'src/context/EntityContext';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { StatsResponse } from 'src/stores/Tables/Store';
 import { SelectTableStoreNames } from 'src/stores/names';
-import EditTask from '../cells/EditTask';
-import EntityNameLink from '../cells/EntityNameLink';
-import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { selectKeyValueName } from '../shared';
+import { StatsResponse } from 'src/stores/Tables/Store';
 
 interface RowsProps {
     data: CaptureQueryWithStats[];

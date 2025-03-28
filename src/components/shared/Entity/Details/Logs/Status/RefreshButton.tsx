@@ -1,6 +1,8 @@
 import { Button } from '@mui/material';
+
 import { Refresh } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';

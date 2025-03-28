@@ -1,12 +1,15 @@
+import { useState } from 'react';
+
 import { Button, Collapse, Stack } from '@mui/material';
+
+import DiffViewer from './DiffViewer';
+import ReviewTable from './ReviewTable';
+import { useIntl } from 'react-intl';
+
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import DiffViewer from './DiffViewer';
-import ReviewTable from './ReviewTable';
 
 function ReviewSelection() {
     const intl = useIntl();

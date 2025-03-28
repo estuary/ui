@@ -5,9 +5,11 @@ import {
     RadioGroup,
     Typography,
 } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import LegacySingleStep from 'src/components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'src/components/transformation/create/legacy/Wrapper';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useTransformationCreate_language,
     useTransformationCreate_setLanguage,

@@ -1,3 +1,5 @@
+import { useEffect, useMemo } from 'react';
+
 import {
     FormControl,
     FormControlLabel,
@@ -5,11 +7,12 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
+
+import { isEqual, isObject } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import useAutoDiscovery from 'src/components/capture/useAutoDiscovery';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
-import { isEqual, isObject } from 'lodash';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
     Box,
     Table,
@@ -8,15 +10,16 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { AccessGrantRowConfirmation } from '../AccessGrants/types';
+import { ConfirmationWithExplanationProps } from './types';
+import { WarningTriangle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import { alertColorsReversed } from 'src/context/Theme';
 import { AccessGrantRemovalSeverity } from 'src/hooks/useAccessGrantRemovalDescriptions';
-import { WarningTriangle } from 'iconoir-react';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { ConfirmationWithExplanationProps } from './types';
 
 function ConfirmationWithExplanation({
     message,

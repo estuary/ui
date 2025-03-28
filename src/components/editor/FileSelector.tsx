@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { ListItemText } from '@mui/material';
 import {
     DataGrid,
@@ -5,6 +7,9 @@ import {
     GridRenderCellParams,
     GridRowSelectionModel,
 } from '@mui/x-data-grid';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     useEditorStore_isEditing,
     useEditorStore_isSaving,
@@ -12,8 +17,6 @@ import {
     useEditorStore_specs,
 } from 'src/components/editor/Store/hooks';
 import { dataGridListStyling } from 'src/context/Theme';
-import { useEffect, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     localZustandScope: boolean;

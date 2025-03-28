@@ -1,4 +1,5 @@
 import { Session, User } from '@supabase/supabase-js';
+
 import { UserDetails } from 'src/types';
 
 export interface AuthSession {

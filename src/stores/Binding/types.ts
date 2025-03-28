@@ -1,8 +1,11 @@
+import { StoreWithFieldSelection } from './slices/FieldSelection';
+import { StoreWithTimeTravel } from './slices/TimeTravel';
+import { DurationObjectUnits } from 'luxon';
+
 import { EvolvedCollections } from 'src/api/evolutions';
 import { TrialCollectionQuery } from 'src/api/liveSpecsExt';
 import { BooleanString } from 'src/components/shared/buttons/types';
 import { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
-import { DurationObjectUnits } from 'luxon';
 import { ResourceConfigPointers } from 'src/services/ajv';
 import { CallSupabaseResponse } from 'src/services/supabase';
 import { StoreWithHydration } from 'src/stores/extensions/Hydration';
@@ -13,8 +16,6 @@ import {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
-import { StoreWithFieldSelection } from './slices/FieldSelection';
-import { StoreWithTimeTravel } from './slices/TimeTravel';
 
 export interface CollectionMetadata {
     added?: boolean;

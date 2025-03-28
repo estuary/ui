@@ -1,5 +1,6 @@
-import { encryptConfig } from 'src/api/oauth';
 import { isPlainObject } from 'lodash';
+
+import { encryptConfig } from 'src/api/oauth';
 import { createJSONFormDefaults } from 'src/services/ajv';
 import { JsonFormsData, Schema, SupabaseInvokeResponse } from 'src/types';
 

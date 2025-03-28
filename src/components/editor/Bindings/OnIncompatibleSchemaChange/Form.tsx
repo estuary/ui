@@ -1,3 +1,8 @@
+import { useCallback, useMemo } from 'react';
+
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
+
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'src/components/editor/Store/hooks';
 import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
 import {
@@ -5,9 +10,6 @@ import {
     OnIncompatibleSchemaChangeProps,
 } from 'src/components/incompatibleSchemaChange/types';
 import useBindingIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
-import { useSnackbar } from 'notistack';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,

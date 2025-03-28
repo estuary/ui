@@ -1,5 +1,6 @@
-import { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
 import { ReactNode } from 'react';
+
+import { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
 
 export interface CollectionSelectorProps {
     selectedCollections: string[];

@@ -1,17 +1,4 @@
 import {
-    Box,
-    Stack,
-    Table,
-    TableContainer,
-    TextField,
-    Toolbar,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
-import Title from 'src/components/tables/Title';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { debounce } from 'lodash';
-import {
     ChangeEvent,
     MouseEvent,
     ReactNode,
@@ -21,14 +8,33 @@ import {
     useRef,
     useState,
 } from 'react';
+
+import {
+    Box,
+    Stack,
+    Table,
+    TableContainer,
+    TextField,
+    Toolbar,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+
+import EntityTableBody from './TableBody';
+import EntityTableFooter from './TableFooter';
+import EntityTableHeader from './TableHeader';
+import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
+
+import Title from 'src/components/tables/Title';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { Pagination } from 'src/services/supabase';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SortDirection,
     TableColumns,
@@ -37,9 +43,6 @@ import {
     TableStatuses,
 } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
-import EntityTableBody from './TableBody';
-import EntityTableFooter from './TableFooter';
-import EntityTableHeader from './TableHeader';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (

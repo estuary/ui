@@ -1,12 +1,15 @@
-import { Editor } from '@monaco-editor/react';
+import { useRef } from 'react';
+
 import { Box, Divider, Paper, useTheme } from '@mui/material';
+
+import { Editor } from '@monaco-editor/react';
+import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+
 import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import { editorToolBarSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useRef } from 'react';
 import { logRocketConsole } from 'src/services/shared';
 import { stringifyJSON } from 'src/services/stringify';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';

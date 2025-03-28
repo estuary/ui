@@ -1,6 +1,9 @@
-import { Stack, Typography } from '@mui/material';
 import { ReactNode } from 'react';
+
+import { Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
 import { CARD_AREA_HEIGHT } from 'src/utils/billing-utils';
 
 interface Props {

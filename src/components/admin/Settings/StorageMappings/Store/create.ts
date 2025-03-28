@@ -1,9 +1,11 @@
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
+
+import { StorageMappingState } from './types';
 import produce from 'immer';
+
 import { BASE_ERROR } from 'src/services/supabase';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
-import { StorageMappingState } from './types';
 
 const getInitialStateData = (): Pick<
     StorageMappingState,

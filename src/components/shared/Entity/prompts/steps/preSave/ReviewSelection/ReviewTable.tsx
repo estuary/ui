@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
     Box,
     Stack,
@@ -8,16 +10,17 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
+
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { useIntl } from 'react-intl';
+
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import { useEntityType } from 'src/context/EntityContext';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 
 function ReviewTable() {
     const intl = useIntl();

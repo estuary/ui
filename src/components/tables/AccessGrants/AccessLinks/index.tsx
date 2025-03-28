@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
+
 import { Box } from '@mui/material';
+
 import { getDirectivesByType } from 'src/api/directives';
 import Rows from 'src/components/tables/AccessGrants/AccessLinks/Rows';
 import EntityTable from 'src/components/tables/EntityTable';
 import RowSelector from 'src/components/tables/RowActions/AccessLinks/RowSelector';
-import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';

@@ -1,9 +1,11 @@
 import { Divider, Typography } from '@mui/material';
-import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
-import { useIntl } from 'react-intl';
-import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+
 import Overview from './Overview';
 import StatusResponseViewer from './StatusResponseViewer';
+import { useIntl } from 'react-intl';
+
+import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionViews() {
     const intl = useIntl();

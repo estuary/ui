@@ -1,7 +1,5 @@
 import { UTCDate } from '@date-fns/utc';
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { DataByHourRange } from 'src/components/graphs/types';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     Duration,
     isSaturday,
@@ -15,7 +13,13 @@ import {
 } from 'date-fns';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
-import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'src/services/luxon';
+
+import { DataByHourRange } from 'src/components/graphs/types';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import {
+    defaultQueryDateFormat,
+    LUXON_GRAIN_SETTINGS,
+} from 'src/services/luxon';
 import {
     escapeReservedCharacters,
     TABLES,

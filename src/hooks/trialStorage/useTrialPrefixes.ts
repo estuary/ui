@@ -1,6 +1,8 @@
-import { getStorageMappingStores } from 'src/api/storageMappings';
-import { isEqual } from 'lodash';
 import { useCallback } from 'react';
+
+import { isEqual } from 'lodash';
+
+import { getStorageMappingStores } from 'src/api/storageMappings';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';

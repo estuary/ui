@@ -1,4 +1,5 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+
 import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
 import RowSelect from 'src/components/tables/cells/RowSelect';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';

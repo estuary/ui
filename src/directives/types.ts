@@ -3,6 +3,7 @@ import {
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
 import { KeyedMutator } from 'swr';
+
 import { AppliedDirective, JoinedAppliedDirective } from 'src/types';
 
 // THESE MUST STAY IN SYNC WITH THE DB

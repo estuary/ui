@@ -1,8 +1,9 @@
+import { EntityFormState } from './types';
+
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { FormStateStoreNames } from 'src/stores/names';
 import { EntityWorkflow } from 'src/types';
-import { EntityFormState } from './types';
 
 const storeName = (workflow: EntityWorkflow | null): FormStateStoreNames => {
     switch (workflow) {

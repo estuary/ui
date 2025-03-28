@@ -1,16 +1,18 @@
 import { Skeleton, Typography } from '@mui/material';
+
+import DetailWrapper from './DetailWrapper';
+import { BaseDetailProps } from './types';
+import { useIntl } from 'react-intl';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useIntl } from 'react-intl';
 import {
     useEntityStatusStore_lastActivated,
     useEntityStatusStore_singleResponse,
 } from 'src/stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { getDataPlaneActivationStatus } from 'src/utils/entityStatus-utils';
-import DetailWrapper from './DetailWrapper';
-import { BaseDetailProps } from './types';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

@@ -1,17 +1,22 @@
-import { useEntityType } from 'src/context/EntityContext';
-import { useEntityWorkflow, useEntityWorkflow_Editing } from 'src/context/Workflow';
-import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { useEffect, useRef } from 'react';
-import { logRocketConsole } from 'src/services/shared';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { BaseComponentProps } from 'src/types';
+
 import {
     useBinding_hydrateState,
     useBinding_setActive,
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from './hooks';
+
+import { useEntityType } from 'src/context/EntityContext';
+import {
+    useEntityWorkflow,
+    useEntityWorkflow_Editing,
+} from 'src/context/Workflow';
+import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { BaseComponentProps } from 'src/types';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls

@@ -5,6 +5,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import EntityStatus from 'src/components/tables/cells/EntityStatus';
 import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 

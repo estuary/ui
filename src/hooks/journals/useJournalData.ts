@@ -1,11 +1,15 @@
-import { singleCallSettings } from 'src/context/SWR';
-import { useUserStore } from 'src/context/User/useUserContextStore';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { loadDocuments } from './shared';
+import { LoadDocumentsOffsets } from './types';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
-import useJournalStore from 'src/stores/JournalData/Store';
 import useSWR from 'swr';
+
+import { singleCallSettings } from 'src/context/SWR';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import useJournalStore from 'src/stores/JournalData/Store';
 import {
     getJournals,
     isNestedProtocolListResponse,
@@ -13,8 +17,6 @@ import {
     shouldRefreshToken,
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { loadDocuments } from './shared';
-import { LoadDocumentsOffsets } from './types';
 
 const errorRetryCount = 2;
 

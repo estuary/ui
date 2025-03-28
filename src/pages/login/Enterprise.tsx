@@ -1,7 +1,8 @@
+import LoginWrapper from './Wrapper';
+
 import SSOForm from 'src/components/login/SSO';
 import useLoginStateHandler from 'src/hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import LoginWrapper from './Wrapper';
 
 const titleKey = 'routeTitle.login.sso';
 const ogDescriptionKey = `${titleKey}.description`;

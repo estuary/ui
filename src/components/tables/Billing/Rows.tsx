@@ -1,9 +1,11 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import { Invoice } from 'src/api/billing';
-import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
-import { FormattedMessage } from 'react-intl';
+import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { InvoiceId, invoiceId } from 'src/utils/billing-utils';
 

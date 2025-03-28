@@ -1,7 +1,8 @@
+import { useShallow } from 'zustand/react/shallow';
+
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { useShallow } from 'zustand/react/shallow';
 
 function useStepIsIdle() {
     const stepIndex = useLoopIndex();

@@ -1,7 +1,10 @@
-import { Box, Button, Tab, Tabs } from '@mui/material';
-import { TabOptions } from 'src/components/editor/Bindings/types';
 import { Dispatch, SetStateAction, useMemo } from 'react';
+
+import { Box, Button, Tab, Tabs } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
+import { TabOptions } from 'src/components/editor/Bindings/types';
 import { MuiTabProps } from 'src/types';
 
 interface BindingTabsProps {

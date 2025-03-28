@@ -1,16 +1,19 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import { Box, Stack, Typography } from '@mui/material';
+
+import { DateTime } from 'luxon';
+import { FormattedMessage } from 'react-intl';
+import { NavLink, useLocation } from 'react-router-dom';
+
 import {
-    MultiplePaymentMethods,
     getPaymentMethodsForTenants,
+    MultiplePaymentMethods,
 } from 'src/api/billing';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useTenantBillingDetails } from 'src/context/fetcher/TenantBillingDetails';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { DateTime } from 'luxon';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { NavLink, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'src/services/shared';
 import useNotificationStore, {
     notificationStoreSelectors,

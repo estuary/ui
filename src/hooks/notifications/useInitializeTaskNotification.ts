@@ -1,16 +1,18 @@
+import { useCallback, useMemo } from 'react';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import {
     AlertSubscriptionQuery,
-    DataProcessingAlertQuery,
     createNotificationSubscription,
+    DataProcessingAlertQuery,
     getNotificationSubscriptionForUser,
     getTaskNotification,
 } from 'src/api/alerts';
-import { useCallback, useMemo } from 'react';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { useUserStore } from 'src/context/User/useUserContextStore';
 
 function useInitializeTaskNotification(catalogName: string) {
     const user = useUserStore((state) => state.user);

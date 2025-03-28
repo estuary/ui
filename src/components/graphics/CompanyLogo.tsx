@@ -1,7 +1,9 @@
 import { useTheme } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import darkLogo from 'src/images/combination-marks/combination-mark__multi-blue.png';
 import lightLogo from 'src/images/combination-marks/combination-mark__white.png';
-import { useIntl } from 'react-intl';
 
 function CompanyLogo() {
     const intl = useIntl();

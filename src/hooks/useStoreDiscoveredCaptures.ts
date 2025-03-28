@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { getDraftSpecsBySpecType } from 'src/api/draftSpecs';
 import {
     useEditorStore_setId,
@@ -7,7 +9,6 @@ import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
@@ -15,8 +16,8 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
 import { Entity } from 'src/types';
 import {
-    SupabaseConfig,
     modifyDiscoveredDraftSpec,
+    SupabaseConfig,
 } from 'src/utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {

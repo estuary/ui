@@ -1,11 +1,15 @@
+import { useEffect } from 'react';
+
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { PromptStepState } from '../../../types';
+import { useIntl } from 'react-intl';
+
 import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec } from 'src/api/draftSpecs';
 import { getLiveSpecSpec } from 'src/api/liveSpecsExt';
-
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
+import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 import {
@@ -13,9 +17,6 @@ import {
     getBindingAsFullSource,
     getCollectionName,
 } from 'src/utils/workflow-utils';
-import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { PromptStepState } from '../../../types';
 
 function MarkMaterialization() {
     const intl = useIntl();

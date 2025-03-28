@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import {
-    liveSpecsExtRelatedQuery,
     LiveSpecsExt_Related,
+    liveSpecsExtRelatedQuery,
 } from 'src/api/liveSpecsExt';
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { useMemo } from 'react';
 import {
     ENABLED_SHARDS,
     escapeReservedCharacters,

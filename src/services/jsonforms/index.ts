@@ -39,13 +39,7 @@ import {
     toDataPathSegments,
     UISchemaElement,
 } from '@jsonforms/core';
-import { concat, includes, isPlainObject, orderBy } from 'lodash';
-import isEmpty from 'lodash/isEmpty';
-import { logRocketConsole, logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { Annotations, CustomTypes, Formats, Options } from 'src/types/jsonforms';
-import JsonRefs from 'json-refs';
-import { ISO_8601_DURATION_PATTERN } from 'src/validation';
+
 import {
     ADVANCED,
     allowedNullableTypes,
@@ -53,6 +47,19 @@ import {
     LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
 } from './shared';
+import JsonRefs from 'json-refs';
+import { concat, includes, isPlainObject, orderBy } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import {
+    Annotations,
+    CustomTypes,
+    Formats,
+    Options,
+} from 'src/types/jsonforms';
+import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
     Collapse,
     IconButton,
@@ -7,18 +9,19 @@ import {
     Stack,
     useTheme,
 } from '@mui/material';
+
+import {
+    NavArrowDown,
+    NavArrowRight,
+    WarningCircle,
+    Xmark,
+} from 'iconoir-react';
+
 import {
     useEditorStore_removeStaleStatus,
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
 import { defaultOutline } from 'src/context/Theme';
-import {
-    Xmark,
-    NavArrowDown,
-    NavArrowRight,
-    WarningCircle,
-} from 'iconoir-react';
-import { useState } from 'react';
 import {
     useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,

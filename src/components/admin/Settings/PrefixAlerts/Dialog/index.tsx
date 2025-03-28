@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import {
     Button,
     Dialog,
@@ -9,14 +11,15 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
-import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import EmailListField from './EmailListField';
 import PrefixField from './PrefixField';
 import ServerErrors from './ServerErrors';
+import { Xmark } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 
 interface Props {
     headerId: string;

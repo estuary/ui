@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { DIRECTIVES } from 'src/directives/shared';
 import { UserClaims } from 'src/directives/types';
@@ -19,8 +20,8 @@ import {
     AppliedDirective,
     Directive,
     GrantDirective,
-    GrantDirectiveSpec,
     GrantDirective_AccessLinks,
+    GrantDirectiveSpec,
     JoinedAppliedDirective,
     Schema,
 } from 'src/types';

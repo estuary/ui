@@ -1,9 +1,11 @@
+import { Box, ChipProps, Tooltip } from '@mui/material';
+
+import StyledChip from './StyledChip';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Box, ChipProps, Tooltip } from '@mui/material';
-import { truncateTextSx } from 'src/context/Theme';
 import { useIntl } from 'react-intl';
-import StyledChip from './StyledChip';
+
+import { truncateTextSx } from 'src/context/Theme';
 
 interface Props {
     tagProps: Partial<ChipProps>;

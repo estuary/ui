@@ -1,10 +1,12 @@
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
+
 import produce from 'immer';
+
 import { SelectTableStoreNames } from 'src/stores/names';
 import { BillingTableState } from 'src/stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'src/stores/Tables/Store';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
 
 export const getInitialState = (
     set: NamedSet<BillingTableState>,

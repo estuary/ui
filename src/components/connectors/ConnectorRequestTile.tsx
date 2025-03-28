@@ -1,10 +1,10 @@
 import { Typography, useTheme } from '@mui/material';
-import ConnectorCard from 'src/components/connectors/card';
 
+import ConnectorCardTitle from './card/Title';
 import { PlusSquare } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import ConnectorCardTitle from './card/Title';
+import ConnectorCard from 'src/components/connectors/card';
 
 function ConnectorRequestTile() {
     const intl = useIntl();

@@ -1,17 +1,7 @@
-import { Box, Stack, Table, TableContainer } from '@mui/material';
-import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
-import TableColumnSelector from 'src/components/editor/Bindings/FieldSelection/TableColumnSelector';
-import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import Rows from 'src/components/tables/FieldSelection/Rows';
-import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { SortDirection, TableState, TableStatuses } from 'src/types';
+
+import { Box, Stack, Table, TableContainer } from '@mui/material';
+
 import FieldFilter from './FieldFilter';
 import {
     evaluateColumnsToShow,
@@ -19,6 +9,19 @@ import {
     tableColumns,
 } from './shared';
 import { FieldSelectionTableProps } from './types';
+import { useIntl } from 'react-intl';
+
+import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
+import TableColumnSelector from 'src/components/editor/Bindings/FieldSelection/TableColumnSelector';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import Rows from 'src/components/tables/FieldSelection/Rows';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
+import { SortDirection, TableState, TableStatuses } from 'src/types';
 
 export default function FieldSelectionTable({
     bindingUUID,

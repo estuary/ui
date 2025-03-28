@@ -1,11 +1,14 @@
+import { ReactElement, useMemo } from 'react';
+
 import { Divider, Stack, Typography } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
+
+import FullPageWrapper from 'src/app/FullPageWrapper';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import Error from 'src/components/shared/Error';
 import { ErrorDetails } from 'src/components/shared/Error/types';
-import FullPageWrapper from 'src/app/FullPageWrapper';
-import { ReactElement, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useMount } from 'react-use';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 

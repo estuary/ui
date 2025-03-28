@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
+
+import Selector from './Selector';
+
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import Error from 'src/components/shared/Error';
 import { useLiveSpecsExt_related } from 'src/hooks/useLiveSpecsExt';
-import Selector from './Selector';
 
 function SelectMaterialization() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();

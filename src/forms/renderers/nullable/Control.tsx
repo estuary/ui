@@ -1,13 +1,16 @@
+import { useMemo } from 'react';
+
 import { RankedTester, rankWith } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { useMemo } from 'react';
+
+import { optionExists } from '../Overrides/testers/testers';
+import { nullableRank } from './shared';
+
 import { AllowedNullable } from 'src/services/jsonforms/shared';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { Options } from 'src/types/jsonforms';
-import { optionExists } from '../Overrides/testers/testers';
-import { nullableRank } from './shared';
 
 const { MaterialNumberControl, MaterialIntegerControl, MaterialTextControl } =
     Unwrapped;

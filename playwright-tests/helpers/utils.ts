@@ -1,14 +1,14 @@
-import { expect, Page, request, TestType } from '@playwright/test';
 import { inbucketURL } from '../tests/props';
-
-import path = require('path');
-import fs = require('fs');
 import {
     AuthFile,
     AuthProps,
     Entity,
     StartSessionWithUserResponse,
 } from './types';
+import { expect, Page, request, TestType } from '@playwright/test';
+
+import path = require('path');
+import fs = require('fs');
 
 // https://www.bekapod.dev/articles/supabase-magic-login-testing-with-playwright/
 

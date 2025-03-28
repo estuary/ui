@@ -1,10 +1,12 @@
-import useEntityStatus from 'src/hooks/entityStatus/useEntityStatus';
 import { useEffect } from 'react';
-import { useMount } from 'react-use';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
+
 import { useEntityStatusStore } from './Store';
 import { HydratorProps } from './types';
+import { useMount } from 'react-use';
+
+import useEntityStatus from 'src/hooks/entityStatus/useEntityStatus';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 export default function EntityStatusHydrator({
     catalogName,

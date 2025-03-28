@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
     Box,
     Chip as MuiChip,
@@ -6,12 +8,13 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
-import { defaultOutline, underlineTextSx } from 'src/context/Theme';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { stripPathing } from 'src/utils/misc-utils';
+
 import LinkWrapper from '../LinkWrapper';
 import { ChipWrapperProps } from './types';
+import { useIntl } from 'react-intl';
+
+import { defaultOutline, underlineTextSx } from 'src/context/Theme';
+import { stripPathing } from 'src/utils/misc-utils';
 
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),

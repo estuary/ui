@@ -1,21 +1,22 @@
-import { expect, test, Page } from '@playwright/test';
 import { beforeEach } from 'node:test';
+
+import {
+    discover_HelloWorld,
+    editEndpoint_HelloWorld,
+    testConfig,
+} from '../helpers/captures';
+import { AuthProps } from '../helpers/types';
 import { USERS } from '../helpers/users';
 import {
     defaultLocalStorage,
     defaultPageSetup,
     inituser,
     openDetailsFromTable,
-    startSessionWithUser,
     saveAndPublish,
+    startSessionWithUser,
 } from '../helpers/utils';
-import {
-    discover_HelloWorld,
-    editEndpoint_HelloWorld,
-    testConfig,
-} from '../helpers/captures';
 import { messageDescription, timeDescription } from './props';
-import { AuthProps } from '../helpers/types';
+import { expect, Page, test } from '@playwright/test';
 
 test.describe.serial('Collections:', () => {
     const uuid = crypto.randomUUID().split('-')[0];

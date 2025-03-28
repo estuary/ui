@@ -1,4 +1,8 @@
 import { useEffect, useMemo } from 'react';
+
+import useShardsList from './useShardsList';
+import useShardStatusDefaultColor from './useShardStatusDefaultColor';
+
 import {
     useShardDetail_setDefaultMessageId,
     useShardDetail_setDefaultStatusColor,
@@ -7,8 +11,6 @@ import {
     useShardDetail_setShards,
 } from 'src/stores/ShardDetail/hooks';
 import { ShardStatusMessageIds } from 'src/stores/ShardDetail/types';
-import useShardsList from './useShardsList';
-import useShardStatusDefaultColor from './useShardStatusDefaultColor';
 
 function useShardHydration(
     querySettings: any[],

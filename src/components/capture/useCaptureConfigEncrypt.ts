@@ -1,9 +1,10 @@
-import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useCallback } from 'react';
+
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
+    useEndpointConfigStore_endpointSchema,
 } from 'src/stores/EndpointConfig/hooks';
 import { Schema } from 'src/types';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';

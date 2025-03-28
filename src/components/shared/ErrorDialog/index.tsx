@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import {
     Dialog,
     DialogActions,
@@ -5,7 +7,7 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
-import { ReactNode } from 'react';
+
 import AlertBox from '../AlertBox';
 
 const ARIA_DESC_ID = '-dialog-description';

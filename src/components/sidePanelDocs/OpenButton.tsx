@@ -7,9 +7,11 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
+
 import { SidebarCollapse } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';

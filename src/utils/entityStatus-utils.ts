@@ -1,4 +1,5 @@
 import { PaletteMode } from '@mui/material';
+
 import {
     errorMain,
     SemanticColor,

@@ -1,4 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,

@@ -1,3 +1,5 @@
+import { BooleanParam, useQueryParam } from 'use-query-params';
+
 import ShardsEditor from 'src/components/editor/Shards';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import DetailsFormForm from 'src/components/shared/Entity/DetailsForm/Form';
@@ -7,7 +9,6 @@ import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
-import { BooleanParam, useQueryParam } from 'use-query-params';
 
 function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
     const [forcedToEnable] = useQueryParam(

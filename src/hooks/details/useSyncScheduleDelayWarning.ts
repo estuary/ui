@@ -1,8 +1,10 @@
-import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'src/services/shared';
+
 import { Duration } from 'luxon';
+import { useIntl } from 'react-intl';
+
+import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 export function useSyncScheduleDelayWarning() {

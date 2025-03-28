@@ -1,10 +1,15 @@
+import type { LogProps } from 'src/components/logs';
+
+import { useState } from 'react';
+
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
-import Logs, { type LogProps } from 'src/components/logs';
+
+import { NavArrowDown } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import Logs from 'src/components/logs';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { linkButtonSx } from 'src/context/Theme';
-import { NavArrowDown } from 'iconoir-react';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 export interface ErrorLogsProps {
     logToken?: string | null;

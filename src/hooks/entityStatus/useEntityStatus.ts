@@ -1,11 +1,12 @@
+import { DateTime } from 'luxon';
+import useSWR from 'swr';
+
 import { getEntityStatus } from 'src/api/entityStatus';
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { DateTime } from 'luxon';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
-import useSWR from 'swr';
 import { hasLength } from 'src/utils/misc-utils';
 
 type EntityStatusFetcherArgs = [string, string];

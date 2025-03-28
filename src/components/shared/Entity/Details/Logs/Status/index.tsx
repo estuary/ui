@@ -1,16 +1,18 @@
 import { Box, Stack, Typography } from '@mui/material';
-import UnderDev from 'src/components/shared/UnderDev';
-import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useIntl } from 'react-intl';
-import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
+
 import SectionUpdated from './Overview/SectionUpdated';
 import RefreshButton from './RefreshButton';
 import SectionFormatter from './SectionFormatter';
 import SectionViews from './SectionViews';
 import ServerError from './ServerError';
+import { useIntl } from 'react-intl';
+
+import UnderDev from 'src/components/shared/UnderDev';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
 
 export default function Status() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

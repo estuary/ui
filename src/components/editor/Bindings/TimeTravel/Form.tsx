@@ -1,15 +1,19 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { StyledEngineProvider } from '@mui/material';
+
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { StyledEngineProvider } from '@mui/material';
+
+import useTimeTravel from './useTimeTravel';
 import { useSnackbar } from 'notistack';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'src/services/jsonforms/shared';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import useTimeTravel from './useTimeTravel';
 
 interface Props {
     bindingUUID: string;

@@ -1,4 +1,9 @@
+import { useEffect, useRef } from 'react';
+
 import { AlertTitle, Collapse } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import DetailsErrors from 'src/components/shared/Entity/ValidationErrorSummary/DetailsErrors';
 import EndpointConfigErrors from 'src/components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
@@ -8,8 +13,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
-import { useEffect, useRef } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useBinding_fullSourceErrorsExist,
     useBinding_hydrationErrorsExist,
@@ -17,8 +20,8 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_errorsExist,
     useEndpointConfig_hydrationErrorsExist,
+    useEndpointConfigStore_errorsExist,
 } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_displayValidation } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';

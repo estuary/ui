@@ -1,3 +1,11 @@
+import { ConnectorConfig } from '../../deps/flow/flow';
+import { isDekafEndpointConfig } from './connector-utils';
+import {
+    addOrRemoveOnIncompatibleSchemaChange,
+    addOrRemoveSourceCapture,
+} from './entity-utils';
+import { isBoolean, isEmpty } from 'lodash';
+
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
@@ -7,7 +15,6 @@ import {
     FieldSelectionType,
 } from 'src/components/editor/Bindings/FieldSelection/types';
 import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
 import { CallSupabaseResponse } from 'src/services/supabase';
 import {
     FullSource,
@@ -22,12 +29,6 @@ import {
     SourceCaptureDef,
 } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { isDekafEndpointConfig } from './connector-utils';
-import {
-    addOrRemoveOnIncompatibleSchemaChange,
-    addOrRemoveSourceCapture,
-} from './entity-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;

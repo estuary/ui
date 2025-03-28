@@ -1,3 +1,7 @@
+import { useCallback, useMemo } from 'react';
+
+import produce from 'immer';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -5,8 +9,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import produce from 'immer';
-import { useCallback, useMemo } from 'react';
 import { Schema } from 'src/types';
 
 function useShards() {

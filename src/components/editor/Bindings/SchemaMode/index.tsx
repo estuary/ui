@@ -1,5 +1,7 @@
 import { FormControl, FormControlLabel, Switch } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 

@@ -1,6 +1,11 @@
-import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { useMemo } from 'react';
+
+import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+
+import TableLoadingRows from '../Loading';
+import { ColumnProps } from './types';
 import { FormattedMessage } from 'react-intl';
+
 import { TableIntlConfig, TableState } from 'src/types';
 import {
     getColumnKeyList,
@@ -8,8 +13,6 @@ import {
     getEmptyTableMessage,
     getTableComponents,
 } from 'src/utils/table-utils';
-import TableLoadingRows from '../Loading';
-import { ColumnProps } from './types';
 
 interface Props {
     columns: ColumnProps[];

@@ -1,4 +1,12 @@
 import { TableRow, useTheme } from '@mui/material';
+
+import EditTask from '../cells/EditTask';
+import EntityNameLink from '../cells/EntityNameLink';
+import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+
 import { MaterializationQueryWithStats } from 'src/api/liveSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
 import Connector from 'src/components/tables/cells/Connector';
@@ -9,12 +17,6 @@ import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { StatsResponse } from 'src/stores/Tables/Store';
-import EditTask from '../cells/EditTask';
-import EntityNameLink from '../cells/EntityNameLink';
-import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];

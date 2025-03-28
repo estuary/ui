@@ -1,5 +1,6 @@
-import KeyValueList from 'src/components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
+
+import KeyValueList from 'src/components/shared/KeyValueList';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { hasLength } from 'src/utils/misc-utils';
 

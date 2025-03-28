@@ -1,8 +1,11 @@
-import { AlertColor, SnackbarProps } from '@mui/material';
 import { ReactNode } from 'react';
-import { devtoolsOptions } from 'src/utils/store-utils';
+
+import { AlertColor, SnackbarProps } from '@mui/material';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 export interface Notification {
     title: string | ReactNode;

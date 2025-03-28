@@ -1,4 +1,12 @@
 import { TableRow, useTheme } from '@mui/material';
+
+import EntityNameLink from '../cells/EntityNameLink';
+import RowSelect from '../cells/RowSelect';
+import Bytes from '../cells/stats/Bytes';
+import Docs from '../cells/stats/Docs';
+import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+import { selectKeyValueName } from '../shared';
+
 import { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
@@ -6,14 +14,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'src/stores/names';
-
 import { StatsResponse } from 'src/stores/Tables/Store';
-import EntityNameLink from '../cells/EntityNameLink';
-import RowSelect from '../cells/RowSelect';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { selectKeyValueName } from '../shared';
 
 interface RowProps {
     isSelected: boolean;

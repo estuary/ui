@@ -1,8 +1,10 @@
-import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useEffect } from 'react';
-import { useUnmount } from 'react-use';
+
 import useJournalStore from './Store';
 import { HydratorProps } from './types';
+import { useUnmount } from 'react-use';
+
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 export default function JournalHydrator({
     catalogName,

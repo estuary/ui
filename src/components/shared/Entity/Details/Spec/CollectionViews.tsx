@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
@@ -13,7 +15,6 @@ import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useEffect } from 'react';
 
 interface Props {
     presentation: SpecPresentation;

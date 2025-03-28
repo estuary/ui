@@ -1,6 +1,8 @@
-import { Tooltip } from '@mui/material';
-import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
 import { useMemo } from 'react';
+
+import { Tooltip } from '@mui/material';
+
+import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,

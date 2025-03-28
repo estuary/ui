@@ -1,8 +1,10 @@
 import { Grid } from '@mui/material';
-import ExternalLink from 'src/components/shared/ExternalLink';
-import { FormattedMessage } from 'react-intl';
+
 import DemoButton from './DemoButton';
 import DemoStep from './Steps/Demo';
+import { FormattedMessage } from 'react-intl';
+
+import ExternalLink from 'src/components/shared/ExternalLink';
 
 const DEMO_URL =
     'https://docs.google.com/spreadsheets/d/1Cd_afDejaVXKeGxSTCupKaTtrb3a7ZHBghTemDNKE5I/edit#gid=0';

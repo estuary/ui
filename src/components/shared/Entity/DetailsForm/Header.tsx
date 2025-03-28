@@ -1,6 +1,8 @@
 import { Typography, useTheme } from '@mui/material';
+
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 interface Props {

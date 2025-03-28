@@ -3,8 +3,14 @@
 //  truly reusable. So marking the query as `any` even thogh
 //  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
 
+import { ConnectorConfig } from '../../deps/flow/flow';
+import { hasLength } from './misc-utils';
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'src/api/connectors';
+
+import {
+    ConnectorsQuery_DetailsForm,
+    ConnectorTag_Base,
+} from 'src/api/connectors';
 import { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
 import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
@@ -15,8 +21,6 @@ import {
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
 import { DekafConfig } from 'src/types';
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { hasLength } from './misc-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';

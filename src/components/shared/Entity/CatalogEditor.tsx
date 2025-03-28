@@ -1,8 +1,12 @@
 import { Paper, Typography } from '@mui/material';
+
+import AlertBox from '../AlertBox';
+import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import DraftSpecEditor from 'src/components/editor/DraftSpec';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
@@ -10,8 +14,6 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import AlertBox from '../AlertBox';
-import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 
 interface Props {
     messageId: string;

@@ -1,6 +1,8 @@
-import { ColumnProps } from 'src/components/tables/EntityTable/types';
 import { useMemo } from 'react';
+
 import { catalogNameColumn, publishedColumn } from './shared';
+
+import { ColumnProps } from 'src/components/tables/EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
     {

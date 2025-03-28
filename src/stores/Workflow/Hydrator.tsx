@@ -1,6 +1,7 @@
+import { Fragment } from 'react';
+
 import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import { Fragment } from 'react';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
 import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
 import { EndpointConfigHydrator } from 'src/stores/EndpointConfig/Hydrator';

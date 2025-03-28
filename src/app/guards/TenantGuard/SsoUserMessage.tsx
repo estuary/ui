@@ -1,9 +1,11 @@
 import { Stack, Typography } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import AlertBox from 'src/components/shared/AlertBox';
-import { useIntl } from 'react-intl';
 
 function SsoUserMessage() {
     const intl = useIntl();

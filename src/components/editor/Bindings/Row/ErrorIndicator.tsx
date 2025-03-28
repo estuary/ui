@@ -1,11 +1,13 @@
 import { Typography, useTheme } from '@mui/material';
+
+import { ErrorIndicatorProps } from './types';
 import { WarningCircle } from 'iconoir-react';
+
 import {
     useBinding_collectionMetadataProperty,
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
 } from 'src/stores/Binding/hooks';
-import { ErrorIndicatorProps } from './types';
 
 function BindingsSelectorErrorIndicator({
     bindingUUID,

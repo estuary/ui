@@ -1,9 +1,13 @@
+import { create, StoreApi } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
+
+import produce from 'immer';
+import { isEmpty } from 'lodash';
+
 import { getConnectors_detailsForm } from 'src/api/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import produce from 'immer';
-import { isEmpty } from 'lodash';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
@@ -32,8 +36,6 @@ import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { NAME_RE } from 'src/validation';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
 
 const STORE_KEY = 'Details Form';
 

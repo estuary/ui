@@ -1,3 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
+
+import SharedProgress from './Progress';
+import { ProgressStates, SharedProgressProps } from './types';
+
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -11,7 +16,6 @@ import Error from 'src/components/shared/Error';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import usePublications from 'src/hooks/usePublications';
-import { useEffect, useRef, useState } from 'react';
 import { jobSucceeded } from 'src/services/supabase';
 import { SelectTableStoreNames } from 'src/stores/names';
 import {
@@ -19,8 +23,6 @@ import {
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { Entity } from 'src/types';
-import SharedProgress from './Progress';
-import { ProgressStates, SharedProgressProps } from './types';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;

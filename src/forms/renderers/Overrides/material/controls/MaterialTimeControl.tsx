@@ -23,6 +23,10 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { useMemo, useState } from 'react';
+
+import { Hidden, Stack } from '@mui/material';
+
 import {
     ControlProps,
     isTimeControl,
@@ -30,13 +34,13 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Hidden, Stack } from '@mui/material';
-import TimePickerCTA from 'src/components/shared/pickers/TimePickerCTA';
-import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
-import { useMemo, useState } from 'react';
-import { hasLength } from 'src/utils/misc-utils';
+
 import { CustomMaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
+
+import TimePickerCTA from 'src/components/shared/pickers/TimePickerCTA';
+import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
+import { hasLength } from 'src/utils/misc-utils';
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes

@@ -1,5 +1,6 @@
-import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { createContext, useContext, useState } from 'react';
+
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { BaseComponentProps } from 'src/types';
 
 const OnLoadSpinnerContext = createContext<{

@@ -1,5 +1,7 @@
-import { AlertColor, Stack } from '@mui/material';
 import { useMemo } from 'react';
+
+import { AlertColor, Stack } from '@mui/material';
+
 import { LogsContextProvider } from './Context';
 import LogLines from './Lines';
 import StoppedAlert from './StoppedAlert';

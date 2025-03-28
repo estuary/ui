@@ -1,3 +1,5 @@
+import { ReactNode, useEffect, useState } from 'react';
+
 import {
     Autocomplete,
     Grid,
@@ -5,15 +7,16 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { autoCompleteDefaults_Virtual } from 'src/components/shared/AutoComplete/DefaultProps';
-import { ReactNode, useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { RelatedMaterializationSelectorProps } from './types';
-import SelectorOption from './SelectorOption';
 import NoMaterializationsFound from './NoMaterializationsFound';
+import SelectorOption from './SelectorOption';
+import { RelatedMaterializationSelectorProps } from './types';
+import { useIntl } from 'react-intl';
+
+import { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+import { autoCompleteDefaults_Virtual } from 'src/components/shared/AutoComplete/DefaultProps';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;

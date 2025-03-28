@@ -1,7 +1,9 @@
 import { Chip } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { useIntl } from 'react-intl';
 
 function SelectedChip() {
     const intl = useIntl();

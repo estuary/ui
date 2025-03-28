@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { useIntl } from 'react-intl';
+
 import Form from './Form';
+import { useIntl } from 'react-intl';
 
 function OnIncompatibleSchemaChange() {
     const intl = useIntl();

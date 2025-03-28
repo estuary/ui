@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import {
     Box,
     Stack,
@@ -6,15 +8,16 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
+import { HelpCircle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
     defaultBoxShadow,
     semiTransparentBackground,
 } from 'src/context/Theme';
-import { HelpCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
 import { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {

@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import {
     Box,
     CircularProgress,
@@ -5,11 +7,12 @@ import {
     Stack,
     useTheme,
 } from '@mui/material';
-import Error from 'src/components/shared/Error';
-import { CheckCircle, WarningCircle } from 'iconoir-react';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
+
 import { ProgressStates } from '../Shared/types';
+import { CheckCircle, WarningCircle } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import Error from 'src/components/shared/Error';
 
 interface Props {
     error: any | null;

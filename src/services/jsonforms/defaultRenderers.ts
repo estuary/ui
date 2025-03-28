@@ -1,4 +1,5 @@
 import { materialRenderers } from '@jsonforms/material-renderers';
+
 import {
     CatalogName,
     catalogNameTypeTester,
@@ -7,13 +8,19 @@ import {
     CollapsibleGroup,
     collapsibleGroupTester,
 } from 'src/forms/renderers/CollapsibleGroup';
-import { ConnectorType, connectorTypeTester } from 'src/forms/renderers/Connectors';
+import {
+    ConnectorType,
+    connectorTypeTester,
+} from 'src/forms/renderers/Connectors';
 import { DataPlane, dataPlaneTester } from 'src/forms/renderers/DataPlanes';
 import {
     DurationTypeControl,
     durationTypeTester,
 } from 'src/forms/renderers/Duration';
-import { MissingType, missingTypeTester } from 'src/forms/renderers/MissingType';
+import {
+    MissingType,
+    missingTypeTester,
+} from 'src/forms/renderers/MissingType';
 import {
     MultiLineSecret,
     multiLineSecretTester,

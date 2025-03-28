@@ -1,7 +1,10 @@
-import { Box, Button } from '@mui/material';
-import PopperWrapper from 'src/components/shared/PopperWrapper';
 import { MouseEvent, ReactNode, useState } from 'react';
+
+import { Box, Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 interface Props {
     messageId: string;

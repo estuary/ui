@@ -1,7 +1,9 @@
 import { Stack, Typography } from '@mui/material';
+
+import { DataPlaneProps } from './types';
+
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { hasLength } from 'src/utils/misc-utils';
-import { DataPlaneProps } from './types';
 
 export default function DataPlane({
     dataPlaneName,

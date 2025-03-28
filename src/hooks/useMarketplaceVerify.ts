@@ -1,13 +1,15 @@
-import { Session } from '@supabase/supabase-js';
 import { useCallback } from 'react';
+
+import { Session } from '@supabase/supabase-js';
+import retry from 'retry';
+
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { client } from 'src/services/client';
+import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { handleFailure, handleSuccess } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
 import { MarketPlaceVerifyResponse } from 'src/types';
 import { getMarketplaceSettings } from 'src/utils/env-utils';
-import retry from 'retry';
-import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { handleFailure, handleSuccess } from 'src/services/supabase';
-import { useUserStore } from 'src/context/User/useUserContextStore';
 
 const { verifyURL } = getMarketplaceSettings();
 

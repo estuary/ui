@@ -1,7 +1,7 @@
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,
+    ConnectorWithTagDetailQuery,
 } from 'src/hooks/connectors/shared';
 import {
     CONNECTOR_DETAILS,

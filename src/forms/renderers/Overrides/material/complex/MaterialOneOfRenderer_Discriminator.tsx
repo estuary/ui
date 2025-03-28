@@ -27,6 +27,20 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { useCallback, useState } from 'react';
+
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Hidden,
+    Tab,
+    Tabs,
+} from '@mui/material';
+
 import {
     and,
     CombinatorRendererProps,
@@ -39,27 +53,17 @@ import {
     schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch } from '@jsonforms/react';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Hidden,
-    Tab,
-    Tabs,
-} from '@mui/material';
+
+import CombinatorProperties from './CombinatorProperties';
+import { keys } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
 } from 'src/forms/renderers/shared';
-import { keys } from 'lodash';
-import isEmpty from 'lodash/isEmpty';
-import { useCallback, useState } from 'react';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
-import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;

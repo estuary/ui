@@ -1,9 +1,11 @@
-import produce from 'immer';
-import { SchemaEvolutionState } from 'src/stores/SchemaEvolution/types';
-import { SchemaEvolutionStoreNames } from 'src/stores/names';
-import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
+import { devtools, NamedSet } from 'zustand/middleware';
+
+import produce from 'immer';
+
+import { SchemaEvolutionStoreNames } from 'src/stores/names';
+import { SchemaEvolutionState } from 'src/stores/SchemaEvolution/types';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
     SchemaEvolutionState,

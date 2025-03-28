@@ -1,6 +1,8 @@
 import { Button, Divider, Stack, Typography } from '@mui/material';
+
 import { ReloadWindow } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 

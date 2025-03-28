@@ -1,12 +1,16 @@
+import { useCallback, useState } from 'react';
+
+import { Box, Button, Stack } from '@mui/material';
+
 import { optionIs, RankedTester, rankWith } from '@jsonforms/core';
 import {
     MaterialInputControl,
     MuiInputText,
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Box, Button, Stack } from '@mui/material';
-import { useCallback, useState } from 'react';
+
 import { DropzoneDialog } from 'react-mui-dropzone';
+
 import { Options } from 'src/types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(

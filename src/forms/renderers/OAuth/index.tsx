@@ -1,24 +1,28 @@
+import { useCallback, useEffect, useMemo } from 'react';
+
+import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
+
 import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
-import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import { optionExists } from 'src/forms/renderers/Overrides/testers/testers';
+
+import { getDiscriminator, getDiscriminatorDefaultValue } from '../shared';
+import { INJECTED_VALUES, NO_PROVIDER } from './shared';
+import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
+import { useOauthHandler } from './useOauthHandler';
 import { startCase } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+
+import FullPageSpinner from 'src/components/fullPage/Spinner';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { optionExists } from 'src/forms/renderers/Overrides/testers/testers';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'src/stores/EndpointConfig/hooks';
 import { generateCustomError } from 'src/stores/extensions/CustomErrors';
 import { Options } from 'src/types/jsonforms';
 import { hasLength } from 'src/utils/misc-utils';
-import { getDiscriminator, getDiscriminatorDefaultValue } from '../shared';
-import { INJECTED_VALUES, NO_PROVIDER } from './shared';
-import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
-import { useOauthHandler } from './useOauthHandler';
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,

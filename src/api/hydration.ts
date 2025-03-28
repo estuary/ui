@@ -1,8 +1,8 @@
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { ConnectorTag } from 'src/hooks/connectors/shared';
 import {
-    LiveSpecsExtQuery,
     LiveSpecsExt_MaterializeOrTransform,
+    LiveSpecsExtQuery,
 } from 'src/hooks/useLiveSpecsExt';
 import {
     handleFailure,

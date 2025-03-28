@@ -1,8 +1,10 @@
 import { Stack, Typography } from '@mui/material';
-import MessageWithLink from 'src/components/content/MessageWithLink';
-import { FormattedMessage } from 'react-intl';
-import { FAILED_TO_FETCH, checkErrorMessage } from 'src/services/shared';
+
 import { ExternalLinkOptions } from '../ExternalLink';
+import { FormattedMessage } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 
 interface Props {
     message: string;

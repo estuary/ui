@@ -1,6 +1,8 @@
 import { Typography } from '@mui/material';
-import EditOff from 'src/icons/EditOff';
+
 import { FormattedMessage } from 'react-intl';
+
+import EditOff from 'src/icons/EditOff';
 
 interface Props {
     iconSize: number;

@@ -1,10 +1,12 @@
-import { every, includes } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
+
+import { CLIENT_ID, CLIENT_SECRET } from './shared';
+import { every, includes } from 'lodash';
+
 import { useEndpointConfig_serverUpdateRequired } from 'src/stores/EndpointConfig/hooks';
 import { Schema } from 'src/types';
 import { Options } from 'src/types/jsonforms';
 import { hasLength } from 'src/utils/misc-utils';
-import { CLIENT_ID, CLIENT_SECRET } from './shared';
 
 export const useAllRequiredPropCheck = (
     data: any,

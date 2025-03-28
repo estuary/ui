@@ -1,17 +1,20 @@
+import { useMemo } from 'react';
+
 import { Box } from '@mui/material';
+
+import { selectKeyValueName } from '../shared';
+import CaptureExportButton from './Export';
+import useCaptureColumns from './useCaptureColumns';
+
 import { getLiveSpecs_captures } from 'src/api/liveSpecsExt';
 import Rows from 'src/components/tables/Captures/Rows';
 import EntityTable from 'src/components/tables/EntityTable';
 import RowSelector from 'src/components/tables/RowActions/RowSelector';
-import { useMemo } from 'react';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import StatsHydrator from 'src/stores/Tables/StatsHydrator';
-import { selectKeyValueName } from '../shared';
-import CaptureExportButton from './Export';
-import useCaptureColumns from './useCaptureColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.CAPTURE;
 

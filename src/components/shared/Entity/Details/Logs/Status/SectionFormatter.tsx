@@ -1,7 +1,9 @@
 import { Box } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
-import { useIntl } from 'react-intl';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionFormatter() {

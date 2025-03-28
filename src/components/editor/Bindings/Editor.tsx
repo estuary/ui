@@ -1,4 +1,12 @@
+import { useEffect, useState } from 'react';
+
 import { Box, Stack, Typography } from '@mui/material';
+
+import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
+import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
+import useBackgroundTest from './FieldSelection/useBackgroundTest';
+import { FormattedMessage } from 'react-intl';
+
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
@@ -19,15 +27,10 @@ import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useEntityType } from 'src/context/EntityContext';
 import useInitializeCollectionDraft from 'src/hooks/useInitializeCollectionDraft';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
 } from 'src/stores/Binding/hooks';
-import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
-import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
-import useBackgroundTest from './FieldSelection/useBackgroundTest';
 
 interface Props {
     itemType: string;

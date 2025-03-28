@@ -1,7 +1,9 @@
 import { InputBaseComponentProps } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'src/context/EntityContext';
-import { useIntl } from 'react-intl';
 import { useEntitiesStore_atLeastOneAdminTenant } from 'src/stores/Entities/hooks';
 
 function AdminCapabilityGuard({ children }: InputBaseComponentProps) {

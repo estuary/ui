@@ -1,8 +1,9 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
+import { KeyedMutator } from 'swr';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { TABLES } from 'src/services/supabase';
-import { KeyedMutator } from 'swr';
 import { Entity, Schema } from 'src/types';
 
 export interface DraftSpecQuery {

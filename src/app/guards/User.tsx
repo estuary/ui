@@ -1,11 +1,15 @@
+import { useEffect, useRef } from 'react';
+
 import { unauthenticatedRoutes } from 'src/app/routes';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useRef } from 'react';
+
 import 'react-reflex/styles.css';
+
 import { Navigate } from 'react-router';
+
 import { identifyUser } from 'src/services/logrocket';
 import { BaseComponentProps } from 'src/types';
 

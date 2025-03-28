@@ -1,7 +1,9 @@
 import { Collapse } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     show?: boolean;

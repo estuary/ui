@@ -1,13 +1,19 @@
+import { useState } from 'react';
+
 import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
+
 import { PostgrestError } from '@supabase/postgrest-js';
-import { INVALID_TOKEN_INTERVAL, updateRefreshTokenValidity } from 'src/api/tokens';
+import { WarningCircle } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import {
+    INVALID_TOKEN_INTERVAL,
+    updateRefreshTokenValidity,
+} from 'src/api/tokens';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import { sample_blue } from 'src/context/Theme';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { WarningCircle } from 'iconoir-react';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,

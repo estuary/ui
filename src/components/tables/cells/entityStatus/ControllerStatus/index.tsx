@@ -1,4 +1,5 @@
 import { Stack, TableCell, Typography } from '@mui/material';
+
 import StatusIndicator from './StatusIndicator';
 import { ControllerStatusProps } from './types';
 

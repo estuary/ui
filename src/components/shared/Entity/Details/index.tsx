@@ -1,4 +1,10 @@
+import { useMemo } from 'react';
+
 import { Box, Divider, Stack, Typography } from '@mui/material';
+
+import ShardHydrator from '../Shard/Hydrator';
+import { useUnmount } from 'react-use';
+
 import { createEditorStore } from 'src/components/editor/Store/create';
 import LiveSpecsHydrator from 'src/components/editor/Store/LiveSpecsHydrator';
 import EditButton from 'src/components/shared/Entity/Details/EditButton';
@@ -11,11 +17,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import { useMemo } from 'react';
-import { useUnmount } from 'react-use';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { EditorStoreNames } from 'src/stores/names';
-import ShardHydrator from '../Shard/Hydrator';
 
 // TODO: Hydrate the journal store in a single location that satisfies
 //   the needs of components dependent on its state.

@@ -1,6 +1,7 @@
+import { Align } from 'react-window';
+
 import { FetchMoreLogsFunction } from 'src/components/tables/Logs/types';
 import { LoadDocumentsOffsets, UseOpsLogsDocs } from 'src/hooks/journals/types';
-import { Align } from 'react-window';
 import { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import { OpsLogFlowDocument } from 'src/types';
 

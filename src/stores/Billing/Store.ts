@@ -1,5 +1,9 @@
+import { create } from 'zustand';
+import { devtools, NamedSet } from 'zustand/middleware';
+
 import produce from 'immer';
 import { isArray, isEqual } from 'lodash';
+
 import { BillingState, DataVolumeByTask } from 'src/stores/Billing/types';
 import {
     getInitialHydrationData,
@@ -12,8 +16,6 @@ import {
 } from 'src/utils/billing-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import { create } from 'zustand';
-import { NamedSet, devtools } from 'zustand/middleware';
 
 const getInitialStateData = (): Pick<
     BillingState,

@@ -1,4 +1,5 @@
 import { Stack, TableCell } from '@mui/material';
+
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import EntityStatus from 'src/components/tables/cells/EntityStatus';
 import { ShardEntityTypes } from 'src/stores/ShardDetail/types';

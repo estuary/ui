@@ -1,7 +1,8 @@
-import { authenticatedRoutes } from 'src/app/routes';
 import { CommonMessages } from './CommonMessages';
 import { CTAs } from './CTAs';
 import { Navigation } from './Navigation';
+
+import { authenticatedRoutes } from 'src/app/routes';
 
 export const Authentication: Record<string, string> = {
     'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,

@@ -1,5 +1,6 @@
-import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import { CompositeProjection } from '../types';
+
+import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
 export interface BaseProps {
     bindingUUID: string;

@@ -1,9 +1,11 @@
 import { Box, Grid, Typography, useTheme } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import { JsonSchemaSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import { defaultOutline, semiTransparentBackground } from 'src/context/Theme';
-import { FormattedMessage } from 'react-intl';
 
 function ListViewSkeleton() {
     const theme = useTheme();

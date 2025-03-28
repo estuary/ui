@@ -1,16 +1,20 @@
+import { useMemo } from 'react';
+
 import { Box, Stack, Typography } from '@mui/material';
+
+import { useShallow } from 'zustand/react/shallow';
+
+import { SectionWrapperProps } from './types';
+import { useIntl } from 'react-intl';
+
 import { isBeforeTrialInterval } from 'src/components/materialization/shared';
 import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
 import { useEntityType } from 'src/context/EntityContext';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledCollections,
     useBinding_collectionMetadataProperty,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useShallow } from 'zustand/react/shallow';
-import { SectionWrapperProps } from './types';
 
 export default function SectionWrapper({
     alertMessageId,

@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction, useState } from 'react';
+
 import {
     Box,
     Dialog,
@@ -7,13 +9,14 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+import { Xmark } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
 import GenerateGrant from 'src/components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
-import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'share-data-dialog-title';
 

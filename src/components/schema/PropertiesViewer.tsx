@@ -1,4 +1,11 @@
+import { useState } from 'react';
+
 import { Box, Collapse, Grid, Stack, Typography } from '@mui/material';
+
+import ExistFilter from './ExistFilter';
+import { FieldFilter } from './types';
+import { FormattedMessage } from 'react-intl';
+
 import {
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponseError,
@@ -8,10 +15,6 @@ import MonacoEditor, {
 } from 'src/components/editor/MonacoEditor';
 import AlertBox from 'src/components/shared/AlertBox';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import ExistFilter from './ExistFilter';
-import { FieldFilter } from './types';
 
 interface Props {
     disabled: boolean;

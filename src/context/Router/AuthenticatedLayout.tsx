@@ -1,5 +1,6 @@
-import AppLayout from 'src/app/Layout';
 import Authenticated from './Authenticated';
+
+import AppLayout from 'src/app/Layout';
 
 function AuthenticatedLayout() {
     return (

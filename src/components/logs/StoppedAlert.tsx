@@ -1,8 +1,10 @@
 import { Button, Collapse } from '@mui/material';
+
+import { useLogsContext } from './Context';
+import { FormattedMessage } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import { linkButtonSx } from 'src/context/Theme';
-import { FormattedMessage } from 'react-intl';
-import { useLogsContext } from './Context';
 
 function StoppedAlert() {
     const { networkFailure, stopped, reset, fetchingCanSafelyStop } =

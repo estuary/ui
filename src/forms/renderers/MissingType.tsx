@@ -1,6 +1,8 @@
+import { Alert, Hidden } from '@mui/material';
+
 import { LayoutProps, RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
 import { withJsonFormsLayoutProps } from '@jsonforms/react';
-import { Alert, Hidden } from '@mui/material';
+
 import { CustomTypes } from 'src/types/jsonforms';
 
 export const missingTypeTester: RankedTester = rankWith(

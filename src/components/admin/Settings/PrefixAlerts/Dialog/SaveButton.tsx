@@ -1,19 +1,21 @@
+import { useMemo, useState } from 'react';
+
+import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
+import { union } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import {
     createNotificationSubscription,
     deleteNotificationSubscription,
 } from 'src/api/alerts';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { union } from 'lodash';
-import { useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { SelectTableStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
 interface Props {
     closeDialog: () => void;

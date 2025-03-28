@@ -1,9 +1,10 @@
+import { useMemo } from 'react';
+
 import MonacoEditor from 'src/components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import { useEditorStore_queryResponse_isValidating } from 'src/components/editor/Store/hooks';
 import EmptySQLEditor from 'src/components/transformation/create/Config/SQLEditor/Empty';
 import useSQLEditor from 'src/components/transformation/create/Config/SQLEditor/useSQLEditor';
-import { useMemo } from 'react';
 import { useTransformationCreate_selectedAttribute } from 'src/stores/TransformationCreate/hooks';
 
 interface Props {

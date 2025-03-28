@@ -1,13 +1,14 @@
-import { useIntl } from 'react-intl';
-import { useSnackbar } from 'notistack';
-import { logRocketConsole } from 'src/services/shared';
-import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
-
-import { useNavigate } from 'react-router-dom';
-import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useEffect } from 'react';
-import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
+
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+
+import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
+import { logRocketConsole } from 'src/services/shared';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this

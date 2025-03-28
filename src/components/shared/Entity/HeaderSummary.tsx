@@ -1,7 +1,9 @@
 import { AlertColor, Box, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'src/types';
+
 import AlertBox from '../AlertBox';
+import { FormattedMessage } from 'react-intl';
+
+import { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {
     severity: AlertColor;

@@ -1,8 +1,11 @@
+import { useState } from 'react';
+
 import { Button } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/EditProjection/Dialog';
 import { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     operation: 'addProjection' | 'renameField';

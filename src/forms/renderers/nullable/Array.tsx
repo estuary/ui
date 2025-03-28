@@ -4,10 +4,12 @@ import {
     RankedTester,
     rankWith,
 } from '@jsonforms/core';
-import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
-import { Options } from 'src/types/jsonforms';
 import { Unwrapped } from '@jsonforms/material-renderers';
+import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
+
 import { nullableRank } from './shared';
+
+import { Options } from 'src/types/jsonforms';
 
 const { MaterialArrayControlRenderer } = Unwrapped;
 

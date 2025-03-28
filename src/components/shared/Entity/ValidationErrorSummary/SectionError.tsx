@@ -1,6 +1,7 @@
-import KeyValueList from 'src/components/shared/KeyValueList';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
+
+import KeyValueList from 'src/components/shared/KeyValueList';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {

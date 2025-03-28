@@ -1,15 +1,18 @@
+import { useMemo } from 'react';
+
 import { TableCell, Typography } from '@mui/material';
+
+import { StatsHeaderProps } from './types';
+import { useIntl } from 'react-intl';
+
 import DateFilter from 'src/components/filters/Date';
 import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { StatsHeaderProps } from './types';
 
 const StatsHeader = ({
     selectableTableStoreName,

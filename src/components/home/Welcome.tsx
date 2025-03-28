@@ -7,11 +7,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { Plus, Xmark } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import HeroImageAndDescription from 'src/components/home/hero';
 import { useShowDashboardWelcome } from 'src/context/DashboardWelcome';
 import { defaultOutline, semiTransparentBackground } from 'src/context/Theme';
-import { Plus, Xmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 export default function Welcome() {
     const theme = useTheme();

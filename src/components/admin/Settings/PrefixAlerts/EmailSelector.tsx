@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+
 import {
     Autocomplete,
     AutocompleteRenderInputParams,
@@ -9,12 +11,13 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
-import { useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { Grant_UserExt } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 

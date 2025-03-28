@@ -1,7 +1,9 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
-import { EXPAND_ROW_TRANSITION } from 'src/components/tables/Logs/shared';
+
 import { NavArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
+import { EXPAND_ROW_TRANSITION } from 'src/components/tables/Logs/shared';
 
 interface Props {
     expanded: boolean;

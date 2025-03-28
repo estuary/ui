@@ -1,4 +1,5 @@
 import { isArray } from 'lodash';
+
 import {
     MigrationDictionary,
     TransformConfig,

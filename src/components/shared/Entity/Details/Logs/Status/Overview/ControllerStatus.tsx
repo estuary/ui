@@ -1,10 +1,12 @@
 import { useTheme } from '@mui/material';
+
+import StatusIndicator from './StatusIndicator';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import { getControllerStatusIndicatorState } from 'src/utils/entityStatus-utils';
-import StatusIndicator from './StatusIndicator';
 
 export default function ControllerStatus() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

@@ -1,5 +1,13 @@
 /* eslint-disable complexity */
+import { useMemo } from 'react';
+
 import { Button, Stack, Typography } from '@mui/material';
+
+import ListViewSkeleton from './ListViewSkeleton';
+import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
+import { Refresh } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import ListView from 'src/components/collection/DataPreview/ListView';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import JournalAlerts from 'src/components/journals/Alerts';
@@ -13,13 +21,8 @@ import {
 } from 'src/hooks/journals/useJournalData';
 import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useTenantHidesDataPreview } from 'src/hooks/useTenants';
-import { Refresh } from 'iconoir-react';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
-import ListViewSkeleton from './ListViewSkeleton';
-import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
 
 interface Props {
     collectionName: string;

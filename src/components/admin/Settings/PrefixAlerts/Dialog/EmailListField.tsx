@@ -1,5 +1,7 @@
-import { Grid, Skeleton } from '@mui/material';
 import { useEffect } from 'react';
+
+import { Grid, Skeleton } from '@mui/material';
+
 import EmailSelector from '../EmailSelector';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 

@@ -1,3 +1,9 @@
+import { useCallback, useMemo } from 'react';
+
+import useDiscoverConfigEncrypt from './useCaptureConfigEncrypt';
+import useDiscoverDraftUpdate from './useCaptureDraftUpdate';
+import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
+
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -6,14 +12,13 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
-import { useCallback, useMemo } from 'react';
 import { useBinding_resourceConfigErrorsExist } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
-    useEndpointConfig_serverUpdateRequired,
 } from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
@@ -22,9 +27,6 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { Entity } from 'src/types';
-import useDiscoverConfigEncrypt from './useCaptureConfigEncrypt';
-import useDiscoverDraftUpdate from './useCaptureDraftUpdate';
-import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
 
 function useDiscoverCapture(
     entityType: Entity,

@@ -1,5 +1,6 @@
-import { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 import { DataPlaneSetting } from './types';
+
+import { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 
 export const DATA_PLANE_PREFIX = 'ops/dp/';
 

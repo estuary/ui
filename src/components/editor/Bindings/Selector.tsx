@@ -1,5 +1,13 @@
+import { ReactNode } from 'react';
+
 import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
+
+import BindingsSelectorName from './Row/Name';
+import BindingsSelectorRemove from './Row/Remove';
+import BindingsSelectorToggle from './Row/Toggle';
+import BindingSearch from './Search';
+
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import CollectionSelectorList from 'src/components/collection/Selector/List';
 import {
@@ -9,7 +17,6 @@ import {
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
-import { ReactNode } from 'react';
 import {
     useBinding_collections,
     useBinding_discoveredCollections,
@@ -21,10 +28,6 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import BindingsSelectorName from './Row/Name';
-import BindingsSelectorRemove from './Row/Remove';
-import BindingsSelectorToggle from './Row/Toggle';
-import BindingSearch from './Search';
 
 interface BindingSelectorProps {
     disableSelect?: boolean;

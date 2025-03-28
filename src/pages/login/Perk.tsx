@@ -1,7 +1,9 @@
 import { Box, Stack } from '@mui/material';
+
+import { CheckCircleSolid } from 'iconoir-react';
+
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
 import { registerPerkCheck, registerPerkHighlight } from 'src/context/Theme';
-import { CheckCircleSolid } from 'iconoir-react';
 
 interface Props {
     messageID: string;

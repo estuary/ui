@@ -1,9 +1,11 @@
 import { Stack, Toolbar, Typography } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
 import ConnectorTiles from 'src/components/connectors/ConnectorTiles';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { FormattedMessage } from 'react-intl';
 
 const AdminConnectors = () => {
     usePageTitle({

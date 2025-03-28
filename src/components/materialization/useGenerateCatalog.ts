@@ -1,3 +1,7 @@
+import { useCallback } from 'react';
+
+import { ConnectorConfig } from '../../../deps/flow/flow';
+
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -15,7 +19,6 @@ import {
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
-import { useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
@@ -31,13 +34,13 @@ import {
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_serverUpdateRequired,
 } from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_setFormState,
@@ -49,7 +52,6 @@ import { DekafConfig } from 'src/types';
 import { isDekafConnector } from 'src/utils/connector-utils';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
 import { generateTaskSpec } from 'src/utils/workflow-utils';
-import { ConnectorConfig } from '../../../deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';
 

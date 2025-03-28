@@ -1,4 +1,5 @@
 import { Chip, ChipProps, TableCell } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 interface Props {

@@ -1,6 +1,8 @@
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { DefaultStatsWithDocument, getStatsForDashboard } from 'src/api/stats';
 import { useMemo } from 'react';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
+import { DefaultStatsWithDocument, getStatsForDashboard } from 'src/api/stats';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { CatalogStats_Dashboard } from 'src/types';
 import { hasLength, RESPONSE_DATA_LIMIT } from 'src/utils/misc-utils';

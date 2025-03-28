@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import CaptureGenerateButton from 'src/components/capture/GenerateButton';
 import RediscoverButton from 'src/components/capture/RediscoverButton';
@@ -15,7 +17,6 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { useCallback } from 'react';
 import { CustomEvents } from 'src/services/types';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';

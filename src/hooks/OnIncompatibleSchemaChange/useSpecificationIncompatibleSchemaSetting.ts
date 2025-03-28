@@ -1,3 +1,7 @@
+import { useCallback, useMemo } from 'react';
+
+import { cloneDeep } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -5,8 +9,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
-import { cloneDeep } from 'lodash';
-import { useCallback, useMemo } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { Schema } from 'src/types';

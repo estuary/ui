@@ -1,11 +1,13 @@
+import { useCallback, useEffect, useRef } from 'react';
+
+import { debounce } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import { debounce } from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
 import {
     useSchemaEvolution_addNewBindings,
     useSchemaEvolution_autoDiscover,

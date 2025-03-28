@@ -1,5 +1,6 @@
-import { authenticatedRoutes } from 'src/app/routes';
 import { createContext, useContext } from 'react';
+
+import { authenticatedRoutes } from 'src/app/routes';
 import { BaseComponentProps } from 'src/types';
 
 export type Pages =

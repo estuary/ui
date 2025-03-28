@@ -1,12 +1,15 @@
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+
 import { Container, Paper, Snackbar, useTheme } from '@mui/material';
+
+import AlertBox from './AlertBox';
+
 import Topbar from 'src/components/navigation/TopBar';
 import { paperBackground } from 'src/context/Theme';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
 import useNotificationStore, {
     Notification,
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
-import AlertBox from './AlertBox';
 
 interface Props {
     children: ReactNode | ReactNode[];

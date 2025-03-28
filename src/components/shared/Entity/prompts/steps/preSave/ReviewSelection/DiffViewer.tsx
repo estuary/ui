@@ -1,7 +1,8 @@
-import { DiffEditor } from '@monaco-editor/react';
 import { useTheme } from '@mui/material';
-import { monacoEditorComponentBackground } from 'src/context/Theme';
 
+import { DiffEditor } from '@monaco-editor/react';
+
+import { monacoEditorComponentBackground } from 'src/context/Theme';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { stringifyJSON } from 'src/services/stringify';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';

@@ -1,11 +1,15 @@
+import { useState } from 'react';
+
 import { Button, Tooltip } from '@mui/material';
+
+import { useStore } from 'zustand';
+
+import { BindingsEditorAddProps } from '../types';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityType } from 'src/context/EntityContext';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useStore } from 'zustand';
-import { BindingsEditorAddProps } from '../types';
 
 const DIALOG_ID = 'add-collection-search-dialog';
 

@@ -1,12 +1,14 @@
+import { useMemo } from 'react';
+
+import OnboardGuard from '../OnboardGuard';
+import SsoUserMessage from './SsoUserMessage';
+
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useMemo } from 'react';
 import { BaseComponentProps } from 'src/types';
-import OnboardGuard from '../OnboardGuard';
-import SsoUserMessage from './SsoUserMessage';
 
 // This is a way to very simply "hide" the flow where anyone
 //  can create a tenant but allow us to test it out in prod.

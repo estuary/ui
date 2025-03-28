@@ -1,6 +1,8 @@
 import { Button, Switch } from '@mui/material';
-import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
+
 import { useIntl } from 'react-intl';
+
+import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import {
     useBinding_resourceConfigOfMetaBindingProperty,
     useBinding_toggleDisable,

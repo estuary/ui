@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
+
 import { getRefreshTokensForTable } from 'src/api/tokens';
 import ConfigureRefreshTokenButton from 'src/components/admin/Api/RefreshToken/ConfigureTokenButton';
 import EntityTable from 'src/components/tables/EntityTable';
 import Rows from 'src/components/tables/RefreshTokens/Rows';
-import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';

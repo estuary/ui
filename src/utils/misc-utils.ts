@@ -1,11 +1,14 @@
+import { ReactElement, ReactNode } from 'react';
+
 import { SortDirection } from '@mui/material';
+
 import {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
 import { isEmpty, isObject } from 'lodash';
-import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
+
 import { derefSchema } from 'src/services/jsonforms';
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';

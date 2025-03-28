@@ -1,15 +1,16 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import pLimit from 'p-limit';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import pLimit from 'p-limit';
 import {
-    RPCS,
-    TABLES,
     deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
+    RPCS,
     supabaseRetry,
+    TABLES,
     updateSupabase,
 } from 'src/services/supabase';
 import { Entity } from 'src/types';

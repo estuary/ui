@@ -1,6 +1,7 @@
 // Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { useCallback, useRef, useState } from 'react';
+
 import {
     MESSAGE_KEY,
     OAUTH_RESPONSE,

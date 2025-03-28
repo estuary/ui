@@ -1,8 +1,10 @@
-import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
-import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+
+import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
+
 import { useRefreshTokenStore } from '../Store/create';
+import { Xmark } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;

@@ -1,6 +1,8 @@
 import { Typography, useTheme } from '@mui/material';
+
 import { WarningCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
 import {
     useBinding_bindingErrorsExist,
     useBinding_fullSourceErrorsExist,

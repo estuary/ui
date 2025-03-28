@@ -1,11 +1,11 @@
+import { useCallback, useMemo } from 'react';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import { useCallback, useMemo } from 'react';
-
 import {
     useBinding_currentBindingIndex,
     useBinding_fullSourceOfBinding,

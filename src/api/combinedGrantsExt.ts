@@ -1,12 +1,12 @@
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
+    DEFAULT_PAGING_SIZE,
     defaultTableFilter,
-    parsePagedFetchAllResponse,
     pagedFetchAll,
+    parsePagedFetchAllResponse,
     RPCS,
     SortingProps,
     TABLES,
-    DEFAULT_PAGING_SIZE,
 } from 'src/services/supabase';
 import { AuthRoles, Capability, Grant_UserExt } from 'src/types';
 import { getCountSettings } from 'src/utils/table-utils';

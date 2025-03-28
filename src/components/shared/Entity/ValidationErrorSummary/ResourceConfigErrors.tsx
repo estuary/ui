@@ -1,6 +1,8 @@
-import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
 import { useMemo } from 'react';
+
 import { useIntl } from 'react-intl';
+
+import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,

@@ -1,10 +1,12 @@
 import { Divider, Stack } from '@mui/material';
-import { useIntl } from 'react-intl';
-import { getLoginSettings } from 'src/utils/env-utils';
+
+import SSOButton from './buttons/SSO';
 import LoginButton from './LoginButton';
 import { LoginProvidersProps } from './types';
 import useLoginHandler from './useLoginHandler';
-import SSOButton from './buttons/SSO';
+import { useIntl } from 'react-intl';
+
+import { getLoginSettings } from 'src/utils/env-utils';
 
 const loginSettings = getLoginSettings();
 

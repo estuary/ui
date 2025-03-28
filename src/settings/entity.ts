@@ -1,12 +1,13 @@
+import { EntitySetting } from './types';
+import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import {
     semiTransparentBackground_blue,
     semiTransparentBackground_purple,
     semiTransparentBackground_teal,
 } from 'src/context/Theme';
-import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
 import { Entity } from 'src/types';
-import { EntitySetting } from './types';
 
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     capture: {

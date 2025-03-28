@@ -1,11 +1,13 @@
 import { Box, Chip, Stack } from '@mui/material';
-import { chipOutlinedStyling, truncateTextSx } from 'src/context/Theme';
+
+import useSourceCapture from '../useSourceCapture';
+import SourceCaptureChipOptionalSettings from './SourceCaptureChipOptionalSettings';
 import { useIntl } from 'react-intl';
+
+import { chipOutlinedStyling, truncateTextSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import useSourceCapture from '../useSourceCapture';
-import SourceCaptureChipOptionalSettings from './SourceCaptureChipOptionalSettings';
 
 function SourceCaptureChip() {
     const intl = useIntl();

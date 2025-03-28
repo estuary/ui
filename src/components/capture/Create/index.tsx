@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import CaptureGenerateButton from 'src/components/capture/GenerateButton';
 import RediscoverButton from 'src/components/capture/RediscoverButton';
@@ -13,7 +15,6 @@ import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraf
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { useCallback, useEffect, useState } from 'react';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';

@@ -34,8 +34,10 @@ import {
 } from '@jsonforms/core';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
+
 import { CustomMaterialInputControl } from './Overrides/material/controls/MaterialInputControl';
+
+import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 

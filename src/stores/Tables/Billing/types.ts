@@ -1,4 +1,5 @@
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { Invoice } from 'src/api/billing';
 import { SelectableTableStore } from 'src/stores/Tables/Store';
 

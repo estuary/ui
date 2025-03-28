@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+
 import { intensifiedOutline } from 'src/context/Theme';
 import { BaseComponentProps } from 'src/types';
 

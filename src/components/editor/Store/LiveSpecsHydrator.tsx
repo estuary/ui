@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
@@ -6,7 +8,6 @@ import Error from 'src/components/shared/Error';
 import { useEntityType } from 'src/context/EntityContext';
 import { useLiveSpecs_details } from 'src/hooks/useLiveSpecs';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
-import { useEffect } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { BaseComponentProps } from 'src/types';

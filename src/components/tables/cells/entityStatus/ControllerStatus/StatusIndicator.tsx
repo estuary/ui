@@ -1,6 +1,8 @@
 import { Box, useTheme } from '@mui/material';
-import { getStatusIndicatorColor } from 'src/utils/entityStatus-utils';
+
 import { StatusIndicatorProps } from './types';
+
+import { getStatusIndicatorColor } from 'src/utils/entityStatus-utils';
 
 const INDICATOR_SIZE = 16;
 

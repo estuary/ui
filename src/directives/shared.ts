@@ -1,11 +1,12 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
+import { Directives, UserClaims } from './types';
 import { isEmpty } from 'lodash';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { JOB_STATUS_COLUMNS, TABLES } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 import { AppliedDirective } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
-import { Directives, UserClaims } from './types';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
 

@@ -1,3 +1,8 @@
+import { useEffect } from 'react';
+
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { useIntl } from 'react-intl';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { createPublication } from 'src/api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
@@ -11,13 +16,10 @@ import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
 import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
-import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function DisableCapture() {
     const intl = useIntl();

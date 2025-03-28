@@ -1,5 +1,7 @@
-import { JsonForms } from '@jsonforms/react';
 import { Stack, StyledEngineProvider } from '@mui/material';
+
+import { JsonForms } from '@jsonforms/react';
+
 import useConfigurationSchema from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { jsonFormsPadding } from 'src/context/Theme';

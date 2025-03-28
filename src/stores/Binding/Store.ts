@@ -1,42 +1,6 @@
-import {
-    getLiveSpecsById_writesTo,
-    getLiveSpecsByLiveSpecId,
-} from 'src/api/hydration';
-import { isBeforeTrialInterval } from 'src/components/materialization/shared';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { evaluateTrialCollections } from 'src/hooks/trialStorage/useTrialCollections';
-import produce from 'immer';
-import {
-    difference,
-    has,
-    isBoolean,
-    isEmpty,
-    isEqual,
-    omit,
-    omitBy,
-    pick,
-    union,
-} from 'lodash';
-import {
-    createJSONFormDefaults,
-    generateMaterializationResourceSpec,
-    getResourceConfigPointers,
-} from 'src/services/ajv';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
-import { BindingStoreNames } from 'src/stores/names';
-import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
-import { devtoolsOptions } from 'src/utils/store-utils';
-import { parsePostgresInterval } from 'src/utils/time-utils';
-import {
-    getBackfillCounter,
-    getBindingIndex,
-    getCollectionName,
-} from 'src/utils/workflow-utils';
-import { POSTGRES_INTERVAL_RE } from 'src/validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+
 import {
     getCollectionNames,
     getInitialMiscData,
@@ -63,6 +27,44 @@ import {
     initializeFullSourceConfig,
 } from './slices/TimeTravel';
 import { BindingMetadata, BindingState, ResourceConfig } from './types';
+import produce from 'immer';
+import {
+    difference,
+    has,
+    isBoolean,
+    isEmpty,
+    isEqual,
+    omit,
+    omitBy,
+    pick,
+    union,
+} from 'lodash';
+
+import {
+    getLiveSpecsById_writesTo,
+    getLiveSpecsByLiveSpecId,
+} from 'src/api/hydration';
+import { isBeforeTrialInterval } from 'src/components/materialization/shared';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { evaluateTrialCollections } from 'src/hooks/trialStorage/useTrialCollections';
+import {
+    createJSONFormDefaults,
+    generateMaterializationResourceSpec,
+    getResourceConfigPointers,
+} from 'src/services/ajv';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
+import { BindingStoreNames } from 'src/stores/names';
+import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { parsePostgresInterval } from 'src/utils/time-utils';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+} from 'src/utils/workflow-utils';
+import { POSTGRES_INTERVAL_RE } from 'src/validation';
 
 const getInitialState = (
     set: NamedSet<BindingState>,

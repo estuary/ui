@@ -1,6 +1,8 @@
 import { Box, Divider, Typography } from '@mui/material';
-import { Invoice } from 'src/api/billing';
+
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import { Invoice } from 'src/api/billing';
 
 function TotalLines({ invoice }: { invoice: Invoice }) {
     const intl = useIntl();

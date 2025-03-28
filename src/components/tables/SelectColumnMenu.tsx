@@ -7,11 +7,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { ViewColumns3 } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import IconMenu from 'src/components/menus/IconMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { disabledButtonText_primary } from 'src/context/Theme';
-import { ViewColumns3 } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableColumns } from 'src/types';
 import { WithRequiredNonNullProperty } from 'src/types/utils';

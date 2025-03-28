@@ -1,14 +1,17 @@
+import { ReactNode, useState } from 'react';
+
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
+
+import DeleteButton from './DeleteButton';
+import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
+
 import { EVERYTHING } from 'src/components/collection/Selector/Table/shared';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
-import { ReactNode, useState } from 'react';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { SelectTableStoreNames } from 'src/stores/names';
-import DeleteButton from './DeleteButton';
 
 interface Props {
     additionalCTA: ReactNode;

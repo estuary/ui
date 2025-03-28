@@ -1,4 +1,10 @@
+import { useState } from 'react';
+
 import { Button, Dialog } from '@mui/material';
+
+import { RowConfirmation } from '../types';
+import { FormattedMessage } from 'react-intl';
+
 import { unauthenticatedRoutes } from 'src/app/routes';
 import ConfirmationMessage from 'src/components/tables/RowActions/AccessLinks/ConfirmationMessage';
 import DisableDirective from 'src/components/tables/RowActions/AccessLinks/DisableDirective';
@@ -7,15 +13,12 @@ import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confi
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { getPathWithParams } from 'src/utils/misc-utils';
-import { RowConfirmation } from '../types';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

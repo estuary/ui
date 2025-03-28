@@ -1,4 +1,5 @@
 import { TableCell } from '@mui/material';
+
 import EditLink from 'src/components/shared/Entity/EditLink';
 
 interface Props {

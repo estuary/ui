@@ -1,5 +1,10 @@
+import { useCallback } from 'react';
+
 import { createEntityDraft } from 'src/api/drafts';
-import { createDraftSpec, getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
+import {
+    createDraftSpec,
+    getDraftSpecsByCatalogName,
+} from 'src/api/draftSpecs';
 import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
@@ -15,7 +20,6 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
-import { useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 

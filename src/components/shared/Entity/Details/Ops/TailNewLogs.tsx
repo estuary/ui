@@ -1,4 +1,5 @@
 import { Checkbox, FormControl, FormControlLabel } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';

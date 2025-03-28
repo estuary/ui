@@ -1,9 +1,11 @@
+import { createAjv } from '@jsonforms/core';
+
 import {
     get_resource_config_pointers,
     update_materialization_resource_spec,
 } from '@estuary/flow-web';
-import { createAjv } from '@jsonforms/core';
 import { isEmpty } from 'lodash';
+
 import { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
 import { Annotations } from 'src/types/jsonforms';
 import { stripPathing } from 'src/utils/misc-utils';

@@ -1,12 +1,13 @@
-import { createDraftSpec } from 'src/api/draftSpecs';
+import { useEffect } from 'react';
 
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { useIntl } from 'react-intl';
+
+import { createDraftSpec } from 'src/api/draftSpecs';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
-import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function EnableCapture() {
     const intl = useIntl();

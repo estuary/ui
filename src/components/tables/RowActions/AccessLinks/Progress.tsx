@@ -5,10 +5,12 @@ import {
     Stack,
     useTheme,
 } from '@mui/material';
-import Error from 'src/components/shared/Error';
+
+import { ProgressStates } from '../Shared/types';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressStates } from '../Shared/types';
+
+import Error from 'src/components/shared/Error';
 
 interface Props {
     progress: ProgressStates;

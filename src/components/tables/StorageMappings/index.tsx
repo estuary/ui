@@ -1,13 +1,16 @@
+import { useMemo } from 'react';
+
 import { Box } from '@mui/material';
+
+import Rows, { tableColumns } from './Rows';
+
 import { getStorageMappings } from 'src/api/storageMappings';
 import StorageMappingsGenerateButton from 'src/components/admin/Settings/StorageMappings/GenerateButton';
 import EntityTable from 'src/components/tables/EntityTable';
-import { useMemo } from 'react';
-import TableHydrator from 'src/stores/Tables/Hydrator';
-import { useTableState } from 'src/stores/Tables/hooks';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 import { SelectTableStoreNames } from 'src/stores/names';
-import Rows, { tableColumns } from './Rows';
+import { useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 function StorageMappingsTable() {
     const {

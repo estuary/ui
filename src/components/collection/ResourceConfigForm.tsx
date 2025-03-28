@@ -1,6 +1,9 @@
-import { JsonForms } from '@jsonforms/react';
-import { StyledEngineProvider } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
+
+import { StyledEngineProvider } from '@mui/material';
+
+import { JsonForms } from '@jsonforms/react';
+
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import { showValidation } from 'src/services/jsonforms/shared';

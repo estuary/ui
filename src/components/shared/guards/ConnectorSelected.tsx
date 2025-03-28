@@ -1,7 +1,8 @@
+import { Navigate } from 'react-router-dom';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { Navigate } from 'react-router-dom';
 import { BaseComponentProps } from 'src/types';
 import { MAC_ADDR_RE } from 'src/validation';
 

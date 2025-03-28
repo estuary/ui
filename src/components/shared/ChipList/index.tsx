@@ -1,8 +1,10 @@
-import { Box } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
+
+import { Box } from '@mui/material';
+
 import { ChipListProps } from './types';
 import ChipWrapper from './Wrapper';
+import { useIntl } from 'react-intl';
 
 function ChipList({
     values,

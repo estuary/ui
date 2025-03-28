@@ -1,8 +1,11 @@
-import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
-import { codeBackground, getButtonIcon } from 'src/context/Theme';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
+
+import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
+
 import { SingleLineCodeProps } from './types';
+import { useIntl } from 'react-intl';
+
+import { codeBackground, getButtonIcon } from 'src/context/Theme';
 
 type TransientButtonState = 'success' | 'error' | undefined;
 

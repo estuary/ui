@@ -1,3 +1,5 @@
+import { createContext, useContext, useRef, useState } from 'react';
+
 import {
     Box,
     Button,
@@ -6,10 +8,11 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { createContext, useContext, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'src/types';
+
 import { IConfirmationModalContext, IConfirmationModalOptions } from './types';
+import { FormattedMessage } from 'react-intl';
+
+import { BaseComponentProps } from 'src/types';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';

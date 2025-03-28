@@ -1,4 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { TABLES } from 'src/services/supabase';

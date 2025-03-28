@@ -1,11 +1,14 @@
 import { Button } from '@mui/material';
+
+import { useStore } from 'zustand';
+
+import { FormattedMessage } from 'react-intl';
+
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import { FormattedMessage } from 'react-intl';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
-import { useStore } from 'zustand';
 
 function ManualSelectionButton({ toggle }: AddCollectionDialogCTAProps) {
     const stepIndex = useLoopIndex();

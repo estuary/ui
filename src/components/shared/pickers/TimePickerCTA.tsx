@@ -1,9 +1,11 @@
 import { StaticTimePicker } from '@mui/x-date-pickers';
+
+import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
+import { PickerProps } from './types';
 import { format } from 'date-fns';
 import { Clock } from 'iconoir-react';
+
 import { Patterns } from 'src/types/jsonforms';
-import { PickerProps } from './types';
-import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 
 const INVALID_TIME = 'Invalid Time';
 

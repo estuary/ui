@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+
 import ErrorDialog from './index';
+import { FormattedMessage } from 'react-intl';
 
 const ARIA_NAME = 'OauthWindowOpenerMissing';
 

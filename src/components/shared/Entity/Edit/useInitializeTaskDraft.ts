@@ -1,4 +1,7 @@
+import { Dispatch, SetStateAction, useCallback } from 'react';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+
 import { createEntityDraft, getDraftsByCatalogName } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -21,7 +24,6 @@ import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { Dispatch, SetStateAction, useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';

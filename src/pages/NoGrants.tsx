@@ -1,7 +1,9 @@
 import { Stack, Typography } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import { FormattedMessage } from 'react-intl';
 
 const NoGrants = () => {
     useBrowserTitle('routeTitle.noGrants');

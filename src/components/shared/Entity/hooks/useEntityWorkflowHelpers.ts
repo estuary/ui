@@ -1,3 +1,10 @@
+import { useCallback, useMemo } from 'react';
+
+import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+
 import { getLiveSpecIdByPublication } from 'src/api/publicationSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useBindingsEditorStore_resetState } from 'src/components/editor/Bindings/Store/hooks';
@@ -9,10 +16,6 @@ import {
 import { useEntityType } from 'src/context/EntityContext';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { useSnackbar } from 'notistack';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_resetState } from 'src/stores/Binding/hooks';
@@ -29,7 +32,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();

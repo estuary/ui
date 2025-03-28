@@ -1,4 +1,5 @@
-import Editor from '@monaco-editor/react';
+import { useState } from 'react';
+
 import {
     Accordion,
     AccordionDetails,
@@ -7,11 +8,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { defaultOutline } from 'src/context/Theme';
-import { NavArrowDown } from 'iconoir-react';
-import { useState } from 'react';
-import { unescapeString } from 'src/utils/misc-utils';
+
 import { ControllerAlertProps } from './types';
+import Editor from '@monaco-editor/react';
+import { NavArrowDown } from 'iconoir-react';
+
+import { defaultOutline } from 'src/context/Theme';
+import { unescapeString } from 'src/utils/misc-utils';
 
 export default function ControllerAlert({
     error,

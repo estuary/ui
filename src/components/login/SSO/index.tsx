@@ -1,22 +1,24 @@
+import React, { useState } from 'react';
+
 import {
-    Stack,
     Box,
     Button,
+    Divider,
+    Stack,
     TextField,
     Typography,
-    Divider,
 } from '@mui/material';
-import { supabaseClient } from 'src/context/GlobalProviders';
-import React, { useState } from 'react';
-import AlertBox from 'src/components/shared/AlertBox';
+
+import { DefaultLoginProps } from '../types';
+import useRedirectPath from '../useRedirectPath';
 import { useSnackbar, VariantType } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
-import { hasLength } from 'src/utils/misc-utils';
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import useRedirectPath from '../useRedirectPath';
-import { DefaultLoginProps } from '../types';
+import AlertBox from 'src/components/shared/AlertBox';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { hasLength } from 'src/utils/misc-utils';
 
 const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const redirectPath = useRedirectPath(grantToken);

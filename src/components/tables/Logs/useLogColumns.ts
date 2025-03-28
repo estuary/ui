@@ -1,6 +1,8 @@
-import { TableColumns } from 'src/types';
 import useConstant from 'use-constant';
+
 import { ColumnProps } from '../EntityTable/types';
+
+import { TableColumns } from 'src/types';
 
 const defaultColumns: TableColumns[] = [
     {

@@ -1,13 +1,15 @@
 import { Button } from '@mui/material';
+
+import { evaluateUpdatedFields } from './shared';
+import { SaveButtonProps } from './types';
 import { useIntl } from 'react-intl';
+
 import {
     useBinding_recommendFields,
     useBinding_setMultiSelection,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { evaluateUpdatedFields } from './shared';
-import { SaveButtonProps } from './types';
 
 export default function SaveButton({
     bindingUUID,

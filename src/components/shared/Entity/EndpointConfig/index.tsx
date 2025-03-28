@@ -1,4 +1,11 @@
+import { useEffect, useMemo } from 'react';
+
 import { Box, useTheme } from '@mui/material';
+
+import { isEqual } from 'lodash';
+import { useIntl } from 'react-intl';
+import { useMount, useUnmount } from 'react-use';
+
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
@@ -8,13 +15,11 @@ import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useConnectorTag from 'src/hooks/connectors/useConnectorTag';
-import { isEqual } from 'lodash';
-import { useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useMount, useUnmount } from 'react-use';
 import { createJSONFormDefaults } from 'src/services/ajv';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_setEndpointCanBeEmpty,
+    useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
@@ -23,8 +28,6 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeEmpty,
-    useEndpointConfig_setServerUpdateRequired,
 } from 'src/stores/EndpointConfig/hooks';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 import { configCanBeEmpty } from 'src/utils/misc-utils';

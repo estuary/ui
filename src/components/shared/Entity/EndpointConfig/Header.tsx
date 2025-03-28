@@ -1,7 +1,9 @@
 import { Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
-import ExternalLink from 'src/components/shared/ExternalLink';
+
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { useEndpointConfigStore_errorsExist } from 'src/stores/EndpointConfig/hooks';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 

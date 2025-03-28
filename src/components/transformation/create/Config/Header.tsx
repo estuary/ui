@@ -1,7 +1,9 @@
 import { Typography, useTheme } from '@mui/material';
-import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
+
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import {
     useTransformationCreate_emptySQLExists,
     useTransformationCreate_shuffleKeyErrorsExist,

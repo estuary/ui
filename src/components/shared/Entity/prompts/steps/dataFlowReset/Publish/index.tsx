@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
+
+import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+
 import { createPublication } from 'src/api/publications';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { useEffect } from 'react';
-import { CustomEvents } from 'src/services/types';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
 import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
-import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();

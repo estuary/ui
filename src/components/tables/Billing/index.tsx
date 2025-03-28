@@ -1,12 +1,15 @@
+import { useMemo } from 'react';
+
 import { Box, Table, TableContainer } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useBillingStore } from 'src/stores/Billing/Store';
 import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
+import { useBillingStore } from 'src/stores/Billing/Store';
 import { TableColumns, TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 

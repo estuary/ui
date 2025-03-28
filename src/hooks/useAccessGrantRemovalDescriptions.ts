@@ -1,13 +1,16 @@
-import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useCallback, useMemo } from 'react';
+
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
+
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
 } from 'src/stores/Entities/hooks';
 import { BaseGrant, Grant_UserExt } from 'src/types';
 import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'src/utils/misc-utils';
-import { useShallow } from 'zustand/react/shallow';
 
 type GrantScopeMessageIdSuffix =
     | 'finalEmail'

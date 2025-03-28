@@ -1,12 +1,15 @@
-import { Box, TableRow, useTheme } from '@mui/material';
-import { OpsLogFlowDocument } from 'src/types';
 import { CSSProperties, useLayoutEffect, useRef, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
-import { defaultOutline_hovered } from 'src/context/Theme';
-import { UUID_NEWEST_LOG, UUID_OLDEST_LOG } from './shared';
+
+import { Box, TableRow, useTheme } from '@mui/material';
+
 import { LogsTableColumns } from './Columns';
-import WaitingForOldLogsRow from './WaitingForRow/OldLogs';
+import { UUID_NEWEST_LOG, UUID_OLDEST_LOG } from './shared';
 import WaitingForNewLogsRow from './WaitingForRow/NewLogs';
+import WaitingForOldLogsRow from './WaitingForRow/OldLogs';
+
+import { defaultOutline_hovered } from 'src/context/Theme';
+import { OpsLogFlowDocument } from 'src/types';
 
 interface RowProps {
     row: OpsLogFlowDocument;

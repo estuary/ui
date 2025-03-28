@@ -1,8 +1,11 @@
+import React, { useState } from 'react';
+
 import { IconButton } from '@mui/material';
+
+import { Xmark } from 'iconoir-react';
+
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { useEntityWorkflow } from 'src/context/Workflow';
-import { Xmark } from 'iconoir-react';
-import React, { useState } from 'react';
 import {
     useBinding_discoveredCollections,
     useBinding_removeBinding,

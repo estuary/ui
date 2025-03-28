@@ -1,5 +1,6 @@
-import { AutocompleteRenderInputParams, Box, Input } from '@mui/material';
 import { ReactNode } from 'react';
+
+import { AutocompleteRenderInputParams, Box, Input } from '@mui/material';
 
 interface Props {
     textFieldProps: AutocompleteRenderInputParams;

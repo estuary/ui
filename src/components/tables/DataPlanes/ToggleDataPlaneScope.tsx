@@ -1,13 +1,15 @@
 import { ToggleButtonGroup } from '@mui/material';
+
+import { selectableTableStoreName } from './shared';
+import { useIntl } from 'react-intl';
+
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { selectableTableStoreName } from './shared';
 
 function ToggleDataPlaneScope() {
     const intl = useIntl();

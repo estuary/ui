@@ -1,7 +1,8 @@
+import { useIntl } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import ChipList from 'src/components/shared/ChipList';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { useIntl } from 'react-intl';
 
 interface Props {
     collections: string[] | null;

@@ -1,5 +1,6 @@
-import KeyValueList from 'src/components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
+
+import KeyValueList from 'src/components/shared/KeyValueList';
 
 function NoConnectorError() {
     const intl = useIntl();

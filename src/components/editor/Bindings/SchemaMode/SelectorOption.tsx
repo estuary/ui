@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+
 import { SelectorOptionProps } from './types';
 
 function SelectorOption({ option }: SelectorOptionProps) {

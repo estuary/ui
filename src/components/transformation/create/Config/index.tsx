@@ -1,4 +1,7 @@
 import { Typography, useTheme } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -7,7 +10,6 @@ import TransformList from 'src/components/transformation/create/Config/catalog/T
 import DerivationCatalogEditor from 'src/components/transformation/create/Config/Editor';
 import DerivationCatalogHeader from 'src/components/transformation/create/Config/Header';
 import { alternativeReflexContainerBackground } from 'src/context/Theme';
-import { FormattedMessage } from 'react-intl';
 
 function DerivationConfig() {
     const theme = useTheme();

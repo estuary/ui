@@ -1,7 +1,9 @@
 import { useTheme } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import darkWelcome from 'src/images/welcome_dark.png';
 import lightWelcome from 'src/images/welcome_light.png';
-import { useIntl } from 'react-intl';
 
 function WelcomeImage() {
     const intl = useIntl();

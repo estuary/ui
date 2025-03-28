@@ -1,6 +1,8 @@
 import { Grid } from '@mui/material';
-import AlertBox from 'src/components/shared/AlertBox';
+
 import { FormattedMessage } from 'react-intl';
+
+import AlertBox from 'src/components/shared/AlertBox';
 import { useBillingStore } from 'src/stores/Billing/Store';
 
 function BillingLoadError() {

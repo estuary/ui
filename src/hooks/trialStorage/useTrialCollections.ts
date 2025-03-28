@@ -1,10 +1,12 @@
-import { getTrialCollections } from 'src/api/liveSpecsExt';
-import { uniq } from 'lodash';
 import { useCallback } from 'react';
+
+import useTrialPrefixes from './useTrialPrefixes';
+import { uniq } from 'lodash';
+
+import { getTrialCollections } from 'src/api/liveSpecsExt';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { hasLength, stripPathing } from 'src/utils/misc-utils';
-import useTrialPrefixes from './useTrialPrefixes';
 
 // This function was created and exported so the binding store hydrator
 // can use the same logic to evaluate trial collection as the core hook.

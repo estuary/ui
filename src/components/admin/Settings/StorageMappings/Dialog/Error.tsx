@@ -1,9 +1,11 @@
 import { AlertTitle, Button, Stack, Typography } from '@mui/material';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+import { FormattedMessage } from 'react-intl';
+
 import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import AlertBox from 'src/components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 interface Props {

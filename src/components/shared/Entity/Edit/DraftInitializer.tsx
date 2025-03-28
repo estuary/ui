@@ -1,10 +1,13 @@
+import { useEffect, useState } from 'react';
+
 import { Typography } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_draftInitializationError } from 'src/components/editor/Store/hooks';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import useInitializeTaskDraft from 'src/components/shared/Entity/Edit/useInitializeTaskDraft';
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { BaseComponentProps } from 'src/types';

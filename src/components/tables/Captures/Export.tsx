@@ -1,6 +1,7 @@
-import { CaptureQueryWithStats } from 'src/api/liveSpecsExt';
 import ExportButton from '../shared/ExportButton';
 import useCaptureExport from './useCaptureExport';
+
+import { CaptureQueryWithStats } from 'src/api/liveSpecsExt';
 
 interface Props {
     data: CaptureQueryWithStats[];

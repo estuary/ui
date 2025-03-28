@@ -1,10 +1,11 @@
+import { useCallback } from 'react';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import { useCallback } from 'react';
 import { Schema } from 'src/types';
 
 type UpdaterFunction = (spec: Schema) => Schema;

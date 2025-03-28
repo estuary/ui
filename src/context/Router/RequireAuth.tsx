@@ -1,10 +1,11 @@
+import { Navigate, useLocation } from 'react-router-dom';
+
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
-import { Navigate, useLocation } from 'react-router-dom';
 import { logRocketConsole } from 'src/services/shared';
 import { BaseComponentProps } from 'src/types';
 import { getPathWithParams } from 'src/utils/misc-utils';

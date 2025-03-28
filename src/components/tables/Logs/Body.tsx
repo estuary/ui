@@ -1,7 +1,3 @@
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'src/types';
-import { TableBody } from '@mui/material';
 import {
     MutableRefObject,
     useCallback,
@@ -9,12 +5,11 @@ import {
     useMemo,
     useRef,
 } from 'react';
-import { isEmpty } from 'lodash';
 
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
+import { TableBody } from '@mui/material';
+
 import EntityTableBody from '../EntityTable/TableBody';
+import { LogsTableRow } from './Row';
 import {
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
@@ -24,7 +19,14 @@ import {
     WAITING_ROW_HEIGHT,
 } from './shared';
 import useLogColumns from './useLogColumns';
-import { LogsTableRow } from './Row';
+import { isEmpty } from 'lodash';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { ListChildComponentProps, VariableSizeList } from 'react-window';
+
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
+import { OpsLogFlowDocument, TableStatuses } from 'src/types';
 
 interface Props {
     outerRef: MutableRefObject<any>;

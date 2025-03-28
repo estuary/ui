@@ -1,4 +1,8 @@
+import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
+import LogDialog from './LogDialog';
+import LogDialogActions from './LogDialogActions';
 import { FormattedMessage } from 'react-intl';
+
 import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
@@ -6,9 +10,6 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
-import LogDialog from './LogDialog';
-import LogDialogActions from './LogDialogActions';
 
 function HeaderLogs() {
     const { closeLogs } = useEntityWorkflowHelpers();

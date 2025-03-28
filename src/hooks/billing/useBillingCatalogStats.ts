@@ -1,4 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
 import { getStatsForBilling } from 'src/api/stats';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';

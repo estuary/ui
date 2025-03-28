@@ -1,5 +1,6 @@
-import { SelectTableStoreNames } from 'src/stores/names';
 import { ReactNode } from 'react';
+
+import { SelectTableStoreNames } from 'src/stores/names';
 
 export interface RowConfirmation<M = string> {
     id: string;

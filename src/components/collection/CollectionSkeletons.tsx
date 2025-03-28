@@ -1,4 +1,5 @@
 import { Box, Skeleton, Stack } from '@mui/material';
+
 import { defaultOutline } from 'src/context/Theme';
 
 export function BindingsEditorConfigSkeleton() {

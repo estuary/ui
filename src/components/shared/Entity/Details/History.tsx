@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { DiffEditor } from '@monaco-editor/react';
+import { useEffect, useMemo, useState } from 'react';
+
 import {
     Box,
     CircularProgress,
@@ -11,25 +12,27 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { DiffEditor } from '@monaco-editor/react';
+import { format } from 'date-fns';
+import { findIndex } from 'lodash';
+import { useIntl } from 'react-intl';
+
 import ListAndDetails from 'src/components/editor/ListAndDetails';
+import Error from 'src/components/shared/Error';
 import UnderDev from 'src/components/shared/UnderDev';
 import {
     editorToolBarSx,
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
-import { format } from 'date-fns';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import usePublicationSpecsExt_History from 'src/hooks/usePublicationSpecsExt';
-import { findIndex } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
 import { stringifyJSON } from 'src/services/stringify';
+import { BASE_ERROR } from 'src/services/supabase';
 import { getEditorTotalHeight } from 'src/utils/editor-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import Error from 'src/components/shared/Error';
-import { BASE_ERROR } from 'src/services/supabase';
-import { useIntl } from 'react-intl';
 
 const HEIGHT = 400;
 const CARD_DATE_FORMAT = `EEEE, MMM do, yyyy 'at' hh:mm:ss aa`;

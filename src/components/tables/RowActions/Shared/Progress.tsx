@@ -6,11 +6,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
-import Error from 'src/components/shared/Error';
+
+import { ProgressStates, SharedProgressProps } from './types';
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressStates, SharedProgressProps } from './types';
+
+import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
+import Error from 'src/components/shared/Error';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 

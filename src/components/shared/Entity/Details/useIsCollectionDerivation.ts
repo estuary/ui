@@ -1,5 +1,6 @@
-import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { useMemo } from 'react';
+
+import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { specContainsDerivation } from 'src/utils/misc-utils';
 
 function useIsCollectionDerivation() {

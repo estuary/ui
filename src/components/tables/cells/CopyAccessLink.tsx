@@ -1,10 +1,13 @@
-import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
-import { unauthenticatedRoutes } from 'src/app/routes';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useState } from 'react';
+
+import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { getPathWithParams } from 'src/utils/misc-utils';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
 import { getButtonIcon, TransientButtonState } from 'src/context/Theme';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props {
     token: string;

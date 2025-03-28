@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+
 import {
     Autocomplete,
     AutocompleteRenderInputParams,
@@ -7,12 +9,14 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import useCaptureInterval from 'src/hooks/captureInterval/useCaptureInterval';
+
+import { CaptureIntervalProps } from './types';
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { Duration } from 'luxon';
-import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import useCaptureInterval from 'src/hooks/captureInterval/useCaptureInterval';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
@@ -21,7 +25,6 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
-import { CaptureIntervalProps } from './types';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();

@@ -1,6 +1,5 @@
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import Editor from '@monaco-editor/react';
+import { useMemo, useState } from 'react';
+
 import {
     Box,
     Button,
@@ -8,6 +7,14 @@ import {
     Stack,
     StyledEngineProvider,
 } from '@mui/material';
+
+import { materialCells } from '@jsonforms/material-renderers';
+import { JsonForms } from '@jsonforms/react';
+
+import Editor from '@monaco-editor/react';
+import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -16,9 +23,6 @@ import { WorkflowContextProvider } from 'src/context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useConnectors from 'src/hooks/connectors/useConnectors';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
 import { customAjv } from 'src/services/ajv';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import defaultRenderers from 'src/services/jsonforms/defaultRenderers';

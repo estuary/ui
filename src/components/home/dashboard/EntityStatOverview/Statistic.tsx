@@ -1,8 +1,11 @@
-import { Box, Tooltip, Typography } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { ReactNode } from 'react';
+
+import { Box, Tooltip, Typography } from '@mui/material';
+
+import { PostgrestError } from '@supabase/postgrest-js';
 import { useIntl } from 'react-intl';
+
+import { formatBytes } from 'src/components/tables/cells/stats/shared';
 
 interface Props {
     label: ReactNode;

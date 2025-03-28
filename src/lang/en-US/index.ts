@@ -1,28 +1,28 @@
+import { AccessGrants } from './AccessGrants';
 import { AdminPage } from './AdminPage';
 import { Authentication } from './Authentication';
-import { CTAs } from './CTAs';
 import { Captures } from './Captures';
+import { Collections } from './Collections';
 import { CommonMessages } from './CommonMessages';
 import { Connectors } from './Connectors';
-import { Errors } from './Errors';
+import { CTAs } from './CTAs';
+import { Data } from './Data';
+import { Details } from './Details';
 import { EntityTable } from './EntityTable';
+import { Errors } from './Errors';
 import { Fetchers } from './Fetchers';
 import { Graphs } from './Graphs';
+import { HomePage } from './HomePage';
+import { JsonForms } from './JsonForms';
 import { Materializations } from './Materializations';
 import { MonacoEditor } from './MonacoEditor';
-import { Transforms } from './Transforms';
+import { Navigation } from './Navigation';
+import { Notifications } from './Notifications';
 import { Ops } from './Ops';
 import { PrefixedName } from './PrefixedName';
 import { RouteTitles } from './RouteTitles';
+import { Transforms } from './Transforms';
 import { Workflows } from './Workflows';
-import { Data } from './Data';
-import { Navigation } from './Navigation';
-import { Collections } from './Collections';
-import { Details } from './Details';
-import { Notifications } from './Notifications';
-import { JsonForms } from './JsonForms';
-import { HomePage } from './HomePage';
-import { AccessGrants } from './AccessGrants';
 
 // We are not using the ResolvedIntlConfig['messages'] type because it can end up causing
 //  the TS error : "Expression produces a union type that is too complex to represent"

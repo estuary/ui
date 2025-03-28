@@ -1,4 +1,5 @@
 import { JournalClient } from 'data-plane-gateway';
+
 import { OpsLogFlowDocument } from 'src/types';
 
 export type JournalRecord<B extends {} = Record<string, any>> = B & {

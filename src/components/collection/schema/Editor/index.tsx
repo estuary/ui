@@ -1,4 +1,11 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { Grid, Stack, Typography } from '@mui/material';
+
+import CollectionSchemaEditorSkeleton from './Skeleton';
+import { FormattedMessage } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
+
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
@@ -12,12 +19,8 @@ import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
-import { useCallback, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
 import { Schema } from 'src/types';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
-import CollectionSchemaEditorSkeleton from './Skeleton';
 
 export interface Props {
     entityName?: string;

@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
+
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { useEffect } from 'react';
 import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,

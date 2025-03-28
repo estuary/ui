@@ -1,12 +1,12 @@
+import { useEffect, useRef } from 'react';
+
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
-
-import { useEffect, useRef } from 'react';
 import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfig_hydrateState,
     useEndpointConfig_hydrated,
+    useEndpointConfig_hydrateState,
     useEndpointConfig_setActive,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,

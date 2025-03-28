@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
     DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
@@ -11,7 +13,6 @@ import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEnti
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
-import { useCallback } from 'react';
 import {
     useBinding_bindings,
     useBinding_resourceConfigs,
@@ -24,7 +25,6 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
 } from 'src/stores/EndpointConfig/hooks';
 import { isDekafConnector } from 'src/utils/connector-utils';
-
 import { modifyExistingCaptureDraftSpec } from 'src/utils/workflow-utils';
 
 function useDiscoverDraftUpdate(options?: {

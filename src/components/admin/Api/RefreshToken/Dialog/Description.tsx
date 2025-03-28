@@ -1,6 +1,7 @@
 import { TextField } from '@mui/material';
-import { useIntl } from 'react-intl';
+
 import { useRefreshTokenStore } from '../Store/create';
+import { useIntl } from 'react-intl';
 
 function RefreshTokenDescription() {
     const intl = useIntl();

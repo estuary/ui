@@ -1,6 +1,11 @@
+import { ConnectorConfig } from '../../../deps/flow/flow';
+
 import { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
 import { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
-import { ResourceConfig, ResourceConfigDictionary } from 'src/stores/Binding/types';
+import {
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'src/stores/Binding/types';
 import {
     generateMockBinding,
     generateMockConnectorConfig,
@@ -8,7 +13,6 @@ import {
 } from 'src/test/test-utils';
 import { SourceCaptureDef } from 'src/types';
 import { generateTaskSpec, getBindingIndex } from 'src/utils/workflow-utils';
-import { ConnectorConfig } from '../../../deps/flow/flow';
 
 describe('getBindingIndex', () => {
     let defaultResponse: number, matchedCollection: string;

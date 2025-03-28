@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import ExternalLink, {
     ExternalLinkOptions,
 } from 'src/components/shared/ExternalLink';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     messageID: string;

@@ -1,13 +1,15 @@
 import { Button, Stack } from '@mui/material';
-import { unauthenticatedRoutes } from 'src/app/routes';
-import FullPageDialog from 'src/components/fullPage/Dialog';
-import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
-import { NavArrowLeft } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+
 import HeaderMessage from './HeaderMessage';
 import RegisterPerk from './Perk';
 import LoginTabs from './Tabs';
 import { LoginWrapperProps } from './types';
+import { NavArrowLeft } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
+import FullPageDialog from 'src/components/fullPage/Dialog';
+import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 
 const LoginWrapper = ({
     children,

@@ -1,4 +1,8 @@
 import { Box, Typography } from '@mui/material';
+
+import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
+import { FormattedMessage } from 'react-intl';
+
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
 import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
 import Backfill from 'src/components/editor/Bindings/Backfill';
@@ -7,14 +11,12 @@ import { useEditorStore_queryResponse_draftedBindingIndex } from 'src/components
 import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
-import { FormattedMessage } from 'react-intl';
 import {
     useBinding_collectionMetadataProperty,
     useBinding_currentBindingIndex,
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
 } from 'src/stores/Binding/hooks';
-import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 
 interface Props {
     bindingUUID: string;

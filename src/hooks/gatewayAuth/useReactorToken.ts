@@ -1,8 +1,12 @@
-import { useUserStore } from 'src/context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
-import { logRocketConsole } from 'src/services/shared';
 import useSWR from 'swr';
-import { authorizeTask, formatEndpointAddress } from 'src/utils/dataPlane-utils';
+
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { logRocketConsole } from 'src/services/shared';
+import {
+    authorizeTask,
+    formatEndpointAddress,
+} from 'src/utils/dataPlane-utils';
 import { getURL, hasLength } from 'src/utils/misc-utils';
 
 interface Token {

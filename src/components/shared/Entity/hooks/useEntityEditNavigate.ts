@@ -1,9 +1,11 @@
+import { useCallback } from 'react';
+
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
-import { isEmpty } from 'lodash';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router';
 import { Entity } from 'src/types';
 import { getPathWithParams } from 'src/utils/misc-utils';
 

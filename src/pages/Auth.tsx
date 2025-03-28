@@ -1,3 +1,8 @@
+import { useEffect, useRef } from 'react';
+
+import { useSnackbar } from 'notistack';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import {
     authenticatedRoutes,
     REDIRECT_TO_PARAM_NAME,
@@ -7,9 +12,6 @@ import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import { useSnackbar } from 'notistack';
-import { useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { logRocketEvent } from 'src/services/shared';
 import { CommonStatuses, CustomEvents } from 'src/services/types';
 

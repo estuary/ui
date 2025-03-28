@@ -1,15 +1,18 @@
-import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { useState } from 'react';
+
+import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
+
+import { RowSelectorProps } from './types';
+import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
+
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { MAX_BINDINGS } from 'src/utils/workflow-utils';
-import { RowSelectorProps } from './types';
 
 type Props = Pick<
     RowSelectorProps,

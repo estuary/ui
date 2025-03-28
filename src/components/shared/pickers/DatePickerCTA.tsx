@@ -1,10 +1,12 @@
 import { StaticDatePicker } from '@mui/x-date-pickers';
-import { format, parseISO } from 'date-fns';
-import { Calendar } from 'iconoir-react';
-import { Patterns } from 'src/types/jsonforms';
+
+import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
 import { INVALID_DATE } from './shared';
 import { PickerProps } from './types';
-import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
+import { format, parseISO } from 'date-fns';
+import { Calendar } from 'iconoir-react';
+
+import { Patterns } from 'src/types/jsonforms';
 
 function DatePickerCTA(props: PickerProps) {
     const { enabled, state, value, onChange } = props;

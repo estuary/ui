@@ -1,6 +1,7 @@
-import { SemanticColor } from 'src/context/Theme';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
+
+import { SemanticColor } from 'src/context/Theme';
 import { Entity } from 'src/types';
 
 export enum ShardStatusMessageIds {

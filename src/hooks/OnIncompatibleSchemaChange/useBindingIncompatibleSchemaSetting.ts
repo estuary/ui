@@ -1,3 +1,8 @@
+import { useCallback } from 'react';
+
+import { cloneDeep } from 'lodash';
+import { useIntl } from 'react-intl';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -6,9 +11,6 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 import { useEntityType } from 'src/context/EntityContext';
-import { cloneDeep } from 'lodash';
-import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';

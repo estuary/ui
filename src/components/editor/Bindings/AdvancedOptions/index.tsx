@@ -1,12 +1,14 @@
 import { Stack, Typography } from '@mui/material';
-import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
-import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import { useEntityType } from 'src/context/EntityContext';
-import { useIntl } from 'react-intl';
-import { useBindingStore } from 'src/stores/Binding/Store';
+
 import OnIncompatibleSchemaChange from '../OnIncompatibleSchemaChange';
 import TimeTravel from '../TimeTravel';
 import { AdvancedOptionsProps } from './types';
+import { useIntl } from 'react-intl';
+
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityType } from 'src/context/EntityContext';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function AdvancedOptions({
     bindingIndex,

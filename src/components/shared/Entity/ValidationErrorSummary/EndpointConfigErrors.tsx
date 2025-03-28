@@ -1,10 +1,10 @@
 import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_customErrors,
     useEndpointConfigStore_endpointConfigErrors,
     useEndpointConfigStore_endpointSchema,
-    useEndpointConfig_serverUpdateRequired,
 } from 'src/stores/EndpointConfig/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 

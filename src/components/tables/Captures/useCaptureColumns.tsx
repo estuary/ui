@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import StatsHeader from '../cells/stats/Header';
 import { ColumnProps } from '../EntityTable/types';
 import { catalogName, connectorType, lastPublished, writesTo } from '../shared';

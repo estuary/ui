@@ -1,9 +1,12 @@
-import { Chip } from '@mui/material';
-import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
+
+import { Chip } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { useBinding_evolvedCollections_count } from 'src/stores/Binding/hooks';
+
+import { useEntityType } from 'src/context/EntityContext';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { useBinding_evolvedCollections_count } from 'src/stores/Binding/hooks';
 
 function EvolvedCount() {
     const intl = useIntl();

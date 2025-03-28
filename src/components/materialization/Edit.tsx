@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import {
     useEditorStore_id,
@@ -14,7 +16,6 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { useCallback } from 'react';
 import { CustomEvents } from 'src/services/types';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 

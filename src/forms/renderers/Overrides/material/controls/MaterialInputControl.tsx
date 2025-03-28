@@ -23,6 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
+
 import {
     ControlProps,
     isDescriptionHidden,
@@ -30,10 +32,10 @@ import {
 } from '@jsonforms/core';
 import { useFocus } from '@jsonforms/material-renderers';
 
-import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
-import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 import { endsWith } from 'lodash';
 import merge from 'lodash/merge';
+
+import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 
 export interface WithInput {
     input: any;

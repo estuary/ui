@@ -1,6 +1,8 @@
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import { diminishedTextColor } from 'src/context/Theme';
+
 import { useIntl } from 'react-intl';
+
+import { diminishedTextColor } from 'src/context/Theme';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionUpdated() {

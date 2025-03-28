@@ -1,11 +1,13 @@
+import { useCallback } from 'react';
+
+import { omit } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import { omit } from 'lodash';
-import { useCallback } from 'react';
 import {
     useBinding_currentBindingIndex,
     useBinding_recommendFields,

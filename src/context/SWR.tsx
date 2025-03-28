@@ -1,14 +1,16 @@
+import { useCallback } from 'react';
+
+import { supabaseClient } from './GlobalProviders';
 import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
 import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { SWRConfig, useSWRConfig } from 'swr';
+
 import { AUTH_ERROR } from 'src/services/client';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { tokenHasIssues } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
-import { SWRConfig, useSWRConfig } from 'swr';
 import { BaseComponentProps } from 'src/types';
-import { supabaseClient } from './GlobalProviders';
 
 const DEFAULT_RETRY_COUNT = 3;
 export const DEFAULT_POLLING = 2500;

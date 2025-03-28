@@ -1,14 +1,17 @@
+import { forwardRef, useMemo } from 'react';
+
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
-import { alertBackground, alertTextPrimary } from 'src/context/Theme';
+
+import { AlertBoxProps } from './types';
 import {
     CheckCircle,
     InfoCircle,
     WarningHexagon,
     WarningTriangle,
 } from 'iconoir-react';
-import { forwardRef, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { AlertBoxProps } from './types';
+
+import { alertBackground, alertTextPrimary } from 'src/context/Theme';
 
 const SHARED_STYLING = {
     borderRadius: 2,

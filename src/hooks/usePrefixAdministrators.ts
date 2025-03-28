@@ -1,4 +1,5 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
 import { getPrefixAdministrators } from 'src/api/roleGrants';
 import { Capability } from 'src/types';
 

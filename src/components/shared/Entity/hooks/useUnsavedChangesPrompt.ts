@@ -1,5 +1,6 @@
-import { usePrompt } from 'src/hooks/useBlocker';
 import { useUnmount } from 'react-use';
+
+import { usePrompt } from 'src/hooks/useBlocker';
 
 export default function useUnsavedChangesPrompt(
     when: boolean,

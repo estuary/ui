@@ -1,9 +1,10 @@
+import TimestampDetail from './TimestampDetail';
+import { BaseDetailProps } from './types';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
-import TimestampDetail from './TimestampDetail';
-import { BaseDetailProps } from './types';
 
 export default function ControllerUpdatedDetail({
     headerMessageId,

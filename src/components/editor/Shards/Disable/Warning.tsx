@@ -1,8 +1,9 @@
 import { Box } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useEntityType } from 'src/context/EntityContext';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

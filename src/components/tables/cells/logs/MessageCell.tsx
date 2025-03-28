@@ -1,8 +1,13 @@
 import { TableCell, Typography } from '@mui/material';
-import { jsonObjectPreview_key, jsonObjectPreview_value } from 'src/context/Theme';
+
+import { BaseTypographySx } from './shared';
 import { isEmpty } from 'lodash';
 import { ObjectPreview } from 'react-inspector';
-import { BaseTypographySx } from './shared';
+
+import {
+    jsonObjectPreview_key,
+    jsonObjectPreview_value,
+} from 'src/context/Theme';
 
 interface Props {
     message: string;

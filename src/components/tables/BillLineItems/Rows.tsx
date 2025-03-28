@@ -1,4 +1,5 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+
 import { InvoiceLineItem } from 'src/api/billing';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 

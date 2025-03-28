@@ -1,17 +1,19 @@
+import { useEffect, useRef, useState } from 'react';
+
+import useFieldSelectionRefresh from './useFieldSelectionRefresh';
+
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import { useEffect, useRef, useState } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 export default function useBackgroundTest() {
     const entityType = useEntityType();

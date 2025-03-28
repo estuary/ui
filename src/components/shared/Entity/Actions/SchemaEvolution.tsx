@@ -1,4 +1,9 @@
+import { useCallback } from 'react';
+
 import { Button } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
 import { createEvolution, toEvolutionRequest } from 'src/api/evolutions';
 import {
     useBindingsEditorStore_incompatibleCollections,
@@ -9,15 +14,12 @@ import {
     useEditorStore_isSaving,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-
 import { useEntityType } from 'src/context/EntityContext';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
-import { useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { logRocketEvent } from 'src/services/shared';
 import {
     DEFAULT_POLLER_ERROR,

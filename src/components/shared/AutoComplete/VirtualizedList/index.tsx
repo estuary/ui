@@ -1,9 +1,11 @@
-import { autoCompleteListPadding } from 'src/context/Theme';
 import { forwardRef, HTMLAttributes, ReactChild } from 'react';
-import { VariableSizeList } from 'react-window';
+
 import { useResetCache } from './hooks';
 import { OuterElement, OuterElementContext } from './OuterElement';
 import Row from './Row';
+import { VariableSizeList } from 'react-window';
+
+import { autoCompleteListPadding } from 'src/context/Theme';
 
 export const itemSize = 40;
 const groupSize = 55;

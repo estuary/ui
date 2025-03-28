@@ -1,11 +1,13 @@
 import { Box, Grid } from '@mui/material';
-import HeroTabs from 'src/components/home/hero/Tabs';
+
 import HeroDemo from './Demo';
 import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';
 import DemoImage from './Images/Demo';
 import WelcomeImage from './Images/Welcome';
 import HeroOverview from './Overview';
+
+import HeroTabs from 'src/components/home/hero/Tabs';
 
 function HeroImageAndDescription() {
     const { activeTab } = useHeroTabs();

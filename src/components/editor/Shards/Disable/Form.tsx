@@ -1,16 +1,17 @@
+import { useCallback, useState } from 'react';
+
+import useShards from './useShards';
+import { useSnackbar } from 'notistack';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
 import { useEntityType } from 'src/context/EntityContext';
-
-import { useSnackbar } from 'notistack';
-import { useCallback, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import useShards from './useShards';
 
 function ShardsDisableForm() {
     const intl = useIntl();

@@ -1,11 +1,13 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
+
 import { exchangeBearerToken } from 'src/api/directives';
 import { DIRECTIVES } from 'src/directives/shared';
 import { DirectiveStates, UserClaims } from 'src/directives/types';
 import useAppliedDirectives from 'src/hooks/useAppliedDirectives';
-import { useSnackbar } from 'notistack';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { AppliedDirective } from 'src/types';

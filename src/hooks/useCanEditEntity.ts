@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
+
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useMemo } from 'react';
 import { useEntitiesStore_capabilities_writable } from 'src/stores/Entities/hooks';
 
 function useCanEditEntity() {

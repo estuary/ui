@@ -1,17 +1,25 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { Box, Table, TableContainer } from '@mui/material';
+
+import EntityTableBody from '../EntityTable/TableBody';
+import EntityTableHeader from '../EntityTable/TableHeader';
+import Rows from './Rows';
+import { useIntl } from 'react-intl';
+
 import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import { FieldFilter } from 'src/components/schema/types';
-import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'src/types';
+import {
+    SortDirection,
+    TableColumns,
+    TableState,
+    TableStatuses,
+} from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
-import EntityTableBody from '../EntityTable/TableBody';
-import EntityTableHeader from '../EntityTable/TableHeader';
-import Rows from './Rows';
 
 export const columns: TableColumns[] = [
     {

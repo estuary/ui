@@ -1,5 +1,6 @@
-import { PopupState } from 'material-ui-popup-state/hooks';
 import { MutableRefObject } from 'react';
+
+import { PopupState } from 'material-ui-popup-state/hooks';
 
 export interface PickerProps {
     buttonRef: MutableRefObject<null>;

@@ -1,5 +1,7 @@
 import { Avatar, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
 import { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {

@@ -1,13 +1,14 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    RPCS,
-    SortingProps,
-    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
+    RPCS,
+    SortingProps,
     supabaseRetry,
+    TABLES,
 } from 'src/services/supabase';
 import { RefreshTokenData } from 'src/types';
 

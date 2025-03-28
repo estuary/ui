@@ -1,12 +1,15 @@
+import { useMemo, useState } from 'react';
+
+import { useStore } from 'zustand';
+
+import UpdateDraftButton from '../UpdateDraftButton';
+
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import EntityList from 'src/components/shared/Entity/List';
 import { CatalogListContent } from 'src/components/transformation/create/Config/catalog/CatalogList';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import { useMemo, useState } from 'react';
 import { useTransformationCreate_transformConfigs } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { useStore } from 'zustand';
-import UpdateDraftButton from '../UpdateDraftButton';
 
 function TransformList() {
     const resetSelected = useStore(

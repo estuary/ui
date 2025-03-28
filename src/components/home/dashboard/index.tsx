@@ -1,6 +1,8 @@
 import { Box, Grid } from '@mui/material';
-import TenantSelector from 'src/components/shared/TenantSelector';
+
 import EntityStatOverview from './EntityStatOverview';
+
+import TenantSelector from 'src/components/shared/TenantSelector';
 
 export default function Dashboard() {
     return (

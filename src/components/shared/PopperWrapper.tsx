@@ -1,3 +1,5 @@
+import { Dispatch, ReactNode, SetStateAction } from 'react';
+
 import {
     Box,
     ClickAwayListener,
@@ -7,8 +9,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+
 import { paperBackground, popperIndex } from 'src/context/Theme';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface Props {
     children: ReactNode;

@@ -26,9 +26,12 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { ControlProps, WithClassname } from '@jsonforms/core';
-import { Autocomplete, Input } from '@mui/material';
 import React, { useLayoutEffect, useMemo, useRef } from 'react';
+
+import { Autocomplete, Input } from '@mui/material';
+
+import { ControlProps, WithClassname } from '@jsonforms/core';
+
 import { ISO_8601_DURATION_RE } from 'src/validation';
 
 const DURATION_TIME_PREFIX = 'PT';

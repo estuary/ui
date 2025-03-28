@@ -1,8 +1,15 @@
+import { useCallback, useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
 } from 'src/api/draftSpecs';
-import { createPublication, getPublicationByIdQuery } from 'src/api/publications';
+import {
+    createPublication,
+    getPublicationByIdQuery,
+} from 'src/api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_draftSpecs,
@@ -13,9 +20,7 @@ import {
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { logRocketEvent, DEFAULT_FILTER } from 'src/services/shared';
+import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
     useBinding_collections,

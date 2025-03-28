@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction, useState } from 'react';
+
 import {
     Box,
     Dialog,
@@ -7,13 +9,14 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { PostgrestError } from '@supabase/postgrest-js';
+import { Xmark } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
 import Error from 'src/components/shared/Error';
 import AccessLinksTable from 'src/components/tables/AccessGrants/AccessLinks';
 import GenerateInvitation from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
-import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 const TITLE_ID = 'share-prefix-dialog-title';
 

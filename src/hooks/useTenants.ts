@@ -1,6 +1,8 @@
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getTenantDetails, getTenantHidesPreview } from 'src/api/tenants';
 import { useMemo } from 'react';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
+import { getTenantDetails, getTenantHidesPreview } from 'src/api/tenants';
 import { TenantPaymentDetails } from 'src/types';
 import { DEMO_TENANT, hasLength, stripPathing } from 'src/utils/misc-utils';
 

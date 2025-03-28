@@ -1,5 +1,5 @@
-import { hasLength } from 'src/utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
+
 import {
     getCollectionNames,
     getCollections,
@@ -8,6 +8,8 @@ import {
 import { FullSourceJsonForms } from './slices/TimeTravel';
 import { useBindingStore } from './Store';
 import { CollectionMetadata, ResourceConfig } from './types';
+
+import { hasLength } from 'src/utils/misc-utils';
 
 export const useBinding_hydrated = () => {
     return useBindingStore((state) => state.hydrated);

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
     Checkbox,
     FormControl,
@@ -5,17 +7,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { submitDirective } from 'src/api/directives';
-import RegistrationProgress from 'src/app/guards/RegistrationProgress';
-import AlertBox from 'src/components/shared/AlertBox';
-import ExternalLink from 'src/components/shared/ExternalLink';
-import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
-import HeaderMessage from 'src/pages/login/HeaderMessage';
-import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useMount } from 'react-use';
-import { getUrls } from 'src/utils/env-utils';
+
 import Actions from './Actions';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
@@ -23,6 +15,17 @@ import {
     trackEvent,
 } from './shared';
 import { DirectiveProps } from './types';
+import { PostgrestError } from '@supabase/postgrest-js';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useMount } from 'react-use';
+
+import { submitDirective } from 'src/api/directives';
+import RegistrationProgress from 'src/app/guards/RegistrationProgress';
+import AlertBox from 'src/components/shared/AlertBox';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import HeaderMessage from 'src/pages/login/HeaderMessage';
+import { getUrls } from 'src/utils/env-utils';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';

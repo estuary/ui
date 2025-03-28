@@ -1,4 +1,10 @@
+import { useState } from 'react';
+
 import { Box, Divider, Stack } from '@mui/material';
+
+import { ConfigHeader } from './ConfigHeader';
+import { FormattedMessage } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import BindingSelectorTable from 'src/components/collection/Selector/Table';
 import PrefixedName from 'src/components/inputs/PrefixedName';
@@ -6,14 +12,10 @@ import LanguageSelector from 'src/components/transformation/create/LanguageSelec
 import SingleStep from 'src/components/transformation/create/SingleStep';
 import StepWrapper from 'src/components/transformation/create/Wrapper';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
 } from 'src/stores/TransformationCreate/hooks';
-import { ConfigHeader } from './ConfigHeader';
 
 function DerivationCreateConfig() {
     usePageTitle({

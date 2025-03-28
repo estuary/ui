@@ -1,7 +1,10 @@
-import { JsonFormsProps } from '@jsonforms/core';
-import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
-import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
+
+import { JsonFormsProps } from '@jsonforms/core';
+
+import { isEmpty } from 'lodash';
+
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import { EnumDictionary } from 'src/types/utils';
 import { PREFIX_NAME_PATTERN } from 'src/validation';

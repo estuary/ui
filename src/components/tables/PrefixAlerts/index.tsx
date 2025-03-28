@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
+
 import { getNotificationSubscriptionsForTable } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import EntityTable from 'src/components/tables/EntityTable';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
-import { useMemo } from 'react';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';

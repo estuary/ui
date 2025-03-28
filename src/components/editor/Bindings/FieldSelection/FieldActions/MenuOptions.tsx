@@ -1,6 +1,8 @@
 import { RadioGroup } from '@mui/material';
-import RadioMenuItem from 'src/components/shared/RadioMenuItem';
+
 import { useIntl } from 'react-intl';
+
+import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 

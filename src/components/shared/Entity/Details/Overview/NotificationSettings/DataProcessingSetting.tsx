@@ -1,4 +1,12 @@
 import {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
+
+import {
     Autocomplete,
     AutocompleteRenderInputParams,
     Skeleton,
@@ -7,9 +15,12 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
-    DataProcessingAlertQuery,
     createDataProcessingNotification,
+    DataProcessingAlertQuery,
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
 } from 'src/api/alerts';
@@ -20,14 +31,6 @@ import useInitializeTaskNotification from 'src/hooks/notifications/useInitialize
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { CallSupabaseResponse } from 'src/services/supabase';
 
 interface Props {

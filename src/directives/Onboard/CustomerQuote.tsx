@@ -1,5 +1,7 @@
 import { Box, useMediaQuery, useTheme } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
 import customerQuoteDark from 'src/images/customer_quote-dark.png';
 import customerQuoteLight from 'src/images/customer_quote-light.png';
 

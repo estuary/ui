@@ -1,30 +1,17 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useConstant from 'use-constant';
+
 import { Box, Popper } from '@mui/material';
 import {
     DataGrid,
     GridColDef,
     GridFilterModel,
+    gridPaginatedVisibleSortedGridRowIdsSelector,
     GridRowId,
     GridRowSelectionModel,
-    gridPaginatedVisibleSortedGridRowIdsSelector,
     useGridApiRef,
 } from '@mui/x-data-grid';
-import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
-import AlertBox from 'src/components/shared/AlertBox';
-import { useEntityType } from 'src/context/EntityContext';
-import { dataGridListStyling } from 'src/context/Theme';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
-import {
-    useBinding_currentBindingUUID,
-    useBinding_resourceConfigs,
-} from 'src/stores/Binding/hooks';
-import { BindingState } from 'src/stores/Binding/types';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
-import useConstant from 'use-constant';
-import { hasLength, stripPathing } from 'src/utils/misc-utils';
+
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';
@@ -35,6 +22,22 @@ import {
     COLLECTION_SELECTOR_UUID_COL,
     getCollectionSelector,
 } from './shared';
+import { isEmpty } from 'lodash';
+import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
+
+import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
+import AlertBox from 'src/components/shared/AlertBox';
+import { useEntityType } from 'src/context/EntityContext';
+import { dataGridListStyling } from 'src/context/Theme';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_resourceConfigs,
+} from 'src/stores/Binding/hooks';
+import { BindingState } from 'src/stores/Binding/types';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { hasLength, stripPathing } from 'src/utils/misc-utils';
 
 interface Props {
     disableActions?: boolean;

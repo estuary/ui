@@ -1,14 +1,16 @@
 import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
-import {
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
-    useBindingsEditorStore_inferSchemaResponse_Keys,
-} from 'src/components/editor/Bindings/Store/hooks';
-import AlertBox from 'src/components/shared/AlertBox';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { hasLength } from 'src/utils/misc-utils';
+
 import SchemaKeyHeader from './Header';
 import { keyIsValidOption } from './shared';
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import {
+    useBindingsEditorStore_inferSchemaResponse_Keys,
+    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
+    useBindingsEditorStore_inferSchemaResponseEmpty,
+} from 'src/components/editor/Bindings/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     value: string[] | null;

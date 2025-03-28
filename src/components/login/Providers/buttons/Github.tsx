@@ -1,8 +1,10 @@
 import { Button, useTheme } from '@mui/material';
-import { sample_grey } from 'src/context/Theme';
-import { FormattedMessage } from 'react-intl';
+
 import { ProviderButtonProps } from '../types';
 import { defaulticonSize } from './shared';
+import { FormattedMessage } from 'react-intl';
+
+import { sample_grey } from 'src/context/Theme';
 
 const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
     const theme = useTheme();

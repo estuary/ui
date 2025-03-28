@@ -1,6 +1,7 @@
-import { DateTime } from 'luxon';
-import { QUERY_PARAM_CONNECTOR_TITLE } from 'src/services/supabase';
 import { ColumnProps } from './EntityTable/types';
+import { DateTime } from 'luxon';
+
+import { QUERY_PARAM_CONNECTOR_TITLE } from 'src/services/supabase';
 
 // This is the property fetched when setting the select row in the store
 //   and then passed in the URL as the prefill for materialize

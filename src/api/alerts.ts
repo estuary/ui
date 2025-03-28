@@ -1,5 +1,6 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import pLimit from 'p-limit';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { stringifyJSON } from 'src/services/stringify';
 import {
     defaultTableFilter,

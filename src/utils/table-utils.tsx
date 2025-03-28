@@ -1,6 +1,8 @@
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import MessageWithLink from 'src/components/content/MessageWithLink';
+
 import { FormattedMessage } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
 import { Pagination } from 'src/services/supabase';
 import { TableColumns, TableIntlConfig, TableStatuses } from 'src/types';
 

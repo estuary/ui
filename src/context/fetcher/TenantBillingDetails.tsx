@@ -1,9 +1,11 @@
+import { createContext, useContext, useMemo } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
 import { MAX_TENANTS } from 'src/api/billing';
 import FullPageError from 'src/components/fullPage/Error';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useTenantsDetailsForPayment } from 'src/hooks/useTenants';
-import { createContext, useContext, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { BaseComponentProps, TenantPaymentDetails } from 'src/types';
 

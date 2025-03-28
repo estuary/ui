@@ -1,7 +1,9 @@
 import { materialCells } from '@jsonforms/material-renderers';
-import { customAjv } from 'src/services/ajv';
+
 import defaultRenderers from './defaultRenderers';
 import { defaultOptions } from './shared';
+
+import { customAjv } from 'src/services/ajv';
 
 export const jsonFormsDefaults = {
     renderers: defaultRenderers,

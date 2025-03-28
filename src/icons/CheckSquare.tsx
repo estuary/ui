@@ -1,5 +1,6 @@
-import { IconoirContext } from 'iconoir-react';
 import React from 'react';
+
+import { IconoirContext } from 'iconoir-react';
 
 function SvgCheckSquare(
     passedProps: React.SVGProps<SVGSVGElement>,

@@ -1,13 +1,12 @@
 import { Button } from '@mui/material';
-import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
-
-import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import { entityHeaderButtonSx } from 'src/context/Theme';
-import { FormattedMessage } from 'react-intl';
-
-import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 import useGenerateCatalog from './useGenerateCatalog';
+import { FormattedMessage } from 'react-intl';
+
+import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
+import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { entityHeaderButtonSx } from 'src/context/Theme';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface Props {
     disabled: boolean;

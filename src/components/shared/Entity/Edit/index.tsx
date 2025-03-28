@@ -1,4 +1,15 @@
+import { ReactNode, useEffect, useMemo } from 'react';
+
 import { Box, Collapse } from '@mui/material';
+
+import AlertBox from '../../AlertBox';
+import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
+import IncompatibleCollections from '../IncompatibleCollections';
+import PreSavePrompt from '../prompts/PreSave';
+import PromptsHydrator from '../prompts/store/Hydrator';
+import ValidationErrorSummary from '../ValidationErrorSummary';
+import { useIntl } from 'react-intl';
+
 import CollectionConfig from 'src/components/collection/Config';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
@@ -18,16 +29,14 @@ import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
+    useEndpointConfigStore_changed,
 } from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
@@ -37,12 +46,6 @@ import {
 } from 'src/stores/FormState/hooks';
 import { EntityWithCreateWorkflow } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
-import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import IncompatibleCollections from '../IncompatibleCollections';
-import PreSavePrompt from '../prompts/PreSave';
-import PromptsHydrator from '../prompts/store/Hydrator';
-import ValidationErrorSummary from '../ValidationErrorSummary';
 
 interface Props {
     title: string;

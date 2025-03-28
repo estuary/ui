@@ -1,8 +1,10 @@
-import { AccessGrantRemovalDescription } from 'src/hooks/useAccessGrantRemovalDescriptions';
 import { ReactNode } from 'react';
+
+import { RowConfirmation } from '../types';
+
+import { AccessGrantRemovalDescription } from 'src/hooks/useAccessGrantRemovalDescriptions';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { Capability } from 'src/types';
-import { RowConfirmation } from '../types';
 
 export interface AccessGrantRowConfirmation extends RowConfirmation<ReactNode> {
     details: AccessGrantRemovalDescription;

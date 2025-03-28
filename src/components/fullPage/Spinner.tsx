@@ -1,8 +1,11 @@
-import { Backdrop, CircularProgress } from '@mui/material';
-import { zIndexIncrement } from 'src/context/Theme';
 import { useEffect } from 'react';
+
+import { Backdrop, CircularProgress } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 import { useTimeout } from 'react-use';
+
+import { zIndexIncrement } from 'src/context/Theme';
 
 interface Props {
     delay?: number;

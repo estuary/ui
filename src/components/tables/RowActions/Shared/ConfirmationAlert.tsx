@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
-import { useIntl } from 'react-intl';
+
 import { ConfirmationAlertProps } from './types';
+import { useIntl } from 'react-intl';
 
 function ConfirmationAlert({ messageId }: ConfirmationAlertProps) {
     const intl = useIntl();

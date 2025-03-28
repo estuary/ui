@@ -1,9 +1,11 @@
 import { Box, TableCell, Typography } from '@mui/material';
+
+import ControllerAlert from './ControllerAlert';
+import { ControllerErrorsProps } from './types';
+
 import AlertBox from 'src/components/shared/AlertBox';
 import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
 import { linkButtonSx } from 'src/context/Theme';
-import ControllerAlert from './ControllerAlert';
-import { ControllerErrorsProps } from './types';
 
 export default function ControllerErrors({
     errors,

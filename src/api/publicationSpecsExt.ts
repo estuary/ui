@@ -1,4 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { supabaseRetry, TABLES } from 'src/services/supabase';
 import { Schema } from 'src/types';

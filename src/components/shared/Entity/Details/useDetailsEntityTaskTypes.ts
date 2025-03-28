@@ -1,7 +1,9 @@
-import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
-import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+
 import useIsCollectionDerivation from './useIsCollectionDerivation';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 function useDetailsEntityTaskTypes() {
     const entityType = useEntityType();

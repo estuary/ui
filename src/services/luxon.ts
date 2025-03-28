@@ -1,5 +1,6 @@
-import { DataGrains } from 'src/components/graphs/types';
 import { DateTime, DateTimeUnit, ToRelativeUnit } from 'luxon';
+
+import { DataGrains } from 'src/components/graphs/types';
 
 export interface LuxonGrainSettings {
     longFormat: (val: DateTime) => string;

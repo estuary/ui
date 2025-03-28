@@ -1,4 +1,10 @@
+import { useCallback } from 'react';
+
 import { Button } from '@mui/material';
+
+import { isEmpty } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
@@ -7,9 +13,6 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
-import { isEmpty } from 'lodash';
-import { useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import {

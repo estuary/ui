@@ -1,7 +1,10 @@
-import { Skeleton, Typography } from '@mui/material';
-import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
 import { useMemo } from 'react';
+
+import { Skeleton, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 

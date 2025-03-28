@@ -1,6 +1,7 @@
+import { useIntl } from 'react-intl';
+
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
-import { useIntl } from 'react-intl';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 function StatTypeSelector() {

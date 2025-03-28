@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
     FormControl,
     FormHelperText,
@@ -7,15 +9,16 @@ import {
     OutlinedInput,
     TextField,
 } from '@mui/material';
-import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
-import AlertBox from 'src/components/shared/AlertBox';
+
+import PrefixSelector from './PrefixSelector';
+import { PrefixedNameProps } from './types';
 import { capitalize } from 'lodash';
-import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
+
+import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
+import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
-import { PrefixedNameProps } from './types';
-import PrefixSelector from './PrefixSelector';
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';

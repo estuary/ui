@@ -1,7 +1,9 @@
-import { Button, Tab, Tabs } from '@mui/material';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+
+import { Button, Tab, Tabs } from '@mui/material';
+
 import { useHeroTabs } from './hooks';
+import { useIntl } from 'react-intl';
 
 function HeroTabs() {
     const intl = useIntl();

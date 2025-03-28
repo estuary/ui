@@ -1,11 +1,14 @@
-import { List, Paper } from '@mui/material';
 import { useLayoutEffect, useRef } from 'react';
-import useStayScrolled from 'react-stay-scrolled';
-import { hasLength } from 'src/utils/misc-utils';
+
+import { List, Paper } from '@mui/material';
+
 import { useLogsContext } from './Context';
 import LogLine from './Line';
 import Spinner from './Spinner';
 import { SpinnerOptions } from './types';
+import useStayScrolled from 'react-stay-scrolled';
+
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     height: number;

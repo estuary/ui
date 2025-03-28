@@ -1,4 +1,11 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { Box, Stack, Typography } from '@mui/material';
+
+import RefreshStatus from './RefreshStatus';
+import { isEqual } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
 import {
@@ -14,9 +21,6 @@ import {
 import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
-import { isEqual } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
@@ -33,7 +37,6 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 import { Schema } from 'src/types';
 import { getBindingIndex } from 'src/utils/workflow-utils';
-import RefreshStatus from './RefreshStatus';
 
 interface Props {
     bindingUUID: string;

@@ -1,9 +1,11 @@
 import { Avatar, Box, PaletteMode, useTheme } from '@mui/material';
+
+import { Lock, QuestionMark } from 'iconoir-react';
+
 import { DataPlaneIconProps } from 'src/components/shared/Entity/types';
 import { semiTransparentBackground_oneLayerElevated } from 'src/context/Theme';
-import { Lock, QuestionMark } from 'iconoir-react';
-import awsLogo from 'src/images/data-plane-providers/aws.png';
 import awsLogoWhite from 'src/images/data-plane-providers/aws_logo-white.png';
+import awsLogo from 'src/images/data-plane-providers/aws.png';
 import gcpLogo from 'src/images/data-plane-providers/google_cloud.png';
 
 const DEFAULT_AVATAR_SIZE = 20;

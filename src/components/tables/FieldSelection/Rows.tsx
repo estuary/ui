@@ -1,4 +1,13 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+
+import {
+    constraintTypeSort,
+    displayOptionalColumn,
+    optionalColumnIntlKeys,
+} from './shared';
+import { RowProps, RowsProps } from './types';
+import { orderBy } from 'lodash';
+
 import { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
@@ -7,15 +16,8 @@ import {
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
-import { orderBy } from 'lodash';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { basicSort_string } from 'src/utils/misc-utils';
-import {
-    constraintTypeSort,
-    displayOptionalColumn,
-    optionalColumnIntlKeys,
-} from './shared';
-import { RowProps, RowsProps } from './types';
 
 function Row({ columns, row }: RowProps) {
     const currentBindingUUID = useBinding_currentBindingUUID();

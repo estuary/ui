@@ -1,8 +1,9 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
@@ -11,8 +12,8 @@ import {
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
-    SHARDS_DISABLE,
     SHARD_LABELS,
+    SHARDS_DISABLE,
     SortingProps,
     supabaseRetry,
     TABLES,

@@ -7,8 +7,10 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { semiTransparentBackground } from 'src/context/Theme';
+
 import { FormattedMessage } from 'react-intl';
+
+import { semiTransparentBackground } from 'src/context/Theme';
 import { TableColumns } from 'src/types';
 
 interface Props {

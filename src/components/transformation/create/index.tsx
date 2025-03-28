@@ -1,16 +1,21 @@
+import { useMemo, useState } from 'react';
+
 import {
     Box,
     Stack,
     Step,
     StepConnector,
+    stepConnectorClasses,
     StepLabel,
     Stepper,
+    styled,
     Theme,
     Typography,
-    stepConnectorClasses,
-    styled,
     useMediaQuery,
 } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import BindingSelector from 'src/components/editor/Bindings/Selector';
 import PrefixedName from 'src/components/inputs/PrefixedName';
@@ -18,8 +23,6 @@ import GitPodButton from 'src/components/transformation/create/GitPodButton';
 import LegacyLanguageSelector from 'src/components/transformation/create/legacy/LanguageSelector';
 import LegacySingleStep from 'src/components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'src/components/transformation/create/legacy/Wrapper';
-import { useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_collections,
     useBinding_hydrated,

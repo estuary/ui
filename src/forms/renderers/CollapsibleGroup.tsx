@@ -1,22 +1,26 @@
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Hidden,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
+
 import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
 import {
     MaterialLayoutRenderer,
     MaterialLayoutRendererProps,
 } from '@jsonforms/material-renderers';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Button,
-    Box,
-    Hidden,
-    Typography,
-    useTheme,
-    Tooltip,
-} from '@mui/material';
-import { defaultOutline, jsonFormsGroupHeaders } from 'src/context/Theme';
+
+import SshEndpointInfo from './Informational/SshEndpoint';
 import { NavArrowDown, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
+import { defaultOutline, jsonFormsGroupHeaders } from 'src/context/Theme';
 import { withCustomJsonFormsLayoutProps } from 'src/services/jsonforms/JsonFormsContext';
 import {
     ADVANCED,
@@ -24,7 +28,6 @@ import {
     CONTAINS_REQUIRED_FIELDS,
     SHOW_INFO_SSH_ENDPOINT,
 } from 'src/services/jsonforms/shared';
-import SshEndpointInfo from './Informational/SshEndpoint';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 

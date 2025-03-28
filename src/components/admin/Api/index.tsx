@@ -1,10 +1,12 @@
 import { Divider, Grid, Typography } from '@mui/material';
+
+import AccessToken from './AccessToken';
+import RefreshToken from './RefreshToken';
+import { FormattedMessage } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { FormattedMessage } from 'react-intl';
-import AccessToken from './AccessToken';
-import RefreshToken from './RefreshToken';
 
 function AdminApi() {
     usePageTitle({

@@ -1,22 +1,24 @@
+import { ReactNode, useEffect, useMemo } from 'react';
+
 import { Stack, Typography, useTheme } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import AutoDiscoverySettings from 'src/components/capture/AutoDiscoverySettings';
 import CaptureInterval from 'src/components/capture/Interval';
 import BindingsEditor from 'src/components/editor/Bindings/Editor';
 import BindingSelector from 'src/components/editor/Bindings/Selector';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import { createEditorStore } from 'src/components/editor/Store/create';
+import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
 import SourceCapture from 'src/components/materialization/SourceCapture';
 import Backfill from 'src/components/shared/Entity/Backfill';
 import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
-
-import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
 import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'src/hooks/useServerUpdateRequiredMonitor';
-import { ReactNode, useEffect, useMemo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_discoveredCollections,
     useBinding_removeDiscoveredBindings,

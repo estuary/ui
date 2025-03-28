@@ -1,14 +1,16 @@
+import { ReactElement } from 'react';
+
+import { ConnectorConfig } from '../../deps/flow/flow';
 import { AuthSession, Session, User } from '@supabase/supabase-js';
-import { RenderOptions, render } from '@testing-library/react';
+import { render, RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
+import { mockDeep } from 'vitest-mock-extended';
+
 import AppProviders from 'src/context';
 import ThemeProvider from 'src/context/Theme';
-import { ReactElement } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { ResourceConfig } from 'src/stores/Binding/types';
 import { Entity, Schema } from 'src/types';
-import { mockDeep } from 'vitest-mock-extended';
-import { ConnectorConfig } from '../../deps/flow/flow';
 
 export const generateMockUserMetadata = (
     username: string

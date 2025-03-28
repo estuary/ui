@@ -1,8 +1,10 @@
 import { Button, Typography } from '@mui/material';
-import { typographyTruncation } from 'src/context/Theme';
-import { stripPathing } from 'src/utils/misc-utils';
+
 import BindingsSelectorErrorIndicator from './ErrorIndicator';
 import { SelectorNameProps } from './types';
+
+import { typographyTruncation } from 'src/context/Theme';
+import { stripPathing } from 'src/utils/misc-utils';
 
 function BindingsSelectorName({
     bindingUUID,

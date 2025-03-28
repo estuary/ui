@@ -31,7 +31,8 @@
 //      the focus event and not trigger focus.
 //
 import React, { useState } from 'react';
-import { CellProps, WithClassname } from '@jsonforms/core';
+
+import Close from '@mui/icons-material/Close';
 import {
     IconButton,
     Input,
@@ -40,9 +41,12 @@ import {
     InputProps,
     useTheme,
 } from '@mui/material';
-import merge from 'lodash/merge';
-import Close from '@mui/icons-material/Close';
+
+import { CellProps, WithClassname } from '@jsonforms/core';
 import { useDebouncedChange } from '@jsonforms/material-renderers';
+
+import merge from 'lodash/merge';
+
 import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 
 interface MuiTextInputProps {

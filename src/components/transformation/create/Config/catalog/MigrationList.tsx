@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+
 import {
     Accordion,
     AccordionDetails,
@@ -5,22 +7,23 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
+import CollectionList from './CollectionList';
+import { NavArrowDown } from 'iconoir-react';
+import { isEmpty } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
 } from 'src/components/transformation/create/Config/catalog/CatalogList';
 import { defaultOutline } from 'src/context/Theme';
-import { NavArrowDown } from 'iconoir-react';
-import { isEmpty } from 'lodash';
-import { useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_addMigrations,
     useTransformationCreate_migrations,
     useTransformationCreate_selectedAttribute,
 } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import CollectionList from './CollectionList';
 
 function MigrationList() {
     const theme = useTheme();

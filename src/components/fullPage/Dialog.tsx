@@ -1,4 +1,5 @@
 import { Box, Paper, SxProps } from '@mui/material';
+
 import { paperBackground } from 'src/context/Theme';
 import { BaseComponentProps } from 'src/types';
 

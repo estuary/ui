@@ -1,7 +1,10 @@
-import { Button } from '@mui/material';
-import PopperWrapper from 'src/components/shared/PopperWrapper';
 import { MouseEvent, useState } from 'react';
+
+import { Button } from '@mui/material';
+
 import { ButtonWithPopperProps } from './types';
+
+import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 function ButtonWithPopper({
     buttonProps,

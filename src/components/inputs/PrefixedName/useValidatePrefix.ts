@@ -1,9 +1,11 @@
+import { useState } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     PrefixedName_Change,
     PrefixedName_Errors,
 } from 'src/components/inputs/PrefixedName/types';
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';

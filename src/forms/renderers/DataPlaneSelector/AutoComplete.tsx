@@ -25,7 +25,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import React, { ReactNode, useMemo } from 'react';
+
 import {
     Autocomplete,
     AutocompleteRenderOptionState,
@@ -35,13 +36,15 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
-import { defaultOutline_hovered } from 'src/context/Theme';
 
-import React, { ReactNode, useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 import Option from './Option';
+import { useIntl } from 'react-intl';
+
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { defaultOutline_hovered } from 'src/context/Theme';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;

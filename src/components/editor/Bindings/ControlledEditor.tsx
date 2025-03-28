@@ -1,9 +1,11 @@
-import Editor from '@monaco-editor/react';
 import { Box, Stack, useTheme } from '@mui/material';
+
+import Editor from '@monaco-editor/react';
+
 import {
     useBindingsEditorStore_collectionData,
-    useBindingsEditorStore_schemaUpdateErrored,
     useBindingsEditorStore_schemaUpdated,
+    useBindingsEditorStore_schemaUpdateErrored,
 } from 'src/components/editor/Bindings/Store/hooks';
 import OutOfSync from 'src/components/editor/Status/OutOfSync';
 import ReadOnly from 'src/components/editor/Status/ReadOnly';
@@ -15,7 +17,7 @@ import {
 } from 'src/context/Theme';
 import { stringifyJSON } from 'src/services/stringify';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
-import { ICON_SIZE, getEditorTotalHeight } from 'src/utils/editor-utils';
+import { getEditorTotalHeight, ICON_SIZE } from 'src/utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;
 const EDITOR_TOOLBAR_HEIGHT = 29;

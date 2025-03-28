@@ -1,10 +1,12 @@
-import { Button, Divider, Menu } from '@mui/material';
-import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
-import { useIntl } from 'react-intl';
+
+import { Button, Divider, Menu } from '@mui/material';
+
 import MenuActions from './MenuActions';
 import MenuOptions from './MenuOptions';
 import { BaseProps } from './types';
+import { NavArrowDown } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
 export default function FieldActions({
     bindingUUID,

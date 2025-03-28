@@ -1,3 +1,7 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { set } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
@@ -7,8 +11,6 @@ import {
     useEditorStore_setSpecs,
 } from 'src/components/editor/Store/hooks';
 import { DraftSpec } from 'src/hooks/useDraftSpecs';
-import { set } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,

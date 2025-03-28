@@ -1,7 +1,10 @@
-import { Box, Button } from '@mui/material';
-import PrefixInvitationDialog from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
 import { useState } from 'react';
+
+import { Box, Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import PrefixInvitationDialog from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
 import { useEntitiesStore_atLeastOneAdminTenant } from 'src/stores/Entities/hooks';
 
 function AccessLinksButton() {

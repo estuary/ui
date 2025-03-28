@@ -1,6 +1,8 @@
 import { Grid } from '@mui/material';
-import Error from 'src/components/shared/Error';
+
 import { useRefreshTokenStore } from '../Store/create';
+
+import Error from 'src/components/shared/Error';
 
 function RefreshTokenError() {
     const serverError = useRefreshTokenStore((state) => state.serverError);

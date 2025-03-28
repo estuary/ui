@@ -1,10 +1,11 @@
 import { Stack, Typography } from '@mui/material';
-import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
-import { useEntityType } from 'src/context/EntityContext';
-import { FormattedMessage } from 'react-intl';
 
 import ShardsDisableForm from './Form';
 import ShardsDisableWarning from './Warning';
+import { FormattedMessage } from 'react-intl';
+
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
 
 function ShardsDisable() {
     const entityType = useEntityType();

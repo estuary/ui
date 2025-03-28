@@ -1,18 +1,21 @@
-import { Stack, Typography } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { getDirectiveByToken } from 'src/api/directives';
-import { authenticatedRoutes } from 'src/app/routes';
-import MessageWithLink from 'src/components/content/MessageWithLink';
-import AcceptGrant from 'src/directives/AcceptGrant';
-import FullPageWrapper from 'src/app/FullPageWrapper';
 import { useMemo, useState } from 'react';
+
+import { Stack, Typography } from '@mui/material';
+
+import useDirectiveGuard from '../hooks';
+import { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage } from 'react-intl';
 import { Navigate } from 'react-router';
-import { getPathWithParams } from 'src/utils/misc-utils';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { HomePageErrors } from 'src/components/login/shared';
+
+import { getDirectiveByToken } from 'src/api/directives';
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import { authenticatedRoutes } from 'src/app/routes';
+import MessageWithLink from 'src/components/content/MessageWithLink';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
-import useDirectiveGuard from '../hooks';
+import { HomePageErrors } from 'src/components/login/shared';
+import AcceptGrant from 'src/directives/AcceptGrant';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 const SELECTED_DIRECTIVE = 'grant';
 

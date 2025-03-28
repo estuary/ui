@@ -1,54 +1,68 @@
+import { lazy, Suspense } from 'react';
+
+import { ErrorBoundary } from 'react-error-boundary';
+import {
+    createBrowserRouter,
+    createRoutesFromElements,
+    Route,
+    RouterProvider,
+    Routes,
+} from 'react-router-dom';
+
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
+import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
 import { EntityContextProvider } from 'src/context/EntityContext';
+import Authenticated from 'src/context/Router/Authenticated';
+import AuthenticatedLayout from 'src/context/Router/AuthenticatedLayout';
+import CapturesTable from 'src/context/Router/CapturesTable';
+import MaterializationsTable from 'src/context/Router/MaterializationsTable';
+import RequireAuth from 'src/context/Router/RequireAuth';
 import { WorkflowContextProvider } from 'src/context/Workflow';
 import { OAuthPopup } from 'src/hooks/forks/react-use-oauth2/components';
 import Admin from 'src/pages/Admin';
 import Auth from 'src/pages/Auth';
 import Collections from 'src/pages/Collections';
 import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
-import HomePage from 'src/pages/Home';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
 import PageNotFound from 'src/pages/error/PageNotFound';
+import HomePage from 'src/pages/Home';
 import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
-import { lazy, Suspense } from 'react';
-import {
-    Route,
-    RouterProvider,
-    Routes,
-    createBrowserRouter,
-    createRoutesFromElements,
-} from 'react-router-dom';
-import { ErrorImporting } from 'src/components/shared/ErrorImporting';
-import { ErrorBoundary } from 'react-error-boundary';
-import Authenticated from 'src/context/Router/Authenticated';
-import AuthenticatedLayout from 'src/context/Router/AuthenticatedLayout';
-import CapturesTable from 'src/context/Router/CapturesTable';
-import MaterializationsTable from 'src/context/Router/MaterializationsTable';
-import RequireAuth from 'src/context/Router/RequireAuth';
 
 // Capture
-const CaptureCreateRoute = lazy(() => import('src/context/Router/CaptureCreate'));
-const CaptureCreateNewRoute = lazy(() => import('src/context/Router/CaptureCreateNew'));
-const CaptureDetailsRoute = lazy(() => import('src/context/Router/CaptureDetails'));
+const CaptureCreateRoute = lazy(
+    () => import('src/context/Router/CaptureCreate')
+);
+const CaptureCreateNewRoute = lazy(
+    () => import('src/context/Router/CaptureCreateNew')
+);
+const CaptureDetailsRoute = lazy(
+    () => import('src/context/Router/CaptureDetails')
+);
 const CaptureEditRoute = lazy(() => import('src/context/Router/CaptureEdit'));
 
 // Collection
 const DerivationCreateComponent = lazy(
     () => import('src/components/derivation/Create')
 );
-const CollectionCreateRoute = lazy(() => import('src/context/Router/CollectionCreate'));
-const CollectionCreateNewRoute = lazy(() => import('src/context/Router/CollectionCreateNew'));
-const CollectionDetailsRoute = lazy(() => import('src/context/Router/CollectionDetails'));
+const CollectionCreateRoute = lazy(
+    () => import('src/context/Router/CollectionCreate')
+);
+const CollectionCreateNewRoute = lazy(
+    () => import('src/context/Router/CollectionCreateNew')
+);
+const CollectionDetailsRoute = lazy(
+    () => import('src/context/Router/CollectionDetails')
+);
 
 //Materializations
 const MaterializationCreateRoute = lazy(
@@ -60,7 +74,9 @@ const MaterializationCreateNewRoute = lazy(
 const MaterializationDetailsRoute = lazy(
     () => import('src/context/Router/MaterializationDetails')
 );
-const MaterializationEditRoute = lazy(() => import('src/context/Router/MaterializationEdit'));
+const MaterializationEditRoute = lazy(
+    () => import('src/context/Router/MaterializationEdit')
+);
 
 const router = createBrowserRouter(
     createRoutesFromElements(

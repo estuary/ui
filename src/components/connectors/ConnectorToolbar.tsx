@@ -1,7 +1,3 @@
-import { Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
-import SearchField from 'src/components/shared/toolbar/SearchField';
-import { debounce } from 'lodash';
 import {
     ChangeEvent,
     Dispatch,
@@ -9,10 +5,17 @@ import {
     SyntheticEvent,
     useRef,
 } from 'react';
+import useConstant from 'use-constant';
+
+import { Grid, Toolbar } from '@mui/material';
+
+import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
+
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import SearchField from 'src/components/shared/toolbar/SearchField';
 import { fireGtmEvent } from 'src/services/gtm';
 import { Entity } from 'src/types';
-import useConstant from 'use-constant';
 
 interface Props {
     belowMd: boolean;

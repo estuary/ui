@@ -1,7 +1,9 @@
-import LinkWrapper from 'src/components/shared/LinkWrapper';
 import { Box, Tooltip } from '@mui/material';
-import { useIntl } from 'react-intl';
+
 import { ViewDetailsProps } from './types';
+import { useIntl } from 'react-intl';
+
+import LinkWrapper from 'src/components/shared/LinkWrapper';
 
 function EntityNameDetailsLink({ name, path, newWindow }: ViewDetailsProps) {
     const intl = useIntl();
