@@ -24,9 +24,8 @@ function Row({ row }: RowProps) {
                 (rowType) => rowType === rowTypeString
             );
             if (stringIndex > -1) {
-                row.types[
-                    stringIndex
-                ] = `${rowTypeString}: ${row.string_format}`;
+                row.types[stringIndex] =
+                    `${rowTypeString}: ${row.string_format}`;
             }
         }
 

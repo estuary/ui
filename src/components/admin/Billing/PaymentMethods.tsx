@@ -89,9 +89,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
     useEffect(() => {
         void (async () => {
             if (selectedTenant) {
-                const setupResponse = await getSetupIntentSecret(
-                    selectedTenant
-                );
+                const setupResponse =
+                    await getSetupIntentSecret(selectedTenant);
 
                 if (setupResponse.data?.intent_secret) {
                     setSetupIntentSecret(setupResponse.data.intent_secret);
@@ -113,9 +112,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
 
                     // TODO (store payment method info) we load this for the first 5 tenants so we should just pull that info
-                    const methodsResponse = await getTenantPaymentMethods(
-                        selectedTenant
-                    );
+                    const methodsResponse =
+                        await getTenantPaymentMethods(selectedTenant);
 
                     setMethods(methodsResponse.data?.payment_methods);
                     setDefaultSource(methodsResponse.data?.primary);

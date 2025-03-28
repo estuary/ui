@@ -10,12 +10,12 @@ import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'stores/DetailsForm/Store';
 import { Details } from 'stores/DetailsForm/types';
 import { EntityWithCreateWorkflow } from 'types';
-import { getConnectorMetadata } from 'utils/connector-utils';
-import { hasLength } from 'utils/misc-utils';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
-} from 'utils/workflow-utils';
+    getConnectorMetadata,
+} from 'utils/connector-utils';
+import { hasLength } from 'utils/misc-utils';
 import { MAC_ADDR_RE } from 'validation';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 

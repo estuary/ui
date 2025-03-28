@@ -23,23 +23,23 @@ function LevelIcon({ level }: Props) {
         level === 'error'
             ? XmarkCircle
             : level === 'warn'
-            ? WarningCircle
-            : level === 'done'
-            ? CheckCircle
-            : level === 'debug'
-            ? MinusCircle
-            : level === 'trace'
-            ? Circle
-            : InfoCircle;
+              ? WarningCircle
+              : level === 'done'
+                ? CheckCircle
+                : level === 'debug'
+                  ? MinusCircle
+                  : level === 'trace'
+                    ? Circle
+                    : InfoCircle;
 
     const iconColor =
         level === 'error'
             ? theme.palette.error.main
             : level === 'warn'
-            ? theme.palette.warning.main
-            : level === 'done'
-            ? theme.palette.success.main
-            : theme.palette.info.main;
+              ? theme.palette.warning.main
+              : level === 'done'
+                ? theme.palette.success.main
+                : theme.palette.info.main;
 
     return (
         <Tooltip title={level} placement="top" enterDelay={500}>

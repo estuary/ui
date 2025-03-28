@@ -293,9 +293,8 @@ const getInitialState = (
         if (prefillLiveSpecIds.length > 0) {
             // Prefills bindings in materialization workflows when the Materialize CTA
             // on the Captures page, Collections page, or captures/collections Details page is clicked.
-            const { data, error } = await getLiveSpecsById_writesTo(
-                prefillLiveSpecIds
-            );
+            const { data, error } =
+                await getLiveSpecsById_writesTo(prefillLiveSpecIds);
 
             if (error) {
                 get().setHydrationErrorsExist(true);
@@ -1102,8 +1101,8 @@ const getInitialState = (
                     typeof targetUUIDs === 'string'
                         ? [targetUUIDs]
                         : Array.isArray(targetUUIDs)
-                        ? targetUUIDs
-                        : Object.keys(state.resourceConfigs);
+                          ? targetUUIDs
+                          : Object.keys(state.resourceConfigs);
 
                 evaluatedUUIDs.forEach((uuid) => {
                     const { collectionName, disable, previouslyDisabled } =

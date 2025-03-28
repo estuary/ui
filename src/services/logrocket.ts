@@ -1,9 +1,9 @@
 import { User } from '@supabase/supabase-js';
+import { OAUTH_OPERATIONS } from 'api/shared';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
-import { OAUTH_OPERATIONS } from 'services/supabase';
 import { getLogRocketSettings } from 'utils/env-utils';
 import { DEFAULT_FILTER, getUserDetails } from './shared';
 
@@ -34,8 +34,8 @@ const shouldMaskEverything = (url?: string) =>
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
-    maskEverythingOperations.some(
-        (el) => operation?.toLowerCase().includes(el)
+    maskEverythingOperations.some((el) =>
+        operation?.toLowerCase().includes(el)
     );
 
 // for endpoints where we do not want to mess with the request at all

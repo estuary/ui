@@ -63,10 +63,10 @@ function SharedProgress({
                                 state === ProgressStates.SUCCESS
                                     ? successMessageID
                                     : state === ProgressStates.SKIPPED
-                                    ? 'common.skipped'
-                                    : state === ProgressStates.FAILED
-                                    ? 'common.fail'
-                                    : runningMessageID
+                                      ? 'common.skipped'
+                                      : state === ProgressStates.FAILED
+                                        ? 'common.fail'
+                                        : runningMessageID
                             }
                         />
                     }

@@ -150,8 +150,8 @@ function useTenantMissingPaymentMethodWarning() {
                     const descriptionID = trialCurrent
                         ? 'notifications.paymentMethods.missing.trialCurrent'
                         : daysLeft === 0
-                        ? 'notifications.paymentMethods.missing.trialEndsToday'
-                        : 'notifications.paymentMethods.missing.trialPast';
+                          ? 'notifications.paymentMethods.missing.trialEndsToday'
+                          : 'notifications.paymentMethods.missing.trialPast';
 
                     // Just always pass the same values even if all the messages do not need them
                     const descriptionValues: Schema = {

@@ -21,7 +21,7 @@ export const getDiscriminatorDefaultValue = (
     forIn(tabSchemaProps, (val: any, key: string) => {
         defaultVal[key] =
             key === discriminatorProperty
-                ? val.default ?? val.const ?? ''
+                ? (val.default ?? val.const ?? '')
                 : createDefaultValue(val, tabSchemaProps);
     });
 

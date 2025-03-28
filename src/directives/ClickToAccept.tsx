@@ -63,9 +63,8 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 setShowErrors(false);
                 setSaving(true);
 
-                const clickToAcceptResponse = await submit_clickToAccept(
-                    directive
-                );
+                const clickToAcceptResponse =
+                    await submit_clickToAccept(directive);
 
                 if (clickToAcceptResponse.error) {
                     setSaving(false);

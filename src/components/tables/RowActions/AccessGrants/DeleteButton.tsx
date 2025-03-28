@@ -49,10 +49,10 @@ function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
                 const identifier =
                     selectTableStoreName ===
                     SelectTableStoreNames.ACCESS_GRANTS_USERS
-                        ? value?.user_full_name ??
+                        ? (value?.user_full_name ??
                           value?.user_email ??
                           value?.subject_role ??
-                          'User'
+                          'User')
                         : value.subject_role;
 
                 grants.push({

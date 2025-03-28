@@ -81,8 +81,8 @@ function PrefixedName({
                     ? 'prefixedName.description.singlePrefix'
                     : 'prefixedName.description.singlePrefix.noEntityType'
                 : name.length > 0
-                ? 'prefixedName.description.noPrefix'
-                : 'prefixedName.description';
+                  ? 'prefixedName.description.noPrefix'
+                  : 'prefixedName.description';
 
         return intl.formatMessage(
             { id: messageKey },
@@ -100,8 +100,8 @@ function PrefixedName({
     const firstFormHelperText = description
         ? description
         : showErrors
-        ? errors
-        : null;
+          ? errors
+          : null;
     const secondFormHelperText = description && showErrors ? errors : null;
 
     // If needed we will validate on load. This is mainly just for

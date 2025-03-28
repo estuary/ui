@@ -85,8 +85,8 @@ function BillingHistoryTable() {
                         billingHistory.length > 0
                             ? { status: TableStatuses.DATA_FETCHED }
                             : networkFailed
-                            ? { status: TableStatuses.NETWORK_FAILED }
-                            : { status: TableStatuses.NO_EXISTING_DATA }
+                              ? { status: TableStatuses.NETWORK_FAILED }
+                              : { status: TableStatuses.NO_EXISTING_DATA }
                     }
                     loading={Boolean(active || !hydrated)}
                     rows={dataRows}

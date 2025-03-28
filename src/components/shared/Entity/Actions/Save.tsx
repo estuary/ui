@@ -39,8 +39,8 @@ function EntityCreateSave({
                 id: buttonLabelId
                     ? buttonLabelId
                     : dryRun === true
-                    ? `cta.testConfig${loading ? '.active' : ''}`
-                    : `cta.saveEntity${loading ? '.active' : ''}`,
+                      ? `cta.testConfig${loading ? '.active' : ''}`
+                      : `cta.saveEntity${loading ? '.active' : ''}`,
             })}
         </Button>
     );

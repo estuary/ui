@@ -55,8 +55,8 @@ function Progress({
                                 progress === ProgressStates.SUCCESS
                                     ? successMessageID
                                     : progress === ProgressStates.FAILED
-                                    ? 'common.fail'
-                                    : runningMessageID
+                                      ? 'common.fail'
+                                      : runningMessageID
                             }
                         />
                     }

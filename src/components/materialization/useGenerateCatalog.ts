@@ -196,9 +196,8 @@ function useGenerateCatalog() {
                     }
                 } else {
                     // No existing draft so start a new one
-                    const draftsResponse = await createEntityDraft(
-                        processedEntityName
-                    );
+                    const draftsResponse =
+                        await createEntityDraft(processedEntityName);
 
                     if (draftsResponse.error) {
                         callFailed({

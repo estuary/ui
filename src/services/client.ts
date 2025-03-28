@@ -51,8 +51,8 @@ export const client = <Response, Request = {}>(
                 message: returnOriginalMessage
                     ? error.message
                     : error?.message === AUTH_ERROR
-                    ? AUTH_ERROR
-                    : FETCH_DEFAULT_ERROR,
+                      ? AUTH_ERROR
+                      : FETCH_DEFAULT_ERROR,
                 ...error,
             });
         });

@@ -111,8 +111,8 @@ function SelectCapture() {
                         showLoading
                             ? 'workflows.sourceCapture.cta.loading'
                             : sourceCapture
-                            ? 'workflows.sourceCapture.cta.edit'
-                            : 'workflows.sourceCapture.cta'
+                              ? 'workflows.sourceCapture.cta.edit'
+                              : 'workflows.sourceCapture.cta'
                     }
                 />
             </Button>

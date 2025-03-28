@@ -130,11 +130,11 @@ export const useShardDetail_readDictionary = (
                 compositeColor: isCollection
                     ? successMain
                     : state.error
-                    ? state.defaultStatusColor
-                    : getCompositeColor(
-                          filteredValues,
-                          state.defaultStatusColor
-                      ),
+                      ? state.defaultStatusColor
+                      : getCompositeColor(
+                            filteredValues,
+                            state.defaultStatusColor
+                        ),
                 disabled,
                 defaultMessageId: isCollection
                     ? ShardStatusMessageIds.COLLECTION
