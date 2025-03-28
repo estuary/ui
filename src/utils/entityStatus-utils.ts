@@ -135,6 +135,26 @@ export const getAutoDiscoveryIndicatorState = (
     };
 };
 
+export const getConnectorStatusIndicatorState = (
+    _colorMode: PaletteMode,
+    connectorStatus: EntityStatusResponse['connector_status'] | undefined
+): StatusIndicatorState => {
+    if (!connectorStatus) {
+        return {
+            color: { hex: warningMain, id: 'warning' },
+            messageId: 'status.error.medium',
+        };
+    }
+
+    return {
+        color: {
+            hex: successMain,
+            id: 'success',
+        },
+        messageId: 'status.error.low',
+    };
+};
+
 export const isEntityControllerStatus = (
     value: ControllerStatus
 ): value is EntityControllerStatus =>
