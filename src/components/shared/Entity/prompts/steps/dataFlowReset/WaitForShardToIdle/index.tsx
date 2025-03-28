@@ -1,10 +1,12 @@
+import type { Shard } from 'data-plane-gateway/types/shard_client';
+
 import { useEffect } from 'react';
 
-import type { Shard } from 'data-plane-gateway/types/shard_client';
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
 import { useEditorStore_catalogName } from 'src/components/editor/Store/hooks';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import { useUserStore } from 'src/context/User/useUserContextStore';
@@ -13,7 +15,6 @@ import { useQueryPoller } from 'src/hooks/useJobStatusPoller';
 import { defaultQueryDateFormat } from 'src/services/luxon';
 import { handlePollerError } from 'src/services/supabase';
 import { fetchShardList } from 'src/utils/dataPlane-utils';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
     const intl = useIntl();

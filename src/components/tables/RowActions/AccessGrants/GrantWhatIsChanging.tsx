@@ -1,7 +1,8 @@
+import type { GrantWhatIsChangingProps } from 'src/components/tables/RowActions/AccessGrants/types';
+
 import { Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import type { GrantWhatIsChangingProps } from 'src/components/tables/RowActions/AccessGrants/types';
 
 function GrantWhatIsChanging({
     identifier,

@@ -1,3 +1,5 @@
+import type { ProgressDialogProps } from 'src/components/tables/RowActions/types';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
@@ -10,7 +12,6 @@ import {
 } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
-import type { ProgressDialogProps } from 'src/components/tables/RowActions/types';
 
 function ProgressDialog({
     selectedEntities,

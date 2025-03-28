@@ -1,12 +1,13 @@
+import type { Schema } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { every, includes } from 'lodash';
 
+import { CLIENT_ID, CLIENT_SECRET } from 'src/forms/renderers/OAuth/shared';
 import { useEndpointConfig_serverUpdateRequired } from 'src/stores/EndpointConfig/hooks';
-import type { Schema } from 'src/types';
 import { Options } from 'src/types/jsonforms';
 import { hasLength } from 'src/utils/misc-utils';
-import { CLIENT_ID, CLIENT_SECRET } from 'src/forms/renderers/OAuth/shared';
 
 export const useAllRequiredPropCheck = (
     data: any,

@@ -1,7 +1,6 @@
+import type { PopperProps } from '@mui/material';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
-import type {
-    PopperProps} from '@mui/material';
 import {
     Box,
     ClickAwayListener,

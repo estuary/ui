@@ -8,6 +8,9 @@ import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
+import useBackgroundTest from 'src/components/editor/Bindings/FieldSelection/useBackgroundTest';
+import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
+import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationAlert,
@@ -28,9 +31,6 @@ import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
 } from 'src/stores/Binding/hooks';
-import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
-import useBackgroundTest from 'src/components/editor/Bindings/FieldSelection/useBackgroundTest';
-import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
 
 interface Props {
     itemType: string;

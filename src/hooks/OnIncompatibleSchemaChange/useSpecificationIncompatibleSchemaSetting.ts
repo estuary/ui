@@ -1,3 +1,6 @@
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { Schema } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { cloneDeep } from 'lodash';
@@ -8,10 +11,8 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import type { Schema } from 'src/types';
 import { addOrRemoveOnIncompatibleSchemaChange } from 'src/utils/entity-utils';
 
 export default function useSpecificationIncompatibleSchemaSetting() {

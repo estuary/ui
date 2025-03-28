@@ -1,7 +1,11 @@
 import { TableCell, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
-import { BaseCellSx, BaseTypographySx } from 'src/components/tables/cells/logs/shared';
+
+import {
+    BaseCellSx,
+    BaseTypographySx,
+} from 'src/components/tables/cells/logs/shared';
 
 interface Props {
     ts: string;

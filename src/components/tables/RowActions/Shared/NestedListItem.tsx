@@ -1,3 +1,6 @@
+import type { NestedListItemProps } from 'src/components/tables/RowActions/Shared/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import {
     Checkbox,
     FormControl,
@@ -10,12 +13,7 @@ import {
 import { useIntl } from 'react-intl';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import type { NestedListItemProps } from 'src/components/tables/RowActions/Shared/types';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 function NestedListItem({
     catalogName,

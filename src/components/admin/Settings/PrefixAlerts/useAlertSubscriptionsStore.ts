@@ -1,12 +1,13 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import produce from 'immer';
 
-import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 interface AlertSubscriptionState {
     existingEmails: EmailDictionary;

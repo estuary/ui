@@ -1,8 +1,10 @@
+import type { FormatDateOptions } from 'react-intl';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
 import { useMemo } from 'react';
 
 import { CircularProgress, Skeleton, Stack } from '@mui/material';
 
-import type { FormatDateOptions} from 'react-intl';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import ConnectorName from 'src/components/connectors/ConnectorName';
@@ -11,7 +13,6 @@ import DataPlane from 'src/components/shared/Entity/DataPlane';
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
-import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import {
     formatDataPlaneName,
     getDataPlaneScope,

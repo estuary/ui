@@ -1,3 +1,6 @@
+import type { Entity } from 'src/types';
+import type { SupabaseConfig } from 'src/utils/workflow-utils';
+
 import { useCallback } from 'react';
 
 import { getDraftSpecsBySpecType } from 'src/api/draftSpecs';
@@ -14,12 +17,7 @@ import { CustomEvents } from 'src/services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
-import type { Entity } from 'src/types';
-import type {
-    SupabaseConfig} from 'src/utils/workflow-utils';
-import {
-    modifyDiscoveredDraftSpec
-} from 'src/utils/workflow-utils';
+import { modifyDiscoveredDraftSpec } from 'src/utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {
     const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);

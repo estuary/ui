@@ -1,3 +1,5 @@
+import type { Schema, SourceCaptureDef } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -9,7 +11,6 @@ import {
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import type { Schema, SourceCaptureDef } from 'src/types';
 import {
     addOrRemoveSourceCapture,
     getSourceCapture,

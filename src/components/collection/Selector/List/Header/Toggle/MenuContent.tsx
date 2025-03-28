@@ -1,4 +1,6 @@
-import type { SyntheticEvent} from 'react';
+import type { SyntheticEvent } from 'react';
+import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
+
 import { useState } from 'react';
 
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
@@ -7,7 +9,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { useEntityType } from 'src/context/EntityContext';
-import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
 
 interface MenuOption {
     title: string;

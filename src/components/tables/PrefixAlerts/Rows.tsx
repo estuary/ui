@@ -1,9 +1,10 @@
+import type { PrefixSubscription } from 'src/utils/notification-utils';
+
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
 import { getEntityTableRowSx } from 'src/context/Theme';
-import type { PrefixSubscription } from 'src/utils/notification-utils';
 
 interface RowsProps {
     data: [string, PrefixSubscription][];

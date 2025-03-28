@@ -1,3 +1,5 @@
+import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
+
 import {
     Box,
     Dialog,
@@ -8,10 +10,8 @@ import {
 } from '@mui/material';
 
 import BindingSelectorTable from 'src/components/collection/Selector/Table';
-import StepWrapper from 'src/components/transformation/create/Wrapper';
 import DefaultCancelButton from 'src/components/shared/Entity/AddDialog/DefaultCancelButton';
-import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
-
+import StepWrapper from 'src/components/transformation/create/Wrapper';
 
 function AddDialog({
     entity,

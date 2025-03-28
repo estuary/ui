@@ -1,12 +1,10 @@
+import type { PublicationJobStatus } from 'src/api/publications';
+
 import { useCallback } from 'react';
 
-
-import type {
-    PublicationJobStatus} from 'src/api/publications';
-import {
-    getPublicationByIdQuery
-} from 'src/api/publications';
+import { getPublicationByIdQuery } from 'src/api/publications';
 import { republishPrefix } from 'src/api/storageMappings';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import {
@@ -16,7 +14,6 @@ import {
 } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 import { hasLength } from 'src/utils/misc-utils';
-import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 
 export const REPUBLICATION_FAILURE_MESSAGE_ID =
     'storageMappings.dialog.generate.error.republicationFailed';

@@ -1,14 +1,17 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { DirectiveProps } from 'src/directives/types';
+
 import { useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
 import AlertBox from 'src/components/shared/AlertBox';
+import Actions from 'src/directives/Actions';
 import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
@@ -19,13 +22,11 @@ import {
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'src/directives/Onboard/Survey';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { fireGtmEvent } from 'src/services/gtm';
 import { hasLength } from 'src/utils/misc-utils';
-import Actions from 'src/directives/Actions';
-import type { DirectiveProps } from 'src/directives/types';
-import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 
 const directiveName = 'betaOnboard';
 const NAME_TAKEN_MESSAGE = 'is already in use';

@@ -1,6 +1,14 @@
+import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
+import type { CollectionData } from 'src/components/editor/Bindings/types';
+import type {
+    InferSchemaPropertyForRender,
+    InferSchemaResponse,
+    Schema,
+} from 'src/types';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import { extend_read_bundle, infer } from '@estuary/flow-web';
@@ -10,15 +18,8 @@ import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
-import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
-import type { CollectionData } from 'src/components/editor/Bindings/types';
 import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
-import type {
-    InferSchemaPropertyForRender,
-    InferSchemaResponse,
-    Schema,
-} from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     filterInferSchemaResponse,

@@ -1,8 +1,10 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
 
 import { Button, Grid } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
@@ -10,11 +12,7 @@ import PrefixedName from 'src/components/inputs/PrefixedName';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
 interface Props {

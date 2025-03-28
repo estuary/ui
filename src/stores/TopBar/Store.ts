@@ -1,12 +1,13 @@
-import { create } from 'zustand';
+import type { TopBarState } from 'src/stores/TopBar/types';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { devtoolsOptions } from 'src/utils/store-utils';
-import { GlobalStoreNames } from 'src/stores/names';
-import type { TopBarState } from 'src/stores/TopBar/types';
 
+import { GlobalStoreNames } from 'src/stores/names';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<TopBarState, 'header' | 'headerLink'> => ({
     header: '',

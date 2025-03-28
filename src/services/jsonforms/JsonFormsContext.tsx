@@ -23,16 +23,18 @@
   THE SOFTWARE.
 */
 
-import type { ComponentType } from 'react';
-import React from 'react';
-
 import type {
     CombinatorKeyword,
     CombinatorRendererProps,
     LayoutProps,
     OwnPropsOfControl,
     OwnPropsOfLayout,
-    StatePropsOfCombinator} from '@jsonforms/core';
+    StatePropsOfCombinator,
+} from '@jsonforms/core';
+import type { ComponentType } from 'react';
+
+import React from 'react';
+
 import {
     getUISchemas,
     mapStateToControlProps,
@@ -46,8 +48,10 @@ import {
 } from '@jsonforms/react';
 
 import { getDiscriminatorIndex } from 'src/forms/renderers/shared';
-import { CHILDREN_HAVE_VALUE, LAYOUT_PATH } from 'src/services/jsonforms/shared';
-
+import {
+    CHILDREN_HAVE_VALUE,
+    LAYOUT_PATH,
+} from 'src/services/jsonforms/shared';
 
 // All these functions are customized just so we can end up with the custom function
 //  mapCustomStateToCombinatorRendererProps calling into out own getDiscriminatorIndex

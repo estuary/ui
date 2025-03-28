@@ -3,10 +3,10 @@ import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
+import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
 
 interface Props {
     disabled: boolean;

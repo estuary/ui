@@ -1,5 +1,6 @@
-import useTenantMissingPaymentMethodWarning from 'src/hooks/billing/useTenantMissingPaymentMethodWarning';
 import type { BaseComponentProps } from 'src/types';
+
+import useTenantMissingPaymentMethodWarning from 'src/hooks/billing/useTenantMissingPaymentMethodWarning';
 
 function PaymentMethodWarning({ children }: BaseComponentProps) {
     useTenantMissingPaymentMethodWarning();

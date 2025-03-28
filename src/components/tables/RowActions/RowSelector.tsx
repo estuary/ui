@@ -1,3 +1,6 @@
+import type { RowSelectorProps } from 'src/components/tables/RowActions/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { ButtonGroup, Grid, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -5,16 +8,11 @@ import { useIntl } from 'react-intl';
 import DeleteButton from 'src/components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'src/components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'src/components/tables/RowActions/Materialize';
+import RowSelectorCheckBox from 'src/components/tables/RowActions/RowSelectorCheckBox';
+import Transform from 'src/components/tables/RowActions/Transform';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import RowSelectorCheckBox from 'src/components/tables/RowActions/RowSelectorCheckBox';
-import type { RowSelectorProps } from 'src/components/tables/RowActions/types';
-import Transform from 'src/components/tables/RowActions/Transform';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 function RowSelector({
     hideActions,

@@ -1,3 +1,6 @@
+import type { StripeInvoice } from 'src/api/billing';
+import type { TableColumns } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
@@ -5,7 +8,6 @@ import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
 import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import type { StripeInvoice } from 'src/api/billing';
 import { getTenantInvoice } from 'src/api/billing';
 import Rows from 'src/components/tables/BillLineItems/Rows';
 import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
@@ -15,7 +17,6 @@ import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import type { TableColumns} from 'src/types';
 import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [

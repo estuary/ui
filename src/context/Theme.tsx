@@ -1,12 +1,16 @@
-import React from 'react';
-
+import type { ThemeKeys } from '@microlink/react-json-view';
 import type {
     AlertColor,
     PaletteOptions,
     SxProps,
     Theme,
     ThemeOptions,
-    TypographyProps} from '@mui/material';
+    TypographyProps,
+} from '@mui/material';
+import type { BaseComponentProps } from 'src/types';
+
+import React from 'react';
+
 import {
     createTheme,
     ThemeProvider as MUIThemeProvider,
@@ -14,12 +18,10 @@ import {
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import type { ThemeKeys } from '@microlink/react-json-view';
 import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import { useLocalStorage } from 'react-use';
 
 import CheckSquare from 'src/icons/CheckSquare';
-import type { BaseComponentProps } from 'src/types';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 

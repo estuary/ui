@@ -1,3 +1,5 @@
+import type { TransformConfig } from 'src/stores/TransformationCreate/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { FormattedMessage } from 'react-intl';
@@ -22,7 +24,6 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
 } from 'src/stores/TransformationCreate/hooks';
-import type { TransformConfig } from 'src/stores/TransformationCreate/types';
 import {
     generateInitialSpec,
     templateTransformConfig,

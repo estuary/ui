@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-
 import type { BaseComponentProps } from 'src/types';
 
 export interface BackfillButtonProps {

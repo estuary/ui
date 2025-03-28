@@ -1,7 +1,10 @@
+import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import { Skeleton, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -11,8 +14,6 @@ import {
 } from 'src/stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { getDataPlaneActivationStatus } from 'src/utils/entityStatus-utils';
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
-import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

@@ -1,6 +1,7 @@
+import type { BaseGrant, Capability } from 'src/types';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { deleteSupabase, insertSupabase, TABLES } from 'src/services/supabase';
-import type { BaseGrant, Capability } from 'src/types';
 
 const createRoleGrant = (
     subject_role: string,

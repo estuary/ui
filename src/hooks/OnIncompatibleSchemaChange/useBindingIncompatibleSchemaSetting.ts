@@ -1,3 +1,6 @@
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { BindingMetadata, Schema } from 'src/types';
+
 import { useCallback } from 'react';
 
 import { cloneDeep } from 'lodash';
@@ -9,12 +12,10 @@ import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 import { useEntityType } from 'src/context/EntityContext';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
-import type { BindingMetadata, Schema } from 'src/types';
 import { addOrRemoveOnIncompatibleSchemaChange } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
 

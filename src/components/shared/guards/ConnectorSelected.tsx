@@ -1,9 +1,10 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { Navigate } from 'react-router-dom';
 
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import type { BaseComponentProps } from 'src/types';
 import { MAC_ADDR_RE } from 'src/validation';
 
 // This 'navigateToPath' is so stupid and so annoying. However, for whatever reason

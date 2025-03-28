@@ -2,9 +2,8 @@ import type {
     PostgrestFilterBuilder,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
-import type { KeyedMutator } from 'swr';
-
 import type { AppliedDirective, JoinedAppliedDirective } from 'src/types';
+import type { KeyedMutator } from 'swr';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {

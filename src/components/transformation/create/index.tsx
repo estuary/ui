@@ -1,7 +1,7 @@
+import type { Theme } from '@mui/material';
+
 import { useMemo, useState } from 'react';
 
-import type {
-    Theme} from '@mui/material';
 import {
     Box,
     Stack,

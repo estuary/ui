@@ -1,7 +1,11 @@
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
+import type { JournalRecord } from 'src/hooks/journals/types';
+import type { useJournalData } from 'src/hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Box, Grid, useTheme } from '@mui/material';
-import type { GridRowSelectionModel } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
 
 import ReactJson from '@microlink/react-json-view';
@@ -16,9 +20,6 @@ import {
     jsonViewTheme,
     semiTransparentBackground,
 } from 'src/context/Theme';
-import type { JournalRecord } from 'src/hooks/journals/types';
-import type { useJournalData } from 'src/hooks/journals/useJournalData';
-import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_details;

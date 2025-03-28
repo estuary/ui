@@ -1,9 +1,8 @@
 import { Grid, useMediaQuery, useTheme } from '@mui/material';
 
-import { useEntityType } from 'src/context/EntityContext';
 import AutoDiscoveryOverview from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoveryOverview';
 import ControllerOverview from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerOverview';
-
+import { useEntityType } from 'src/context/EntityContext';
 
 const GRID_ITEM_SELECTOR = '.MuiGrid-item';
 

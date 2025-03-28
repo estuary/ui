@@ -1,6 +1,6 @@
+import type { SortingProps } from 'src/services/supabase';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
-import type {
-    SortingProps} from 'src/services/supabase';
 import {
     defaultTableFilter,
     handleFailure,

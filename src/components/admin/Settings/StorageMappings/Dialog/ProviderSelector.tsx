@@ -2,9 +2,9 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { hasLength } from 'src/utils/misc-utils';
-import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
 
 const INPUT_ID = 'cloud-provider-input';
 

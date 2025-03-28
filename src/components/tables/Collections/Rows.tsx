@@ -1,20 +1,20 @@
+import type { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
+import type { StatsResponse } from 'src/stores/Tables/Store';
+
 import { TableRow, useTheme } from '@mui/material';
 
-
-import type { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
+import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
+import RowSelect from 'src/components/tables/cells/RowSelect';
+import Bytes from 'src/components/tables/cells/stats/Bytes';
+import Docs from 'src/components/tables/cells/stats/Docs';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
+import { selectKeyValueName } from 'src/components/tables/shared';
 import { useEntityType } from 'src/context/EntityContext';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type { StatsResponse } from 'src/stores/Tables/Store';
-import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
-import Docs from 'src/components/tables/cells/stats/Docs';
-import Bytes from 'src/components/tables/cells/stats/Bytes';
-import { selectKeyValueName } from 'src/components/tables/shared';
-import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
-import RowSelect from 'src/components/tables/cells/RowSelect';
 
 interface RowProps {
     isSelected: boolean;

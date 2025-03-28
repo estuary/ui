@@ -1,15 +1,19 @@
+import type { Stripe } from '@stripe/stripe-js';
+
 import { Box, Dialog, DialogTitle } from '@mui/material';
 
 import { Elements } from '@stripe/react-stripe-js';
-import type { Stripe } from '@stripe/stripe-js';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
+import {
+    INTENT_SECRET_ERROR,
+    INTENT_SECRET_LOADING,
+} from 'src/components/admin/Billing/shared';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { fireGtmEvent } from 'src/services/gtm';
-import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from 'src/components/admin/Billing/shared';
 
 interface Props {
     show: boolean;

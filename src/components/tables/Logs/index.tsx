@@ -1,15 +1,16 @@
+import type { VariableSizeList } from 'react-window';
+
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import type { VariableSizeList } from 'react-window';
 
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import LogsTableBody from 'src/components/tables/Logs/Body';
+import useLogColumns from 'src/components/tables/Logs/useLogColumns';
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
-import LogsTableBody from 'src/components/tables/Logs/Body';
-import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import useLogColumns from 'src/components/tables/Logs/useLogColumns';
 
 const TABLE_HEIGHT = 500;
 

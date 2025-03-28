@@ -1,12 +1,13 @@
+import type { OnboardingState } from 'src/directives/Onboard/Store/types';
+import type { OnboardingStoreNames } from 'src/stores/names';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import type { OnboardingState } from 'src/directives/Onboard/Store/types';
-import type { OnboardingStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { PREFIX_NAME_PATTERN } from 'src/validation';

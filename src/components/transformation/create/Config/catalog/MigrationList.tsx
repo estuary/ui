@@ -1,3 +1,5 @@
+import type { CatalogListContent } from 'src/components/transformation/create/Config/catalog/CatalogList';
+
 import { useMemo, useState } from 'react';
 
 import {
@@ -13,10 +15,8 @@ import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
-import type {
-    CatalogListContent,
-} from 'src/components/transformation/create/Config/catalog/CatalogList';
 import CatalogList from 'src/components/transformation/create/Config/catalog/CatalogList';
+import CollectionList from 'src/components/transformation/create/Config/catalog/CollectionList';
 import { defaultOutline } from 'src/context/Theme';
 import {
     useTransformationCreate_addMigrations,
@@ -24,7 +24,6 @@ import {
     useTransformationCreate_selectedAttribute,
 } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import CollectionList from 'src/components/transformation/create/Config/catalog/CollectionList';
 
 function MigrationList() {
     const theme = useTheme();

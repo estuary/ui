@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-
 import type { BaseComponentProps } from 'src/types';
 import type { AutoDiscoverOutcome } from 'src/types/controlPlane';
 import type { StatusIndicatorState } from 'src/utils/entityStatus-utils';

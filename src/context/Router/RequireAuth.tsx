@@ -1,3 +1,5 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
@@ -7,7 +9,6 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
 import { logRocketConsole } from 'src/services/shared';
-import type { BaseComponentProps } from 'src/types';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {

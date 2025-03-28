@@ -4,7 +4,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import DraftSpecEditor from 'src/components/editor/DraftSpec';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
@@ -12,8 +14,6 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import AlertBox from 'src/components/shared/AlertBox';
-import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 
 interface Props {
     messageId: string;

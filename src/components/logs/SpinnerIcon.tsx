@@ -1,4 +1,5 @@
-import type { AlertColor} from '@mui/material';
+import type { AlertColor } from '@mui/material';
+
 import { CircularProgress } from '@mui/material';
 
 import { lineNumberColor } from 'src/components/logs/Line';

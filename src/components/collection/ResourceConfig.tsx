@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import { BindingsEditorConfigSkeleton } from 'src/components/collection/CollectionSkeletons';
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
 import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
 import Backfill from 'src/components/editor/Bindings/Backfill';
@@ -16,7 +17,6 @@ import {
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
 } from 'src/stores/Binding/hooks';
-import { BindingsEditorConfigSkeleton } from 'src/components/collection/CollectionSkeletons';
 
 interface Props {
     bindingUUID: string;

@@ -1,3 +1,5 @@
+import type { CatalogStats_Details } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
@@ -11,7 +13,6 @@ import {
     LUXON_GRAIN_SETTINGS,
 } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
-import type { CatalogStats_Details } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 function useDetailsStats(catalogName: string) {

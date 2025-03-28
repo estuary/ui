@@ -1,6 +1,7 @@
+import type { SortingProps } from 'src/services/supabase';
+import type { AuthRoles, Capability, Grant_UserExt } from 'src/types';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
-import type {
-    SortingProps} from 'src/services/supabase';
 import {
     DEFAULT_PAGING_SIZE,
     defaultTableFilter,
@@ -9,7 +10,6 @@ import {
     RPCS,
     TABLES,
 } from 'src/services/supabase';
-import type { AuthRoles, Capability, Grant_UserExt } from 'src/types';
 import { getCountSettings } from 'src/utils/table-utils';
 
 // Used to display prefix grants in admin page

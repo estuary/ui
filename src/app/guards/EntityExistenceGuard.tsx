@@ -1,3 +1,5 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -8,7 +10,6 @@ import useGlobalSearchParams, {
 import { useLiveSpecsExtWithSpec } from 'src/hooks/useLiveSpecsExt';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
 import { useFormStateStore_setLiveSpec } from 'src/stores/FormState/hooks';
-import type { BaseComponentProps } from 'src/types';
 
 function EntityExistenceGuard({ children }: BaseComponentProps) {
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);

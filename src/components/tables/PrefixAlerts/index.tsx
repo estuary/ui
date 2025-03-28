@@ -1,3 +1,5 @@
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { getNotificationSubscriptionsForTable } from 'src/api/alerts';
@@ -8,7 +10,6 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import type { TableColumns } from 'src/types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
 //   however the current data model does not provide a means to reliably track

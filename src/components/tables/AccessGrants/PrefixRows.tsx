@@ -1,15 +1,12 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { TableCell, TableRow } from '@mui/material';
 
-
+import RowSelect from 'src/components/tables/cells/RowSelect';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import RowSelect from 'src/components/tables/cells/RowSelect';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface RowProps {
     row: any;

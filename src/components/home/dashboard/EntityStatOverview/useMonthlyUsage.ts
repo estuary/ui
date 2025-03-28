@@ -1,11 +1,12 @@
+import type { DefaultStatsWithDocument } from 'src/api/stats';
+import type { CatalogStats_Dashboard } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-import type { DefaultStatsWithDocument} from 'src/api/stats';
 import { getStatsForDashboard } from 'src/api/stats';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import type { CatalogStats_Dashboard } from 'src/types';
 import { hasLength, RESPONSE_DATA_LIMIT } from 'src/utils/misc-utils';
 
 // The interfaces of this union type have minimal overlap and a type guard is required

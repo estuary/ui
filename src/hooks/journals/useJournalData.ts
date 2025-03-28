@@ -1,3 +1,5 @@
+import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
@@ -7,6 +9,7 @@ import useSWR from 'swr';
 
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { loadDocuments } from 'src/hooks/journals/shared';
 import useJournalStore from 'src/stores/JournalData/Store';
 import {
     getJournals,
@@ -15,8 +18,6 @@ import {
     shouldRefreshToken,
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { loadDocuments } from 'src/hooks/journals/shared';
-import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
 
 const errorRetryCount = 2;
 

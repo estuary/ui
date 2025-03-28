@@ -1,3 +1,7 @@
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Transform } from 'src/types';
+
 import { useCallback } from 'react';
 
 import { FormattedMessage } from 'react-intl';
@@ -11,14 +15,9 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_catalogUpdating,
@@ -30,7 +29,6 @@ import {
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
-import type { Transform } from 'src/types';
 import { evaluateTransformConfigs } from 'src/utils/derivation-utils';
 import { hasLength } from 'src/utils/misc-utils';
 

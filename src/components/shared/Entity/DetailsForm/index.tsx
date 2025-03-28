@@ -1,10 +1,11 @@
+import type { Props } from 'src/components/shared/Entity/DetailsForm/types';
+
 import { BooleanParam, useQueryParam } from 'use-query-params';
 
 import ShardsEditor from 'src/components/editor/Shards';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import DetailsFormForm from 'src/components/shared/Entity/DetailsForm/Form';
 import DetailsFormHeader from 'src/components/shared/Entity/DetailsForm/Header';
-import type { Props } from 'src/components/shared/Entity/DetailsForm/types';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';

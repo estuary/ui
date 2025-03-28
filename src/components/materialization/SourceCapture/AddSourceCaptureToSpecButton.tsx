@@ -1,3 +1,6 @@
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { SourceCaptureDef } from 'src/types';
+
 import { useState } from 'react';
 
 import { Button } from '@mui/material';
@@ -6,7 +9,7 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import useSourceCapture from 'src/components/materialization/useSourceCapture';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
@@ -15,8 +18,6 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import type { SourceCaptureDef } from 'src/types';
-import useSourceCapture from 'src/components/materialization/useSourceCapture';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);

@@ -26,19 +26,20 @@
 import type {
     ControlProps,
     OwnPropsOfEnum,
-    RankedTester} from '@jsonforms/core';
+    RankedTester,
+} from '@jsonforms/core';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+
 import {
     and,
     isOneOfEnumControl,
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
 import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
 import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
-
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 

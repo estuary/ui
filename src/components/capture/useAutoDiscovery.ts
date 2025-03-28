@@ -1,3 +1,5 @@
+import type { Schema } from 'src/types';
+
 import { useCallback, useEffect, useRef } from 'react';
 
 import { debounce } from 'lodash';
@@ -16,7 +18,6 @@ import {
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsActive,
 } from 'src/stores/SchemaEvolution/hooks';
-import type { Schema } from 'src/types';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function useAutoDiscovery() {

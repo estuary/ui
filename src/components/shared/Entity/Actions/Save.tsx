@@ -1,3 +1,5 @@
+import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/Actions/types';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -6,10 +8,9 @@ import {
     useEditorStore_id,
     useEditorStore_isSaving,
 } from 'src/components/editor/Store/hooks';
+import useSave from 'src/components/shared/Entity/Actions/useSave';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/Actions/types';
-import useSave from 'src/components/shared/Entity/Actions/useSave';
 
 function EntityCreateSave({
     buttonLabelId,

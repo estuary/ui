@@ -1,3 +1,6 @@
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { Button } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
@@ -6,12 +9,7 @@ import { useNavigate } from 'react-router';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props {

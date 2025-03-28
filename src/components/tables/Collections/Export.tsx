@@ -1,7 +1,7 @@
 import type { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
-import ExportButton from 'src/components/tables/shared/ExportButton';
-import useCollectionExport from 'src/components/tables/Collections/useCollectionExport';
 
+import useCollectionExport from 'src/components/tables/Collections/useCollectionExport';
+import ExportButton from 'src/components/tables/shared/ExportButton';
 
 interface Props {
     data: CollectionQueryWithStats[];

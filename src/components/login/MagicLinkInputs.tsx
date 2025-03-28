@@ -1,10 +1,11 @@
+import type { AuthApiError } from '@supabase/supabase-js';
+import type { VariantType } from 'notistack';
+
 import React, { useState } from 'react';
 
 import { Box, Button, TextField, Typography } from '@mui/material';
 
-import type { AuthApiError } from '@supabase/supabase-js';
 import { isEmpty } from 'lodash';
-import type { VariantType } from 'notistack';
 import { useSnackbar } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';

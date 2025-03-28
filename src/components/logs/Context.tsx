@@ -1,3 +1,5 @@
+import type { BaseComponentProps, ViewLogs_Line } from 'src/types';
+
 import {
     createContext,
     useCallback,
@@ -9,7 +11,6 @@ import {
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'src/services/supabase';
-import type { BaseComponentProps, ViewLogs_Line } from 'src/types';
 import {
     hasLength,
     incrementInterval,

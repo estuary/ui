@@ -1,4 +1,5 @@
-import type { RefObject} from 'react';
+import type { RefObject } from 'react';
+
 import { useCallback } from 'react';
 
 function useScrollIntoView(target: RefObject<HTMLDivElement>) {

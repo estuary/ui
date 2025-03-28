@@ -10,6 +10,7 @@ import EditButton from 'src/components/shared/Entity/Details/EditButton';
 import MaterializeButton from 'src/components/shared/Entity/Details/MaterializeButton';
 import RenderTab from 'src/components/shared/Entity/Details/RenderTab';
 import DetailTabs from 'src/components/shared/Entity/Details/Tabs';
+import ShardHydrator from 'src/components/shared/Entity/Shard/Hydrator';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
@@ -18,7 +19,6 @@ import useGlobalSearchParams, {
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { EditorStoreNames } from 'src/stores/names';
-import ShardHydrator from 'src/components/shared/Entity/Shard/Hydrator';
 
 // TODO: Hydrate the journal store in a single location that satisfies
 //   the needs of components dependent on its state.

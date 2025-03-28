@@ -1,3 +1,5 @@
+import type { SectionWrapperProps } from 'src/components/editor/Bindings/Backfill/types';
+
 import { useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -14,7 +16,6 @@ import {
     useBinding_collectionMetadataProperty,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import type { SectionWrapperProps } from 'src/components/editor/Bindings/Backfill/types';
 
 export default function SectionWrapper({
     alertMessageId,

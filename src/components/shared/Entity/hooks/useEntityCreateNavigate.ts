@@ -1,3 +1,5 @@
+import type { EntityWithCreateWorkflow } from 'src/types';
+
 import { useCallback } from 'react';
 
 import { isEmpty } from 'lodash';
@@ -6,7 +8,6 @@ import { useNavigate } from 'react-router';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
-import type { EntityWithCreateWorkflow } from 'src/types';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 
 export interface HookEntityCreateNavigateProps {

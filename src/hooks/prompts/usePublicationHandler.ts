@@ -1,10 +1,8 @@
+import type { PublicationJobStatus } from 'src/api/publications';
+
 import { useCallback } from 'react';
 
-import type {
-    PublicationJobStatus} from 'src/api/publications';
-import {
-    getPublicationByIdQuery
-} from 'src/api/publications';
+import { getPublicationByIdQuery } from 'src/api/publications';
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';

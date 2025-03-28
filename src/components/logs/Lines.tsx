@@ -1,14 +1,15 @@
+import type { SpinnerOptions } from 'src/components/logs/types';
+
 import { useLayoutEffect, useRef } from 'react';
 
 import { List, Paper } from '@mui/material';
 
 import useStayScrolled from 'react-stay-scrolled';
-import { hasLength } from 'src/utils/misc-utils';
+
 import { useLogsContext } from 'src/components/logs/Context';
 import LogLine from 'src/components/logs/Line';
 import Spinner from 'src/components/logs/Spinner';
-import type { SpinnerOptions } from 'src/components/logs/types';
-
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     height: number;

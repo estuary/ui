@@ -1,3 +1,6 @@
+import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
+import type { Schema } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -11,8 +14,6 @@ import {
     useBinding_fullSourceOfBinding,
     useBinding_updateFullSourceConfig,
 } from 'src/stores/Binding/hooks';
-import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
-import type { Schema } from 'src/types';
 import {
     getBindingIndex,
     getCollectionNameProp,

@@ -1,7 +1,7 @@
+import type { StepperProps as StepperPropsType } from '@mui/material';
+
 import React from 'react';
 
-import type {
-    StepperProps as StepperPropsType} from '@mui/material';
 import {
     Step,
     StepLabel,

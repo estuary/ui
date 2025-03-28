@@ -1,3 +1,5 @@
+import type { ControllerAlertProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
+
 import { useState } from 'react';
 
 import {
@@ -14,7 +16,6 @@ import { NavArrowDown } from 'iconoir-react';
 
 import { defaultOutline } from 'src/context/Theme';
 import { unescapeString } from 'src/utils/misc-utils';
-import type { ControllerAlertProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
 
 export default function ControllerAlert({
     error,

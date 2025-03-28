@@ -1,3 +1,5 @@
+import type { JournalRecord } from 'src/hooks/journals/types';
+
 import { useEffect } from 'react';
 
 import { DataGrid } from '@mui/x-data-grid';
@@ -7,7 +9,6 @@ import { random } from 'lodash';
 import { useTimeout } from 'react-use';
 
 import { dataGridListStyling } from 'src/context/Theme';
-import type { JournalRecord } from 'src/hooks/journals/types';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',

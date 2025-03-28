@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react';
-
 import type { BaseComponentProps } from 'src/types';
+
+import { createContext, useContext } from 'react';
 
 interface Props extends BaseComponentProps {
     value: Function;

@@ -3,9 +3,9 @@ import { Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import ManualSelection from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/ManualSelection';
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import ManualSelection from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/ManualSelection';
 
 function NoMaterializationsFound() {
     const intl = useIntl();

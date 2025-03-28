@@ -1,6 +1,10 @@
+import type { Entity } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
-
+import useDiscoverConfigEncrypt from 'src/components/capture/useCaptureConfigEncrypt';
+import useDiscoverDraftUpdate from 'src/components/capture/useCaptureDraftUpdate';
+import useDiscoverStartDiscovery from 'src/components/capture/useDiscoverStartDiscovery';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
@@ -23,10 +27,6 @@ import {
     useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import type { Entity } from 'src/types';
-import useDiscoverConfigEncrypt from 'src/components/capture/useCaptureConfigEncrypt';
-import useDiscoverStartDiscovery from 'src/components/capture/useDiscoverStartDiscovery';
-import useDiscoverDraftUpdate from 'src/components/capture/useCaptureDraftUpdate';
 
 function useDiscoverCapture(
     entityType: Entity,

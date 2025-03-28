@@ -1,13 +1,15 @@
+import type { AlertColor } from '@mui/material';
+import type { SpinnerMessageKeys } from 'src/components/logs/types';
+
 import { useMemo } from 'react';
 
-import type { AlertColor } from '@mui/material';
-
 import { useIntl } from 'react-intl';
+
 import { useLogsContext } from 'src/components/logs/Context';
 // import { useInterval } from 'react-use';
 import LogLine from 'src/components/logs/Line';
 import SpinnerIcon from 'src/components/logs/SpinnerIcon';
-import type { SpinnerMessageKeys } from 'src/components/logs/types';
+
 // import { MutableRefObject, useRef, useState } from 'react';
 
 interface Props {

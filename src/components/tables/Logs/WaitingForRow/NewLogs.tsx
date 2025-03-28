@@ -1,7 +1,7 @@
-import { DEFAULT_POLLING } from 'src/context/SWR';
 import type { WaitingForRowProps } from 'src/components/tables/Logs/types';
-import WaitingForRowBase from 'src/components/tables/Logs/WaitingForRow/Base';
 
+import WaitingForRowBase from 'src/components/tables/Logs/WaitingForRow/Base';
+import { DEFAULT_POLLING } from 'src/context/SWR';
 
 function WaitingForNewLogsRow(props: WaitingForRowProps) {
     return (

@@ -1,3 +1,5 @@
+import type { CustomEvents } from 'src/services/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
@@ -21,7 +23,6 @@ import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
-import type { CustomEvents } from 'src/services/types';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,

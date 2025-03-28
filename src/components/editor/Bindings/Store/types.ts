@@ -1,5 +1,4 @@
 import type { AlertColor } from '@mui/material';
-
 import type { IncompatibleCollections } from 'src/api/evolutions';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type { InferSchemaPropertyForRender } from 'src/types';

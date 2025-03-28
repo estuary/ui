@@ -1,3 +1,5 @@
+import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
+
 import { createAjv } from '@jsonforms/core';
 
 import {
@@ -6,7 +8,6 @@ import {
 } from '@estuary/flow-web';
 import { isEmpty } from 'lodash';
 
-import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
 import { Annotations } from 'src/types/jsonforms';
 import { stripPathing } from 'src/utils/misc-utils';
 

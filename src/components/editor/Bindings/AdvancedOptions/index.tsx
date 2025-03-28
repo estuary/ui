@@ -1,14 +1,15 @@
+import type { AdvancedOptionsProps } from 'src/components/editor/Bindings/AdvancedOptions/types';
+
 import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import OnIncompatibleSchemaChange from 'src/components/editor/Bindings/OnIncompatibleSchemaChange';
+import TimeTravel from 'src/components/editor/Bindings/TimeTravel';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import OnIncompatibleSchemaChange from 'src/components/editor/Bindings/OnIncompatibleSchemaChange';
-import type { AdvancedOptionsProps } from 'src/components/editor/Bindings/AdvancedOptions/types';
-import TimeTravel from 'src/components/editor/Bindings/TimeTravel';
 
 export default function AdvancedOptions({
     bindingIndex,

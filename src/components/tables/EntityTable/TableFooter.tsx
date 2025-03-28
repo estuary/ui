@@ -1,14 +1,11 @@
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { TableFooter, TablePagination, TableRow } from '@mui/material';
 
-
-import { useZustandStore } from 'src/context/Zustand/provider';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
 import TablePaginationActions from 'src/components/tables/PaginationActions';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface Props {
     filterLabel: string;

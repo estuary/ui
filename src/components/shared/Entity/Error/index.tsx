@@ -1,18 +1,15 @@
+import type { DraftErrorProps } from 'src/components/shared/Entity/Error/DraftErrors';
+import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/Logs';
+import type { ErrorProps } from 'src/components/shared/Error';
+
 import { useEffect, useRef } from 'react';
 
 import { Box, Divider, Stack } from '@mui/material';
 
 import { useEditorStore_discoveredDraftId } from 'src/components/editor/Store/hooks';
-import type {
-    DraftErrorProps,
-} from 'src/components/shared/Entity/Error/DraftErrors';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
-import type {
-    ErrorLogsProps,
-} from 'src/components/shared/Entity/Error/Logs';
 import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
 import HeaderSummary from 'src/components/shared/Entity/HeaderSummary';
-import type { ErrorProps } from 'src/components/shared/Error';
 import Error from 'src/components/shared/Error';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
 

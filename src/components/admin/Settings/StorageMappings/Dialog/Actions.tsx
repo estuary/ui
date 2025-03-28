@@ -1,11 +1,12 @@
-import type { ButtonProps} from '@mui/material';
+import type { ButtonProps } from '@mui/material';
+
 import { Button, DialogActions } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import SaveButton from 'src/components/admin/Settings/StorageMappings/Dialog/SaveButton';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import SaveButton from 'src/components/admin/Settings/StorageMappings/Dialog/SaveButton';
 
 interface Props {
     closeDialog: ButtonProps['onClick'];

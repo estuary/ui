@@ -1,4 +1,5 @@
 import type { JWTPayload } from 'jose';
+
 import { decodeJwt } from 'jose';
 import useSWR from 'swr';
 

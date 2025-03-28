@@ -1,7 +1,8 @@
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
+
 import { useMemo } from 'react';
 
 import StatsHeader from 'src/components/tables/cells/stats/Header';
-import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 
 const defaultColumns: ColumnProps[] = [
     {

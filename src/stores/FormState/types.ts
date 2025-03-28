@@ -1,7 +1,5 @@
 import type { AlertColor } from '@mui/material';
-
 import type { PostgrestError } from '@supabase/postgrest-js';
-
 import type { MessagePrefixes, Schema } from 'src/types';
 
 export interface FormState {

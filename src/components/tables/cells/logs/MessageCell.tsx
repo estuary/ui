@@ -3,11 +3,11 @@ import { TableCell, Typography } from '@mui/material';
 import { isEmpty } from 'lodash';
 import { ObjectPreview } from 'react-inspector';
 
+import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
 import {
     jsonObjectPreview_key,
     jsonObjectPreview_value,
 } from 'src/context/Theme';
-import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
 
 interface Props {
     message: string;

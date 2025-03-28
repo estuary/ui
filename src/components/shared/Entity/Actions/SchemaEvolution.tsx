@@ -1,3 +1,5 @@
+import type { FormState } from 'src/stores/FormState/types';
+
 import { useCallback } from 'react';
 
 import { Button } from '@mui/material';
@@ -33,7 +35,6 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
-import type { FormState} from 'src/stores/FormState/types';
 import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {

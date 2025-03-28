@@ -1,13 +1,15 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+
 import { useMemo, useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage } from 'react-intl';
 import { Navigate } from 'react-router';
 
 import { getDirectiveByToken } from 'src/api/directives';
 import FullPageWrapper from 'src/app/FullPageWrapper';
+import useDirectiveGuard from 'src/app/guards/hooks';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -15,7 +17,6 @@ import { HomePageErrors } from 'src/components/login/shared';
 import AcceptGrant from 'src/directives/AcceptGrant';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { getPathWithParams } from 'src/utils/misc-utils';
-import useDirectiveGuard from 'src/app/guards/hooks';
 
 const SELECTED_DIRECTIVE = 'grant';
 

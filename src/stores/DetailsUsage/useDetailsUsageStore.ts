@@ -1,12 +1,13 @@
+import type { DetailsUsageState } from 'src/stores/DetailsUsage/types';
+
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import produce from 'immer';
 
 import { DataGrains } from 'src/components/graphs/types';
-import { devtoolsOptions } from 'src/utils/store-utils';
 import { persistOptions } from 'src/stores/DetailsUsage/shared';
-import type { DetailsUsageState } from 'src/stores/DetailsUsage/types';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 export const useDetailsUsageStore = create<DetailsUsageState>()(
     persist(

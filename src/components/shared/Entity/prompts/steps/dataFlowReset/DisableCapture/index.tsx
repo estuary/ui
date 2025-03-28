@@ -10,6 +10,7 @@ import {
     useEditorStore_queryResponse_draftSpecs,
 } from 'src/components/editor/Store/hooks';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
@@ -19,7 +20,6 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function DisableCapture() {
     const intl = useIntl();

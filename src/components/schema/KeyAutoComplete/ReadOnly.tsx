@@ -7,10 +7,10 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
-import AlertBox from 'src/components/shared/AlertBox';
-import { hasLength } from 'src/utils/misc-utils';
 import SchemaKeyHeader from 'src/components/schema/KeyAutoComplete/Header';
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
+import AlertBox from 'src/components/shared/AlertBox';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     value: string[] | null;

@@ -1,5 +1,4 @@
 import type { ButtonProps } from '@mui/material';
-
 import type { Schema } from 'src/types';
 import type { SupportedProvider } from 'src/types/authProviders';
 

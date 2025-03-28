@@ -1,6 +1,12 @@
+import type {
+    BindingMetadata,
+    BindingState,
+    ResourceConfig,
+} from 'src/stores/Binding/types';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -30,17 +36,6 @@ import {
 } from 'src/services/ajv';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
-import { BindingStoreNames } from 'src/stores/names';
-import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
-import { devtoolsOptions } from 'src/utils/store-utils';
-import { parsePostgresInterval } from 'src/utils/time-utils';
-import {
-    getBackfillCounter,
-    getBindingIndex,
-    getCollectionName,
-} from 'src/utils/workflow-utils';
-import { POSTGRES_INTERVAL_RE } from 'src/validation';
 import {
     getCollectionNames,
     getInitialMiscData,
@@ -57,16 +52,26 @@ import {
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
-import type { BindingMetadata, BindingState, ResourceConfig } from 'src/stores/Binding/types';
+import {
+    getInitialFieldSelectionData,
+    getStoreWithFieldSelectionSettings,
+} from 'src/stores/Binding/slices/FieldSelection';
 import {
     getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from 'src/stores/Binding/slices/TimeTravel';
+import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
+import { BindingStoreNames } from 'src/stores/names';
+import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { parsePostgresInterval } from 'src/utils/time-utils';
 import {
-    getInitialFieldSelectionData,
-    getStoreWithFieldSelectionSettings,
-} from 'src/stores/Binding/slices/FieldSelection';
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+} from 'src/utils/workflow-utils';
+import { POSTGRES_INTERVAL_RE } from 'src/validation';
 
 const getInitialState = (
     set: NamedSet<BindingState>,

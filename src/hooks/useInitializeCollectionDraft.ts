@@ -1,3 +1,5 @@
+import type { LiveSpecsExtQuery_ByCatalogName } from 'src/api/liveSpecsExt';
+
 import { useCallback } from 'react';
 
 import { createEntityDraft } from 'src/api/drafts';
@@ -5,11 +7,7 @@ import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
 } from 'src/api/draftSpecs';
-import type {
-    LiveSpecsExtQuery_ByCatalogName} from 'src/api/liveSpecsExt';
-import {
-    getLiveSpecsByCatalogName
-} from 'src/api/liveSpecsExt';
+import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_resetState,

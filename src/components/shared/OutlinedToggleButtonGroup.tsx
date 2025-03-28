@@ -1,9 +1,6 @@
-import type {
-    ToggleButtonGroupProps} from '@mui/material';
-import {
-    styled,
-    ToggleButtonGroup
-} from '@mui/material';
+import type { ToggleButtonGroupProps } from '@mui/material';
+
+import { styled, ToggleButtonGroup } from '@mui/material';
 
 const OutlinedToggleButtonGroup = styled(ToggleButtonGroup, {
     shouldForwardProp: (props) => props !== 'buttonSelector',

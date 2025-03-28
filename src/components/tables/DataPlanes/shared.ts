@@ -1,5 +1,6 @@
-import { SelectTableStoreNames } from 'src/stores/names';
 import type { TableColumns } from 'src/types';
+
+import { SelectTableStoreNames } from 'src/stores/names';
 
 export const selectableTableStoreName = SelectTableStoreNames.DATA_PLANE;
 

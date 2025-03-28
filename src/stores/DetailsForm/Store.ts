@@ -1,6 +1,13 @@
+import type {
+    DataPlaneOption,
+    Details,
+    DetailsFormState,
+} from 'src/stores/DetailsForm/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -13,11 +20,6 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import type {
-    DataPlaneOption,
-    Details,
-    DetailsFormState,
-} from 'src/stores/DetailsForm/types';
 import {
     fetchErrors,
     filterErrors,
@@ -29,11 +31,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import type {
-    ConnectorVersionEvaluationOptions} from 'src/utils/connector-utils';
-import {
-    getConnectorMetadata,
-} from 'src/utils/connector-utils';
+import { getConnectorMetadata } from 'src/utils/connector-utils';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 import { hasLength } from 'src/utils/misc-utils';

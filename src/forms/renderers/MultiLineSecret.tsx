@@ -1,8 +1,9 @@
+import type { RankedTester } from '@jsonforms/core';
+
 import { useCallback, useState } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
 
-import type { RankedTester} from '@jsonforms/core';
 import { optionIs, rankWith } from '@jsonforms/core';
 import {
     MaterialInputControl,

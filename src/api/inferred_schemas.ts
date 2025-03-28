@@ -1,3 +1,5 @@
+import type { InferredSchemas } from 'src/types';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
@@ -5,7 +7,6 @@ import {
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
-import type { InferredSchemas } from 'src/types';
 
 export const fetchInferredSchema = (collectionName: string) => {
     const queryBuilder = supabaseRetry(

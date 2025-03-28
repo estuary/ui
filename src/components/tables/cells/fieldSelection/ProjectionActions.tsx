@@ -1,14 +1,14 @@
+import type {
+    Projection,
+    TranslatedConstraint,
+} from 'src/components/editor/Bindings/FieldSelection/types';
+
 import { Button, Stack, TableCell } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
 import EditProjectionButton from 'src/components/editor/Bindings/FieldSelection/EditProjection/Button';
-import type {
-    Projection,
-    TranslatedConstraint} from 'src/components/editor/Bindings/FieldSelection/types';
-import {
-    ConstraintTypes
-} from 'src/components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 
 interface Props {
     projection: Projection;

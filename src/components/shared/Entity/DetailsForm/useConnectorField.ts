@@ -1,26 +1,26 @@
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { Details } from 'src/stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
+
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
 
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsForm_changed_connectorId } from 'src/stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import type { Details } from 'src/stores/DetailsForm/types';
-import type { EntityWithCreateWorkflow } from 'src/types';
-import type {
-    ConnectorVersionEvaluationOptions} from 'src/utils/connector-utils';
 import {
     evaluateConnectorVersions,
     getConnectorMetadata,
 } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { MAC_ADDR_RE } from 'src/validation';
-import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 
 export default function useConnectorField(
     connectorTags: ConnectorWithTagDetailQuery[],

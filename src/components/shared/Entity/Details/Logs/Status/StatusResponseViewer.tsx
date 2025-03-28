@@ -1,9 +1,10 @@
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+
 import { useRef } from 'react';
 
 import { Box, Divider, Paper, useTheme } from '@mui/material';
 
 import { Editor } from '@monaco-editor/react';
-import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import { editorToolBarSx } from 'src/context/Theme';

@@ -1,7 +1,10 @@
-import type { ReactElement } from 'react';
-
 import type { AuthSession, Session, User } from '@supabase/supabase-js';
 import type { RenderOptions } from '@testing-library/react';
+import type { ConnectorConfig } from 'deps/flow/flow';
+import type { ReactElement } from 'react';
+import type { ResourceConfig } from 'src/stores/Binding/types';
+import type { Entity, Schema } from 'src/types';
+
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
@@ -9,9 +12,6 @@ import { mockDeep } from 'vitest-mock-extended';
 
 import AppProviders from 'src/context';
 import ThemeProvider from 'src/context/Theme';
-import type { ResourceConfig } from 'src/stores/Binding/types';
-import type { Entity, Schema } from 'src/types';
-import type { ConnectorConfig } from 'deps/flow/flow';
 
 export const generateMockUserMetadata = (
     username: string

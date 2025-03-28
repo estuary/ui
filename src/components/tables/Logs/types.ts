@@ -1,5 +1,4 @@
 import type { CSSProperties, RefCallback } from 'react';
-
 import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
 
 export type FetchMoreLogsOptions = 'old' | 'new';

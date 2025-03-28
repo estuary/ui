@@ -1,12 +1,16 @@
 import type { HTMLAttributes, ReactChild } from 'react';
+
 import { forwardRef } from 'react';
 
 import { VariableSizeList } from 'react-window';
-import { autoCompleteListPadding } from 'src/context/Theme';
-import { useResetCache } from 'src/components/shared/AutoComplete/VirtualizedList/hooks';
-import { OuterElement, OuterElementContext } from 'src/components/shared/AutoComplete/VirtualizedList/OuterElement';
-import Row from 'src/components/shared/AutoComplete/VirtualizedList/Row';
 
+import { useResetCache } from 'src/components/shared/AutoComplete/VirtualizedList/hooks';
+import {
+    OuterElement,
+    OuterElementContext,
+} from 'src/components/shared/AutoComplete/VirtualizedList/OuterElement';
+import Row from 'src/components/shared/AutoComplete/VirtualizedList/Row';
+import { autoCompleteListPadding } from 'src/context/Theme';
 
 export const itemSize = 40;
 const groupSize = 55;

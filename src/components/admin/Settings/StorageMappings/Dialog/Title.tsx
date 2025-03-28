@@ -1,5 +1,5 @@
-import type {
-    ButtonProps} from '@mui/material';
+import type { ButtonProps } from '@mui/material';
+
 import {
     DialogTitle,
     IconButton,

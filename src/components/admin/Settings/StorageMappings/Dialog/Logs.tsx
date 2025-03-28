@@ -1,6 +1,7 @@
+import type { AlertColor } from '@mui/material';
+
 import { useMemo } from 'react';
 
-import type { AlertColor} from '@mui/material';
 import { Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';

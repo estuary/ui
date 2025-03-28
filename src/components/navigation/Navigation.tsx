@@ -23,9 +23,9 @@ import {
 import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import ListItemLink from 'src/components/navigation/ListItemLink';
 import ModeSwitch from 'src/components/navigation/ModeSwitch';
 import { paperBackground } from 'src/context/Theme';
-import ListItemLink from 'src/components/navigation/ListItemLink';
 
 interface NavigationProps {
     open: boolean;

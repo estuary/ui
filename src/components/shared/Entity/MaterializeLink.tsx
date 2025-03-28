@@ -1,6 +1,7 @@
+import type { ButtonProps } from '@mui/material';
+
 import { useMemo } from 'react';
 
-import type { ButtonProps } from '@mui/material';
 import { Button } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';

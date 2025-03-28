@@ -1,11 +1,12 @@
-import { create } from 'zustand';
+import type { BillingState, DataVolumeByTask } from 'src/stores/Billing/types';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 import { isArray, isEqual } from 'lodash';
 
-import type { BillingState, DataVolumeByTask } from 'src/stores/Billing/types';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,

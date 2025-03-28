@@ -1,6 +1,5 @@
 import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
-
 import type { SemanticColor } from 'src/context/Theme';
 import type { Entity } from 'src/types';
 

@@ -1,3 +1,10 @@
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type {
+    EntityWithCreateWorkflow,
+    TableIntlConfig,
+    TableState,
+} from 'src/types';
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -13,28 +20,21 @@ import { FormattedMessage } from 'react-intl';
 
 import { getConnectors } from 'src/api/connectors';
 import ConnectorCard from 'src/components/connectors/card';
+import ConnectorCardDetails from 'src/components/connectors/card/Details';
+import ConnectorLogo from 'src/components/connectors/card/Logo';
+import ConnectorCardTitle from 'src/components/connectors/card/Title';
+import ConnectorRequestTile from 'src/components/connectors/ConnectorRequestTile';
 import ConnectorToolbar from 'src/components/connectors/ConnectorToolbar';
+import ConnectorsSkeleton from 'src/components/connectors/Skeleton';
 import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'src/context/Theme';
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
-import type {
-    EntityWithCreateWorkflow,
-    TableIntlConfig,
-    TableState} from 'src/types';
-import {
-    TableStatuses,
-} from 'src/types';
+import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     getEmptyTableHeader,
     getEmptyTableMessage,
 } from 'src/utils/table-utils';
-import ConnectorCardDetails from 'src/components/connectors/card/Details';
-import ConnectorRequestTile from 'src/components/connectors/ConnectorRequestTile';
-import ConnectorCardTitle from 'src/components/connectors/card/Title';
-import ConnectorsSkeleton from 'src/components/connectors/Skeleton';
-import ConnectorLogo from 'src/components/connectors/card/Logo';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;

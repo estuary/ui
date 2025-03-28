@@ -1,15 +1,12 @@
-import type {
-    ChangeEvent,
-    Dispatch,
-    SetStateAction} from 'react';
-import {
-    useMemo,
-    useState,
-} from 'react';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Capability } from 'src/types';
+
+import { useMemo, useState } from 'react';
 
 import { Button, Grid, TextField } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { createRoleGrant } from 'src/api/roleGrants';
@@ -20,12 +17,7 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import type { Capability } from 'src/types';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 import { PREFIX_NAME_PATTERN } from 'src/validation';
 

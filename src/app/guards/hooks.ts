@@ -1,16 +1,17 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { DirectiveStates, UserClaims } from 'src/directives/types';
+import type { AppliedDirective } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import { exchangeBearerToken } from 'src/api/directives';
 import { DIRECTIVES } from 'src/directives/shared';
-import type { DirectiveStates, UserClaims } from 'src/directives/types';
 import useAppliedDirectives from 'src/hooks/useAppliedDirectives';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import type { AppliedDirective } from 'src/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 const useDirectiveGuard = (

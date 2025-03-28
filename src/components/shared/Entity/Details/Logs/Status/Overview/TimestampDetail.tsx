@@ -1,10 +1,11 @@
+import type { TimestampDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import { Skeleton, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
-import type { TimestampDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
 
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function TimestampDetail({
     headerMessageId,

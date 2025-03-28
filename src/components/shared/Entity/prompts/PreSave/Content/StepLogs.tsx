@@ -2,11 +2,10 @@ import { Box } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-
 import Logs from 'src/components/logs';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function StepLogs() {
     const stepIndex = useLoopIndex();

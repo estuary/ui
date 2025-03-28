@@ -1,8 +1,9 @@
+import type { SxProps, Theme } from '@mui/material';
+import type { useJournalData } from 'src/hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
 import { useMemo } from 'react';
 
-import type {
-    SxProps,
-    Theme} from '@mui/material';
 import {
     Grid,
     Paper,
@@ -11,15 +12,13 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
 } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
 import Error from 'src/components/shared/Error';
 import { tableAlternateRowsSx } from 'src/context/Theme';
-import type { useJournalData } from 'src/hooks/journals/useJournalData';
-import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface PreviewTableModeProps {

@@ -1,3 +1,6 @@
+import type { AdminBillingProps } from 'src/components/admin/Billing/types';
+import type { TableColumns } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -21,18 +24,19 @@ import {
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
 } from 'src/api/billing';
+import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
+import {
+    INTENT_SECRET_ERROR,
+    INTENT_SECRET_LOADING,
+} from 'src/components/admin/Billing/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import type { TableColumns } from 'src/types';
 import { getColumnKeyList } from 'src/utils/table-utils';
-import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
-import type { AdminBillingProps } from 'src/components/admin/Billing/types';
-import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from 'src/components/admin/Billing/shared';
 
 const columns: TableColumns[] = [
     {

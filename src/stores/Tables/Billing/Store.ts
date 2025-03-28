@@ -1,12 +1,13 @@
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { BillingTableState } from 'src/stores/Tables/Billing/types';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type { BillingTableState } from 'src/stores/Tables/Billing/types';
 import { getInitialState as getInitialSelectTableState } from 'src/stores/Tables/Store';
 import { devtoolsOptions } from 'src/utils/store-utils';
 

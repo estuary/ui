@@ -1,4 +1,7 @@
-import { CommonMessages, endpointConfigHeader } from 'src/lang/en-US/CommonMessages';
+import {
+    CommonMessages,
+    endpointConfigHeader,
+} from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 const trialDuration = import.meta.env.VITE_TRIAL_DURATION;

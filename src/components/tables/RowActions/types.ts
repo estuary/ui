@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-
 import type { SelectTableStoreNames } from 'src/stores/names';
 
 export interface RowConfirmation<M = string> {

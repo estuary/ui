@@ -1,14 +1,12 @@
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
 
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import type { BaseComponentProps } from 'src/types';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 // Hydrator
 interface StatsHydratorProps extends BaseComponentProps {

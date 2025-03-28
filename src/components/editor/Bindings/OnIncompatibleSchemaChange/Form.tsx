@@ -1,3 +1,9 @@
+import type {
+    AutoCompleteOption,
+    OnIncompatibleSchemaChangeProps,
+} from 'src/components/incompatibleSchemaChange/types';
+import type { BindingMetadata } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { useSnackbar } from 'notistack';
@@ -5,10 +11,6 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'src/components/editor/Store/hooks';
 import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
-import type {
-    AutoCompleteOption,
-    OnIncompatibleSchemaChangeProps,
-} from 'src/components/incompatibleSchemaChange/types';
 import useBindingIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
 import {
     useBinding_currentBindingUUID,
@@ -17,7 +19,6 @@ import {
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import type { BindingMetadata } from 'src/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {

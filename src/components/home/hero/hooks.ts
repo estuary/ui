@@ -1,8 +1,7 @@
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-import type { MuiTabProps } from 'src/types';
 import type { TabOptions } from 'src/components/home/hero/types';
+import type { MuiTabProps } from 'src/types';
 
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 export const TABS: MuiTabProps<TabOptions>[] = [
     {

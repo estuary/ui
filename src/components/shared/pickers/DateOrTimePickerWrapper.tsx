@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { PickerProps } from 'src/components/shared/pickers/types';
+import type { BaseComponentProps } from 'src/types';
 
 import { Box, IconButton, Popover } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -7,9 +9,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
 import { useIntl } from 'react-intl';
 
-import type { BaseComponentProps } from 'src/types';
-import { DEFAULT_ANCHOR_ORIGIN, DEFAULT_TRANSFORM_ORIGIN } from 'src/components/shared/pickers/shared';
-import type { PickerProps } from 'src/components/shared/pickers/types';
+import {
+    DEFAULT_ANCHOR_ORIGIN,
+    DEFAULT_TRANSFORM_ORIGIN,
+} from 'src/components/shared/pickers/shared';
 
 interface Props extends PickerProps, BaseComponentProps {
     icon: ReactNode;

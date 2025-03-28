@@ -1,3 +1,5 @@
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
@@ -10,7 +12,6 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
 import { useBillingStore } from 'src/stores/Billing/Store';
-import type { TableColumns} from 'src/types';
 import { TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 

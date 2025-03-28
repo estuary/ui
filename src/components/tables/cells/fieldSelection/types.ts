@@ -1,5 +1,4 @@
 import type { ToggleButtonProps, TooltipProps } from '@mui/material';
-
 import type {
     FieldSelectionType,
     TranslatedConstraint,

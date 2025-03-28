@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from 'react';
-
 import type { PostgrestError } from '@supabase/postgrest-js';
-
 import type {
     AlertSubscriptionQuery,
-    DataProcessingAlertQuery} from 'src/api/alerts';
+    DataProcessingAlertQuery,
+} from 'src/api/alerts';
+
+import { useCallback, useMemo } from 'react';
+
 import {
     createNotificationSubscription,
     getNotificationSubscriptionForUser,

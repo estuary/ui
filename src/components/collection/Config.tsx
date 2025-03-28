@@ -1,15 +1,16 @@
+import type { CollectionConfigProps } from 'src/components/collection/types';
+
 import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import SectionAlertIndicator from 'src/components/collection/SectionAlertIndicator';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import BindingsMultiEditor from 'src/components/editor/Bindings';
 import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useBinding_hydrationErrorsExist } from 'src/stores/Binding/hooks';
-import SectionAlertIndicator from 'src/components/collection/SectionAlertIndicator';
-import type { CollectionConfigProps } from 'src/components/collection/types';
 
 function CollectionConfig({
     draftSpecs,

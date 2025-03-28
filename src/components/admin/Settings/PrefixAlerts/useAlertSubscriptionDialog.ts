@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 
-
 import { getNotificationSubscriptions } from 'src/api/alerts';
-import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 const initializeNotificationSubscriptions = async (prefix?: string) => {
     const { data, error } = await getNotificationSubscriptions(prefix);

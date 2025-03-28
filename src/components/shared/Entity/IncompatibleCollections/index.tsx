@@ -4,9 +4,9 @@ import { FormattedMessage } from 'react-intl';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
-import { hasLength } from 'src/utils/misc-utils';
 import Actions from 'src/components/shared/Entity/IncompatibleCollections/Actions';
 import CollectionsList from 'src/components/shared/Entity/IncompatibleCollections/CollectionsList';
+import { hasLength } from 'src/utils/misc-utils';
 
 function IncompatibleCollections() {
     const incompatibleCollections =

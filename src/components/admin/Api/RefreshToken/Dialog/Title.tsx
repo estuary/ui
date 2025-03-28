@@ -4,6 +4,7 @@ import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
 import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
 
 interface Props {

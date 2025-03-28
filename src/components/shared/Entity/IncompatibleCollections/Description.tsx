@@ -1,9 +1,9 @@
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import type {
     AffectedMaterialization,
     RequiresRecreation,
 } from 'src/api/evolutions';
+
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {
     newName: string | null;

@@ -1,10 +1,9 @@
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
+
 import { Box } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import type {
-    ExternalLinkOptions,
-} from 'src/components/shared/ExternalLink';
 import ExternalLink from 'src/components/shared/ExternalLink';
 
 interface Props {

@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import BindingSelectorTable from 'src/components/collection/Selector/Table';
+import { ConfigHeader } from 'src/components/derivation/Create/ConfigHeader';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import LanguageSelector from 'src/components/transformation/create/LanguageSelector';
 import SingleStep from 'src/components/transformation/create/SingleStep';
@@ -15,7 +16,6 @@ import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
 } from 'src/stores/TransformationCreate/hooks';
-import { ConfigHeader } from 'src/components/derivation/Create/ConfigHeader';
 
 function DerivationCreateConfig() {
     usePageTitle({

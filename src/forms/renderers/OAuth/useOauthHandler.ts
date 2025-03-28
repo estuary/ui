@@ -5,12 +5,12 @@ import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
 
 import { accessToken, authURL } from 'src/api/oauth';
+import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 import { useOAuth2 } from 'src/hooks/forks/react-use-oauth2/components';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
-import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.
 export const useOauthHandler = (

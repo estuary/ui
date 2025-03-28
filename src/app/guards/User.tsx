@@ -8,10 +8,11 @@ import useGlobalSearchParams, {
 
 import 'react-reflex/styles.css';
 
+import type { BaseComponentProps } from 'src/types';
+
 import { Navigate } from 'react-router';
 
 import { identifyUser } from 'src/services/logrocket';
-import type { BaseComponentProps } from 'src/types';
 
 function UserGuard({ children }: BaseComponentProps) {
     // We only want to idenfity users once. Since the user object changes

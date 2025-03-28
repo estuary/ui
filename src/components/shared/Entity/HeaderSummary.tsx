@@ -1,9 +1,10 @@
-import type { AlertColor} from '@mui/material';
+import type { AlertColor } from '@mui/material';
+import type { BaseComponentProps } from 'src/types';
+
 import { Box, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import type { BaseComponentProps } from 'src/types';
 import AlertBox from 'src/components/shared/AlertBox';
 
 interface Props extends BaseComponentProps {

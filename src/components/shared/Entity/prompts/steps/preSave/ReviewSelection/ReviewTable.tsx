@@ -15,12 +15,12 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import { useEntityType } from 'src/context/EntityContext';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function ReviewTable() {
     const intl = useIntl();

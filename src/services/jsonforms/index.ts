@@ -29,7 +29,9 @@ import type {
     JsonSchema,
     LabelElement,
     Layout,
-    UISchemaElement} from '@jsonforms/core';
+    UISchemaElement,
+} from '@jsonforms/core';
+
 import {
     deriveTypes,
     encode,
@@ -38,13 +40,20 @@ import {
     isLayout,
     resolveSchema,
     toDataPath,
-    toDataPathSegments
+    toDataPathSegments,
 } from '@jsonforms/core';
 
 import JsonRefs from 'json-refs';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
+import {
+    ADVANCED,
+    allowedNullableTypes,
+    CONTAINS_REQUIRED_FIELDS,
+    LAYOUT_PATH,
+    SHOW_INFO_SSH_ENDPOINT,
+} from 'src/services/jsonforms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
@@ -54,13 +63,6 @@ import {
     Options,
 } from 'src/types/jsonforms';
 import { ISO_8601_DURATION_PATTERN } from 'src/validation';
-import {
-    ADVANCED,
-    allowedNullableTypes,
-    CONTAINS_REQUIRED_FIELDS,
-    LAYOUT_PATH,
-    SHOW_INFO_SSH_ENDPOINT,
-} from 'src/services/jsonforms/shared';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS

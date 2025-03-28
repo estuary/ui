@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
 
 import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
@@ -15,11 +17,7 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { useBinding_resetState } from 'src/stores/Binding/hooks';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 
 const ARIA_LABEL_ID = 'derivation-create-dialog';

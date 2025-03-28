@@ -1,4 +1,7 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
+import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+import type { RelatedMaterializationSelectorProps } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/types';
+
 import { useEffect, useState } from 'react';
 
 import {
@@ -10,14 +13,12 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+
 import { autoCompleteDefaults_Virtual } from 'src/components/shared/AutoComplete/DefaultProps';
-import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import NoMaterializationsFound from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/NoMaterializationsFound';
 import SelectorOption from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/SelectorOption';
-import type { RelatedMaterializationSelectorProps } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/types';
-
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;

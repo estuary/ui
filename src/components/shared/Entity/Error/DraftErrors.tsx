@@ -1,8 +1,9 @@
+import type { KeyValue } from 'src/components/shared/KeyValueList';
+
 import { Box, Breadcrumbs, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import type { KeyValue } from 'src/components/shared/KeyValueList';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
 

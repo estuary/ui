@@ -1,4 +1,3 @@
-
 import SSOForm from 'src/components/login/SSO';
 import useLoginStateHandler from 'src/hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';

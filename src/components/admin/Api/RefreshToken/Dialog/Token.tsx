@@ -2,9 +2,9 @@ import { Grid, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import AlertBox from 'src/components/shared/AlertBox';
-import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
 
 function CopyRefreshToken() {
     const token = useRefreshTokenStore((state) => state.token);

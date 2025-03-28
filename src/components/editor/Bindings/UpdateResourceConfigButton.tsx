@@ -1,3 +1,5 @@
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+
 import { useState } from 'react';
 
 import { Button } from '@mui/material';
@@ -6,7 +8,6 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {

@@ -1,14 +1,14 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useMemo } from 'react';
 
-
+import OnboardGuard from 'src/app/guards/OnboardGuard';
+import SsoUserMessage from 'src/app/guards/TenantGuard/SsoUserMessage';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import type { BaseComponentProps } from 'src/types';
-import OnboardGuard from 'src/app/guards/OnboardGuard';
-import SsoUserMessage from 'src/app/guards/TenantGuard/SsoUserMessage';
 
 // This is a way to very simply "hide" the flow where anyone
 //  can create a tenant but allow us to test it out in prod.

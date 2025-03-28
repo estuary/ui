@@ -1,9 +1,8 @@
+import type { LinearProgressProps } from '@mui/material/LinearProgress';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
-import type {
-    LinearProgressProps,
-} from '@mui/material/LinearProgress';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { useDebounce } from 'react-use';

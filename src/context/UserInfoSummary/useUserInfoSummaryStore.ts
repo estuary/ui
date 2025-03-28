@@ -1,10 +1,11 @@
+import type { UserInfoStore } from 'src/context/UserInfoSummary/types';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
 import { devtoolsOptions } from 'src/utils/store-utils';
-import type { UserInfoStore } from 'src/context/UserInfoSummary/types';
 
 const name = 'estuary.user-info-store';
 

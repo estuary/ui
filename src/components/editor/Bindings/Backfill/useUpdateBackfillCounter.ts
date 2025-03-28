@@ -1,23 +1,24 @@
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { BindingMetadata, Schema } from 'src/types';
+
 import { useCallback } from 'react';
 
 import { useIntl } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
-import type { BooleanString } from 'src/components/shared/buttons/types';
+import {
+    useEditorStore_persistedDraftId,
+    useEditorStore_queryResponse_mutate,
+} from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { BASE_ERROR } from 'src/services/supabase';
 import {
     useBinding_backfilledBindings,
     useBinding_bindings,
 } from 'src/stores/Binding/hooks';
-import type { BindingMetadata, Schema } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBackfillCounter, getBindingIndex } from 'src/utils/workflow-utils';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_mutate,
-} from 'src/components/editor/Store/hooks';
 
 interface BackfillChangeSummary {
     counterDecremented: string[];

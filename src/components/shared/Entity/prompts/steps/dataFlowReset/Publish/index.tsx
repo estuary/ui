@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-
 import { createPublication } from 'src/api/publications';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
@@ -9,7 +9,6 @@ import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();

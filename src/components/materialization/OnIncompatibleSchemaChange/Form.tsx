@@ -1,10 +1,11 @@
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+
 import { useCallback } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 import useSpecificationIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useSpecificationIncompatibleSchemaSetting';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';

@@ -1,3 +1,5 @@
+import type { DataByHourRange } from 'src/components/graphs/types';
+
 import React, { useState } from 'react';
 
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
@@ -5,7 +7,6 @@ import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import type { DataByHourRange} from 'src/components/graphs/types';
 import { DataGrains } from 'src/components/graphs/types';
 import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
 import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';

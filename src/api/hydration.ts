@@ -1,16 +1,17 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import type { ConnectorTag } from 'src/hooks/connectors/shared';
 import type {
     LiveSpecsExt_MaterializeOrTransform,
     LiveSpecsExtQuery,
 } from 'src/hooks/useLiveSpecsExt';
+import type { Entity } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
     handleSuccess,
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
-import type { Entity } from 'src/types';
 
 // TODO (optimization): Consider removing he tight coupling between this file and the stores.
 //  These APIs are truly general purpose. Perhaps break them out by supabase table.

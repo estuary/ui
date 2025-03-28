@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import type { BaseComponentProps } from 'src/types';
 
+import { useEffect, useRef } from 'react';
 
 import { useEntityType } from 'src/context/EntityContext';
 import {
@@ -8,15 +9,14 @@ import {
 } from 'src/context/Workflow';
 import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { logRocketConsole } from 'src/services/shared';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import type { BaseComponentProps } from 'src/types';
 import {
     useBinding_hydrateState,
     useBinding_setActive,
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls

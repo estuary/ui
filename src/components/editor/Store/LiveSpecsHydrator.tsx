@@ -1,3 +1,5 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
 
 import {
@@ -10,7 +12,6 @@ import { useLiveSpecs_details } from 'src/hooks/useLiveSpecs';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import type { BaseComponentProps } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {

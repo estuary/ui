@@ -8,12 +8,12 @@ import { JsonForms } from '@jsonforms/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
+import useTimeTravel from 'src/components/editor/Bindings/TimeTravel/useTimeTravel';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'src/services/jsonforms/shared';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import useTimeTravel from 'src/components/editor/Bindings/TimeTravel/useTimeTravel';
 
 interface Props {
     bindingUUID: string;

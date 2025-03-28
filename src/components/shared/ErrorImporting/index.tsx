@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react';
-
 import type { FallbackProps } from 'react-error-boundary';
+
+import { useEffect, useState } from 'react';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import Error from 'src/components/shared/Error';
+import {
+    getWithExpiry,
+    setWithExpiry,
+} from 'src/components/shared/ErrorImporting/shared';
 import {
     failedToLazyLoad,
     logRocketConsole,
     logRocketEvent,
 } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { getWithExpiry, setWithExpiry } from 'src/components/shared/ErrorImporting/shared';
 
 export function ErrorImporting({ error }: FallbackProps) {
     const [stopTrying, setStopTrying] = useState(false);

@@ -1,3 +1,15 @@
+import type {
+    BuiltSpec_Binding,
+    CompositeProjection,
+    ConstraintDictionary,
+    FieldSelectionType,
+    Projection,
+    TranslatedConstraint,
+    ValidationResponse_Binding,
+} from 'src/components/editor/Bindings/FieldSelection/types';
+import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { Schema } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -7,17 +19,8 @@ import { FormattedMessage } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
-import type {
-    BuiltSpec_Binding,
-    CompositeProjection,
-    ConstraintDictionary,
-    FieldSelectionType,
-    Projection,
-    TranslatedConstraint,
-    ValidationResponse_Binding} from 'src/components/editor/Bindings/FieldSelection/types';
-import {
-    ConstraintTypes
-} from 'src/components/editor/Bindings/FieldSelection/types';
+import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
@@ -28,16 +31,13 @@ import {
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
 } from 'src/stores/Binding/hooks';
-import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import type { Schema } from 'src/types';
 import { getBindingIndex } from 'src/utils/workflow-utils';
-import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
 
 interface Props {
     bindingUUID: string;

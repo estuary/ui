@@ -1,7 +1,15 @@
-import { UTCDate } from '@date-fns/utc';
 import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { Duration } from 'date-fns';
+import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
-    Duration} from 'date-fns';
+    CatalogStats,
+    CatalogStats_Billing,
+    CatalogStats_Dashboard,
+    CatalogStats_Details,
+    Entity,
+} from 'src/types';
+
+import { UTCDate } from '@date-fns/utc';
 import {
     isSaturday,
     isSunday,
@@ -15,7 +23,6 @@ import {
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
-import type { DataByHourRange } from 'src/components/graphs/types';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultQueryDateFormat,
@@ -26,13 +33,6 @@ import {
     TABLES,
     TASK_STATS,
 } from 'src/services/supabase';
-import type {
-    CatalogStats,
-    CatalogStats_Billing,
-    CatalogStats_Dashboard,
-    CatalogStats_Details,
-    Entity,
-} from 'src/types';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 export type StatsFilter =

@@ -1,3 +1,5 @@
+import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+
 import {
     Box,
     CircularProgress,
@@ -7,13 +9,12 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
 import Error from 'src/components/shared/Error';
-import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 

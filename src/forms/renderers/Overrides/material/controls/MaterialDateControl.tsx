@@ -23,22 +23,17 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import type { ControlProps, RankedTester } from '@jsonforms/core';
+
 import { Hidden, Stack } from '@mui/material';
 
-import type {
-    ControlProps,
-    RankedTester} from '@jsonforms/core';
-import {
-    isDateControl,
-    rankWith,
-} from '@jsonforms/core';
+import { isDateControl, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
 import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
 import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
 import { CustomMuiInputText } from 'src/forms/renderers/Overrides/material/controls/MuiInputText';
-
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes

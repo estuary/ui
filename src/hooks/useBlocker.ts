@@ -1,10 +1,8 @@
+import type { unstable_BlockerFunction as BlockerFunction } from 'react-router-dom';
+
 import { useCallback, useEffect } from 'react';
 
-import type {
-    unstable_BlockerFunction as BlockerFunction} from 'react-router-dom';
-import {
-    unstable_useBlocker as useBlocker,
-} from 'react-router-dom';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 

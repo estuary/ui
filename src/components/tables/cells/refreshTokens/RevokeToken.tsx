@@ -1,8 +1,10 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
 
 import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
@@ -15,11 +17,7 @@ import Error from 'src/components/shared/Error';
 import { sample_blue } from 'src/context/Theme';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface Props {
     id: string;

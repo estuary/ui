@@ -1,3 +1,5 @@
+import type { SortDirection } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 import {
     JsonParam,
@@ -7,7 +9,6 @@ import {
     withDefault,
 } from 'use-query-params';
 
-import type { SortDirection } from 'src/types';
 import { getPagination } from 'src/utils/table-utils';
 
 export enum TableFilterKeys {

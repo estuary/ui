@@ -1,3 +1,6 @@
+import type { MultiplePaymentMethods } from 'src/api/billing';
+import type { Schema } from 'src/types';
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -6,11 +9,7 @@ import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import type {
-    MultiplePaymentMethods} from 'src/api/billing';
-import {
-    getPaymentMethodsForTenants
-} from 'src/api/billing';
+import { getPaymentMethodsForTenants } from 'src/api/billing';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useTenantBillingDetails } from 'src/context/fetcher/TenantBillingDetails';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -19,7 +18,6 @@ import { logRocketConsole } from 'src/services/shared';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
-import type { Schema } from 'src/types';
 import { basicSort_string, getPathWithParams } from 'src/utils/misc-utils';
 
 const TRIAL_LENGTH = 30;

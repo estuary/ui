@@ -1,3 +1,5 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect, useRef } from 'react';
 
 import { useEntityType } from 'src/context/EntityContext';
@@ -11,7 +13,6 @@ import {
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
 } from 'src/stores/EndpointConfig/hooks';
-import type { BaseComponentProps } from 'src/types';
 
 export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();

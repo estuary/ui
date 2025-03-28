@@ -1,3 +1,5 @@
+import type { LogDialogActionsProps } from 'src/components/shared/Entity/types';
+
 import { useMemo } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
@@ -12,7 +14,6 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import type { LogDialogActionsProps } from 'src/components/shared/Entity/types';
 
 function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
     const entityType = useEntityType();

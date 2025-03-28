@@ -1,8 +1,8 @@
+import type { StatusIndicatorProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import { Skeleton, Stack } from '@mui/material';
 
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
-import type { StatusIndicatorProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
-
 
 const INDICATOR_SIZE = 10;
 

@@ -1,7 +1,8 @@
+import type { ListChildComponentProps } from 'react-window';
+
 import { Box, ListSubheader, Typography } from '@mui/material';
 
 import { Check } from 'iconoir-react';
-import type { ListChildComponentProps } from 'react-window';
 
 import { truncateTextSx } from 'src/context/Theme';
 

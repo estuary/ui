@@ -1,5 +1,4 @@
 import type { JsonFormsCore } from '@jsonforms/core';
-
 import type { StoreWithCustomErrors } from 'src/stores/extensions/CustomErrors';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import type { EntityWorkflow } from 'src/types';

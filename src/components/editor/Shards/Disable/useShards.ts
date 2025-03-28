@@ -1,3 +1,5 @@
+import type { Schema } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import produce from 'immer';
@@ -9,7 +11,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import type { Schema } from 'src/types';
 
 function useShards() {
     const taskSpecType = useEntityType();

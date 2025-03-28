@@ -1,9 +1,10 @@
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { KeyValue } from 'src/components/shared/KeyValueList';
+
 import { useIntl } from 'react-intl';
 
-import type { KeyValue } from 'src/components/shared/KeyValueList';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { hasLength } from 'src/utils/misc-utils';
-import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 interface Props {
     error?: ErrorDetails;

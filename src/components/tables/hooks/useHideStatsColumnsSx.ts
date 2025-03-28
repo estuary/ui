@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-
 import type { SxProps, Theme } from '@mui/material';
+
+import { useMemo } from 'react';
 
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 

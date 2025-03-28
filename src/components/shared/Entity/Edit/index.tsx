@@ -1,4 +1,7 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
+import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
+import type { EntityWithCreateWorkflow } from 'src/types';
+
 import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
@@ -13,17 +16,22 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
 import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
 import DetailsForm from 'src/components/shared/Entity/DetailsForm';
 import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
 import EntityError from 'src/components/shared/Entity/Error';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
+import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
+import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
+import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
@@ -39,14 +47,7 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'src/stores/FormState/hooks';
-import type { EntityWithCreateWorkflow } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
-import AlertBox from 'src/components/shared/AlertBox';
-import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
-import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
-import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
-import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
-import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 
 interface Props {
     title: string;

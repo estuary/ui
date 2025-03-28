@@ -27,6 +27,13 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+import type {
+    CombinatorRendererProps,
+    JsonSchema,
+    OwnPropsOfControl,
+    RankedTester,
+} from '@jsonforms/core';
+
 import { useCallback, useState } from 'react';
 
 import {
@@ -41,11 +48,6 @@ import {
     Tabs,
 } from '@mui/material';
 
-import type {
-    CombinatorRendererProps,
-    JsonSchema,
-    OwnPropsOfControl,
-    RankedTester} from '@jsonforms/core';
 import {
     and,
     createCombinatorRenderInfos,
@@ -58,13 +60,13 @@ import { JsonFormsDispatch } from '@jsonforms/react';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
+import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
 } from 'src/forms/renderers/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
-import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;

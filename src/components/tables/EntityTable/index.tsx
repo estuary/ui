@@ -1,14 +1,15 @@
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import type { Pagination } from 'src/services/supabase';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type {
-    ChangeEvent,
-    MouseEvent,
-    ReactNode} from 'react';
-import {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+} from 'src/types';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     Box,
@@ -25,27 +26,14 @@ import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Title from 'src/components/tables/Title';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import type { Pagination } from 'src/services/supabase';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
-import type {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState} from 'src/types';
-import {
-    TableStatuses,
-} from 'src/types';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { TableStatuses } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
-import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (

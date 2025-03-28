@@ -1,3 +1,5 @@
+import type { Entity } from 'src/types';
+
 import { useCallback } from 'react';
 
 import {
@@ -23,7 +25,6 @@ import {
 } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import type { Entity } from 'src/types';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {

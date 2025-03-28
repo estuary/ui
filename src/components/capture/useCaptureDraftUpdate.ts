@@ -1,10 +1,8 @@
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+
 import { useCallback } from 'react';
 
-import type {
-    DraftSpecsExtQuery_ByCatalogName} from 'src/api/draftSpecs';
-import {
-    getDraftSpecsByCatalogName,
-} from 'src/api/draftSpecs';
+import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,

@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import useShards from 'src/components/editor/Shards/Disable/useShards';
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
 import { useEntityType } from 'src/context/EntityContext';
 import {
@@ -11,7 +12,6 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import useShards from 'src/components/editor/Shards/Disable/useShards';
 
 function ShardsDisableForm() {
     const intl = useIntl();

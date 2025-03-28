@@ -1,3 +1,5 @@
+import type { DerivationAttribute } from 'src/stores/TransformationCreate/types';
+
 import { useState } from 'react';
 
 import {
@@ -28,7 +30,6 @@ import {
     useTransformationCreate_setAttributeType,
     useTransformationCreate_setSelectedAttribute,
 } from 'src/stores/TransformationCreate/hooks';
-import type { DerivationAttribute } from 'src/stores/TransformationCreate/types';
 
 interface Props {
     fixedAttributeType: DerivationAttribute;

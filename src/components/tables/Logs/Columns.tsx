@@ -1,13 +1,12 @@
 import type { RefCallback } from 'react';
+import type { OpsLogFlowDocument } from 'src/types';
 
 import { Box, Stack } from '@mui/material';
 
-import type { OpsLogFlowDocument } from 'src/types';
 import FieldsExpandedCell from 'src/components/tables/cells/logs/FieldsExpandedCell';
 import LevelCell from 'src/components/tables/cells/logs/LevelCell';
 import MessageCell from 'src/components/tables/cells/logs/MessageCell';
 import TimestampCell from 'src/components/tables/cells/logs/TimestampCell';
-
 
 interface RowProps {
     row: OpsLogFlowDocument;

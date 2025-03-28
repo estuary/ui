@@ -1,3 +1,5 @@
+import type { CommonStatuses } from 'src/services/types';
+
 import { useEffect, useRef } from 'react';
 
 import { useSnackbar } from 'notistack';
@@ -13,7 +15,6 @@ import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
-import type { CommonStatuses} from 'src/services/types';
 import { CustomEvents } from 'src/services/types';
 
 const trackEvent = (status: CommonStatuses) => {

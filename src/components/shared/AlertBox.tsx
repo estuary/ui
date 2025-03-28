@@ -1,3 +1,5 @@
+import type { AlertBoxProps } from 'src/components/shared/types';
+
 import { forwardRef, useMemo } from 'react';
 
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
@@ -11,7 +13,6 @@ import {
 import { useIntl } from 'react-intl';
 
 import { alertBackground, alertTextPrimary } from 'src/context/Theme';
-import type { AlertBoxProps } from 'src/components/shared/types';
 
 const SHARED_STYLING = {
     borderRadius: 2,

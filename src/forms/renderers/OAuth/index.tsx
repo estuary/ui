@@ -1,8 +1,9 @@
+import type { ControlProps, RankedTester } from '@jsonforms/core';
+
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 
-import type { ControlProps, RankedTester} from '@jsonforms/core';
 import { rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
@@ -13,17 +14,20 @@ import { useMount } from 'react-use';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { INJECTED_VALUES, NO_PROVIDER } from 'src/forms/renderers/OAuth/shared';
+import { useAllRequiredPropCheck } from 'src/forms/renderers/OAuth/useAllRequiredPropCheck';
+import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
 import { optionExists } from 'src/forms/renderers/Overrides/testers/testers';
+import {
+    getDiscriminator,
+    getDiscriminatorDefaultValue,
+} from 'src/forms/renderers/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'src/stores/EndpointConfig/hooks';
 import { generateCustomError } from 'src/stores/extensions/CustomErrors';
 import { Options } from 'src/types/jsonforms';
 import { hasLength } from 'src/utils/misc-utils';
-import { INJECTED_VALUES, NO_PROVIDER } from 'src/forms/renderers/OAuth/shared';
-import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
-import { getDiscriminator, getDiscriminatorDefaultValue } from 'src/forms/renderers/shared';
-import { useAllRequiredPropCheck } from 'src/forms/renderers/OAuth/useAllRequiredPropCheck';
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,

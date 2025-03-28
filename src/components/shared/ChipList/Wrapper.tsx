@@ -1,21 +1,15 @@
+import type { SxProps, Theme } from '@mui/material';
+import type { ChipWrapperProps } from 'src/components/shared/ChipList/types';
+
 import { useMemo } from 'react';
 
-import type {
-    SxProps,
-    Theme} from '@mui/material';
-import {
-    Box,
-    Chip as MuiChip,
-    styled,
-    Tooltip,
-} from '@mui/material';
+import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import LinkWrapper from 'src/components/shared/LinkWrapper';
 import { defaultOutline, underlineTextSx } from 'src/context/Theme';
 import { stripPathing } from 'src/utils/misc-utils';
-import LinkWrapper from 'src/components/shared/LinkWrapper';
-import type { ChipWrapperProps } from 'src/components/shared/ChipList/types';
 
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),

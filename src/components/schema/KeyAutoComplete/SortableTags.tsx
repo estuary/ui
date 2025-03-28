@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react';
-
+import type { UniqueIdentifier } from '@dnd-kit/core';
 import type { AutocompleteGetTagProps } from '@mui/material';
 
-import type {
-    UniqueIdentifier} from '@dnd-kit/core';
+import { useMemo, useState } from 'react';
+
 import {
     closestCenter,
     DndContext,
@@ -22,6 +21,7 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
+
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import SortableTag from 'src/components/schema/KeyAutoComplete/SortableTag';
 import StyledChip from 'src/components/schema/KeyAutoComplete/StyledChip';

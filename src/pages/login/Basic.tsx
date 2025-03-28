@@ -1,3 +1,5 @@
+import type { SupportedProvider } from 'src/types/authProviders';
+
 import { Box, Divider, Stack } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
@@ -9,9 +11,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import type { SupportedProvider } from 'src/types/authProviders';
-import { getLoginSettings } from 'src/utils/env-utils';
 import LoginWrapper from 'src/pages/login/Wrapper';
+import { getLoginSettings } from 'src/utils/env-utils';
 
 const loginSettings = getLoginSettings();
 

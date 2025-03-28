@@ -1,7 +1,8 @@
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 
 function DefaultCancelButton({ toggle }: AddCollectionDialogCTAProps) {
     const intl = useIntl();

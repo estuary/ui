@@ -1,8 +1,8 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
 
-
 import useOpsLogs from 'src/hooks/journals/useOpsLogs';
-import type { BaseComponentProps } from 'src/types';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {

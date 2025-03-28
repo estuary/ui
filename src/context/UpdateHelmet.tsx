@@ -1,8 +1,8 @@
+import type { BaseComponentProps } from 'src/types';
+
 import React, { useCallback, useContext, useState } from 'react';
 
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-
-import type { BaseComponentProps } from 'src/types';
 
 const UpdateHelmetContext = React.createContext<{
     updateDescription: (newVal: string | undefined) => void;

@@ -1,8 +1,9 @@
+import type { RowActionConfirmationProps } from 'src/components/tables/RowActions/Shared/types';
+import type { RowConfirmation } from 'src/components/tables/RowActions/types';
+
 import { List, ListItem, Typography } from '@mui/material';
 
-import type { RowConfirmation } from 'src/components/tables/RowActions/types';
 import NestedListItem from 'src/components/tables/RowActions/Shared/NestedListItem';
-import type { RowActionConfirmationProps } from 'src/components/tables/RowActions/Shared/types';
 
 // TODO (typing) - eventually we should remove supporting passing in string arrays
 //  so that we always have an `id` and `message` to use.

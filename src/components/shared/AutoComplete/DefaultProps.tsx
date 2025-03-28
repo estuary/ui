@@ -1,6 +1,6 @@
+import type { AutocompleteProps } from '@mui/material';
 import type React from 'react';
 
-import type { AutocompleteProps} from '@mui/material';
 import { autocompleteClasses, Popper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 

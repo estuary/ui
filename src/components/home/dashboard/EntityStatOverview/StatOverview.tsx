@@ -1,13 +1,14 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { Entity } from 'src/types';
+
 import { Stack, Typography } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import LinkWrapper from 'src/components/shared/LinkWrapper';
-import { ENTITY_SETTINGS } from 'src/settings/entity';
-import type { Entity } from 'src/types';
 import ActiveEntityCount from 'src/components/home/dashboard/EntityStatOverview/ActiveEntityCount';
 import Statistic from 'src/components/home/dashboard/EntityStatOverview/Statistic';
+import LinkWrapper from 'src/components/shared/LinkWrapper';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 
 interface Props {
     entityType: Entity;

@@ -6,10 +6,10 @@ import { FormattedMessage } from 'react-intl';
 
 import LiveSpecEditor from 'src/components/editor/LiveSpec';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+import CollectionSpecViews from 'src/components/shared/Entity/Details/Spec/CollectionViews';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { useEntityType } from 'src/context/EntityContext';
-import CollectionSpecViews from 'src/components/shared/Entity/Details/Spec/CollectionViews';
 
 export type SpecPresentation = 'table' | 'code';
 

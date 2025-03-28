@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Button, Tab, Tabs } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+
 import { useHeroTabs } from 'src/components/home/hero/hooks';
 
 function HeroTabs() {

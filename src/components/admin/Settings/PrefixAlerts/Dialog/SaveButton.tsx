@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useMemo, useState } from 'react';
 
 import { union } from 'lodash';
@@ -7,16 +9,12 @@ import {
     createNotificationSubscription,
     deleteNotificationSubscription,
 } from 'src/api/alerts';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { hasLength } from 'src/utils/misc-utils';
-import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 interface Props {
     closeDialog: () => void;

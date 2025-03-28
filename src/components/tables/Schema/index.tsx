@@ -1,3 +1,6 @@
+import type { FieldFilter } from 'src/components/schema/types';
+import type { SortDirection, TableColumns, TableState } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
@@ -9,18 +12,11 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
-import type { FieldFilter } from 'src/components/schema/types';
-import type {
-    SortDirection,
-    TableColumns,
-    TableState} from 'src/types';
-import {
-    TableStatuses,
-} from 'src/types';
-import { hasLength } from 'src/utils/misc-utils';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
-import Rows from 'src/components/tables/Schema/Rows';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import Rows from 'src/components/tables/Schema/Rows';
+import { TableStatuses } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const columns: TableColumns[] = [
     {

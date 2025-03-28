@@ -1,3 +1,6 @@
+import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
+import type { SortDirection, TableState } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
@@ -8,21 +11,19 @@ import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldAct
 import TableColumnSelector from 'src/components/editor/Bindings/FieldSelection/TableColumnSelector';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import Rows from 'src/components/tables/FieldSelection/Rows';
-import { useDisplayTableColumns } from 'src/context/TableSettings';
-import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
-import type { SortDirection, TableState} from 'src/types';
-import { TableStatuses } from 'src/types';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
-import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
+import Rows from 'src/components/tables/FieldSelection/Rows';
 import {
     evaluateColumnsToShow,
     optionalColumnIntlKeys,
     tableColumns,
 } from 'src/components/tables/FieldSelection/shared';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
+import { TableStatuses } from 'src/types';
 
 export default function FieldSelectionTable({
     bindingUUID,

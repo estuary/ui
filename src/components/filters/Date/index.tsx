@@ -1,3 +1,7 @@
+import type { StatsFilter } from 'src/api/stats';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import React, { useState } from 'react';
 
 import {
@@ -12,15 +16,9 @@ import {
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import type { StatsFilter } from 'src/api/stats';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
 import DateFilterOption from 'src/components/filters/Date/FilterOption';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface Props {
     header: string;

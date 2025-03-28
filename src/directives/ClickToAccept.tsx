@@ -1,3 +1,6 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { DirectiveProps } from 'src/directives/types';
+
 import { useState } from 'react';
 
 import {
@@ -8,7 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
@@ -16,16 +18,15 @@ import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
-import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
-import HeaderMessage from 'src/pages/login/HeaderMessage';
-import { getUrls } from 'src/utils/env-utils';
 import Actions from 'src/directives/Actions';
-import type { DirectiveProps } from 'src/directives/types';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
     jobStatusQuery,
     trackEvent,
 } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import HeaderMessage from 'src/pages/login/HeaderMessage';
+import { getUrls } from 'src/utils/env-utils';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';

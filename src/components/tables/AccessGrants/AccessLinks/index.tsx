@@ -1,3 +1,5 @@
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
@@ -9,7 +11,6 @@ import RowSelector from 'src/components/tables/RowActions/AccessLinks/RowSelecto
 import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
-import type { TableColumns } from 'src/types';
 
 export const columns: TableColumns[] = [
     {

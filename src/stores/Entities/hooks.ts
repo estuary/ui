@@ -5,8 +5,8 @@ import { useShallow } from 'zustand/react/shallow';
 import useSWR from 'swr';
 
 import { singleCallSettings } from 'src/context/SWR';
-import { stripPathing } from 'src/utils/misc-utils';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { stripPathing } from 'src/utils/misc-utils';
 
 // TODO (Entities Store)
 // We should move away from hardcoded hooks and just pass in the capability

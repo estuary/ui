@@ -1,12 +1,12 @@
-import type { Dispatch, SetStateAction} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import type { TabOptions } from 'src/components/editor/Bindings/types';
+import type { MuiTabProps } from 'src/types';
+
 import { useMemo } from 'react';
 
 import { Box, Button, Tab, Tabs } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-
-import type { TabOptions } from 'src/components/editor/Bindings/types';
-import type { MuiTabProps } from 'src/types';
 
 interface BindingTabsProps {
     selectedTab: number;

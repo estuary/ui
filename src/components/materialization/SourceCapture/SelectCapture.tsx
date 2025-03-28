@@ -8,6 +8,8 @@ import { isString } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
+import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import OptionalSettings from 'src/components/shared/Entity/AddDialog/OptionalSettings';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
@@ -15,8 +17,6 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { getSourceCapture } from 'src/utils/entity-utils';
-import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
-import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 

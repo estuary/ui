@@ -1,7 +1,7 @@
 import type { MaterializationQueryWithStats } from 'src/api/liveSpecsExt';
-import ExportButton from 'src/components/tables/shared/ExportButton';
-import useMaterializationExport from 'src/components/tables/Materializations/useMaterializationExport';
 
+import useMaterializationExport from 'src/components/tables/Materializations/useMaterializationExport';
+import ExportButton from 'src/components/tables/shared/ExportButton';
 
 interface Props {
     data: MaterializationQueryWithStats[];

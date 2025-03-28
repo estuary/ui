@@ -1,12 +1,14 @@
+import type { BaseProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+
 import { useState } from 'react';
 
 import { Button, Divider, Menu } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+
 import MenuActions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuActions';
 import MenuOptions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuOptions';
-import type { BaseProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
 
 export default function FieldActions({
     bindingUUID,

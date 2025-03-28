@@ -1,4 +1,5 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -18,14 +19,14 @@ import {
     useBindingsEditorStore_inferSchemaResponse_Keys,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
+import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
+import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
+import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
+import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
-import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
-import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
-import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
-import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
 
 interface Props {
     value: any;

@@ -1,8 +1,9 @@
+import type { BaseComponentProps } from 'src/types';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
-import type { BaseComponentProps } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';
 

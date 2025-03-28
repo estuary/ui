@@ -1,9 +1,10 @@
+import type { ConnectorConfig } from 'deps/flow/flow';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+import type { DekafConfig } from 'src/types';
+
 import { useCallback } from 'react';
 
-
 import { createEntityDraft } from 'src/api/drafts';
-import type {
-    DraftSpecsExtQuery_ByCatalogName} from 'src/api/draftSpecs';
 import {
     createDraftSpec,
     getDraftSpecsByDraftId,
@@ -48,11 +49,9 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
-import type { DekafConfig } from 'src/types';
 import { isDekafConnector } from 'src/utils/connector-utils';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
 import { generateTaskSpec } from 'src/utils/workflow-utils';
-import type { ConnectorConfig } from 'deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';
 

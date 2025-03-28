@@ -1,3 +1,5 @@
+import type { SeriesConfig } from 'src/utils/billing-utils';
+
 import { useEffect, useMemo, useState } from 'react';
 import useConstant from 'use-constant';
 
@@ -20,16 +22,14 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useIntl } from 'react-intl';
 
+import {
+    getTooltipItem,
+    getTooltipTitle,
+} from 'src/components/graphs/tooltips';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useBillingStore } from 'src/stores/Billing/Store';
-import type {
-    SeriesConfig} from 'src/utils/billing-utils';
-import {
-    CARD_AREA_HEIGHT,
-    stripTimeFromDate,
-} from 'src/utils/billing-utils';
-import { getTooltipItem, getTooltipTitle } from 'src/components/graphs/tooltips';
-import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'task-hours-by-month';
 

@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react';
-
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { ReactNode } from 'react';
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 
 export interface AddDialogProps extends AddCollectionDialogCTAProps {

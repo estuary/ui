@@ -1,9 +1,10 @@
+import type { ShardStatusColor } from 'src/stores/ShardDetail/types';
+
 import { useMemo } from 'react';
 
 import { useTheme } from '@mui/material';
 
 import { shardStatusDefaultColor } from 'src/context/Theme';
-import type { ShardStatusColor } from 'src/stores/ShardDetail/types';
 
 function useShardStatusDefaultColor() {
     const theme = useTheme();

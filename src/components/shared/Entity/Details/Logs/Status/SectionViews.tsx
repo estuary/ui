@@ -2,10 +2,10 @@ import { Divider, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
-import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import Overview from 'src/components/shared/Entity/Details/Logs/Status/Overview';
 import StatusResponseViewer from 'src/components/shared/Entity/Details/Logs/Status/StatusResponseViewer';
+import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionViews() {
     const intl = useIntl();

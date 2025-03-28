@@ -26,14 +26,16 @@
 import type {
     ControlProps,
     OwnPropsOfEnum,
-    RankedTester} from '@jsonforms/core';
+    RankedTester,
+} from '@jsonforms/core';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+
 import {
     and,
     isOneOfEnumControl,
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
 import { DataPlaneAutoComplete } from 'src/forms/renderers/DataPlaneSelector/AutoComplete';

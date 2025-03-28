@@ -1,3 +1,5 @@
+import type { TransientButtonState } from 'src/context/Theme';
+
 import { useState } from 'react';
 
 import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
@@ -5,7 +7,6 @@ import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
-import type { TransientButtonState } from 'src/context/Theme';
 import { getButtonIcon } from 'src/context/Theme';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { getPathWithParams } from 'src/utils/misc-utils';

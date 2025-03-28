@@ -1,4 +1,5 @@
-import type { MouseEvent, ReactNode} from 'react';
+import type { MouseEvent, ReactNode } from 'react';
+
 import { useState } from 'react';
 
 import { Box, Button } from '@mui/material';

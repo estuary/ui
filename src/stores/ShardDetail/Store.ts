@@ -1,28 +1,30 @@
-import { create } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
-import { devtools } from 'zustand/middleware';
-
-import {
-    ShardStatusMessageIds,
-    ShardStatusNoteIds
-} from 'src/stores/ShardDetail/types';
 import type { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import type { Shard } from 'data-plane-gateway/types/shard_client';
-import produce from 'immer';
-
-import { errorMain, successMain, warningMain } from 'src/context/Theme';
-import { logRocketConsole } from 'src/services/shared';
 import type { ShardDetailStoreNames } from 'src/stores/names';
-import { SHARD_LABELS } from 'src/utils/dataPlane-utils';
-import { hasLength } from 'src/utils/misc-utils';
-import { devtoolsOptions } from 'src/utils/store-utils';
 import type {
     EndpointsDictionary,
     ShardDetailStore,
     ShardDictionary,
     ShardEntityTypes,
     ShardStatusColor,
-    TaskShardDetails} from 'src/stores/ShardDetail/types';
+    TaskShardDetails,
+} from 'src/stores/ShardDetail/types';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+import produce from 'immer';
+
+import { errorMain, successMain, warningMain } from 'src/context/Theme';
+import { logRocketConsole } from 'src/services/shared';
+import {
+    ShardStatusMessageIds,
+    ShardStatusNoteIds,
+} from 'src/stores/ShardDetail/types';
+import { SHARD_LABELS } from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const PORT_PUBLIC_PREFIX = 'estuary.dev/port-public/';
 const PORT_PROTO_PREFIX = 'estuary.dev/port-proto/';

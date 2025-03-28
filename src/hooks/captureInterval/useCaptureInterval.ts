@@ -1,3 +1,5 @@
+import type { Schema } from 'src/types';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce, omit } from 'lodash';
@@ -13,7 +15,6 @@ import { CustomEvents } from 'src/services/types';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import type { Schema } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';

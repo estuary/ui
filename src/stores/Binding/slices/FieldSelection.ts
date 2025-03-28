@@ -1,10 +1,9 @@
+import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { BindingState } from 'src/stores/Binding/types';
+import type { Schema } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
-
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
-import type { Schema } from 'src/types';
-import type { BindingState } from 'src/stores/Binding/types';
 
 export type SelectionAlgorithm = 'excludeAll' | 'recommended';
 

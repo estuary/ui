@@ -1,6 +1,7 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+
 import { AlertTitle, Button, Stack, Typography } from '@mui/material';
 
-import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage } from 'react-intl';
 
 import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';

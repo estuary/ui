@@ -1,6 +1,6 @@
-import { Stack, Typography } from '@mui/material';
-
 import type { SelectorOptionProps } from 'src/components/editor/Bindings/SchemaMode/types';
+
+import { Stack, Typography } from '@mui/material';
 
 function SelectorOption({ option }: SelectorOptionProps) {
     const { description, label } = option;

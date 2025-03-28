@@ -1,3 +1,5 @@
+import type { BaseFormProps } from 'src/components/incompatibleSchemaChange/types';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -11,13 +13,12 @@ import {
 import { useIntl } from 'react-intl';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
+import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChange/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupportedOptions';
 import { stringifyJSON } from 'src/services/stringify';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChange/shared';
-import type { BaseFormProps } from 'src/components/incompatibleSchemaChange/types';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,

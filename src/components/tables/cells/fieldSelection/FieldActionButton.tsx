@@ -1,12 +1,16 @@
+import type { FieldActionButtonProps } from 'src/components/tables/cells/fieldSelection/types';
+
 import { Tooltip } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+import {
+    constraintMessages,
+    TOGGLE_BUTTON_CLASS,
+} from 'src/components/tables/cells/fieldSelection/shared';
 import useOnFieldActionClick from 'src/hooks/fieldSelection/useOnFieldActionClick';
 import { useFormStateStore_isIdle } from 'src/stores/FormState/hooks';
-import { constraintMessages, TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
-import type { FieldActionButtonProps } from 'src/components/tables/cells/fieldSelection/types';
 
 export default function FieldActionButton({
     bindingUUID,

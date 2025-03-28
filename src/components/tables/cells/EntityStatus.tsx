@@ -1,3 +1,5 @@
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+
 import { useMemo } from 'react';
 
 import { Tooltip } from '@mui/material';
@@ -7,11 +9,7 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'src/stores/ShardDetail/hooks';
-import type {
-    ShardEntityTypes} from 'src/stores/ShardDetail/types';
-import {
-    ShardStatusMessageIds,
-} from 'src/stores/ShardDetail/types';
+import { ShardStatusMessageIds } from 'src/stores/ShardDetail/types';
 
 interface Props {
     name: string;

@@ -25,21 +25,16 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import type { ReactNode} from 'react';
-import React, { useMemo } from 'react';
-
+import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 import type {
     AutocompleteRenderOptionState,
-    FilterOptionsState} from '@mui/material';
-import {
-    Autocomplete,
-    Box,
-    MenuList,
-    Stack,
-    Typography,
+    FilterOptionsState,
 } from '@mui/material';
+import type { ReactNode } from 'react';
 
-import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import React, { useMemo } from 'react';
+
+import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 

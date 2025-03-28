@@ -1,11 +1,12 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
 import FullPageError from 'src/components/fullPage/Error';
-import useUserInfoSummary from 'src/hooks/useUserInfoSummary';
-import type { BaseComponentProps } from 'src/types';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import useUserInfoSummary from 'src/hooks/useUserInfoSummary';
 
 const UserInfoSummaryStoreProvider = ({ children }: BaseComponentProps) => {
     const { data, isLoading, isValidating, error, mutate } =

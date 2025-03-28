@@ -1,7 +1,9 @@
+import type { ProviderButtonProps } from 'src/components/login/Providers/types';
+
 import { Button } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
-import type { ProviderButtonProps } from 'src/components/login/Providers/types';
+
 import { defaulticonSize } from 'src/components/login/Providers/buttons/shared';
 
 const AzureButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {

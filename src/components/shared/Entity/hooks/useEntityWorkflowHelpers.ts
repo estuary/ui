@@ -12,6 +12,7 @@ import {
     useEditorStore_pubId,
     useEditorStore_resetState,
 } from 'src/components/editor/Store/hooks';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useEntityType } from 'src/context/EntityContext';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
@@ -31,7 +32,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();

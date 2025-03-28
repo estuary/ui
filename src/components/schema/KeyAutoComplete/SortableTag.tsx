@@ -1,12 +1,13 @@
-import type { ChipProps} from '@mui/material';
+import type { ChipProps } from '@mui/material';
+
 import { Box, Tooltip } from '@mui/material';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useIntl } from 'react-intl';
 
-import { truncateTextSx } from 'src/context/Theme';
 import StyledChip from 'src/components/schema/KeyAutoComplete/StyledChip';
+import { truncateTextSx } from 'src/context/Theme';
 
 interface Props {
     tagProps: Partial<ChipProps>;

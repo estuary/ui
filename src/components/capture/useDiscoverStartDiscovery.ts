@@ -1,8 +1,10 @@
-import { useCallback } from 'react';
+import type { Entity } from 'src/types';
 
+import { useCallback } from 'react';
 
 import { discover } from 'src/api/discovers';
 import { createEntityDraft } from 'src/api/drafts';
+import useDiscoverStartSubscription from 'src/components/capture/useDiscoverStartSubscription';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCatalogName,
@@ -14,8 +16,6 @@ import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
-import type { Entity } from 'src/types';
-import useDiscoverStartSubscription from 'src/components/capture/useDiscoverStartSubscription';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
     const createDiscoversSubscription =

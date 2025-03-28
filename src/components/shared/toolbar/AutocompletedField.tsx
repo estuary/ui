@@ -4,11 +4,10 @@ import type {
     AutocompleteProps,
     AutocompleteRenderInputParams,
     SxProps,
-    Theme} from '@mui/material';
-import {
-    Autocomplete,
-    TextField
+    Theme,
 } from '@mui/material';
+
+import { Autocomplete, TextField } from '@mui/material';
 
 import { autoCompleteDefaults_Virtual_Non_Clearable } from 'src/components/shared/AutoComplete/DefaultProps';
 

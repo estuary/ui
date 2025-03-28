@@ -1,20 +1,18 @@
+import type { TaskAuthorizationResponse } from 'src/utils/dataPlane-utils';
+
 import useSWR, { useSWRConfig } from 'swr';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
-import type {
-    TaskAuthorizationResponse} from 'src/utils/dataPlane-utils';
-import {
-    authorizeTask
-} from 'src/utils/dataPlane-utils';
-import { hasLength } from 'src/utils/misc-utils';
 import {
     getAuthorizationConfig,
     setAuthorizationConfig,
     validateJWTs,
 } from 'src/hooks/gatewayAuth/cache';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
+import { authorizeTask } from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface TaskAuthorizationFetcherResponse extends TaskAuthorizationResponse {
     cacheKey?: string;

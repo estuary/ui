@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import type { SxProps} from '@mui/material';
+import type { SxProps } from '@mui/material';
+
 import { Stack, Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -10,10 +11,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import IconMenu from 'src/components/menus/IconMenu';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import IconMenu from 'src/components/menus/IconMenu';
 
 interface Props {
     iconColor: string;

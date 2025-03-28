@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, Dialog, DialogContent, Grid } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
+
 import RefreshTokenDescription from 'src/components/admin/Api/RefreshToken/Dialog/Description';
 import RefreshTokenError from 'src/components/admin/Api/RefreshToken/Dialog/Error';
 import GenerateButton from 'src/components/admin/Api/RefreshToken/Dialog/GenerateButton';

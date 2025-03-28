@@ -1,9 +1,10 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffectOnce } from 'react-use';
 
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketConsole } from 'src/services/shared';
-import type { BaseComponentProps } from 'src/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {

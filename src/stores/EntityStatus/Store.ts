@@ -1,6 +1,8 @@
+import type { EntityStatusState } from 'src/stores/EntityStatus/types';
 import type { StoreApi } from 'zustand';
-import { create } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -12,7 +14,6 @@ import {
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import type { EntityStatusState } from 'src/stores/EntityStatus/types';
 
 const STORE_KEY = 'entity-status';
 

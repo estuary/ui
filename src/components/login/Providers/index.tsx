@@ -1,12 +1,13 @@
+import type { LoginProvidersProps } from 'src/components/login/Providers/types';
+
 import { Divider, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { getLoginSettings } from 'src/utils/env-utils';
+
 import SSOButton from 'src/components/login/Providers/buttons/SSO';
 import LoginButton from 'src/components/login/Providers/LoginButton';
-import type { LoginProvidersProps } from 'src/components/login/Providers/types';
 import useLoginHandler from 'src/components/login/Providers/useLoginHandler';
-
+import { getLoginSettings } from 'src/utils/env-utils';
 
 const loginSettings = getLoginSettings();
 

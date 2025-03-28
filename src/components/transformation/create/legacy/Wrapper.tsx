@@ -1,4 +1,5 @@
-import type { BoxProps} from '@mui/material';
+import type { BoxProps } from '@mui/material';
+
 import { Box, styled } from '@mui/material';
 
 // TODO (transform): Remove this component when the new transform create workflow can be released

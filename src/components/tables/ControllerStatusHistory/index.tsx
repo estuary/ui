@@ -1,9 +1,13 @@
+import type { SortDirection, TableColumns, TableState } from 'src/types';
+import type { PublicationInfo } from 'src/types/controlPlane';
+
 import { useEffect, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import Rows from 'src/components/tables/ControllerStatusHistory/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import useGlobalSearchParams, {
@@ -11,15 +15,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore_recentHistory } from 'src/stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
-import type {
-    SortDirection,
-    TableColumns,
-    TableState} from 'src/types';
-import {
-    TableStatuses,
-} from 'src/types';
-import type { PublicationInfo } from 'src/types/controlPlane';
-import Rows from 'src/components/tables/ControllerStatusHistory/Rows';
+import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [
     {

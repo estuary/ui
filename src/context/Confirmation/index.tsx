@@ -1,3 +1,9 @@
+import type {
+    IConfirmationModalContext,
+    IConfirmationModalOptions,
+} from 'src/context/Confirmation/types';
+import type { BaseComponentProps } from 'src/types';
+
 import { createContext, useContext, useRef, useState } from 'react';
 
 import {
@@ -10,9 +16,6 @@ import {
 } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
-
-import type { BaseComponentProps } from 'src/types';
-import type { IConfirmationModalContext, IConfirmationModalOptions } from 'src/context/Confirmation/types';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';

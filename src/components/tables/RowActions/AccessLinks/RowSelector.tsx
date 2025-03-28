@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
 
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
@@ -7,11 +9,7 @@ import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import DisableButton from 'src/components/tables/RowActions/AccessLinks/DisableButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

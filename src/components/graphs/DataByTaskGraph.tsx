@@ -1,3 +1,6 @@
+import type { DataVolumeByTask } from 'src/stores/Billing/types';
+import type { SeriesConfig } from 'src/utils/billing-utils';
+
 import { useEffect, useMemo, useState } from 'react';
 import useConstant from 'use-constant';
 
@@ -22,20 +25,20 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { sortBy, sum, uniq } from 'lodash';
 import { useIntl } from 'react-intl';
 
+import {
+    getTooltipItem,
+    getTooltipTitle,
+} from 'src/components/graphs/tooltips';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useBillingStore } from 'src/stores/Billing/Store';
-import type { DataVolumeByTask } from 'src/stores/Billing/types';
-import type {
-    SeriesConfig} from 'src/utils/billing-utils';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay
+    formatDataVolumeForDisplay,
 } from 'src/utils/billing-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { getTooltipItem, getTooltipTitle } from 'src/components/graphs/tooltips';
-import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
-import useLegendConfig from 'src/components/graphs/useLegendConfig';
 
 const chartContainerId = 'data-by-task';
 

@@ -1,10 +1,11 @@
+import type { MenuActionProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+
 import { Box, Button, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'src/stores/Binding/Store';
-import SaveButton from 'src/components/editor/Bindings/FieldSelection/FieldActions/SaveButton';
-import type { MenuActionProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
 
+import SaveButton from 'src/components/editor/Bindings/FieldSelection/FieldActions/SaveButton';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
     bindingUUID,

@@ -1,3 +1,6 @@
+import type { RowSelectorProps } from 'src/components/tables/RowActions/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
 
 import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
@@ -7,13 +10,8 @@ import { FormattedMessage } from 'react-intl';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { MAX_BINDINGS } from 'src/utils/workflow-utils';
-import type { RowSelectorProps } from 'src/components/tables/RowActions/types';
 
 type Props = Pick<
     RowSelectorProps,

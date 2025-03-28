@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
-
 import { createPublication } from 'src/api/publications';
 import { useBindingsEditorStore_setIncompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
@@ -11,7 +11,6 @@ import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_setShowSavePrompt } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function Publish() {
     const publicationHandler = usePublicationHandler();

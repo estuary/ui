@@ -1,8 +1,9 @@
+import type { TenantPaymentDetails } from 'src/types';
+
 import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
-import type { TenantPaymentDetails } from 'src/types';
 import { formatDateForApi } from 'src/utils/billing-utils';
 
 const OPERATIONS = {

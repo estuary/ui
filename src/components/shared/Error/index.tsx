@@ -1,13 +1,14 @@
+import type { AlertColor } from '@mui/material';
 import type { ReactNode } from 'react';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
-import type { AlertColor} from '@mui/material';
 import { AlertTitle, Box } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
-import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 import Message from 'src/components/shared/Error/Message';
-import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 export interface ErrorProps {
     condensed?: boolean;

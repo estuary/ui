@@ -1,10 +1,11 @@
+import type { TrialOnlyPrefixAlertProps } from 'src/components/materialization/types';
+
 import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
-import type { TrialOnlyPrefixAlertProps } from 'src/components/materialization/types';
 
 export default function TrialOnlyPrefixAlert({
     messageId,

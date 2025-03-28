@@ -1,9 +1,9 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { AccordionSummary, Fade, Typography, useTheme } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-
-import type { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {
     expanded: boolean;

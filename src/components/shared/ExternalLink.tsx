@@ -1,6 +1,6 @@
+import type { ButtonTypeMap, SxProps } from '@mui/material';
 import type { ReactNode } from 'react';
 
-import type { ButtonTypeMap, SxProps } from '@mui/material';
 import { Button } from '@mui/material';
 
 import { OpenNewWindow } from 'iconoir-react';

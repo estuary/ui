@@ -4,7 +4,7 @@
 //  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
 
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-
+import type { ConnectorConfig } from 'deps/flow/flow';
 import type {
     ConnectorsQuery_DetailsForm,
     ConnectorTag_Base,
@@ -19,7 +19,7 @@ import type {
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
 import type { DekafConfig } from 'src/types';
-import type { ConnectorConfig } from 'deps/flow/flow';
+
 import { hasLength } from 'src/utils/misc-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';

@@ -1,7 +1,7 @@
-
-import useShardHydration from 'src/hooks/shards/useShardHydration';
 import type { BaseComponentProps } from 'src/types';
+
 import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
+import useShardHydration from 'src/hooks/shards/useShardHydration';
 
 interface Props extends BaseComponentProps {
     catalogName: string;

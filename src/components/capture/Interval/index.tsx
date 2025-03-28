@@ -1,7 +1,8 @@
+import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { CaptureIntervalProps } from 'src/components/capture/Interval/types';
+
 import { useMemo, useState } from 'react';
 
-import type {
-    AutocompleteRenderInputParams} from '@mui/material';
 import {
     Autocomplete,
     FormHelperText,
@@ -25,7 +26,6 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
-import type { CaptureIntervalProps } from 'src/components/capture/Interval/types';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();

@@ -1,3 +1,5 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useCallback } from 'react';
 
 import TenantSelector from 'src/components/shared/TenantSelector';
@@ -8,11 +10,7 @@ import {
     useBillingTable_setHydrated,
     useBillingTable_setHydrationErrorsExist,
 } from 'src/stores/Tables/Billing/hooks';
-import type {
-    SelectableTableStore} from 'src/stores/Tables/Store';
-import {
-    selectableTableStoreSelectors,
-} from 'src/stores/Tables/Store';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 function TenantOptions() {
     const resetBillingState = useBillingStore((state) => state.resetState);

@@ -1,6 +1,6 @@
-import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
-
 import type { RadioMenuItemProps } from 'src/components/shared/types';
+
+import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 
 export default function RadioMenuItem({
     description,

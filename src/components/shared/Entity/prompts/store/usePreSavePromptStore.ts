@@ -1,3 +1,5 @@
+import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
+
 import { useMemo } from 'react';
 
 import { create } from 'zustand';
@@ -6,13 +8,12 @@ import { useShallow } from 'zustand/react/shallow';
 
 import produce from 'immer';
 
+import { getInitialDataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { logRocketEvent } from 'src/services/shared';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'src/services/supabase';
 import { devtoolsOptions } from 'src/utils/store-utils';
-import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
-import { getInitialDataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
-import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
