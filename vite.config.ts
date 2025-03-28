@@ -18,9 +18,7 @@ import { defineConfig } from 'vitest/config';
 
 const gitFolder = '.git/';
 
-const cleanFileRead = (path: string) => {
-    return readFileSync(path).toString().trim();
-};
+const cleanFileRead = (path: string) => readFileSync(path).toString().trim();
 
 const getCommitId = () => {
     const headRef = cleanFileRead(`${gitFolder}HEAD`);
