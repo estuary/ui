@@ -1,8 +1,11 @@
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'types';
+
 import { useEffect } from 'react';
+
+import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { PROMPT_SETTINGS } from 'settings/prompts';
 import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
 import { useBindingStore } from 'stores/Binding/Store';
-import { usePreSavePromptStore } from './usePreSavePromptStore';
 
 function PromptsHydrator({ children }: BaseComponentProps) {
     const [initializeSteps, resetState] = usePreSavePromptStore((state) => [
@@ -14,7 +17,13 @@ function PromptsHydrator({ children }: BaseComponentProps) {
     const backfillCount = useBinding_backfilledBindings_count();
 
     useEffect(() => {
-        initializeSteps(Boolean(backfillDataflow && backfillCount));
+        initializeSteps(
+            PROMPT_SETTINGS[
+                Boolean(backfillDataflow && backfillCount)
+                    ? 'dataFlowReset'
+                    : 'defaultSave'
+            ]
+        );
 
         return () => {
             resetState();
