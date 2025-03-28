@@ -1,6 +1,6 @@
 import { Collapse } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

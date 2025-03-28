@@ -32,8 +32,8 @@ import {
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Hidden, Stack } from '@mui/material';
 
-import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
-import useDatePickerState from 'components/shared/pickers/useDatePickerState';
+import DateTimePickerCTA from 'src/components/shared/pickers/DateTimePickerCTA';
+import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
 import { CustomMaterialInputControl } from './MaterialInputControl';
 import { CustomMuiInputText } from './MuiInputText';
 

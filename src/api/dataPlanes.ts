@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
     handleFailure,
@@ -6,7 +6,7 @@ import {
     SortingProps,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
+} from 'src/services/supabase';
 
 export interface AwsDnsEntry {
     dns_name: string;

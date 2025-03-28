@@ -1,5 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
-import ConnectorCard from 'components/connectors/card';
+import ConnectorCard from 'src/components/connectors/card';
 
 import { PlusSquare } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';

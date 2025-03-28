@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityType } from 'context/EntityContext';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityType } from 'src/context/EntityContext';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import OnIncompatibleSchemaChange from './OnIncompatibleSchemaChange';
 
 export default function AdvancedOptions() {

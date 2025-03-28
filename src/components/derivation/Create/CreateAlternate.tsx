@@ -1,32 +1,32 @@
 import { Box, Collapse } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+import { authenticatedRoutes } from 'src/app/routes';
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_invalidEditors,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
-} from 'components/editor/Store/hooks';
-import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import EntityError from 'components/shared/Entity/Error';
-import EntityToolbar from 'components/shared/Entity/Header';
-import DerivationConfig from 'components/transformation/create/Config';
-import GitPodButton from 'components/transformation/create/GitPodButton';
-import PatchDraftButton from 'components/transformation/create/PatchDraftButton';
-import DerivationSchema from 'components/transformation/create/Schema';
-import usePageTitle from 'hooks/usePageTitle';
+} from 'src/components/editor/Store/hooks';
+import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
+import EntityError from 'src/components/shared/Entity/Error';
+import EntityToolbar from 'src/components/shared/Entity/Header';
+import DerivationConfig from 'src/components/transformation/create/Config';
+import GitPodButton from 'src/components/transformation/create/GitPodButton';
+import PatchDraftButton from 'src/components/transformation/create/PatchDraftButton';
+import DerivationSchema from 'src/components/transformation/create/Schema';
+import usePageTitle from 'src/hooks/usePageTitle';
 import { useUnmount } from 'react-use';
-import { CustomEvents } from 'services/types';
+import { CustomEvents } from 'src/services/types';
 import {
     useFormStateStore_error,
     useFormStateStore_logToken,
     useFormStateStore_resetState,
-} from 'stores/FormState/hooks';
+} from 'src/stores/FormState/hooks';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_emptySQLExists,
     useTransformationCreate_resetState,
     useTransformationCreate_schemaUnedited,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 function DerivationCreateAlternate() {
     usePageTitle({

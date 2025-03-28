@@ -4,18 +4,18 @@ import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_schemaUpdateErrored,
     useBindingsEditorStore_schemaUpdated,
-} from 'components/editor/Bindings/Store/hooks';
-import OutOfSync from 'components/editor/Status/OutOfSync';
-import ReadOnly from 'components/editor/Status/ReadOnly';
-import Synchronizing from 'components/editor/Status/Synchronizing';
+} from 'src/components/editor/Bindings/Store/hooks';
+import OutOfSync from 'src/components/editor/Status/OutOfSync';
+import ReadOnly from 'src/components/editor/Status/ReadOnly';
+import Synchronizing from 'src/components/editor/Status/Synchronizing';
 import {
     defaultOutline,
     monacoEditorComponentBackground,
     monacoEditorHeaderBackground,
-} from 'context/Theme';
-import { stringifyJSON } from 'services/stringify';
-import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
-import { ICON_SIZE, getEditorTotalHeight } from 'utils/editor-utils';
+} from 'src/context/Theme';
+import { stringifyJSON } from 'src/services/stringify';
+import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import { ICON_SIZE, getEditorTotalHeight } from 'src/utils/editor-utils';
 
 const EDITOR_HEIGHT = 396;
 const EDITOR_TOOLBAR_HEIGHT = 29;

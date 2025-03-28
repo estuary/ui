@@ -7,9 +7,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { semiTransparentBackground } from 'context/Theme';
+import { semiTransparentBackground } from 'src/context/Theme';
 import { FormattedMessage } from 'react-intl';
-import { TableColumns } from 'types';
+import { TableColumns } from 'src/types';
 
 interface Props {
     columns: TableColumns[];

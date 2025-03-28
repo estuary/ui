@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import SQLDataPreviewDialog from 'components/transformation/create/Schema/SQLDataPreview/Dialog';
+import SQLDataPreviewDialog from 'src/components/transformation/create/Schema/SQLDataPreview/Dialog';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

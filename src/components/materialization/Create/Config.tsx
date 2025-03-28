@@ -1,6 +1,6 @@
-import { authenticatedRoutes } from 'app/routes';
-import EntityCreateConfig from 'components/shared/Entity/Create/Config';
-import usePageTitle from 'hooks/usePageTitle';
+import { authenticatedRoutes } from 'src/app/routes';
+import EntityCreateConfig from 'src/components/shared/Entity/Create/Config';
+import usePageTitle from 'src/hooks/usePageTitle';
 
 const entityType = 'materialization';
 

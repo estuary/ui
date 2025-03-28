@@ -1,8 +1,8 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
-import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
-import { JobStatus } from 'types';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DEFAULT_POLLING } from 'src/context/SWR';
+import { TABLES } from 'src/services/supabase';
+import { JobStatus } from 'src/types';
 
 export interface Publications {
     id: string;

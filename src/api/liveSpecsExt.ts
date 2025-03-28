@@ -1,5 +1,5 @@
 import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
@@ -16,15 +16,15 @@ import {
     SortingProps,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
+} from 'src/services/supabase';
 import {
     CatalogStats,
     Entity,
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
-} from 'types';
-import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
-import { getCountSettings } from 'utils/table-utils';
+} from 'src/types';
+import { CHUNK_SIZE, DEMO_TENANT } from 'src/utils/misc-utils';
+import { getCountSettings } from 'src/utils/table-utils';
 
 const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 

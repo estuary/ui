@@ -1,4 +1,4 @@
-import ExternalLink from 'components/shared/ExternalLink';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

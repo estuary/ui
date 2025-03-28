@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import CopyCidrBlocks from 'components/shared/CopyCidrBlocks';
+import AlertBox from 'src/components/shared/AlertBox';
+import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 function SshEndpointInfo() {
     const intl = useIntl();

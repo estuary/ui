@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import RefreshTokenTable from 'components/tables/RefreshTokens';
+import RefreshTokenTable from 'src/components/tables/RefreshTokens';
 import { FormattedMessage } from 'react-intl';
 
 function RefreshToken() {

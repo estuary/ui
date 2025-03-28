@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_message } from 'stores/FormState/hooks';
+import { useFormStateStore_message } from 'src/stores/FormState/hooks';
 import AlertBox from '../AlertBox';
 
 function Status() {

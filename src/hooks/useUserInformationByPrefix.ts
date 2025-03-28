@@ -1,6 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getUserInformationByPrefix } from 'api/combinedGrantsExt';
-import { Capability, Grant_UserExt } from 'types';
+import { getUserInformationByPrefix } from 'src/api/combinedGrantsExt';
+import { Capability, Grant_UserExt } from 'src/types';
 
 function useUserInformationByPrefix(
     objectRoles: string[],

@@ -1,18 +1,18 @@
-import { EvolvedCollections } from 'api/evolutions';
-import { TrialCollectionQuery } from 'api/liveSpecsExt';
-import { BooleanString } from 'components/shared/buttons/types';
-import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
+import { EvolvedCollections } from 'src/api/evolutions';
+import { TrialCollectionQuery } from 'src/api/liveSpecsExt';
+import { BooleanString } from 'src/components/shared/buttons/types';
+import { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import { DurationObjectUnits } from 'luxon';
-import { ResourceConfigPointers } from 'services/ajv';
-import { CallSupabaseResponse } from 'services/supabase';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
+import { ResourceConfigPointers } from 'src/services/ajv';
+import { CallSupabaseResponse } from 'src/services/supabase';
+import { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import {
     Entity,
     EntityWorkflow,
     JsonFormsData,
     Schema,
     SourceCaptureDef,
-} from 'types';
+} from 'src/types';
 import { StoreWithFieldSelection } from './slices/FieldSelection';
 import { StoreWithTimeTravel } from './slices/TimeTravel';
 

@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
-import Error from 'components/shared/Error';
-import { hasLength } from 'utils/misc-utils';
+import Error from 'src/components/shared/Error';
+import { hasLength } from 'src/utils/misc-utils';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
 export default function ServerErrors() {

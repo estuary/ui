@@ -1,6 +1,6 @@
-import { DataGrains } from 'components/graphs/types';
+import { DataGrains } from 'src/components/graphs/types';
 import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { persistOptions } from './shared';

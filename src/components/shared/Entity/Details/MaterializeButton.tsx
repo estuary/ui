@@ -1,9 +1,9 @@
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import MaterializeLink from '../MaterializeLink';
 
 function MaterializeButton() {

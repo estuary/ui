@@ -4,7 +4,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { bindFocus, bindPopover } from 'material-ui-popup-state/hooks';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 import { DEFAULT_ANCHOR_ORIGIN, DEFAULT_TRANSFORM_ORIGIN } from './shared';
 import { PickerProps } from './types';
 

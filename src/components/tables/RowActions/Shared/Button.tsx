@@ -1,13 +1,13 @@
 import { Button, Dialog } from '@mui/material';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import { RowConfirmation } from '../types';
 import { RowActionButtonProps } from './types';
 

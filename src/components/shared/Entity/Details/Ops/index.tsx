@@ -1,15 +1,15 @@
 import { Box, Stack } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import Message from 'components/shared/Error/Message';
-import LogsTable from 'components/tables/Logs';
+import AlertBox from 'src/components/shared/AlertBox';
+import Message from 'src/components/shared/Error/Message';
+import LogsTable from 'src/components/tables/Logs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { FormattedMessage } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import JournalHydrator from 'stores/JournalData/Hydrator';
-import JournalDataLogsHydrator from 'stores/JournalData/Logs/Hydrator';
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { BASE_ERROR } from 'src/services/supabase';
+import JournalHydrator from 'src/stores/JournalData/Hydrator';
+import JournalDataLogsHydrator from 'src/stores/JournalData/Logs/Hydrator';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
 import useEntityShouldShowLogs from '../useEntityShouldShowLogs';
 

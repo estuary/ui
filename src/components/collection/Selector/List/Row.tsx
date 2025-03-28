@@ -1,5 +1,5 @@
 import { IconButton, ListItemText } from '@mui/material';
-import { typographyTruncation } from 'context/Theme';
+import { typographyTruncation } from 'src/context/Theme';
 import { Xmark } from 'iconoir-react';
 
 interface Props {

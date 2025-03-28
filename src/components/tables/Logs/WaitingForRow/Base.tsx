@@ -1,18 +1,18 @@
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
-import SpinnerIcon from 'components/logs/SpinnerIcon';
-import { BaseTypographySx } from 'components/tables/cells/logs/shared';
+import SpinnerIcon from 'src/components/logs/SpinnerIcon';
+import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
 import {
     errorOutlinedButtonBackground,
     tableRowActive_Finished__Background,
     tableRowActive__Background,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
 
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
 import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 

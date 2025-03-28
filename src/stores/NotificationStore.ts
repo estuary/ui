@@ -1,6 +1,6 @@
 import { AlertColor, SnackbarProps } from '@mui/material';
 import { ReactNode } from 'react';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 

@@ -1,10 +1,10 @@
 import { Button, ButtonProps } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { authenticatedRoutes } from 'src/app/routes';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props {
     liveSpecId: string;

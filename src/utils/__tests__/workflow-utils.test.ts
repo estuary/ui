@@ -1,13 +1,13 @@
-import { DraftSpecsExtQuery_ByCatalogName } from 'api/draftSpecs';
-import { FullSourceDictionary } from 'stores/Binding/slices/TimeTravel';
-import { ResourceConfig, ResourceConfigDictionary } from 'stores/Binding/types';
+import { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+import { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
+import { ResourceConfig, ResourceConfigDictionary } from 'src/stores/Binding/types';
 import {
     generateMockBinding,
     generateMockConnectorConfig,
     generateMockResourceConfig,
-} from 'test/test-utils';
-import { SourceCaptureDef } from 'types';
-import { generateTaskSpec, getBindingIndex } from 'utils/workflow-utils';
+} from 'src/test/test-utils';
+import { SourceCaptureDef } from 'src/types';
+import { generateTaskSpec, getBindingIndex } from 'src/utils/workflow-utils';
 import { ConnectorConfig } from '../../../deps/flow/flow';
 
 describe('getBindingIndex', () => {

@@ -1,7 +1,7 @@
 import produce from 'immer';
-import { SchemaEvolutionState } from 'stores/SchemaEvolution/types';
-import { SchemaEvolutionStoreNames } from 'stores/names';
-import { devtoolsOptions } from 'utils/store-utils';
+import { SchemaEvolutionState } from 'src/stores/SchemaEvolution/types';
+import { SchemaEvolutionStoreNames } from 'src/stores/names';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 

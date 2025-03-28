@@ -10,14 +10,14 @@ import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
-} from 'components/editor/Bindings/Store/hooks';
-import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
-import { useEntityType } from 'context/EntityContext';
-import { truncateTextSx } from 'context/Theme';
+} from 'src/components/editor/Bindings/Store/hooks';
+import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
+import { useEntityType } from 'src/context/EntityContext';
+import { truncateTextSx } from 'src/context/Theme';
 import { filter, orderBy } from 'lodash';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import BasicOption from './options/Basic';
 import ReadOnly from './ReadOnly';
 import { keyIsValidOption } from './shared';

@@ -1,12 +1,12 @@
-import { errorMain, successMain, warningMain } from 'context/Theme';
+import { errorMain, successMain, warningMain } from 'src/context/Theme';
 import { ReplicaStatusCode } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import produce from 'immer';
-import { logRocketConsole } from 'services/shared';
-import { ShardDetailStoreNames } from 'stores/names';
-import { SHARD_LABELS } from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
+import { logRocketConsole } from 'src/services/shared';
+import { ShardDetailStoreNames } from 'src/stores/names';
+import { SHARD_LABELS } from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {

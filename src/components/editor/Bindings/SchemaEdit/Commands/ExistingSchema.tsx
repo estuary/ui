@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
+import SingleLineCode from 'src/components/content/SingleLineCode';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
-} from 'components/editor/Store/hooks';
+} from 'src/components/editor/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBinding_currentCollection } from 'stores/Binding/hooks';
+import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 function ExistingSchemaCommands() {
     const intl = useIntl();

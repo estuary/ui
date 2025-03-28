@@ -1,5 +1,5 @@
 import { Box, Button, List, Stack, Typography, useTheme } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
+import { defaultOutline } from 'src/context/Theme';
 import { MouseEventHandler, ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 

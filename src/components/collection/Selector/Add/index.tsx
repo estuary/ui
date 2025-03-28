@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@mui/material';
-import AddDialog from 'components/shared/Entity/AddDialog';
-import { useEntityType } from 'context/EntityContext';
-import invariableStores from 'context/Zustand/invariableStores';
+import AddDialog from 'src/components/shared/Entity/AddDialog';
+import { useEntityType } from 'src/context/EntityContext';
+import invariableStores from 'src/context/Zustand/invariableStores';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useStore } from 'zustand';

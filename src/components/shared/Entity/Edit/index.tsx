@@ -1,42 +1,42 @@
 import { Box, Collapse } from '@mui/material';
-import CollectionConfig from 'components/collection/Config';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+import CollectionConfig from 'src/components/collection/Config';
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_draftInitializationError,
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm from 'components/shared/Entity/DetailsForm';
-import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import EntityError from 'components/shared/Entity/Error';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
+} from 'src/components/editor/Store/hooks';
+import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
+import DetailsForm from 'src/components/shared/Entity/DetailsForm';
+import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
+import EntityError from 'src/components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { BASE_ERROR } from 'services/supabase';
-import { CustomEvents } from 'services/types';
-import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { logRocketEvent } from 'src/services/shared';
+import { BASE_ERROR } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/FormState/hooks';
+import { EntityWithCreateWorkflow } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import AlertBox from '../../AlertBox';
 import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
 import IncompatibleCollections from '../IncompatibleCollections';

@@ -1,13 +1,13 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { TableIntlConfig, TableState } from 'types';
+import { TableIntlConfig, TableState } from 'src/types';
 import {
     getColumnKeyList,
     getEmptyTableHeader,
     getEmptyTableMessage,
     getTableComponents,
-} from 'utils/table-utils';
+} from 'src/utils/table-utils';
 import TableLoadingRows from '../Loading';
 import { ColumnProps } from './types';
 

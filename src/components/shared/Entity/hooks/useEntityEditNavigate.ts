@@ -1,11 +1,11 @@
-import { authenticatedRoutes } from 'app/routes';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
+import { authenticatedRoutes } from 'src/app/routes';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { Entity } from 'types';
-import { getPathWithParams } from 'utils/misc-utils';
+import { Entity } from 'src/types';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface BaseSearchParams {
     [GlobalSearchParams.CONNECTOR_ID]: string;

@@ -8,15 +8,15 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import EntityNameDetailsLink from 'components/shared/Entity/EntityNameDetailsLink';
-import RelatedCollections from 'components/shared/Entity/RelatedCollections';
-import { useEntityType } from 'context/EntityContext';
-import useDetailsNavigator from 'hooks/useDetailsNavigator';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
+import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import { useEntityType } from 'src/context/EntityContext';
+import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'settings/entity';
+import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 function ReviewTable() {

@@ -1,5 +1,5 @@
 import { List, ListItemText, Stack, TableCell } from '@mui/material';
-import UserAvatar from 'components/shared/UserAvatar';
+import UserAvatar from 'src/components/shared/UserAvatar';
 
 interface Props {
     name: string | null;

@@ -1,8 +1,8 @@
-import MaterializationDetails from 'components/materialization/Details';
+import MaterializationDetails from 'src/components/materialization/Details';
 import {
     DetailsPageContextProvider,
     Pages,
-} from 'components/shared/Entity/Details/context';
+} from 'src/components/shared/Entity/Details/context';
 
 interface Props {
     tab: Pages;

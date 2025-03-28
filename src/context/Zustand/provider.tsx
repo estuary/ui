@@ -1,5 +1,5 @@
 import { createContext as createReactContext, useContext } from 'react';
-import { StoreName } from 'stores/names';
+import { StoreName } from 'src/stores/names';
 import { StoreApi, useStore } from 'zustand';
 import invariableStores from './invariableStores';
 import { ZustandProviderProps } from './types';

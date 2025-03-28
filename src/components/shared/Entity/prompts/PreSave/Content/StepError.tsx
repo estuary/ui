@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
-import Error from 'components/shared/Error';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import Error from 'src/components/shared/Error';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function StepError() {

@@ -1,12 +1,12 @@
-import { getEntityStatus } from 'api/entityStatus';
-import { useUserStore } from 'context/User/useUserContextStore';
+import { getEntityStatus } from 'src/api/entityStatus';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { DateTime } from 'luxon';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import useSWR from 'swr';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 type EntityStatusFetcherArgs = [string, string];
 const statusFetcher = async ({

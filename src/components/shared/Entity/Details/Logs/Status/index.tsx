@@ -1,11 +1,11 @@
 import { Box, Stack, Typography } from '@mui/material';
-import UnderDev from 'components/shared/UnderDev';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
+import UnderDev from 'src/components/shared/UnderDev';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
-import EntityStatusHydrator from 'stores/EntityStatus/Hydrator';
+import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
 import SectionUpdated from './Overview/SectionUpdated';
 import RefreshButton from './RefreshButton';
 import SectionFormatter from './SectionFormatter';

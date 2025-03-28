@@ -1,16 +1,16 @@
 import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
-import invariableStores from 'context/Zustand/invariableStores';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import invariableStores from 'src/context/Zustand/invariableStores';
+import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_prefillResourceConfigs,
     useBinding_sourceCaptureFlags,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { SourceCaptureDef } from 'types';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { SourceCaptureDef } from 'src/types';
 import { useStore } from 'zustand';
 import useSourceCapture from '../useSourceCapture';
 

@@ -1,12 +1,12 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useEffect, useState } from 'react';
 import {
     failedToLazyLoad,
     logRocketConsole,
     logRocketEvent,
-} from 'services/shared';
-import { CustomEvents } from 'services/types';
-import Error from 'components/shared/Error';
+} from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import Error from 'src/components/shared/Error';
 import { FallbackProps } from 'react-error-boundary';
 import { getWithExpiry, setWithExpiry } from './shared';
 

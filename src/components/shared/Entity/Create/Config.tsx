@@ -1,12 +1,12 @@
 import { Collapse, Typography } from '@mui/material';
-import ConnectorTiles from 'components/connectors/ConnectorTiles';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+import ConnectorTiles from 'src/components/connectors/ConnectorTiles';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+import { EntityWithCreateWorkflow } from 'src/types';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

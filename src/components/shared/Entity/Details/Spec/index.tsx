@@ -1,9 +1,9 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import LiveSpecEditor from 'components/editor/LiveSpec';
-import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import ExternalLink from 'components/shared/ExternalLink';
-import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
-import { useEntityType } from 'context/EntityContext';
+import LiveSpecEditor from 'src/components/editor/LiveSpec';
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
+import { useEntityType } from 'src/context/EntityContext';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import CollectionSpecViews from './CollectionViews';

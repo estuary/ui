@@ -1,6 +1,6 @@
 import { StepLabel, useTheme } from '@mui/material';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import { useIntl } from 'react-intl';
 import { useShallow } from 'zustand/react/shallow';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';

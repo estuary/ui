@@ -6,16 +6,16 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { StatsFilter } from 'api/stats';
-import { useZustandStore } from 'context/Zustand/provider';
+import { StatsFilter } from 'src/api/stats';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import DateFilterOption from './FilterOption';
 
 interface Props {

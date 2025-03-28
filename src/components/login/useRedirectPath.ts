@@ -1,5 +1,5 @@
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
 import { useMemo } from 'react';
 
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked

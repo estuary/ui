@@ -1,11 +1,11 @@
 import { useTheme } from '@mui/material';
 import { EChartsOption } from 'echarts';
-import navArrowLeftDark from 'images/graph-icons/nav-arrow-left__dark.svg';
-import navArrowLeftLight from 'images/graph-icons/nav-arrow-left__light.svg';
-import navArrowRightDark from 'images/graph-icons/nav-arrow-right__dark.svg';
-import navArrowRightLight from 'images/graph-icons/nav-arrow-right__light.svg';
+import navArrowLeftDark from 'src/images/graph-icons/nav-arrow-left__dark.svg';
+import navArrowLeftLight from 'src/images/graph-icons/nav-arrow-left__light.svg';
+import navArrowRightDark from 'src/images/graph-icons/nav-arrow-right__dark.svg';
+import navArrowRightLight from 'src/images/graph-icons/nav-arrow-right__light.svg';
 import { useMemo } from 'react';
-import { DEFAULT_FILTER } from 'services/shared';
+import { DEFAULT_FILTER } from 'src/services/shared';
 
 const navArrowsLight = [
     `image://${navArrowLeftLight}`,

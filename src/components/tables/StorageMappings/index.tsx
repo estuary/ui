@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
-import { getStorageMappings } from 'api/storageMappings';
-import StorageMappingsGenerateButton from 'components/admin/Settings/StorageMappings/GenerateButton';
-import EntityTable from 'components/tables/EntityTable';
+import { getStorageMappings } from 'src/api/storageMappings';
+import StorageMappingsGenerateButton from 'src/components/admin/Settings/StorageMappings/GenerateButton';
+import EntityTable from 'src/components/tables/EntityTable';
 import { useMemo } from 'react';
-import TableHydrator from 'stores/Tables/Hydrator';
-import { useTableState } from 'stores/Tables/hooks';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { SelectTableStoreNames } from 'stores/names';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import { useTableState } from 'src/stores/Tables/hooks';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
 import Rows, { tableColumns } from './Rows';
 
 function StorageMappingsTable() {

@@ -1,5 +1,5 @@
 import { Stack, Tooltip, Typography } from '@mui/material';
-import { useSyncScheduleDelayWarning } from 'hooks/details/useSyncScheduleDelayWarning';
+import { useSyncScheduleDelayWarning } from 'src/hooks/details/useSyncScheduleDelayWarning';
 import { HelpCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 

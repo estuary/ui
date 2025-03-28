@@ -1,4 +1,4 @@
-import { useZustandStore } from 'context/Zustand/provider';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import {
     Dispatch,
     SetStateAction,
@@ -7,13 +7,13 @@ import {
     useRef,
 } from 'react';
 import { useEffectOnce } from 'react-use';
-import { Pagination } from 'services/supabase';
+import { Pagination } from 'src/services/supabase';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { getStartingPage } from 'utils/table-utils';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { getStartingPage } from 'src/utils/table-utils';
 
 export function useTableUtils(
     pagination: Pagination,

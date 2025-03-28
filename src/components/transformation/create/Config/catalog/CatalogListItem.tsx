@@ -10,8 +10,8 @@ import {
 import {
     useEditorStore_removeStaleStatus,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import { defaultOutline } from 'context/Theme';
+} from 'src/components/editor/Store/hooks';
+import { defaultOutline } from 'src/context/Theme';
 import {
     Xmark,
     NavArrowDown,
@@ -24,8 +24,8 @@ import {
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_setAttributeType,
     useTransformationCreate_setSelectedAttribute,
-} from 'stores/TransformationCreate/hooks';
-import { DerivationAttribute } from 'stores/TransformationCreate/types';
+} from 'src/stores/TransformationCreate/hooks';
+import { DerivationAttribute } from 'src/stores/TransformationCreate/types';
 
 interface Props {
     fixedAttributeType: DerivationAttribute;

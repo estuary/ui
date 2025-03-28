@@ -5,8 +5,8 @@ import {
     useShardDetail_setDictionaryHydrated,
     useShardDetail_setError,
     useShardDetail_setShards,
-} from 'stores/ShardDetail/hooks';
-import { ShardStatusMessageIds } from 'stores/ShardDetail/types';
+} from 'src/stores/ShardDetail/hooks';
+import { ShardStatusMessageIds } from 'src/stores/ShardDetail/types';
 import useShardsList from './useShardsList';
 import useShardStatusDefaultColor from './useShardStatusDefaultColor';
 

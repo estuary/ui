@@ -1,10 +1,10 @@
 /* eslint-disable no-await-in-loop */
 import { parseJournalDocuments } from 'data-plane-gateway';
 import { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { INCREMENT } from 'utils/dataPlane-utils';
-import { journalStatusIsError } from 'utils/misc-utils';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { INCREMENT } from 'src/utils/dataPlane-utils';
+import { journalStatusIsError } from 'src/utils/misc-utils';
 import {
     AttemptToReadResponse,
     JournalByteRange,

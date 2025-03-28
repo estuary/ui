@@ -5,12 +5,12 @@ import {
     createNotificationSubscription,
     getNotificationSubscriptionForUser,
     getTaskNotification,
-} from 'api/alerts';
+} from 'src/api/alerts';
 import { useCallback, useMemo } from 'react';
-import { BASE_ERROR } from 'services/supabase';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { hasLength } from 'utils/misc-utils';
-import { useUserStore } from 'context/User/useUserContextStore';
+import { BASE_ERROR } from 'src/services/supabase';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { hasLength } from 'src/utils/misc-utils';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 function useInitializeTaskNotification(catalogName: string) {
     const user = useUserStore((state) => state.user);

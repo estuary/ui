@@ -1,9 +1,9 @@
-import { getTrialCollections } from 'api/liveSpecsExt';
+import { getTrialCollections } from 'src/api/liveSpecsExt';
 import { uniq } from 'lodash';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import useTrialPrefixes from './useTrialPrefixes';
 
 // This function was created and exported so the binding store hydrator

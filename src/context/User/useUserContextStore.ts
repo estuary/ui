@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import produce from 'immer';
 import { UserStore } from './types';
 

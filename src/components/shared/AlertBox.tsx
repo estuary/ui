@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
-import { alertBackground, alertTextPrimary } from 'context/Theme';
+import { alertBackground, alertTextPrimary } from 'src/context/Theme';
 import {
     CheckCircle,
     InfoCircle,

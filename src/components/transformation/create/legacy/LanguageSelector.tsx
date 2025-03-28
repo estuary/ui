@@ -5,13 +5,13 @@ import {
     RadioGroup,
     Typography,
 } from '@mui/material';
-import LegacySingleStep from 'components/transformation/create/legacy/SingleStep';
-import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
+import LegacySingleStep from 'src/components/transformation/create/legacy/SingleStep';
+import { LegacyStepWrapper } from 'src/components/transformation/create/legacy/Wrapper';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useTransformationCreate_language,
     useTransformationCreate_setLanguage,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 // TODO (transform): Remove this component when the new transform create workflow can be released
 //   because it is only used in the legacy workflow.

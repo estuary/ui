@@ -3,10 +3,10 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
-} from 'components/editor/Bindings/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
+} from 'src/components/editor/Bindings/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import SchemaKeyHeader from './Header';
 import { keyIsValidOption } from './shared';
 

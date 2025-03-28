@@ -1,4 +1,4 @@
-import KeyValueList from 'components/shared/KeyValueList';
+import KeyValueList from 'src/components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
 
 function NoConnectorError() {

@@ -1,6 +1,6 @@
 import { Box, Collapse, Divider, Typography, useTheme } from '@mui/material';
 import ReactJson from '@microlink/react-json-view';
-import { jsonViewTheme, paperBackground } from 'context/Theme';
+import { jsonViewTheme, paperBackground } from 'src/context/Theme';
 
 interface Props {
     fields: any;

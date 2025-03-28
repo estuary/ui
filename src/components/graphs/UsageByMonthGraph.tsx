@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
-import useLegendConfig from 'components/graphs/useLegendConfig';
-import { eChartsColors } from 'context/Theme';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import { eChartsColors } from 'src/context/Theme';
 import {
     eachMonthOfInterval,
     endOfMonth,
@@ -21,9 +21,9 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing/Store';
 import useConstant from 'use-constant';
-import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
+import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 import useTooltipConfig from './useTooltipConfig';
 
 const chartContainerId = 'data-by-month';

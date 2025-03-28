@@ -1,9 +1,9 @@
-import { TABLES } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
-import { requiredConnectorColumnsExist } from 'utils/connector-utils';
+import { TABLES } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
+import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { useMemo } from 'react';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { ConnectorTag, CONNECTOR_TAG_QUERY } from './shared';
 
 function useConnectorTag(connectorImage: string | null) {

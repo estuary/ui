@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { useIntl } from 'react-intl';
 import { StandAloneTableTitleProps } from './types';
 

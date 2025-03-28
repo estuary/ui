@@ -1,7 +1,7 @@
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
-import Logs, { type LogProps } from 'components/logs';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { linkButtonSx } from 'context/Theme';
+import Logs, { type LogProps } from 'src/components/logs';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { linkButtonSx } from 'src/context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';

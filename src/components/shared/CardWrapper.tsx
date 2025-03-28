@@ -6,16 +6,16 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { eChartsTooltipSX } from 'components/graphs/tooltips';
+import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
     defaultBoxShadow,
     semiTransparentBackground,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import { HelpCircle } from 'iconoir-react';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;

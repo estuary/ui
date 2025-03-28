@@ -1,10 +1,10 @@
 import { FormControl, FormLabel, RadioGroup } from '@mui/material';
-import { hiddenButAccessibleRadio } from 'context/Theme';
+import { hiddenButAccessibleRadio } from 'src/context/Theme';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
-} from 'directives/Onboard/Store/hooks';
+} from 'src/directives/Onboard/Store/hooks';
 import { ChangeEvent } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useConstant from 'use-constant';

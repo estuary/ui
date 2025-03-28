@@ -8,9 +8,9 @@ import {
     useTheme,
 } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import AlertBox from 'components/shared/AlertBox';
-import Error from 'components/shared/Error';
-import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
+import AlertBox from 'src/components/shared/AlertBox';
+import Error from 'src/components/shared/Error';
+import GenerateGrant from 'src/components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 import { Xmark } from 'iconoir-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';

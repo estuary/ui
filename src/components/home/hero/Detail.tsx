@@ -1,5 +1,5 @@
 import { Button, Grid } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes } from 'src/app/routes';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';

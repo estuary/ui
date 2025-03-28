@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useLocalStorage } from 'react-use';
-import { DataPlaneScopes } from 'stores/DetailsForm/types';
-import { BaseComponentProps } from 'types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { DataPlaneScopes } from 'src/stores/DetailsForm/types';
+import { BaseComponentProps } from 'src/types';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 interface DataPlaneScope {
     dataPlaneScope: DataPlaneScopes;

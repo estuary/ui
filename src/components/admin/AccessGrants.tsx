@@ -1,9 +1,9 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import AdminTabs from 'components/admin/Tabs';
-import MessageWithLink from 'components/content/MessageWithLink';
-import AccessGrantsTable from 'components/tables/AccessGrants';
-import usePageTitle from 'hooks/usePageTitle';
+import { authenticatedRoutes } from 'src/app/routes';
+import AdminTabs from 'src/components/admin/Tabs';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import AccessGrantsTable from 'src/components/tables/AccessGrants';
+import usePageTitle from 'src/hooks/usePageTitle';
 import { FormattedMessage } from 'react-intl';
 
 function AccessGrants() {

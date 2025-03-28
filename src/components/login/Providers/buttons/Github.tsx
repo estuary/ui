@@ -1,5 +1,5 @@
 import { Button, useTheme } from '@mui/material';
-import { sample_grey } from 'context/Theme';
+import { sample_grey } from 'src/context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { ProviderButtonProps } from '../types';
 import { defaulticonSize } from './shared';

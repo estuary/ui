@@ -6,7 +6,7 @@ import {
     ToggleButtonProps,
 } from '@mui/material';
 import { ReactNode } from 'react';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 
 export type BooleanString = 'true' | 'false';
 

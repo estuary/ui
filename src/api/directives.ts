@@ -1,8 +1,8 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { DIRECTIVES } from 'directives/shared';
-import { UserClaims } from 'directives/types';
-import { logRocketConsole } from 'services/shared';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DIRECTIVES } from 'src/directives/shared';
+import { UserClaims } from 'src/directives/types';
+import { logRocketConsole } from 'src/services/shared';
 import {
     CallSupabaseResponse,
     defaultTableFilter,
@@ -14,7 +14,7 @@ import {
     supabaseRetry,
     TABLES,
     updateSupabase,
-} from 'services/supabase';
+} from 'src/services/supabase';
 import {
     AppliedDirective,
     Directive,
@@ -23,7 +23,7 @@ import {
     GrantDirective_AccessLinks,
     JoinedAppliedDirective,
     Schema,
-} from 'types';
+} from 'src/types';
 
 interface GrantDirective_CreateMatchData {
     catalog_prefix: string;

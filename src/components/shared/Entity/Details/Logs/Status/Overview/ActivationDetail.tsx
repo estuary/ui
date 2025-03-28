@@ -1,14 +1,14 @@
 import { Skeleton, Typography } from '@mui/material';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useIntl } from 'react-intl';
 import {
     useEntityStatusStore_lastActivated,
     useEntityStatusStore_singleResponse,
-} from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { getDataPlaneActivationStatus } from 'utils/entityStatus-utils';
+} from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { getDataPlaneActivationStatus } from 'src/utils/entityStatus-utils';
 import DetailWrapper from './DetailWrapper';
 import { BaseDetailProps } from './types';
 

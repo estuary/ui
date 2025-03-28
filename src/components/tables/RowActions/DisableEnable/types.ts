@@ -1,4 +1,4 @@
-import { SelectTableStoreNames } from 'stores/names';
+import { SelectTableStoreNames } from 'src/stores/names';
 
 export interface DisableEnableButtonProps {
     enabling: boolean;

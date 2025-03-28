@@ -1,4 +1,4 @@
-import { MEGABYTE } from 'utils/dataPlane-utils';
+import { MEGABYTE } from 'src/utils/dataPlane-utils';
 
 // The amount of data we try to load in each chunk when reading logs
 export const maxBytes = Math.round(MEGABYTE / 10);

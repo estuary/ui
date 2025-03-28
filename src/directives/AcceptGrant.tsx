@@ -3,17 +3,17 @@ import {
     PostgrestError,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import AlertBox from 'components/shared/AlertBox';
-import { defaultOutline } from 'context/Theme';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'directives/shared';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import { submitDirective } from 'src/api/directives';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import AlertBox from 'src/components/shared/AlertBox';
+import { defaultOutline } from 'src/context/Theme';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import { AppliedDirective, JoinedAppliedDirective } from 'src/types';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;

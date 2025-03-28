@@ -1,11 +1,11 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { Invoice } from 'api/billing';
-import MonetaryValue from 'components/tables/cells/MonetaryValue';
-import DataVolume from 'components/tables/cells/billing/DataVolume';
-import TimeStamp from 'components/tables/cells/billing/TimeStamp';
+import { Invoice } from 'src/api/billing';
+import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
+import DataVolume from 'src/components/tables/cells/billing/DataVolume';
+import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import { FormattedMessage } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { InvoiceId, invoiceId } from 'utils/billing-utils';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { InvoiceId, invoiceId } from 'src/utils/billing-utils';
 
 interface RowProps {
     row: Invoice;

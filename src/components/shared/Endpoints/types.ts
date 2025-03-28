@@ -1,4 +1,4 @@
-import { Endpoint } from 'stores/ShardDetail/types';
+import { Endpoint } from 'src/stores/ShardDetail/types';
 
 export interface TaskEndpointProps {
     reactorAddress: string | undefined;

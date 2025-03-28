@@ -1,23 +1,23 @@
-import { getDraftSpecsBySpecType } from 'api/draftSpecs';
+import { getDraftSpecsBySpecType } from 'src/api/draftSpecs';
 import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
-import { useEntityWorkflow } from 'context/Workflow';
+} from 'src/components/editor/Store/hooks';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBinding_evaluateDiscoveredBindings } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'stores/EndpointConfig/hooks';
-import { Entity } from 'types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
+import { Entity } from 'src/types';
 import {
     SupabaseConfig,
     modifyDiscoveredDraftSpec,
-} from 'utils/workflow-utils';
+} from 'src/utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {
     const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);

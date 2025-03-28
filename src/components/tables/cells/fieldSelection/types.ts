@@ -2,8 +2,8 @@ import { ToggleButtonProps, TooltipProps } from '@mui/material';
 import {
     FieldSelectionType,
     TranslatedConstraint,
-} from 'components/editor/Bindings/FieldSelection/types';
-import { FieldSelection } from 'stores/Binding/slices/FieldSelection';
+} from 'src/components/editor/Bindings/FieldSelection/types';
+import { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 export interface ConstraintDetailsProps {
     constraint: TranslatedConstraint;

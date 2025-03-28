@@ -1,21 +1,21 @@
 import { PostgrestError } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import useDirectiveGuard from 'app/guards/hooks';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import { useZustandStore } from 'context/Zustand/provider';
-import { jobStatusQuery, trackEvent } from 'directives/shared';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import { submitDirective } from 'src/api/directives';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+} from 'src/stores/Tables/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { hasLength } from 'src/utils/misc-utils';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import useRepublishPrefix from './useRepublishPrefix';
 
 const SELECTED_DIRECTIVE = 'storageMappings';

@@ -5,16 +5,16 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import useAutoDiscovery from 'components/capture/useAutoDiscovery';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
+import useAutoDiscovery from 'src/components/capture/useAutoDiscovery';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { isEqual, isObject } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import {
     useSchemaEvolution_addNewBindings,
     useSchemaEvolution_autoDiscover,
@@ -24,7 +24,7 @@ import {
     useSchemaEvolution_setEvolveIncompatibleCollections,
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsSaving,
-} from 'stores/SchemaEvolution/hooks';
+} from 'src/stores/SchemaEvolution/hooks';
 
 interface Props {
     readOnly?: boolean;

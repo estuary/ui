@@ -1,5 +1,5 @@
-import { EntityContextProvider } from 'context/EntityContext';
-import Materializations from 'pages/Materializations';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import Materializations from 'src/pages/Materializations';
 
 function MaterializationsTable() {
     return (

@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import { DataGridRowSkeleton } from 'components/collection/CollectionSkeletons';
-import AlertBox from 'components/shared/AlertBox';
+import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
+import AlertBox from 'src/components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_hydrated } from 'stores/Binding/hooks';
+import { useBinding_hydrated } from 'src/stores/Binding/hooks';
 
 function SelectorEmpty() {
     const hydrated = useBinding_hydrated();

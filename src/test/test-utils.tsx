@@ -1,12 +1,12 @@
 import { AuthSession, Session, User } from '@supabase/supabase-js';
 import { RenderOptions, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import AppProviders from 'context';
-import ThemeProvider from 'context/Theme';
+import AppProviders from 'src/context';
+import ThemeProvider from 'src/context/Theme';
 import { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { ResourceConfig } from 'stores/Binding/types';
-import { Entity, Schema } from 'types';
+import { ResourceConfig } from 'src/stores/Binding/types';
+import { Entity, Schema } from 'src/types';
 import { mockDeep } from 'vitest-mock-extended';
 import { ConnectorConfig } from '../../deps/flow/flow';
 

@@ -1,7 +1,7 @@
-import KeyValueList from 'components/shared/KeyValueList';
+import KeyValueList from 'src/components/shared/KeyValueList';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { hasLength } from 'utils/misc-utils';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 function DetailsErrors() {
     const intl = useIntl();

@@ -1,5 +1,5 @@
 import { materialCells } from '@jsonforms/material-renderers';
-import { customAjv } from 'services/ajv';
+import { customAjv } from 'src/services/ajv';
 import defaultRenderers from './defaultRenderers';
 import { defaultOptions } from './shared';
 

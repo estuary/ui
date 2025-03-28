@@ -1,5 +1,5 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
     handleFailure,
@@ -9,8 +9,8 @@ import {
     SortingProps,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
-import { StorageMappings } from 'types';
+} from 'src/services/supabase';
+import { StorageMappings } from 'src/types';
 
 const getStorageMappings = (
     catalogPrefix: string,

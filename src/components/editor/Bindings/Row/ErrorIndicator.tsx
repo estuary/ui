@@ -4,7 +4,7 @@ import {
     useBinding_collectionMetadataProperty,
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 import { ErrorIndicatorProps } from './types';
 
 function BindingsSelectorErrorIndicator({

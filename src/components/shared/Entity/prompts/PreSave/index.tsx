@@ -1,5 +1,5 @@
 import { Dialog } from '@mui/material';
-import { useFormStateStore_showSavePrompt } from 'stores/FormState/hooks';
+import { useFormStateStore_showSavePrompt } from 'src/stores/FormState/hooks';
 import PromptsHydrator from '../store/Hydrator';
 import Actions from './Actions';
 import Content from './Content';

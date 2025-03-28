@@ -1,4 +1,4 @@
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import {
     getCollectionNames,

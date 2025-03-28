@@ -1,4 +1,4 @@
-import { DataByHourRange, DataByHourStatType } from 'components/graphs/types';
+import { DataByHourRange, DataByHourStatType } from 'src/components/graphs/types';
 
 export interface DetailsUsageState {
     range: DataByHourRange;

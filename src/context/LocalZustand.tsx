@@ -3,7 +3,7 @@ import {
     ReactNode,
     useContext,
 } from 'react';
-import { StoreName } from 'stores/names';
+import { StoreName } from 'src/stores/names';
 import { StoreApi, useStore } from 'zustand';
 
 interface LocalZustandProviderProps {

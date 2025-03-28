@@ -1,9 +1,9 @@
 import { Skeleton, Typography } from '@mui/material';
-import { useTenantUsesExternalPayment } from 'context/fetcher/TenantBillingDetails';
+import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 function PricingTierDetails() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);

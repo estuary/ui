@@ -1,6 +1,6 @@
 import { Chip, FormControlLabel, Radio } from '@mui/material';
-import { chipOutlinedStyling } from 'context/Theme';
-import { useOnboardingStore_surveyResponse } from 'directives/Onboard/Store/hooks';
+import { chipOutlinedStyling } from 'src/context/Theme';
+import { useOnboardingStore_surveyResponse } from 'src/directives/Onboard/Store/hooks';
 import { OriginOptionProps } from './types';
 
 function OriginOption({ optionLabel: option }: OriginOptionProps) {

@@ -1,6 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
-import { TABLES } from 'services/supabase';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { TABLES } from 'src/services/supabase';
 import { CONNECTOR_QUERY } from './shared';
 
 // A hook for fetching connectors directory from

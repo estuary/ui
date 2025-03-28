@@ -1,5 +1,5 @@
 import { TableCell, Typography } from '@mui/material';
-import { jsonObjectPreview_key, jsonObjectPreview_value } from 'context/Theme';
+import { jsonObjectPreview_key, jsonObjectPreview_value } from 'src/context/Theme';
 import { isEmpty } from 'lodash';
 import { ObjectPreview } from 'react-inspector';
 import { BaseTypographySx } from './shared';

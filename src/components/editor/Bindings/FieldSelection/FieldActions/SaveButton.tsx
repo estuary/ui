@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_recommendFields,
     useBinding_setMultiSelection,
-} from 'stores/Binding/hooks';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Binding/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 import { evaluateUpdatedFields } from './shared';
 import { SaveButtonProps } from './types';
 

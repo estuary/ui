@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,

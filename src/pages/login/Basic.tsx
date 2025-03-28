@@ -1,14 +1,14 @@
 import { Box, Divider, Stack } from '@mui/material';
-import MagicLink from 'components/login/MagicLink';
-import LoginProviders from 'components/login/Providers';
-import useLoginStateHandler from 'hooks/login/useLoginStateHandler';
+import MagicLink from 'src/components/login/MagicLink';
+import LoginProviders from 'src/components/login/Providers';
+import useLoginStateHandler from 'src/hooks/login/useLoginStateHandler';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
-import { SupportedProvider } from 'types/authProviders';
-import { getLoginSettings } from 'utils/env-utils';
+import { SupportedProvider } from 'src/types/authProviders';
+import { getLoginSettings } from 'src/utils/env-utils';
 import LoginWrapper from './Wrapper';
 
 const loginSettings = getLoginSettings();

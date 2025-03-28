@@ -1,11 +1,11 @@
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useSearchParamAppend from 'hooks/searchParams/useSearchParamAppend';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { ENTITY_SETTINGS } from 'settings/entity';
-import { EntityWithCreateWorkflow } from 'types';
-import { getPathWithParams, hasLength } from 'utils/misc-utils';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { EntityWithCreateWorkflow } from 'src/types';
+import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 
 export interface HookEntityCreateNavigateProps {
     advanceToForm?: boolean;

@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import EditOff from 'icons/EditOff';
+import EditOff from 'src/icons/EditOff';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

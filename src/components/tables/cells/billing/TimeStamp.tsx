@@ -1,7 +1,7 @@
 import { Box, TableCell } from '@mui/material';
-import CustomWidthTooltip from 'components/shared/CustomWidthTooltip';
+import CustomWidthTooltip from 'src/components/shared/CustomWidthTooltip';
 import { FormattedDate, FormattedMessage, useIntl } from 'react-intl';
-import { stripTimeFromDate } from 'utils/billing-utils';
+import { stripTimeFromDate } from 'src/utils/billing-utils';
 
 interface Props {
     date: string;

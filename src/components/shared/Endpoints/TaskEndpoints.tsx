@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import CardWrapper from 'components/shared/CardWrapper';
-import Error from 'components/shared/Error';
-import { useEntityType } from 'context/EntityContext';
-import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import Error from 'src/components/shared/Error';
+import { useEntityType } from 'src/context/EntityContext';
+import { useShardEndpoints } from 'src/hooks/shards/useShardEndpoints';
 import { useIntl } from 'react-intl';
 import { EndpointLink } from './EndpointLink';
 import { TaskEndpointProps } from './types';

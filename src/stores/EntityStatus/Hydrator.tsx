@@ -1,8 +1,8 @@
-import useEntityStatus from 'hooks/entityStatus/useEntityStatus';
+import useEntityStatus from 'src/hooks/entityStatus/useEntityStatus';
 import { useEffect } from 'react';
 import { useMount } from 'react-use';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useEntityStatusStore } from './Store';
 import { HydratorProps } from './types';
 

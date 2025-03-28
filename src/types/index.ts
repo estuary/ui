@@ -1,7 +1,7 @@
 import { JsonFormsCore } from '@jsonforms/core';
 import { TableCellProps } from '@mui/material';
 import { PostgrestError } from '@supabase/supabase-js';
-import { LogLevels } from 'components/tables/Logs/types';
+import { LogLevels } from 'src/components/tables/Logs/types';
 import { ReactNode } from 'react';
 
 export type fake = 'fake';

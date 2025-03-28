@@ -1,17 +1,17 @@
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
-import { authenticatedRoutes } from 'app/routes';
+import { createEntityDraft } from 'src/api/drafts';
+import { createDraftSpec } from 'src/api/draftSpecs';
+import { authenticatedRoutes } from 'src/app/routes';
 import {
     useEditorStore_setCatalogName,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+} from 'src/components/editor/Store/hooks';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useCallback, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import {
     useTransformationCreate_addTransformConfigs,
     useTransformationCreate_catalogName,
@@ -19,13 +19,13 @@ import {
     useTransformationCreate_name,
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
-} from 'stores/TransformationCreate/hooks';
-import { TransformConfig } from 'stores/TransformationCreate/types';
+} from 'src/stores/TransformationCreate/hooks';
+import { TransformConfig } from 'src/stores/TransformationCreate/types';
 import {
     generateInitialSpec,
     templateTransformConfig,
-} from 'utils/derivation-utils';
-import { stripPathing } from 'utils/misc-utils';
+} from 'src/utils/derivation-utils';
+import { stripPathing } from 'src/utils/misc-utils';
 
 interface Props {
     entityNameError: string | null;

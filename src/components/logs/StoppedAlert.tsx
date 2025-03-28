@@ -1,6 +1,6 @@
 import { Button, Collapse } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { linkButtonSx } from 'context/Theme';
+import AlertBox from 'src/components/shared/AlertBox';
+import { linkButtonSx } from 'src/context/Theme';
 import { FormattedMessage } from 'react-intl';
 import { useLogsContext } from './Context';
 

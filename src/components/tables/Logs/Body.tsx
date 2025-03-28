@@ -1,6 +1,6 @@
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
+import { OpsLogFlowDocument, TableStatuses } from 'src/types';
 import { TableBody } from '@mui/material';
 import {
     MutableRefObject,
@@ -11,9 +11,9 @@ import {
 } from 'react';
 import { isEmpty } from 'lodash';
 
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import EntityTableBody from '../EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,

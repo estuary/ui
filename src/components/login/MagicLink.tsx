@@ -1,9 +1,9 @@
 import { Button, Stack } from '@mui/material';
-import MagicLinkInputs from 'components/login/MagicLinkInputs';
-import { supabaseClient } from 'context/GlobalProviders';
+import MagicLinkInputs from 'src/components/login/MagicLinkInputs';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { useCallback, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { getLoginSettings } from 'utils/env-utils';
+import { getLoginSettings } from 'src/utils/env-utils';
 import { MagicLinkProps } from './types';
 import useRedirectPath from './useRedirectPath';
 

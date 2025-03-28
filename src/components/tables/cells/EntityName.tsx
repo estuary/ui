@@ -5,8 +5,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import EntityStatus from 'components/tables/cells/EntityStatus';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
+import EntityStatus from 'src/components/tables/cells/EntityStatus';
+import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 interface Props {
     name: string;

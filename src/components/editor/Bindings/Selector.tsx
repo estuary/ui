@@ -1,14 +1,14 @@
 import { Box } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import CollectionSelectorList from 'components/collection/Selector/List';
+import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
+import CollectionSelectorList from 'src/components/collection/Selector/List';
 import {
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_UUID_COL,
-} from 'components/collection/Selector/List/shared';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+} from 'src/components/collection/Selector/List/shared';
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { ReactNode } from 'react';
 import {
     useBinding_collections,
@@ -16,11 +16,11 @@ import {
     useBinding_removeBindings,
     useBinding_setCurrentBinding,
     useBinding_toggleDisable,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 import BindingsSelectorName from './Row/Name';
 import BindingsSelectorRemove from './Row/Remove';
 import BindingsSelectorToggle from './Row/Toggle';

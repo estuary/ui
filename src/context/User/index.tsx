@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 import {
     logRocketConsole,
     logRocketEvent,
     getUserDetails,
-} from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { supabaseClient } from 'context/GlobalProviders';
+} from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from './useUserContextStore';
 
 const UserStoreProvider = ({ children }: BaseComponentProps) => {

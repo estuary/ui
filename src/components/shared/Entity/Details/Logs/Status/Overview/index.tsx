@@ -1,5 +1,5 @@
 import { Grid, useMediaQuery, useTheme } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
+import { useEntityType } from 'src/context/EntityContext';
 import AutoDiscoveryOverview from './AutoDiscoveryOverview';
 import ControllerOverview from './ControllerOverview';
 

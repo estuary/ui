@@ -1,5 +1,5 @@
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
-import { SortDirection, TableColumns } from 'types';
+import { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import { SortDirection, TableColumns } from 'src/types';
 
 export interface RowProps {
     columns: TableColumns[];

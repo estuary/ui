@@ -2,12 +2,12 @@ import { Box, Collapse, Grid, Stack, Typography } from '@mui/material';
 import {
     useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponseError,
-} from 'components/editor/Bindings/Store/hooks';
+} from 'src/components/editor/Bindings/Store/hooks';
 import MonacoEditor, {
     MonacoEditorProps,
-} from 'components/editor/MonacoEditor';
-import AlertBox from 'components/shared/AlertBox';
-import SchemaPropertiesTable from 'components/tables/Schema';
+} from 'src/components/editor/MonacoEditor';
+import AlertBox from 'src/components/shared/AlertBox';
+import SchemaPropertiesTable from 'src/components/tables/Schema';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ExistFilter from './ExistFilter';

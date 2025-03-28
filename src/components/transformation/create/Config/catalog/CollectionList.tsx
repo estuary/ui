@@ -1,11 +1,11 @@
 import { Box, ListItem, Typography } from '@mui/material';
-import CatalogListItem from 'components/transformation/create/Config/catalog/CatalogListItem';
+import CatalogListItem from 'src/components/transformation/create/Config/catalog/CatalogListItem';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { DerivationAttribute } from 'stores/TransformationCreate/types';
-import { hasLength } from 'utils/misc-utils';
+import { DerivationAttribute } from 'src/stores/TransformationCreate/types';
+import { hasLength } from 'src/utils/misc-utils';
 import { CatalogListContent } from './CatalogList';
 
 interface Props {

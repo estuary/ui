@@ -2,10 +2,10 @@ import produce from 'immer';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
-import { JournalDataStoreNames } from 'stores/names';
-import { OpsLogFlowDocument } from 'types';
-import { devtoolsOptions } from 'utils/store-utils';
+} from 'src/stores/extensions/Hydration';
+import { JournalDataStoreNames } from 'src/stores/names';
+import { OpsLogFlowDocument } from 'src/types';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { JournalDataLogsState } from './types';

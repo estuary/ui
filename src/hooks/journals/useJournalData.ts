@@ -1,18 +1,18 @@
-import { singleCallSettings } from 'context/SWR';
-import { useUserStore } from 'context/User/useUserContextStore';
+import { singleCallSettings } from 'src/context/SWR';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCounter } from 'react-use';
-import useJournalStore from 'stores/JournalData/Store';
+import useJournalStore from 'src/stores/JournalData/Store';
 import useSWR from 'swr';
 import {
     getJournals,
     isNestedProtocolListResponse,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
-} from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { loadDocuments } from './shared';
 import { LoadDocumentsOffsets } from './types';
 

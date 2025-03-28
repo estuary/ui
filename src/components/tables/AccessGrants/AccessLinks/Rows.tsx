@@ -1,14 +1,14 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import CopyAccessLink from 'components/tables/cells/CopyAccessLink';
-import RowSelect from 'components/tables/cells/RowSelect';
-import TimeStamp from 'components/tables/cells/TimeStamp';
-import { useZustandStore } from 'context/Zustand/provider';
-import { SelectTableStoreNames } from 'stores/names';
+import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
+import RowSelect from 'src/components/tables/cells/RowSelect';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { GrantDirective_AccessLinks } from 'types';
+} from 'src/stores/Tables/Store';
+import { GrantDirective_AccessLinks } from 'src/types';
 
 interface RowsProps {
     data: GrantDirective_AccessLinks[];

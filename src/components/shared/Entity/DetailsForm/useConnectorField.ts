@@ -1,22 +1,22 @@
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
+import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDetailsForm_changed_connectorId } from 'stores/DetailsForm/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
+import { useDetailsForm_changed_connectorId } from 'src/stores/DetailsForm/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { Details } from 'src/stores/DetailsForm/types';
+import { EntityWithCreateWorkflow } from 'src/types';
 import {
     ConnectorVersionEvaluationOptions,
     evaluateConnectorVersions,
     getConnectorMetadata,
-} from 'utils/connector-utils';
-import { hasLength } from 'utils/misc-utils';
-import { MAC_ADDR_RE } from 'validation';
+} from 'src/utils/connector-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { MAC_ADDR_RE } from 'src/validation';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 export default function useConnectorField(

@@ -2,11 +2,11 @@ import { Button } from '@mui/material';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
-} from 'components/editor/Store/hooks';
-import { entityHeaderButtonSx } from 'context/Theme';
+} from 'src/components/editor/Store/hooks';
+import { entityHeaderButtonSx } from 'src/context/Theme';
 
 import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { EntityCreateSaveButtonProps } from './types';
 import useSave from './useSave';
 

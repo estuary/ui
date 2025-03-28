@@ -1,10 +1,10 @@
 import { TableFooter, TablePagination, TableRow } from '@mui/material';
-import { useZustandStore } from 'context/Zustand/provider';
-import { SelectTableStoreNames } from 'stores/names';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import TablePaginationActions from '../PaginationActions';
 
 interface Props {

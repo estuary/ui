@@ -1,4 +1,4 @@
-import { DataGrains } from 'components/graphs/types';
+import { DataGrains } from 'src/components/graphs/types';
 import { PersistOptions } from 'zustand/middleware';
 import { DetailsUsageState } from './types';
 

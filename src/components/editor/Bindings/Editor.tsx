@@ -1,30 +1,30 @@
 import { Box, Stack, Typography } from '@mui/material';
-import ResourceConfig from 'components/collection/ResourceConfig';
-import CollectionSchemaEditor from 'components/collection/schema/Editor';
-import CollectionSchemaEditorSkeleton from 'components/collection/schema/Editor/Skeleton';
-import ControlledEditor from 'components/editor/Bindings/ControlledEditor';
+import ResourceConfig from 'src/components/collection/ResourceConfig';
+import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
+import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
+import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
 import {
     useBindingsEditorStore_collectionData,
     useBindingsEditorStore_collectionInitializationAlert,
     useBindingsEditorStore_schemaUpdateErrored,
-} from 'components/editor/Bindings/Store/hooks';
-import BindingsTabs, { tabProps } from 'components/editor/Bindings/Tabs';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+} from 'src/components/editor/Bindings/Store/hooks';
+import BindingsTabs, { tabProps } from 'src/components/editor/Bindings/Tabs';
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCurrentCatalog,
     useEditorStore_setSpecs,
-} from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
-import ExternalLink from 'components/shared/ExternalLink';
-import { useEntityType } from 'context/EntityContext';
-import useInitializeCollectionDraft from 'hooks/useInitializeCollectionDraft';
+} from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import { useEntityType } from 'src/context/EntityContext';
+import useInitializeCollectionDraft from 'src/hooks/useInitializeCollectionDraft';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
 import useBackgroundTest from './FieldSelection/useBackgroundTest';

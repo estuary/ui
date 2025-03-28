@@ -1,7 +1,7 @@
-import EditorWithFileSelector from 'components/editor/EditorWithFileSelector';
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import EditorWithFileSelector from 'src/components/editor/EditorWithFileSelector';
+import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { useMemo } from 'react';
-import { stringifyJSON } from 'services/stringify';
+import { stringifyJSON } from 'src/services/stringify';
 
 interface Props {
     localZustandScope: boolean;

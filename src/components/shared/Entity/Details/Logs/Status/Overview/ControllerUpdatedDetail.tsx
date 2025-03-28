@@ -1,7 +1,7 @@
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import TimestampDetail from './TimestampDetail';
 import { BaseDetailProps } from './types';
 

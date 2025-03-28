@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
-import CollectionSelector from 'components/collection/Selector';
-import CatalogList from 'components/transformation/create/Config/catalog/CatalogList';
-import CollectionList from 'components/transformation/create/Config/catalog/CollectionList';
+import CollectionSelector from 'src/components/collection/Selector';
+import CatalogList from 'src/components/transformation/create/Config/catalog/CatalogList';
+import CollectionList from 'src/components/transformation/create/Config/catalog/CollectionList';
 import { useIntl } from 'react-intl';
 import { EntityListProps } from './types';
 

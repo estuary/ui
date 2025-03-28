@@ -1,9 +1,9 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
+} from 'src/components/editor/Store/hooks';
 import { debounce } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import {
@@ -13,9 +13,9 @@ import {
     useSchemaEvolution_setSettingsActive,
     useSchemaEvolution_setSettingsSaving,
     useSchemaEvolution_settingsActive,
-} from 'stores/SchemaEvolution/hooks';
-import { Schema } from 'types';
-import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
+} from 'src/stores/SchemaEvolution/hooks';
+import { Schema } from 'src/types';
+import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function useAutoDiscovery() {
     // Draft Editor Store

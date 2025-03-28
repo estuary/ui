@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { omit } from 'lodash';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { EditorStatus, EditorStoreState } from './types';

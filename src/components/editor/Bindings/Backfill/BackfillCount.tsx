@@ -1,13 +1,13 @@
 import { Chip } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
+import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledBindings_count,
     useBinding_collections_count,
     useBinding_evolvedCollections_count,
-} from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'settings/entity';
+} from 'src/stores/Binding/hooks';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { BackfillCountProps } from './types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {

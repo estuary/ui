@@ -1,18 +1,18 @@
 import { Box, Divider, Stack } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import BindingSelectorTable from 'components/collection/Selector/Table';
-import PrefixedName from 'components/inputs/PrefixedName';
-import LanguageSelector from 'components/transformation/create/LanguageSelector';
-import SingleStep from 'components/transformation/create/SingleStep';
-import StepWrapper from 'components/transformation/create/Wrapper';
-import usePageTitle from 'hooks/usePageTitle';
+import { authenticatedRoutes } from 'src/app/routes';
+import BindingSelectorTable from 'src/components/collection/Selector/Table';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import LanguageSelector from 'src/components/transformation/create/LanguageSelector';
+import SingleStep from 'src/components/transformation/create/SingleStep';
+import StepWrapper from 'src/components/transformation/create/Wrapper';
+import usePageTitle from 'src/hooks/usePageTitle';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 import { ConfigHeader } from './ConfigHeader';
 
 function DerivationCreateConfig() {

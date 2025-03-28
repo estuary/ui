@@ -1,8 +1,8 @@
 import { Collapse } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
+import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useBinding_bindingErrorsExist } from 'stores/Binding/hooks';
+import { useBinding_bindingErrorsExist } from 'src/stores/Binding/hooks';
 import AlertBox from '../AlertBox';
 
 function EntityWarnings() {

@@ -1,14 +1,14 @@
 import { TableCell, Typography } from '@mui/material';
-import DateFilter from 'components/filters/Date';
-import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { useZustandStore } from 'context/Zustand/provider';
+import DateFilter from 'src/components/filters/Date';
+import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import { StatsHeaderProps } from './types';
 
 const StatsHeader = ({

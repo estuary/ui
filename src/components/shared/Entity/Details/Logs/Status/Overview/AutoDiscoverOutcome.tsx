@@ -1,10 +1,10 @@
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import {
     useEntityStatusStore_autoDiscoverFailure,
     useEntityStatusStore_autoDiscoverLastSuccess,
-} from 'stores/EntityStatus/hooks';
+} from 'src/stores/EntityStatus/hooks';
 import AutoDiscoverChanges from './AutoDiscoverChanges';
 import TimestampDetail from './TimestampDetail';
 

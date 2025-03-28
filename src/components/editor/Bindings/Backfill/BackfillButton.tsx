@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
-import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
-import { BooleanString } from 'components/shared/buttons/types';
-import { useEntityWorkflow } from 'context/Workflow';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
+import { BooleanString } from 'src/components/shared/buttons/types';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
@@ -14,15 +14,15 @@ import {
     useBinding_currentCollection,
     useBinding_enabledCollections_count,
     useBinding_setBackfilledBindings,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { BindingMetadata } from 'types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { BindingMetadata } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
 import BackfillCount from './BackfillCount';
 import BackfillDataFlowOption from './BackfillDataFlowOption';

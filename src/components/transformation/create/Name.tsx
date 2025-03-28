@@ -1,14 +1,14 @@
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
+import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions, hideValidation } from 'services/jsonforms/shared';
+import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
+import { defaultOptions, hideValidation } from 'src/services/jsonforms/shared';
 import {
     useTransformationCreate_name,
     useTransformationCreate_setName,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 // TODO (transform create) This is not in use right now but should be wired up soon
 function TransformationCreateName() {

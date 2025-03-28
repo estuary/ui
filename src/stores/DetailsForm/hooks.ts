@@ -1,6 +1,6 @@
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from './Store';
 
 // Selector hooks

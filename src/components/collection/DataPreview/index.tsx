@@ -1,23 +1,23 @@
 /* eslint-disable complexity */
 import { Button, Stack, Typography } from '@mui/material';
-import ListView from 'components/collection/DataPreview/ListView';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import JournalAlerts from 'components/journals/Alerts';
-import AlertBox from 'components/shared/AlertBox';
-import CardWrapper from 'components/shared/CardWrapper';
-import useIsCollectionDerivation from 'components/shared/Entity/Details/useIsCollectionDerivation';
-import Error from 'components/shared/Error';
+import ListView from 'src/components/collection/DataPreview/ListView';
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import JournalAlerts from 'src/components/journals/Alerts';
+import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
+import Error from 'src/components/shared/Error';
 import {
     useJournalData,
     useJournalsForCollection,
-} from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
-import { useTenantHidesDataPreview } from 'hooks/useTenants';
+} from 'src/hooks/journals/useJournalData';
+import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+import { useTenantHidesDataPreview } from 'src/hooks/useTenants';
 import { Refresh } from 'iconoir-react';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
+import { BASE_ERROR } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
 import ListViewSkeleton from './ListViewSkeleton';
 import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
 

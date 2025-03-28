@@ -1,6 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 import { Button } from '@mui/material';
-import useLoginHints from 'hooks/searchParams/useLoginHints';
+import useLoginHints from 'src/hooks/searchParams/useLoginHints';
 import { ProviderButtonProps } from '../types';
 import { defaulticonSize } from './shared';
 

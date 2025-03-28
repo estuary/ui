@@ -1,8 +1,8 @@
 import { Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
-import AlertBox from 'components/shared/AlertBox';
-import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
-import { useBindingStore } from 'stores/Binding/Store';
+import AlertBox from 'src/components/shared/AlertBox';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import ManualSelection from '../ManualSelection';
 
 function NoMaterializationsFound() {

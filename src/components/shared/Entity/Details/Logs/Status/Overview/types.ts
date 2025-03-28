@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { BaseComponentProps } from 'types';
-import { AutoDiscoverOutcome } from 'types/controlPlane';
-import { StatusIndicatorState } from 'utils/entityStatus-utils';
+import { BaseComponentProps } from 'src/types';
+import { AutoDiscoverOutcome } from 'src/types/controlPlane';
+import { StatusIndicatorState } from 'src/utils/entityStatus-utils';
 
 export interface AutoDiscoverChangesProps {
     added: AutoDiscoverOutcome['added'];

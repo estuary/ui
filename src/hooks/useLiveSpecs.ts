@@ -1,8 +1,8 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { useMemo } from 'react';
-import { TABLES } from 'services/supabase';
-import { Entity, Schema } from 'types';
+import { TABLES } from 'src/services/supabase';
+import { Entity, Schema } from 'src/types';
 
 export interface LiveSpecsQuery extends Schema {
     catalog_name: string;

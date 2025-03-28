@@ -1,14 +1,14 @@
-import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
+import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
-import { formatDataPlaneName } from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
+import { EntityWithCreateWorkflow } from 'src/types';
+import { formatDataPlaneName } from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
 
 interface OneOfElement {

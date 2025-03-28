@@ -1,10 +1,10 @@
-import { useEntityType } from 'context/EntityContext';
-import { successMain } from 'context/Theme';
-import { useZustandStore } from 'context/Zustand/provider';
+import { useEntityType } from 'src/context/EntityContext';
+import { successMain } from 'src/context/Theme';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { isEmpty } from 'lodash';
-import { ShardDetailStoreNames } from 'stores/names';
-import { Entity } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { ShardDetailStoreNames } from 'src/stores/names';
+import { Entity } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import { getCompositeColor } from './Store';
 import {
     ShardDetailStore,

@@ -1,9 +1,9 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import RegistrationProgress from 'app/guards/RegistrationProgress';
-import AlertBox from 'components/shared/AlertBox';
-import OrganizationNameField from 'directives/Onboard/OrganizationName';
+import { submitDirective } from 'src/api/directives';
+import RegistrationProgress from 'src/app/guards/RegistrationProgress';
+import AlertBox from 'src/components/shared/AlertBox';
+import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
     useOnboardingStore_nameMissing,
@@ -11,15 +11,15 @@ import {
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
     useOnboardingStore_surveyResponse,
-} from 'directives/Onboard/Store/hooks';
-import OnboardingSurvey from 'directives/Onboard/Survey';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import HeaderMessage from 'pages/login/HeaderMessage';
+} from 'src/directives/Onboard/Store/hooks';
+import OnboardingSurvey from 'src/directives/Onboard/Survey';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
-import { fireGtmEvent } from 'services/gtm';
-import { hasLength } from 'utils/misc-utils';
+import { fireGtmEvent } from 'src/services/gtm';
+import { hasLength } from 'src/utils/misc-utils';
 import Actions from './Actions';
 import { jobStatusQuery, trackEvent } from './shared';
 import { DirectiveProps } from './types';

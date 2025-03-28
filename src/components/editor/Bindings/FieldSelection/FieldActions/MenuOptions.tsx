@@ -1,8 +1,8 @@
 import { RadioGroup } from '@mui/material';
-import RadioMenuItem from 'components/shared/RadioMenuItem';
+import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { useIntl } from 'react-intl';
-import { SelectionAlgorithm } from 'stores/Binding/slices/FieldSelection';
-import { useBindingStore } from 'stores/Binding/Store';
+import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuOptions() {
     const intl = useIntl();

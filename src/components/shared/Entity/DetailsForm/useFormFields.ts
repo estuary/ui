@@ -1,12 +1,12 @@
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
+import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { Details } from 'src/stores/DetailsForm/types';
+import { EntityWithCreateWorkflow } from 'src/types';
 import useConnectorField from './useConnectorField';
 import useDataPlaneField from './useDataPlaneField';
 

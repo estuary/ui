@@ -1,12 +1,12 @@
-import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
+import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,
     useBinding_resourceConfigErrors,
-} from 'stores/Binding/hooks';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Binding/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 function ResourceConfigErrors() {
     const intl = useIntl();

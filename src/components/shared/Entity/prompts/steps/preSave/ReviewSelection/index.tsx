@@ -1,10 +1,10 @@
 import { Button, Collapse, Stack } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import AlertBox from 'components/shared/AlertBox';
-import CardWrapper from 'components/shared/CardWrapper';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import DiffViewer from './DiffViewer';
 import ReviewTable from './ReviewTable';
 

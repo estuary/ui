@@ -1,4 +1,4 @@
-import { useUserStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useEffect } from 'react';
 import { useUnmount } from 'react-use';
 import useJournalStore from './Store';

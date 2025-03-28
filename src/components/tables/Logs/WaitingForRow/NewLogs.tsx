@@ -1,4 +1,4 @@
-import { DEFAULT_POLLING } from 'context/SWR';
+import { DEFAULT_POLLING } from 'src/context/SWR';
 import { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 

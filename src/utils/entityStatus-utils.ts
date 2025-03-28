@@ -5,7 +5,7 @@ import {
     shardStatusDefaultColor,
     successMain,
     warningMain,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import {
     ActivationStatus,
     AutoDiscoverStatus,
@@ -14,7 +14,7 @@ import {
     EntityControllerStatus,
     EntityStatusResponse,
     JobStatus,
-} from 'types/controlPlane';
+} from 'src/types/controlPlane';
 
 type MuiColorId =
     | 'default'

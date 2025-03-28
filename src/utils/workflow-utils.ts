@@ -1,27 +1,27 @@
 import {
     DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
-} from 'api/draftSpecs';
+} from 'src/api/draftSpecs';
 import {
     ConstraintTypes,
     FieldSelectionType,
-} from 'components/editor/Bindings/FieldSelection/types';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+} from 'src/components/editor/Bindings/FieldSelection/types';
+import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { isBoolean, isEmpty } from 'lodash';
-import { CallSupabaseResponse } from 'services/supabase';
+import { CallSupabaseResponse } from 'src/services/supabase';
 import {
     FullSource,
     FullSourceDictionary,
-} from 'stores/Binding/slices/TimeTravel';
-import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
+} from 'src/stores/Binding/slices/TimeTravel';
+import { Bindings, ResourceConfigDictionary } from 'src/stores/Binding/types';
 import {
     DekafConfig,
     Entity,
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
-} from 'types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import { ConnectorConfig } from '../../deps/flow/flow';
 import { isDekafEndpointConfig } from './connector-utils';
 import {

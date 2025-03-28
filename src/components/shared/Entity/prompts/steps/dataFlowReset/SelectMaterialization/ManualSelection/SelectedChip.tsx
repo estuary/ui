@@ -1,6 +1,6 @@
 import { Chip } from '@mui/material';
-import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import { useIntl } from 'react-intl';
 
 function SelectedChip() {

@@ -12,12 +12,12 @@ import {
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
-import CheckSquare from 'icons/CheckSquare';
+import CheckSquare from 'src/icons/CheckSquare';
 import React from 'react';
 import { useLocalStorage } from 'react-use';
-import { BaseComponentProps } from 'types';
-import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { BaseComponentProps } from 'src/types';
+import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 // The code block commented out directly below is how the typography variants can be extended
 // or existing variants disabled.

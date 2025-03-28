@@ -1,12 +1,12 @@
 import { Box, DialogContent, Typography } from '@mui/material';
-import StorageMappingForm from 'components/admin/Settings/StorageMappings/Dialog/Form';
-import RepublicationLogs from 'components/admin/Settings/StorageMappings/Dialog/Logs';
-import ProviderSelector from 'components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import StorageMappingForm from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
+import RepublicationLogs from 'src/components/admin/Settings/StorageMappings/Dialog/Logs';
+import ProviderSelector from 'src/components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { FormattedMessage } from 'react-intl';
-import { useTenantStore } from 'stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 import RepublicationError from './Error';
 import { REPUBLICATION_FAILURE_MESSAGE_ID } from './useRepublishPrefix';
 

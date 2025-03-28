@@ -7,9 +7,9 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import HeroImageAndDescription from 'components/home/hero';
-import { useShowDashboardWelcome } from 'context/DashboardWelcome';
-import { defaultOutline, semiTransparentBackground } from 'context/Theme';
+import HeroImageAndDescription from 'src/components/home/hero';
+import { useShowDashboardWelcome } from 'src/context/DashboardWelcome';
+import { defaultOutline, semiTransparentBackground } from 'src/context/Theme';
 import { Plus, Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 

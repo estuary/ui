@@ -1,6 +1,6 @@
 import { Button, ButtonProps, DialogActions } from '@mui/material';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { FormattedMessage } from 'react-intl';
 import SaveButton from './SaveButton';
 

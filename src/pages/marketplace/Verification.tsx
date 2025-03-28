@@ -1,20 +1,20 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { authenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes } from 'src/app/routes';
 
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
-import PrefixedName from 'components/inputs/PrefixedName';
-import Error from 'components/shared/Error';
-import useMarketplaceVerify from 'hooks/useMarketplaceVerify';
-import { BASE_ERROR } from 'services/supabase';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import FullPageWrapper from 'app/FullPageWrapper';
-import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import Error from 'src/components/shared/Error';
+import useMarketplaceVerify from 'src/hooks/useMarketplaceVerify';
+import { BASE_ERROR } from 'src/services/supabase';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 import useConstant from 'use-constant';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
 function MarketplaceVerification() {
     const intl = useIntl();

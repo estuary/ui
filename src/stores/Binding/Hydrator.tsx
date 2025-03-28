@@ -1,11 +1,11 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
-import useTrialPrefixes from 'hooks/trialStorage/useTrialPrefixes';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow, useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { useEffect, useRef } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { BaseComponentProps } from 'types';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { BaseComponentProps } from 'src/types';
 import {
     useBinding_hydrateState,
     useBinding_setActive,

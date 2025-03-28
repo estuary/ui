@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
-import { useShardEndpoints } from 'hooks/shards/useShardEndpoints';
-import useShardHydration from 'hooks/shards/useShardHydration';
+import { useEntityType } from 'src/context/EntityContext';
+import { useShardEndpoints } from 'src/hooks/shards/useShardEndpoints';
+import useShardHydration from 'src/hooks/shards/useShardHydration';
 import { useIntl } from 'react-intl';
 import { EndpointLink } from './EndpointLink';
 import { TaskEndpointProps } from './types';

@@ -10,8 +10,8 @@ import {
     useEditorStore_isSaving,
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
-} from 'components/editor/Store/hooks';
-import { dataGridListStyling } from 'context/Theme';
+} from 'src/components/editor/Store/hooks';
+import { dataGridListStyling } from 'src/context/Theme';
 import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

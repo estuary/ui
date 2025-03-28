@@ -6,9 +6,9 @@ import {
     useBinding_fullSourceErrorsExist,
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
 
 export default function SectionAlertIndicator() {
     const intl = useIntl();

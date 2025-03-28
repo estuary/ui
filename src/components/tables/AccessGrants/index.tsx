@@ -1,18 +1,18 @@
 import { Box } from '@mui/material';
-import { getGrants, getGrants_Users } from 'api/combinedGrantsExt';
-import AccessLinksButton from 'components/tables/AccessGrants/AccessLinks/Dialog/Button';
-import DataShareButton from 'components/tables/AccessGrants/DataSharing/Dialog/Button';
+import { getGrants, getGrants_Users } from 'src/api/combinedGrantsExt';
+import AccessLinksButton from 'src/components/tables/AccessGrants/AccessLinks/Dialog/Button';
+import DataShareButton from 'src/components/tables/AccessGrants/DataSharing/Dialog/Button';
 import PrefixRows, {
     prefixTableColumns,
-} from 'components/tables/AccessGrants/PrefixRows';
+} from 'src/components/tables/AccessGrants/PrefixRows';
 import UserRows, {
     userTableColumns,
-} from 'components/tables/AccessGrants/UserRows';
-import EntityTable from 'components/tables/EntityTable';
+} from 'src/components/tables/AccessGrants/UserRows';
+import EntityTable from 'src/components/tables/EntityTable';
 import { useMemo } from 'react';
-import TableHydrator from 'stores/Tables/Hydrator';
-import { TablePrefix, useTableState } from 'stores/Tables/hooks';
-import { SelectTableStoreNames } from 'stores/names';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import { TablePrefix, useTableState } from 'src/stores/Tables/hooks';
+import { SelectTableStoreNames } from 'src/stores/names';
 import RowSelector from '../RowActions/AccessGrants/RowSelector';
 
 interface Props {

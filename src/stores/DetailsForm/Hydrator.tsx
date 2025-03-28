@@ -1,9 +1,9 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
 
 import { useEffectOnce } from 'react-use';
-import { logRocketConsole } from 'services/shared';
-import { BaseComponentProps } from 'types';
+import { logRocketConsole } from 'src/services/shared';
+import { BaseComponentProps } from 'src/types';
 import { useDetailsFormStore } from './Store';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {

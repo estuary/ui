@@ -1,8 +1,8 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import pLimit from 'p-limit';
-import { FUNCTIONS, TABLES, invokeSupabase } from 'services/supabase';
-import { TenantPaymentDetails } from 'types';
-import { formatDateForApi } from 'utils/billing-utils';
+import { FUNCTIONS, TABLES, invokeSupabase } from 'src/services/supabase';
+import { TenantPaymentDetails } from 'src/types';
+import { formatDateForApi } from 'src/utils/billing-utils';
 
 const OPERATIONS = {
     SETUP_INTENT: 'setup-intent',

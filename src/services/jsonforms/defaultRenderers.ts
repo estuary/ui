@@ -2,43 +2,43 @@ import { materialRenderers } from '@jsonforms/material-renderers';
 import {
     CatalogName,
     catalogNameTypeTester,
-} from 'forms/renderers/CatalogName';
+} from 'src/forms/renderers/CatalogName';
 import {
     CollapsibleGroup,
     collapsibleGroupTester,
-} from 'forms/renderers/CollapsibleGroup';
-import { ConnectorType, connectorTypeTester } from 'forms/renderers/Connectors';
-import { DataPlane, dataPlaneTester } from 'forms/renderers/DataPlanes';
+} from 'src/forms/renderers/CollapsibleGroup';
+import { ConnectorType, connectorTypeTester } from 'src/forms/renderers/Connectors';
+import { DataPlane, dataPlaneTester } from 'src/forms/renderers/DataPlanes';
 import {
     DurationTypeControl,
     durationTypeTester,
-} from 'forms/renderers/Duration';
-import { MissingType, missingTypeTester } from 'forms/renderers/MissingType';
+} from 'src/forms/renderers/Duration';
+import { MissingType, missingTypeTester } from 'src/forms/renderers/MissingType';
 import {
     MultiLineSecret,
     multiLineSecretTester,
-} from 'forms/renderers/MultiLineSecret';
+} from 'src/forms/renderers/MultiLineSecret';
 import {
     NullableArrayControl,
     nullableArrayTester,
-} from 'forms/renderers/nullable/Array';
+} from 'src/forms/renderers/nullable/Array';
 import {
     NullableControl,
     nullableControlTester,
-} from 'forms/renderers/nullable/Control';
-import { oAuthProviderTester, OAuthType } from 'forms/renderers/OAuth';
+} from 'src/forms/renderers/nullable/Control';
+import { oAuthProviderTester, OAuthType } from 'src/forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
-} from 'forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+} from 'src/forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import MaterialDateControl, {
     materialDateControlTester,
-} from 'forms/renderers/Overrides/material/controls/MaterialDateControl';
+} from 'src/forms/renderers/Overrides/material/controls/MaterialDateControl';
 import MaterialDateTimeControl, {
     materialDateTimeControlTester,
-} from 'forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
+} from 'src/forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
 import MaterialTimeControl, {
     materialTimeControlTester,
-} from 'forms/renderers/Overrides/material/controls/MaterialTimeControl';
+} from 'src/forms/renderers/Overrides/material/controls/MaterialTimeControl';
 
 const defaultRenderers = [
     ...materialRenderers,

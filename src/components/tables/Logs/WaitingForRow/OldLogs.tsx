@@ -1,4 +1,4 @@
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import { WaitingForRowProps } from '../types';
 import WaitingForRowBase from './Base';
 

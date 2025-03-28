@@ -1,20 +1,20 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+} from 'src/components/editor/Store/hooks';
+import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
 import {
     useBinding_currentBindingIndex,
     useBinding_recommendFields,
     useBinding_selections,
-} from 'stores/Binding/hooks';
-import { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
-import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getBindingIndex } from 'utils/workflow-utils';
+} from 'src/stores/Binding/hooks';
+import { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import { Schema } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { getBindingIndex } from 'src/utils/workflow-utils';
 
 function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store

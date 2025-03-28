@@ -1,8 +1,8 @@
 import { Dialog } from '@mui/material';
-import StorageMappingActions from 'components/admin/Settings/StorageMappings/Dialog/Actions';
-import StorageMappingContent from 'components/admin/Settings/StorageMappings/Dialog/Content';
-import StorageMappingTitle from 'components/admin/Settings/StorageMappings/Dialog/Title';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
+import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
+import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
+import StorageMappingTitle from 'src/components/admin/Settings/StorageMappings/Dialog/Title';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { Dispatch, SetStateAction } from 'react';
 
 interface Props {

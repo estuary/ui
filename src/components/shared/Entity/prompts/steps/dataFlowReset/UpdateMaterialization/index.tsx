@@ -1,19 +1,19 @@
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec } from 'api/draftSpecs';
-import { getLiveSpecSpec } from 'api/liveSpecsExt';
+import { createEntityDraft } from 'src/api/drafts';
+import { createDraftSpec } from 'src/api/draftSpecs';
+import { getLiveSpecSpec } from 'src/api/liveSpecsExt';
 
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { CustomEvents } from 'services/types';
-import { useBinding_collectionsBeingBackfilled } from 'stores/Binding/hooks';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 import {
     getBackfillCounter,
     getBindingAsFullSource,
     getCollectionName,
-} from 'utils/workflow-utils';
-import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
+} from 'src/utils/workflow-utils';
+import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
 import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { PromptStepState } from '../../../types';
 

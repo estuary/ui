@@ -1,10 +1,10 @@
 import { Button, Stack, TableCell } from '@mui/material';
-import EditProjectionButton from 'components/editor/Bindings/FieldSelection/EditProjection/Button';
+import EditProjectionButton from 'src/components/editor/Bindings/FieldSelection/EditProjection/Button';
 import {
     ConstraintTypes,
     Projection,
     TranslatedConstraint,
-} from 'components/editor/Bindings/FieldSelection/types';
+} from 'src/components/editor/Bindings/FieldSelection/types';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

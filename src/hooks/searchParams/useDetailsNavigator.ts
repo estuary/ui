@@ -2,10 +2,10 @@ import {
     CaptureQueryWithStats,
     CollectionQueryWithStats,
     MaterializationQueryWithStats,
-} from 'api/liveSpecsExt';
+} from 'src/api/liveSpecsExt';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams } from 'src/utils/misc-utils';
 import { GlobalSearchParams } from './useGlobalSearchParams';
 
 type Row =

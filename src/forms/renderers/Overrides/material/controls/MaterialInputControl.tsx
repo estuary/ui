@@ -31,7 +31,7 @@ import {
 import { useFocus } from '@jsonforms/material-renderers';
 
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
-import { CLEAR_BUTTON_ID_SUFFIX } from 'components/shared/pickers/shared';
+import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 import { endsWith } from 'lodash';
 import merge from 'lodash/merge';
 

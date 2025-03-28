@@ -1,8 +1,8 @@
-import CaptureDetails from 'components/capture/Details';
+import CaptureDetails from 'src/components/capture/Details';
 import {
     DetailsPageContextProvider,
     Pages,
-} from 'components/shared/Entity/Details/context';
+} from 'src/components/shared/Entity/Details/context';
 
 interface Props {
     tab: Pages;

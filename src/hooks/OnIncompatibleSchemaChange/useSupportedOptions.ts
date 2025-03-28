@@ -1,5 +1,5 @@
-import { choices } from 'components/incompatibleSchemaChange/shared';
-import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
+import { choices } from 'src/components/incompatibleSchemaChange/shared';
+import { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

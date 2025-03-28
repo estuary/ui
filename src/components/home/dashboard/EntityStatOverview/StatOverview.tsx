@@ -1,10 +1,10 @@
 import { Stack, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import LinkWrapper from 'components/shared/LinkWrapper';
+import LinkWrapper from 'src/components/shared/LinkWrapper';
 
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Entity } from 'types';
-import { ENTITY_SETTINGS } from 'settings/entity';
+import { Entity } from 'src/types';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 import ActiveEntityCount from './ActiveEntityCount';
 import Statistic from './Statistic';
 

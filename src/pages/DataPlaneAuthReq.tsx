@@ -1,16 +1,16 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { getLiveSpecs_dataPlaneAuthReq } from 'api/liveSpecsExt';
-import { authenticatedRoutes } from 'app/routes';
-import Error from 'components/shared/Error';
-import useReactorToken from 'hooks/gatewayAuth/useReactorToken';
-import usePageTitle from 'hooks/usePageTitle';
+import { getLiveSpecs_dataPlaneAuthReq } from 'src/api/liveSpecsExt';
+import { authenticatedRoutes } from 'src/app/routes';
+import Error from 'src/components/shared/Error';
+import useReactorToken from 'src/hooks/gatewayAuth/useReactorToken';
+import usePageTitle from 'src/hooks/usePageTitle';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-import { logRocketConsole } from 'services/shared';
-import { SHARD_LABELS } from 'utils/dataPlane-utils';
-import { getURL } from 'utils/misc-utils';
+import { logRocketConsole } from 'src/services/shared';
+import { SHARD_LABELS } from 'src/utils/dataPlane-utils';
+import { getURL } from 'src/utils/misc-utils';
 
 interface RedirectResult {
     targetUrl?: string;

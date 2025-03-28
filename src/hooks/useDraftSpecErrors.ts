@@ -1,7 +1,7 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
-import { DEFAULT_POLLING } from 'context/SWR';
-import { TABLES } from 'services/supabase';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DEFAULT_POLLING } from 'src/context/SWR';
+import { TABLES } from 'src/services/supabase';
 
 interface DraftErrorsQuery {
     scope: string;

@@ -1,4 +1,4 @@
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 
 export const QueuedTasksHydrator = ({ children }: BaseComponentProps) => {
     // eslint-disable-next-line react/jsx-no-useless-fragment

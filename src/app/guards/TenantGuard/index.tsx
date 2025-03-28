@@ -1,10 +1,10 @@
-import { useUserStore } from 'context/User/useUserContextStore';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useMemo } from 'react';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 import OnboardGuard from '../OnboardGuard';
 import SsoUserMessage from './SsoUserMessage';
 

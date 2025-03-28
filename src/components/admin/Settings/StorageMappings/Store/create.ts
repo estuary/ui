@@ -1,6 +1,6 @@
 import produce from 'immer';
-import { BASE_ERROR } from 'services/supabase';
-import { devtoolsOptions } from 'utils/store-utils';
+import { BASE_ERROR } from 'src/services/supabase';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { StoreApi, create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { StorageMappingState } from './types';

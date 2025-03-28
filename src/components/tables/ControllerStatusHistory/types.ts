@@ -1,5 +1,5 @@
-import { SortDirection } from 'types';
-import { PublicationInfo } from 'types/controlPlane';
+import { SortDirection } from 'src/types';
+import { PublicationInfo } from 'src/types/controlPlane';
 
 export interface RowProps {
     row: PublicationInfo;

@@ -8,8 +8,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import Title from 'components/tables/Title';
-import { useZustandStore } from 'context/Zustand/provider';
+import Title from 'src/components/tables/Title';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -23,20 +23,20 @@ import {
 } from 'react';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
-import { Pagination } from 'services/supabase';
+import { Pagination } from 'src/services/supabase';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SortDirection,
     TableColumns,
     TableIntlConfig,
     TableState,
     TableStatuses,
-} from 'types';
-import { getPagination, getStartingPage } from 'utils/table-utils';
+} from 'src/types';
+import { getPagination, getStartingPage } from 'src/utils/table-utils';
 import EntityTableBody from './TableBody';
 import EntityTableFooter from './TableFooter';
 import EntityTableHeader from './TableHeader';

@@ -1,37 +1,37 @@
-import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneOptions } from 'api/dataPlanes';
-import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import { getConnectors_detailsForm } from 'src/api/connectors';
+import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import {
     DataPlaneOption,
     Details,
     DetailsFormState,
-} from 'stores/DetailsForm/types';
+} from 'src/stores/DetailsForm/types';
 import {
     fetchErrors,
     filterErrors,
     generateCustomError,
     getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
-} from 'stores/extensions/CustomErrors';
+} from 'src/stores/extensions/CustomErrors';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
+} from 'src/stores/extensions/Hydration';
 import {
     ConnectorVersionEvaluationOptions,
     getConnectorMetadata,
-} from 'utils/connector-utils';
-import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix } from 'utils/env-utils';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { NAME_RE } from 'validation';
+} from 'src/utils/connector-utils';
+import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { NAME_RE } from 'src/validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 

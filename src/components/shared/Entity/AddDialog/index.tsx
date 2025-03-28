@@ -6,8 +6,8 @@ import {
     DialogTitle,
     Stack,
 } from '@mui/material';
-import BindingSelectorTable from 'components/collection/Selector/Table';
-import StepWrapper from 'components/transformation/create/Wrapper';
+import BindingSelectorTable from 'src/components/collection/Selector/Table';
+import StepWrapper from 'src/components/transformation/create/Wrapper';
 import DefaultCancelButton from './DefaultCancelButton';
 import { AddDialogProps } from './types';
 

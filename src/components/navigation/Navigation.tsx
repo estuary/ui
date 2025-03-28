@@ -11,9 +11,9 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { authenticatedRoutes } from 'app/routes';
-import ModeSwitch from 'components/navigation/ModeSwitch';
-import { paperBackground } from 'context/Theme';
+import { authenticatedRoutes } from 'src/app/routes';
+import ModeSwitch from 'src/components/navigation/ModeSwitch';
+import { paperBackground } from 'src/context/Theme';
 import {
     CloudDownload,
     CloudUpload,

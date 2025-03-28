@@ -43,7 +43,7 @@ import {
 import merge from 'lodash/merge';
 import Close from '@mui/icons-material/Close';
 import { useDebouncedChange } from '@jsonforms/material-renderers';
-import { CLEAR_BUTTON_ID_SUFFIX } from 'components/shared/pickers/shared';
+import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 
 interface MuiTextInputProps {
     muiInputProps?: InputProps['inputProps'];

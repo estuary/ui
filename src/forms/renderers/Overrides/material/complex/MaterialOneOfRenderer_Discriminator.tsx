@@ -54,11 +54,11 @@ import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'forms/renderers/shared';
+} from 'src/forms/renderers/shared';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
-import { withCustomJsonFormsOneOfDiscriminatorProps } from 'services/jsonforms/JsonFormsContext';
+import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
 import CombinatorProperties from './CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {

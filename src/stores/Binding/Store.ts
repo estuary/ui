@@ -1,10 +1,10 @@
 import {
     getLiveSpecsById_writesTo,
     getLiveSpecsByLiveSpecId,
-} from 'api/hydration';
-import { isBeforeTrialInterval } from 'components/materialization/shared';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { evaluateTrialCollections } from 'hooks/trialStorage/useTrialCollections';
+} from 'src/api/hydration';
+import { isBeforeTrialInterval } from 'src/components/materialization/shared';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { evaluateTrialCollections } from 'src/hooks/trialStorage/useTrialCollections';
 import produce from 'immer';
 import {
     difference,
@@ -21,20 +21,20 @@ import {
     createJSONFormDefaults,
     generateMaterializationResourceSpec,
     getResourceConfigPointers,
-} from 'services/ajv';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
-import { BindingStoreNames } from 'stores/names';
-import { getDereffedSchema, hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { parsePostgresInterval } from 'utils/time-utils';
+} from 'src/services/ajv';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
+import { BindingStoreNames } from 'src/stores/names';
+import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { parsePostgresInterval } from 'src/utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,
     getCollectionName,
-} from 'utils/workflow-utils';
-import { POSTGRES_INTERVAL_RE } from 'validation';
+} from 'src/utils/workflow-utils';
+import { POSTGRES_INTERVAL_RE } from 'src/validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {

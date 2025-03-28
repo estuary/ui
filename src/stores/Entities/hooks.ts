@@ -1,7 +1,7 @@
-import { singleCallSettings } from 'context/SWR';
+import { singleCallSettings } from 'src/context/SWR';
 import { useEffect } from 'react';
 import useSWR from 'swr';
-import { stripPathing } from 'utils/misc-utils';
+import { stripPathing } from 'src/utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useEntitiesStore } from './Store';
 

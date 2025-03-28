@@ -5,7 +5,7 @@ import {
     Tooltip,
     useTheme,
 } from '@mui/material';
-import { useColorMode } from 'context/Theme';
+import { useColorMode } from 'src/context/Theme';
 import { HalfMoon, SunLight } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 

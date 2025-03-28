@@ -1,7 +1,7 @@
 import { Divider, Typography } from '@mui/material';
-import ControllerStatusHistoryTable from 'components/tables/ControllerStatusHistory';
+import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
 import { useIntl } from 'react-intl';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import Overview from './Overview';
 import StatusResponseViewer from './StatusResponseViewer';
 

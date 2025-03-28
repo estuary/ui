@@ -1,8 +1,8 @@
 import produce from 'immer';
 import { intersection, omit } from 'lodash';
-import { TransformCreateStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
+import { TransformCreateStoreNames } from 'src/stores/names';
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import {

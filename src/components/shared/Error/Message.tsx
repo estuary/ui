@@ -4,8 +4,8 @@ import {
     logRocketConsole,
     logRocketEvent,
     retryAfterFailure,
-} from 'services/shared';
-import { CustomEvents } from 'services/types';
+} from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { ExternalLinkOptions } from '../ExternalLink';
 import Instructions from './Instructions';
 import { ErrorDetails } from './types';

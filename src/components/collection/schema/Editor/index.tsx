@@ -1,22 +1,22 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
-} from 'components/editor/Bindings/Store/hooks';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
-import KeyAutoComplete from 'components/schema/KeyAutoComplete';
-import PropertiesViewer from 'components/schema/PropertiesViewer';
-import { useEntityType } from 'context/EntityContext';
-import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
+} from 'src/components/editor/Bindings/Store/hooks';
+import { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
+import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
+import PropertiesViewer from 'src/components/schema/PropertiesViewer';
+import { useEntityType } from 'src/context/EntityContext';
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
-import { Schema } from 'types';
-import { getProperSchemaScope } from 'utils/schema-utils';
+import { Schema } from 'src/types';
+import { getProperSchemaScope } from 'src/utils/schema-utils';
 import CollectionSchemaEditorSkeleton from './Skeleton';
 
 export interface Props {

@@ -5,11 +5,11 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
+import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import CatalogList, {
     CatalogListContent,
-} from 'components/transformation/create/Config/catalog/CatalogList';
-import { defaultOutline } from 'context/Theme';
+} from 'src/components/transformation/create/Config/catalog/CatalogList';
+import { defaultOutline } from 'src/context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
@@ -18,8 +18,8 @@ import {
     useTransformationCreate_addMigrations,
     useTransformationCreate_migrations,
     useTransformationCreate_selectedAttribute,
-} from 'stores/TransformationCreate/hooks';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/TransformationCreate/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 import CollectionList from './CollectionList';
 
 function MigrationList() {

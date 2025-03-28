@@ -14,16 +14,16 @@ import {
     useTheme,
     Tooltip,
 } from '@mui/material';
-import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
+import { defaultOutline, jsonFormsGroupHeaders } from 'src/context/Theme';
 import { NavArrowDown, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { withCustomJsonFormsLayoutProps } from 'services/jsonforms/JsonFormsContext';
+import { withCustomJsonFormsLayoutProps } from 'src/services/jsonforms/JsonFormsContext';
 import {
     ADVANCED,
     CHILDREN_HAVE_VALUE,
     CONTAINS_REQUIRED_FIELDS,
     SHOW_INFO_SSH_ENDPOINT,
-} from 'services/jsonforms/shared';
+} from 'src/services/jsonforms/shared';
 import SshEndpointInfo from './Informational/SshEndpoint';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';

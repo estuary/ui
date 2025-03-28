@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
-import AlertBox from 'components/shared/AlertBox';
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import AlertBox from 'src/components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 import { useRefreshTokenStore } from '../Store/create';
 

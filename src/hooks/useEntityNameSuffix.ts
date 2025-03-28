@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { hasLength, stripPathing } from 'src/utils/misc-utils';
 
 // Used to add the image name to the end of an entity name
 //  We pass in the boolean as different entities need to control

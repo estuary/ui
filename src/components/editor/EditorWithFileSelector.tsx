@@ -1,8 +1,8 @@
-import EditorFileSelector from 'components/editor/FileSelector';
-import ListAndDetails from 'components/editor/ListAndDetails';
+import EditorFileSelector from 'src/components/editor/FileSelector';
+import ListAndDetails from 'src/components/editor/ListAndDetails';
 import MonacoEditor, {
     MonacoEditorProps,
-} from 'components/editor/MonacoEditor';
+} from 'src/components/editor/MonacoEditor';
 
 export interface Props extends MonacoEditorProps {
     height?: number;

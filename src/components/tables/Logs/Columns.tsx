@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import { OpsLogFlowDocument } from 'types';
+import { OpsLogFlowDocument } from 'src/types';
 import { RefCallback } from 'react';
 import LevelCell from '../cells/logs/LevelCell';
 import TimestampCell from '../cells/logs/TimestampCell';

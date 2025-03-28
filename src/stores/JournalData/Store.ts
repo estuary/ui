@@ -1,6 +1,6 @@
 import produce from 'immer';
-import { authorizeCollection, authorizeTask } from 'utils/dataPlane-utils';
-import { devtoolsOptions } from 'utils/store-utils';
+import { authorizeCollection, authorizeTask } from 'src/utils/dataPlane-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 

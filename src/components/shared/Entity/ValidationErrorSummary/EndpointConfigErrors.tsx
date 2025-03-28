@@ -1,12 +1,12 @@
-import SectionError from 'components/shared/Entity/ValidationErrorSummary/SectionError';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
+import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import {
     useEndpointConfigStore_customErrors,
     useEndpointConfigStore_endpointConfigErrors,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/EndpointConfig/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 function EndpointConfigErrors() {
     const isEdit = useEntityWorkflow_Editing();

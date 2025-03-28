@@ -1,9 +1,9 @@
-import { useJournalData } from 'hooks/journals/useJournalData';
+import { useJournalData } from 'src/hooks/journals/useJournalData';
 
-import { maxBytes } from 'components/tables/Logs/shared';
+import { maxBytes } from 'src/components/tables/Logs/shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import useJournalStore from 'stores/JournalData/Store';
-import { OpsLogFlowDocument } from 'types';
+import useJournalStore from 'src/stores/JournalData/Store';
+import { OpsLogFlowDocument } from 'src/types';
 import { LoadDocumentsOffsets, UseOpsLogsDocs } from './types';
 
 function useOpsLogs() {

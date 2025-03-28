@@ -1,5 +1,5 @@
 import { TableCell } from '@mui/material';
-import RelatedCollections from 'components/shared/Entity/RelatedCollections';
+import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 
 interface Props {
     values: string[];

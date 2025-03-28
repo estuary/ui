@@ -1,4 +1,4 @@
-import { authenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes } from 'src/app/routes';
 import { useNavigate } from 'react-router-dom';
 import { useMount } from 'react-use';
 

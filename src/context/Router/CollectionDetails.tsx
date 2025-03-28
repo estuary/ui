@@ -1,8 +1,8 @@
-import CollectionDetails from 'components/collection/Details';
+import CollectionDetails from 'src/components/collection/Details';
 import {
     DetailsPageContextProvider,
     Pages,
-} from 'components/shared/Entity/Details/context';
+} from 'src/components/shared/Entity/Details/context';
 
 interface Props {
     tab: Pages;

@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { useEntityType } from 'context/EntityContext';
+import AlertBox from 'src/components/shared/AlertBox';
+import { useEntityType } from 'src/context/EntityContext';
 import { useIntl } from 'react-intl';
 import { TrialOnlyPrefixAlertProps } from './types';
 

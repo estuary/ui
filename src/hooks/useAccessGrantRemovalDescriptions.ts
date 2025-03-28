@@ -1,12 +1,12 @@
-import { useUserStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
-} from 'stores/Entities/hooks';
-import { BaseGrant, Grant_UserExt } from 'types';
-import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'utils/misc-utils';
+} from 'src/stores/Entities/hooks';
+import { BaseGrant, Grant_UserExt } from 'src/types';
+import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'src/utils/misc-utils';
 import { useShallow } from 'zustand/react/shallow';
 
 type GrantScopeMessageIdSuffix =

@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import BindingsMultiEditor from 'components/editor/Bindings';
-import AlertBox from 'components/shared/AlertBox';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import BindingsMultiEditor from 'src/components/editor/Bindings';
+import AlertBox from 'src/components/shared/AlertBox';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useIntl } from 'react-intl';
-import { useBinding_hydrationErrorsExist } from 'stores/Binding/hooks';
+import { useBinding_hydrationErrorsExist } from 'src/stores/Binding/hooks';
 import SectionAlertIndicator from './SectionAlertIndicator';
 import { CollectionConfigProps } from './types';
 

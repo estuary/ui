@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { NamedSet, devtools } from 'zustand/middleware';
 import { SourceCaptureState } from './types';

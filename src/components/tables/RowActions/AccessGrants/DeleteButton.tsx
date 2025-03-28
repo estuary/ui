@@ -1,15 +1,15 @@
 import { Button, Dialog } from '@mui/material';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
-import useAccessGrantRemovalDescriptions from 'hooks/useAccessGrantRemovalDescriptions';
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import useAccessGrantRemovalDescriptions from 'src/hooks/useAccessGrantRemovalDescriptions';
 import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import ConfirmationAlert from '../Shared/ConfirmationAlert';
 import ConfirmationWithExplanation from '../Shared/ConfirmationWithExplination';
 import GrantWhatIsChanging from './GrantWhatIsChanging';

@@ -1,6 +1,6 @@
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
-import RadioMenuItem from 'components/shared/RadioMenuItem';
-import { useEntityType } from 'context/EntityContext';
+import RadioMenuItem from 'src/components/shared/RadioMenuItem';
+import { useEntityType } from 'src/context/EntityContext';
 import { SyntheticEvent, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Scopes } from './types';

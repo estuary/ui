@@ -1,14 +1,14 @@
 import {
     PublicationJobStatus,
     getPublicationByIdQuery,
-} from 'api/publications';
-import { republishPrefix } from 'api/storageMappings';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
+} from 'src/api/publications';
+import { republishPrefix } from 'src/api/storageMappings';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { useCallback } from 'react';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { handleFailure, handleSuccess, supabaseRetry } from 'services/supabase';
-import { CustomEvents } from 'services/types';
-import { hasLength } from 'utils/misc-utils';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { handleFailure, handleSuccess, supabaseRetry } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
+import { hasLength } from 'src/utils/misc-utils';
 import { useStorageMappingStore } from '../Store/create';
 
 export const REPUBLICATION_FAILURE_MESSAGE_ID =

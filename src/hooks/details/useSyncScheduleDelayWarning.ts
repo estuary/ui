@@ -1,9 +1,9 @@
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
+import { logRocketEvent } from 'src/services/shared';
 import { Duration } from 'luxon';
-import { CustomEvents } from 'services/types';
+import { CustomEvents } from 'src/services/types';
 
 export function useSyncScheduleDelayWarning() {
     const intl = useIntl();

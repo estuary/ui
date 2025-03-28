@@ -32,10 +32,10 @@ import {
 } from '@jsonforms/core';
 import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import PrefixedName from 'components/inputs/PrefixedName';
-import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import { PrefixedName_Change } from 'src/components/inputs/PrefixedName/types';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useCallback } from 'react';
 
 export const CATALOG_NAME_SCOPE = 'entityName';

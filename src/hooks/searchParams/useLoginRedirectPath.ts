@@ -1,5 +1,5 @@
-import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
-import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
+import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'src/app/routes';
+import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 

@@ -1,4 +1,4 @@
-import { CatalogListContent } from 'components/transformation/create/Config/catalog/CatalogList';
+import { CatalogListContent } from 'src/components/transformation/create/Config/catalog/CatalogList';
 import { AddDialogProps } from '../AddDialog/types';
 import { AddCollectionDialogCTAProps } from '../types';
 

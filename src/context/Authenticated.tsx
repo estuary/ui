@@ -1,7 +1,7 @@
-import AppGuards from 'app/guards';
-import { ZustandProvider } from 'context/Zustand/provider';
-import { BaseComponentProps } from 'types';
-import RequireAuth from 'context/Router/RequireAuth';
+import AppGuards from 'src/app/guards';
+import { ZustandProvider } from 'src/context/Zustand/provider';
+import { BaseComponentProps } from 'src/types';
+import RequireAuth from 'src/context/Router/RequireAuth';
 import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
 import QueryParamProvider from './QueryParam';
 import { UserInfoSummaryStoreProvider } from './UserInfoSummary';

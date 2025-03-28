@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { TerminalTag } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 

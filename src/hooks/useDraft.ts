@@ -1,7 +1,7 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
-import { useUserStore } from 'context/User/useUserContextStore';
-import { TABLES } from 'services/supabase';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { TABLES } from 'src/services/supabase';
 
 export interface DraftQuery {
     id: string;

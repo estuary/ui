@@ -1,7 +1,7 @@
 import { Divider } from '@mui/material';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
 import { useShallow } from 'zustand/react/shallow';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 

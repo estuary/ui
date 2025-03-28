@@ -1,6 +1,6 @@
 import { Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SearchField from 'components/shared/toolbar/SearchField';
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import SearchField from 'src/components/shared/toolbar/SearchField';
 import { debounce } from 'lodash';
 import {
     ChangeEvent,
@@ -10,8 +10,8 @@ import {
     useRef,
 } from 'react';
 import { useIntl } from 'react-intl';
-import { fireGtmEvent } from 'services/gtm';
-import { Entity } from 'types';
+import { fireGtmEvent } from 'src/services/gtm';
+import { Entity } from 'src/types';
 import useConstant from 'use-constant';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useBinding_sourceCaptureFlags } from 'stores/Binding/hooks';
-import { SourceCaptureDef } from 'types';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
+import { SourceCaptureDef } from 'src/types';
 import { useShallow } from 'zustand/react/shallow';
 import { useSourceCaptureStore } from './Store';
 

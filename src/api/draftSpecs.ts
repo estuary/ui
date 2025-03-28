@@ -1,6 +1,6 @@
 import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import pLimit from 'p-limit';
 import {
     RPCS,
@@ -11,9 +11,9 @@ import {
     insertSupabase,
     supabaseRetry,
     updateSupabase,
-} from 'services/supabase';
-import { Entity } from 'types';
-import { CHUNK_SIZE } from 'utils/misc-utils';
+} from 'src/services/supabase';
+import { Entity } from 'src/types';
+import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 interface CreateMatchData {
     draft_id: string | null;

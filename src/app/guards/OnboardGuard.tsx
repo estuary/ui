@@ -1,11 +1,11 @@
-import { LocalZustandProvider } from 'context/LocalZustand';
-import BetaOnboard from 'directives/BetaOnboard';
-import FullPageWrapper from 'app/FullPageWrapper';
-import { createOnboardingStore } from 'directives/Onboard/Store/create';
+import { LocalZustandProvider } from 'src/context/LocalZustand';
+import BetaOnboard from 'src/directives/BetaOnboard';
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import { createOnboardingStore } from 'src/directives/Onboard/Store/create';
 import { useMemo } from 'react';
-import { OnboardingStoreNames } from 'stores/names';
-import { BaseComponentProps } from 'types';
-import CustomerQuote from 'directives/Onboard/CustomerQuote';
+import { OnboardingStoreNames } from 'src/stores/names';
+import { BaseComponentProps } from 'src/types';
+import CustomerQuote from 'src/directives/Onboard/CustomerQuote';
 import { Grid } from '@mui/material';
 import useDirectiveGuard from './hooks';
 

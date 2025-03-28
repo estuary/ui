@@ -1,5 +1,5 @@
 import { Session } from '@supabase/supabase-js';
-import { BaseDataPlaneQuery } from 'api/dataPlanes';
+import { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 import {
     ProtocolLabelSelector,
@@ -7,11 +7,11 @@ import {
 } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import { Shard } from 'data-plane-gateway/types/shard_client';
 import { ResponseError } from 'data-plane-gateway/types/util';
-import { client } from 'services/client';
-import { logRocketConsole } from 'services/shared';
-import { DATA_PLANE_PREFIX, DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import { DataPlaneName, DataPlaneOption } from 'stores/DetailsForm/types';
-import { Endpoint } from 'stores/ShardDetail/types';
+import { client } from 'src/services/client';
+import { logRocketConsole } from 'src/services/shared';
+import { DATA_PLANE_PREFIX, DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { DataPlaneName, DataPlaneOption } from 'src/stores/DetailsForm/types';
+import { Endpoint } from 'src/stores/ShardDetail/types';
 import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,

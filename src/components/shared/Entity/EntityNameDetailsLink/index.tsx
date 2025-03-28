@@ -1,4 +1,4 @@
-import LinkWrapper from 'components/shared/LinkWrapper';
+import LinkWrapper from 'src/components/shared/LinkWrapper';
 import { Box, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { ViewDetailsProps } from './types';

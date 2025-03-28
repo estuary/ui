@@ -35,8 +35,8 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
-import { defaultOutline_hovered } from 'context/Theme';
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { defaultOutline_hovered } from 'src/context/Theme';
 
 import React, { ReactNode, useMemo } from 'react';
 import { useIntl } from 'react-intl';

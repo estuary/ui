@@ -1,13 +1,13 @@
 import { Stack, Typography } from '@mui/material';
-import SchemaEditToggle from 'components/editor/Bindings/SchemaEdit/Toggle';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import DerivationSchemaEditor from 'components/transformation/create/Schema/Editor';
-import DerivationSchemaHeader from 'components/transformation/create/Schema/Header';
-import SQLDataPreviewButton from 'components/transformation/create/Schema/SQLDataPreview/Button';
+import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import DerivationSchemaEditor from 'src/components/transformation/create/Schema/Editor';
+import DerivationSchemaHeader from 'src/components/transformation/create/Schema/Header';
+import SQLDataPreviewButton from 'src/components/transformation/create/Schema/SQLDataPreview/Button';
 import { FormattedMessage } from 'react-intl';
-import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_catalogName } from 'src/stores/TransformationCreate/hooks';
 
 function DerivationSchema() {
     // Draft Editor Store

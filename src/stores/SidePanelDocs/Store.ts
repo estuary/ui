@@ -1,6 +1,6 @@
 import produce from 'immer';
-import { getDocsSettings } from 'utils/env-utils';
-import { devtoolsOptions } from 'utils/store-utils';
+import { getDocsSettings } from 'src/utils/env-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 import { GlobalStoreNames } from '../names';

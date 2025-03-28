@@ -1,15 +1,15 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
-import ChipListCell from 'components/tables/cells/ChipList';
-import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
-import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
+import { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import ChipListCell from 'src/components/tables/cells/ChipList';
+import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
+import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import {
     doubleElevationHoverBackground,
     getStickyTableCell,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import { orderBy } from 'lodash';
-import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
-import { basicSort_string } from 'utils/misc-utils';
+import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import { basicSort_string } from 'src/utils/misc-utils';
 import {
     constraintTypeSort,
     displayOptionalColumn,

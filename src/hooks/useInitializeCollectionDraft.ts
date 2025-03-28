@@ -1,23 +1,23 @@
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, getDraftSpecsByCatalogName } from 'api/draftSpecs';
+import { createEntityDraft } from 'src/api/drafts';
+import { createDraftSpec, getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
     getLiveSpecsByCatalogName,
     LiveSpecsExtQuery_ByCatalogName,
-} from 'api/liveSpecsExt';
-import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
+} from 'src/api/liveSpecsExt';
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_resetState,
     useBindingsEditorStore_setCollectionData,
     useBindingsEditorStore_setCollectionInitializationAlert,
-} from 'components/editor/Bindings/Store/hooks';
+} from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
+} from 'src/components/editor/Store/hooks';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 const specType = 'collection';
 

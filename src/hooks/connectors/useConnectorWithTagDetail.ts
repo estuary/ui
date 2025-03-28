@@ -1,12 +1,12 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { useMemo } from 'react';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     TABLES,
-} from 'services/supabase';
-import { requiredConnectorColumnsExist } from 'utils/connector-utils';
+} from 'src/services/supabase';
+import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
 import {
     ConnectorWithTagDetailQuery,
     CONNECTOR_WITH_TAG_QUERY,

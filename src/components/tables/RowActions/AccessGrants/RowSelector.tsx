@@ -1,13 +1,13 @@
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
-import { EVERYTHING } from 'components/collection/Selector/Table/shared';
-import { useZustandStore } from 'context/Zustand/provider';
+import { EVERYTHING } from 'src/components/collection/Selector/Table/shared';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import { ReactNode, useState } from 'react';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
 import DeleteButton from './DeleteButton';
 
 interface Props {

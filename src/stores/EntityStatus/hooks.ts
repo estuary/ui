@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import {
     isCaptureControllerStatus,
     isEntityControllerStatus,
-} from 'utils/entityStatus-utils';
+} from 'src/utils/entityStatus-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { useEntityStatusStore } from './Store';
 

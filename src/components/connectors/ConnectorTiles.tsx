@@ -6,24 +6,24 @@ import {
     useTheme,
 } from '@mui/material';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getConnectors } from 'api/connectors';
-import ConnectorCard from 'components/connectors/card';
-import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { semiTransparentBackground } from 'context/Theme';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import { getConnectors } from 'src/api/connectors';
+import ConnectorCard from 'src/components/connectors/card';
+import ConnectorToolbar from 'src/components/connectors/ConnectorToolbar';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
+import { semiTransparentBackground } from 'src/context/Theme';
+import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 
 import {
     EntityWithCreateWorkflow,
     TableIntlConfig,
     TableState,
     TableStatuses,
-} from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
+} from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { getEmptyTableHeader, getEmptyTableMessage } from 'src/utils/table-utils';
 import ConnectorCardDetails from './card/Details';
 import ConnectorLogo from './card/Logo';
 import ConnectorCardTitle from './card/Title';

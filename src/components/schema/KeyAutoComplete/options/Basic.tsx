@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import { truncateTextSx } from 'context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 
 interface Props {
     pointer: string;

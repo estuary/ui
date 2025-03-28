@@ -1,13 +1,13 @@
 import { TableCell } from '@mui/material';
-import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { useMemo } from 'react';
 import {
     useBinding_recommendFields,
     useBinding_selections,
-} from 'stores/Binding/hooks';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { isExcludeOnlyField, isRequireOnlyField } from 'utils/workflow-utils';
+} from 'src/stores/Binding/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { isExcludeOnlyField, isRequireOnlyField } from 'src/utils/workflow-utils';
 import FieldActionButton from './FieldActionButton';
 import { TOGGLE_BUTTON_CLASS } from './shared';
 import { FieldActionsProps } from './types';

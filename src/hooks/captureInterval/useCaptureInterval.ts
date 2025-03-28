@@ -1,21 +1,21 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
+} from 'src/components/editor/Store/hooks';
 import { debounce, omit } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { formatCaptureInterval } from 'utils/time-utils';
-import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
-import { CAPTURE_INTERVAL_RE } from 'validation';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { Schema } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { formatCaptureInterval } from 'src/utils/time-utils';
+import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
+import { CAPTURE_INTERVAL_RE } from 'src/validation';
 
 export default function useCaptureInterval() {
     // Binding Store

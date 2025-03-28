@@ -7,8 +7,8 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import AcceptDemoInvitation from 'components/home/hero/AcceptDemoInvitation';
-import Logo from 'components/navigation/Logo';
+import AcceptDemoInvitation from 'src/components/home/hero/AcceptDemoInvitation';
+import Logo from 'src/components/navigation/Logo';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 

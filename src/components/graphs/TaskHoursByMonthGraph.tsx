@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor } from 'context/Theme';
+import { defaultOutlineColor } from 'src/context/Theme';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -17,13 +17,13 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing/Store';
 import useConstant from 'use-constant';
 import {
     CARD_AREA_HEIGHT,
     SeriesConfig,
     stripTimeFromDate,
-} from 'utils/billing-utils';
+} from 'src/utils/billing-utils';
 import { getTooltipItem, getTooltipTitle } from './tooltips';
 import useTooltipConfig from './useTooltipConfig';
 

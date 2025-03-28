@@ -4,7 +4,7 @@ import {
     useOnboardingStore_nameMissing,
     useOnboardingStore_requestedTenant,
     useOnboardingStore_setRequestedTenant,
-} from 'directives/Onboard/Store/hooks';
+} from 'src/directives/Onboard/Store/hooks';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {

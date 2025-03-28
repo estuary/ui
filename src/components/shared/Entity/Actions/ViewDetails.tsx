@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { entityHeaderButtonSx } from 'context/Theme';
+import { entityHeaderButtonSx } from 'src/context/Theme';
 
 import { FormattedMessage } from 'react-intl';
 

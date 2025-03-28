@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import ClearInput from 'components/shared/Input/Clear';
+import ClearInput from 'src/components/shared/Input/Clear';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 

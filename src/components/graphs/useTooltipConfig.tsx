@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor, paperBackground } from 'context/Theme';
+import { defaultOutlineColor, paperBackground } from 'src/context/Theme';
 import { EChartsOption } from 'echarts';
 import { useMemo } from 'react';
 

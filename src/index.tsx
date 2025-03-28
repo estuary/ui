@@ -1,6 +1,6 @@
-import 'index.css';
-import 'polyfills/transformStream';
-import ApplicationRouter from 'context/Router';
+import 'src/index.css';
+import 'src/polyfills/transformStream';
+import ApplicationRouter from 'src/context/Router';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { loader } from '@monaco-editor/react';

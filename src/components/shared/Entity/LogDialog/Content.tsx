@@ -1,5 +1,5 @@
-import Logs from 'components/logs';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import Logs from 'src/components/logs';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import EntityWarnings from '../Warnings';
 import { LogDialogContentProps } from './types';
 

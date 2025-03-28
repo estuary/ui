@@ -1,12 +1,12 @@
 import { Box, Divider, Stack } from '@mui/material';
-import { useEditorStore_discoveredDraftId } from 'components/editor/Store/hooks';
+import { useEditorStore_discoveredDraftId } from 'src/components/editor/Store/hooks';
 import DraftErrors, {
     DraftErrorProps,
-} from 'components/shared/Entity/Error/DraftErrors';
-import ErrorLogs, { ErrorLogsProps } from 'components/shared/Entity/Error/Logs';
-import HeaderSummary from 'components/shared/Entity/HeaderSummary';
-import Error, { ErrorProps } from 'components/shared/Error';
-import useScrollIntoView from 'hooks/useScrollIntoView';
+} from 'src/components/shared/Entity/Error/DraftErrors';
+import ErrorLogs, { ErrorLogsProps } from 'src/components/shared/Entity/Error/Logs';
+import HeaderSummary from 'src/components/shared/Entity/HeaderSummary';
+import Error, { ErrorProps } from 'src/components/shared/Error';
+import useScrollIntoView from 'src/hooks/useScrollIntoView';
 import { useEffect, useRef } from 'react';
 
 interface Props {

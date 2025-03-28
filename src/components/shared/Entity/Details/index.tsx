@@ -1,20 +1,20 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
-import { createEditorStore } from 'components/editor/Store/create';
-import LiveSpecsHydrator from 'components/editor/Store/LiveSpecsHydrator';
-import EditButton from 'components/shared/Entity/Details/EditButton';
-import MaterializeButton from 'components/shared/Entity/Details/MaterializeButton';
-import RenderTab from 'components/shared/Entity/Details/RenderTab';
-import DetailTabs from 'components/shared/Entity/Details/Tabs';
-import { LocalZustandProvider } from 'context/LocalZustand';
-import { truncateTextSx } from 'context/Theme';
+import { createEditorStore } from 'src/components/editor/Store/create';
+import LiveSpecsHydrator from 'src/components/editor/Store/LiveSpecsHydrator';
+import EditButton from 'src/components/shared/Entity/Details/EditButton';
+import MaterializeButton from 'src/components/shared/Entity/Details/MaterializeButton';
+import RenderTab from 'src/components/shared/Entity/Details/RenderTab';
+import DetailTabs from 'src/components/shared/Entity/Details/Tabs';
+import { LocalZustandProvider } from 'src/context/LocalZustand';
+import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { useMemo } from 'react';
 import { useUnmount } from 'react-use';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { EditorStoreNames } from 'stores/names';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { EditorStoreNames } from 'src/stores/names';
 import ShardHydrator from '../Shard/Hydrator';
 
 // TODO: Hydrate the journal store in a single location that satisfies

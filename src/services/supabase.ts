@@ -3,10 +3,10 @@ import {
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { forEach } from 'lodash';
 import retry from 'retry';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
+import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'src/types';
 import { logRocketEvent, retryAfterFailure } from './shared';
 import { CustomEvents } from './types';
 

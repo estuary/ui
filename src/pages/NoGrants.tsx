@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
-import FullPageWrapper from 'app/FullPageWrapper';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { FormattedMessage } from 'react-intl';
 
 const NoGrants = () => {

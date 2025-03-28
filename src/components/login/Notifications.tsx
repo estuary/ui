@@ -1,5 +1,5 @@
 import { Snackbar } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
+import AlertBox from 'src/components/shared/AlertBox';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

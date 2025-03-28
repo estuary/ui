@@ -1,13 +1,13 @@
 import { Provider } from '@supabase/supabase-js';
-import { unauthenticatedRoutes } from 'app/routes';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
+import { unauthenticatedRoutes } from 'src/app/routes';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams } from 'src/utils/misc-utils';
 import { useCallback, useMemo } from 'react';
-import { SupportedProvider } from 'types/authProviders';
-import { supabaseClient } from 'context/GlobalProviders';
+import { SupportedProvider } from 'src/types/authProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;

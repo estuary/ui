@@ -1,12 +1,12 @@
 import { TableCell, TableRow } from '@mui/material';
-import TimeStamp from 'components/tables/cells/TimeStamp';
-import UserName from 'components/tables/cells/UserName';
-import { useZustandStore } from 'context/Zustand/provider';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import UserName from 'src/components/tables/cells/UserName';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
 import RowSelect from '../cells/RowSelect';
 
 interface RowProps {

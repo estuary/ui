@@ -1,6 +1,6 @@
 import { Box, Button, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import SaveButton from './SaveButton';
 import { MenuActionProps } from './types';
 

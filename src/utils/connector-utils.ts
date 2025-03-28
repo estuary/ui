@@ -4,17 +4,17 @@
 //  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
 
 import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
-import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
-import { DraftSpecsExtQuery_ByDraftId } from 'api/draftSpecs';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
+import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'src/api/connectors';
+import { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
+import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import {
     ConnectorMetadata,
     DekafConnectorMetadata,
     Details,
     StandardConnectorMetadata,
-} from 'stores/DetailsForm/types';
-import { DekafConfig } from 'types';
+} from 'src/stores/DetailsForm/types';
+import { DekafConfig } from 'src/types';
 import { ConnectorConfig } from '../../deps/flow/flow';
 import { hasLength } from './misc-utils';
 

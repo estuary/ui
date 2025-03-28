@@ -12,14 +12,14 @@ import {
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
-} from 'api/alerts';
-import useSettingIntervalOptions from 'components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
-import { ErrorDetails } from 'components/shared/Error/types';
-import { cardHeaderSx, defaultOutline } from 'context/Theme';
-import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
+} from 'src/api/alerts';
+import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
+import { ErrorDetails } from 'src/components/shared/Error/types';
+import { cardHeaderSx, defaultOutline } from 'src/context/Theme';
+import useInitializeTaskNotification from 'src/hooks/notifications/useInitializeTaskNotification';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import {
     Dispatch,
     SetStateAction,
@@ -28,7 +28,7 @@ import {
     useState,
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { CallSupabaseResponse } from 'services/supabase';
+import { CallSupabaseResponse } from 'src/services/supabase';
 
 interface Props {
     errored: boolean;

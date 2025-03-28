@@ -1,13 +1,13 @@
 import { Box, TableCell, TableRow, useTheme } from '@mui/material';
-import { BaseDataPlaneQuery } from 'api/dataPlanes';
-import SingleLineCode from 'components/content/SingleLineCode';
-import CopyCidrBlocks from 'components/shared/CopyCidrBlocks';
-import DataPlane from 'components/shared/Entity/DataPlane';
-import { getEntityTableRowSx } from 'context/Theme';
+import { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
+import DataPlane from 'src/components/shared/Entity/DataPlane';
+import { getEntityTableRowSx } from 'src/context/Theme';
 import {
     formatDataPlaneName,
     generateDataPlaneOption,
-} from 'utils/dataPlane-utils';
+} from 'src/utils/dataPlane-utils';
 
 interface RowsProps {
     data: BaseDataPlaneQuery[];

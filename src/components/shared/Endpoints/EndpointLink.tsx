@@ -1,7 +1,7 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { formatHttpUrl, isHttp } from 'utils/dataPlane-utils';
+import { formatHttpUrl, isHttp } from 'src/utils/dataPlane-utils';
 import ExternalLink from '../ExternalLink';
 import { EndpointLinkProps } from './types';
 

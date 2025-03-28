@@ -1,14 +1,14 @@
 import { ButtonGroup, Grid, Stack } from '@mui/material';
-import DeleteButton from 'components/tables/RowActions/Delete/Button';
-import DisableEnableButton from 'components/tables/RowActions/DisableEnable/Button';
-import Materialize from 'components/tables/RowActions/Materialize';
-import { useZustandStore } from 'context/Zustand/provider';
+import DeleteButton from 'src/components/tables/RowActions/Delete/Button';
+import DisableEnableButton from 'src/components/tables/RowActions/DisableEnable/Button';
+import Materialize from 'src/components/tables/RowActions/Materialize';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
 import RowSelectorCheckBox from './RowSelectorCheckBox';
 import Transform from './Transform';
 import { RowSelectorProps } from './types';

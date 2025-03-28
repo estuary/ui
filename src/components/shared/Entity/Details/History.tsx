@@ -11,24 +11,24 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import ListAndDetails from 'components/editor/ListAndDetails';
-import UnderDev from 'components/shared/UnderDev';
+import ListAndDetails from 'src/components/editor/ListAndDetails';
+import UnderDev from 'src/components/shared/UnderDev';
 import {
     editorToolBarSx,
     monacoEditorComponentBackground,
-} from 'context/Theme';
+} from 'src/context/Theme';
 import { format } from 'date-fns';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import usePublicationSpecsExt_History from 'hooks/usePublicationSpecsExt';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import usePublicationSpecsExt_History from 'src/hooks/usePublicationSpecsExt';
 import { findIndex } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
-import { stringifyJSON } from 'services/stringify';
-import { getEditorTotalHeight } from 'utils/editor-utils';
-import { hasLength } from 'utils/misc-utils';
-import Error from 'components/shared/Error';
-import { BASE_ERROR } from 'services/supabase';
+import { stringifyJSON } from 'src/services/stringify';
+import { getEditorTotalHeight } from 'src/utils/editor-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import Error from 'src/components/shared/Error';
+import { BASE_ERROR } from 'src/services/supabase';
 import { useIntl } from 'react-intl';
 
 const HEIGHT = 400;

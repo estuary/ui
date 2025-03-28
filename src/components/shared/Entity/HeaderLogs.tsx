@@ -4,8 +4,8 @@ import {
     useFormStateStore_messagePrefix,
     useFormStateStore_showLogs,
     useFormStateStore_status,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
 import LogDialog from './LogDialog';
 import LogDialogActions from './LogDialogActions';

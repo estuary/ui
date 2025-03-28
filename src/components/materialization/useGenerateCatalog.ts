@@ -1,23 +1,23 @@
-import { createEntityDraft } from 'api/drafts';
+import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
     DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByDraftId,
     modifyDraftSpec,
-} from 'api/draftSpecs';
+} from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setCatalogName,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
+} from 'src/components/editor/Store/hooks';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import {
     useBinding_bindings,
     useBinding_fullSourceConfigs,
@@ -27,9 +27,9 @@ import {
     useBinding_resourceConfigErrorsExist,
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
@@ -38,17 +38,17 @@ import {
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
-import { DekafConfig } from 'types';
-import { isDekafConnector } from 'utils/connector-utils';
-import { encryptEndpointConfig } from 'utils/sops-utils';
-import { generateTaskSpec } from 'utils/workflow-utils';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
+import { DekafConfig } from 'src/types';
+import { isDekafConnector } from 'src/utils/connector-utils';
+import { encryptEndpointConfig } from 'src/utils/sops-utils';
+import { generateTaskSpec } from 'src/utils/workflow-utils';
 import { ConnectorConfig } from '../../../deps/flow/flow';
 
 const ENTITY_TYPE = 'materialization';

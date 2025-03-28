@@ -41,11 +41,11 @@ import {
 } from '@jsonforms/core';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { Annotations, CustomTypes, Formats, Options } from 'src/types/jsonforms';
 import JsonRefs from 'json-refs';
-import { ISO_8601_DURATION_PATTERN } from 'validation';
+import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 import {
     ADVANCED,
     allowedNullableTypes,

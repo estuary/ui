@@ -1,5 +1,5 @@
 import { Box, ListSubheader, Typography } from '@mui/material';
-import { truncateTextSx } from 'context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 import { Check } from 'iconoir-react';
 import { ListChildComponentProps } from 'react-window';
 

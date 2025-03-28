@@ -1,6 +1,6 @@
-import { useZustandStore } from 'context/Zustand/provider';
-import { SchemaEvolutionState } from 'stores/SchemaEvolution/types';
-import { SchemaEvolutionStoreNames } from 'stores/names';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SchemaEvolutionState } from 'src/stores/SchemaEvolution/types';
+import { SchemaEvolutionStoreNames } from 'src/stores/names';
 
 export const useSchemaEvolution_autoDiscover = () => {
     return useZustandStore<

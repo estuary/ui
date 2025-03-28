@@ -1,8 +1,8 @@
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
 import { useMemo } from 'react';
-import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
-import { basicSort_string } from 'utils/misc-utils';
+import { InferSchemaResponseProperty, Schema, SortDirection } from 'src/types';
+import { basicSort_string } from 'src/utils/misc-utils';
 import ChipListCell from '../cells/ChipList';
 
 interface RowProps {

@@ -1,4 +1,4 @@
-import { useEntityType } from 'context/EntityContext';
+import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

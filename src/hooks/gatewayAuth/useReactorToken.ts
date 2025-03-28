@@ -1,9 +1,9 @@
-import { useUserStore } from 'context/User/useUserContextStore';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { decodeJwt, JWTPayload } from 'jose';
-import { logRocketConsole } from 'services/shared';
+import { logRocketConsole } from 'src/services/shared';
 import useSWR from 'swr';
-import { authorizeTask, formatEndpointAddress } from 'utils/dataPlane-utils';
-import { getURL, hasLength } from 'utils/misc-utils';
+import { authorizeTask, formatEndpointAddress } from 'src/utils/dataPlane-utils';
+import { getURL, hasLength } from 'src/utils/misc-utils';
 
 interface Token {
     url: URL | null;

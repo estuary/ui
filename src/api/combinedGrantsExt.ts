@@ -1,4 +1,4 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
     parsePagedFetchAllResponse,
@@ -7,9 +7,9 @@ import {
     SortingProps,
     TABLES,
     DEFAULT_PAGING_SIZE,
-} from 'services/supabase';
-import { AuthRoles, Capability, Grant_UserExt } from 'types';
-import { getCountSettings } from 'utils/table-utils';
+} from 'src/services/supabase';
+import { AuthRoles, Capability, Grant_UserExt } from 'src/types';
+import { getCountSettings } from 'src/utils/table-utils';
 
 // Used to display prefix grants in admin page
 const getGrants = (

@@ -1,5 +1,5 @@
 import { Button, ButtonTypeMap, SxProps } from '@mui/material';
-import { linkButtonSx } from 'context/Theme';
+import { linkButtonSx } from 'src/context/Theme';
 import { OpenNewWindow } from 'iconoir-react';
 import { ReactNode } from 'react';
 

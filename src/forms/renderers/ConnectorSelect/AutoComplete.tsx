@@ -31,8 +31,8 @@ import {
     AutocompleteRenderOptionState,
     FilterOptionsState,
 } from '@mui/material';
-import ConnectorIcon from 'components/connectors/ConnectorIcon';
-import ConnectorOption from 'forms/renderers/ConnectorSelect/Option';
+import ConnectorIcon from 'src/components/connectors/ConnectorIcon';
+import ConnectorOption from 'src/forms/renderers/ConnectorSelect/Option';
 import React, { ReactNode, useMemo } from 'react';
 import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 

@@ -1,9 +1,9 @@
 import { JsonForms } from '@jsonforms/react';
 import { Stack, StyledEngineProvider } from '@mui/material';
-import useConfigurationSchema from 'components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import { jsonFormsPadding } from 'context/Theme';
-import { jsonFormsDefaults } from 'services/jsonforms/defaults';
+import useConfigurationSchema from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import { jsonFormsPadding } from 'src/context/Theme';
+import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 
 function StorageMappingForm() {
     const formValue = useStorageMappingStore((state) => state.formValue);

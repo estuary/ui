@@ -6,12 +6,12 @@ import {
     ListItem,
     ListItemText,
 } from '@mui/material';
-import { useZustandStore } from 'context/Zustand/provider';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 import { NestedListItemProps } from './types';
 
 function NestedListItem({

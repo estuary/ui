@@ -1,4 +1,4 @@
-import EntityCreateSave from 'components/shared/Entity/Actions/Save';
+import EntityCreateSave from 'src/components/shared/Entity/Actions/Save';
 import useEntitySaveHelpers from '../hooks/useEntitySaveHelpers';
 import { EntitySaveButtonProps } from './types';
 

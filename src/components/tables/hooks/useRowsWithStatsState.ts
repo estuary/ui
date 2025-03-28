@@ -2,16 +2,16 @@ import {
     CaptureQueryWithStats,
     CollectionQueryWithStats,
     MaterializationQueryWithStats,
-} from 'api/liveSpecsExt';
-import { useZustandStore } from 'context/Zustand/provider';
-import useShardHydration from 'hooks/shards/useShardHydration';
+} from 'src/api/liveSpecsExt';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import useShardHydration from 'src/hooks/shards/useShardHydration';
 import { useEffect, useMemo } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
+import { SelectTableStoreNames } from 'src/stores/names';
 
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/stores/Tables/Store';
 
 type Data =
     | CaptureQueryWithStats[]

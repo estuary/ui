@@ -1,6 +1,6 @@
 import { IconButton } from '@mui/material';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { useEntityWorkflow } from 'context/Workflow';
+import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { Xmark } from 'iconoir-react';
 import React, { useState } from 'react';
 import {
@@ -8,10 +8,10 @@ import {
     useBinding_removeBinding,
     useBinding_removeFullSourceConfig,
     useBinding_setRestrictedDiscoveredCollections,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { BindingMetadata } from 'stores/Binding/types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { BindingMetadata } from 'src/stores/Binding/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     binding: BindingMetadata;

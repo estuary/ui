@@ -1,7 +1,7 @@
-import type { Invoice } from 'api/billing';
+import type { Invoice } from 'src/api/billing';
 import { format, parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
-import { CatalogStats_Billing, Entity, Schema } from 'types';
+import { CatalogStats_Billing, Entity, Schema } from 'src/types';
 
 export const TOTAL_CARD_HEIGHT = 300;
 

@@ -1,11 +1,11 @@
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
-import { DataByHourRange, DataGrains } from 'components/graphs/types';
-import { cardHeaderSx, linkButtonSx } from 'context/Theme';
+import { DataByHourRange, DataGrains } from 'src/components/graphs/types';
+import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
 import { Calendar } from 'iconoir-react';
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
-import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
+import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 // TODO (details range) - we should probably not add many more predefined ranges and
 //  start allowing a user to enter their own range manually.

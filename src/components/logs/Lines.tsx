@@ -1,7 +1,7 @@
 import { List, Paper } from '@mui/material';
 import { useLayoutEffect, useRef } from 'react';
 import useStayScrolled from 'react-stay-scrolled';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { useLogsContext } from './Context';
 import LogLine from './Line';
 import Spinner from './Spinner';

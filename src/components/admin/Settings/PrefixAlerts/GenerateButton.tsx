@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
-import AlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
+import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
+import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 import { FormattedMessage } from 'react-intl';
 
 function AlertGenerateButton() {

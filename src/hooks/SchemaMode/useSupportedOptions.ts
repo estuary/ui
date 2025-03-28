@@ -1,5 +1,5 @@
-import { choices } from 'components/editor/Bindings/SchemaMode/shared';
-import { AutoCompleteOption } from 'components/editor/Bindings/SchemaMode/types';
+import { choices } from 'src/components/editor/Bindings/SchemaMode/shared';
+import { AutoCompleteOption } from 'src/components/editor/Bindings/SchemaMode/types';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

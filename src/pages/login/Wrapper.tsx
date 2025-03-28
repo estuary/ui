@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material';
-import { unauthenticatedRoutes } from 'app/routes';
-import FullPageDialog from 'components/fullPage/Dialog';
-import useLoginBodyClass from 'hooks/login/useLoginBodyClass';
+import { unauthenticatedRoutes } from 'src/app/routes';
+import FullPageDialog from 'src/components/fullPage/Dialog';
+import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import { NavArrowLeft } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import HeaderMessage from './HeaderMessage';

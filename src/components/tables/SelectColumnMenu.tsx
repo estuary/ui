@@ -7,14 +7,14 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import IconMenu from 'components/menus/IconMenu';
-import { useDisplayTableColumns } from 'context/TableSettings';
-import { disabledButtonText_primary } from 'context/Theme';
+import IconMenu from 'src/components/menus/IconMenu';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { disabledButtonText_primary } from 'src/context/Theme';
 import { ViewColumns3 } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { TablePrefixes } from 'stores/Tables/hooks';
-import { TableColumns } from 'types';
-import { WithRequiredNonNullProperty } from 'types/utils';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
+import { TableColumns } from 'src/types';
+import { WithRequiredNonNullProperty } from 'src/types/utils';
 
 interface Props {
     columns: WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'>[];

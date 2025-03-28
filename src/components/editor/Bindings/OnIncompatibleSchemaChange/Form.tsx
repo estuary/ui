@@ -1,22 +1,22 @@
-import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'components/editor/Store/hooks';
-import IncompatibleSchemaChangeForm from 'components/incompatibleSchemaChange/Form';
+import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'src/components/editor/Store/hooks';
+import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
 import {
     AutoCompleteOption,
     OnIncompatibleSchemaChangeProps,
-} from 'components/incompatibleSchemaChange/types';
-import useBindingIncompatibleSchemaSetting from 'hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
+} from 'src/components/incompatibleSchemaChange/types';
+import useBindingIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useBindingIncompatibleSchemaSetting';
 import { useSnackbar } from 'notistack';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { BindingMetadata } from 'types';
-import { snackbarSettings } from 'utils/notification-utils';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { BindingMetadata } from 'src/types';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
     const intl = useIntl();

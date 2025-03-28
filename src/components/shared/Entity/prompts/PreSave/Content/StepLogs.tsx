@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useShallow } from 'zustand/react/shallow';
-import Logs from 'components/logs';
+import Logs from 'src/components/logs';
 import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
 
 function StepLogs() {

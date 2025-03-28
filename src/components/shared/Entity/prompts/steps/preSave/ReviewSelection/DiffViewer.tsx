@@ -1,11 +1,11 @@
 import { DiffEditor } from '@monaco-editor/react';
 import { useTheme } from '@mui/material';
-import { monacoEditorComponentBackground } from 'context/Theme';
+import { monacoEditorComponentBackground } from 'src/context/Theme';
 
-import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { stringifyJSON } from 'services/stringify';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_liveSpec } from 'stores/FormState/hooks';
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
+import { stringifyJSON } from 'src/services/stringify';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useFormStateStore_liveSpec } from 'src/stores/FormState/hooks';
 
 const HEIGHT = 400;
 

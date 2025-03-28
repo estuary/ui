@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
+import AlertBox from 'src/components/shared/AlertBox';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     journalData: any;

@@ -1,13 +1,13 @@
-import { useUserStore } from 'context/User/useUserContextStore';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useEntitiesStore_capabilities_readable } from 'stores/Entities/hooks';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
 import useSWR, { useSWRConfig } from 'swr';
 import {
     authorizeTask,
     TaskAuthorizationResponse,
-} from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import {
     getAuthorizationConfig,
     setAuthorizationConfig,

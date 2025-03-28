@@ -7,7 +7,7 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { Box, Button, Stack } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { DropzoneDialog } from 'react-mui-dropzone';
-import { Options } from 'types/jsonforms';
+import { Options } from 'src/types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(
     10,

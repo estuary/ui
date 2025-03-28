@@ -1,14 +1,14 @@
-import { createRefreshToken } from 'api/tokens';
-import { useZustandStore } from 'context/Zustand/provider';
+import { createRefreshToken } from 'src/api/tokens';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { hasLength } from 'src/utils/misc-utils';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useRefreshTokenStore } from '../Store/create';
 
 const TOKEN_VALIDITY = '1 year';

@@ -1,11 +1,11 @@
 import { Typography, useTheme } from '@mui/material';
-import { useEditorStore_invalidEditors } from 'components/editor/Store/hooks';
+import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import { WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_emptySQLExists,
     useTransformationCreate_shuffleKeyErrorsExist,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 function DerivationCatalogHeader() {
     const theme = useTheme();

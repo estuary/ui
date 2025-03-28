@@ -1,11 +1,11 @@
 import { Box } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import { useEntityType } from 'context/EntityContext';
+import { useEntityType } from 'src/context/EntityContext';
 
-import AlertBox from 'components/shared/AlertBox';
+import AlertBox from 'src/components/shared/AlertBox';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function ShardsDisableWarning() {
     const forcedToEnable = useGlobalSearchParams<number>(

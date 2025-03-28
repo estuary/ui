@@ -1,14 +1,14 @@
 import { Tooltip } from '@mui/material';
-import StatusIndicatorAndLabel from 'components/shared/Entity/Shard/StatusIndicatorAndLabel';
+import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
 import { useMemo } from 'react';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
-} from 'stores/ShardDetail/hooks';
+} from 'src/stores/ShardDetail/hooks';
 import {
     ShardEntityTypes,
     ShardStatusMessageIds,
-} from 'stores/ShardDetail/types';
+} from 'src/stores/ShardDetail/types';
 
 interface Props {
     name: string;

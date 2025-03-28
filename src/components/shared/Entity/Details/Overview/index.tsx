@@ -1,16 +1,16 @@
 import { Grid } from '@mui/material';
-import { DataPreview } from 'components/collection/DataPreview';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import { TaskEndpoints } from 'components/shared/Endpoints/TaskEndpoints';
-import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
-import { useEntityType } from 'context/EntityContext';
+import { DataPreview } from 'src/components/collection/DataPreview';
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
+import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useMemo } from 'react';
-import JournalHydrator from 'stores/JournalData/Hydrator';
-import { hasLength } from 'utils/misc-utils';
+import JournalHydrator from 'src/stores/JournalData/Hydrator';
+import { hasLength } from 'src/utils/misc-utils';
 import ShardInformation from '../../Shard/Information';
 import Usage from '../Usage';
 import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';

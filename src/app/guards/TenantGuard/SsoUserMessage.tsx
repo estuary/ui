@@ -1,8 +1,8 @@
 import { Stack, Typography } from '@mui/material';
-import FullPageWrapper from 'app/FullPageWrapper';
-import MessageWithLink from 'components/content/MessageWithLink';
-import SingleLineCode from 'components/content/SingleLineCode';
-import AlertBox from 'components/shared/AlertBox';
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import AlertBox from 'src/components/shared/AlertBox';
 import { useIntl } from 'react-intl';
 
 function SsoUserMessage() {

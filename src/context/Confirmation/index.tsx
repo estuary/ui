@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { createContext, useContext, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 import { IConfirmationModalContext, IConfirmationModalOptions } from './types';
 
 const LABEL_ID = 'alert-dialog-title';

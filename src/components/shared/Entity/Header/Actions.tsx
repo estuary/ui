@@ -1,8 +1,8 @@
 import { Stack } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import { truncateTextSx } from 'context/Theme';
-import { useFormStateStore_status } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import { truncateTextSx } from 'src/context/Theme';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import EntitySaveButton from '../Actions/SaveButton';
 import EntityTestButton from '../Actions/TestButton';
 import EntityViewDetails from '../Actions/ViewDetails';

@@ -1,17 +1,17 @@
 import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
-import { StripeInvoice, getTenantInvoice } from 'api/billing';
-import Rows from 'components/tables/BillLineItems/Rows';
-import TotalLines from 'components/tables/BillLineItems/TotalLines';
-import EntityTableBody from 'components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
+import { StripeInvoice, getTenantInvoice } from 'src/api/billing';
+import Rows from 'src/components/tables/BillLineItems/Rows';
+import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { CreditCard, Download } from 'iconoir-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns, TableStatuses } from 'types';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { TableColumns, TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [
     {

@@ -1,7 +1,7 @@
-import { clearAuthorizationCache } from 'hooks/gatewayAuth/cache';
+import { clearAuthorizationCache } from 'src/hooks/gatewayAuth/cache';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useCallback, useMemo, useState } from 'react';
 import { useEffectOnce } from 'react-use';
 

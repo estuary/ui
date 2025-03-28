@@ -11,23 +11,23 @@ import {
     styled,
     useMediaQuery,
 } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
-import BindingSelector from 'components/editor/Bindings/Selector';
-import PrefixedName from 'components/inputs/PrefixedName';
-import GitPodButton from 'components/transformation/create/GitPodButton';
-import LegacyLanguageSelector from 'components/transformation/create/legacy/LanguageSelector';
-import LegacySingleStep from 'components/transformation/create/legacy/SingleStep';
-import { LegacyStepWrapper } from 'components/transformation/create/legacy/Wrapper';
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import BindingSelector from 'src/components/editor/Bindings/Selector';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import GitPodButton from 'src/components/transformation/create/GitPodButton';
+import LegacyLanguageSelector from 'src/components/transformation/create/legacy/LanguageSelector';
+import LegacySingleStep from 'src/components/transformation/create/legacy/SingleStep';
+import { LegacyStepWrapper } from 'src/components/transformation/create/legacy/Wrapper';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useBinding_collections,
     useBinding_hydrated,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 // TODO (transform): Remove the StyledStepConnector when the new transform create workflow can be released
 //   because it is only used in the legacy workflow.

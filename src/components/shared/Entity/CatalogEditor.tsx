@@ -1,15 +1,15 @@
 import { Paper, Typography } from '@mui/material';
-import DraftSpecEditor from 'components/editor/DraftSpec';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
+import DraftSpecEditor from 'src/components/editor/DraftSpec';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import AlertBox from '../AlertBox';
 import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 

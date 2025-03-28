@@ -8,10 +8,10 @@ import {
     gridPaginatedVisibleSortedGridRowIdsSelector,
     useGridApiRef,
 } from '@mui/x-data-grid';
-import SelectorEmpty from 'components/editor/Bindings/SelectorEmpty';
-import AlertBox from 'components/shared/AlertBox';
-import { useEntityType } from 'context/EntityContext';
-import { dataGridListStyling } from 'context/Theme';
+import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
+import AlertBox from 'src/components/shared/AlertBox';
+import { useEntityType } from 'src/context/EntityContext';
+import { dataGridListStyling } from 'src/context/Theme';
 import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -19,12 +19,12 @@ import { useUnmount } from 'react-use';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
-} from 'stores/Binding/hooks';
-import { BindingState } from 'stores/Binding/types';
-import { useFormStateStore_status } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/stores/Binding/hooks';
+import { BindingState } from 'src/stores/Binding/types';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import useConstant from 'use-constant';
-import { hasLength, stripPathing } from 'utils/misc-utils';
+import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import CollectionSelectorHeaderName from './Header/Name';
 import CollectionSelectorHeaderRemove from './Header/Remove';
 import CollectionSelectorHeaderToggle from './Header/Toggle';

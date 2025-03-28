@@ -1,7 +1,7 @@
 import { AlertColor, Typography } from '@mui/material';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import Logs from 'components/logs';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import Logs from 'src/components/logs';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 

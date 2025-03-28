@@ -1,6 +1,6 @@
 import { Button, DialogActions, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
+import { useFormStateStore_setShowSavePrompt } from 'src/stores/FormState/hooks';
 import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
 import {
     usePreSavePromptStore,

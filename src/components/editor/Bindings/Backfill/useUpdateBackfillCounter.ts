@@ -1,17 +1,17 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
-import { BooleanString } from 'components/shared/buttons/types';
-import { useEntityType } from 'context/EntityContext';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
+import { BooleanString } from 'src/components/shared/buttons/types';
+import { useEntityType } from 'src/context/EntityContext';
+import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
+import { BASE_ERROR } from 'src/services/supabase';
 import {
     useBinding_backfilledBindings,
     useBinding_bindings,
-} from 'stores/Binding/hooks';
-import { BindingMetadata, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
+} from 'src/stores/Binding/hooks';
+import { BindingMetadata, Schema } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { getBackfillCounter, getBindingIndex } from 'src/utils/workflow-utils';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,

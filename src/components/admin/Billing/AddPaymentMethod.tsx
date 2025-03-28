@@ -1,13 +1,13 @@
 import { Box, Dialog, DialogTitle } from '@mui/material';
 import { Elements } from '@stripe/react-stripe-js';
 import { Stripe } from '@stripe/stripe-js';
-import { setTenantPrimaryPaymentMethod } from 'api/billing';
-import { PaymentForm } from 'components/admin/Billing/CapturePaymentMethod';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
+import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { Plus } from 'iconoir-react';
 
 import { FormattedMessage } from 'react-intl';
-import { fireGtmEvent } from 'services/gtm';
+import { fireGtmEvent } from 'src/services/gtm';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 
 interface Props {

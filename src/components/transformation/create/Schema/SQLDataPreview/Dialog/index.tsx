@@ -8,11 +8,11 @@ import {
     Divider,
     Typography,
 } from '@mui/material';
-import DataPreview from 'components/transformation/create/Schema/SQLDataPreview/Dialog/DataPreview';
-import { defaultOutline } from 'context/Theme';
+import DataPreview from 'src/components/transformation/create/Schema/SQLDataPreview/Dialog/DataPreview';
+import { defaultOutline } from 'src/context/Theme';
 import { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useTransformationCreate_name } from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_name } from 'src/stores/TransformationCreate/hooks';
 
 interface Props {
     open: boolean;

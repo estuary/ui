@@ -1,5 +1,5 @@
-import { logRocketConsole } from 'services/shared';
-import { JOB_STATUS_SUCCESS } from 'services/supabase';
+import { logRocketConsole } from 'src/services/shared';
+import { JOB_STATUS_SUCCESS } from 'src/services/supabase';
 import { hasLength } from './misc-utils';
 
 export const checkIfPublishIsDone = (payload: any): [boolean | null, any] => {

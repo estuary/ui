@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import Error from 'components/shared/Error';
+import Error from 'src/components/shared/Error';
 import { useRefreshTokenStore } from '../Store/create';
 
 function RefreshTokenError() {

@@ -1,5 +1,5 @@
-import { FieldSelectionDictionary } from 'stores/Binding/slices/FieldSelection';
-import { isRequireOnlyField } from 'utils/workflow-utils';
+import { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
+import { isRequireOnlyField } from 'src/utils/workflow-utils';
 import { CompositeProjection, FieldSelectionType } from '../types';
 
 export const evaluateUpdatedFields = (

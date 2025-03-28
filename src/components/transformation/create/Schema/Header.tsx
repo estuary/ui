@@ -1,12 +1,12 @@
 import { Typography, useTheme } from '@mui/material';
-import { useEditorStore_currentCatalog } from 'components/editor/Store/hooks';
+import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { WarningCircle } from 'iconoir-react';
 import { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     useTransformationCreate_schemaUnedited,
     useTransformationCreate_setSchemaUnedited,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 function DerivationSchemaHeader() {
     const theme = useTheme();

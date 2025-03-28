@@ -1,4 +1,4 @@
-import { authenticatedRoutes } from 'app/routes';
+import { authenticatedRoutes } from 'src/app/routes';
 import { CommonMessages } from './CommonMessages';
 import { CTAs } from './CTAs';
 import { Navigation } from './Navigation';

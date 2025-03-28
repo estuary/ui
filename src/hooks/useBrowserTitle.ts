@@ -1,4 +1,4 @@
-import { useUpdateHelmet } from 'context/UpdateHelmet';
+import { useUpdateHelmet } from 'src/context/UpdateHelmet';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 

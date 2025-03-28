@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import { encodeParamVal } from 'utils/misc-utils';
+import { encodeParamVal } from 'src/utils/misc-utils';
 
 export default function useSearchParamAppend() {
     const [searchParams] = useSearchParams();

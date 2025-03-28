@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { QUERY_PARAM_CONNECTOR_TITLE } from 'services/supabase';
+import { QUERY_PARAM_CONNECTOR_TITLE } from 'src/services/supabase';
 import { ColumnProps } from './EntityTable/types';
 
 // This is the property fetched when setting the select row in the store

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { TableActionSettings } from 'stores/Tables/Store';
+import { TableActionSettings } from 'src/stores/Tables/Store';
 import { AccessGrantRowConfirmation } from '../AccessGrants/types';
 import { RowActionSupportedTableStoreName, RowConfirmation } from '../types';
 

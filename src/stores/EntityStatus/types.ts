@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
+import { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import { KeyedMutator } from 'swr';
-import { BaseComponentProps } from 'types';
-import { EntityStatusResponse } from 'types/controlPlane';
+import { BaseComponentProps } from 'src/types';
+import { EntityStatusResponse } from 'src/types/controlPlane';
 
 interface ApiError {
     message: string;

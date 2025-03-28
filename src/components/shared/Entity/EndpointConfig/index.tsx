@@ -1,19 +1,19 @@
 import { Box, useTheme } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
-import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
-import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityWorkflow } from 'context/Workflow';
-import useConnectorTag from 'hooks/connectors/useConnectorTag';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
+import EndpointConfigHeader from 'src/components/shared/Entity/EndpointConfig/Header';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import useConnectorTag from 'src/hooks/connectors/useConnectorTag';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
-import { createJSONFormDefaults } from 'services/ajv';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import { createJSONFormDefaults } from 'src/services/ajv';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
@@ -25,9 +25,9 @@ import {
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setEndpointCanBeEmpty,
     useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
-import { configCanBeEmpty } from 'utils/misc-utils';
+} from 'src/stores/EndpointConfig/hooks';
+import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { configCanBeEmpty } from 'src/utils/misc-utils';
 
 interface Props {
     connectorImage: string;

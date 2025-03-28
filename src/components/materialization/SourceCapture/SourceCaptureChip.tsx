@@ -1,9 +1,9 @@
 import { Box, Chip, Stack } from '@mui/material';
-import { chipOutlinedStyling, truncateTextSx } from 'context/Theme';
+import { chipOutlinedStyling, truncateTextSx } from 'src/context/Theme';
 import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useSourceCaptureStore_sourceCaptureDefinition } from 'stores/SourceCapture/hooks';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import useSourceCapture from '../useSourceCapture';
 import SourceCaptureChipOptionalSettings from './SourceCaptureChipOptionalSettings';
 

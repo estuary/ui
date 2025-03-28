@@ -1,6 +1,6 @@
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { useTheme } from '@mui/material';
-import { loginButtonStyling } from 'context/Theme';
+import { loginButtonStyling } from 'src/context/Theme';
 import AzureButton from './buttons/Azure';
 import GithubButton from './buttons/Github';
 import GoogleButton from './buttons/Google';

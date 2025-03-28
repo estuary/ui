@@ -1,6 +1,6 @@
-import { ConnectorTag_Base } from 'api/connectors';
-import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'services/supabase';
-import { EntityWithCreateWorkflow, Schema } from 'types';
+import { ConnectorTag_Base } from 'src/api/connectors';
+import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'src/services/supabase';
+import { EntityWithCreateWorkflow, Schema } from 'src/types';
 
 //////////////////////////
 // useConnectors

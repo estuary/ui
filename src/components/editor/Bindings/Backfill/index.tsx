@@ -1,5 +1,5 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { FormattedMessage } from 'react-intl';
 import BackfillButton from './BackfillButton';
 import SectionWrapper from './SectionWrapper';

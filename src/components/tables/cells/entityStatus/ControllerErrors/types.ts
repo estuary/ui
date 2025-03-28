@@ -1,5 +1,5 @@
 import { PopperPlacementType } from '@mui/material';
-import { Error } from 'types/controlPlane';
+import { Error } from 'src/types/controlPlane';
 
 export interface ControllerAlertProps {
     error: Error;

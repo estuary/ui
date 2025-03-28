@@ -1,7 +1,7 @@
 import { Button, Stack, Tooltip } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import AddDialog from 'components/shared/Entity/AddDialog';
-import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
+import AlertBox from 'src/components/shared/AlertBox';
+import AddDialog from 'src/components/shared/Entity/AddDialog';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import ManualSelectionButton from './Button';

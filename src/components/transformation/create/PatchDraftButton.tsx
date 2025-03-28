@@ -1,17 +1,17 @@
 import { Button } from '@mui/material';
-import { modifyDraftSpec } from 'api/draftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
+} from 'src/components/editor/Store/hooks';
 import { isEmpty } from 'lodash';
 import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_emptySQLExists,
@@ -19,8 +19,8 @@ import {
     useTransformationCreate_setCatalogUpdating,
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_transformConfigs,
-} from 'stores/TransformationCreate/hooks';
-import { Transform } from 'types';
+} from 'src/stores/TransformationCreate/hooks';
+import { Transform } from 'src/types';
 
 function PatchDraftButton() {
     // Draft Editor Store

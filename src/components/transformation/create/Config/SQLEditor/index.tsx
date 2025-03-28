@@ -1,10 +1,10 @@
-import MonacoEditor from 'components/editor/MonacoEditor';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import { useEditorStore_queryResponse_isValidating } from 'components/editor/Store/hooks';
-import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
-import useSQLEditor from 'components/transformation/create/Config/SQLEditor/useSQLEditor';
+import MonacoEditor from 'src/components/editor/MonacoEditor';
+import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
+import { useEditorStore_queryResponse_isValidating } from 'src/components/editor/Store/hooks';
+import EmptySQLEditor from 'src/components/transformation/create/Config/SQLEditor/Empty';
+import useSQLEditor from 'src/components/transformation/create/Config/SQLEditor/useSQLEditor';
 import { useMemo } from 'react';
-import { useTransformationCreate_selectedAttribute } from 'stores/TransformationCreate/hooks';
+import { useTransformationCreate_selectedAttribute } from 'src/stores/TransformationCreate/hooks';
 
 interface Props {
     entityName: string;

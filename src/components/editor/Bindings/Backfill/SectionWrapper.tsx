@@ -1,14 +1,14 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { isBeforeTrialInterval } from 'components/materialization/shared';
-import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
-import { useEntityType } from 'context/EntityContext';
+import { isBeforeTrialInterval } from 'src/components/materialization/shared';
+import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
+import { useEntityType } from 'src/context/EntityContext';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import {
     useBinding_backfilledCollections,
     useBinding_collectionMetadataProperty,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { useShallow } from 'zustand/react/shallow';
 import { SectionWrapperProps } from './types';
 

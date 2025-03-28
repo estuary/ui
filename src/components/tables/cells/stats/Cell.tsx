@@ -1,6 +1,6 @@
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
-import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { textLoadingColor } from 'context/Theme';
+import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
+import { textLoadingColor } from 'src/context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { StatsCellProps } from './types';

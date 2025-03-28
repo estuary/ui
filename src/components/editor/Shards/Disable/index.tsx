@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
 import { FormattedMessage } from 'react-intl';
 
 import ShardsDisableForm from './Form';

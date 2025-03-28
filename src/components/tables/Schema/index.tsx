@@ -3,12 +3,12 @@ import {
     useBindingsEditorStore_inferSchemaResponse,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
-} from 'components/editor/Bindings/Store/hooks';
-import { FieldFilter } from 'components/schema/types';
+} from 'src/components/editor/Bindings/Store/hooks';
+import { FieldFilter } from 'src/components/schema/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
-import { hasLength } from 'utils/misc-utils';
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import EntityTableBody from '../EntityTable/TableBody';
 import EntityTableHeader from '../EntityTable/TableHeader';
 import Rows from './Rows';

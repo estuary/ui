@@ -1,28 +1,28 @@
 import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
+} from 'src/components/editor/Store/hooks';
+import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
 import { useCallback } from 'react';
-import { DEFAULT_FILTER, logRocketEvent } from 'services/shared';
+import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
-} from 'services/supabase';
-import { CustomEvents } from 'services/types';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_setPreviousEndpointConfig,
     useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { Entity } from 'types';
-import { supabaseClient } from 'context/GlobalProviders';
+} from 'src/stores/EndpointConfig/hooks';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { Entity } from 'src/types';
+import { supabaseClient } from 'src/context/GlobalProviders';
 
 const trackEvent = (payload: any) => {
     logRocketEvent(CustomEvents.CAPTURE_DISCOVER, {

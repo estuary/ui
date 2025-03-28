@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { diminishedTextColor } from 'context/Theme';
+import { diminishedTextColor } from 'src/context/Theme';
 import { useIntl } from 'react-intl';
 import { DetailWrapperProps } from './types';
 

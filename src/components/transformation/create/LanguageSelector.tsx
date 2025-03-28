@@ -1,11 +1,11 @@
 import { Divider, FormControlLabel, Radio, RadioGroup } from '@mui/material';
-import SingleStep from 'components/transformation/create/SingleStep';
-import StepWrapper from 'components/transformation/create/Wrapper';
+import SingleStep from 'src/components/transformation/create/SingleStep';
+import StepWrapper from 'src/components/transformation/create/Wrapper';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
     useTransformationCreate_language,
     useTransformationCreate_setLanguage,
-} from 'stores/TransformationCreate/hooks';
+} from 'src/stores/TransformationCreate/hooks';
 
 function LanguageSelector() {
     const intl = useIntl();

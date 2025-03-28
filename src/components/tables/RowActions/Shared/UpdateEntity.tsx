@@ -1,24 +1,24 @@
-import { createEntityDraft } from 'api/drafts';
+import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
     draftCollectionsEligibleForDeletion,
-} from 'api/draftSpecs';
-import { CaptureQuery, getLatestLiveSpecByName } from 'api/liveSpecsExt';
-import { createPublication } from 'api/publications';
-import AlertBox from 'components/shared/AlertBox';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import Error from 'components/shared/Error';
-import { useZustandStore } from 'context/Zustand/provider';
-import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
-import usePublications from 'hooks/usePublications';
+} from 'src/api/draftSpecs';
+import { CaptureQuery, getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
+import { createPublication } from 'src/api/publications';
+import AlertBox from 'src/components/shared/AlertBox';
+import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
+import Error from 'src/components/shared/Error';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
+import usePublications from 'src/hooks/usePublications';
 import { useEffect, useRef, useState } from 'react';
-import { jobSucceeded } from 'services/supabase';
-import { SelectTableStoreNames } from 'stores/names';
+import { jobSucceeded } from 'src/services/supabase';
+import { SelectTableStoreNames } from 'src/stores/names';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { Entity } from 'types';
+} from 'src/stores/Tables/Store';
+import { Entity } from 'src/types';
 import SharedProgress from './Progress';
 import { ProgressStates, SharedProgressProps } from './types';
 

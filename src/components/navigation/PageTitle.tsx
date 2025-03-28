@@ -1,8 +1,8 @@
 import { Stack, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { FormattedMessage } from 'react-intl';
 
-import { useTopBarStore } from 'stores/TopBar/Store';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 function PageTitle() {
     const [header, headerLink] = useTopBarStore((state) => [

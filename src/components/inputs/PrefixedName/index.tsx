@@ -7,13 +7,13 @@ import {
     OutlinedInput,
     TextField,
 } from '@mui/material';
-import useValidatePrefix from 'components/inputs/PrefixedName/useValidatePrefix';
-import AlertBox from 'components/shared/AlertBox';
+import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
+import AlertBox from 'src/components/shared/AlertBox';
 import { capitalize } from 'lodash';
 import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { hasLength } from 'utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { PrefixedNameProps } from './types';
 import PrefixSelector from './PrefixSelector';
 

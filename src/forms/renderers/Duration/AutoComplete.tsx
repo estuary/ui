@@ -29,7 +29,7 @@
 import { ControlProps, WithClassname } from '@jsonforms/core';
 import { Autocomplete, Input } from '@mui/material';
 import React, { useLayoutEffect, useMemo, useRef } from 'react';
-import { ISO_8601_DURATION_RE } from 'validation';
+import { ISO_8601_DURATION_RE } from 'src/validation';
 
 const DURATION_TIME_PREFIX = 'PT';
 const DURATION_OPTIONS = [

@@ -1,13 +1,13 @@
 import { Divider, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
-import CompanyLogo from 'components/graphics/CompanyLogo';
-import HelpMenu from 'components/menus/HelpMenu';
-import UserMenu from 'components/menus/UserMenu';
-import PageTitle from 'components/navigation/PageTitle';
-import SidePanelDocsOpenButton from 'components/sidePanelDocs/OpenButton';
-import { UpdateAlert } from 'components/UpdateAlert';
-import { zIndexIncrement } from 'context/Theme';
+import CompanyLogo from 'src/components/graphics/CompanyLogo';
+import HelpMenu from 'src/components/menus/HelpMenu';
+import UserMenu from 'src/components/menus/UserMenu';
+import PageTitle from 'src/components/navigation/PageTitle';
+import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
+import { UpdateAlert } from 'src/components/UpdateAlert';
+import { zIndexIncrement } from 'src/context/Theme';
 
 const Topbar = () => {
     const theme = useTheme();

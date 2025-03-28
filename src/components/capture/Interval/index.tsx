@@ -7,20 +7,20 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import useCaptureInterval from 'hooks/captureInterval/useCaptureInterval';
+import useCaptureInterval from 'src/hooks/captureInterval/useCaptureInterval';
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { Duration } from 'luxon';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useBindingStore } from 'stores/Binding/Store';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_status,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { hasLength } from 'utils/misc-utils';
-import { CAPTURE_INTERVAL_RE } from 'validation';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { CAPTURE_INTERVAL_RE } from 'src/validation';
 import { CaptureIntervalProps } from './types';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {

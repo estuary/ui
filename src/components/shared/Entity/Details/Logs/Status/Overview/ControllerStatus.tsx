@@ -1,9 +1,9 @@
 import { useTheme } from '@mui/material';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
-import { getControllerStatusIndicatorState } from 'utils/entityStatus-utils';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
+import { getControllerStatusIndicatorState } from 'src/utils/entityStatus-utils';
 import StatusIndicator from './StatusIndicator';
 
 export default function ControllerStatus() {

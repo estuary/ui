@@ -1,11 +1,11 @@
-import { getDataPlanesForTable } from 'api/dataPlanes';
-import EntityTable from 'components/tables/EntityTable';
-import { useDataPlaneScope } from 'context/DataPlaneScopeContext';
+import { getDataPlanesForTable } from 'src/api/dataPlanes';
+import EntityTable from 'src/components/tables/EntityTable';
+import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useMemo } from 'react';
-import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
-import { useTenantStore } from 'stores/Tenant/Store';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 import ToggleDataPlaneScope from './ToggleDataPlaneScope';
 import Rows from './Rows';
 import { columns, selectableTableStoreName } from './shared';

@@ -1,4 +1,4 @@
-import { AlertSubscriptionsExtendedQuery } from 'api/alerts';
+import { AlertSubscriptionsExtendedQuery } from 'src/api/alerts';
 import { isEmpty } from 'lodash';
 import { OptionsObject } from 'notistack';
 

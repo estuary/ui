@@ -1,14 +1,14 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import TableLoadingRows from 'components/tables/Loading';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
+import TableLoadingRows from 'src/components/tables/Loading';
+import { semiTransparentBackgroundIntensified } from 'src/context/Theme';
 import { FormattedMessage } from 'react-intl';
 import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
-} from 'stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
-import { TableColumns } from 'types';
-import { getColumnKeyList } from 'utils/table-utils';
+} from 'src/stores/ShardDetail/hooks';
+import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import { TableColumns } from 'src/types';
+import { getColumnKeyList } from 'src/utils/table-utils';
 import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 
 interface Props {

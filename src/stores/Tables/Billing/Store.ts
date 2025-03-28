@@ -1,8 +1,8 @@
 import produce from 'immer';
-import { SelectTableStoreNames } from 'stores/names';
-import { BillingTableState } from 'stores/Tables/Billing/types';
-import { getInitialState as getInitialSelectTableState } from 'stores/Tables/Store';
-import { devtoolsOptions } from 'utils/store-utils';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { BillingTableState } from 'src/stores/Tables/Billing/types';
+import { getInitialState as getInitialSelectTableState } from 'src/stores/Tables/Store';
+import { devtoolsOptions } from 'src/utils/store-utils';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
 

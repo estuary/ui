@@ -1,18 +1,18 @@
 import {
     createNotificationSubscription,
     deleteNotificationSubscription,
-} from 'api/alerts';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import { useZustandStore } from 'context/Zustand/provider';
+} from 'src/api/alerts';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import { union } from 'lodash';
 import { useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import {
     SelectableTableStore,
     selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Tables/Store';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { hasLength } from 'src/utils/misc-utils';
 import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
 interface Props {

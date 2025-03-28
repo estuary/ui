@@ -7,10 +7,10 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
+import { defaultOutline } from 'src/context/Theme';
 import { NavArrowDown } from 'iconoir-react';
 import { useState } from 'react';
-import { unescapeString } from 'utils/misc-utils';
+import { unescapeString } from 'src/utils/misc-utils';
 import { ControllerAlertProps } from './types';
 
 export default function ControllerAlert({

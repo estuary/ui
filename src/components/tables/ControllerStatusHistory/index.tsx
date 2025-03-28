@@ -1,15 +1,15 @@
 import { Box, Table, TableContainer } from '@mui/material';
-import EntityTableBody from 'components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
-import { PublicationInfo } from 'types/controlPlane';
+import { useEntityStatusStore_recentHistory } from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { SortDirection, TableColumns, TableState, TableStatuses } from 'src/types';
+import { PublicationInfo } from 'src/types/controlPlane';
 import Rows from './Rows';
 
 export const columns: TableColumns[] = [

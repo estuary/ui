@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
-import ChipList from 'components/shared/ChipList';
-import { truncateTextSx } from 'context/Theme';
+import ChipList from 'src/components/shared/ChipList';
+import { truncateTextSx } from 'src/context/Theme';
 import { MaterializationSelectorOptionProps } from './types';
 
 function SelectorOption({ option }: MaterializationSelectorOptionProps) {

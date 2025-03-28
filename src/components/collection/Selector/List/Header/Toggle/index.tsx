@@ -1,10 +1,10 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box, Button, Menu, Tooltip } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
-import { dataGridEntireCellButtonStyling } from 'context/Theme';
+import { useEntityType } from 'src/context/EntityContext';
+import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBinding_someBindingsDisabled } from 'stores/Binding/hooks';
+import { useBinding_someBindingsDisabled } from 'src/stores/Binding/hooks';
 import ScopeMenuContent from './MenuContent';
 import { Scopes } from './types';
 

@@ -1,9 +1,9 @@
 import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
-import { useShowSidePanelDocs } from 'context/SidePanelDocs';
+import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import SidePanelIframe from './Iframe';
 
 interface Props {

@@ -1,4 +1,4 @@
-import { CaptureQueryWithStats } from 'api/liveSpecsExt';
+import { CaptureQueryWithStats } from 'src/api/liveSpecsExt';
 import ExportButton from '../shared/ExportButton';
 import useCaptureExport from './useCaptureExport';
 

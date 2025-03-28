@@ -1,15 +1,15 @@
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import {
     useBinding_bindings,
     useBinding_resourceConfigs,
     useBinding_setServerUpdateRequired,
-} from 'stores/Binding/hooks';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
+} from 'src/stores/Binding/hooks';
+import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const bindings = useBinding_bindings();

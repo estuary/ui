@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import ExternalLink, {
     ExternalLinkOptions,
-} from 'components/shared/ExternalLink';
+} from 'src/components/shared/ExternalLink';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {

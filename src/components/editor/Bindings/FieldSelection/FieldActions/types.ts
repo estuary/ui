@@ -1,4 +1,4 @@
-import { SelectionAlgorithm } from 'stores/Binding/slices/FieldSelection';
+import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import { CompositeProjection } from '../types';
 
 export interface BaseProps {

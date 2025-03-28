@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
 import {
     BuiltSpec_Binding,
     CompositeProjection,
@@ -10,10 +10,10 @@ import {
     Projection,
     TranslatedConstraint,
     ValidationResponse_Binding,
-} from 'components/editor/Bindings/FieldSelection/types';
-import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import FieldSelectionTable from 'components/tables/FieldSelection';
+} from 'src/components/editor/Bindings/FieldSelection/types';
+import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -23,16 +23,16 @@ import {
     useBinding_selectionSaving,
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
-} from 'stores/Binding/hooks';
-import { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
+} from 'src/stores/Binding/hooks';
+import { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { Schema } from 'types';
-import { getBindingIndex } from 'utils/workflow-utils';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { Schema } from 'src/types';
+import { getBindingIndex } from 'src/utils/workflow-utils';
 import RefreshStatus from './RefreshStatus';
 
 interface Props {

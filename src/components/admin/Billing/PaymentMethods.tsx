@@ -15,19 +15,19 @@ import {
     getSetupIntentSecret,
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
-} from 'api/billing';
-import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import AlertBox from 'components/shared/AlertBox';
-import TableLoadingRows from 'components/tables/Loading';
+} from 'src/api/billing';
+import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
+import AlertBox from 'src/components/shared/AlertBox';
+import TableLoadingRows from 'src/components/tables/Loading';
 
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBillingStore } from 'stores/Billing/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns } from 'types';
-import { getColumnKeyList } from 'utils/table-utils';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { TableColumns } from 'src/types';
+import { getColumnKeyList } from 'src/utils/table-utils';
 import AddPaymentMethod from './AddPaymentMethod';
 import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
 import { AdminBillingProps } from './types';

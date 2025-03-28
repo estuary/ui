@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import Logo from 'components/navigation/Logo';
+import Logo from 'src/components/navigation/Logo';
 import { FormattedMessage } from 'react-intl';
 import { HeaderMessageProps } from './types';
 

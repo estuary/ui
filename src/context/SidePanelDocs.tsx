@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { useLocalStorage } from 'react-use';
-import { BaseComponentProps } from 'types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+import { BaseComponentProps } from 'src/types';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 interface SidePanelDocsState {
     showDocs: boolean;

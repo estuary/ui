@@ -1,15 +1,15 @@
 import { Box, Stack } from '@mui/material';
 import { PostgrestError } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import useDirectiveGuard from 'app/guards/hooks';
-import MessageWithButton from 'components/content/MessageWithButton';
-import Error from 'components/shared/Error';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'directives/shared';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import { submitDirective } from 'src/api/directives';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import MessageWithButton from 'src/components/content/MessageWithButton';
+import Error from 'src/components/shared/Error';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useEntitiesStore } from 'stores/Entities/Store';
-import { DEMO_TENANT } from 'utils/misc-utils';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { DEMO_TENANT } from 'src/utils/misc-utils';
 
 interface Props {
     tenant: string;

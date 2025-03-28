@@ -1,11 +1,11 @@
 import { Container, Paper, Snackbar, useTheme } from '@mui/material';
-import Topbar from 'components/navigation/TopBar';
-import { paperBackground } from 'context/Theme';
+import Topbar from 'src/components/navigation/TopBar';
+import { paperBackground } from 'src/context/Theme';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import useNotificationStore, {
     Notification,
     notificationStoreSelectors,
-} from 'stores/NotificationStore';
+} from 'src/stores/NotificationStore';
 import AlertBox from './AlertBox';
 
 interface Props {

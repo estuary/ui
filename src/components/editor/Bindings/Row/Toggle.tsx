@@ -1,10 +1,10 @@
 import { Button, Switch } from '@mui/material';
-import { dataGridEntireCellButtonStyling } from 'context/Theme';
+import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import { useIntl } from 'react-intl';
 import {
     useBinding_resourceConfigOfMetaBindingProperty,
     useBinding_toggleDisable,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 
 interface Props {
     bindingUUID: string;

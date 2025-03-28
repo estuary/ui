@@ -1,14 +1,14 @@
 import { Box } from '@mui/material';
-import { getLiveSpecs_materializations } from 'api/liveSpecsExt';
-import EntityTable from 'components/tables/EntityTable';
-import Rows from 'components/tables/Materializations/Rows';
-import RowSelector from 'components/tables/RowActions/RowSelector';
+import { getLiveSpecs_materializations } from 'src/api/liveSpecsExt';
+import EntityTable from 'src/components/tables/EntityTable';
+import Rows from 'src/components/tables/Materializations/Rows';
+import RowSelector from 'src/components/tables/RowActions/RowSelector';
 import { useMemo } from 'react';
-import { ENTITY_SETTINGS } from 'settings/entity';
-import { SelectTableStoreNames } from 'stores/names';
-import { useTableState } from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
-import StatsHydrator from 'stores/Tables/StatsHydrator';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import StatsHydrator from 'src/stores/Tables/StatsHydrator';
 import MaterializationExportButton from './Export';
 import useMaterializationColumns from './useMaterializationColumns';
 

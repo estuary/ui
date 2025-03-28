@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material';
-import HeroTabs from 'components/home/hero/Tabs';
+import HeroTabs from 'src/components/home/hero/Tabs';
 import HeroDemo from './Demo';
 import HeroDetail from './Detail';
 import { useHeroTabs } from './hooks';

@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { OnIncompatibleSchemaChangeProps } from 'components/incompatibleSchemaChange/types';
+import { OnIncompatibleSchemaChangeProps } from 'src/components/incompatibleSchemaChange/types';
 import { useIntl } from 'react-intl';
 import Form from './Form';
 

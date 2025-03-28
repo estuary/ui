@@ -1,16 +1,16 @@
-import { useEntityType } from 'context/EntityContext';
-import { useLocalZustandStore } from 'context/LocalZustand';
-import { useZustandStore as useGlobalZustandStore } from 'context/Zustand/provider';
+import { useEntityType } from 'src/context/EntityContext';
+import { useLocalZustandStore } from 'src/context/LocalZustand';
+import { useZustandStore as useGlobalZustandStore } from 'src/context/Zustand/provider';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecQuery, useDraftSpecs_forEditor } from 'hooks/useDraftSpecs';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { DraftSpecQuery, useDraftSpecs_forEditor } from 'src/hooks/useDraftSpecs';
+import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useEffect } from 'react';
-import { EditorStoreNames } from 'stores/names';
-import { Entity } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getBindingIndex } from 'utils/workflow-utils';
+import { EditorStoreNames } from 'src/stores/names';
+import { Entity } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { getBindingIndex } from 'src/utils/workflow-utils';
 import { useShallow } from 'zustand/react/shallow';
 import { EditorStoreState } from './types';
 

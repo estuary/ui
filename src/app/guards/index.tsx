@@ -1,6 +1,6 @@
-import GrantGuard from 'app/guards/GrantGuard';
+import GrantGuard from 'src/app/guards/GrantGuard';
 import 'react-reflex/styles.css';
-import { BaseComponentProps } from 'types';
+import { BaseComponentProps } from 'src/types';
 import LegalGuard from './LegalGuard';
 import TenantGuard from './TenantGuard';
 import UserGuard from './User';

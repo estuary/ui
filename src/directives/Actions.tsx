@@ -1,6 +1,6 @@
 import { Button, Toolbar } from '@mui/material';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import { supabaseClient } from 'context/GlobalProviders';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { useIntl } from 'react-intl';
 import { ActionsProps } from './types';
 

@@ -6,10 +6,10 @@ import {
     Theme,
     Tooltip,
 } from '@mui/material';
-import { defaultOutline, underlineTextSx } from 'context/Theme';
+import { defaultOutline, underlineTextSx } from 'src/context/Theme';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { stripPathing } from 'utils/misc-utils';
+import { stripPathing } from 'src/utils/misc-utils';
 import LinkWrapper from '../LinkWrapper';
 import { ChipWrapperProps } from './types';
 
