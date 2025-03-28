@@ -1,5 +1,9 @@
-import { DataFlowResetContext } from '../steps/dataFlowReset/shared';
-import { PromptStep, PromptStepState } from '../types';
+import type { DataFlowResetContext } from 'components/shared/Entity/prompts/steps/dataFlowReset/types';
+import type {
+    PromptSettings,
+    PromptStep,
+    PromptStepState,
+} from 'components/shared/Entity/prompts/types';
 
 // TODO (typing) would like to auto generate the `context` type somehow
 //  by combining multiple steps contexts
@@ -11,7 +15,7 @@ export interface PreSavePromptStore {
 
     retryStep: (step: number) => void;
     updateStep: (step: number, settings: Partial<PromptStepState>) => void;
-    initializeSteps: (backfillEnabled: boolean) => void;
+    initializeSteps: (settings: PromptSettings) => void;
     initUUID: string | null;
 
     activeStep: number;
