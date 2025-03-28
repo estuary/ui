@@ -25,8 +25,9 @@
 */
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
 
+import type {
+    ControlProps} from '@jsonforms/core';
 import {
-    ControlProps,
     isDescriptionHidden,
     showAsRequired,
 } from '@jsonforms/core';

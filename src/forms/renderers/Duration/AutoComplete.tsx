@@ -30,7 +30,7 @@ import React, { useLayoutEffect, useMemo, useRef } from 'react';
 
 import { Autocomplete, Input } from '@mui/material';
 
-import { ControlProps, WithClassname } from '@jsonforms/core';
+import type { ControlProps, WithClassname } from '@jsonforms/core';
 
 import { ISO_8601_DURATION_RE } from 'src/validation';
 

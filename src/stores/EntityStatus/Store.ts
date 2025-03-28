@@ -1,7 +1,8 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import { EntityStatusState } from './types';
 import produce from 'immer';
 
 import { logRocketEvent } from 'src/services/shared';
@@ -11,6 +12,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import type { EntityStatusState } from 'src/stores/EntityStatus/types';
 
 const STORE_KEY = 'entity-status';
 

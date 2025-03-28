@@ -7,14 +7,15 @@ import {
     ListItemText,
 } from '@mui/material';
 
-import { NestedListItemProps } from './types';
 import { useIntl } from 'react-intl';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
+import type { NestedListItemProps } from 'src/components/tables/RowActions/Shared/types';
 
 function NestedListItem({
     catalogName,

@@ -1,17 +1,15 @@
 import { useMemo } from 'react';
 
 import { Box, Typography } from '@mui/material';
+import type {
+    PickersLayoutProps} from '@mui/x-date-pickers';
 import {
     PickersLayoutContentWrapper,
-    PickersLayoutProps,
     PickersLayoutRoot,
     StaticDateTimePicker,
     usePickerLayout,
 } from '@mui/x-date-pickers';
 
-import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
-import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from './shared';
-import { PickerProps } from './types';
 import { formatRFC3339, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -19,6 +17,9 @@ import { useIntl } from 'react-intl';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { isReactElement } from 'src/utils/misc-utils';
+import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
+import type { PickerProps } from 'src/components/shared/pickers/types';
+import { INVALID_DATE, TIMEZONE_OFFSET_REPLACEMENT } from 'src/components/shared/pickers/shared';
 
 const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
 

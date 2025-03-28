@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
-import RowSelector from '../RowActions/AccessGrants/RowSelector';
 
 import { getGrants, getGrants_Users } from 'src/api/combinedGrantsExt';
 import AccessLinksButton from 'src/components/tables/AccessGrants/AccessLinks/Dialog/Button';
@@ -15,8 +14,10 @@ import UserRows, {
 } from 'src/components/tables/AccessGrants/UserRows';
 import EntityTable from 'src/components/tables/EntityTable';
 import { SelectTableStoreNames } from 'src/stores/names';
-import { TablePrefix, useTableState } from 'src/stores/Tables/hooks';
+import type { TablePrefix} from 'src/stores/Tables/hooks';
+import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
+import RowSelector from 'src/components/tables/RowActions/AccessGrants/RowSelector';
 
 interface Props {
     tablePrefix: TablePrefix;

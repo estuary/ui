@@ -10,7 +10,7 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'src/components/editor/Store/hooks';
-import { DraftSpec } from 'src/hooks/useDraftSpecs';
+import type { DraftSpec } from 'src/hooks/useDraftSpecs';
 import {
     useTransformationCreate_attributeType,
     useTransformationCreate_migrations,
@@ -18,7 +18,7 @@ import {
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import { updateMigrations, updateTransforms } from 'src/utils/derivation-utils';
 
 function useSQLEditor(entityName: string) {

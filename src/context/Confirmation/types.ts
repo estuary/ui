@@ -1,6 +1,6 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
-import { DialogProps } from '@mui/material';
+import type { DialogProps } from '@mui/material';
 
 export interface IConfirmationModalOptions {
     confirmText?: string;

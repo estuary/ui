@@ -1,6 +1,5 @@
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 
-import StatusIndicatorAndLabel from './StatusIndicatorAndLabel';
 import { FormattedMessage } from 'react-intl';
 
 import TableLoadingRows from 'src/components/tables/Loading';
@@ -9,9 +8,10 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'src/stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
-import { TableColumns } from 'src/types';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { TableColumns } from 'src/types';
 import { getColumnKeyList } from 'src/utils/table-utils';
+import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
 
 interface Props {
     page: number;

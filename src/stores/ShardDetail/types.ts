@@ -1,8 +1,8 @@
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { ResponseError } from 'data-plane-gateway/types/util';
+import type { Shard } from 'data-plane-gateway/types/shard_client';
+import type { ResponseError } from 'data-plane-gateway/types/util';
 
-import { SemanticColor } from 'src/context/Theme';
-import { Entity } from 'src/types';
+import type { SemanticColor } from 'src/context/Theme';
+import type { Entity } from 'src/types';
 
 export enum ShardStatusMessageIds {
     PRIMARY = 'shardStatus.primary',

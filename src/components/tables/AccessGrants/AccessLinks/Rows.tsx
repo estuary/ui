@@ -5,11 +5,12 @@ import RowSelect from 'src/components/tables/cells/RowSelect';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { GrantDirective_AccessLinks } from 'src/types';
+import type { GrantDirective_AccessLinks } from 'src/types';
 
 interface RowsProps {
     data: GrantDirective_AccessLinks[];

@@ -1,4 +1,5 @@
-import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
+import type { SxProps, Theme} from '@mui/material';
+import { Box, Button, Toolbar } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';

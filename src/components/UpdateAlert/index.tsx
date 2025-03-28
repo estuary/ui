@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { Box, Divider } from '@mui/material';
 
-import Actions from './Actions';
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
@@ -11,6 +10,7 @@ import { getLatestVersionDetails } from 'src/api/meta';
 import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import Actions from 'src/components/UpdateAlert/Actions';
 
 export function UpdateAlert() {
     const intl = useIntl();

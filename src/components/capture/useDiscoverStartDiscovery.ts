@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import useDiscoverStartSubscription from './useDiscoverStartSubscription';
 
 import { discover } from 'src/api/discovers';
 import { createEntityDraft } from 'src/api/drafts';
@@ -15,7 +14,8 @@ import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
+import useDiscoverStartSubscription from 'src/components/capture/useDiscoverStartSubscription';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
     const createDiscoversSubscription =

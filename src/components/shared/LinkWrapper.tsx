@@ -3,7 +3,7 @@ import { Link, useMediaQuery, useTheme } from '@mui/material';
 import { OpenNewWindow } from 'iconoir-react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {
     link: string;

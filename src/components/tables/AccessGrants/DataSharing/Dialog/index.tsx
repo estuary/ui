@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction} from 'react';
+import { useState } from 'react';
 
 import {
     Box,
@@ -10,7 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 

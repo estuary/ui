@@ -4,7 +4,6 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { SectionWrapperProps } from './types';
 import { useIntl } from 'react-intl';
 
 import { isBeforeTrialInterval } from 'src/components/materialization/shared';
@@ -15,6 +14,7 @@ import {
     useBinding_collectionMetadataProperty,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import type { SectionWrapperProps } from 'src/components/editor/Bindings/Backfill/types';
 
 export default function SectionWrapper({
     alertMessageId,

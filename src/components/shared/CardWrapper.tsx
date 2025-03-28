@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import {
     Box,
@@ -18,7 +18,7 @@ import {
     defaultBoxShadow,
     semiTransparentBackground,
 } from 'src/context/Theme';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 interface Props extends BaseComponentProps {
     message?: string | ReactNode;

@@ -1,7 +1,8 @@
+import type {
+    ToggleButtonGroupProps} from '@mui/material';
 import {
     styled,
-    ToggleButtonGroup,
-    ToggleButtonGroupProps,
+    ToggleButtonGroup
 } from '@mui/material';
 
 const OutlinedToggleButtonGroup = styled(ToggleButtonGroup, {

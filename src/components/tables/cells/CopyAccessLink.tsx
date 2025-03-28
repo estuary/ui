@@ -5,7 +5,8 @@ import { Button, TableCell, Tooltip, useTheme } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
-import { getButtonIcon, TransientButtonState } from 'src/context/Theme';
+import type { TransientButtonState } from 'src/context/Theme';
+import { getButtonIcon } from 'src/context/Theme';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { getPathWithParams } from 'src/utils/misc-utils';
 

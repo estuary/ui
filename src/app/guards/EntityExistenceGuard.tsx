@@ -8,7 +8,7 @@ import useGlobalSearchParams, {
 import { useLiveSpecsExtWithSpec } from 'src/hooks/useLiveSpecsExt';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
 import { useFormStateStore_setLiveSpec } from 'src/stores/FormState/hooks';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 function EntityExistenceGuard({ children }: BaseComponentProps) {
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);

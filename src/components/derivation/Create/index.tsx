@@ -15,8 +15,9 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { useBinding_resetState } from 'src/stores/Binding/hooks';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';

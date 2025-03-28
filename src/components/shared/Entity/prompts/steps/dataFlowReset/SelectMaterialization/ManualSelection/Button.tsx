@@ -5,7 +5,7 @@ import { useStore } from 'zustand';
 import { FormattedMessage } from 'react-intl';
 
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
-import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';

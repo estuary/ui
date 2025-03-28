@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useTheme } from '@mui/material';
 
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 
 import navArrowLeftDark from 'src/images/graph-icons/nav-arrow-left__dark.svg';
 import navArrowLeftLight from 'src/images/graph-icons/nav-arrow-left__light.svg';

@@ -2,11 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTheme } from '@mui/material';
 
-import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourStatType } from '../types';
-import useLegendConfig from '../useLegendConfig';
-import useTooltipConfig from '../useTooltipConfig';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -28,7 +24,11 @@ import { defaultOutlineColor, eChartsColors } from 'src/context/Theme';
 import useDataByHourGraphMessages from 'src/hooks/useDataByHourGraphMessages';
 import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
-import { CatalogStats_Details } from 'src/types';
+import type { CatalogStats_Details } from 'src/types';
+import { getTooltipItem, getTooltipTitle } from 'src/components/graphs/tooltips';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import type { DataByHourStatType } from 'src/components/graphs/types';
 
 interface Props {
     id: string;

@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
 
-import SchemaEvolution from '../Actions/SchemaEvolution';
 
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import SchemaEvolution from 'src/components/shared/Entity/Actions/SchemaEvolution';
 
 function Actions() {
     const setFormState = useFormStateStore_setFormState();

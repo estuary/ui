@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 
 import { Box, Tooltip, Typography } from '@mui/material';
 
-import ExternalLink from '../ExternalLink';
-import { EndpointLinkProps } from './types';
 import { useIntl } from 'react-intl';
-
 import { formatHttpUrl, isHttp } from 'src/utils/dataPlane-utils';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import type { EndpointLinkProps } from 'src/components/shared/Endpoints/types';
+
 
 export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     const intl = useIntl();

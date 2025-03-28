@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { isEqual } from 'lodash';
 
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {

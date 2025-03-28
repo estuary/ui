@@ -1,12 +1,12 @@
 import { StaticDatePicker } from '@mui/x-date-pickers';
 
-import DateOrTimePickerWrapper from './DateOrTimePickerWrapper';
-import { INVALID_DATE } from './shared';
-import { PickerProps } from './types';
 import { format, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
-
 import { Patterns } from 'src/types/jsonforms';
+import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
+import { INVALID_DATE } from 'src/components/shared/pickers/shared';
+import type { PickerProps } from 'src/components/shared/pickers/types';
+
 
 function DatePickerCTA(props: PickerProps) {
     const { enabled, state, value, onChange } = props;

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { ListItemText } from '@mui/material';
-import {
-    DataGrid,
+import type {
     GridColDef,
     GridRenderCellParams,
-    GridRowSelectionModel,
+    GridRowSelectionModel} from '@mui/x-data-grid';
+import {
+    DataGrid
 } from '@mui/x-data-grid';
 
 import { FormattedMessage } from 'react-intl';

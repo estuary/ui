@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import useBrowserTitle from './useBrowserTitle';
-
 import { useTopBarStore } from 'src/stores/TopBar/Store';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
+
 
 interface PageTitleProps {
     header: string;

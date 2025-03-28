@@ -9,10 +9,10 @@ import {
     DialogTitle,
 } from '@mui/material';
 
-import { IConfirmationModalContext, IConfirmationModalOptions } from './types';
 import { FormattedMessage } from 'react-intl';
 
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import type { IConfirmationModalContext, IConfirmationModalOptions } from 'src/context/Confirmation/types';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';

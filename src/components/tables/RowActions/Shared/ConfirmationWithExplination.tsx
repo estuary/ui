@@ -11,15 +11,15 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { ConfirmationWithExplanationProps } from './types';
 import { WarningTriangle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import { alertColorsReversed } from 'src/context/Theme';
-import { AccessGrantRemovalSeverity } from 'src/hooks/useAccessGrantRemovalDescriptions';
+import type { AccessGrantRemovalSeverity } from 'src/hooks/useAccessGrantRemovalDescriptions';
+import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type { ConfirmationWithExplanationProps } from 'src/components/tables/RowActions/Shared/types';
 
 function ConfirmationWithExplanation({
     message,

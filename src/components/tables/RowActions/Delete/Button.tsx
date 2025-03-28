@@ -1,11 +1,11 @@
-import RowActionConfirmation from '../Shared/Confirmation';
-import { SettingMetadata } from '../Shared/types';
-import { DeleteButtonProps } from '../types';
 
 import DeleteConfirmation from 'src/components/tables/RowActions/Delete/Confirmation';
 import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
 import { SelectTableStoreNames } from 'src/stores/names';
+import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
+import type { DeleteButtonProps } from 'src/components/tables/RowActions/types';
+import type { SettingMetadata } from 'src/components/tables/RowActions/Shared/types';
 
 function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
     const generator = () => null;

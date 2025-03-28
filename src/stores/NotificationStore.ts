@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { AlertColor, SnackbarProps } from '@mui/material';
+import type { AlertColor, SnackbarProps } from '@mui/material';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';

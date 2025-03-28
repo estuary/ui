@@ -1,4 +1,4 @@
-import { InputBaseComponentProps } from '@mui/material';
+import type { InputBaseComponentProps } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 

@@ -1,4 +1,4 @@
-import { Tester, UISchemaElement } from '@jsonforms/core';
+import type { Tester, UISchemaElement } from '@jsonforms/core';
 
 import { has, isEmpty } from 'lodash';
 

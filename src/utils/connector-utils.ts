@@ -3,24 +3,24 @@
 //  truly reusable. So marking the query as `any` even thogh
 //  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
 
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { hasLength } from './misc-utils';
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
-import {
+import type {
     ConnectorsQuery_DetailsForm,
     ConnectorTag_Base,
 } from 'src/api/connectors';
-import { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
-import { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
-import { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
-import {
+import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
+import type {
     ConnectorMetadata,
     DekafConnectorMetadata,
     Details,
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
-import { DekafConfig } from 'src/types';
+import type { DekafConfig } from 'src/types';
+import type { ConnectorConfig } from 'deps/flow/flow';
+import { hasLength } from 'src/utils/misc-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';

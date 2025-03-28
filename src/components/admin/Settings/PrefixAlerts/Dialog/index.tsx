@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 import {
     Button,
@@ -12,14 +12,14 @@ import {
     useTheme,
 } from '@mui/material';
 
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
-import EmailListField from './EmailListField';
-import PrefixField from './PrefixField';
-import ServerErrors from './ServerErrors';
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
+import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
+import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
+
 
 interface Props {
     headerId: string;

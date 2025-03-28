@@ -1,9 +1,9 @@
 import { Button } from '@mui/material';
 
-import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
 import { FormattedMessage } from 'react-intl';
 
 import { entityHeaderButtonSx } from 'src/context/Theme';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 
 function EntityViewDetails() {
     const { exit } = useEntityWorkflowHelpers();

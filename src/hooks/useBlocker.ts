@@ -1,7 +1,8 @@
 import { useCallback, useEffect } from 'react';
 
+import type {
+    unstable_BlockerFunction as BlockerFunction} from 'react-router-dom';
 import {
-    unstable_BlockerFunction as BlockerFunction,
     unstable_useBlocker as useBlocker,
 } from 'react-router-dom';
 

@@ -1,19 +1,21 @@
+import type { BackfillButtonProps } from 'src/components/editor/Bindings/Backfill/types';
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { BindingMetadata } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
-import BackfillCount from './BackfillCount';
-import BackfillDataFlowOption from './BackfillDataFlowOption';
-import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
-import EvolvedAlert from './EvolvedAlert';
-import EvolvedCount from './EvolvedCount';
-import { BackfillButtonProps } from './types';
-import useUpdateBackfillCounter from './useUpdateBackfillCounter';
 import { useIntl } from 'react-intl';
 
+import BackfillCount from 'src/components/editor/Bindings/Backfill/BackfillCount';
+import BackfillDataFlowOption from 'src/components/editor/Bindings/Backfill/BackfillDataFlowOption';
+import BackfillNotSupportedAlert from 'src/components/editor/Bindings/Backfill/BackfillNotSupportedAlert';
+import EvolvedAlert from 'src/components/editor/Bindings/Backfill/EvolvedAlert';
+import EvolvedCount from 'src/components/editor/Bindings/Backfill/EvolvedCount';
+import useUpdateBackfillCounter from 'src/components/editor/Bindings/Backfill/useUpdateBackfillCounter';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
-import { BooleanString } from 'src/components/shared/buttons/types';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
@@ -32,7 +34,6 @@ import {
     useFormStateStore_setFormState,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { BindingMetadata } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 function BackfillButton({

@@ -2,13 +2,10 @@ import { useEffect, useMemo } from 'react';
 
 import { useStore } from 'zustand';
 
-import Rows from './Rows';
-import { EVERYTHING, publishedColumn } from './shared';
-import { useCollectionsSelectorColumns } from './useCollectionsSelectorColumns';
 import { useUnmount } from 'react-use';
 
 import { getLiveSpecs_entitySelector } from 'src/api/liveSpecsExt';
-import { TableHydratorProps } from 'src/components/shared/Entity/types';
+import type { TableHydratorProps } from 'src/components/shared/Entity/types';
 import EntityTable from 'src/components/tables/EntityTable';
 import RowSelector from 'src/components/tables/RowActions/RowSelector';
 import invariableStores from 'src/context/Zustand/invariableStores';
@@ -17,6 +14,9 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import { MAX_BINDINGS } from 'src/utils/workflow-utils';
+import Rows from 'src/components/collection/Selector/Table/Rows';
+import { useCollectionsSelectorColumns } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
+import { EVERYTHING, publishedColumn } from 'src/components/collection/Selector/Table/shared';
 
 const selectableTableStoreName = SelectTableStoreNames.ENTITY_SELECTOR;
 const tableRowsPerPage = [10, 50, 100, MAX_BINDINGS];

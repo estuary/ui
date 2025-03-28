@@ -7,7 +7,7 @@ import Rows from 'src/components/tables/RefreshTokens/Rows';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
-import { TableColumns } from 'src/types';
+import type { TableColumns } from 'src/types';
 
 const columns: TableColumns[] = [
     {

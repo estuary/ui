@@ -9,17 +9,18 @@ import {
     Typography,
 } from '@mui/material';
 
-import DateFilterOption from './FilterOption';
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { StatsFilter } from 'src/api/stats';
+import type { StatsFilter } from 'src/api/stats';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
+import DateFilterOption from 'src/components/filters/Date/FilterOption';
 
 interface Props {
     header: string;

@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 
 import { Button, Stack, Typography } from '@mui/material';
 
-import ListViewSkeleton from './ListViewSkeleton';
-import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
 import { Refresh } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
@@ -19,10 +17,12 @@ import {
     useJournalData,
     useJournalsForCollection,
 } from 'src/hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useTenantHidesDataPreview } from 'src/hooks/useTenants';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
+import ListViewSkeleton from 'src/components/collection/DataPreview/ListViewSkeleton';
+import NoCollectionJournalsAlert from 'src/components/collection/DataPreview/NoCollectionJournalsAlert';
 
 interface Props {
     collectionName: string;

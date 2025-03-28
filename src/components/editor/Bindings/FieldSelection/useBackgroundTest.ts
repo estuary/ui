@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-import useFieldSelectionRefresh from './useFieldSelectionRefresh';
 
 import {
     useEditorStore_id,
@@ -14,6 +13,7 @@ import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
 import { useEndpointConfig_serverUpdateRequired } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import useFieldSelectionRefresh from 'src/components/editor/Bindings/FieldSelection/useFieldSelectionRefresh';
 
 export default function useBackgroundTest() {
     const entityType = useEntityType();

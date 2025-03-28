@@ -2,17 +2,18 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
-import { RowConfirmation } from '../types';
-import { RowActionButtonProps } from './types';
 import { FormattedMessage } from 'react-intl';
 
 import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
+import type { RowConfirmation } from 'src/components/tables/RowActions/types';
+import type { RowActionButtonProps } from 'src/components/tables/RowActions/Shared/types';
 
 function RowActionButton({
     messageID,

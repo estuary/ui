@@ -8,13 +8,13 @@ import {
     Typography,
 } from '@mui/material';
 
-import { BackfillDataflowOptionProps } from './types';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import type { BackfillDataflowOptionProps } from 'src/components/editor/Bindings/Backfill/types';
 
 function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const intl = useIntl();

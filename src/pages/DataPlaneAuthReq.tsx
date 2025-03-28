@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Box, Toolbar, Typography } from '@mui/material';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 

@@ -8,7 +8,7 @@ import {
     OAUTH_STATE_KEY,
     POPUP_HEIGHT,
     POPUP_WIDTH,
-} from './constants';
+} from 'src/hooks/forks/react-use-oauth2/components/constants';
 
 export type AuthTokenPayload = {
     token_type: string;

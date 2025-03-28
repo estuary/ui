@@ -10,7 +10,8 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
 import { useBillingStore } from 'src/stores/Billing/Store';
-import { TableColumns, TableStatuses } from 'src/types';
+import type { TableColumns} from 'src/types';
+import { TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 
 export const columns: TableColumns[] = [

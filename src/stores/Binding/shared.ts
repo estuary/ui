@@ -1,28 +1,28 @@
-import { StoreApi } from 'zustand';
+import type { StoreApi } from 'zustand';
 
-import { getInitialFieldSelectionData } from './slices/FieldSelection';
-import { getInitialTimeTravelData } from './slices/TimeTravel';
-import {
-    BindingChanges,
-    Bindings,
-    BindingState,
-    ResourceConfig,
-    ResourceConfigDictionary,
-} from './types';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { difference, intersection } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
+import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import { BASE_ERROR } from 'src/services/supabase';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
-import { Entity, Schema } from 'src/types';
+import type { Entity, Schema } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
+import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
+import type {
+    BindingChanges,
+    Bindings,
+    BindingState,
+    ResourceConfig,
+    ResourceConfigDictionary,
+} from 'src/stores/Binding/types';
+import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 
 export const getCollections = (configs: ResourceConfigDictionary) => {
     return Object.values(configs);

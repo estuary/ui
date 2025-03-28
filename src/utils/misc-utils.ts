@@ -1,8 +1,8 @@
-import { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
-import { SortDirection } from '@mui/material';
+import type { SortDirection } from '@mui/material';
 
-import {
+import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
@@ -12,7 +12,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'src/services/jsonforms';
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { BaseGrant, Grant_UserExt } from 'src/types';
+import type { BaseGrant, Grant_UserExt } from 'src/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';

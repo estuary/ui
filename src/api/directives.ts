@@ -1,22 +1,23 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { DIRECTIVES } from 'src/directives/shared';
-import { UserClaims } from 'src/directives/types';
+import type { UserClaims } from 'src/directives/types';
 import { logRocketConsole } from 'src/services/shared';
-import {
+import type {
     CallSupabaseResponse,
+    SortingProps} from 'src/services/supabase';
+import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
     insertSupabase,
     RPCS,
-    SortingProps,
     supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
-import {
+import type {
     AppliedDirective,
     Directive,
     GrantDirective,

@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { SelectTableStoreNames } from 'src/stores/names';
-import { TableColumns } from 'src/types';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { TableColumns } from 'src/types';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (

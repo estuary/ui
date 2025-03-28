@@ -1,6 +1,5 @@
 import { Stack } from '@mui/material';
 
-import DelayWarning from './DelayWarning';
 import { FormattedMessage } from 'react-intl';
 
 import DetailsRange from 'src/components/filters/DetailsRange';
@@ -13,6 +12,7 @@ import Error from 'src/components/shared/Error';
 import useDetailsStats from 'src/hooks/useDetailsStats';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { hasLength } from 'src/utils/misc-utils';
+import DelayWarning from 'src/components/shared/Entity/Details/Usage/DelayWarning';
 
 interface Props {
     catalogName: string;

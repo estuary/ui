@@ -9,7 +9,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { Schema } from 'src/types';
+import type { Schema } from 'src/types';
 
 function useShards() {
     const taskSpecType = useEntityType();

@@ -1,4 +1,5 @@
-import { decodeJwt, JWTPayload } from 'jose';
+import type { JWTPayload } from 'jose';
+import { decodeJwt } from 'jose';
 import useSWR from 'swr';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';

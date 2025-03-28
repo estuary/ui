@@ -1,6 +1,4 @@
-import { logRocketEvent, retryAfterFailure } from './shared';
-import { CustomEvents } from './types';
-import {
+import type {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
@@ -9,7 +7,9 @@ import { forEach } from 'lodash';
 import retry from 'retry';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'src/types';
+import type { JobStatus, SortDirection, SupabaseInvokeResponse } from 'src/types';
+import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;

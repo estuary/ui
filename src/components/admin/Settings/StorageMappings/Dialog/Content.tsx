@@ -1,7 +1,5 @@
 import { Box, DialogContent, Typography } from '@mui/material';
 
-import RepublicationError from './Error';
-import { REPUBLICATION_FAILURE_MESSAGE_ID } from './useRepublishPrefix';
 import { FormattedMessage } from 'react-intl';
 
 import StorageMappingForm from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
@@ -11,6 +9,8 @@ import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMap
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useTenantStore } from 'src/stores/Tenant/Store';
+import RepublicationError from 'src/components/admin/Settings/StorageMappings/Dialog/Error';
+import { REPUBLICATION_FAILURE_MESSAGE_ID } from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 
 function StorageMappingContent() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);

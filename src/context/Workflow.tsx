@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 
-import { BaseComponentProps, EntityWorkflow as Workflow } from 'src/types';
+import type { BaseComponentProps, EntityWorkflow as Workflow } from 'src/types';
 
 interface Props extends BaseComponentProps {
     value: Workflow;

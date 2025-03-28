@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 
 import { Box, TableCell, Tooltip, Typography } from '@mui/material';
 
-import { StatsCellProps } from './types';
 import { useIntl } from 'react-intl';
 
 import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
 import { textLoadingColor } from 'src/context/Theme';
+import type { StatsCellProps } from 'src/components/tables/cells/stats/types';
 
 const StatsCell = ({
     failed,

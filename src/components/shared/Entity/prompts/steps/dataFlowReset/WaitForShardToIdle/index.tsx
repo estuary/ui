@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { Shard } from 'data-plane-gateway/types/shard_client';
+import type { Shard } from 'data-plane-gateway/types/shard_client';
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
@@ -14,6 +13,7 @@ import { useQueryPoller } from 'src/hooks/useJobStatusPoller';
 import { defaultQueryDateFormat } from 'src/services/luxon';
 import { handlePollerError } from 'src/services/supabase';
 import { fetchShardList } from 'src/utils/dataPlane-utils';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function WaitForShardToIdle() {
     const intl = useIntl();

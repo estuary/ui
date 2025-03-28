@@ -1,24 +1,28 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import {
+import type {
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
 import produce from 'immer';
 import { flatMap } from 'lodash';
 
-import { getStatsByName, StatsFilter } from 'src/api/stats';
+import type { StatsFilter } from 'src/api/stats';
+import { getStatsByName } from 'src/api/stats';
 import { EVERYTHING } from 'src/components/collection/Selector/Table/shared';
-import { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
+import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { supabaseRetry } from 'src/services/supabase';
-import {
+import type {
     AsyncOperationProps,
+    StoreWithHydration} from 'src/stores/extensions/Hydration';
+import {
     getAsyncDefault,
     getInitialHydrationData,
-    getStoreWithHydrationSettings,
-    StoreWithHydration,
+    getStoreWithHydrationSettings
 } from 'src/stores/extensions/Hydration';
 import { devtoolsOptions } from 'src/utils/store-utils';
 

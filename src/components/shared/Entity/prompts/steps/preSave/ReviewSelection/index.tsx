@@ -2,14 +2,14 @@ import { useState } from 'react';
 
 import { Button, Collapse, Stack } from '@mui/material';
 
-import DiffViewer from './DiffViewer';
-import ReviewTable from './ReviewTable';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import DiffViewer from 'src/components/shared/Entity/prompts/steps/preSave/ReviewSelection/DiffViewer';
+import ReviewTable from 'src/components/shared/Entity/prompts/steps/preSave/ReviewSelection/ReviewTable';
 
 function ReviewSelection() {
     const intl = useIntl();

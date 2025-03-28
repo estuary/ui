@@ -2,14 +2,6 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
-import ConfirmationAlert from '../Shared/ConfirmationAlert';
-import ConfirmationWithExplanation from '../Shared/ConfirmationWithExplination';
-import GrantWhatIsChanging from './GrantWhatIsChanging';
-import RevokeGrant from './RevokeGrant';
-import {
-    AccessGrantDeleteButtonProps,
-    AccessGrantRowConfirmation,
-} from './types';
 import { FormattedMessage } from 'react-intl';
 
 import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
@@ -17,10 +9,19 @@ import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import useAccessGrantRemovalDescriptions from 'src/hooks/useAccessGrantRemovalDescriptions';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
+import ConfirmationAlert from 'src/components/tables/RowActions/Shared/ConfirmationAlert';
+import RevokeGrant from 'src/components/tables/RowActions/AccessGrants/RevokeGrant';
+import GrantWhatIsChanging from 'src/components/tables/RowActions/AccessGrants/GrantWhatIsChanging';
+import type {
+    AccessGrantDeleteButtonProps,
+    AccessGrantRowConfirmation,
+} from 'src/components/tables/RowActions/AccessGrants/types';
+import ConfirmationWithExplanation from 'src/components/tables/RowActions/Shared/ConfirmationWithExplination';
 
 // TODO (capabilities) - need to see if they remove their own capabilities
 //  and then refresh local cache of access grants.

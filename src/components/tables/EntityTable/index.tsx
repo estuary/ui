@@ -1,7 +1,8 @@
-import {
+import type {
     ChangeEvent,
     MouseEvent,
-    ReactNode,
+    ReactNode} from 'react';
+import {
     useCallback,
     useEffect,
     useMemo,
@@ -20,29 +21,31 @@ import {
     useTheme,
 } from '@mui/material';
 
-import EntityTableBody from './TableBody';
-import EntityTableFooter from './TableFooter';
-import EntityTableHeader from './TableHeader';
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
 
 import Title from 'src/components/tables/Title';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { Pagination } from 'src/services/supabase';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { Pagination } from 'src/services/supabase';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import {
+import type {
     SortDirection,
     TableColumns,
     TableIntlConfig,
-    TableState,
+    TableState} from 'src/types';
+import {
     TableStatuses,
 } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (

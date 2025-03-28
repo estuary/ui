@@ -1,9 +1,10 @@
-import {
+import type {
     SxProps,
+    Theme} from '@mui/material';
+import {
     TableCell,
     TableHead,
     TableRow,
-    Theme,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -11,7 +12,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 
 import { semiTransparentBackground } from 'src/context/Theme';
-import { TableColumns } from 'src/types';
+import type { TableColumns } from 'src/types';
 
 interface Props {
     columns: TableColumns[];

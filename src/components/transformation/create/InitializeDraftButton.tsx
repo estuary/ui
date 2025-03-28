@@ -22,7 +22,7 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_setSourceCollections,
 } from 'src/stores/TransformationCreate/hooks';
-import { TransformConfig } from 'src/stores/TransformationCreate/types';
+import type { TransformConfig } from 'src/stores/TransformationCreate/types';
 import {
     generateInitialSpec,
     templateTransformConfig,

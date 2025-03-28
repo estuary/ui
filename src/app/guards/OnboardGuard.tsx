@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Grid } from '@mui/material';
 
-import useDirectiveGuard from './hooks';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
@@ -10,7 +9,8 @@ import BetaOnboard from 'src/directives/BetaOnboard';
 import CustomerQuote from 'src/directives/Onboard/CustomerQuote';
 import { createOnboardingStore } from 'src/directives/Onboard/Store/create';
 import { OnboardingStoreNames } from 'src/stores/names';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import useDirectiveGuard from 'src/app/guards/hooks';
 
 const SELECTED_DIRECTIVE = 'betaOnboard';
 

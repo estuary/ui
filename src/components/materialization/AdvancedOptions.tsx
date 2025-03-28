@@ -1,12 +1,12 @@
 import { Box, Typography } from '@mui/material';
 
-import OnIncompatibleSchemaChange from './OnIncompatibleSchemaChange';
 import { useIntl } from 'react-intl';
 
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import OnIncompatibleSchemaChange from 'src/components/materialization/OnIncompatibleSchemaChange';
 
 export default function AdvancedOptions() {
     const intl = useIntl();

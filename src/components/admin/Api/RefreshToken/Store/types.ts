@@ -1,4 +1,4 @@
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 
 export interface RefreshTokenState {
     token: string;

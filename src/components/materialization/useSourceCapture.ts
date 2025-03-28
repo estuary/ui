@@ -9,7 +9,7 @@ import {
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { Schema, SourceCaptureDef } from 'src/types';
+import type { Schema, SourceCaptureDef } from 'src/types';
 import {
     addOrRemoveSourceCapture,
     getSourceCapture,

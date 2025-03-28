@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 
+import type {
+    AutocompleteRenderInputParams} from '@mui/material';
 import {
     Autocomplete,
-    AutocompleteRenderInputParams,
     FormHelperText,
     Stack,
     TextField,
@@ -10,7 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { CaptureIntervalProps } from './types';
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { Duration } from 'luxon';
@@ -25,6 +25,7 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
+import type { CaptureIntervalProps } from 'src/components/capture/Interval/types';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();

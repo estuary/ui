@@ -9,12 +9,12 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ControllerAlertProps } from './types';
 import Editor from '@monaco-editor/react';
 import { NavArrowDown } from 'iconoir-react';
 
 import { defaultOutline } from 'src/context/Theme';
 import { unescapeString } from 'src/utils/misc-utils';
+import type { ControllerAlertProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
 
 export default function ControllerAlert({
     error,

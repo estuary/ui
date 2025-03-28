@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectTableStoreNames } from 'src/stores/names';
 
 export interface RowConfirmation<M = string> {
     id: string;

@@ -7,7 +7,7 @@ import FullPageError from 'src/components/fullPage/Error';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useTenantsDetailsForPayment } from 'src/hooks/useTenants';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
-import { BaseComponentProps, TenantPaymentDetails } from 'src/types';
+import type { BaseComponentProps, TenantPaymentDetails } from 'src/types';
 
 export interface TenantContextData {
     tenantBillingDetails: TenantPaymentDetails[] | null;

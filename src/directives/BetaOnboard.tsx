@@ -2,10 +2,7 @@ import { useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import Actions from './Actions';
-import { jobStatusQuery, trackEvent } from './shared';
-import { DirectiveProps } from './types';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 
@@ -26,6 +23,9 @@ import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { fireGtmEvent } from 'src/services/gtm';
 import { hasLength } from 'src/utils/misc-utils';
+import Actions from 'src/directives/Actions';
+import type { DirectiveProps } from 'src/directives/types';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 
 const directiveName = 'betaOnboard';
 const NAME_TAKEN_MESSAGE = 'is already in use';

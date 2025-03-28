@@ -1,6 +1,6 @@
 import { styled } from '@mui/material';
 
-import { ParsedSpan } from 'ansicolor';
+import type { ParsedSpan } from 'ansicolor';
 
 import { unescapeString } from 'src/utils/misc-utils';
 

@@ -1,13 +1,13 @@
 import { Divider, Grid, Stack } from '@mui/material';
 
-import DataPlanes from './DataPlanes';
-import StorageMappings from './StorageMappings';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
 import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import usePageTitle from 'src/hooks/usePageTitle';
+import DataPlanes from 'src/components/admin/Settings/DataPlanes';
+import StorageMappings from 'src/components/admin/Settings/StorageMappings';
 
 function Settings() {
     usePageTitle({

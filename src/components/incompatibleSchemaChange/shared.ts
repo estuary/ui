@@ -1,6 +1,6 @@
-import { AutoCompleteOption } from './types';
-
 import { getTypedAutoCompleteDefaults } from 'src/components/shared/AutoComplete/DefaultProps';
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+
 
 export const choices = [
     'abort',

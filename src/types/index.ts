@@ -1,12 +1,12 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { TableCellProps } from '@mui/material';
+import type { TableCellProps } from '@mui/material';
 
-import { JsonFormsCore } from '@jsonforms/core';
+import type { JsonFormsCore } from '@jsonforms/core';
 
-import { PostgrestError } from '@supabase/supabase-js';
+import type { PostgrestError } from '@supabase/supabase-js';
 
-import { LogLevels } from 'src/components/tables/Logs/types';
+import type { LogLevels } from 'src/components/tables/Logs/types';
 
 export type fake = 'fake';
 

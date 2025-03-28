@@ -3,7 +3,6 @@ import useConstant from 'use-constant';
 
 import { useTheme } from '@mui/material';
 
-import useTooltipConfig from './useTooltipConfig';
 import {
     eachMonthOfInterval,
     endOfMonth,
@@ -11,7 +10,7 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -28,6 +27,7 @@ import useLegendConfig from 'src/components/graphs/useLegendConfig';
 import { eChartsColors } from 'src/context/Theme';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 
 const chartContainerId = 'data-by-month';
 

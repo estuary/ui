@@ -1,4 +1,4 @@
-import { Schema } from 'src/types';
+import type { Schema } from 'src/types';
 import { getGoogleTageManagerSettings } from 'src/utils/env-utils';
 
 // GTM is loaded/initialized in index.html

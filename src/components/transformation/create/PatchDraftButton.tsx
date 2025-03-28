@@ -23,7 +23,7 @@ import {
     useTransformationCreate_setSelectedAttribute,
     useTransformationCreate_transformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
-import { Transform } from 'src/types';
+import type { Transform } from 'src/types';
 
 function PatchDraftButton() {
     // Draft Editor Store

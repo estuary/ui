@@ -2,7 +2,7 @@ import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import AuthenticatedHydrators from 'src/context/AuthenticatedHydrators';
 import OnLoadSpinner from 'src/context/OnLoadSpinner/OnLoadSpinner';
 import PaymentMethodWarning from 'src/context/PaymentMethodWarning';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 function Authenticated({ children }: BaseComponentProps) {
     return (

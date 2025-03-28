@@ -1,7 +1,5 @@
 import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 
-import SchemaKeyHeader from './Header';
-import { keyIsValidOption } from './shared';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import {
@@ -11,6 +9,8 @@ import {
 } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
+import SchemaKeyHeader from 'src/components/schema/KeyAutoComplete/Header';
+import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 
 interface Props {
     value: string[] | null;

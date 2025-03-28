@@ -1,8 +1,8 @@
-import { useDetailsFormStore } from './Store';
-
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+
 
 // Selector hooks
 export const useDetailsForm_changed_connectorId = () => {

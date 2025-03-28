@@ -1,15 +1,16 @@
-import {
+import type {
     ArrayLayoutProps,
+    RankedTester} from '@jsonforms/core';
+import {
     optionIs,
-    RankedTester,
     rankWith,
 } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsArrayLayoutProps } from '@jsonforms/react';
 
-import { nullableRank } from './shared';
-
 import { Options } from 'src/types/jsonforms';
+import { nullableRank } from 'src/forms/renderers/nullable/shared';
+
 
 const { MaterialArrayControlRenderer } = Unwrapped;
 

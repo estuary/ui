@@ -1,32 +1,8 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import {
-    getCollectionNames,
-    getInitialMiscData,
-    getInitialStoreData,
-    hydrateConnectorTagDependentState,
-    hydrateSpecificationDependentState,
-    initializeAndGenerateUUID,
-    initializeBinding,
-    initializeCurrentBinding,
-    populateResourceConfigErrors,
-    resetCollectionMetadata,
-    sortResourceConfigs,
-    STORE_KEY,
-    updateBackfilledBindingState,
-    whatChanged,
-} from './shared';
-import {
-    getInitialFieldSelectionData,
-    getStoreWithFieldSelectionSettings,
-} from './slices/FieldSelection';
-import {
-    getInitialTimeTravelData,
-    getStoreWithTimeTravelSettings,
-    initializeFullSourceConfig,
-} from './slices/TimeTravel';
-import { BindingMetadata, BindingState, ResourceConfig } from './types';
 import produce from 'immer';
 import {
     difference,
@@ -65,6 +41,32 @@ import {
     getCollectionName,
 } from 'src/utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'src/validation';
+import {
+    getCollectionNames,
+    getInitialMiscData,
+    getInitialStoreData,
+    hydrateConnectorTagDependentState,
+    hydrateSpecificationDependentState,
+    initializeAndGenerateUUID,
+    initializeBinding,
+    initializeCurrentBinding,
+    populateResourceConfigErrors,
+    resetCollectionMetadata,
+    sortResourceConfigs,
+    STORE_KEY,
+    updateBackfilledBindingState,
+    whatChanged,
+} from 'src/stores/Binding/shared';
+import type { BindingMetadata, BindingState, ResourceConfig } from 'src/stores/Binding/types';
+import {
+    getInitialTimeTravelData,
+    getStoreWithTimeTravelSettings,
+    initializeFullSourceConfig,
+} from 'src/stores/Binding/slices/TimeTravel';
+import {
+    getInitialFieldSelectionData,
+    getStoreWithFieldSelectionSettings,
+} from 'src/stores/Binding/slices/FieldSelection';
 
 const getInitialState = (
     set: NamedSet<BindingState>,

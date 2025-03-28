@@ -1,4 +1,4 @@
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 export interface LoginWrapperProps extends BaseComponentProps {
     isRegister: boolean;

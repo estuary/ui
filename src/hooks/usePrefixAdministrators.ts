@@ -1,7 +1,7 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { getPrefixAdministrators } from 'src/api/roleGrants';
-import { Capability } from 'src/types';
+import type { Capability } from 'src/types';
 
 function usePrefixAdministrators(objectRole: string, capability: Capability) {
     const { data, error, mutate, isValidating } = useQuery(

@@ -15,8 +15,8 @@ import IconMenu from 'src/components/menus/IconMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { disabledButtonText_primary } from 'src/context/Theme';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { TableColumns } from 'src/types';
-import { WithRequiredNonNullProperty } from 'src/types/utils';
+import type { TableColumns } from 'src/types';
+import type { WithRequiredNonNullProperty } from 'src/types/utils';
 
 interface Props {
     columns: WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'>[];

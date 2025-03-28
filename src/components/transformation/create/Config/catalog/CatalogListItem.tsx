@@ -28,7 +28,7 @@ import {
     useTransformationCreate_setAttributeType,
     useTransformationCreate_setSelectedAttribute,
 } from 'src/stores/TransformationCreate/hooks';
-import { DerivationAttribute } from 'src/stores/TransformationCreate/types';
+import type { DerivationAttribute } from 'src/stores/TransformationCreate/types';
 
 interface Props {
     fixedAttributeType: DerivationAttribute;

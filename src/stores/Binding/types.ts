@@ -1,21 +1,21 @@
-import { StoreWithFieldSelection } from './slices/FieldSelection';
-import { StoreWithTimeTravel } from './slices/TimeTravel';
-import { DurationObjectUnits } from 'luxon';
+import type { DurationObjectUnits } from 'luxon';
 
-import { EvolvedCollections } from 'src/api/evolutions';
-import { TrialCollectionQuery } from 'src/api/liveSpecsExt';
-import { BooleanString } from 'src/components/shared/buttons/types';
-import { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
-import { ResourceConfigPointers } from 'src/services/ajv';
-import { CallSupabaseResponse } from 'src/services/supabase';
-import { StoreWithHydration } from 'src/stores/extensions/Hydration';
-import {
+import type { EvolvedCollections } from 'src/api/evolutions';
+import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
+import type { ResourceConfigPointers } from 'src/services/ajv';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type {
     Entity,
     EntityWorkflow,
     JsonFormsData,
     Schema,
     SourceCaptureDef,
 } from 'src/types';
+import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
 
 export interface CollectionMetadata {
     added?: boolean;

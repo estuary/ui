@@ -1,10 +1,10 @@
 import { Button } from '@mui/material';
 
-import { ProviderButtonProps } from '../types';
-import { defaulticonSize } from './shared';
 import { FormattedMessage } from 'react-intl';
-
 import useLoginHints from 'src/hooks/searchParams/useLoginHints';
+import type { ProviderButtonProps } from 'src/components/login/Providers/types';
+import { defaulticonSize } from 'src/components/login/Providers/buttons/shared';
+
 
 const GoogleButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
     const { google } = useLoginHints();

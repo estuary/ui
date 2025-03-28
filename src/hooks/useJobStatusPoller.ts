@@ -1,17 +1,18 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-import {
+import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
 import { useUnmount } from 'react-use';
 
 import { logRocketConsole, retryAfterFailure } from 'src/services/shared';
+import type {
+    PollerTimeout} from 'src/services/supabase';
 import {
     DEFAULT_POLLING_INTERVAL,
     handleFailure,
-    JOB_STATUS_POLLER_ERROR,
-    PollerTimeout,
+    JOB_STATUS_POLLER_ERROR
 } from 'src/services/supabase';
 import {
     incrementInterval,

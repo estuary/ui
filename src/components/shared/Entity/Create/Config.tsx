@@ -9,7 +9,7 @@ import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntit
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { EntityWithCreateWorkflow } from 'src/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

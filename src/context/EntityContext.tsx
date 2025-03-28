@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import { BaseComponentProps, Entity } from 'src/types';
+import type { BaseComponentProps, Entity } from 'src/types';
 
 interface Props extends BaseComponentProps {
     value: Entity;

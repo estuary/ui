@@ -1,26 +1,26 @@
-import {
-    getCollectionAuthorizationSettings,
-    getTaskAuthorizationSettings,
-} from './env-utils';
-import { hasLength } from './misc-utils';
-import { Session } from '@supabase/supabase-js';
+import type { Session } from '@supabase/supabase-js';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
-import {
+import type {
     ProtocolLabelSelector,
     ProtocolListResponse,
 } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import { Shard } from 'data-plane-gateway/types/shard_client';
-import { ResponseError } from 'data-plane-gateway/types/util';
+import type { Shard } from 'data-plane-gateway/types/shard_client';
+import type { ResponseError } from 'data-plane-gateway/types/util';
 
-import { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import { client } from 'src/services/client';
 import { logRocketConsole } from 'src/services/shared';
 import {
     DATA_PLANE_PREFIX,
     DATA_PLANE_SETTINGS,
 } from 'src/settings/dataPlanes';
-import { DataPlaneName, DataPlaneOption } from 'src/stores/DetailsForm/types';
-import { Endpoint } from 'src/stores/ShardDetail/types';
+import type { DataPlaneName, DataPlaneOption } from 'src/stores/DetailsForm/types';
+import type { Endpoint } from 'src/stores/ShardDetail/types';
+import {
+    getCollectionAuthorizationSettings,
+    getTaskAuthorizationSettings,
+} from 'src/utils/env-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 export enum SHARD_LABELS {
     EXPOSE_PORT = 'estuary.dev/expose-port',

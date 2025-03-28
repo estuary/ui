@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 
-import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +31,7 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 import { getPathWithParams } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
-import Rows, { tableColumns } from './Rows';
 
 import { getStorageMappings } from 'src/api/storageMappings';
 import StorageMappingsGenerateButton from 'src/components/admin/Settings/StorageMappings/GenerateButton';
@@ -11,6 +10,7 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import { useTenantStore } from 'src/stores/Tenant/Store';
+import Rows, { tableColumns } from 'src/components/tables/StorageMappings/Rows';
 
 function StorageMappingsTable() {
     const {

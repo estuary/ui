@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
 import { FormattedMessage } from 'react-intl';
 
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
@@ -17,6 +16,7 @@ import {
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
 } from 'src/stores/Binding/hooks';
+import { BindingsEditorConfigSkeleton } from 'src/components/collection/CollectionSkeletons';
 
 interface Props {
     bindingUUID: string;

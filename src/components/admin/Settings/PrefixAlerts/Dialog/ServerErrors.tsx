@@ -1,9 +1,9 @@
 import { Stack } from '@mui/material';
 
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 
 import Error from 'src/components/shared/Error';
 import { hasLength } from 'src/utils/misc-utils';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 export default function ServerErrors() {
     const serverErrors = useAlertSubscriptionsStore((state) =>

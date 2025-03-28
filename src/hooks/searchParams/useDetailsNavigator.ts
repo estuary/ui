@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
-import { GlobalSearchParams } from './useGlobalSearchParams';
 import { useNavigate } from 'react-router';
 
-import {
+import type {
     CaptureQueryWithStats,
     CollectionQueryWithStats,
     MaterializationQueryWithStats,
 } from 'src/api/liveSpecsExt';
 import { getPathWithParams } from 'src/utils/misc-utils';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 type Row =
     | CollectionQueryWithStats

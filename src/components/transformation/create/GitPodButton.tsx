@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { LoadingButtonProps } from '@mui/lab';
+import type { LoadingButtonProps } from '@mui/lab';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';

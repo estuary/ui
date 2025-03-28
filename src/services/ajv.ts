@@ -6,7 +6,7 @@ import {
 } from '@estuary/flow-web';
 import { isEmpty } from 'lodash';
 
-import { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
+import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
 import { Annotations } from 'src/types/jsonforms';
 import { stripPathing } from 'src/utils/misc-utils';
 

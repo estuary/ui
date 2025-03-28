@@ -10,7 +10,7 @@ import FullPageSpinner from 'src/components/fullPage/Spinner';
 import useInitializeTaskDraft from 'src/components/shared/Entity/Edit/useInitializeTaskDraft';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 function DraftInitializer({ children }: BaseComponentProps) {
     const initializeTaskDraft = useInitializeTaskDraft();

@@ -3,7 +3,7 @@ import { RadioGroup } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
-import { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
+import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuOptions() {

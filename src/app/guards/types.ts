@@ -1,4 +1,4 @@
-import { DirectiveStates } from 'src/directives/types';
+import type { DirectiveStates } from 'src/directives/types';
 
 export interface RegistrationProgressProps {
     status: DirectiveStates;

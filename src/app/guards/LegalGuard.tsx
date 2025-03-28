@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 
-import useDirectiveGuard from './hooks';
 import { FormattedMessage } from 'react-intl';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import FullPageError from 'src/components/fullPage/Error';
 import ClickToAccept from 'src/directives/ClickToAccept';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import useDirectiveGuard from 'src/app/guards/hooks';
 
 const SELECTED_DIRECTIVE = 'clickToAccept';
 

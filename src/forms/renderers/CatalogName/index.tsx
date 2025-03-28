@@ -25,18 +25,19 @@
 
 import { useCallback } from 'react';
 
-import {
+import type {
     ControlProps,
     OwnPropsOfEnum,
-    RankedTester,
+    RankedTester} from '@jsonforms/core';
+import {
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
 import PrefixedName from 'src/components/inputs/PrefixedName';
-import { PrefixedName_Change } from 'src/components/inputs/PrefixedName/types';
+import type { PrefixedName_Change } from 'src/components/inputs/PrefixedName/types';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 

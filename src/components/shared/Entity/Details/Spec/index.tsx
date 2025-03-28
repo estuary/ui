@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import CollectionSpecViews from './CollectionViews';
 import { FormattedMessage } from 'react-intl';
 
 import LiveSpecEditor from 'src/components/editor/LiveSpec';
@@ -10,6 +9,7 @@ import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleBu
 import ExternalLink from 'src/components/shared/ExternalLink';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { useEntityType } from 'src/context/EntityContext';
+import CollectionSpecViews from 'src/components/shared/Entity/Details/Spec/CollectionViews';
 
 export type SpecPresentation = 'table' | 'code';
 

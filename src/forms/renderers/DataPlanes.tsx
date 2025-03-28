@@ -23,20 +23,21 @@
   THE SOFTWARE.
 */
 
+import type {
+    ControlProps,
+    OwnPropsOfEnum,
+    RankedTester} from '@jsonforms/core';
 import {
     and,
-    ControlProps,
     isOneOfEnumControl,
-    OwnPropsOfEnum,
-    RankedTester,
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
-import { DataPlaneAutoComplete } from './DataPlaneSelector/AutoComplete';
-import { CustomMaterialInputControl } from './Overrides/material/controls/MaterialInputControl';
+import { DataPlaneAutoComplete } from 'src/forms/renderers/DataPlaneSelector/AutoComplete';
+import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
 
 export const DATA_PLANE_SCOPE = 'dataPlane';
 

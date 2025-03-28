@@ -1,7 +1,8 @@
-import { hasLength } from './misc-utils';
-import { Duration, DurationObjectUnits } from 'luxon';
+import type { DurationObjectUnits } from 'luxon';
+import { Duration } from 'luxon';
 
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const parsePostgresInterval = (
     interval: string,

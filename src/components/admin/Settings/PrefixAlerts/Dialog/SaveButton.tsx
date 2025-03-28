@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import { union } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
@@ -11,11 +10,13 @@ import {
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { hasLength } from 'src/utils/misc-utils';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 interface Props {
     closeDialog: () => void;

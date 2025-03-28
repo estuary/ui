@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { StoreName } from 'src/stores/names';
+import type { StoreName } from 'src/stores/names';
 
 export type UseZustandStore = <S extends Object, U>(
     storeName: StoreName,

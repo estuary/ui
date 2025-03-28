@@ -9,7 +9,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataProcessingSetting from 'src/components/shared/Entity/Details/Overview/NotificationSettings/DataProcessingSetting';
 import Error from 'src/components/shared/Error';
-import { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
 import useInitializeTaskNotification from 'src/hooks/notifications/useInitializeTaskNotification';
 
 interface Props {

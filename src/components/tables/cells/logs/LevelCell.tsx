@@ -1,10 +1,10 @@
 import { Stack, TableCell } from '@mui/material';
 
-import ExpandRowButton from './ExpandRowButton';
-import LevelIcon from './LevelIcon';
-import { BaseCellSx } from './shared';
+import type { OpsLogFlowDocument } from 'src/types';
+import ExpandRowButton from 'src/components/tables/cells/logs/ExpandRowButton';
+import LevelIcon from 'src/components/tables/cells/logs/LevelIcon';
+import { BaseCellSx } from 'src/components/tables/cells/logs/shared';
 
-import { OpsLogFlowDocument } from 'src/types';
 
 interface Props {
     row: OpsLogFlowDocument;

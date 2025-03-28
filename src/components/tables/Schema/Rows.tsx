@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
 
-import ChipListCell from '../cells/ChipList';
 import { orderBy } from 'lodash';
 
-import { InferSchemaResponseProperty, Schema, SortDirection } from 'src/types';
+import type { InferSchemaResponseProperty, Schema, SortDirection } from 'src/types';
 import { basicSort_string } from 'src/utils/misc-utils';
+import ChipListCell from 'src/components/tables/cells/ChipList';
 
 interface RowProps {
     row: InferSchemaResponseProperty;

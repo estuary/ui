@@ -12,9 +12,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import AddPaymentMethod from './AddPaymentMethod';
-import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
-import { AdminBillingProps } from './types';
 import { loadStripe } from '@stripe/stripe-js';
 import { FormattedMessage } from 'react-intl';
 
@@ -31,8 +28,11 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import { TableColumns } from 'src/types';
+import type { TableColumns } from 'src/types';
 import { getColumnKeyList } from 'src/utils/table-utils';
+import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
+import type { AdminBillingProps } from 'src/components/admin/Billing/types';
+import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from 'src/components/admin/Billing/shared';
 
 const columns: TableColumns[] = [
     {

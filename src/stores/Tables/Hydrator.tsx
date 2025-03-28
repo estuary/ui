@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import { useUnmount } from 'react-use';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {

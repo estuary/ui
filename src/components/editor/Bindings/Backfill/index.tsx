@@ -1,10 +1,10 @@
-import BackfillButton from './BackfillButton';
-import SectionWrapper from './SectionWrapper';
-import { BackfillProps } from './types';
 import { FormattedMessage } from 'react-intl';
-
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import BackfillButton from 'src/components/editor/Bindings/Backfill/BackfillButton';
+import SectionWrapper from 'src/components/editor/Bindings/Backfill/SectionWrapper';
+import type { BackfillProps } from 'src/components/editor/Bindings/Backfill/types';
+
 
 export default function Backfill({
     bindingIndex,

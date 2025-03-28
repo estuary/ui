@@ -4,15 +4,15 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-import { getInitialDataFlowResetContext } from '../steps/dataFlowReset/shared';
-import { defaultStepState } from './shared';
-import { PreSavePromptStore } from './types';
 import produce from 'immer';
 
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { logRocketEvent } from 'src/services/shared';
 import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'src/services/supabase';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
+import { getInitialDataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,

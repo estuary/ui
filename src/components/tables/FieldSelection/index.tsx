@@ -2,13 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 
-import FieldFilter from './FieldFilter';
-import {
-    evaluateColumnsToShow,
-    optionalColumnIntlKeys,
-    tableColumns,
-} from './shared';
-import { FieldSelectionTableProps } from './types';
 import { useIntl } from 'react-intl';
 
 import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
@@ -21,7 +14,15 @@ import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { SortDirection, TableState, TableStatuses } from 'src/types';
+import type { SortDirection, TableState} from 'src/types';
+import { TableStatuses } from 'src/types';
+import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
+import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
+import {
+    evaluateColumnsToShow,
+    optionalColumnIntlKeys,
+    tableColumns,
+} from 'src/components/tables/FieldSelection/shared';
 
 export default function FieldSelectionTable({
     bindingUUID,

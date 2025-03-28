@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material';
 
-import { DetailWrapperProps } from './types';
 import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
+import type { DetailWrapperProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
 
 export default function DetailWrapper({
     children,

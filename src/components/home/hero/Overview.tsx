@@ -1,10 +1,10 @@
 import { Button, Grid, Typography } from '@mui/material';
 
-import { useHeroTabs } from './hooks';
 import { NavArrowRight } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
+import { useHeroTabs } from 'src/components/home/hero/hooks';
 
 function HeroOverview() {
     const { openDetails } = useHeroTabs();

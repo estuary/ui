@@ -7,8 +7,9 @@ import {
     useShardDetail_dictionaryHydrated,
     useShardDetail_readDictionary,
 } from 'src/stores/ShardDetail/hooks';
+import type {
+    ShardEntityTypes} from 'src/stores/ShardDetail/types';
 import {
-    ShardEntityTypes,
     ShardStatusMessageIds,
 } from 'src/stores/ShardDetail/types';
 

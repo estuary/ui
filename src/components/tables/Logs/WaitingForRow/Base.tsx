@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
-import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
-import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -17,6 +15,8 @@ import {
     tableRowActive_Finished__Background,
 } from 'src/context/Theme';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
+import { VIRTUAL_TABLE_BODY_PADDING } from 'src/components/tables/Logs/shared';
+import type { FetchMoreLogsOptions, WaitingForRowProps } from 'src/components/tables/Logs/types';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;

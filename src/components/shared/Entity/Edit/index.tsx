@@ -1,13 +1,8 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import type { ReactNode} from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
-import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import IncompatibleCollections from '../IncompatibleCollections';
-import PreSavePrompt from '../prompts/PreSave';
-import PromptsHydrator from '../prompts/store/Hydrator';
-import ValidationErrorSummary from '../ValidationErrorSummary';
 import { useIntl } from 'react-intl';
 
 import CollectionConfig from 'src/components/collection/Config';
@@ -28,7 +23,7 @@ import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
@@ -44,8 +39,14 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'src/stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'src/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import AlertBox from 'src/components/shared/AlertBox';
+import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
+import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
+import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 
 interface Props {
     title: string;

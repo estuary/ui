@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode} from 'react';
+import { useEffect, useState } from 'react';
 import useConstant from 'use-constant';
 
-import UpdateResourceConfigButton from './UpdateResourceConfigButton';
 import { useIntl } from 'react-intl';
 
 import CollectionSelector from 'src/components/collection/Selector';
@@ -10,6 +10,7 @@ import {
     useBinding_discoveredCollections,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import UpdateResourceConfigButton from 'src/components/editor/Bindings/UpdateResourceConfigButton';
 
 interface Props {
     emptyListComponent?: ReactNode;

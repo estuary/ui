@@ -3,7 +3,7 @@ import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { DEFAULT_POLLING } from 'src/context/SWR';
 import { TABLES } from 'src/services/supabase';
-import { JobStatus } from 'src/types';
+import type { JobStatus } from 'src/types';
 
 export interface Publications {
     id: string;

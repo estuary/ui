@@ -1,27 +1,23 @@
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { isDekafEndpointConfig } from './connector-utils';
-import {
-    addOrRemoveOnIncompatibleSchemaChange,
-    addOrRemoveSourceCapture,
-} from './entity-utils';
 import { isBoolean, isEmpty } from 'lodash';
 
+import type {
+    DraftSpecsExtQuery_ByCatalogName} from 'src/api/draftSpecs';
 import {
-    DraftSpecsExtQuery_ByCatalogName,
     modifyDraftSpec,
 } from 'src/api/draftSpecs';
+import type {
+    FieldSelectionType} from 'src/components/editor/Bindings/FieldSelection/types';
 import {
-    ConstraintTypes,
-    FieldSelectionType,
+    ConstraintTypes
 } from 'src/components/editor/Bindings/FieldSelection/types';
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import { CallSupabaseResponse } from 'src/services/supabase';
-import {
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+import type {
     FullSource,
     FullSourceDictionary,
 } from 'src/stores/Binding/slices/TimeTravel';
-import { Bindings, ResourceConfigDictionary } from 'src/stores/Binding/types';
-import {
+import type { Bindings, ResourceConfigDictionary } from 'src/stores/Binding/types';
+import type {
     DekafConfig,
     Entity,
     EntityWithCreateWorkflow,
@@ -29,6 +25,12 @@ import {
     SourceCaptureDef,
 } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import { isDekafEndpointConfig } from 'src/utils/connector-utils';
+import type { ConnectorConfig } from 'deps/flow/flow';
+import {
+    addOrRemoveOnIncompatibleSchemaChange,
+    addOrRemoveSourceCapture,
+} from 'src/utils/entity-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;

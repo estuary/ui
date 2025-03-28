@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 const OnLoadSpinnerContext = createContext<{
     setLoading: (val: boolean) => void;

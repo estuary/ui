@@ -23,20 +23,21 @@
   THE SOFTWARE.
 */
 
+import type {
+    ControlProps,
+    RankedTester} from '@jsonforms/core';
 import {
     and,
-    ControlProps,
     formatIs,
     optionIs,
     or,
-    RankedTester,
     rankWith,
     uiTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { CustomMaterialInputControl } from '../Overrides/material/controls/MaterialInputControl';
-import { DurationAutoComplete } from './AutoComplete';
+import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
+import { DurationAutoComplete } from 'src/forms/renderers/Duration/AutoComplete';
 
 const DURATION_FORMAT = 'duration';
 

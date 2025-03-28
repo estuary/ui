@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 import { choices } from 'src/components/editor/Bindings/SchemaMode/shared';
-import { AutoCompleteOption } from 'src/components/editor/Bindings/SchemaMode/types';
+import type { AutoCompleteOption } from 'src/components/editor/Bindings/SchemaMode/types';
 
 function useSupportedOptions(): AutoCompleteOption[] {
     const intl = useIntl();

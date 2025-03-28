@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
-import { selectKeyValueName } from '../shared';
-import CaptureExportButton from './Export';
-import useCaptureColumns from './useCaptureColumns';
 
 import { getLiveSpecs_captures } from 'src/api/liveSpecsExt';
 import Rows from 'src/components/tables/Captures/Rows';
@@ -15,6 +12,9 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import StatsHydrator from 'src/stores/Tables/StatsHydrator';
+import CaptureExportButton from 'src/components/tables/Captures/Export';
+import { selectKeyValueName } from 'src/components/tables/shared';
+import useCaptureColumns from 'src/components/tables/Captures/useCaptureColumns';
 
 const selectableTableStoreName = SelectTableStoreNames.CAPTURE;
 

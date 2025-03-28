@@ -5,9 +5,10 @@ import {
     createDraftSpec,
     getDraftSpecsByCatalogName,
 } from 'src/api/draftSpecs';
+import type {
+    LiveSpecsExtQuery_ByCatalogName} from 'src/api/liveSpecsExt';
 import {
-    getLiveSpecsByCatalogName,
-    LiveSpecsExtQuery_ByCatalogName,
+    getLiveSpecsByCatalogName
 } from 'src/api/liveSpecsExt';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {

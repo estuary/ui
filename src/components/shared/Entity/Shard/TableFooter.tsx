@@ -2,7 +2,7 @@ import { TableFooter, TablePagination, TableRow } from '@mui/material';
 
 import { semiTransparentBackground } from 'src/context/Theme';
 import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 interface Props {
     page: number;

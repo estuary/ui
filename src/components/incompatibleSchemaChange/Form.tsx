@@ -8,8 +8,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { autoCompleteDefaultProps } from './shared';
-import { BaseFormProps } from './types';
 import { useIntl } from 'react-intl';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
@@ -18,6 +16,8 @@ import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupport
 import { stringifyJSON } from 'src/services/stringify';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChange/shared';
+import type { BaseFormProps } from 'src/components/incompatibleSchemaChange/types';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,

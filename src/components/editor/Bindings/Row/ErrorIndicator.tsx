@@ -1,6 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
 
-import { ErrorIndicatorProps } from './types';
 import { WarningCircle } from 'iconoir-react';
 
 import {
@@ -8,6 +7,7 @@ import {
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
 } from 'src/stores/Binding/hooks';
+import type { ErrorIndicatorProps } from 'src/components/editor/Bindings/Row/types';
 
 function BindingsSelectorErrorIndicator({
     bindingUUID,

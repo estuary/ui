@@ -1,12 +1,12 @@
 import { Grid, Stack, Typography } from '@mui/material';
 
-import ActivationDetail from './ActivationDetail';
-import ControllerStatus from './ControllerStatus';
-import ControllerUpdatedDetail from './ControllerUpdatedDetail';
 import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { cardHeaderSx } from 'src/context/Theme';
+import ActivationDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ActivationDetail';
+import ControllerStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerStatus';
+import ControllerUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerUpdatedDetail';
+
 
 export default function ControllerOverview() {
     const intl = useIntl();

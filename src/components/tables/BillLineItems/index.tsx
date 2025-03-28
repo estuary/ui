@@ -5,7 +5,8 @@ import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
 import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { getTenantInvoice, StripeInvoice } from 'src/api/billing';
+import type { StripeInvoice } from 'src/api/billing';
+import { getTenantInvoice } from 'src/api/billing';
 import Rows from 'src/components/tables/BillLineItems/Rows';
 import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -14,7 +15,8 @@ import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
-import { TableColumns, TableStatuses } from 'src/types';
+import type { TableColumns} from 'src/types';
+import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [
     {

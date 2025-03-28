@@ -8,8 +8,9 @@ import {
     useBillingTable_setHydrated,
     useBillingTable_setHydrationErrorsExist,
 } from 'src/stores/Tables/Billing/hooks';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 

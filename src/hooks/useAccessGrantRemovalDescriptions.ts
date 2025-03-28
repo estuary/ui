@@ -9,7 +9,7 @@ import {
     useEntitiesStore_capabilities_adminable,
     useEntitiesStore_capabilities_readable,
 } from 'src/stores/Entities/hooks';
-import { BaseGrant, Grant_UserExt } from 'src/types';
+import type { BaseGrant, Grant_UserExt } from 'src/types';
 import { ESTUARY_SUPPORT_ROLE, isGrant_UserExt } from 'src/utils/misc-utils';
 
 type GrantScopeMessageIdSuffix =

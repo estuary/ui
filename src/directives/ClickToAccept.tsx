@@ -8,14 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import Actions from './Actions';
-import {
-    CLICK_TO_ACCEPT_LATEST_VERSION,
-    jobStatusQuery,
-    trackEvent,
-} from './shared';
-import { DirectiveProps } from './types';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
@@ -26,6 +19,13 @@ import ExternalLink from 'src/components/shared/ExternalLink';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { getUrls } from 'src/utils/env-utils';
+import Actions from 'src/directives/Actions';
+import type { DirectiveProps } from 'src/directives/types';
+import {
+    CLICK_TO_ACCEPT_LATEST_VERSION,
+    jobStatusQuery,
+    trackEvent,
+} from 'src/directives/shared';
 
 const urls = getUrls();
 const directiveName = 'clickToAccept';

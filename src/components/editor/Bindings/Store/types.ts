@@ -1,8 +1,8 @@
-import { AlertColor } from '@mui/material';
+import type { AlertColor } from '@mui/material';
 
-import { IncompatibleCollections } from 'src/api/evolutions';
-import { CollectionData } from 'src/components/editor/Bindings/types';
-import { InferSchemaPropertyForRender } from 'src/types';
+import type { IncompatibleCollections } from 'src/api/evolutions';
+import type { CollectionData } from 'src/components/editor/Bindings/types';
+import type { InferSchemaPropertyForRender } from 'src/types';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;

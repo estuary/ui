@@ -2,26 +2,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
 import { Box, Popper } from '@mui/material';
-import {
-    DataGrid,
+import type {
     GridColDef,
     GridFilterModel,
-    gridPaginatedVisibleSortedGridRowIdsSelector,
     GridRowId,
-    GridRowSelectionModel,
+    GridRowSelectionModel} from '@mui/x-data-grid';
+import {
+    DataGrid,
+    gridPaginatedVisibleSortedGridRowIdsSelector,
     useGridApiRef,
 } from '@mui/x-data-grid';
 
-import CollectionSelectorHeaderName from './Header/Name';
-import CollectionSelectorHeaderRemove from './Header/Remove';
-import CollectionSelectorHeaderToggle from './Header/Toggle';
-import {
-    COLLECTION_SELECTOR_NAME_COL,
-    COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
-    COLLECTION_SELECTOR_TOGGLE_COL,
-    COLLECTION_SELECTOR_UUID_COL,
-    getCollectionSelector,
-} from './shared';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -34,10 +25,20 @@ import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
 } from 'src/stores/Binding/hooks';
-import { BindingState } from 'src/stores/Binding/types';
+import type { BindingState } from 'src/stores/Binding/types';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength, stripPathing } from 'src/utils/misc-utils';
+import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
+import {
+    COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    COLLECTION_SELECTOR_TOGGLE_COL,
+    COLLECTION_SELECTOR_UUID_COL,
+    getCollectionSelector,
+} from 'src/components/collection/Selector/List/shared';
+import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
+import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 
 interface Props {
     disableActions?: boolean;

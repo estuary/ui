@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
-import EntityTableBody from '../EntityTable/TableBody';
-import EntityTableHeader from '../EntityTable/TableHeader';
-import Rows from './Rows';
 import { useIntl } from 'react-intl';
 
 import {
@@ -12,14 +9,18 @@ import {
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_inferSchemaResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
-import { FieldFilter } from 'src/components/schema/types';
-import {
+import type { FieldFilter } from 'src/components/schema/types';
+import type {
     SortDirection,
     TableColumns,
-    TableState,
+    TableState} from 'src/types';
+import {
     TableStatuses,
 } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import Rows from 'src/components/tables/Schema/Rows';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 
 export const columns: TableColumns[] = [
     {

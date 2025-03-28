@@ -1,14 +1,14 @@
-import { SyntheticEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 
-import { TableColumnSelectorProps } from './types';
 
 import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
 import SelectColumnMenu from 'src/components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { TableColumns } from 'src/types';
-import { WithRequiredNonNullProperty } from 'src/types/utils';
+import type { TableColumns } from 'src/types';
+import type { WithRequiredNonNullProperty } from 'src/types/utils';
 import { hasLength } from 'src/utils/misc-utils';
+import type { TableColumnSelectorProps } from 'src/components/editor/Bindings/FieldSelection/types';
 
 export default function TableColumnSelector({
     columns,

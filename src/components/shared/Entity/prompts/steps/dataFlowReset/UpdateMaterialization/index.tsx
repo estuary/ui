@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { PromptStepState } from '../../../types';
 import { useIntl } from 'react-intl';
 
 import { createEntityDraft } from 'src/api/drafts';
@@ -17,6 +15,8 @@ import {
     getBindingAsFullSource,
     getCollectionName,
 } from 'src/utils/workflow-utils';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import type { PromptStepState } from 'src/components/shared/Entity/prompts/types';
 
 function MarkMaterialization() {
     const intl = useIntl();

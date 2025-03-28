@@ -1,5 +1,5 @@
-import { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
-import { TableIntlConfig } from 'src/types';
+import type { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
+import type { TableIntlConfig } from 'src/types';
 
 interface TableSettings {
     noExistingDataContentIds: TableIntlConfig;

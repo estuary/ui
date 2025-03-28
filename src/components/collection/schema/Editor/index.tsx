@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import CollectionSchemaEditorSkeleton from './Skeleton';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
@@ -14,13 +13,14 @@ import {
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
 } from 'src/components/editor/Bindings/Store/hooks';
-import { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
+import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
-import { Schema } from 'src/types';
+import type { Schema } from 'src/types';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
+import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 
 export interface Props {
     entityName?: string;

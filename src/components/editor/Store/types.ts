@@ -1,9 +1,9 @@
-import { AlertColor } from '@mui/material';
+import type { AlertColor } from '@mui/material';
 
-import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
-import { KeyedMutator } from 'swr';
+import type { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
+import type { KeyedMutator } from 'swr';
 
-import { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 
 export interface DraftSpecResponse {
     draftSpecs: DraftSpecQuery[];

@@ -1,6 +1,6 @@
-import { KeyboardEvent, SyntheticEvent } from 'react';
+import type { KeyboardEvent, SyntheticEvent } from 'react';
 
-import {
+import type {
     AutocompleteChangeReason,
     AutocompleteInputChangeReason,
 } from '@mui/material';

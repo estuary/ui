@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 
-import { SelectorOptionProps } from './types';
+import type { SelectorOptionProps } from 'src/components/incompatibleSchemaChange/types';
 
 function SelectorOption({ option }: SelectorOptionProps) {
     const { description, label } = option;

@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import type {
+    Theme} from '@mui/material';
 import {
     Box,
     Stack,
@@ -9,7 +11,6 @@ import {
     StepLabel,
     Stepper,
     styled,
-    Theme,
     Typography,
     useMediaQuery,
 } from '@mui/material';

@@ -1,13 +1,14 @@
-import { PaletteMode } from '@mui/material';
+import type { PaletteMode } from '@mui/material';
 
+import type {
+    SemanticColor} from 'src/context/Theme';
 import {
     errorMain,
-    SemanticColor,
     shardStatusDefaultColor,
     successMain,
     warningMain,
 } from 'src/context/Theme';
-import {
+import type {
     ActivationStatus,
     AutoDiscoverStatus,
     CaptureControllerStatus,

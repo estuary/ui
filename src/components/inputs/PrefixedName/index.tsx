@@ -10,8 +10,6 @@ import {
     TextField,
 } from '@mui/material';
 
-import PrefixSelector from './PrefixSelector';
-import { PrefixedNameProps } from './types';
 import { capitalize } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
@@ -19,6 +17,8 @@ import { useMount } from 'react-use';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
+import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
+import type { PrefixedNameProps } from 'src/components/inputs/PrefixedName/types';
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';

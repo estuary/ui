@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
-import useRepublishPrefix from './useRepublishPrefix';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
@@ -13,12 +12,14 @@ import { useZustandStore } from 'src/context/Zustand/provider';
 import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
+import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 
 const SELECTED_DIRECTIVE = 'storageMappings';
 

@@ -15,7 +15,7 @@ import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 import { unescapeString } from 'src/utils/misc-utils';
 
 interface Props {

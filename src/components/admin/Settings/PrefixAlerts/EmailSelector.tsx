@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 
+import type {
+    AutocompleteRenderInputParams} from '@mui/material';
 import {
     Autocomplete,
-    AutocompleteRenderInputParams,
     Chip,
     FormControl,
     FormHelperText,
@@ -14,11 +15,11 @@ import {
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
-import { Grant_UserExt } from 'src/types';
+import type { Grant_UserExt } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 type Values = (Grant_UserExt | string)[];

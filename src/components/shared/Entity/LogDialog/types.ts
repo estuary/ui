@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { AlertColor } from '@mui/material';
+import type { AlertColor } from '@mui/material';
 
 export interface LogDialogProps {
     open: boolean;

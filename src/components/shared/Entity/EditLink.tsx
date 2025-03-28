@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { Button, ButtonProps } from '@mui/material';
+import type { ButtonProps } from '@mui/material';
+import { Button } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';

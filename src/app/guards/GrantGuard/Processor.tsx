@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import useDirectiveGuard from '../hooks';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage } from 'react-intl';
 import { Navigate } from 'react-router';
 
@@ -16,6 +15,7 @@ import { HomePageErrors } from 'src/components/login/shared';
 import AcceptGrant from 'src/directives/AcceptGrant';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { getPathWithParams } from 'src/utils/misc-utils';
+import useDirectiveGuard from 'src/app/guards/hooks';
 
 const SELECTED_DIRECTIVE = 'grant';
 

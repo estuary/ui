@@ -23,30 +23,24 @@
   THE SOFTWARE.
 */
 
-import {
+import type {
     ControlElement,
-    deriveTypes,
-    encode,
-    Generate,
     GroupLayout,
-    isGroup,
-    isLayout,
     JsonSchema,
     LabelElement,
     Layout,
+    UISchemaElement} from '@jsonforms/core';
+import {
+    deriveTypes,
+    encode,
+    Generate,
+    isGroup,
+    isLayout,
     resolveSchema,
     toDataPath,
-    toDataPathSegments,
-    UISchemaElement,
+    toDataPathSegments
 } from '@jsonforms/core';
 
-import {
-    ADVANCED,
-    allowedNullableTypes,
-    CONTAINS_REQUIRED_FIELDS,
-    LAYOUT_PATH,
-    SHOW_INFO_SSH_ENDPOINT,
-} from './shared';
 import JsonRefs from 'json-refs';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
@@ -60,6 +54,13 @@ import {
     Options,
 } from 'src/types/jsonforms';
 import { ISO_8601_DURATION_PATTERN } from 'src/validation';
+import {
+    ADVANCED,
+    allowedNullableTypes,
+    CONTAINS_REQUIRED_FIELDS,
+    LAYOUT_PATH,
+    SHOW_INFO_SSH_ENDPOINT,
+} from 'src/services/jsonforms/shared';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS

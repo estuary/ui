@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { getPathWithParams } from 'src/utils/misc-utils';

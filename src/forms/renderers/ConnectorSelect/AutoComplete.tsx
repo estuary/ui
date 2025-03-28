@@ -25,20 +25,22 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import React, { ReactNode, useMemo } from 'react';
+import type { ReactNode} from 'react';
+import React, { useMemo } from 'react';
 
-import {
-    Autocomplete,
+import type {
     AutocompleteRenderOptionState,
-    FilterOptionsState,
+    FilterOptionsState} from '@mui/material';
+import {
+    Autocomplete
 } from '@mui/material';
 
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
 
-import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
 
 import ConnectorIcon from 'src/components/connectors/ConnectorIcon';
 import ConnectorOption from 'src/forms/renderers/ConnectorSelect/Option';
+import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;

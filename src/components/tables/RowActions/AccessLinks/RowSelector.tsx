@@ -7,8 +7,9 @@ import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
 import DisableButton from 'src/components/tables/RowActions/AccessLinks/DisableButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 

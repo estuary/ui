@@ -1,7 +1,7 @@
-import { TenantBillingDetailsContextProvider } from './fetcher/TenantBillingDetails';
 
 import { EntitiesHydrator } from 'src/stores/Entities/Hydrator';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import { TenantBillingDetailsContextProvider } from 'src/context/fetcher/TenantBillingDetails';
 
 function AuthenticatedHydrators({ children }: BaseComponentProps) {
     return (

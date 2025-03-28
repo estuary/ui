@@ -1,15 +1,16 @@
 import { useEffect, useMemo } from 'react';
 
-import {
+import type {
     CaptureQueryWithStats,
     CollectionQueryWithStats,
     MaterializationQueryWithStats,
 } from 'src/api/liveSpecsExt';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import useShardHydration from 'src/hooks/shards/useShardHydration';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 

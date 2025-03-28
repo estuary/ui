@@ -1,8 +1,8 @@
 import { Box, Grid } from '@mui/material';
 
-import HeroBaseStep from './Base';
-
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
+import HeroBaseStep from 'src/components/home/hero/Steps/Base';
+
 
 interface Props {
     step: number;

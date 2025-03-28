@@ -2,11 +2,6 @@ import { useMemo } from 'react';
 
 import { Grid } from '@mui/material';
 
-import ShardInformation from '../../Shard/Information';
-import Usage from '../Usage';
-import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
-import DetailsSection from './DetailsSection';
-import { DetailsOverviewProps } from './types';
 
 import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
@@ -16,9 +11,14 @@ import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import JournalHydrator from 'src/stores/JournalData/Hydrator';
 import { hasLength } from 'src/utils/misc-utils';
+import ShardInformation from 'src/components/shared/Entity/Shard/Information';
+import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
+import type { DetailsOverviewProps } from 'src/components/shared/Entity/Details/Overview/types';
+import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
+import Usage from 'src/components/shared/Entity/Details/Usage';
 
 function Overview({ name }: DetailsOverviewProps) {
     const entityType = useEntityType();

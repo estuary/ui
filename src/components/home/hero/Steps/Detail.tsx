@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 
-import HeroStep from '../Step';
 import { FormattedMessage } from 'react-intl';
+import HeroStep from 'src/components/home/hero/Step';
 
 interface Props {
     step: number;

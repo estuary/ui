@@ -2,10 +2,6 @@ import { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
-import RowSelector from '../RowActions/RowSelector';
-import { selectKeyValueName } from '../shared';
-import CollectionExportButton from './Export';
-import useCollectionColumns from './useCollectionColumns';
 
 import { getLiveSpecs_collections } from 'src/api/liveSpecsExt';
 import Rows from 'src/components/tables/Collections/Rows';
@@ -15,6 +11,10 @@ import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import StatsHydrator from 'src/stores/Tables/StatsHydrator';
+import RowSelector from 'src/components/tables/RowActions/RowSelector';
+import useCollectionColumns from 'src/components/tables/Collections/useCollectionColumns';
+import CollectionExportButton from 'src/components/tables/Collections/Export';
+import { selectKeyValueName } from 'src/components/tables/shared';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
 

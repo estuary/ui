@@ -1,10 +1,10 @@
-import { useUserStore } from './User/useUserContextStore';
 import { createClient } from '@supabase/supabase-js';
 import { enableMapSet, setAutoFreeze } from 'immer';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { initLogRocket } from 'src/services/logrocket';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 // This is not a normal provider... more like a guard... kind of. This is here so that we know createClient is called early and also
 //  so it is called in a somewhat consistent order. This is also waiting until the client has been

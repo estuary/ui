@@ -4,9 +4,9 @@ import { isEmpty } from 'lodash';
 import { useNavigate } from 'react-router';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import type { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface BaseSearchParams {

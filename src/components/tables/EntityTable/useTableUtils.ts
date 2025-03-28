@@ -1,6 +1,7 @@
-import {
+import type {
     Dispatch,
-    SetStateAction,
+    SetStateAction} from 'react';
+import {
     useCallback,
     useEffect,
     useRef,
@@ -9,10 +10,11 @@ import {
 import { useEffectOnce } from 'react-use';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { Pagination } from 'src/services/supabase';
-import { SelectTableStoreNames } from 'src/stores/names';
+import type { Pagination } from 'src/services/supabase';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import { getStartingPage } from 'src/utils/table-utils';

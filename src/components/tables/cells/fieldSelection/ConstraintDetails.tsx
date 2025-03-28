@@ -1,8 +1,8 @@
 import { TableCell, Typography } from '@mui/material';
 
-import { constraintMessages, recoverableConstraintTypes } from './shared';
-import { ConstraintDetailsProps } from './types';
 import { FormattedMessage } from 'react-intl';
+import { constraintMessages, recoverableConstraintTypes } from 'src/components/tables/cells/fieldSelection/shared';
+import type { ConstraintDetailsProps } from 'src/components/tables/cells/fieldSelection/types';
 
 function ConstraintDetails({ constraint }: ConstraintDetailsProps) {
     const messageId =

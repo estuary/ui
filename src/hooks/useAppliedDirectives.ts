@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { getAppliedDirectives } from 'src/api/directives';
-import { DIRECTIVES } from 'src/directives/shared';
-import { AppliedDirective } from 'src/types';
+import type { DIRECTIVES } from 'src/directives/shared';
+import type { AppliedDirective } from 'src/types';
 
 function useAppliedDirectives(type: keyof typeof DIRECTIVES, token?: string) {
     const { data, error, mutate, isValidating } = useQuery(

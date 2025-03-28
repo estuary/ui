@@ -1,6 +1,3 @@
-import AutoDiscoverChanges from './AutoDiscoverChanges';
-import TimestampDetail from './TimestampDetail';
-
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -8,6 +5,9 @@ import {
     useEntityStatusStore_autoDiscoverFailure,
     useEntityStatusStore_autoDiscoverLastSuccess,
 } from 'src/stores/EntityStatus/hooks';
+import AutoDiscoverChanges from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoverChanges';
+import TimestampDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/TimestampDetail';
+
 
 export default function AutoDiscoverOutcome() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

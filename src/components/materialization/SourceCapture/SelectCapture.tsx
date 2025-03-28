@@ -4,8 +4,6 @@ import { Button } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
-import CancelSourceCaptureButton from './CancelSourceCaptureButton';
 import { isString } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
@@ -17,6 +15,8 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { getSourceCapture } from 'src/utils/entity-utils';
+import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
+import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 

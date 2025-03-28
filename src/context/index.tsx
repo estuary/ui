@@ -1,6 +1,3 @@
-import GlobalProviders from './GlobalProviders';
-import { UpdateHelmetProvider } from './UpdateHelmet';
-import { UserStoreProvider } from './User';
 
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import ContentProvider from 'src/context/Content';
@@ -10,7 +7,10 @@ import { SidePanelDocsProvider } from 'src/context/SidePanelDocs';
 import SwrConfigProvider from 'src/context/SWR';
 import { TableSettingsProvider } from 'src/context/TableSettings';
 import ThemeProvider from 'src/context/Theme';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import GlobalProviders from 'src/context/GlobalProviders';
+import { UserStoreProvider } from 'src/context/User';
+import { UpdateHelmetProvider } from 'src/context/UpdateHelmet';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (

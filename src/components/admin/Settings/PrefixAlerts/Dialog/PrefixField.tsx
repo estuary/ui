@@ -1,9 +1,9 @@
 import { Grid, Skeleton, TextField } from '@mui/material';
 
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
 import { useIntl } from 'react-intl';
 
 import PrefixedName from 'src/components/inputs/PrefixedName';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 interface Props {
     staticPrefix?: string;

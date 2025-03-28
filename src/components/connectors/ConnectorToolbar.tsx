@@ -1,8 +1,9 @@
-import {
+import type {
     ChangeEvent,
     Dispatch,
     SetStateAction,
-    SyntheticEvent,
+    SyntheticEvent} from 'react';
+import {
     useRef,
 } from 'react';
 import useConstant from 'use-constant';
@@ -15,7 +16,7 @@ import { useIntl } from 'react-intl';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import SearchField from 'src/components/shared/toolbar/SearchField';
 import { fireGtmEvent } from 'src/services/gtm';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 
 interface Props {
     belowMd: boolean;

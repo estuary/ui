@@ -33,7 +33,8 @@ import {
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
-import { FormState, FormStatus } from 'src/stores/FormState/types';
+import type { FormState} from 'src/stores/FormState/types';
+import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
     onFailure: (formState: Partial<FormState>) => void;

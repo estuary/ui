@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import {
     Box,
@@ -8,11 +8,11 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ProgressStates } from '../Shared/types';
 import { CheckCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import Error from 'src/components/shared/Error';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
 interface Props {
     error: any | null;

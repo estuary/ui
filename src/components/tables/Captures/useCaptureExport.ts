@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
 
-import { formatBytes } from '../cells/stats/shared';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { ColumnNames } from '../shared';
-import useExportColumns from '../useExportColumns';
-import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
-
-import { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
+import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
+import type { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
+import { formatBytes } from 'src/components/tables/cells/stats/shared';
+import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
+import { ColumnNames } from 'src/components/tables/shared';
+import useExportColumns from 'src/components/tables/useExportColumns';
+
 
 function useCaptureExport(data: CollectionQueryWithStats[]) {
     const exportColumns = useExportColumns();

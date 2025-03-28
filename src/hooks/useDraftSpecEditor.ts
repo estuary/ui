@@ -11,9 +11,9 @@ import {
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
 } from 'src/components/editor/Store/hooks';
-import { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { stringifyJSON } from 'src/services/stringify';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function useDraftSpecEditor(

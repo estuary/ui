@@ -1,13 +1,15 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
 import produce from 'immer';
 
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { supabaseRetry } from 'src/services/supabase';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { PrefixAlertTableState } from 'src/stores/Tables/PrefixAlerts/types';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { PrefixAlertTableState } from 'src/stores/Tables/PrefixAlerts/types';
 import { getInitialState as getInitialSelectTableState } from 'src/stores/Tables/Store';
 import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';

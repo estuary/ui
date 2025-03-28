@@ -1,12 +1,12 @@
 import { useTheme } from '@mui/material';
 
-import AzureButton from './buttons/Azure';
-import GithubButton from './buttons/Github';
-import GoogleButton from './buttons/Google';
-import { LoginButtonProps, ProviderButtonProps } from './types';
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-
+import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { loginButtonStyling } from 'src/context/Theme';
+import AzureButton from 'src/components/login/Providers/buttons/Azure';
+import GithubButton from 'src/components/login/Providers/buttons/Github';
+import GoogleButton from 'src/components/login/Providers/buttons/Google';
+import type { LoginButtonProps, ProviderButtonProps } from 'src/components/login/Providers/types';
+
 
 function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
     const theme = useTheme();

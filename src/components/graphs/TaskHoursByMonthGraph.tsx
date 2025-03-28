@@ -3,8 +3,6 @@ import useConstant from 'use-constant';
 
 import { useTheme } from '@mui/material';
 
-import { getTooltipItem, getTooltipTitle } from './tooltips';
-import useTooltipConfig from './useTooltipConfig';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -24,11 +22,14 @@ import { useIntl } from 'react-intl';
 
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useBillingStore } from 'src/stores/Billing/Store';
+import type {
+    SeriesConfig} from 'src/utils/billing-utils';
 import {
     CARD_AREA_HEIGHT,
-    SeriesConfig,
     stripTimeFromDate,
 } from 'src/utils/billing-utils';
+import { getTooltipItem, getTooltipTitle } from 'src/components/graphs/tooltips';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 
 const chartContainerId = 'task-hours-by-month';
 

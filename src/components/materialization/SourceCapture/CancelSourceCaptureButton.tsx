@@ -5,10 +5,10 @@ import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
-import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { SourceCaptureDef } from 'src/types';
+import type { SourceCaptureDef } from 'src/types';
 
 function CancelSourceCaptureButton({ toggle }: AddCollectionDialogCTAProps) {
     // This is here so that we can switch settings back to how they originally were.

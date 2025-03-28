@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 
-import { CONNECTORS_EXIST_QUERY, ConnectorsExist } from './shared';
+import { CONNECTORS_EXIST_QUERY } from 'src/hooks/connectors/shared';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { TABLES } from 'src/services/supabase';
 import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
+import type { ConnectorsExist } from 'src/hooks/connectors/shared';
 
 // TODO (connectors store) - this is temporary
 // We used to check if connectors exist with a query that returned a bunch

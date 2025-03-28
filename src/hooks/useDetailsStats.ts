@@ -11,7 +11,7 @@ import {
     LUXON_GRAIN_SETTINGS,
 } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
-import { CatalogStats_Details } from 'src/types';
+import type { CatalogStats_Details } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 function useDetailsStats(catalogName: string) {

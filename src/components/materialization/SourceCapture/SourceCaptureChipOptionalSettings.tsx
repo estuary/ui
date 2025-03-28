@@ -1,7 +1,7 @@
-import SourceCaptureChipOption from './SourceCaptureChipOption';
 
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
+import SourceCaptureChipOption from 'src/components/materialization/SourceCapture/SourceCaptureChipOption';
 
 function SourceCaptureChipOptionalSettings() {
     const sourceCaptureDefinition =

@@ -1,9 +1,9 @@
-import GrantGuardProcessor from './Processor';
 
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import GrantGuardProcessor from 'src/app/guards/GrantGuard/Processor';
 
 function GrantGuard({ children }: BaseComponentProps) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);

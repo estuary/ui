@@ -7,7 +7,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
 import { logRocketConsole } from 'src/services/shared';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {

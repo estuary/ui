@@ -1,28 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 
-import SharedProgress from './Progress';
-import { ProgressStates, SharedProgressProps } from './types';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
     draftCollectionsEligibleForDeletion,
 } from 'src/api/draftSpecs';
-import { CaptureQuery, getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
+import type { CaptureQuery} from 'src/api/liveSpecsExt';
+import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
 import AlertBox from 'src/components/shared/AlertBox';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
 import Error from 'src/components/shared/Error';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
+import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import usePublications from 'src/hooks/usePublications';
 import { jobSucceeded } from 'src/services/supabase';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
+import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
+import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;

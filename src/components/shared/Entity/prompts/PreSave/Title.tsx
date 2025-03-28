@@ -1,14 +1,14 @@
 import { DialogTitle, IconButton, useTheme } from '@mui/material';
 
-import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
-import {
-    usePreSavePromptStore,
-    usePreSavePromptStore_done,
-} from '../store/usePreSavePromptStore';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import { useFormStateStore_setShowSavePrompt } from 'src/stores/FormState/hooks';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import {
+    usePreSavePromptStore,
+    usePreSavePromptStore_done,
+} from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function Title() {
     const intl = useIntl();

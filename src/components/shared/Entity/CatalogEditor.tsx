@@ -1,7 +1,5 @@
 import { Paper, Typography } from '@mui/material';
 
-import AlertBox from '../AlertBox';
-import ErrorBoundryWrapper from '../ErrorBoundryWrapper';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import DraftSpecEditor from 'src/components/editor/DraftSpec';
@@ -14,6 +12,8 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import AlertBox from 'src/components/shared/AlertBox';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 
 interface Props {
     messageId: string;

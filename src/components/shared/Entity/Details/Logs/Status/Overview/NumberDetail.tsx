@@ -1,10 +1,10 @@
 import { Skeleton, Typography } from '@mui/material';
 
-import DetailWrapper from './DetailWrapper';
-import { NumericDetailProps } from './types';
 import readable from 'readable-numbers';
-
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import type { NumericDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 
 export default function NumericDetail({
     headerMessageId,

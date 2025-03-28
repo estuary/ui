@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import SchemaEditCLIButton from '../Bindings/SchemaEdit/CLIButton';
-import SchemaEditToggle from '../Bindings/SchemaEdit/Toggle';
-import useBackgroundTest from './FieldSelection/useBackgroundTest';
 import { FormattedMessage } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
@@ -31,6 +28,9 @@ import {
     useBinding_currentBindingUUID,
     useBinding_currentCollection,
 } from 'src/stores/Binding/hooks';
+import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
+import useBackgroundTest from 'src/components/editor/Bindings/FieldSelection/useBackgroundTest';
+import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
 
 interface Props {
     itemType: string;

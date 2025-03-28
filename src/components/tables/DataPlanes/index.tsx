@@ -1,8 +1,5 @@
 import { useMemo } from 'react';
 
-import Rows from './Rows';
-import { columns, selectableTableStoreName } from './shared';
-import ToggleDataPlaneScope from './ToggleDataPlaneScope';
 
 import { getDataPlanesForTable } from 'src/api/dataPlanes';
 import EntityTable from 'src/components/tables/EntityTable';
@@ -11,6 +8,9 @@ import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
 import { useTenantStore } from 'src/stores/Tenant/Store';
+import Rows from 'src/components/tables/DataPlanes/Rows';
+import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
+import { columns, selectableTableStoreName } from 'src/components/tables/DataPlanes/shared';
 
 function DataPlanesTable() {
     const {

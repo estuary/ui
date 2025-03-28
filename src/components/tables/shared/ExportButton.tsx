@@ -1,9 +1,9 @@
 import { Button } from '@mui/material';
 
-import { generateFileName, tableExportSeparator } from '../shared';
 import CsvDownload from 'react-csv-downloader';
-import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
+import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { FormattedMessage } from 'react-intl';
+import { generateFileName, tableExportSeparator } from 'src/components/tables/shared';
 
 interface Props {
     columns: Columns;

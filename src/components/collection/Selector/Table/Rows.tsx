@@ -5,13 +5,13 @@ import { TableCell, TableRow, useTheme } from '@mui/material';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
-import { catalogNameColumn, publishedColumn } from './shared';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import RowSelect from 'src/components/tables/cells/RowSelect';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import { catalogNameColumn, publishedColumn } from 'src/components/collection/Selector/Table/shared';
 
 interface RowProps {
     row: any;

@@ -2,13 +2,10 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { Alert, Box, Button, Chip, Stack, Typography } from '@mui/material';
 
-import { ControlProps, RankedTester, rankWith } from '@jsonforms/core';
+import type { ControlProps, RankedTester} from '@jsonforms/core';
+import { rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { getDiscriminator, getDiscriminatorDefaultValue } from '../shared';
-import { INJECTED_VALUES, NO_PROVIDER } from './shared';
-import { useAllRequiredPropCheck } from './useAllRequiredPropCheck';
-import { useOauthHandler } from './useOauthHandler';
 import { startCase } from 'lodash';
 import GoogleButton from 'react-google-button';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -23,6 +20,10 @@ import { useEndpointConfigStore_setCustomErrors } from 'src/stores/EndpointConfi
 import { generateCustomError } from 'src/stores/extensions/CustomErrors';
 import { Options } from 'src/types/jsonforms';
 import { hasLength } from 'src/utils/misc-utils';
+import { INJECTED_VALUES, NO_PROVIDER } from 'src/forms/renderers/OAuth/shared';
+import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
+import { getDiscriminator, getDiscriminatorDefaultValue } from 'src/forms/renderers/shared';
+import { useAllRequiredPropCheck } from 'src/forms/renderers/OAuth/useAllRequiredPropCheck';
 
 export const oAuthProviderTester: RankedTester = rankWith(
     1000,

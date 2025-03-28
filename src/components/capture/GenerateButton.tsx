@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import type { Dispatch, SetStateAction} from 'react';
+import { useEffect } from 'react';
 
 import { Button } from '@mui/material';
 
-import useDiscoverCapture from './useDiscoverCapture';
 import { FormattedMessage } from 'react-intl';
 
 import { entityHeaderButtonSx } from 'src/context/Theme';
@@ -11,7 +11,8 @@ import { useBinding_rediscoveryRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
+import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
 
 interface Props {
     entityType: Entity;

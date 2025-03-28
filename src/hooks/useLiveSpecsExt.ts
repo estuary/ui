@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 
+import type {
+    LiveSpecsExt_Related} from 'src/api/liveSpecsExt';
 import {
-    LiveSpecsExt_Related,
     liveSpecsExtRelatedQuery,
 } from 'src/api/liveSpecsExt';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -13,7 +14,7 @@ import {
     escapeReservedCharacters,
     TABLES,
 } from 'src/services/supabase';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {

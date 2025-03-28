@@ -1,5 +1,7 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 import { isEmpty } from 'lodash';
@@ -11,7 +13,7 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import {
+import type {
     DataPlaneOption,
     Details,
     DetailsFormState,
@@ -27,8 +29,9 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
+import type {
+    ConnectorVersionEvaluationOptions} from 'src/utils/connector-utils';
 import {
-    ConnectorVersionEvaluationOptions,
     getConnectorMetadata,
 } from 'src/utils/connector-utils';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';

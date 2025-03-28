@@ -25,19 +25,20 @@
 */
 import { Hidden, Stack } from '@mui/material';
 
-import {
+import type {
     ControlProps,
+    RankedTester} from '@jsonforms/core';
+import {
     isDateControl,
-    RankedTester,
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { CustomMaterialInputControl } from './MaterialInputControl';
-import { CustomMuiInputText } from './MuiInputText';
-
 import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
+import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
+import { CustomMuiInputText } from 'src/forms/renderers/Overrides/material/controls/MuiInputText';
+
 
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes

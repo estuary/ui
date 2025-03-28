@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { RowActionSupportedTableStoreName, RowConfirmation } from '../types';
+import type { TableActionSettings } from 'src/stores/Tables/Store';
+import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type { RowActionSupportedTableStoreName, RowConfirmation } from 'src/components/tables/RowActions/types';
 
-import { TableActionSettings } from 'src/stores/Tables/Store';
 
 export const ProgressFinished = 60;
 

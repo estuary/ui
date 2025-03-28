@@ -11,11 +11,12 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
+import type {
+    SelectableTableStore} from 'src/stores/Tables/Store';
 import {
-    SelectableTableStore,
     selectableTableStoreSelectors,
 } from 'src/stores/Tables/Store';
 import {
@@ -29,7 +30,7 @@ import {
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
-import { Transform } from 'src/types';
+import type { Transform } from 'src/types';
 import { evaluateTransformConfigs } from 'src/utils/derivation-utils';
 import { hasLength } from 'src/utils/misc-utils';
 

@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 
-import LinePart from './LinePart';
-import Ansi, { AnsiColored } from 'ansicolor';
+import type { AnsiColored } from 'ansicolor';
+import Ansi from 'ansicolor';
 
 import { defaultOutline } from 'src/context/Theme';
-import { ViewLogs_Line } from 'src/types';
+import type { ViewLogs_Line } from 'src/types';
+import LinePart from 'src/components/logs/LinePart';
 
 interface Props {
     line: ViewLogs_Line | string;

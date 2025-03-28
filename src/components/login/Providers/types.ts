@@ -1,7 +1,7 @@
-import { ButtonProps } from '@mui/material';
+import type { ButtonProps } from '@mui/material';
 
-import { Schema } from 'src/types';
-import { SupportedProvider } from 'src/types/authProviders';
+import type { Schema } from 'src/types';
+import type { SupportedProvider } from 'src/types/authProviders';
 
 export type LoginFunction = (
     provider: SupportedProvider,

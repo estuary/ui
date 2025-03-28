@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 import { Box, Button, List, Stack, Typography, useTheme } from '@mui/material';
 

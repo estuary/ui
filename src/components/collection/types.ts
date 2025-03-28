@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 
 export interface CollectionConfigProps {
     draftSpecs: DraftSpecQuery[];

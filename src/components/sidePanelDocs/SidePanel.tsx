@@ -1,12 +1,12 @@
 import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
 
-import SidePanelIframe from './Iframe';
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import SidePanelIframe from 'src/components/sidePanelDocs/Iframe';
 
 interface Props {
     show: boolean;

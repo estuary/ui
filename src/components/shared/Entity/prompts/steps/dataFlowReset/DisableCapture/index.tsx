@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 import { useIntl } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -20,6 +19,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function DisableCapture() {
     const intl = useIntl();

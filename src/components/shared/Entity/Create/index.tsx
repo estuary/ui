@@ -1,10 +1,8 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import type { ReactNode} from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
-import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import ValidationErrorSummary from '../ValidationErrorSummary';
 import { FormattedMessage } from 'react-intl';
 
 import CollectionConfig from 'src/components/collection/Config';
@@ -26,7 +24,7 @@ import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagD
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -40,8 +38,11 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'src/stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'src/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import AlertBox from 'src/components/shared/AlertBox';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;

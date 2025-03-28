@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import {
+import type {
     PrefixedName_Change,
     PrefixedName_Errors,
 } from 'src/components/inputs/PrefixedName/types';

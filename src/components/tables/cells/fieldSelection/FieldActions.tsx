@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 
 import { TableCell } from '@mui/material';
 
-import FieldActionButton from './FieldActionButton';
-import { TOGGLE_BUTTON_CLASS } from './shared';
-import { FieldActionsProps } from './types';
 
 import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
@@ -17,6 +14,9 @@ import {
     isExcludeOnlyField,
     isRequireOnlyField,
 } from 'src/utils/workflow-utils';
+import FieldActionButton from 'src/components/tables/cells/fieldSelection/FieldActionButton';
+import type { FieldActionsProps } from 'src/components/tables/cells/fieldSelection/types';
+import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
 
 function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
     // Bindings Editor Store

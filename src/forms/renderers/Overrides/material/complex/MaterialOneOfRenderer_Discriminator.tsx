@@ -41,20 +41,20 @@ import {
     Tabs,
 } from '@mui/material';
 
-import {
-    and,
+import type {
     CombinatorRendererProps,
-    createCombinatorRenderInfos,
-    isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
-    RankedTester,
+    RankedTester} from '@jsonforms/core';
+import {
+    and,
+    createCombinatorRenderInfos,
+    isOneOfControl,
     rankWith,
     schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch } from '@jsonforms/react';
 
-import CombinatorProperties from './CombinatorProperties';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
@@ -64,6 +64,7 @@ import {
     getDiscriminatorDefaultValue,
 } from 'src/forms/renderers/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
+import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;

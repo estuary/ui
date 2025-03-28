@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 
-import { NavLink as BaseNavLink, NavLinkProps } from 'react-router-dom';
+import type { NavLinkProps } from 'react-router-dom';
+import { NavLink as BaseNavLink } from 'react-router-dom';
 
 const RouterLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
     function NavLinkRef(refProps, ref) {

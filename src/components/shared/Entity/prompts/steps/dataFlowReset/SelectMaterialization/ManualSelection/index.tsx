@@ -2,13 +2,13 @@ import { useState } from 'react';
 
 import { Button, Stack, Tooltip } from '@mui/material';
 
-import ManualSelectionButton from './Button';
-import SelectedChip from './SelectedChip';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import ManualSelectionButton from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/ManualSelection/Button';
+import SelectedChip from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/ManualSelection/SelectedChip';
 
 const DIALOG_ID = 'add-materialization-search-dialog';
 

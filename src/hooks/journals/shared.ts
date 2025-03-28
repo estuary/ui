@@ -1,18 +1,18 @@
 /* eslint-disable no-await-in-loop */
-import {
-    AttemptToReadResponse,
-    JournalByteRange,
-    JournalRecord,
-    LoadDocumentsProps,
-    LoadDocumentsResponse,
-} from './types';
 import { parseJournalDocuments } from 'data-plane-gateway';
-import { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
+import type { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { INCREMENT } from 'src/utils/dataPlane-utils';
 import { journalStatusIsError } from 'src/utils/misc-utils';
+import type {
+    AttemptToReadResponse,
+    JournalByteRange,
+    JournalRecord,
+    LoadDocumentsProps,
+    LoadDocumentsResponse,
+} from 'src/hooks/journals/types';
 
 function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;

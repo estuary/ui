@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Chip } from '@mui/material';
 
-import { BackfillCountProps } from './types';
 import { useIntl } from 'react-intl';
 
 import { useEntityType } from 'src/context/EntityContext';
@@ -12,6 +11,7 @@ import {
     useBinding_collections_count,
     useBinding_evolvedCollections_count,
 } from 'src/stores/Binding/hooks';
+import type { BackfillCountProps } from 'src/components/editor/Bindings/Backfill/types';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();

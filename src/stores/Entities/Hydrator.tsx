@@ -1,9 +1,9 @@
-import { useHydrateState } from './hooks';
-import { useEntitiesStore } from './Store';
 import { FormattedMessage } from 'react-intl';
 
 import FullPageError from 'src/components/fullPage/Error';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
+import { useHydrateState } from 'src/stores/Entities/hooks';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
 
 export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
     // Start fetching the prefixes the user has access to

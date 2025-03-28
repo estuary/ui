@@ -1,8 +1,9 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction} from 'react';
+import { useState } from 'react';
 
 import { Box, Stack } from '@mui/material';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 
 import { submitDirective } from 'src/api/directives';
 import useDirectiveGuard from 'src/app/guards/hooks';

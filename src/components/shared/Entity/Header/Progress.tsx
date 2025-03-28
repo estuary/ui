@@ -1,6 +1,5 @@
 import { Box, Fade } from '@mui/material';
 
-import { EntityToolbarProgressProps } from '../types';
 
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import LinearProgressTimed from 'src/components/progress/LinearProgressTimed';
@@ -9,6 +8,7 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import type { EntityToolbarProgressProps } from 'src/components/shared/Entity/types';
 
 function HeaderProgress({ waitTimes }: EntityToolbarProgressProps) {
     const generateWaitTime = waitTimes?.generate;

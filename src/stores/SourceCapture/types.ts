@@ -1,4 +1,4 @@
-import { TargetSchemas } from 'src/types';
+import type { TargetSchemas } from 'src/types';
 
 export interface SourceCaptureState {
     sourceCapture: string | null;

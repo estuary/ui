@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 
-import { EnumOption } from '@jsonforms/core';
+import type { EnumOption } from '@jsonforms/core';
 
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 

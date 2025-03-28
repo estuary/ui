@@ -3,8 +3,6 @@ import useConstant from 'use-constant';
 
 import { Divider, Grid, Typography } from '@mui/material';
 
-import BillingLoadError from './LoadError';
-import { AdminBillingProps } from './types';
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FormattedMessage } from 'react-intl';
@@ -31,6 +29,8 @@ import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
+import BillingLoadError from 'src/components/admin/Billing/LoadError';
+import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 

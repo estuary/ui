@@ -1,5 +1,6 @@
+import type {
+    MutableRefObject} from 'react';
 import {
-    MutableRefObject,
     useCallback,
     useLayoutEffect,
     useMemo,
@@ -8,8 +9,19 @@ import {
 
 import { TableBody } from '@mui/material';
 
-import EntityTableBody from '../EntityTable/TableBody';
-import { LogsTableRow } from './Row';
+import { isEmpty } from 'lodash';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import type { ListChildComponentProps} from 'react-window';
+import { VariableSizeList } from 'react-window';
+
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
+import type { OpsLogFlowDocument} from 'src/types';
+import { TableStatuses } from 'src/types';
+import { LogsTableRow } from 'src/components/tables/Logs/Row';
+import useLogColumns from 'src/components/tables/Logs/useLogColumns';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import {
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
@@ -17,16 +29,7 @@ import {
     UUID_OLDEST_LOG,
     VIRTUAL_TABLE_BODY_PADDING,
     WAITING_ROW_HEIGHT,
-} from './shared';
-import useLogColumns from './useLogColumns';
-import { isEmpty } from 'lodash';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListChildComponentProps, VariableSizeList } from 'react-window';
-
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
-import { OpsLogFlowDocument, TableStatuses } from 'src/types';
+} from 'src/components/tables/Logs/shared';
 
 interface Props {
     outerRef: MutableRefObject<any>;

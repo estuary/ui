@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 import { choices } from 'src/components/incompatibleSchemaChange/shared';
-import { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
 
 function useSupportedOptions(): AutoCompleteOption[] {
     const intl = useIntl();

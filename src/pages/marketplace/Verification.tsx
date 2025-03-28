@@ -3,7 +3,7 @@ import useConstant from 'use-constant';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
 

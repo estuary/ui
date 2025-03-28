@@ -21,7 +21,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
+import type { CustomEvents } from 'src/services/types';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useTheme } from '@mui/material';
 
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 
 import { defaultOutlineColor, paperBackground } from 'src/context/Theme';
 

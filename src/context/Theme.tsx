@@ -1,24 +1,25 @@
 import React from 'react';
 
-import {
+import type {
     AlertColor,
-    createTheme,
-    ThemeProvider as MUIThemeProvider,
     PaletteOptions,
     SxProps,
     Theme,
     ThemeOptions,
-    TypographyProps,
+    TypographyProps} from '@mui/material';
+import {
+    createTheme,
+    ThemeProvider as MUIThemeProvider,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { ThemeKeys } from '@microlink/react-json-view';
+import type { ThemeKeys } from '@microlink/react-json-view';
 import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import { useLocalStorage } from 'react-use';
 
 import CheckSquare from 'src/icons/CheckSquare';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 

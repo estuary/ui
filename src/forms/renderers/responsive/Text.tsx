@@ -1,8 +1,9 @@
+import type {
+    ControlProps,
+    RankedTester} from '@jsonforms/core';
 import {
     and,
-    ControlProps,
     isStringControl,
-    RankedTester,
     rankWith,
 } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';

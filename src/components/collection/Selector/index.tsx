@@ -1,10 +1,10 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 
-import BindingsEditorAdd from './Add';
-import { CollectionSelectorProps } from './types';
 import { useIntl } from 'react-intl';
-
 import { defaultOutline } from 'src/context/Theme';
+import BindingsEditorAdd from 'src/components/collection/Selector/Add';
+import type { CollectionSelectorProps } from 'src/components/collection/Selector/types';
+
 
 function CollectionSelector({
     readOnly = false,

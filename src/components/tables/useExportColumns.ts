@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { catalogName, ColumnNames } from './shared';
 import { useIntl } from 'react-intl';
+import { catalogName, ColumnNames } from 'src/components/tables/shared';
 
 function useExportColumns() {
     const intl = useIntl();

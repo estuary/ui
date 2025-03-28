@@ -9,8 +9,8 @@ import {
     Typography,
 } from '@mui/material';
 
-import { ProgressDialogProps } from './types';
 import { FormattedMessage } from 'react-intl';
+import type { ProgressDialogProps } from 'src/components/tables/RowActions/types';
 
 function ProgressDialog({
     selectedEntities,

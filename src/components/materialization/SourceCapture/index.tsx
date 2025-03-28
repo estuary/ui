@@ -1,10 +1,10 @@
 import { Stack, Typography } from '@mui/material';
 
-import SelectCapture from './SelectCapture';
-import SourceCaptureChip from './SourceCaptureChip';
 import { FormattedMessage } from 'react-intl';
-
 import ExternalLink from 'src/components/shared/ExternalLink';
+import SelectCapture from 'src/components/materialization/SourceCapture/SelectCapture';
+import SourceCaptureChip from 'src/components/materialization/SourceCapture/SourceCaptureChip';
+
 
 const DOCS_LINK =
     'https://docs.estuary.dev/concepts/materialization/#using-sourcecapture-to-synchronize-capture-and-materialization-bindings';

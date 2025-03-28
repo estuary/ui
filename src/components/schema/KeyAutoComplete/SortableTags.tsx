@@ -1,17 +1,15 @@
 import { useMemo, useState } from 'react';
 
-import { AutocompleteGetTagProps } from '@mui/material';
+import type { AutocompleteGetTagProps } from '@mui/material';
 
-import { keyIsValidOption } from './shared';
-import SortableTag from './SortableTag';
-import StyledChip from './StyledChip';
+import type {
+    UniqueIdentifier} from '@dnd-kit/core';
 import {
     closestCenter,
     DndContext,
     DragOverlay,
     KeyboardSensor,
     PointerSensor,
-    UniqueIdentifier,
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
@@ -24,6 +22,9 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
+import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
+import SortableTag from 'src/components/schema/KeyAutoComplete/SortableTag';
+import StyledChip from 'src/components/schema/KeyAutoComplete/StyledChip';
 
 interface Props {
     getTagProps: AutocompleteGetTagProps;

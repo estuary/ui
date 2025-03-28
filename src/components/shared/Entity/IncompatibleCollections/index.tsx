@@ -1,12 +1,12 @@
 import { Box, Collapse, Divider, Stack, Typography } from '@mui/material';
 
-import Actions from './Actions';
-import CollectionsList from './CollectionsList';
 import { FormattedMessage } from 'react-intl';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
+import Actions from 'src/components/shared/Entity/IncompatibleCollections/Actions';
+import CollectionsList from 'src/components/shared/Entity/IncompatibleCollections/CollectionsList';
 
 function IncompatibleCollections() {
     const incompatibleCollections =

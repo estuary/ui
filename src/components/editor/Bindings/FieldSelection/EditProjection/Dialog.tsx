@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 import {
     Button,
@@ -13,7 +13,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 
 import FieldEditor from 'src/components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
-import { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 interface Props {

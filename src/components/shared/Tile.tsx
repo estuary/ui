@@ -4,7 +4,7 @@ import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
 } from 'src/context/Theme';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 interface TileProps extends BaseComponentProps {
     clickHandler?: () => void;

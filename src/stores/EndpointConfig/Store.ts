@@ -1,7 +1,8 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import { EndpointConfigState } from './types';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 
@@ -12,8 +13,9 @@ import {
 } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { createJSONFormDefaults } from 'src/services/ajv';
+import type {
+    CustomError} from 'src/stores/extensions/CustomErrors';
 import {
-    CustomError,
     fetchErrors,
     filterErrors,
     getInitialCustomErrorsData,
@@ -23,7 +25,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import { JsonFormsData, Schema } from 'src/types';
+import type { JsonFormsData, Schema } from 'src/types';
 import { getEndpointConfig } from 'src/utils/connector-utils';
 import {
     configCanBeEmpty,
@@ -32,6 +34,7 @@ import {
 } from 'src/utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import type { EndpointConfigState } from 'src/stores/EndpointConfig/types';
 
 const STORE_KEY = 'Endpoint Config';
 

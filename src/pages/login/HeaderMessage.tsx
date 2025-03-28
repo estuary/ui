@@ -1,9 +1,9 @@
 import { Stack, Typography } from '@mui/material';
 
-import { HeaderMessageProps } from './types';
 import { FormattedMessage } from 'react-intl';
 
 import Logo from 'src/components/navigation/Logo';
+import type { HeaderMessageProps } from 'src/pages/login/types';
 
 function HeaderMessage({ isRegister, headerMessageId }: HeaderMessageProps) {
     return (

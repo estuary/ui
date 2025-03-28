@@ -1,9 +1,9 @@
 import { TableCell, TableRow } from '@mui/material';
 
-import ChipStatus from '../cells/ChipStatus';
 
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
-import { StorageMappings, StorageMappingStore } from 'src/types';
+import type { StorageMappings, StorageMappingStore } from 'src/types';
+import ChipStatus from 'src/components/tables/cells/ChipStatus';
 
 interface RowProps {
     row: StorageMappings;

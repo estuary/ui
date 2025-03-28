@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { CREDENTIALS, INJECTED_VALUES } from './shared';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
@@ -11,6 +10,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
+import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.
 export const useOauthHandler = (

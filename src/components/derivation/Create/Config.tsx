@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { Box, Divider, Stack } from '@mui/material';
 
-import { ConfigHeader } from './ConfigHeader';
 import { FormattedMessage } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -16,6 +15,7 @@ import {
     useTransformationCreate_setCatalogName,
     useTransformationCreate_setName,
 } from 'src/stores/TransformationCreate/hooks';
+import { ConfigHeader } from 'src/components/derivation/Create/ConfigHeader';
 
 function DerivationCreateConfig() {
     usePageTitle({

@@ -1,7 +1,5 @@
 import { Button } from '@mui/material';
 
-import { evaluateUpdatedFields } from './shared';
-import { SaveButtonProps } from './types';
 import { useIntl } from 'react-intl';
 
 import {
@@ -10,6 +8,8 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
+import { evaluateUpdatedFields } from 'src/components/editor/Bindings/FieldSelection/FieldActions/shared';
+import type { SaveButtonProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
 
 export default function SaveButton({
     bindingUUID,

@@ -7,7 +7,7 @@ import { random } from 'lodash';
 import { useTimeout } from 'react-use';
 
 import { dataGridListStyling } from 'src/context/Theme';
-import { JournalRecord } from 'src/hooks/journals/types';
+import type { JournalRecord } from 'src/hooks/journals/types';
 
 const sampleSpec = {
     catalog_name: 'estuary/kjt/milk_types',

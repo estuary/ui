@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 
-import SectionAlertIndicator from './SectionAlertIndicator';
-import { CollectionConfigProps } from './types';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
@@ -10,6 +8,8 @@ import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useBinding_hydrationErrorsExist } from 'src/stores/Binding/hooks';
+import SectionAlertIndicator from 'src/components/collection/SectionAlertIndicator';
+import type { CollectionConfigProps } from 'src/components/collection/types';
 
 function CollectionConfig({
     draftSpecs,

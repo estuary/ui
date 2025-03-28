@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { AlertColor, SxProps } from '@mui/material';
+import type { AlertColor, SxProps } from '@mui/material';
 
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 // TODO (AlertBox) we defaulted short to false at the start. That was a mistake
 //  so we need to get `short` to default to `true` soon.

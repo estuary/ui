@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 
-import { JsonFormsProps } from '@jsonforms/core';
+import type { JsonFormsProps } from '@jsonforms/core';
 
 import { isEmpty } from 'lodash';
 
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
-import { EnumDictionary } from 'src/types/utils';
+import type { EnumDictionary } from 'src/types/utils';
 import { PREFIX_NAME_PATTERN } from 'src/validation';
 
 export enum CloudProviderCodes {

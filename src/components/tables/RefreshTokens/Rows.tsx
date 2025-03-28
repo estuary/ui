@@ -1,11 +1,11 @@
 import { TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
-import RevokeTokenButton from '../cells/refreshTokens/RevokeToken';
-import TimeStamp from '../cells/TimeStamp';
 import { FormattedMessage } from 'react-intl';
 
-import { RefreshTokenQuery } from 'src/api/tokens';
+import type { RefreshTokenQuery } from 'src/api/tokens';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import RevokeTokenButton from 'src/components/tables/cells/refreshTokens/RevokeToken';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
 
 interface RowsProps {
     data: RefreshTokenQuery[];

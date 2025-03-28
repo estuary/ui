@@ -1,11 +1,11 @@
 import { Stack, Toolbar } from '@mui/material';
 
-import HeaderLogs from '../HeaderLogs';
-import { EntityToolbarProps } from '../types';
-import HeaderActions from './Actions';
-import HeaderProgress from './Progress';
-
 import EditCapabilityGuard from 'src/components/shared/guards/EditCapability';
+import HeaderLogs from 'src/components/shared/Entity/HeaderLogs';
+import type { EntityToolbarProps } from 'src/components/shared/Entity/types';
+import HeaderActions from 'src/components/shared/Entity/Header/Actions';
+import HeaderProgress from 'src/components/shared/Entity/Header/Progress';
+
 
 function EntityToolbar({
     GenerateButton,

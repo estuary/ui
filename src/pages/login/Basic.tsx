@@ -1,6 +1,5 @@
 import { Box, Divider, Stack } from '@mui/material';
 
-import LoginWrapper from './Wrapper';
 import { FormattedMessage } from 'react-intl';
 
 import MagicLink from 'src/components/login/MagicLink';
@@ -10,8 +9,9 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
-import { SupportedProvider } from 'src/types/authProviders';
+import type { SupportedProvider } from 'src/types/authProviders';
 import { getLoginSettings } from 'src/utils/env-utils';
+import LoginWrapper from 'src/pages/login/Wrapper';
 
 const loginSettings = getLoginSettings();
 

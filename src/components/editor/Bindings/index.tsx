@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import type { ReactNode} from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
@@ -17,7 +18,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import { useServerUpdateRequiredMonitor } from 'src/hooks/useServerUpdateRequiredMonitor';
 import {
     useBinding_discoveredCollections,

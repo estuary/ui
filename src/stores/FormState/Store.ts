@@ -1,15 +1,18 @@
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+import type { StoreApi } from 'zustand';
+import { create } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import { FormStateStoreNames } from '../names';
-import { EntityFormState, FormState, FormStatus } from './types';
+import { FormStatus } from 'src/stores/FormState/types';
 import produce from 'immer';
 
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { MessagePrefixes } from 'src/types';
+import type { MessagePrefixes } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import type { FormStateStoreNames } from 'src/stores/names';
+import type { EntityFormState, FormState} from 'src/stores/FormState/types';
 
 const formActive = (status: FormStatus) => {
     return (

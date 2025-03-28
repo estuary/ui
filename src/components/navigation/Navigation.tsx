@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 
-import ListItemLink from './ListItemLink';
 import {
     CloudDownload,
     CloudUpload,
@@ -26,6 +25,7 @@ import { useIntl } from 'react-intl';
 import { authenticatedRoutes } from 'src/app/routes';
 import ModeSwitch from 'src/components/navigation/ModeSwitch';
 import { paperBackground } from 'src/context/Theme';
+import ListItemLink from 'src/components/navigation/ListItemLink';
 
 interface NavigationProps {
     open: boolean;

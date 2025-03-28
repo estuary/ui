@@ -3,12 +3,11 @@ import { Box, Stack, Typography } from '@mui/material';
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 
-import useFormFields from './useFormFields';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
-import { Props } from 'src/components/shared/Entity/DetailsForm/types';
+import type { Props } from 'src/components/shared/Entity/DetailsForm/types';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
 import { defaultOptions, showValidation } from 'src/services/jsonforms/shared';
@@ -18,6 +17,7 @@ import {
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
 } from 'src/stores/FormState/hooks';
+import useFormFields from 'src/components/shared/Entity/DetailsForm/useFormFields';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 

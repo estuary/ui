@@ -1,16 +1,16 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { ExternalLinkOptions } from '../ExternalLink';
-import Instructions from './Instructions';
-import { ErrorDetails } from './types';
 import { FormattedMessage, useIntl } from 'react-intl';
-
 import {
     logRocketConsole,
     logRocketEvent,
     retryAfterFailure,
 } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
+import Instructions from 'src/components/shared/Error/Instructions';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+
 
 interface Props {
     error?: ErrorDetails;

@@ -1,10 +1,10 @@
 import { TableCell, TableRow } from '@mui/material';
 
-import ControllerErrors from '../cells/entityStatus/ControllerErrors';
-import ControllerStatus from '../cells/entityStatus/ControllerStatus';
-import TimeStamp from '../cells/TimeStamp';
-import { RowProps, RowsProps } from './types';
 import { orderBy } from 'lodash';
+import ControllerErrors from 'src/components/tables/cells/entityStatus/ControllerErrors';
+import ControllerStatus from 'src/components/tables/cells/entityStatus/ControllerStatus';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import type { RowProps, RowsProps } from 'src/components/tables/ControllerStatusHistory/types';
 
 function Row({ row }: RowProps) {
     return (

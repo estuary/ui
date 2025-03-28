@@ -6,7 +6,7 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {

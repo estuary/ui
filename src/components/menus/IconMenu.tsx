@@ -1,14 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React from 'react';
 
+import type {
+    PopoverOrigin,
+    PopoverProps,
+    SxProps,
+    Theme} from '@mui/material';
 import {
     Box,
     IconButton,
     Menu,
-    PopoverOrigin,
-    PopoverProps,
-    SxProps,
-    Theme,
     Tooltip,
 } from '@mui/material';
 

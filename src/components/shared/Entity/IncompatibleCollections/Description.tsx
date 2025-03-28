@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import {
+import type {
     AffectedMaterialization,
     RequiresRecreation,
 } from 'src/api/evolutions';

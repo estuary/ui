@@ -7,14 +7,14 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import {
     useBinding_currentBindingIndex,
     useBinding_recommendFields,
     useBinding_selections,
 } from 'src/stores/Binding/hooks';
-import { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
-import { Schema } from 'src/types';
+import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { Schema } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
 

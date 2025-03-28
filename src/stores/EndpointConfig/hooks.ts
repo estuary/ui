@@ -1,7 +1,7 @@
 import { useShallow } from 'zustand/react/shallow';
 
-import { useEndpointConfigStore } from './Store';
 import { isEqual } from 'lodash';
+import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 
 export const useEndpointConfigStore_errorsExist = () => {
     return useEndpointConfigStore((state) => state.errorsExist);

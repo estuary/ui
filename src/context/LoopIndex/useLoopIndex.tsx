@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { LoopIndexContext } from './shared';
+import { LoopIndexContext } from 'src/context/LoopIndex/shared';
 
 export const useLoopIndex = () => {
     const context = useContext(LoopIndexContext);

@@ -7,11 +7,11 @@ import {
     Stack,
 } from '@mui/material';
 
-import DefaultCancelButton from './DefaultCancelButton';
-import { AddDialogProps } from './types';
-
 import BindingSelectorTable from 'src/components/collection/Selector/Table';
 import StepWrapper from 'src/components/transformation/create/Wrapper';
+import DefaultCancelButton from 'src/components/shared/Entity/AddDialog/DefaultCancelButton';
+import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
+
 
 function AddDialog({
     entity,

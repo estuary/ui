@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 
-import useShards from './useShards';
 import { useSnackbar } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -12,6 +11,7 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
+import useShards from 'src/components/editor/Shards/Disable/useShards';
 
 function ShardsDisableForm() {
     const intl = useIntl();

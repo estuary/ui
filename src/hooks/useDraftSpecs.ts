@@ -1,10 +1,10 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
-import { KeyedMutator } from 'swr';
+import type { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
+import type { KeyedMutator } from 'swr';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { TABLES } from 'src/services/supabase';
-import { Entity, Schema } from 'src/types';
+import type { Entity, Schema } from 'src/types';
 
 export interface DraftSpecQuery {
     catalog_name: string;

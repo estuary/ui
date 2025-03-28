@@ -1,7 +1,7 @@
-import { hasLength } from './misc-utils';
 
 import { logRocketConsole } from 'src/services/shared';
 import { JOB_STATUS_SUCCESS } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const checkIfPublishIsDone = (payload: any): [boolean | null, any] => {
     const response =

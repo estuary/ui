@@ -1,8 +1,8 @@
-import { PersistOptions } from 'zustand/middleware';
-
-import { DetailsUsageState } from './types';
+import type { PersistOptions } from 'zustand/middleware';
 
 import { DataGrains } from 'src/components/graphs/types';
+import type { DetailsUsageState } from 'src/stores/DetailsUsage/types';
+
 
 // Previous persist states for testing migrations
 // v0 - {"state":{"range":48,"statType":"docs","foo":"sup"},"version":0}

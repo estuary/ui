@@ -1,11 +1,11 @@
 import { isArray } from 'lodash';
 
-import {
+import type {
     MigrationDictionary,
     TransformConfig,
     TransformConfigDictionary,
 } from 'src/stores/TransformationCreate/types';
-import { DerivationLanguage, Transform, Transform_Shuffle } from 'src/types';
+import type { DerivationLanguage, Transform, Transform_Shuffle } from 'src/types';
 import { stripPathing } from 'src/utils/misc-utils';
 
 // Constants for part of the templates down below

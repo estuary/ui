@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
 
 import { createPublication } from 'src/api/publications';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
@@ -10,6 +9,7 @@ import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
 import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 
 function PublishStepDataFlowReset() {
     const publicationHandler = usePublicationHandler();

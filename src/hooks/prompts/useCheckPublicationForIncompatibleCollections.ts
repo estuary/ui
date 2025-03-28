@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { IncompatibleCollections } from 'src/api/evolutions';
+import type { IncompatibleCollections } from 'src/api/evolutions';
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 import { logRocketEvent } from 'src/services/shared';

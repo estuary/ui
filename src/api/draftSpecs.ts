@@ -1,8 +1,8 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import {
     deleteSupabase,
     handleFailure,
@@ -13,7 +13,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 interface CreateMatchData {

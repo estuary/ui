@@ -2,17 +2,17 @@ import { useMemo } from 'react';
 
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 
-import TableLoadingRows from '../Loading';
-import { ColumnProps } from './types';
 import { FormattedMessage } from 'react-intl';
 
-import { TableIntlConfig, TableState } from 'src/types';
+import type { TableIntlConfig, TableState } from 'src/types';
 import {
     getColumnKeyList,
     getEmptyTableHeader,
     getEmptyTableMessage,
     getTableComponents,
 } from 'src/utils/table-utils';
+import TableLoadingRows from 'src/components/tables/Loading';
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 
 interface Props {
     columns: ColumnProps[];

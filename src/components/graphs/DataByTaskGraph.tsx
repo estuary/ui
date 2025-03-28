@@ -3,9 +3,6 @@ import useConstant from 'use-constant';
 
 import { useTheme } from '@mui/material';
 
-import { getTooltipItem, getTooltipTitle } from './tooltips';
-import useLegendConfig from './useLegendConfig';
-import useTooltipConfig from './useTooltipConfig';
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -27,14 +24,18 @@ import { useIntl } from 'react-intl';
 
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useBillingStore } from 'src/stores/Billing/Store';
-import { DataVolumeByTask } from 'src/stores/Billing/types';
+import type { DataVolumeByTask } from 'src/stores/Billing/types';
+import type {
+    SeriesConfig} from 'src/utils/billing-utils';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    formatDataVolumeForDisplay,
-    SeriesConfig,
+    formatDataVolumeForDisplay
 } from 'src/utils/billing-utils';
 import { hasLength } from 'src/utils/misc-utils';
+import { getTooltipItem, getTooltipTitle } from 'src/components/graphs/tooltips';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
 
 const chartContainerId = 'data-by-task';
 

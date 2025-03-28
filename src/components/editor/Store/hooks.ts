@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { EditorStoreState } from './types';
 
 import { useEntityType } from 'src/context/EntityContext';
 import { useLocalZustandStore } from 'src/context/LocalZustand';
@@ -10,15 +9,17 @@ import { useZustandStore as useGlobalZustandStore } from 'src/context/Zustand/pr
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import type {
+    DraftSpecQuery} from 'src/hooks/useDraftSpecs';
 import {
-    DraftSpecQuery,
     useDraftSpecs_forEditor,
 } from 'src/hooks/useDraftSpecs';
-import { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { EditorStoreNames } from 'src/stores/names';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
+import type { EditorStoreState } from 'src/components/editor/Store/types';
 
 interface SelectorParams {
     localScope?: boolean;

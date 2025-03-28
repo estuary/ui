@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-import ShardsDisable from './Disable';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
@@ -8,6 +7,7 @@ import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import ShardsDisable from 'src/components/editor/Shards/Disable';
 
 interface Props {
     renderOpen: boolean;

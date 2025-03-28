@@ -1,4 +1,4 @@
-import { JobStatus } from 'src/types';
+import type { JobStatus } from 'src/types';
 
 export interface ControllerStatusProps {
     detail: string;

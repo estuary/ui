@@ -10,7 +10,7 @@ import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorS
 import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
-import { SpecPresentation } from 'src/components/shared/Entity/Details/Spec/index';
+import type { SpecPresentation } from 'src/components/shared/Entity/Details/Spec/index';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,

@@ -4,7 +4,7 @@ import enUSMessages from 'src/lang/en-US';
 import { MISSING } from 'src/services/logrocket';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps } from 'src/types';
 
 // TODO (intl) - Don't hard hardcode to EN
 //    When we do we need to pass locale to MUI https://mui.com/guides/localization/

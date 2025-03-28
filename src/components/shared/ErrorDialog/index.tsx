@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import {
     Dialog,
@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 
-import AlertBox from '../AlertBox';
+import AlertBox from 'src/components/shared/AlertBox';
 
 const ARIA_DESC_ID = '-dialog-description';
 const ARIA_LABEL_ID = '-dialog-title';

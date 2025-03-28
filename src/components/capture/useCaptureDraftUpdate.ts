@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
+import type {
+    DraftSpecsExtQuery_ByCatalogName} from 'src/api/draftSpecs';
 import {
-    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
 } from 'src/api/draftSpecs';
 import {

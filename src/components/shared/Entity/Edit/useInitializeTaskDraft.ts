@@ -1,17 +1,20 @@
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import type { Dispatch, SetStateAction} from 'react';
+import { useCallback } from 'react';
 
-import { PostgrestError } from '@supabase/postgrest-js';
+import type { PostgrestError } from '@supabase/postgrest-js';
 
 import { createEntityDraft, getDraftsByCatalogName } from 'src/api/drafts';
+import type {
+    DraftSpecsExtQuery_ByCatalogName} from 'src/api/draftSpecs';
 import {
     createDraftSpec,
-    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
 } from 'src/api/draftSpecs';
+import type {
+    LiveSpecsExtQuery_ByLiveSpecId} from 'src/api/liveSpecsExt';
 import {
-    getLiveSpecsByLiveSpecId,
-    LiveSpecsExtQuery_ByLiveSpecId,
+    getLiveSpecsByLiveSpecId
 } from 'src/api/liveSpecsExt';
 import {
     useEditorStore_setCatalogName,

@@ -1,4 +1,4 @@
-import {
+import type {
     DataByHourRange,
     DataByHourStatType,
 } from 'src/components/graphs/types';

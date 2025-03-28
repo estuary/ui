@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { loadDocuments } from './shared';
-import { LoadDocumentsOffsets } from './types';
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import { isEmpty } from 'lodash';
 import { useCounter } from 'react-use';
@@ -17,6 +15,8 @@ import {
     shouldRefreshToken,
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
+import { loadDocuments } from 'src/hooks/journals/shared';
+import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
 
 const errorRetryCount = 2;
 

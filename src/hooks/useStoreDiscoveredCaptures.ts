@@ -14,10 +14,11 @@ import { CustomEvents } from 'src/services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
-import { Entity } from 'src/types';
+import type { Entity } from 'src/types';
+import type {
+    SupabaseConfig} from 'src/utils/workflow-utils';
 import {
-    modifyDiscoveredDraftSpec,
-    SupabaseConfig,
+    modifyDiscoveredDraftSpec
 } from 'src/utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {

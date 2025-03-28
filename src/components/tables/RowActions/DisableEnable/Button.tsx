@@ -1,11 +1,11 @@
-import RowActionConfirmation from '../Shared/Confirmation';
-import { DisableEnableButtonProps } from './types';
 
 import DisableEnableConfirmation from 'src/components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
 import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
+import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
+import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
 
 function DisableEnableButton({
     enabling,
