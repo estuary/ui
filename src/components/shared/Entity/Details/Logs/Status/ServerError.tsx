@@ -1,7 +1,7 @@
-import AlertBox from 'components/shared/AlertBox';
-import Message from 'components/shared/Error/Message';
-import { BASE_ERROR } from 'services/supabase';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
+import AlertBox from 'src/components/shared/AlertBox';
+import Message from 'src/components/shared/Error/Message';
+import { BASE_ERROR } from 'src/services/supabase';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function ServerError() {
     const serverError = useEntityStatusStore((state) => state.serverError);

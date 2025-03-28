@@ -1,21 +1,27 @@
+import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/FieldSelection/types';
+
 import { TableCell, TableRow, Typography } from '@mui/material';
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
-import ChipListCell from 'components/tables/cells/ChipList';
-import ConstraintDetails from 'components/tables/cells/fieldSelection/ConstraintDetails';
-import FieldActions from 'components/tables/cells/fieldSelection/FieldActions';
-import {
-    doubleElevationHoverBackground,
-    getStickyTableCell,
-} from 'context/Theme';
+
 import { orderBy } from 'lodash';
-import { useBinding_currentBindingUUID } from 'stores/Binding/hooks';
-import { basicSort_string } from 'utils/misc-utils';
+
+import ChipListCell from 'src/components/tables/cells/ChipList';
+import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
+import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import {
     constraintTypeSort,
     displayOptionalColumn,
     optionalColumnIntlKeys,
-} from './shared';
-import { RowProps, RowsProps } from './types';
+} from 'src/components/tables/FieldSelection/shared';
+import {
+    doubleElevationHoverBackground,
+    getStickyTableCell,
+} from 'src/context/Theme';
+import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import { basicSort_string } from 'src/utils/misc-utils';
 
 function Row({ columns, row }: RowProps) {
     const currentBindingUUID = useBinding_currentBindingUUID();

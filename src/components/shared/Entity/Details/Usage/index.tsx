@@ -1,16 +1,18 @@
 import { Stack } from '@mui/material';
-import DetailsRange from 'components/filters/DetailsRange';
-import DataByHourGraph from 'components/graphs/DataByHourGraph';
-import StatTypeSelector from 'components/graphs/DataByHourGraph/StatTypeSelector';
-import EmptyGraphState from 'components/graphs/states/Empty';
-import GraphLoadingState from 'components/graphs/states/Loading';
-import CardWrapper from 'components/shared/CardWrapper';
-import Error from 'components/shared/Error';
-import useDetailsStats from 'hooks/useDetailsStats';
+
 import { FormattedMessage } from 'react-intl';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
-import { hasLength } from 'utils/misc-utils';
-import DelayWarning from './DelayWarning';
+
+import DetailsRange from 'src/components/filters/DetailsRange';
+import DataByHourGraph from 'src/components/graphs/DataByHourGraph';
+import StatTypeSelector from 'src/components/graphs/DataByHourGraph/StatTypeSelector';
+import EmptyGraphState from 'src/components/graphs/states/Empty';
+import GraphLoadingState from 'src/components/graphs/states/Loading';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import DelayWarning from 'src/components/shared/Entity/Details/Usage/DelayWarning';
+import Error from 'src/components/shared/Error';
+import useDetailsStats from 'src/hooks/useDetailsStats';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     catalogName: string;

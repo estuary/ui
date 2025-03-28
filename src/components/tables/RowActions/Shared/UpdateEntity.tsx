@@ -1,26 +1,28 @@
-import { createEntityDraft } from 'api/drafts';
+import type { CaptureQuery } from 'src/api/liveSpecsExt';
+import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Entity } from 'src/types';
+
+import { useEffect, useRef, useState } from 'react';
+
+import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
     draftCollectionsEligibleForDeletion,
-} from 'api/draftSpecs';
-import { CaptureQuery, getLatestLiveSpecByName } from 'api/liveSpecsExt';
-import { createPublication } from 'api/publications';
-import AlertBox from 'components/shared/AlertBox';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import Error from 'components/shared/Error';
-import { useZustandStore } from 'context/Zustand/provider';
-import { LiveSpecsExtQueryWithSpec } from 'hooks/useLiveSpecsExt';
-import usePublications from 'hooks/usePublications';
-import { useEffect, useRef, useState } from 'react';
-import { jobSucceeded } from 'services/supabase';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { Entity } from 'types';
-import SharedProgress from './Progress';
-import { ProgressStates, SharedProgressProps } from './types';
+} from 'src/api/draftSpecs';
+import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
+import { createPublication } from 'src/api/publications';
+import AlertBox from 'src/components/shared/AlertBox';
+import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
+import Error from 'src/components/shared/Error';
+import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import usePublications from 'src/hooks/usePublications';
+import { jobSucceeded } from 'src/services/supabase';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 export interface UpdateEntityProps {
     entity: CaptureQuery;

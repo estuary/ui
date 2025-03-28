@@ -1,21 +1,24 @@
+import type { DetailsOverviewProps } from 'src/components/shared/Entity/Details/Overview/types';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
+import { useMemo } from 'react';
+
 import { Grid } from '@mui/material';
-import { DataPreview } from 'components/collection/DataPreview';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import { TaskEndpoints } from 'components/shared/Endpoints/TaskEndpoints';
-import NotificationSettings from 'components/shared/Entity/Details/Overview/NotificationSettings';
-import { useEntityType } from 'context/EntityContext';
+
+import { DataPreview } from 'src/components/collection/DataPreview';
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
+import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
+import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
+import Usage from 'src/components/shared/Entity/Details/Usage';
+import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
+import ShardInformation from 'src/components/shared/Entity/Shard/Information';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
-import { useMemo } from 'react';
-import JournalHydrator from 'stores/JournalData/Hydrator';
-import { hasLength } from 'utils/misc-utils';
-import ShardInformation from '../../Shard/Information';
-import Usage from '../Usage';
-import useDetailsEntityTaskTypes from '../useDetailsEntityTaskTypes';
-import DetailsSection from './DetailsSection';
-import { DetailsOverviewProps } from './types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import JournalHydrator from 'src/stores/JournalData/Hydrator';
+import { hasLength } from 'src/utils/misc-utils';
 
 function Overview({ name }: DetailsOverviewProps) {
     const entityType = useEntityType();

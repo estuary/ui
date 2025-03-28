@@ -1,39 +1,43 @@
-import { Box, Stack, Typography } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import RefreshButton from 'components/editor/Bindings/FieldSelection/RefreshButton';
-import {
+import type {
     BuiltSpec_Binding,
     CompositeProjection,
     ConstraintDictionary,
-    ConstraintTypes,
     FieldSelectionType,
     Projection,
     TranslatedConstraint,
     ValidationResponse_Binding,
-} from 'components/editor/Bindings/FieldSelection/types';
-import useFieldSelection from 'components/editor/Bindings/FieldSelection/useFieldSelection';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import FieldSelectionTable from 'components/tables/FieldSelection';
-import { isEqual } from 'lodash';
+} from 'src/components/editor/Bindings/FieldSelection/types';
+import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { Schema } from 'src/types';
+
 import { useEffect, useMemo, useState } from 'react';
+
+import { Box, Stack, Typography } from '@mui/material';
+
+import { isEqual } from 'lodash';
 import { FormattedMessage } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
+import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
     useBinding_selectionSaving,
     useBinding_setRecommendFields,
     useBinding_setSelectionSaving,
-} from 'stores/Binding/hooks';
-import { ExpandedFieldSelection } from 'stores/Binding/slices/FieldSelection';
+} from 'src/stores/Binding/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_status,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { Schema } from 'types';
-import { getBindingIndex } from 'utils/workflow-utils';
-import RefreshStatus from './RefreshStatus';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { getBindingIndex } from 'src/utils/workflow-utils';
 
 interface Props {
     bindingUUID: string;

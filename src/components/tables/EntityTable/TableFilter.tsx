@@ -1,6 +1,7 @@
+import type { DebouncedFunc } from 'lodash';
+import type { RefObject } from 'react';
+
 import { TextField, useMediaQuery, useTheme } from '@mui/material';
-import { DebouncedFunc } from 'lodash';
-import { RefObject } from 'react';
 
 interface Props {
     label: string;

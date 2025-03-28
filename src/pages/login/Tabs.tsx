@@ -1,4 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 interface Props {

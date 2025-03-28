@@ -1,12 +1,14 @@
-import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
+import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
+import type { MaterializationQueryWithStats } from 'src/api/liveSpecsExt';
+
 import { useCallback, useMemo } from 'react';
-import { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
-import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import { formatBytes } from '../cells/stats/shared';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
-import { ColumnNames } from '../shared';
-import useExportColumns from '../useExportColumns';
+
+import { formatBytes } from 'src/components/tables/cells/stats/shared';
+import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
+import { ColumnNames } from 'src/components/tables/shared';
+import useExportColumns from 'src/components/tables/useExportColumns';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { hasLength } from 'src/utils/misc-utils';
 
 function useMaterializationExport(data: MaterializationQueryWithStats[]) {
     const exportColumns = useExportColumns();

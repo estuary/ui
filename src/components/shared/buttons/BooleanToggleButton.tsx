@@ -1,7 +1,13 @@
-import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { Check } from 'iconoir-react';
+import type {
+    BooleanString,
+    OutlinedToggleButtonProps,
+} from 'src/components/shared/buttons/types';
+
 import { useMemo } from 'react';
-import { BooleanString, OutlinedToggleButtonProps } from './types';
+
+import { Check } from 'iconoir-react';
+
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 
 function BooleanToggleButton({
     children,

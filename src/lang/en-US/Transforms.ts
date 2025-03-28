@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
-import { Errors } from './Errors';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+import { Errors } from 'src/lang/en-US/Errors';
 
 export const Transforms: Record<string, string> = {
     'newTransform.modal.title': `Derive A New Collection`,

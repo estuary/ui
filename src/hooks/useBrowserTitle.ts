@@ -1,6 +1,8 @@
-import { useUpdateHelmet } from 'context/UpdateHelmet';
 import { useEffect } from 'react';
+
 import { useIntl } from 'react-intl';
+
+import { useUpdateHelmet } from 'src/context/UpdateHelmet';
 
 interface MetaSettings {
     descriptionKey?: string;

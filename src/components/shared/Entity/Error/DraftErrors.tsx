@@ -1,7 +1,11 @@
+import type { KeyValue } from 'src/components/shared/KeyValueList';
+
 import { Box, Breadcrumbs, Typography } from '@mui/material';
-import KeyValueList, { KeyValue } from 'components/shared/KeyValueList';
-import useDraftSpecErrors from 'hooks/useDraftSpecErrors';
+
 import { FormattedMessage } from 'react-intl';
+
+import KeyValueList from 'src/components/shared/KeyValueList';
+import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
 
 export interface DraftErrorProps {
     draftId?: string | null;

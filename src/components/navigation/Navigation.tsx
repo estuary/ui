@@ -11,9 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { authenticatedRoutes } from 'app/routes';
-import ModeSwitch from 'components/navigation/ModeSwitch';
-import { paperBackground } from 'context/Theme';
+
 import {
     CloudDownload,
     CloudUpload,
@@ -23,7 +21,11 @@ import {
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import ListItemLink from './ListItemLink';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import ListItemLink from 'src/components/navigation/ListItemLink';
+import ModeSwitch from 'src/components/navigation/ModeSwitch';
+import { paperBackground } from 'src/context/Theme';
 
 interface NavigationProps {
     open: boolean;

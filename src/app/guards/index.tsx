@@ -1,9 +1,12 @@
-import GrantGuard from 'app/guards/GrantGuard';
+import GrantGuard from 'src/app/guards/GrantGuard';
+
 import 'react-reflex/styles.css';
-import { BaseComponentProps } from 'types';
-import LegalGuard from './LegalGuard';
-import TenantGuard from './TenantGuard';
-import UserGuard from './User';
+
+import type { BaseComponentProps } from 'src/types';
+
+import LegalGuard from 'src/app/guards/LegalGuard';
+import TenantGuard from 'src/app/guards/TenantGuard';
+import UserGuard from 'src/app/guards/User';
 
 function AppGuards({ children }: BaseComponentProps) {
     return (

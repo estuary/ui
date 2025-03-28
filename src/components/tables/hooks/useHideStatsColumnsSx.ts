@@ -1,6 +1,8 @@
+import type { SxProps, Theme } from '@mui/material';
+
 import { useMemo } from 'react';
-import { SxProps, Theme } from '@mui/material';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
+
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 function useHideStatsColumnsSxSx() {
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);

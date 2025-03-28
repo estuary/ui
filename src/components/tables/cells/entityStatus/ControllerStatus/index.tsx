@@ -1,6 +1,8 @@
+import type { ControllerStatusProps } from 'src/components/tables/cells/entityStatus/ControllerStatus/types';
+
 import { Stack, TableCell, Typography } from '@mui/material';
-import StatusIndicator from './StatusIndicator';
-import { ControllerStatusProps } from './types';
+
+import StatusIndicator from 'src/components/tables/cells/entityStatus/ControllerStatus/StatusIndicator';
 
 export default function ControllerStatus({
     detail,

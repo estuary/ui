@@ -1,7 +1,9 @@
 import { FormControl, FormControlLabel, Stack, Switch } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
+
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 // https://docs.estuary.dev/concepts/materialization/#delta-updates
 function DeltaUpdates() {

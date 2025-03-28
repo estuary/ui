@@ -1,6 +1,7 @@
 import { cleanup, configure } from '@testing-library/react';
-import invariableStores from 'context/Zustand/invariableStores';
-import { server } from 'test/server/test-server';
+
+import invariableStores from 'src/context/Zustand/invariableStores';
+import { server } from 'src/test/server/test-server';
 
 vi.mock('zustand');
 

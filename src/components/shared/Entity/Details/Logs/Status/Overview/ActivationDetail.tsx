@@ -1,16 +1,19 @@
+import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import { Skeleton, Typography } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useIntl } from 'react-intl';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import {
     useEntityStatusStore_lastActivated,
     useEntityStatusStore_singleResponse,
-} from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { getDataPlaneActivationStatus } from 'utils/entityStatus-utils';
-import DetailWrapper from './DetailWrapper';
-import { BaseDetailProps } from './types';
+} from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { getDataPlaneActivationStatus } from 'src/utils/entityStatus-utils';
 
 export default function ActivationDetail({ headerMessageId }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

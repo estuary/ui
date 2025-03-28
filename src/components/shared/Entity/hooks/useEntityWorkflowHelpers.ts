@@ -1,35 +1,37 @@
-import { getLiveSpecIdByPublication } from 'api/publicationSpecsExt';
-import { authenticatedRoutes } from 'app/routes';
-import { useBindingsEditorStore_resetState } from 'components/editor/Bindings/Store/hooks';
+import { useCallback, useMemo } from 'react';
+
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
+
+import { getLiveSpecIdByPublication } from 'src/api/publicationSpecsExt';
+import { authenticatedRoutes } from 'src/app/routes';
+import { useBindingsEditorStore_resetState } from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_catalogName,
     useEditorStore_pubId,
     useEditorStore_resetState,
-} from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import { useSnackbar } from 'notistack';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBinding_resetState } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEndpointConfigStore_reset } from 'stores/EndpointConfig/hooks';
+} from 'src/components/editor/Store/hooks';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useEntityType } from 'src/context/EntityContext';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_resetState } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfigStore_reset } from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_resetState,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
-import { getPathWithParams } from 'utils/misc-utils';
-import { snackbarSettings } from 'utils/notification-utils';
-import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { useSchemaEvolution_resetState } from 'src/stores/SchemaEvolution/hooks';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
+import { getPathWithParams } from 'src/utils/misc-utils';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();

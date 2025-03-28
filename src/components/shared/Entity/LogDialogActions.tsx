@@ -1,15 +1,19 @@
-import { Box, Button, Stack } from '@mui/material';
-import { TaskEndpoint } from 'components/shared/Endpoints/TaskEndpoint';
-import Status from 'components/shared/Entity/Status';
-import { useEntityType } from 'context/EntityContext';
+import type { LogDialogActionsProps } from 'src/components/shared/Entity/types';
+
 import { useMemo } from 'react';
+
+import { Box, Button, Stack } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_status } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { useTransformationCreate_catalogName } from 'stores/TransformationCreate/hooks';
-import { hasLength } from 'utils/misc-utils';
-import { LogDialogActionsProps } from './types';
+
+import { TaskEndpoint } from 'src/components/shared/Endpoints/TaskEndpoint';
+import Status from 'src/components/shared/Entity/Status';
+import { useEntityType } from 'src/context/EntityContext';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { useTransformationCreate_catalogName } from 'src/stores/TransformationCreate/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
     const entityType = useEntityType();

@@ -1,5 +1,6 @@
 import { TableCell } from '@mui/material';
-import MaterializeLink from 'components/shared/Entity/MaterializeLink';
+
+import MaterializeLink from 'src/components/shared/Entity/MaterializeLink';
 
 interface Props {
     liveSpecId: string;

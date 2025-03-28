@@ -1,8 +1,11 @@
+import type { UserStore } from 'src/context/User/types';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { devtoolsOptions } from 'utils/store-utils';
+
 import produce from 'immer';
-import { UserStore } from './types';
+
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const name = 'estuary.user-provider-store';
 

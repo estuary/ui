@@ -1,7 +1,7 @@
-import { ParsedPagedFetchAllResponse } from 'services/supabase';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { KeyedMutator } from 'swr';
-import { AuthRoles } from 'types';
+import type { ParsedPagedFetchAllResponse } from 'src/services/supabase';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { AuthRoles } from 'src/types';
+import type { KeyedMutator } from 'swr';
 
 export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to

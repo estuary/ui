@@ -1,4 +1,4 @@
-import { Provider } from '@supabase/supabase-js';
+import type { Provider } from '@supabase/supabase-js';
 
 export type SupportedProvider = Extract<
     Provider,

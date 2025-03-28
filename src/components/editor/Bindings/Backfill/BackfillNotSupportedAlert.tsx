@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import AlertBox from 'components/shared/AlertBox';
-import { useEntityType } from 'context/EntityContext';
+
 import { useIntl } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import AlertBox from 'src/components/shared/AlertBox';
+import { useEntityType } from 'src/context/EntityContext';
 
 function BackfillNotSupportedAlert() {
     const intl = useIntl();

@@ -1,6 +1,7 @@
-import { useZustandStore } from 'context/Zustand/provider';
-import { TransformCreateStoreNames } from 'stores/names';
-import { TransformCreateState } from './types';
+import type { TransformCreateState } from 'src/stores/TransformationCreate/types';
+
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { TransformCreateStoreNames } from 'src/stores/names';
 
 export const useTransformationCreate_language = () => {
     return useZustandStore<

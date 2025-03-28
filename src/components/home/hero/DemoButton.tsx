@@ -1,14 +1,21 @@
-import { Box, Grid, Link } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import DemoDialog from 'components/home/hero/DemoDialog';
-import { semiTransparentBackgroundIntensified } from 'context/Theme';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useCallback, useState } from 'react';
+
+import { Box, Grid, Link } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { TableFilterKeys, TablePrefixes } from 'stores/Tables/hooks';
-import { DEMO_TENANT, getPathWithParams, hasLength } from 'utils/misc-utils';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import DemoDialog from 'src/components/home/hero/DemoDialog';
+import { semiTransparentBackgroundIntensified } from 'src/context/Theme';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { TableFilterKeys, TablePrefixes } from 'src/stores/Tables/hooks';
+import {
+    DEMO_TENANT,
+    getPathWithParams,
+    hasLength,
+} from 'src/utils/misc-utils';
 
 export const FILTER_TABLE_PROPS = {
     captures: {

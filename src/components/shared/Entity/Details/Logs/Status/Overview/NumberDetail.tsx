@@ -1,8 +1,11 @@
+import type { NumericDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import { Skeleton, Typography } from '@mui/material';
+
 import readable from 'readable-numbers';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import DetailWrapper from './DetailWrapper';
-import { NumericDetailProps } from './types';
+
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function NumericDetail({
     headerMessageId,

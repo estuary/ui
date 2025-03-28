@@ -1,5 +1,6 @@
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getPublicationHistoryByCatalogName } from 'api/publicationSpecsExt';
+
+import { getPublicationHistoryByCatalogName } from 'src/api/publicationSpecsExt';
 
 function usePublicationSpecsExt_History(catalogName?: string) {
     const { data, error, mutate, isValidating } = useQuery(

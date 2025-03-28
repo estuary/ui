@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
-import ConnectorName from 'components/connectors/ConnectorName';
+
+import ConnectorName from 'src/components/connectors/ConnectorName';
 
 interface Props {
     renderOptionProps: any;

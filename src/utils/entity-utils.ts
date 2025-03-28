@@ -1,6 +1,8 @@
+import type { Schema, SourceCaptureDef } from 'src/types';
+
 import produce from 'immer';
-import { Schema, SourceCaptureDef } from 'types';
-import { hasLength, specContainsDerivation } from 'utils/misc-utils';
+
+import { hasLength, specContainsDerivation } from 'src/utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};

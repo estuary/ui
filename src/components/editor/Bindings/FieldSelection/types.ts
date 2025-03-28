@@ -1,4 +1,4 @@
-import { Schema, TableColumns } from 'types';
+import type { Schema, TableColumns } from 'src/types';
 
 export interface Projection {
     field: string;

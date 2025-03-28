@@ -1,10 +1,13 @@
-import FullPageError from 'components/fullPage/Error';
-import ClickToAccept from 'directives/ClickToAccept';
-import FullPageWrapper from 'app/FullPageWrapper';
-import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
+import type { BaseComponentProps } from 'src/types';
+
 import { Box } from '@mui/material';
-import useDirectiveGuard from './hooks';
+
+import { FormattedMessage } from 'react-intl';
+
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import FullPageError from 'src/components/fullPage/Error';
+import ClickToAccept from 'src/directives/ClickToAccept';
 
 const SELECTED_DIRECTIVE = 'clickToAccept';
 

@@ -1,9 +1,11 @@
 import { Box, Button } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+
 import { Refresh } from 'iconoir-react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import useFieldSelectionRefresh from './useFieldSelectionRefresh';
+import { FormattedMessage } from 'react-intl';
+
+import useFieldSelectionRefresh from 'src/components/editor/Bindings/FieldSelection/useFieldSelectionRefresh';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 interface Props {
     buttonLabelId: string;

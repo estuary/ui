@@ -1,17 +1,21 @@
-import { Grid, Stack, Table, TableContainer } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import CardWrapper from 'components/shared/CardWrapper';
-import Message from 'components/shared/Error/Message';
-import ExternalLink from 'components/shared/ExternalLink';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { TableColumns } from 'src/types';
+
 import { useState } from 'react';
+
+import { Grid, Stack, Table, TableContainer } from '@mui/material';
+
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useShardDetail_error } from 'stores/ShardDetail/hooks';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
-import { TableColumns } from 'types';
-import ShardAlerts from './Alerts';
-import InformationTableBody from './TableBody';
-import InformationTableFooter from './TableFooter';
-import InformationTableHeader from './TableHeader';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import ShardAlerts from 'src/components/shared/Entity/Shard/Alerts';
+import InformationTableBody from 'src/components/shared/Entity/Shard/TableBody';
+import InformationTableFooter from 'src/components/shared/Entity/Shard/TableFooter';
+import InformationTableHeader from 'src/components/shared/Entity/Shard/TableHeader';
+import Message from 'src/components/shared/Error/Message';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import { useShardDetail_error } from 'src/stores/ShardDetail/hooks';
 
 interface Props {
     taskTypes: ShardEntityTypes[];

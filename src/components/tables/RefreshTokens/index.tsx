@@ -1,12 +1,14 @@
-import { getRefreshTokensForTable } from 'api/tokens';
-import ConfigureRefreshTokenButton from 'components/admin/Api/RefreshToken/ConfigureTokenButton';
-import EntityTable from 'components/tables/EntityTable';
-import Rows from 'components/tables/RefreshTokens/Rows';
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
-import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
-import { TableColumns } from 'types';
+
+import { getRefreshTokensForTable } from 'src/api/tokens';
+import ConfigureRefreshTokenButton from 'src/components/admin/Api/RefreshToken/ConfigureTokenButton';
+import EntityTable from 'src/components/tables/EntityTable';
+import Rows from 'src/components/tables/RefreshTokens/Rows';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
 
 const columns: TableColumns[] = [
     {

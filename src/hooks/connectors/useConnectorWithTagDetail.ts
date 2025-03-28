@@ -1,16 +1,17 @@
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+
 import { useMemo } from 'react';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { CONNECTOR_WITH_TAG_QUERY } from 'src/hooks/connectors/shared';
 import {
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
     TABLES,
-} from 'services/supabase';
-import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from './shared';
+} from 'src/services/supabase';
+import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
 
 const defaultResponse: ConnectorWithTagDetailQuery[] = [];
 

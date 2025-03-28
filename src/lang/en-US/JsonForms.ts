@@ -1,4 +1,4 @@
-import { Errors } from './Errors';
+import { Errors } from 'src/lang/en-US/Errors';
 
 export const JsonForms: Record<string, string> = {
     'jsonForms.clearInput': `Clear input field`,

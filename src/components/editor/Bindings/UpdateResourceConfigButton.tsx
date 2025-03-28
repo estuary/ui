@@ -1,19 +1,22 @@
-import { Button } from '@mui/material';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
-import invariableStores from 'context/Zustand/invariableStores';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+
 import { useState } from 'react';
 
+import { Button } from '@mui/material';
+
+import { useStore } from 'zustand';
+
 import { FormattedMessage } from 'react-intl';
+
+import invariableStores from 'src/context/Zustand/invariableStores';
+import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_discoveredCollections,
     useBinding_prefillResourceConfigs,
     useBinding_setRestrictedDiscoveredCollections,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { hasLength } from 'utils/misc-utils';
-
-import { useStore } from 'zustand';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);

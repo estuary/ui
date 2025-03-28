@@ -1,5 +1,5 @@
-import { EntityContextProvider } from 'context/EntityContext';
-import Collections from 'pages/Collections';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import Collections from 'src/pages/Collections';
 
 function CollectionsTable() {
     return (

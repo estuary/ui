@@ -1,7 +1,9 @@
+import type { Entity, Shard } from 'src/types';
+
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { supabaseClient } from 'context/GlobalProviders';
-import { TABLES } from 'services/supabase';
-import { Entity, Shard } from 'types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { TABLES } from 'src/services/supabase';
 
 export interface Out {
     bytesTotal: number;

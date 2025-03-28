@@ -1,9 +1,13 @@
-import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
+import type { GlobalStoreNames } from 'src/stores/names';
+import type { QueuedTasksStore } from 'src/stores/QueuedTasks/types';
+import type { NamedSet } from 'zustand/middleware';
+
 import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { GlobalStoreNames } from '../names';
-import { QueuedTasksStore } from './types';
+import { devtools } from 'zustand/middleware';
+
+import produce from 'immer';
+
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
     QueuedTasksStore,

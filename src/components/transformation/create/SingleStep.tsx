@@ -1,5 +1,6 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { Box, FormLabel } from '@mui/material';
-import { BaseComponentProps } from 'types';
 
 function SingleStep({ children }: BaseComponentProps) {
     return (

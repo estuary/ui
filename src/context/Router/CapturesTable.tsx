@@ -1,5 +1,5 @@
-import { EntityContextProvider } from 'context/EntityContext';
-import Captures from 'pages/Captures';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import Captures from 'src/pages/Captures';
 
 function CapturesTable() {
     return (

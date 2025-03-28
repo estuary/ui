@@ -1,12 +1,14 @@
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import type { Schema } from 'src/types';
+
 import { useCallback } from 'react';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_endpointSchema,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { Schema } from 'types';
-import { encryptEndpointConfig } from 'utils/sops-utils';
+    useEndpointConfigStore_endpointSchema,
+} from 'src/stores/EndpointConfig/hooks';
+import { encryptEndpointConfig } from 'src/utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {
     const { callFailed } = useEntityWorkflowHelpers();

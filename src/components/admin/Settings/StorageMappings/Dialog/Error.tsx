@@ -1,10 +1,13 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+
 import { AlertTitle, Button, Stack, Typography } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import useRepublishPrefix from 'components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import AlertBox from 'components/shared/AlertBox';
+
 import { FormattedMessage } from 'react-intl';
-import { useTenantStore } from 'stores/Tenant/Store';
+
+import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import AlertBox from 'src/components/shared/AlertBox';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 interface Props {
     error: PostgrestError;

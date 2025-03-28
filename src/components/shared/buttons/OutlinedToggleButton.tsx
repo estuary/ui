@@ -1,10 +1,11 @@
 import { styled, ToggleButton, toggleButtonClasses } from '@mui/material';
+
 import {
     defaultOutline,
     defaultOutline_hovered,
     disabledButtonText,
     intensifiedOutline,
-} from 'context/Theme';
+} from 'src/context/Theme';
 
 const OutlinedToggleButton = styled(ToggleButton)(({
     color,

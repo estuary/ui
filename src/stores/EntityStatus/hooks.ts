@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
+
+import { useShallow } from 'zustand/react/shallow';
+
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import {
     isCaptureControllerStatus,
     isEntityControllerStatus,
-} from 'utils/entityStatus-utils';
-import { useShallow } from 'zustand/react/shallow';
-import { useEntityStatusStore } from './Store';
+} from 'src/utils/entityStatus-utils';
 
 export const useEntityStatusStore_singleResponse = (catalogName: string) => {
     return useEntityStatusStore(

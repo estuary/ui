@@ -1,9 +1,9 @@
-import { useDetailsPage } from './context';
-import History from './History';
-import Status from './Logs/Status';
-import Ops from './Ops';
-import Overview from './Overview';
-import Spec from './Spec';
+import { useDetailsPage } from 'src/components/shared/Entity/Details/context';
+import History from 'src/components/shared/Entity/Details/History';
+import Status from 'src/components/shared/Entity/Details/Logs/Status';
+import Ops from 'src/components/shared/Entity/Details/Ops';
+import Overview from 'src/components/shared/Entity/Details/Overview';
+import Spec from 'src/components/shared/Entity/Details/Spec';
 
 function RenderTab() {
     const page = useDetailsPage();

@@ -1,6 +1,6 @@
-import test, { expect } from '@playwright/test';
 import { USERS } from '../helpers/users';
 import { defaultPageSetup } from '../helpers/utils';
+import test, { expect } from '@playwright/test';
 
 test.only('Welcome Page', async ({ page }) => {
     const uuid = crypto.randomUUID().split('-')[0];

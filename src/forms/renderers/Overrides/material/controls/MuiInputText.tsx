@@ -30,20 +30,19 @@
 //    Added an id to this so that the date/time/datetime inputs can check that id during
 //      the focus event and not trigger focus.
 //
+import type { CellProps, WithClassname } from '@jsonforms/core';
+import type { InputBaseComponentProps, InputProps } from '@mui/material';
+
 import React, { useState } from 'react';
-import { CellProps, WithClassname } from '@jsonforms/core';
-import {
-    IconButton,
-    Input,
-    InputAdornment,
-    InputBaseComponentProps,
-    InputProps,
-    useTheme,
-} from '@mui/material';
-import merge from 'lodash/merge';
+
 import Close from '@mui/icons-material/Close';
+import { IconButton, Input, InputAdornment, useTheme } from '@mui/material';
+
 import { useDebouncedChange } from '@jsonforms/material-renderers';
-import { CLEAR_BUTTON_ID_SUFFIX } from 'components/shared/pickers/shared';
+
+import merge from 'lodash/merge';
+
+import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 
 interface MuiTextInputProps {
     muiInputProps?: InputProps['inputProps'];

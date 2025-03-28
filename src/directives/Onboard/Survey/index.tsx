@@ -1,14 +1,18 @@
+import type { ChangeEvent } from 'react';
+
+import useConstant from 'use-constant';
+
 import { FormControl, FormLabel, RadioGroup } from '@mui/material';
-import { hiddenButAccessibleRadio } from 'context/Theme';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import { hiddenButAccessibleRadio } from 'src/context/Theme';
 import {
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
-} from 'directives/Onboard/Store/hooks';
-import { ChangeEvent } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import useConstant from 'use-constant';
-import OriginOption from './OriginOption';
+} from 'src/directives/Onboard/Store/hooks';
+import OriginOption from 'src/directives/Onboard/Survey/OriginOption';
 
 function OnboardingSurvey() {
     const intl = useIntl();

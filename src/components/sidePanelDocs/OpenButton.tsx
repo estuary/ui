@@ -7,13 +7,15 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { useShowSidePanelDocs } from 'context/SidePanelDocs';
+
 import { SidebarCollapse } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
-import { hasLength } from 'utils/misc-utils';
+
+import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 function SidePanelDocsOpenButton() {
     const theme = useTheme();

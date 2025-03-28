@@ -1,5 +1,5 @@
-import AppLayout from 'app/Layout';
-import Authenticated from './Authenticated';
+import AppLayout from 'src/app/Layout';
+import Authenticated from 'src/context/Router/Authenticated';
 
 function AuthenticatedLayout() {
     return (

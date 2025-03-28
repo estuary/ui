@@ -1,6 +1,8 @@
+import type { TaskShardDetails } from 'src/stores/ShardDetail/types';
+
 import { Box, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { TaskShardDetails } from 'stores/ShardDetail/types';
 
 interface Props {
     shard: TaskShardDetails;

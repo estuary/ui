@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

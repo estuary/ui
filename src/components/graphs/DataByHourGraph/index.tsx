@@ -1,7 +1,11 @@
+import type { EChartsOption } from 'echarts';
+import type { DataByHourStatType } from 'src/components/graphs/types';
+import type { CatalogStats_Details } from 'src/types';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { useTheme } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
-import { defaultOutlineColor, eChartsColors } from 'context/Theme';
-import { EChartsOption } from 'echarts';
+
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -15,17 +19,20 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import readable from 'readable-numbers';
-import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
-import { CatalogStats_Details } from 'types';
-import useDataByHourGraphMessages from 'hooks/useDataByHourGraphMessages';
-import { LUXON_GRAIN_SETTINGS } from 'services/luxon';
-import { getTooltipItem, getTooltipTitle } from '../tooltips';
-import { DataByHourStatType } from '../types';
-import useLegendConfig from '../useLegendConfig';
-import useTooltipConfig from '../useTooltipConfig';
+
+import {
+    getTooltipItem,
+    getTooltipTitle,
+} from 'src/components/graphs/tooltips';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import { useEntityType } from 'src/context/EntityContext';
+import { defaultOutlineColor, eChartsColors } from 'src/context/Theme';
+import useDataByHourGraphMessages from 'src/hooks/useDataByHourGraphMessages';
+import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 interface Props {
     id: string;

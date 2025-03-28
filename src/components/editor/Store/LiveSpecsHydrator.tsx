@@ -1,16 +1,18 @@
+import type { BaseComponentProps } from 'src/types';
+
+import { useEffect } from 'react';
+
 import {
     useEditorStore_setId,
     useEditorStore_setSpecs,
-} from 'components/editor/Store/hooks';
-import Error from 'components/shared/Error';
-import { useEntityType } from 'context/EntityContext';
-import { useLiveSpecs_details } from 'hooks/useLiveSpecs';
-import EntityNotFound from 'pages/error/EntityNotFound';
-import { useEffect } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { BaseComponentProps } from 'types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/components/editor/Store/hooks';
+import Error from 'src/components/shared/Error';
+import { useEntityType } from 'src/context/EntityContext';
+import { useLiveSpecs_details } from 'src/hooks/useLiveSpecs';
+import EntityNotFound from 'src/pages/error/EntityNotFound';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     localZustandScope: boolean;

@@ -1,9 +1,10 @@
 import { Dialog } from '@mui/material';
-import { useFormStateStore_showSavePrompt } from 'stores/FormState/hooks';
-import PromptsHydrator from '../store/Hydrator';
-import Actions from './Actions';
-import Content from './Content';
-import Title from './Title';
+
+import Actions from 'src/components/shared/Entity/prompts/PreSave/Actions';
+import Content from 'src/components/shared/Entity/prompts/PreSave/Content';
+import Title from 'src/components/shared/Entity/prompts/PreSave/Title';
+import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
+import { useFormStateStore_showSavePrompt } from 'src/stores/FormState/hooks';
 
 function PreSavePrompt() {
     const showSavePrompt = useFormStateStore_showSavePrompt();

@@ -1,5 +1,5 @@
-import StandAloneTableTitle from 'components/tables/EntityTable/StandAloneTableTitle';
-import PrefixAlertTable from 'components/tables/PrefixAlerts';
+import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
+import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 
 function PrefixAlerts() {
     return (

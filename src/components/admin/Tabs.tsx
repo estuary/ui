@@ -1,9 +1,12 @@
-import { Box, Tab, Tabs } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
 import { useMemo, useState } from 'react';
+
+import { Box, Tab, Tabs } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 function AdminTabs() {
     const intl = useIntl();

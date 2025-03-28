@@ -1,4 +1,5 @@
 import { createDefaultValue } from '@jsonforms/core';
+
 import { forIn } from 'lodash';
 
 export const discriminator = 'discriminator';

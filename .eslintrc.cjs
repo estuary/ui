@@ -1,22 +1,15 @@
 module.exports = {
     extends: [
-        'eslint-config-kentcdodds',
+        'eslint-config-kentcdodds/import',
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
     ],
     ignorePatterns: ['vite.config.ts', '__mocks__', 'playwright-tests/'],
+    plugins: ['formatjs', 'unused-imports', 'no-relative-import-paths'],
     parserOptions: {
         project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
     },
-    plugins: ['formatjs', 'unused-imports', 'import'],
     rules: {
-        // Want to make sure imports and exports are always formatted correctly
-        'unused-imports/no-unused-imports': 'error',
-        'import/first': 'error',
-        'import/newline-after-import': 'error',
-        'import/no-duplicates': 'error',
-
         // Only turning off right now to see more actual issues
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
@@ -25,6 +18,9 @@ module.exports = {
         // Helpful for dev but probably should turn these on eventually
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
+
+        // These really help with managing circular deps that don't matter
+        '@typescript-eslint/consistent-type-imports': 'error',
 
         // Helpful for dev... maybe make different settings for "final code"?
         'no-console': 'off',
@@ -49,6 +45,7 @@ module.exports = {
         // We should never have these unless commented and explained
         'react-hooks/exhaustive-deps': 'error',
 
+        // --------------------------IMPORTS --------------------------
         // Original LoadingButton can cause issues with Google Translate
         //  https://github.com/mui/material-ui/issues/27853
         //  https://github.com/facebook/react/issues/11538
@@ -69,5 +66,16 @@ module.exports = {
                 message: 'Please use @supabase/postgrest-js',
             },
         ],
+
+        // Absolute paths just makes moving files so much easier
+        'no-relative-import-paths/no-relative-import-paths': [
+            'error',
+            { allowSameFolder: false },
+        ],
+
+        'unused-imports/no-unused-imports': 'error',
+        'import/first': 'error',
+        'import/newline-after-import': 'error',
+        'import/no-duplicates': 'error',
     },
 };

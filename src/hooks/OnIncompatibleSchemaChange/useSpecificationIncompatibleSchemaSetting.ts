@@ -1,16 +1,19 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { Schema } from 'src/types';
+
+import { useCallback, useMemo } from 'react';
+
+import { cloneDeep } from 'lodash';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import { AutoCompleteOption } from 'components/incompatibleSchemaChange/types';
-import { cloneDeep } from 'lodash';
-import { useCallback, useMemo } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { Schema } from 'types';
-import { addOrRemoveOnIncompatibleSchemaChange } from 'utils/entity-utils';
+} from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { addOrRemoveOnIncompatibleSchemaChange } from 'src/utils/entity-utils';
 
 export default function useSpecificationIncompatibleSchemaSetting() {
     // Draft Editor Store

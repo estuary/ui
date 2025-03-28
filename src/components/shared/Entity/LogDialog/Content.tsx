@@ -1,7 +1,8 @@
-import Logs from 'components/logs';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import EntityWarnings from '../Warnings';
-import { LogDialogContentProps } from './types';
+import type { LogDialogContentProps } from 'src/components/shared/Entity/LogDialog/types';
+
+import Logs from 'src/components/logs';
+import EntityWarnings from 'src/components/shared/Entity/Warnings';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 
 function LogDialogContent({
     spinnerMessageId,

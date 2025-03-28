@@ -1,17 +1,19 @@
-import { Button, Grid } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { generateGrantDirective } from 'api/directives';
-import PrefixedName from 'components/inputs/PrefixedName';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useZustandStore } from 'context/Zustand/provider';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
+
+import { Button, Grid } from '@mui/material';
+
 import { FormattedMessage, useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
+
+import { generateGrantDirective } from 'src/api/directives';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     serverError: PostgrestError | null;

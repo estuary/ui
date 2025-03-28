@@ -1,3 +1,7 @@
+import type { BackfillDataflowOptionProps } from 'src/components/editor/Bindings/Backfill/types';
+
+import { useEffect, useRef } from 'react';
+
 import {
     Box,
     FormControl,
@@ -5,13 +9,13 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { useEffect, useRef } from 'react';
+
 import { useIntl } from 'react-intl';
-import { useBinding_backfilledBindings_count } from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { BackfillDataflowOptionProps } from './types';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const intl = useIntl();

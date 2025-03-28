@@ -23,17 +23,17 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import {
-    ControlProps,
-    isDescriptionHidden,
-    showAsRequired,
-} from '@jsonforms/core';
-import { useFocus } from '@jsonforms/material-renderers';
+import type { ControlProps } from '@jsonforms/core';
 
 import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
-import { CLEAR_BUTTON_ID_SUFFIX } from 'components/shared/pickers/shared';
+
+import { isDescriptionHidden, showAsRequired } from '@jsonforms/core';
+import { useFocus } from '@jsonforms/material-renderers';
+
 import { endsWith } from 'lodash';
 import merge from 'lodash/merge';
+
+import { CLEAR_BUTTON_ID_SUFFIX } from 'src/components/shared/pickers/shared';
 
 export interface WithInput {
     input: any;

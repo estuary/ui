@@ -1,19 +1,24 @@
-import { CircularProgress, Skeleton, Stack } from '@mui/material';
-import ConnectorName from 'components/connectors/ConnectorName';
-import CardWrapper from 'components/shared/CardWrapper';
-import DataPlane from 'components/shared/Entity/DataPlane';
-import RelatedCollections from 'components/shared/Entity/RelatedCollections';
-import ExternalLink from 'components/shared/ExternalLink';
-import KeyValueList from 'components/shared/KeyValueList';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { FormatDateOptions } from 'react-intl';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
 import { useMemo } from 'react';
-import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
+
+import { CircularProgress, Skeleton, Stack } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import ConnectorName from 'src/components/connectors/ConnectorName';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import DataPlane from 'src/components/shared/Entity/DataPlane';
+import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import KeyValueList from 'src/components/shared/KeyValueList';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
     parseDataPlaneName,
-} from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     entityName: string;

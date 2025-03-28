@@ -27,18 +27,15 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import {
-    and,
+import type {
     CombinatorRendererProps,
-    createCombinatorRenderInfos,
-    isOneOfControl,
     JsonSchema,
     OwnPropsOfControl,
     RankedTester,
-    rankWith,
-    schemaMatches,
 } from '@jsonforms/core';
-import { JsonFormsDispatch } from '@jsonforms/react';
+
+import { useCallback, useState } from 'react';
+
 import {
     Button,
     Dialog,
@@ -50,16 +47,26 @@ import {
     Tab,
     Tabs,
 } from '@mui/material';
+
+import {
+    and,
+    createCombinatorRenderInfos,
+    isOneOfControl,
+    rankWith,
+    schemaMatches,
+} from '@jsonforms/core';
+import { JsonFormsDispatch } from '@jsonforms/react';
+
+import { keys } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+
+import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'forms/renderers/shared';
-import { keys } from 'lodash';
-import isEmpty from 'lodash/isEmpty';
-import { useCallback, useState } from 'react';
-import { withCustomJsonFormsOneOfDiscriminatorProps } from 'services/jsonforms/JsonFormsContext';
-import CombinatorProperties from './CombinatorProperties';
+} from 'src/forms/renderers/shared';
+import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;

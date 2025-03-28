@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
-import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import OutlinedToggleButtonGroup from 'components/shared/OutlinedToggleButtonGroup';
+
 import { useIntl } from 'react-intl';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
+
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionFormatter() {
     const intl = useIntl();

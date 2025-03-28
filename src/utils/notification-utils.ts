@@ -1,6 +1,7 @@
-import { AlertSubscriptionsExtendedQuery } from 'api/alerts';
+import type { OptionsObject } from 'notistack';
+import type { AlertSubscriptionsExtendedQuery } from 'src/api/alerts';
+
 import { isEmpty } from 'lodash';
-import { OptionsObject } from 'notistack';
 
 export const snackbarSettings: OptionsObject = {
     anchorOrigin: {

@@ -1,4 +1,5 @@
 import { Box, TableCell, Tooltip } from '@mui/material';
+
 import { formatDistanceToNow, formatRelative } from 'date-fns';
 import { FormattedDate } from 'react-intl';
 

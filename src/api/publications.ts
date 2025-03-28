@@ -1,7 +1,11 @@
-import { supabaseClient } from 'context/GlobalProviders';
-import { DEFAULT_FILTER } from 'services/shared';
-import { insertSupabase, JOB_STATUS_COLUMNS, TABLES } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DEFAULT_FILTER } from 'src/services/shared';
+import {
+    insertSupabase,
+    JOB_STATUS_COLUMNS,
+    TABLES,
+} from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface PublicationRequest {
     draft_id: string;

@@ -1,4 +1,4 @@
-import { CommonMessages } from './CommonMessages';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 export const PrefixedName: Record<string, string> = {
     'prefixedName.description': `Select a prefix from the drop-down and add a unique name. (ex: ${CommonMessages['common.exampleName']})`,

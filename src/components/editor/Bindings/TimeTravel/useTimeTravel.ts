@@ -1,23 +1,24 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
+import type { Schema } from 'src/types';
+
+import { useCallback, useMemo } from 'react';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import { useCallback, useMemo } from 'react';
-
+} from 'src/components/editor/Store/hooks';
 import {
     useBinding_currentBindingIndex,
     useBinding_fullSourceOfBinding,
     useBinding_updateFullSourceConfig,
-} from 'stores/Binding/hooks';
-import { FullSourceJsonForms } from 'stores/Binding/slices/TimeTravel';
-import { Schema } from 'types';
+} from 'src/stores/Binding/hooks';
 import {
     getBindingIndex,
     getCollectionNameProp,
     getFullSourceSetting,
-} from 'utils/workflow-utils';
+} from 'src/utils/workflow-utils';
 
 function useTimeTravel(bindingUUID: string, collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();

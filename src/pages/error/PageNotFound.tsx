@@ -1,6 +1,8 @@
 import { Typography } from '@mui/material';
-import usePageTitle from 'hooks/usePageTitle';
+
 import { FormattedMessage } from 'react-intl';
+
+import usePageTitle from 'src/hooks/usePageTitle';
 
 const TITLE = 'routeTitle.error.pageNotFound';
 

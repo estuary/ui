@@ -1,4 +1,4 @@
-import { CommonMessages } from './CommonMessages';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 const prefixes = {
     finalEmail: `You will have no ability to`,

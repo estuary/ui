@@ -1,21 +1,23 @@
-import { Button, Dialog } from '@mui/material';
-import { unauthenticatedRoutes } from 'app/routes';
-import ConfirmationMessage from 'components/tables/RowActions/AccessLinks/ConfirmationMessage';
-import DisableDirective from 'components/tables/RowActions/AccessLinks/DisableDirective';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import type { RowConfirmation } from 'src/components/tables/RowActions/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
+
+import { Button, Dialog } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { getPathWithParams } from 'utils/misc-utils';
-import { RowConfirmation } from '../types';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
+import ConfirmationMessage from 'src/components/tables/RowActions/AccessLinks/ConfirmationMessage';
+import DisableDirective from 'src/components/tables/RowActions/AccessLinks/DisableDirective';
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 

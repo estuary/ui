@@ -1,5 +1,5 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Navigation: Record<string, string> = {
     'navigation.toggle.ariaLabel': `Toggle Navigation`,

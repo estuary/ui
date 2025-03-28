@@ -1,4 +1,4 @@
-import { FETCH_DEFAULT_ERROR, logRocketConsole } from './shared';
+import { FETCH_DEFAULT_ERROR, logRocketConsole } from 'src/services/shared';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;

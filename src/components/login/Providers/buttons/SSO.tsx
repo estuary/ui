@@ -1,10 +1,13 @@
+import type { HTMLAttributeAnchorTarget, ReactNode } from 'react';
+import type { LoginProps } from 'src/components/login/Providers/types';
+
 import { Button, Typography, useTheme } from '@mui/material';
-import { loginButtonStyling } from 'context/Theme';
-import { useIntl } from 'react-intl';
-import { unauthenticatedRoutes } from 'app/routes';
+
 import { Lock, OpenNewWindow } from 'iconoir-react';
-import { HTMLAttributeAnchorTarget, ReactNode } from 'react';
-import { LoginProps } from '../types';
+import { useIntl } from 'react-intl';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
+import { loginButtonStyling } from 'src/context/Theme';
 
 function SSOButton({ isRegister }: LoginProps) {
     const intl = useIntl();

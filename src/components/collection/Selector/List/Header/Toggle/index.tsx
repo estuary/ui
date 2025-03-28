@@ -1,12 +1,17 @@
+import type { SyntheticEvent } from 'react';
+import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box, Button, Menu, Tooltip } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
-import { dataGridEntireCellButtonStyling } from 'context/Theme';
-import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+
 import { useIntl } from 'react-intl';
-import { useBinding_someBindingsDisabled } from 'stores/Binding/hooks';
-import ScopeMenuContent from './MenuContent';
-import { Scopes } from './types';
+
+import ScopeMenuContent from 'src/components/collection/Selector/List/Header/Toggle/MenuContent';
+import { useEntityType } from 'src/context/EntityContext';
+import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
+import { useBinding_someBindingsDisabled } from 'src/stores/Binding/hooks';
 
 interface Props {
     itemType: string;

@@ -1,28 +1,25 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Capability } from 'src/types';
+
+import { useMemo, useState } from 'react';
+
 import { Button, Grid, TextField } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import { createRoleGrant } from 'api/roleGrants';
-import PrefixedName from 'components/inputs/PrefixedName';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import { useZustandStore } from 'context/Zustand/provider';
-import {
-    ChangeEvent,
-    Dispatch,
-    SetStateAction,
-    useMemo,
-    useState,
-} from 'react';
+
 import { FormattedMessage, useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
+
+import { createRoleGrant } from 'src/api/roleGrants';
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
 import useNotificationStore, {
     notificationStoreSelectors,
-} from 'stores/NotificationStore';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { Capability } from 'types';
-import { appendWithForwardSlash, hasLength } from 'utils/misc-utils';
-import { PREFIX_NAME_PATTERN } from 'validation';
+} from 'src/stores/NotificationStore';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
+import { PREFIX_NAME_PATTERN } from 'src/validation';
 
 interface Props {
     serverError: PostgrestError | null;

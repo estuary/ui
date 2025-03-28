@@ -1,8 +1,11 @@
-import { Box, Button } from '@mui/material';
-import ShareDataDialog from 'components/tables/AccessGrants/DataSharing/Dialog';
 import { useState } from 'react';
+
+import { Box, Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useEntitiesStore_atLeastOneAdminTenant } from 'stores/Entities/hooks';
+
+import ShareDataDialog from 'src/components/tables/AccessGrants/DataSharing/Dialog';
+import { useEntitiesStore_atLeastOneAdminTenant } from 'src/stores/Entities/hooks';
 
 function DataShareButton() {
     const [open, setOpen] = useState<boolean>(false);

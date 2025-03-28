@@ -1,7 +1,10 @@
+import type { ListChildComponentProps } from 'react-window';
+
 import { Box, ListSubheader, Typography } from '@mui/material';
-import { truncateTextSx } from 'context/Theme';
+
 import { Check } from 'iconoir-react';
-import { ListChildComponentProps } from 'react-window';
+
+import { truncateTextSx } from 'src/context/Theme';
 
 const LISTBOX_PADDING = 8;
 

@@ -1,13 +1,16 @@
+import type { ReactNode } from 'react';
+
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
-import Tile from 'components/shared/Tile';
+
+import { FormattedMessage } from 'react-intl';
+
+import ExternalLink from 'src/components/shared/ExternalLink';
+import Tile from 'src/components/shared/Tile';
 import {
     connectorImageBackgroundRadius,
     connectorImageBackgroundSx,
     sample_grey,
-} from 'context/Theme';
-import { ReactNode } from 'react';
-import { FormattedMessage } from 'react-intl';
+} from 'src/context/Theme';
 
 interface Props {
     logo: ReactNode;

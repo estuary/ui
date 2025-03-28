@@ -1,3 +1,9 @@
+import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type { ConfirmationWithExplanationProps } from 'src/components/tables/RowActions/Shared/types';
+import type { AccessGrantRemovalSeverity } from 'src/hooks/useAccessGrantRemovalDescriptions';
+
+import { useMemo } from 'react';
+
 import {
     Box,
     Table,
@@ -8,15 +14,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
-import AlertBox from 'components/shared/AlertBox';
-import { alertColorsReversed } from 'context/Theme';
-import { AccessGrantRemovalSeverity } from 'hooks/useAccessGrantRemovalDescriptions';
+
 import { WarningTriangle } from 'iconoir-react';
-import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { AccessGrantRowConfirmation } from '../AccessGrants/types';
-import { ConfirmationWithExplanationProps } from './types';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import AlertBox from 'src/components/shared/AlertBox';
+import { alertColorsReversed } from 'src/context/Theme';
 
 function ConfirmationWithExplanation({
     message,

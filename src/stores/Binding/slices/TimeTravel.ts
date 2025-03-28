@@ -1,10 +1,12 @@
-import { JsonFormsCore } from '@jsonforms/core';
+import type { JsonFormsCore } from '@jsonforms/core';
+import type { Schema } from 'src/types';
+import type { NamedSet } from 'zustand/middleware';
+
 import produce from 'immer';
 import { isEmpty } from 'lodash';
-import { checkForErrors } from 'stores/utils';
-import { Schema } from 'types';
-import { getSourceOrTarget } from 'utils/workflow-utils';
-import { NamedSet } from 'zustand/middleware';
+
+import { checkForErrors } from 'src/stores/utils';
+import { getSourceOrTarget } from 'src/utils/workflow-utils';
 
 export interface FullSource {
     name?: string;

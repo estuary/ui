@@ -1,7 +1,9 @@
 import { Button, TableCell } from '@mui/material';
-import AlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
+
 import { FormattedMessage } from 'react-intl';
+
+import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
+import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 
 interface Props {
     prefix: string;

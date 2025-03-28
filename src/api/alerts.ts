@@ -1,19 +1,21 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import type { SortingProps } from 'src/services/supabase';
+import type { AlertSubscription, DataProcessingAlert } from 'src/types';
+
 import pLimit from 'p-limit';
-import { stringifyJSON } from 'services/stringify';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { stringifyJSON } from 'src/services/stringify';
 import {
     defaultTableFilter,
     deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
-    SortingProps,
     supabaseRetry,
     TABLES,
     updateSupabase,
-} from 'services/supabase';
-import { AlertSubscription, DataProcessingAlert } from 'types';
-import { CHUNK_SIZE } from 'utils/misc-utils';
+} from 'src/services/supabase';
+import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 interface CreateObject {
     catalog_prefix: string;

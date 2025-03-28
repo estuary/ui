@@ -1,3 +1,9 @@
+import type { StatsFilter } from 'src/api/stats';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
+import React, { useState } from 'react';
+
 import {
     Button,
     Divider,
@@ -6,17 +12,13 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { StatsFilter } from 'api/stats';
-import { useZustandStore } from 'context/Zustand/provider';
+
 import { Calendar } from 'iconoir-react';
-import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import DateFilterOption from './FilterOption';
+
+import DateFilterOption from 'src/components/filters/Date/FilterOption';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface Props {
     header: string;

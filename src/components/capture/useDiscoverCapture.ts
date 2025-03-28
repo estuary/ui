@@ -1,30 +1,32 @@
+import type { Entity } from 'src/types';
+
+import { useCallback, useMemo } from 'react';
+
+import useDiscoverConfigEncrypt from 'src/components/capture/useCaptureConfigEncrypt';
+import useDiscoverDraftUpdate from 'src/components/capture/useCaptureDraftUpdate';
+import useDiscoverStartDiscovery from 'src/components/capture/useDiscoverStartDiscovery';
 import {
     useEditorStore_isSaving,
     useEditorStore_persistedDraftId,
     useEditorStore_resetState,
     useEditorStore_setCatalogName,
-} from 'components/editor/Store/hooks';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
-import { useCallback, useMemo } from 'react';
-import { useBinding_resourceConfigErrorsExist } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/components/editor/Store/hooks';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
+import { useBinding_resourceConfigErrorsExist } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_errorsExist,
-    useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { Entity } from 'types';
-import useDiscoverConfigEncrypt from './useCaptureConfigEncrypt';
-import useDiscoverDraftUpdate from './useCaptureDraftUpdate';
-import useDiscoverStartDiscovery from './useDiscoverStartDiscovery';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 function useDiscoverCapture(
     entityType: Entity,

@@ -18,7 +18,10 @@
         "jsxImportSource": "@emotion/react",
         "module": "esnext",
         "moduleResolution": "node",
-        "baseUrl": "src",
+        "baseUrl": "./",
+        "paths": {
+            "src/": ["src/"]
+        },
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "suppressImplicitAnyIndexErrors": true,

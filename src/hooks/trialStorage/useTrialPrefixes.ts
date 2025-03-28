@@ -1,10 +1,12 @@
-import { getStorageMappingStores } from 'api/storageMappings';
-import { isEqual } from 'lodash';
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useEntitiesStore_capabilities_adminable } from 'stores/Entities/hooks';
-import { hasLength } from 'utils/misc-utils';
+
+import { isEqual } from 'lodash';
+
+import { getStorageMappingStores } from 'src/api/storageMappings';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 const ESTUARY_TRIAL_STORAGE = {
     provider: 'GCS',

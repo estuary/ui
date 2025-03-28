@@ -1,11 +1,13 @@
-import { FieldSelectionType } from 'components/editor/Bindings/FieldSelection/types';
+import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBinding_setSingleSelection } from 'stores/Binding/hooks';
-import { FieldSelection } from 'stores/Binding/slices/FieldSelection';
-import { useBindingStore } from 'stores/Binding/Store';
-import { isFieldSelectionType } from 'utils/workflow-utils';
+
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_setSingleSelection } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { isFieldSelectionType } from 'src/utils/workflow-utils';
 
 const evaluateSelectionType = (
     recommended: boolean,

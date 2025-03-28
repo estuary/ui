@@ -1,29 +1,33 @@
-import { Stack, Typography, useTheme } from '@mui/material';
-import AutoDiscoverySettings from 'components/capture/AutoDiscoverySettings';
-import CaptureInterval from 'components/capture/Interval';
-import BindingsEditor from 'components/editor/Bindings/Editor';
-import BindingSelector from 'components/editor/Bindings/Selector';
-import ListAndDetails from 'components/editor/ListAndDetails';
-import { createEditorStore } from 'components/editor/Store/create';
-import SourceCapture from 'components/materialization/SourceCapture';
-import Backfill from 'components/shared/Entity/Backfill';
-import { useEntityType } from 'context/EntityContext';
-import { LocalZustandProvider } from 'context/LocalZustand';
-import { alternativeReflexContainerBackground } from 'context/Theme';
-import { useEntityWorkflow } from 'context/Workflow';
+import type { ReactNode } from 'react';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 
-import AdvancedOptions from 'components/materialization/AdvancedOptions';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { useServerUpdateRequiredMonitor } from 'hooks/useServerUpdateRequiredMonitor';
-import { ReactNode, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+
+import { Stack, Typography, useTheme } from '@mui/material';
+
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import AutoDiscoverySettings from 'src/components/capture/AutoDiscoverySettings';
+import CaptureInterval from 'src/components/capture/Interval';
+import BindingsEditor from 'src/components/editor/Bindings/Editor';
+import BindingSelector from 'src/components/editor/Bindings/Selector';
+import ListAndDetails from 'src/components/editor/ListAndDetails';
+import { createEditorStore } from 'src/components/editor/Store/create';
+import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
+import SourceCapture from 'src/components/materialization/SourceCapture';
+import Backfill from 'src/components/shared/Entity/Backfill';
+import { useEntityType } from 'src/context/EntityContext';
+import { LocalZustandProvider } from 'src/context/LocalZustand';
+import { alternativeReflexContainerBackground } from 'src/context/Theme';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { useServerUpdateRequiredMonitor } from 'src/hooks/useServerUpdateRequiredMonitor';
 import {
     useBinding_discoveredCollections,
     useBinding_removeDiscoveredBindings,
-} from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
-import { EditorStoreNames } from 'stores/names';
+} from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
+import { EditorStoreNames } from 'src/stores/names';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];

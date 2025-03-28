@@ -1,11 +1,14 @@
-import Box from '@mui/material/Box';
-import LinearProgress, {
-    LinearProgressProps,
-} from '@mui/material/LinearProgress';
-import useProgressTimer from 'hooks/useProgressTimer';
+import type { LinearProgressProps } from '@mui/material/LinearProgress';
+
 import { useState } from 'react';
+
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+
 import { useDebounce } from 'react-use';
-import { DEFAULT_POLLING_INTERVAL } from 'services/supabase';
+
+import useProgressTimer from 'src/hooks/useProgressTimer';
+import { DEFAULT_POLLING_INTERVAL } from 'src/services/supabase';
 
 // If there is no wait then we'll
 interface Props {

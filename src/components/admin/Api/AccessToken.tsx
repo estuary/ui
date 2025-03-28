@@ -1,8 +1,10 @@
 import { Box, Stack, Typography } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
-import ExternalLink from 'components/shared/ExternalLink';
-import { useUserStore } from 'context/User/useUserContextStore';
+
 import { FormattedMessage } from 'react-intl';
+
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 function AccessToken() {
     const session = useUserStore((state) => state.session);

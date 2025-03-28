@@ -1,34 +1,33 @@
+import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { Dispatch, SetStateAction } from 'react';
+import type { DataProcessingAlertQuery } from 'src/api/alerts';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+
+import { useCallback, useEffect, useState } from 'react';
+
 import {
     Autocomplete,
-    AutocompleteRenderInputParams,
     Skeleton,
     Stack,
     TextField,
     Typography,
     useTheme,
 } from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
-    DataProcessingAlertQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     updateDataProcessingNotificationInterval,
-} from 'api/alerts';
-import useSettingIntervalOptions from 'components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
-import { ErrorDetails } from 'components/shared/Error/types';
-import { cardHeaderSx, defaultOutline } from 'context/Theme';
-import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
+} from 'src/api/alerts';
+import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
+import { cardHeaderSx, defaultOutline } from 'src/context/Theme';
+import useInitializeTaskNotification from 'src/hooks/notifications/useInitializeTaskNotification';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { CallSupabaseResponse } from 'services/supabase';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 interface Props {
     errored: boolean;

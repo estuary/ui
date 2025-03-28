@@ -1,6 +1,7 @@
-import { authenticatedRoutes } from 'app/routes';
-import MessageWithButton from 'components/content/MessageWithButton';
 import { useNavigate } from 'react-router';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import MessageWithButton from 'src/components/content/MessageWithButton';
 
 export default function NoCollectionJournalsAlert() {
     const navigate = useNavigate();

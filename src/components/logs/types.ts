@@ -1,4 +1,4 @@
-import { AlertColor } from '@mui/material';
+import type { AlertColor } from '@mui/material';
 
 export interface SpinnerMessageKeys {
     runningKey: string;

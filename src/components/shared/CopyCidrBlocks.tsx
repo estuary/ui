@@ -1,10 +1,13 @@
-import { MenuItem, Select, Stack } from '@mui/material';
-import SingleLineCode from 'components/content/SingleLineCode';
-import useParseCidrBlocks from 'hooks/useParseCidrBlocks';
 import { useMemo } from 'react';
+
+import { MenuItem, Select, Stack } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 import { useLocalStorage } from 'react-use';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 interface Props {
     cidrBlocks: null | undefined | string[];

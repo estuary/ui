@@ -1,7 +1,7 @@
-import MaterializationCreateConfig from 'components/materialization/Create/Config';
-import AdminCapabilityGuard from 'components/shared/guards/AdminCapability';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
+import MaterializationCreateConfig from 'src/components/materialization/Create/Config';
+import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import { WorkflowContextProvider } from 'src/context/Workflow';
 
 function MaterializationCreateRoute() {
     return (

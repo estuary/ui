@@ -1,7 +1,10 @@
+import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
+
 import { Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
+
 import { FormattedMessage } from 'react-intl';
-import { DisableEnableButtonProps } from './types';
+
+import AlertBox from 'src/components/shared/AlertBox';
 
 function DisableEnableConfirmation({ enabling }: DisableEnableButtonProps) {
     return (

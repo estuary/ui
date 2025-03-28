@@ -1,7 +1,11 @@
+import type { MouseEvent } from 'react';
+import type { ButtonWithPopperProps } from 'src/components/shared/buttons/types';
+
+import { useState } from 'react';
+
 import { Button } from '@mui/material';
-import PopperWrapper from 'components/shared/PopperWrapper';
-import { MouseEvent, useState } from 'react';
-import { ButtonWithPopperProps } from './types';
+
+import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 function ButtonWithPopper({
     buttonProps,

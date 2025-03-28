@@ -1,13 +1,15 @@
-import { getNotificationSubscriptionsForTable } from 'api/alerts';
-import AlertGenerateButton from 'components/admin/Settings/PrefixAlerts/GenerateButton';
-import EntityTable from 'components/tables/EntityTable';
-import Rows from 'components/tables/PrefixAlerts/Rows';
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
-import { TablePrefixes, useTableState } from 'stores/Tables/hooks';
-import TableHydrator from 'stores/Tables/Hydrator';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns } from 'types';
+
+import { getNotificationSubscriptionsForTable } from 'src/api/alerts';
+import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
+import EntityTable from 'src/components/tables/EntityTable';
+import Rows from 'src/components/tables/PrefixAlerts/Rows';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 // TODO (optimization): The prefix alert table should have a last updated column
 //   however the current data model does not provide a means to reliably track

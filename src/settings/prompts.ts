@@ -1,13 +1,13 @@
 import type {
     PromptSettings,
     SupportedPrompts,
-} from 'components/shared/Entity/prompts/types';
+} from 'src/components/shared/Entity/prompts/types';
 
 import {
     DataFlowResetSteps,
     PreSaveSteps,
-} from 'components/shared/Entity/prompts/steps/definitions';
-import { CustomEvents } from 'services/types';
+} from 'src/components/shared/Entity/prompts/steps/definitions';
+import { CustomEvents } from 'src/services/types';
 
 // !!!!!!!!!ORDER IS IMPORTANT!!!!!!!!!!!!
 //  `steps` property is looped through in order

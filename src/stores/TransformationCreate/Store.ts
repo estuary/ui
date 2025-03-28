@@ -1,15 +1,19 @@
-import produce from 'immer';
-import { intersection, omit } from 'lodash';
-import { TransformCreateStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import {
+import type { TransformCreateStoreNames } from 'src/stores/names';
+import type {
     MigrationDictionary,
     TransformConfigDictionary,
     TransformCreateState,
-} from './types';
+} from 'src/stores/TransformationCreate/types';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+import produce from 'immer';
+import { intersection, omit } from 'lodash';
+
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const evaluateSQLStatementLength = (
     transformConfigs: TransformConfigDictionary,

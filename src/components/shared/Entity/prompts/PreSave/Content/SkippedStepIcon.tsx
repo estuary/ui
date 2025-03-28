@@ -1,6 +1,8 @@
 import { useTheme } from '@mui/material';
+
 import { MinusCircle } from 'iconoir-react';
-import { pixelSize } from './shared';
+
+import { pixelSize } from 'src/components/shared/Entity/prompts/PreSave/Content/shared';
 
 // TODO (progress icons)
 // We have a few ways of doing this. We should get these all aligned.

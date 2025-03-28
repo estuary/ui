@@ -1,7 +1,9 @@
-import { Grid, Skeleton } from '@mui/material';
 import { useEffect } from 'react';
-import EmailSelector from '../EmailSelector';
-import useAlertSubscriptionsStore from '../useAlertSubscriptionsStore';
+
+import { Grid, Skeleton } from '@mui/material';
+
+import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 interface Props {
     open: boolean;

@@ -1,6 +1,6 @@
-import MonacoEditor from 'components/editor/MonacoEditor';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
+import MonacoEditor from 'src/components/editor/MonacoEditor';
+import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 
 export interface Props {
     disabled?: boolean;

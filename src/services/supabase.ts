@@ -1,14 +1,20 @@
-import {
+import type {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import type {
+    JobStatus,
+    SortDirection,
+    SupabaseInvokeResponse,
+} from 'src/types';
+
 import { forEach } from 'lodash';
 import retry from 'retry';
-import { JobStatus, SortDirection, SupabaseInvokeResponse } from 'types';
-import { logRocketEvent, retryAfterFailure } from './shared';
-import { CustomEvents } from './types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;

@@ -1,8 +1,8 @@
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
-import type { PublicationJobStatus } from 'api/publications';
-import type { ErrorDetails } from 'components/shared/Error/types';
-import type { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import type { CustomEvents } from 'services/types';
+import type { PublicationJobStatus } from 'src/api/publications';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import type { CustomEvents } from 'src/services/types';
 
 export type SupportedPrompts = 'dataFlowReset' | 'defaultSave';
 

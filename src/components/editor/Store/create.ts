@@ -1,9 +1,14 @@
+import type { EditorStoreState } from 'src/components/editor/Store/types';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import produce from 'immer';
 import { omit } from 'lodash';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { EditorStatus, EditorStoreState } from './types';
+
+import { EditorStatus } from 'src/components/editor/Store/types';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 export const isEditorActive = (status: EditorStatus) => {
     return status === EditorStatus.SAVING;

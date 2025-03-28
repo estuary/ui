@@ -1,13 +1,19 @@
-import { getStatsForDetails } from 'api/stats';
-import { useEntityType } from 'context/EntityContext';
-import { hasLength } from 'utils/misc-utils';
-import { CatalogStats_Details } from 'types';
+import type { CatalogStats_Details } from 'src/types';
+
 import { useMemo } from 'react';
-import { DateTime, Interval } from 'luxon';
-import { find } from 'lodash';
+
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { LUXON_GRAIN_SETTINGS, defaultQueryDateFormat } from 'services/luxon';
-import { useDetailsUsageStore } from 'stores/DetailsUsage/useDetailsUsageStore';
+import { find } from 'lodash';
+import { DateTime, Interval } from 'luxon';
+
+import { getStatsForDetails } from 'src/api/stats';
+import { useEntityType } from 'src/context/EntityContext';
+import {
+    defaultQueryDateFormat,
+    LUXON_GRAIN_SETTINGS,
+} from 'src/services/luxon';
+import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
+import { hasLength } from 'src/utils/misc-utils';
 
 function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();

@@ -1,9 +1,11 @@
-import { clearAuthorizationCache } from 'hooks/gatewayAuth/cache';
+import { useCallback, useMemo, useState } from 'react';
+
+import { useEffectOnce } from 'react-use';
+
+import { clearAuthorizationCache } from 'src/hooks/gatewayAuth/cache';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useMemo, useState } from 'react';
-import { useEffectOnce } from 'react-use';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function useLoginStateHandler(showRegistration?: boolean) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);

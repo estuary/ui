@@ -1,7 +1,11 @@
+import type { ReactNode } from 'react';
+
+import { useEffect, useState } from 'react';
+
 import { Accordion, AccordionDetails, useTheme } from '@mui/material';
-import Header from 'components/shared/Entity/WrapperWithHeader/Header';
-import { defaultOutline } from 'context/Theme';
-import { ReactNode, useEffect, useState } from 'react';
+
+import Header from 'src/components/shared/Entity/WrapperWithHeader/Header';
+import { defaultOutline } from 'src/context/Theme';
 
 interface Props {
     header: ReactNode;

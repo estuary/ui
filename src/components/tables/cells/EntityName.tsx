@@ -1,3 +1,5 @@
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+
 import {
     Stack,
     TableCell,
@@ -5,8 +7,8 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import EntityStatus from 'components/tables/cells/EntityStatus';
-import { ShardEntityTypes } from 'stores/ShardDetail/types';
+
+import EntityStatus from 'src/components/tables/cells/EntityStatus';
 
 interface Props {
     name: string;

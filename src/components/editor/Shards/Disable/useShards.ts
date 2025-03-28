@@ -1,13 +1,16 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import type { Schema } from 'src/types';
+
+import { useCallback, useMemo } from 'react';
+
+import produce from 'immer';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import produce from 'immer';
-import { useCallback, useMemo } from 'react';
-import { Schema } from 'types';
+} from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
 
 function useShards() {
     const taskSpecType = useEntityType();

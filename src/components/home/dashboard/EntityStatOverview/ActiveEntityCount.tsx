@@ -1,7 +1,9 @@
+import type { Entity } from 'src/types';
+
 import { useIntl } from 'react-intl';
-import { Entity } from 'types';
-import Statistic from './Statistic';
-import useActiveEntityCount from './useActiveEntityCount';
+
+import Statistic from 'src/components/home/dashboard/EntityStatOverview/Statistic';
+import useActiveEntityCount from 'src/components/home/dashboard/EntityStatOverview/useActiveEntityCount';
 
 interface Props {
     entityType: Entity;

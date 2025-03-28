@@ -1,7 +1,9 @@
 import { Box, Divider, Typography } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
+
 import { FormattedMessage } from 'react-intl';
-import { DEFAULT_HEIGHT } from 'utils/editor-utils';
+
+import { defaultOutline } from 'src/context/Theme';
+import { DEFAULT_HEIGHT } from 'src/utils/editor-utils';
 
 interface Props {
     editorHeight?: number;

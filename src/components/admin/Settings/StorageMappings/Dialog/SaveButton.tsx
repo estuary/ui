@@ -1,22 +1,23 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import useDirectiveGuard from 'app/guards/hooks';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import { useZustandStore } from 'context/Zustand/provider';
-import { jobStatusQuery, trackEvent } from 'directives/shared';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { isEmpty } from 'lodash';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useMemo } from 'react';
+
+import { isEmpty } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { hasLength } from 'utils/misc-utils';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import useRepublishPrefix from './useRepublishPrefix';
+
+import { submitDirective } from 'src/api/directives';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 const SELECTED_DIRECTIVE = 'storageMappings';
 

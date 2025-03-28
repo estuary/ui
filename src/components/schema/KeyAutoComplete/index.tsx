@@ -1,4 +1,7 @@
-import { arrayMove } from '@dnd-kit/sortable';
+import type { ReactNode } from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import {
     Autocomplete,
     Grid,
@@ -6,22 +9,24 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+
+import { arrayMove } from '@dnd-kit/sortable';
+import { filter, orderBy } from 'lodash';
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     useBindingsEditorStore_inferSchemaResponse,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
     useBindingsEditorStore_inferSchemaResponse_Keys,
-} from 'components/editor/Bindings/Store/hooks';
-import { autoCompleteDefaults_Virtual_Multiple } from 'components/shared/AutoComplete/DefaultProps';
-import { useEntityType } from 'context/EntityContext';
-import { truncateTextSx } from 'context/Theme';
-import { filter, orderBy } from 'lodash';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { hasLength } from 'utils/misc-utils';
-import BasicOption from './options/Basic';
-import ReadOnly from './ReadOnly';
-import { keyIsValidOption } from './shared';
-import SortableTags from './SortableTags';
+    useBindingsEditorStore_inferSchemaResponseEmpty,
+} from 'src/components/editor/Bindings/Store/hooks';
+import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
+import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
+import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
+import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
+import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
+import { useEntityType } from 'src/context/EntityContext';
+import { truncateTextSx } from 'src/context/Theme';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     value: any;

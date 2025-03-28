@@ -1,25 +1,29 @@
 /* eslint-disable complexity */
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
+import { useMemo } from 'react';
+
 import { Button, Stack, Typography } from '@mui/material';
-import ListView from 'components/collection/DataPreview/ListView';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
-import JournalAlerts from 'components/journals/Alerts';
-import AlertBox from 'components/shared/AlertBox';
-import CardWrapper from 'components/shared/CardWrapper';
-import useIsCollectionDerivation from 'components/shared/Entity/Details/useIsCollectionDerivation';
-import Error from 'components/shared/Error';
+
+import { Refresh } from 'iconoir-react';
+import { FormattedMessage } from 'react-intl';
+
+import ListView from 'src/components/collection/DataPreview/ListView';
+import ListViewSkeleton from 'src/components/collection/DataPreview/ListViewSkeleton';
+import NoCollectionJournalsAlert from 'src/components/collection/DataPreview/NoCollectionJournalsAlert';
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import JournalAlerts from 'src/components/journals/Alerts';
+import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
+import Error from 'src/components/shared/Error';
 import {
     useJournalData,
     useJournalsForCollection,
-} from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
-import { useTenantHidesDataPreview } from 'hooks/useTenants';
-import { Refresh } from 'iconoir-react';
-import { useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
-import ListViewSkeleton from './ListViewSkeleton';
-import NoCollectionJournalsAlert from './NoCollectionJournalsAlert';
+} from 'src/hooks/journals/useJournalData';
+import { useTenantHidesDataPreview } from 'src/hooks/useTenants';
+import { BASE_ERROR } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     collectionName: string;

@@ -1,11 +1,14 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { Box } from '@mui/material';
-import EmptyGraphState from 'components/graphs/states/Empty';
-import GraphLoadingState from 'components/graphs/states/Loading';
+
 import { FormattedMessage } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { BaseComponentProps } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { eChartsTooltipSX } from '../tooltips';
+
+import EmptyGraphState from 'src/components/graphs/states/Empty';
+import GraphLoadingState from 'src/components/graphs/states/Loading';
+import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 function GraphStateWrapper({ children }: BaseComponentProps) {
     const billingStoreActive = useBillingStore((state) => state.active);

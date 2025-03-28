@@ -1,4 +1,5 @@
 import { Stack, TextField, Typography, useTheme } from '@mui/material';
+
 import { ArrowRight, CheckCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 

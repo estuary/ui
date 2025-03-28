@@ -1,10 +1,15 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import Ansi, { AnsiColored } from 'ansicolor';
-import { defaultOutline } from 'context/Theme';
+import type { AnsiColored } from 'ansicolor';
+import type { ViewLogs_Line } from 'src/types';
+
 import { useMemo } from 'react';
-import { ViewLogs_Line } from 'types';
-import LinePart from './LinePart';
+
+import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+
+import Ansi from 'ansicolor';
+
+import LinePart from 'src/components/logs/LinePart';
+import { defaultOutline } from 'src/context/Theme';
 
 interface Props {
     line: ViewLogs_Line | string;

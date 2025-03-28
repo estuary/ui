@@ -1,9 +1,14 @@
+import type { SyntheticEvent } from 'react';
+import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
+
+import { useState } from 'react';
+
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
-import RadioMenuItem from 'components/shared/RadioMenuItem';
-import { useEntityType } from 'context/EntityContext';
-import { SyntheticEvent, useState } from 'react';
+
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Scopes } from './types';
+
+import RadioMenuItem from 'src/components/shared/RadioMenuItem';
+import { useEntityType } from 'src/context/EntityContext';
 
 interface MenuOption {
     title: string;

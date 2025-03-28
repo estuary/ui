@@ -1,12 +1,14 @@
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
+
 import { useMemo } from 'react';
-import StatsHeader from '../cells/stats/Header';
-import { ColumnProps } from '../EntityTable/types';
+
+import StatsHeader from 'src/components/tables/cells/stats/Header';
 import {
     catalogName,
     connectorType,
     lastPublished,
     readsFrom,
-} from '../shared';
+} from 'src/components/tables/shared';
 
 const defaultColumns: ColumnProps[] = [
     {

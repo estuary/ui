@@ -1,10 +1,14 @@
-import { TABLES } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
-import { requiredConnectorColumnsExist } from 'utils/connector-utils';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import type { ConnectorTag } from 'src/hooks/connectors/shared';
+
 import { useMemo } from 'react';
-import { supabaseClient } from 'context/GlobalProviders';
-import { ConnectorTag, CONNECTOR_TAG_QUERY } from './shared';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { CONNECTOR_TAG_QUERY } from 'src/hooks/connectors/shared';
+import { TABLES } from 'src/services/supabase';
+import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 function useConnectorTag(connectorImage: string | null) {
     const query = useMemo(() => {

@@ -1,8 +1,9 @@
-import LoginNotifications from 'components/login/Notifications';
+import { useMemo } from 'react';
+
+import LoginNotifications from 'src/components/login/Notifications';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useMemo } from 'react';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 export default function LoginError() {
     const homePageError = useGlobalSearchParams(

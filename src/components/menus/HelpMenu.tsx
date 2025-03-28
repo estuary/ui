@@ -1,7 +1,8 @@
-import ExternalLinkMenuItem from 'components/shared/ExternalLinkMenuItem';
 import { HelpCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import IconMenu from './IconMenu';
+
+import IconMenu from 'src/components/menus/IconMenu';
+import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
 
 function HelpMenu() {
     const intl = useIntl();

@@ -1,9 +1,11 @@
+import type { BaseComponentProps } from 'src/types';
+
+import { Navigate } from 'react-router-dom';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { Navigate } from 'react-router-dom';
-import { BaseComponentProps } from 'types';
-import { MAC_ADDR_RE } from 'validation';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { MAC_ADDR_RE } from 'src/validation';
 
 // This 'navigateToPath' is so stupid and so annoying. However, for whatever reason
 //  if you have the navigate to equal to '..' it threw you back up too many levels

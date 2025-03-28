@@ -1,20 +1,22 @@
 import { Box, Typography } from '@mui/material';
-import ResourceConfigForm from 'components/collection/ResourceConfigForm';
-import AdvancedOptions from 'components/editor/Bindings/AdvancedOptions';
-import Backfill from 'components/editor/Bindings/Backfill';
-import FieldSelectionViewer from 'components/editor/Bindings/FieldSelection';
-import { useEditorStore_queryResponse_draftedBindingIndex } from 'components/editor/Store/hooks';
-import TrialOnlyPrefixAlert from 'components/materialization/TrialOnlyPrefixAlert';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityType } from 'context/EntityContext';
+
 import { FormattedMessage } from 'react-intl';
+
+import { BindingsEditorConfigSkeleton } from 'src/components/collection/CollectionSkeletons';
+import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
+import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
+import Backfill from 'src/components/editor/Bindings/Backfill';
+import FieldSelectionViewer from 'src/components/editor/Bindings/FieldSelection';
+import { useEditorStore_queryResponse_draftedBindingIndex } from 'src/components/editor/Store/hooks';
+import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityType } from 'src/context/EntityContext';
 import {
     useBinding_collectionMetadataProperty,
     useBinding_currentBindingIndex,
     useBinding_hydrated,
     useBinding_resourceConfigOfMetaBindingProperty,
-} from 'stores/Binding/hooks';
-import { BindingsEditorConfigSkeleton } from './CollectionSkeletons';
+} from 'src/stores/Binding/hooks';
 
 interface Props {
     bindingUUID: string;

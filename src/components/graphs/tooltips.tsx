@@ -1,4 +1,4 @@
-import { SxProps, Theme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 
 const VALUE_CLASS = 'tooltipDataValue';
 const ITEM_CLASS = 'tooltipItem';

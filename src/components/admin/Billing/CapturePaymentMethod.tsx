@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
     Button,
     CircularProgress,
@@ -5,18 +7,19 @@ import {
     DialogContent,
     Typography,
 } from '@mui/material';
+
 import {
     AddressElement,
     PaymentElement,
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import AlertBox from 'components/shared/AlertBox';
-import { useUserStore } from 'context/User/useUserContextStore';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 export interface PaymentFormProps {
     onSuccess?(id?: string): Promise<void> | void;

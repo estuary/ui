@@ -1,7 +1,8 @@
 import { Checkbox, FormControl, FormControlLabel } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 const intlKey = 'ops.logsTable.tailNewLogs';
 

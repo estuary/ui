@@ -1,20 +1,22 @@
+import type { MaterializationQueryWithStats } from 'src/api/liveSpecsExt';
+import type { StatsResponse } from 'src/stores/Tables/Store';
+
 import { TableRow, useTheme } from '@mui/material';
-import { MaterializationQueryWithStats } from 'api/liveSpecsExt';
-import { authenticatedRoutes } from 'app/routes';
-import Connector from 'components/tables/cells/Connector';
-import RowSelect from 'components/tables/cells/RowSelect';
-import TimeStamp from 'components/tables/cells/TimeStamp';
-import { useEntityType } from 'context/EntityContext';
-import { getEntityTableRowSx } from 'context/Theme';
-import useDetailsNavigator from 'hooks/useDetailsNavigator';
-import { SelectTableStoreNames } from 'stores/names';
-import { StatsResponse } from 'stores/Tables/Store';
-import EditTask from '../cells/EditTask';
-import EntityNameLink from '../cells/EntityNameLink';
-import RelatedCollectionsCell from '../cells/RelatedCollectionsCell';
-import Bytes from '../cells/stats/Bytes';
-import Docs from '../cells/stats/Docs';
-import useRowsWithStatsState from '../hooks/useRowsWithStatsState';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import Connector from 'src/components/tables/cells/Connector';
+import EditTask from 'src/components/tables/cells/EditTask';
+import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
+import RelatedCollectionsCell from 'src/components/tables/cells/RelatedCollectionsCell';
+import RowSelect from 'src/components/tables/cells/RowSelect';
+import Bytes from 'src/components/tables/cells/stats/Bytes';
+import Docs from 'src/components/tables/cells/stats/Docs';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
+import { useEntityType } from 'src/context/EntityContext';
+import { getEntityTableRowSx } from 'src/context/Theme';
+import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
+import { SelectTableStoreNames } from 'src/stores/names';
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];

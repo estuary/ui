@@ -1,4 +1,4 @@
-import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
+import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
 
 export interface SelectMaterializationStepContext {
     backfillTarget: LiveSpecsExt_Related | null;

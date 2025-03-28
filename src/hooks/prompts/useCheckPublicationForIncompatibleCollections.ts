@@ -1,10 +1,12 @@
-import { IncompatibleCollections } from 'api/evolutions';
-import { usePreSavePromptStore } from 'components/shared/Entity/prompts/store/usePreSavePromptStore';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
+import type { IncompatibleCollections } from 'src/api/evolutions';
+
 import { useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { hasLength } from 'utils/misc-utils';
+
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 function useCheckPublicationForIncompatibleCollections() {
     const stepIndex = useLoopIndex();

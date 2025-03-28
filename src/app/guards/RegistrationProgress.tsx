@@ -1,6 +1,8 @@
+import type { RegistrationProgressProps } from 'src/app/guards/types';
+
 import { LinearProgress, Stack, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { RegistrationProgressProps } from './types';
 
 const totalSteps = 2;
 

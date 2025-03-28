@@ -1,13 +1,15 @@
-import EntityToolbar from 'components/shared/Entity/Header';
-import GitPodButton from 'components/transformation/create/GitPodButton';
-import InitializeDraftButton from 'components/transformation/create/InitializeDraftButton';
-import invariableStores from 'context/Zustand/invariableStores';
+import type { ConfigHeaderProps } from 'src/components/derivation/Create/types';
+
 import { useMemo } from 'react';
-import { CustomEvents } from 'services/types';
-import { useTransformationCreate_language } from 'stores/TransformationCreate/hooks';
 
 import { useStore } from 'zustand';
-import { ConfigHeaderProps } from './types';
+
+import EntityToolbar from 'src/components/shared/Entity/Header';
+import GitPodButton from 'src/components/transformation/create/GitPodButton';
+import InitializeDraftButton from 'src/components/transformation/create/InitializeDraftButton';
+import invariableStores from 'src/context/Zustand/invariableStores';
+import { CustomEvents } from 'src/services/types';
+import { useTransformationCreate_language } from 'src/stores/TransformationCreate/hooks';
 
 function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
     const language = useTransformationCreate_language();

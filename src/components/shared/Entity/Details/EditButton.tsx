@@ -1,10 +1,11 @@
-import { ButtonProps } from '@mui/material';
-import { useEditorStore_specs } from 'components/editor/Store/hooks';
+import type { ButtonProps } from '@mui/material';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
+import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
+import EditLink from 'src/components/shared/Entity/EditLink';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
-import EditLink from '../EditLink';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 interface Props {
     buttonVariant?: ButtonProps['variant'];

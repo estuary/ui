@@ -1,8 +1,12 @@
+import type { Pagination } from 'src/services/supabase';
+import type { TableColumns, TableIntlConfig } from 'src/types';
+
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import MessageWithLink from 'components/content/MessageWithLink';
+
 import { FormattedMessage } from 'react-intl';
-import { Pagination } from 'services/supabase';
-import { TableColumns, TableIntlConfig, TableStatuses } from 'types';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import { TableStatuses } from 'src/types';
 
 export const getCountSettings = (pagination: any) =>
     pagination.from === 0 ? 'exact' : undefined;

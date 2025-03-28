@@ -1,15 +1,16 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { SortingProps } from 'src/services/supabase';
+import type { RefreshTokenData } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    RPCS,
-    SortingProps,
-    TABLES,
     defaultTableFilter,
     handleFailure,
     handleSuccess,
+    RPCS,
     supabaseRetry,
-} from 'services/supabase';
-import { RefreshTokenData } from 'types';
+    TABLES,
+} from 'src/services/supabase';
 
 const createRefreshToken = async (
     multi_use: boolean,

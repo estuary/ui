@@ -1,19 +1,23 @@
-import { ListItemText } from '@mui/material';
-import {
-    DataGrid,
+import type {
     GridColDef,
     GridRenderCellParams,
     GridRowSelectionModel,
 } from '@mui/x-data-grid';
+
+import { useEffect, useRef, useState } from 'react';
+
+import { ListItemText } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+
+import { FormattedMessage } from 'react-intl';
+
 import {
     useEditorStore_isEditing,
     useEditorStore_isSaving,
     useEditorStore_setCurrentCatalog,
     useEditorStore_specs,
-} from 'components/editor/Store/hooks';
-import { dataGridListStyling } from 'context/Theme';
-import { useEffect, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+} from 'src/components/editor/Store/hooks';
+import { dataGridListStyling } from 'src/context/Theme';
 
 interface Props {
     localZustandScope: boolean;

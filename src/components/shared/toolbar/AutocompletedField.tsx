@@ -1,14 +1,15 @@
-import {
-    Autocomplete,
+import type {
     AutocompleteChangeDetails,
     AutocompleteChangeReason,
     AutocompleteProps,
     AutocompleteRenderInputParams,
     SxProps,
-    TextField,
     Theme,
 } from '@mui/material';
-import { autoCompleteDefaults_Virtual_Non_Clearable } from '../AutoComplete/DefaultProps';
+
+import { Autocomplete, TextField } from '@mui/material';
+
+import { autoCompleteDefaults_Virtual_Non_Clearable } from 'src/components/shared/AutoComplete/DefaultProps';
 
 interface Props {
     label: string;

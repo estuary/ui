@@ -1,23 +1,27 @@
+import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
+import type { Schema } from 'src/types';
+
+import { useCallback, useEffect, useState } from 'react';
+
 import { Grid, Stack, Typography } from '@mui/material';
-import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
+
+import { FormattedMessage } from 'react-intl';
+import { useUpdateEffect } from 'react-use';
+
+import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_inferSchemaResponseDoneProcessing,
     useBindingsEditorStore_populateInferSchemaResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
-} from 'components/editor/Bindings/Store/hooks';
-import { AllowedScopes } from 'components/editor/MonacoEditor/types';
-import KeyAutoComplete from 'components/schema/KeyAutoComplete';
-import PropertiesViewer from 'components/schema/PropertiesViewer';
-import { useEntityType } from 'context/EntityContext';
-import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
-import { useCallback, useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUpdateEffect } from 'react-use';
-import { Schema } from 'types';
-import { getProperSchemaScope } from 'utils/schema-utils';
-import CollectionSchemaEditorSkeleton from './Skeleton';
+} from 'src/components/editor/Bindings/Store/hooks';
+import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
+import PropertiesViewer from 'src/components/schema/PropertiesViewer';
+import { useEntityType } from 'src/context/EntityContext';
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
+import { getProperSchemaScope } from 'src/utils/schema-utils';
 
 export interface Props {
     entityName?: string;

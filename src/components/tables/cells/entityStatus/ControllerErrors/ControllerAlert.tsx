@@ -1,4 +1,7 @@
-import Editor from '@monaco-editor/react';
+import type { ControllerAlertProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
+
+import { useState } from 'react';
+
 import {
     Accordion,
     AccordionDetails,
@@ -7,11 +10,12 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { defaultOutline } from 'context/Theme';
+
+import Editor from '@monaco-editor/react';
 import { NavArrowDown } from 'iconoir-react';
-import { useState } from 'react';
-import { unescapeString } from 'utils/misc-utils';
-import { ControllerAlertProps } from './types';
+
+import { defaultOutline } from 'src/context/Theme';
+import { unescapeString } from 'src/utils/misc-utils';
 
 export default function ControllerAlert({
     error,

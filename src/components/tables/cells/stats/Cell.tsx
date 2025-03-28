@@ -1,9 +1,13 @@
-import { Box, TableCell, Tooltip, Typography } from '@mui/material';
-import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { textLoadingColor } from 'context/Theme';
+import type { StatsCellProps } from 'src/components/tables/cells/stats/types';
+
 import { useMemo } from 'react';
+
+import { Box, TableCell, Tooltip, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { StatsCellProps } from './types';
+
+import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
+import { textLoadingColor } from 'src/context/Theme';
 
 const StatsCell = ({
     failed,

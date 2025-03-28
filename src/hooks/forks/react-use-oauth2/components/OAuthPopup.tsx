@@ -1,12 +1,16 @@
 // Heavily edited version of https://github.com/tasoskakour/react-use-oauth2
 
-import FullPageSpinner from 'components/fullPage/Spinner';
-import OauthWindowOpenerMissing from 'components/shared/ErrorDialog/OauthWindowOpenerMissing';
 import { useEffect, useState } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { base64RemovePadding } from 'utils/misc-utils';
-import { OAUTH_RESPONSE, OAUTH_STATE_KEY } from './constants';
+
+import FullPageSpinner from 'src/components/fullPage/Spinner';
+import OauthWindowOpenerMissing from 'src/components/shared/ErrorDialog/OauthWindowOpenerMissing';
+import {
+    OAUTH_RESPONSE,
+    OAUTH_STATE_KEY,
+} from 'src/hooks/forks/react-use-oauth2/components/constants';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { base64RemovePadding } from 'src/utils/misc-utils';
 
 const checkState = (receivedState: string) => {
     const state = sessionStorage.getItem(OAUTH_STATE_KEY);

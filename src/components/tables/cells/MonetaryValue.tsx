@@ -1,4 +1,5 @@
 import { TableCell, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 interface Props {

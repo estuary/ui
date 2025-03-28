@@ -1,18 +1,21 @@
-import { JsonForms } from '@jsonforms/react';
-import { StyledEngineProvider } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
-import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import { jsonFormsDefaults } from 'services/jsonforms/defaults';
-import { showValidation } from 'services/jsonforms/shared';
+
+import { StyledEngineProvider } from '@mui/material';
+
+import { JsonForms } from '@jsonforms/react';
+
+import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
+import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
+import { showValidation } from 'src/services/jsonforms/shared';
 import {
     useBinding_resourceConfigOfBindingProperty,
     useBinding_resourceSchema,
     useBinding_updateResourceConfig,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
-} from 'stores/FormState/hooks';
+} from 'src/stores/FormState/hooks';
 
 type Props = {
     bindingUUID: string;

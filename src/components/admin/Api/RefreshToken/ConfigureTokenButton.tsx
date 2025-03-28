@@ -1,11 +1,14 @@
-import { Button, Dialog, DialogContent, Grid } from '@mui/material';
 import { useState } from 'react';
+
+import { Button, Dialog, DialogContent, Grid } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import RefreshTokenDescription from './Dialog/Description';
-import RefreshTokenError from './Dialog/Error';
-import GenerateButton from './Dialog/GenerateButton';
-import RefreshTokenTitle from './Dialog/Title';
-import CopyRefreshToken from './Dialog/Token';
+
+import RefreshTokenDescription from 'src/components/admin/Api/RefreshToken/Dialog/Description';
+import RefreshTokenError from 'src/components/admin/Api/RefreshToken/Dialog/Error';
+import GenerateButton from 'src/components/admin/Api/RefreshToken/Dialog/GenerateButton';
+import RefreshTokenTitle from 'src/components/admin/Api/RefreshToken/Dialog/Title';
+import CopyRefreshToken from 'src/components/admin/Api/RefreshToken/Dialog/Token';
 
 const TITLE_ID = 'create-refresh-tokens-title';
 

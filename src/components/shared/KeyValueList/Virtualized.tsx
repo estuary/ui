@@ -1,6 +1,9 @@
+import type { ListChildComponentProps } from 'react-window';
+
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import KeyValueListRow from './Row';
+import { FixedSizeList } from 'react-window';
+
+import KeyValueListRow from 'src/components/shared/KeyValueList/Row';
 
 export type KeyValue = {
     title: string;

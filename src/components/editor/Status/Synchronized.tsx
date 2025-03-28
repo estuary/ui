@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material';
+
 import { DatabaseCheck } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 

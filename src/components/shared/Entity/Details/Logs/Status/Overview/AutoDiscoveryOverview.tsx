@@ -1,9 +1,11 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/shared/CardWrapper';
-import { cardHeaderSx } from 'context/Theme';
+
 import { useIntl } from 'react-intl';
-import AutoDiscoverOutcome from './AutoDiscoverOutcome';
-import AutoDiscoveryStatus from './AutoDiscoveryStatus';
+
+import CardWrapper from 'src/components/shared/CardWrapper';
+import AutoDiscoverOutcome from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoverOutcome';
+import AutoDiscoveryStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoveryStatus';
+import { cardHeaderSx } from 'src/context/Theme';
 
 export default function AutoDiscoveryOverview() {
     const intl = useIntl();

@@ -1,6 +1,6 @@
-import { useBindingsEditorStore } from 'components/editor/Bindings/Store/create';
-import { createEditorStore } from 'components/editor/Store/create';
-import { createFormStateStore } from 'stores/FormState/Store';
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
+import { createEditorStore } from 'src/components/editor/Store/create';
+import { createFormStateStore } from 'src/stores/FormState/Store';
 import {
     BindingsEditorStoreNames,
     EditorStoreNames,
@@ -9,14 +9,14 @@ import {
     SelectTableStoreNames,
     ShardDetailStoreNames,
     TransformCreateStoreNames,
-} from 'stores/names';
-import { createSchemaEvolutionStore } from 'stores/SchemaEvolution/Store';
-import { createShardDetailStore } from 'stores/ShardDetail/Store';
-import { createBillingTableStore } from 'stores/Tables/Billing/Store';
-import { createPrefixAlertTableStore } from 'stores/Tables/PrefixAlerts/Store';
-import { createSelectableTableStore } from 'stores/Tables/Store';
-import { createTransformationCreateStore } from 'stores/TransformationCreate/Store';
-import { MessagePrefixes } from 'types';
+} from 'src/stores/names';
+import { createSchemaEvolutionStore } from 'src/stores/SchemaEvolution/Store';
+import { createShardDetailStore } from 'src/stores/ShardDetail/Store';
+import { createBillingTableStore } from 'src/stores/Tables/Billing/Store';
+import { createPrefixAlertTableStore } from 'src/stores/Tables/PrefixAlerts/Store';
+import { createSelectableTableStore } from 'src/stores/Tables/Store';
+import { createTransformationCreateStore } from 'src/stores/TransformationCreate/Store';
+import { MessagePrefixes } from 'src/types';
 
 const invariableStores = {
     // Bindings Editor Store

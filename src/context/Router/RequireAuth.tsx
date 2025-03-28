@@ -1,13 +1,15 @@
-import { authenticatedRoutes, unauthenticatedRoutes } from 'app/routes';
-import { useUserStore } from 'context/User/useUserContextStore';
+import type { BaseComponentProps } from 'src/types';
+
+import { Navigate, useLocation } from 'react-router-dom';
+
+import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import useLoginRedirectPath from 'hooks/searchParams/useLoginRedirectPath';
-import { Navigate, useLocation } from 'react-router-dom';
-import { logRocketConsole } from 'services/shared';
-import { BaseComponentProps } from 'types';
-import { getPathWithParams } from 'utils/misc-utils';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
+import { logRocketConsole } from 'src/services/shared';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     firstLoad?: boolean;

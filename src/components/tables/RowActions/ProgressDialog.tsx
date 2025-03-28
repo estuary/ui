@@ -1,3 +1,7 @@
+import type { ProgressDialogProps } from 'src/components/tables/RowActions/types';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
     Button,
     DialogActions,
@@ -6,9 +10,8 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
-import { ProgressDialogProps } from './types';
 
 function ProgressDialog({
     selectedEntities,

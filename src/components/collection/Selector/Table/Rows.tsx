@@ -1,14 +1,19 @@
-import { TableCell, TableRow, useTheme } from '@mui/material';
-import ChipListCell from 'components/tables/cells/ChipList';
-import RowSelect from 'components/tables/cells/RowSelect';
-import TimeStamp from 'components/tables/cells/TimeStamp';
-import { getEntityTableRowSx } from 'context/Theme';
-import invariableStores from 'context/Zustand/invariableStores';
 import { useMemo } from 'react';
+
+import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import { catalogNameColumn, publishedColumn } from './shared';
+
+import {
+    catalogNameColumn,
+    publishedColumn,
+} from 'src/components/collection/Selector/Table/shared';
+import ChipListCell from 'src/components/tables/cells/ChipList';
+import RowSelect from 'src/components/tables/cells/RowSelect';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import { getEntityTableRowSx } from 'src/context/Theme';
+import invariableStores from 'src/context/Zustand/invariableStores';
 
 interface RowProps {
     row: any;

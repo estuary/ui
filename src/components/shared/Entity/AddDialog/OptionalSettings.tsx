@@ -1,8 +1,10 @@
 import { Stack, Typography } from '@mui/material';
-import DeltaUpdates from 'components/editor/Bindings/DeltaUpdates';
-import SchemaMode from 'components/editor/Bindings/SchemaMode';
+
 import { useIntl } from 'react-intl';
-import { useBinding_sourceCaptureFlags } from 'stores/Binding/hooks';
+
+import DeltaUpdates from 'src/components/editor/Bindings/DeltaUpdates';
+import SchemaMode from 'src/components/editor/Bindings/SchemaMode';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 
 function OptionalSettings() {
     const intl = useIntl();
