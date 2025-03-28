@@ -16,14 +16,19 @@ import wasm from 'vite-plugin-wasm';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const gitFolder = '.git/';
+
+const cleanFileRead = (path: string) => {
+    return readFileSync(path).toString().trim();
+};
+
 const getCommitId = () => {
-    const headRef = readFileSync('.git/HEAD').toString().trim();
+    const headRef = cleanFileRead(`${gitFolder}HEAD`);
 
     if (headRef.indexOf(':') === -1) {
         return headRef;
     } else {
-        const branchRef = '.git/' + headRef.substring(5);
-        return readFileSync(branchRef).toString().trim();
+        return cleanFileRead(`${gitFolder}${headRef.substring(5)}`);
     }
 };
 
