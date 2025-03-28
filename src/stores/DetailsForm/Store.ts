@@ -23,12 +23,14 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'stores/extensions/Hydration';
-import { getConnectorMetadata } from 'utils/connector-utils';
+import {
+    ConnectorVersionEvaluationOptions,
+    getConnectorMetadata,
+} from 'utils/connector-utils';
 import { generateDataPlaneOption } from 'utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'utils/env-utils';
 import { hasLength } from 'utils/misc-utils';
 import { devtoolsOptions } from 'utils/store-utils';
-import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
@@ -367,9 +369,8 @@ export const getInitialState = (
                     get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {
-                const { data, error } = await getLiveSpecs_detailsForm(
-                    liveSpecId
-                );
+                const { data, error } =
+                    await getLiveSpecs_detailsForm(liveSpecId);
 
                 if (!error && data && data.length > 0) {
                     const {

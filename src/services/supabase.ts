@@ -101,12 +101,6 @@ export enum FUNCTIONS {
     BILLING = 'billing',
 }
 
-export const OAUTH_OPERATIONS = {
-    AUTH_URL: 'auth-url',
-    ACCESS_TOKEN: 'access-token',
-    ENCRYPT_CONFIG: 'encrypt-config',
-};
-
 // https://github.com/orgs/supabase/discussions/19651
 const reservedWrapper = `%22`;
 // eslint-disable-next-line no-useless-escape
@@ -423,8 +417,8 @@ export const handlePollerError = (failedResponse: any) => {
     return failedResponse.error === JOB_STATUS_POLLER_ERROR
         ? DEFAULT_POLLER_ERROR.error
         : failedResponse.error
-        ? failedResponse
-        : null;
+          ? failedResponse
+          : null;
 };
 
 export const JOB_TYPE_EMPTY = 'emptyDraft';
