@@ -45,8 +45,8 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
     const firstFormHelperText = description
         ? description
         : showErrors
-        ? errors
-        : null;
+          ? errors
+          : null;
     const secondFormHelperText = description && showErrors ? errors : null;
 
     const updateState = (updateValue: any) => {

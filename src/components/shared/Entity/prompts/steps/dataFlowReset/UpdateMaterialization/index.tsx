@@ -76,9 +76,8 @@ function MarkMaterialization() {
             let updatedSpec = null;
             let updatedTotal = 0;
             if (backfillTargetId) {
-                const liveSpecResponse = await getLiveSpecSpec(
-                    backfillTargetId
-                );
+                const liveSpecResponse =
+                    await getLiveSpecSpec(backfillTargetId);
 
                 if (liveSpecResponse.error) {
                     updateStep(stepIndex, {

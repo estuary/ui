@@ -28,7 +28,7 @@ function Spinner({ severity, runningKey, stoppedKey }: Props) {
         }
 
         return intl.formatMessage({
-            id: stopped ? 'logs.paused' : runningKey ?? 'logs.default',
+            id: stopped ? 'logs.paused' : (runningKey ?? 'logs.default'),
         });
     }, [fetchingCanSafelyStop, intl, runningKey, stopped, stoppedKey]);
 

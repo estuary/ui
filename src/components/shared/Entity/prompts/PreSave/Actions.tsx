@@ -38,8 +38,8 @@ function Actions() {
                         onLastStep
                             ? true
                             : onFirstStep
-                            ? disableClose
-                            : disableBack
+                              ? disableClose
+                              : disableBack
                     }
                     onClick={
                         onFirstStep

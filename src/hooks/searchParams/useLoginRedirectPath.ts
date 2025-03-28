@@ -14,8 +14,8 @@ function useLoginRedirectPath(redirectToBase?: string) {
     const from = marketplaceVerify?.path
         ? `${marketplaceVerify.path}`
         : location.state?.from
-        ? `${location.state.from.pathname}${location.state.from.search}`
-        : authenticatedRoutes.home.path;
+          ? `${location.state.from.pathname}${location.state.from.search}`
+          : authenticatedRoutes.home.path;
 
     const redirectTo = useMemo(
         () =>

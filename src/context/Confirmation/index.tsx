@@ -27,9 +27,8 @@ const ConfirmationModalContext =
     createContext<IConfirmationModalContext | null>(null);
 
 const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
-    const [settings, setSettings] = useState<IConfirmationModalOptions>(
-        getDefaultSettings()
-    );
+    const [settings, setSettings] =
+        useState<IConfirmationModalOptions>(getDefaultSettings());
     const [showConfirmationModal, setShowConfirmationModal] =
         useState<boolean>(false);
     const resolver = useRef<any>();

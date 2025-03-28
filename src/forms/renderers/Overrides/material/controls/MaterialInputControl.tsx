@@ -81,8 +81,8 @@ export const CustomMaterialInputControl = (
     const firstFormHelperText = showDescription
         ? description
         : !isValid
-        ? errors
-        : null;
+          ? errors
+          : null;
     const secondFormHelperText = showDescription && !isValid ? errors : null;
     const InnerComponent = input;
 

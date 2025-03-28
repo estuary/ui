@@ -45,8 +45,8 @@ function useLegendConfig(seriesConfig?: any): EChartsOption['legend'] {
                 const name = config.seriesName
                     ? config.seriesName
                     : config.name
-                    ? config.name
-                    : DEFAULT_FILTER;
+                      ? config.name
+                      : DEFAULT_FILTER;
 
                 return {
                     name,

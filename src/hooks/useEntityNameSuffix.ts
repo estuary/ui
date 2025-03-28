@@ -25,8 +25,8 @@ function useEntityNameSuffix(when: boolean | undefined) {
                     ? `${entityName}/${strippedImageName}`
                     : entityName
                 : hasLength(draftedEntityName)
-                ? draftedEntityName
-                : entityName,
+                  ? draftedEntityName
+                  : entityName,
         [
             draftedEntityName,
             entityName,

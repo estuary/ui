@@ -60,9 +60,8 @@ function setJSONFormDefaults(jsonSchema: any, formData: any) {
 function defaultResourceSchema(resourceSchema: any, collection: string) {
     // Find the field with the collection name annotation
     const collectionNameField =
-        Object.entries(resourceSchema.properties).find(
-            ([_, value]) =>
-                value?.hasOwnProperty(Annotations.defaultResourceConfigName)
+        Object.entries(resourceSchema.properties).find(([_, value]) =>
+            value?.hasOwnProperty(Annotations.defaultResourceConfigName)
         ) ?? [];
 
     // Try to fetch the key

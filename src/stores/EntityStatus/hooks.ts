@@ -8,11 +8,10 @@ import { useEntityStatusStore } from './Store';
 
 export const useEntityStatusStore_singleResponse = (catalogName: string) => {
     return useEntityStatusStore(
-        useShallow(
-            (state) =>
-                state.responses
-                    ?.filter((datum) => datum.catalog_name === catalogName)
-                    .at(0)
+        useShallow((state) =>
+            state.responses
+                ?.filter((datum) => datum.catalog_name === catalogName)
+                .at(0)
         )
     );
 };

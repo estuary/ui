@@ -60,16 +60,16 @@ export default function TableColumnSelector({
                       },
                   }
                 : checked && !columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: [
-                              ...shownOptionalColumns,
-                              column,
-                          ],
-                      },
-                  }
-                : existingSettings;
+                  ? {
+                        ...existingSettings,
+                        [TablePrefixes.fieldSelection]: {
+                            shownOptionalColumns: [
+                                ...shownOptionalColumns,
+                                column,
+                            ],
+                        },
+                    }
+                  : existingSettings;
 
         setTableSettings(evaluatedSettings);
     };

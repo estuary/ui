@@ -64,24 +64,24 @@ function BackfillCount({ disabled }: BackfillCountProps) {
                           }
                       )
                     : noBackfill
-                    ? intl.formatMessage(
-                          {
-                              id: 'workflows.collectionSelector.manualBackfill.count.empty',
-                          },
-                          {
-                              itemType: itemType_backfill,
-                          }
-                      )
-                    : intl.formatMessage(
-                          {
-                              id: 'workflows.collectionSelector.manualBackfill.count',
-                          },
-                          {
-                              backfillCount: calculatedCount,
-                              bindingsTotal,
-                              itemType: itemType_bindings,
-                          }
-                      )
+                      ? intl.formatMessage(
+                            {
+                                id: 'workflows.collectionSelector.manualBackfill.count.empty',
+                            },
+                            {
+                                itemType: itemType_backfill,
+                            }
+                        )
+                      : intl.formatMessage(
+                            {
+                                id: 'workflows.collectionSelector.manualBackfill.count',
+                            },
+                            {
+                                backfillCount: calculatedCount,
+                                bindingsTotal,
+                                itemType: itemType_bindings,
+                            }
+                        )
             }
         />
     );

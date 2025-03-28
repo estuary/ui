@@ -5,9 +5,9 @@ import { useBillingStore } from './Store';
 export const useBilling_selectedInvoice = () => {
     return useBillingStore((state) =>
         state.selectedInvoiceId
-            ? state.invoices.find(
+            ? (state.invoices.find(
                   (inv) => invoiceId(inv) === state.selectedInvoiceId
-              ) ?? null
+              ) ?? null)
             : null
     );
 };

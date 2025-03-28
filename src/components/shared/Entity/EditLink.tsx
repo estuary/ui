@@ -27,8 +27,8 @@ function EditLink({ liveSpecId, name, variant }: Props) {
             entityType === 'capture'
                 ? 'captures'
                 : entityType === 'materialization'
-                ? 'materializations'
-                : null;
+                  ? 'materializations'
+                  : null;
 
         if (path) {
             return getPathWithParams(authenticatedRoutes[path].edit.fullPath, {

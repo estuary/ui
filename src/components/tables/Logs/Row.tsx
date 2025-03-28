@@ -56,8 +56,8 @@ export function LogsTableRow({
         uuid.current === UUID_NEWEST_LOG
             ? WaitingForNewLogsRow
             : uuid.current === UUID_OLDEST_LOG
-            ? WaitingForOldLogsRow
-            : null;
+              ? WaitingForOldLogsRow
+              : null;
 
     if (WaitingComponent) {
         return <WaitingComponent style={style} sizeRef={sizeRef} />;

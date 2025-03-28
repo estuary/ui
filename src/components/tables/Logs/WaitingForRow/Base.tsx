@@ -103,8 +103,8 @@ function WaitingForRowBase({
                 bgcolor: lastFetchFailed
                     ? errorOutlinedButtonBackground[theme.palette.mode]
                     : disabled
-                    ? tableRowActive_Finished__Background[theme.palette.mode]
-                    : tableRowActive__Background[theme.palette.mode],
+                      ? tableRowActive_Finished__Background[theme.palette.mode]
+                      : tableRowActive__Background[theme.palette.mode],
                 opacity:
                     lastFetchFailed || disabled || intersection?.isIntersecting
                         ? 1
@@ -138,8 +138,8 @@ function WaitingForRowBase({
                                 lastFetchFailed
                                     ? `${messageKey}.failed`
                                     : disabled
-                                    ? `${messageKey}.complete`
-                                    : messageKey
+                                      ? `${messageKey}.complete`
+                                      : messageKey
                             }
                         />
                     </Typography>

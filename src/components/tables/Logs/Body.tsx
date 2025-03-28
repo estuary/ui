@@ -145,8 +145,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                     return customHeight && customHeight > 0
                                         ? customHeight
                                         : isEmpty(row.fields)
-                                        ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
-                                        : DEFAULT_ROW_HEIGHT;
+                                          ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
+                                          : DEFAULT_ROW_HEIGHT;
                                 }}
                                 overscanCount={10}
                                 style={{
@@ -177,8 +177,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                 status: noData
                     ? TableStatuses.NO_EXISTING_DATA
                     : networkFailed
-                    ? TableStatuses.NETWORK_FAILED
-                    : TableStatuses.LOADING,
+                      ? TableStatuses.NETWORK_FAILED
+                      : TableStatuses.LOADING,
             }}
             loading={!hydrated}
             rows={null}

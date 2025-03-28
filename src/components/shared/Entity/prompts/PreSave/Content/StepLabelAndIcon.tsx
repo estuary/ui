@@ -36,10 +36,10 @@ function StepLabelAndIcon() {
                 optionalLabel
                     ? optionalLabel
                     : stepSkipped
-                    ? intl.formatMessage({
-                          id: 'common.skipped',
-                      })
-                    : undefined
+                      ? intl.formatMessage({
+                            id: 'common.skipped',
+                        })
+                      : undefined
             }
             sx={{
                 '& .MuiStepLabel-label': {
@@ -50,8 +50,8 @@ function StepLabelAndIcon() {
                 stepSkipped
                     ? SkippedStepIcon
                     : progress === ProgressStates.IDLE
-                    ? undefined
-                    : CustomStepIcon
+                      ? undefined
+                      : CustomStepIcon
             }
         >
             {intl.formatMessage({
