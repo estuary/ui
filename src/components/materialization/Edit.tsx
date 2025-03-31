@@ -1,22 +1,23 @@
-import { authenticatedRoutes } from 'app/routes';
+import { useCallback } from 'react';
+
+import { authenticatedRoutes } from 'src/app/routes';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import MaterializeGenerateButton from 'components/materialization/GenerateButton';
-import EntityEdit from 'components/shared/Entity/Edit';
-import EntityToolbar from 'components/shared/Entity/Header';
-import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
+} from 'src/components/editor/Store/hooks';
+import MaterializeGenerateButton from 'src/components/materialization/GenerateButton';
+import EntityEdit from 'src/components/shared/Entity/Edit';
+import EntityToolbar from 'src/components/shared/Entity/Header';
+import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useDraftSpecs_editWorkflow } from 'hooks/useDraftSpecs';
-import usePageTitle from 'hooks/usePageTitle';
-import { useCallback } from 'react';
-import { CustomEvents } from 'services/types';
-import WorkflowHydrator from 'stores/Workflow/Hydrator';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
+import usePageTitle from 'src/hooks/usePageTitle';
+import { CustomEvents } from 'src/services/types';
+import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 
 function MaterializationEdit() {
     usePageTitle({

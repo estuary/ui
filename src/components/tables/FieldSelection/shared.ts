@@ -1,6 +1,7 @@
-import { CompositeProjection } from 'components/editor/Bindings/FieldSelection/types';
-import { SortDirection, TableColumns } from 'types';
-import { compareInitialCharacterType } from 'utils/misc-utils';
+import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { SortDirection, TableColumns } from 'src/types';
+
+import { compareInitialCharacterType } from 'src/utils/misc-utils';
 
 export const optionalColumnIntlKeys = {
     pointer: 'data.pointer',

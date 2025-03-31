@@ -25,23 +25,23 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
-import {
-    Autocomplete,
+import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import type {
     AutocompleteRenderOptionState,
-    Box,
     FilterOptionsState,
-    MenuList,
-    Stack,
-    Typography,
 } from '@mui/material';
-import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
-import { defaultOutline_hovered } from 'context/Theme';
+import type { ReactNode } from 'react';
 
-import React, { ReactNode, useMemo } from 'react';
+import React, { useMemo } from 'react';
+
+import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
-import Option from './Option';
+
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { defaultOutline_hovered } from 'src/context/Theme';
+import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
+import Option from 'src/forms/renderers/DataPlaneSelector/Option';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;

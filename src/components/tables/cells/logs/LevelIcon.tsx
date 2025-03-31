@@ -1,5 +1,7 @@
+import type { LogLevels } from 'src/components/tables/Logs/types';
+
 import { Tooltip, Typography, useTheme } from '@mui/material';
-import { LogLevels } from 'components/tables/Logs/types';
+
 import {
     CheckCircle,
     Circle,
@@ -8,7 +10,8 @@ import {
     WarningCircle,
     XmarkCircle,
 } from 'iconoir-react';
-import { BaseTypographySx } from './shared';
+
+import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
 
 interface Props {
     level: LogLevels;

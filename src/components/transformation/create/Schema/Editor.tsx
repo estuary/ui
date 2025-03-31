@@ -1,7 +1,7 @@
-import CollectionSchemaEditor from 'components/collection/schema/Editor';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import EmptySQLEditor from 'components/transformation/create/Config/SQLEditor/Empty';
-import useDraftSpecEditor from 'hooks/useDraftSpecEditor';
+import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
+import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
+import EmptySQLEditor from 'src/components/transformation/create/Config/SQLEditor/Empty';
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 
 export interface Props {
     entityName: string;

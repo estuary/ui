@@ -1,10 +1,14 @@
-import { Button, Divider, Menu } from '@mui/material';
-import { NavArrowDown } from 'iconoir-react';
+import type { BaseProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+
 import { useState } from 'react';
+
+import { Button, Divider, Menu } from '@mui/material';
+
+import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import MenuActions from './MenuActions';
-import MenuOptions from './MenuOptions';
-import { BaseProps } from './types';
+
+import MenuActions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuActions';
+import MenuOptions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuOptions';
 
 export default function FieldActions({
     bindingUUID,

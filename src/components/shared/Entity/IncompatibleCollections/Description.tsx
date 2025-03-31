@@ -1,4 +1,8 @@
-import { AffectedMaterialization, RequiresRecreation } from 'api/evolutions';
+import type {
+    AffectedMaterialization,
+    RequiresRecreation,
+} from 'src/api/evolutions';
+
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface Props {

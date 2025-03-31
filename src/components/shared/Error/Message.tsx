@@ -1,14 +1,17 @@
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
+
 import { Box, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import Instructions from 'src/components/shared/Error/Instructions';
 import {
     logRocketConsole,
     logRocketEvent,
     retryAfterFailure,
-} from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { ExternalLinkOptions } from '../ExternalLink';
-import Instructions from './Instructions';
-import { ErrorDetails } from './types';
+} from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 interface Props {
     error?: ErrorDetails;

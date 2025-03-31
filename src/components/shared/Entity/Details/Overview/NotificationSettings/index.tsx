@@ -1,13 +1,17 @@
-import { Box, Stack, useMediaQuery, useTheme } from '@mui/material';
-import MessageWithButton from 'components/content/MessageWithButton';
-import AlertBox from 'components/shared/AlertBox';
-import CardWrapper from 'components/shared/CardWrapper';
-import DataProcessingSetting from 'components/shared/Entity/Details/Overview/NotificationSettings/DataProcessingSetting';
-import Error from 'components/shared/Error';
-import { ErrorDetails } from 'components/shared/Error/types';
-import useInitializeTaskNotification from 'hooks/notifications/useInitializeTaskNotification';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+
 import { useEffect, useMemo, useState } from 'react';
+
+import { Box, Stack, useMediaQuery, useTheme } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import MessageWithButton from 'src/components/content/MessageWithButton';
+import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import DataProcessingSetting from 'src/components/shared/Entity/Details/Overview/NotificationSettings/DataProcessingSetting';
+import Error from 'src/components/shared/Error';
+import useInitializeTaskNotification from 'src/hooks/notifications/useInitializeTaskNotification';
 
 interface Props {
     taskName: string;

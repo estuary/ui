@@ -1,14 +1,16 @@
+import type { PopperProps } from '@mui/material';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
+
 import {
     Box,
     ClickAwayListener,
     Fade,
     Popper,
-    PopperProps,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { paperBackground, popperIndex } from 'context/Theme';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+
+import { paperBackground, popperIndex } from 'src/context/Theme';
 
 interface Props {
     children: ReactNode;

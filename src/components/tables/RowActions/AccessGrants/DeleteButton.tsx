@@ -1,23 +1,25 @@
-import { Button, Dialog } from '@mui/material';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
-import useAccessGrantRemovalDescriptions from 'hooks/useAccessGrantRemovalDescriptions';
-import { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import ConfirmationAlert from '../Shared/ConfirmationAlert';
-import ConfirmationWithExplanation from '../Shared/ConfirmationWithExplination';
-import GrantWhatIsChanging from './GrantWhatIsChanging';
-import RevokeGrant from './RevokeGrant';
-import {
+import type {
     AccessGrantDeleteButtonProps,
     AccessGrantRowConfirmation,
-} from './types';
+} from 'src/components/tables/RowActions/AccessGrants/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
+import { useState } from 'react';
+
+import { Button, Dialog } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
+import GrantWhatIsChanging from 'src/components/tables/RowActions/AccessGrants/GrantWhatIsChanging';
+import RevokeGrant from 'src/components/tables/RowActions/AccessGrants/RevokeGrant';
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import ConfirmationAlert from 'src/components/tables/RowActions/Shared/ConfirmationAlert';
+import ConfirmationWithExplanation from 'src/components/tables/RowActions/Shared/ConfirmationWithExplination';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import useAccessGrantRemovalDescriptions from 'src/hooks/useAccessGrantRemovalDescriptions';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 // TODO (capabilities) - need to see if they remove their own capabilities
 //  and then refresh local cache of access grants.

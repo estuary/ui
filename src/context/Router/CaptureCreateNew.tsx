@@ -1,9 +1,9 @@
-import { authenticatedRoutes } from 'app/routes';
-import CaptureCreate from 'components/capture/Create';
-import AdminCapabilityGuard from 'components/shared/guards/AdminCapability';
-import ConnectorSelectedGuard from 'components/shared/guards/ConnectorSelected';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
+import { authenticatedRoutes } from 'src/app/routes';
+import CaptureCreate from 'src/components/capture/Create';
+import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
+import ConnectorSelectedGuard from 'src/components/shared/guards/ConnectorSelected';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import { WorkflowContextProvider } from 'src/context/Workflow';
 
 function CaptureCreateNewRoute() {
     return (

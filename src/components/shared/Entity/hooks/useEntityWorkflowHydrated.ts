@@ -1,8 +1,9 @@
-import { useEntityWorkflow } from 'context/Workflow';
 import { useMemo } from 'react';
-import { useBinding_hydrated } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEndpointConfig_hydrated } from 'stores/EndpointConfig/hooks';
+
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { useBinding_hydrated } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfig_hydrated } from 'src/stores/EndpointConfig/hooks';
 
 // TODO (forms)
 // Later on we might want to build this out in a way where forms can

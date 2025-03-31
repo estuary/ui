@@ -1,17 +1,18 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+import type { BaseComponentProps } from 'src/types';
 
 import { useEffect, useRef } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfig_hydrateState,
     useEndpointConfig_hydrated,
+    useEndpointConfig_hydrateState,
     useEndpointConfig_setActive,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
-} from 'stores/EndpointConfig/hooks';
-import { BaseComponentProps } from 'types';
+} from 'src/stores/EndpointConfig/hooks';
 
 export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();

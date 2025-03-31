@@ -1,7 +1,11 @@
-import { Dispatch, SetStateAction, createContext, useContext } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import type { BaseComponentProps } from 'src/types';
+
+import { createContext, useContext } from 'react';
+
 import { useLocalStorage } from 'react-use';
-import { BaseComponentProps } from 'types';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 interface TableSettings {
     shownOptionalColumns: string[];

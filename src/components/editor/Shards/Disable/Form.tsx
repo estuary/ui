@@ -1,16 +1,17 @@
-import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
-import { useEntityType } from 'context/EntityContext';
+import { useCallback, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+
+import useShards from 'src/components/editor/Shards/Disable/useShards';
+import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
+import { useEntityType } from 'src/context/EntityContext';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { snackbarSettings } from 'utils/notification-utils';
-import useShards from './useShards';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 function ShardsDisableForm() {
     const intl = useIntl();

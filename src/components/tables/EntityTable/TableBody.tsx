@@ -1,15 +1,19 @@
-import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
+import type { TableIntlConfig, TableState } from 'src/types';
+
 import { useMemo } from 'react';
+
+import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { TableIntlConfig, TableState } from 'types';
+
+import TableLoadingRows from 'src/components/tables/Loading';
 import {
     getColumnKeyList,
     getEmptyTableHeader,
     getEmptyTableMessage,
     getTableComponents,
-} from 'utils/table-utils';
-import TableLoadingRows from '../Loading';
-import { ColumnProps } from './types';
+} from 'src/utils/table-utils';
 
 interface Props {
     columns: ColumnProps[];

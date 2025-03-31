@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
-import { Data } from './Data';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+import { Data } from 'src/lang/en-US/Data';
 
 export const EntityTable: Record<string, string> = {
     'entityTable.title': `Entity Table`,

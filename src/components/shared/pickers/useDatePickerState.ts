@@ -1,5 +1,6 @@
-import { usePopupState } from 'material-ui-popup-state/hooks';
 import { useMemo, useRef } from 'react';
+
+import { usePopupState } from 'material-ui-popup-state/hooks';
 
 // TODO (accessibility) Setting the `disableAutoFocus` means this pop up is not
 //   accessible at all. We do this because it makes the showing/hiding when clicking

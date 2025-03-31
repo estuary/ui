@@ -1,21 +1,22 @@
 /* eslint-disable react/destructuring-assignment */
-import {
-    Box,
-    IconButton,
-    Menu,
+import type {
     PopoverOrigin,
     PopoverProps,
     SxProps,
     Theme,
-    Tooltip,
 } from '@mui/material';
+import type { ReactNode } from 'react';
+
+import React from 'react';
+
+import { Box, IconButton, Menu, Tooltip } from '@mui/material';
+
 import {
     defaultOutline,
     outlinedIconButtonStyling,
     paperBackground,
     paperBackgroundImage,
-} from 'context/Theme';
-import React, { ReactNode } from 'react';
+} from 'src/context/Theme';
 
 interface CustomPopoverPosition {
     transformOrigin?: PopoverOrigin;

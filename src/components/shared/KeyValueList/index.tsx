@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react';
+
 import { List, ListItem, ListItemText, Typography } from '@mui/material';
-import { ReactNode } from 'react';
 
 export type KeyValue = {
     title: string | ReactNode;

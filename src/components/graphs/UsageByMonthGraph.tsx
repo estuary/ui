@@ -1,6 +1,10 @@
+import type { EChartsOption } from 'echarts';
+
+import { useEffect, useMemo, useState } from 'react';
+import useConstant from 'use-constant';
+
 import { useTheme } from '@mui/material';
-import useLegendConfig from 'components/graphs/useLegendConfig';
-import { eChartsColors } from 'context/Theme';
+
 import {
     eachMonthOfInterval,
     endOfMonth,
@@ -8,7 +12,6 @@ import {
     startOfMonth,
     sub,
 } from 'date-fns';
-import { EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
 import {
     GridComponent,
@@ -19,12 +22,13 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import useConstant from 'use-constant';
-import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'utils/billing-utils';
-import useTooltipConfig from './useTooltipConfig';
+
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import { eChartsColors } from 'src/context/Theme';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'data-by-month';
 

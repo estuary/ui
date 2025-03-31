@@ -1,4 +1,5 @@
 import { Skeleton, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
 
 function CollectionSchemaEditorSkeleton() {

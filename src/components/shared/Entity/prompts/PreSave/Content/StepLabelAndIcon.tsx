@@ -1,11 +1,14 @@
 import { StepLabel, useTheme } from '@mui/material';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { useIntl } from 'react-intl';
+
 import { useShallow } from 'zustand/react/shallow';
-import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
-import CustomStepIcon from './CustomStepIcon';
-import SkippedStepIcon from './SkippedStepIcon';
+
+import { useIntl } from 'react-intl';
+
+import CustomStepIcon from 'src/components/shared/Entity/prompts/PreSave/Content/CustomStepIcon';
+import SkippedStepIcon from 'src/components/shared/Entity/prompts/PreSave/Content/SkippedStepIcon';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 
 function StepLabelAndIcon() {
     const intl = useIntl();

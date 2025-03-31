@@ -1,10 +1,13 @@
-import { JsonFormsProps } from '@jsonforms/core';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import { isEmpty } from 'lodash';
+import type { JsonFormsProps } from '@jsonforms/core';
+import type { EnumDictionary } from 'src/types/utils';
+
 import { useMemo } from 'react';
-import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import { EnumDictionary } from 'types/utils';
-import { PREFIX_NAME_PATTERN } from 'validation';
+
+import { isEmpty } from 'lodash';
+
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
+import { PREFIX_NAME_PATTERN } from 'src/validation';
 
 export enum CloudProviderCodes {
     GCS = 'GCS',

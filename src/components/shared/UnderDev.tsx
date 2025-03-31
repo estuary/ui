@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
-import AlertBox from './AlertBox';
+
+import AlertBox from 'src/components/shared/AlertBox';
 
 function UnderDev() {
     return (

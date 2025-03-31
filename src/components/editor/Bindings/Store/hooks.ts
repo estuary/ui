@@ -1,4 +1,4 @@
-import { useBindingsEditorStore } from './create';
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 
 export const useBindingsEditorStore_collectionData = () => {
     return useBindingsEditorStore((state) => state.collectionData);

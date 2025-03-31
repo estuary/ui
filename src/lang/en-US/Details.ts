@@ -1,4 +1,4 @@
-import { CTAs } from './CTAs';
+import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Details: Record<string, string> = {
     'details.tabs.overview': `Overview`,

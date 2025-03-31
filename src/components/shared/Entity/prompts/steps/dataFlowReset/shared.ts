@@ -1,7 +1,7 @@
-import type { DataFlowResetContext } from 'components/shared/Entity/prompts/steps/dataFlowReset/types';
-import { DEFAULT_FILTER } from 'services/shared';
+import type { DataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/types';
 
-import { CustomEvents } from 'services/types';
+import { DEFAULT_FILTER } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 export const getInitialDataFlowResetContext = (): DataFlowResetContext => ({
     backfillTarget: null,

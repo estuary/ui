@@ -1,9 +1,11 @@
 import { Button, TableCell, TableRow } from '@mui/material';
+
 import { Check } from 'iconoir-react';
-import AmexLogo from 'images/payment-methods/amex.png';
-import DiscoverLogo from 'images/payment-methods/discover.png';
-import MastercardLogo from 'images/payment-methods/mastercard.png';
-import VisaLogo from 'images/payment-methods/visa.png';
+
+import AmexLogo from 'src/images/payment-methods/amex.png';
+import DiscoverLogo from 'src/images/payment-methods/discover.png';
+import MastercardLogo from 'src/images/payment-methods/mastercard.png';
+import VisaLogo from 'src/images/payment-methods/visa.png';
 
 const cardLogos = {
     amex: AmexLogo,
