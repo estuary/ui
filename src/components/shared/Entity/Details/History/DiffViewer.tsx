@@ -50,6 +50,11 @@ function DiffViewer({ modifiedPubId, originalPubId }: DiffViewerProps) {
     return (
         <>
             <Grid container>
+                {isValidating ? (
+                    <Grid item xs={12}>
+                        <LinearProgress />
+                    </Grid>
+                ) : null}
                 <Grid item xs={6}>
                     <Box
                         sx={{
@@ -59,7 +64,7 @@ function DiffViewer({ modifiedPubId, originalPubId }: DiffViewerProps) {
                         <Typography sx={{ fontWeight: 500 }}>
                             {originalSpec
                                 ? formatDate(originalSpec.published_at)
-                                : '...'}
+                                : ''}
                         </Typography>
                     </Box>
                 </Grid>
@@ -68,26 +73,19 @@ function DiffViewer({ modifiedPubId, originalPubId }: DiffViewerProps) {
                         <Typography sx={{ fontWeight: 500 }}>
                             {modifiedSpec
                                 ? formatDate(modifiedSpec.published_at)
-                                : '...'}
+                                : ''}
                         </Typography>
                     </Box>
                 </Grid>
             </Grid>
-            {isValidating ? (
-                <LinearProgress />
-            ) : (
-                <DiffEditor
-                    height={`${HEIGHT}px`}
-                    original={
-                        originalSpec ? stringifyJSON(originalSpec.spec) : '---'
-                    }
-                    modified={
-                        modifiedSpec ? stringifyJSON(modifiedSpec.spec) : '...'
-                    }
-                    theme={monacoEditorComponentBackground[theme.palette.mode]}
-                    options={{ readOnly: true }}
-                />
-            )}
+            <DiffEditor
+                language="json"
+                height={`${HEIGHT}px`}
+                original={originalSpec ? stringifyJSON(originalSpec.spec) : ''}
+                modified={modifiedSpec ? stringifyJSON(modifiedSpec.spec) : ''}
+                theme={monacoEditorComponentBackground[theme.palette.mode]}
+                options={{ readOnly: true }}
+            />
         </>
     );
 }
