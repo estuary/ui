@@ -1,16 +1,17 @@
 import type { PublicationSpecsExt_Spec } from 'src/api/publicationSpecsExt';
-import type { DiffViewerProps } from 'src/components/shared/Entity/Details/History/types';
 
 import { useMemo } from 'react';
 
 import { Box, Grid, LinearProgress, Typography, useTheme } from '@mui/material';
 
 import { DiffEditor } from '@monaco-editor/react';
+import { useIntl } from 'react-intl';
 
 import {
     formatDate,
     HEIGHT,
 } from 'src/components/shared/Entity/Details/History/shared';
+import Error from 'src/components/shared/Error';
 import {
     editorToolBarSx,
     monacoEditorComponentBackground,
@@ -20,15 +21,20 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { usePublicationSpecsExt_DiffViewer } from 'src/hooks/usePublicationSpecsExt';
 import { stringifyJSON } from 'src/services/stringify';
+import { BASE_ERROR } from 'src/services/supabase';
 
-function DiffViewer({ modifiedPubId, originalPubId }: DiffViewerProps) {
+function DiffViewer() {
+    const intl = useIntl();
     const theme = useTheme();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+    const originalPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
+    const modifiedPubId = useGlobalSearchParams(GlobalSearchParams.PUB_ID);
 
-    const { publications, isValidating } = usePublicationSpecsExt_DiffViewer(
-        catalogName,
-        [originalPubId, modifiedPubId]
-    );
+    const { publications, error, isValidating } =
+        usePublicationSpecsExt_DiffViewer(catalogName, [
+            originalPubId,
+            modifiedPubId,
+        ]);
 
     const [modifiedSpec, originalSpec] = useMemo<
         [PublicationSpecsExt_Spec | null, PublicationSpecsExt_Spec | null]
@@ -49,43 +55,69 @@ function DiffViewer({ modifiedPubId, originalPubId }: DiffViewerProps) {
 
     return (
         <>
-            <Grid container>
-                {isValidating ? (
-                    <Grid item xs={12}>
-                        <LinearProgress />
-                    </Grid>
-                ) : null}
+            <Grid
+                container
+                sx={{
+                    ...editorToolBarSx,
+                }}
+            >
                 <Grid item xs={6}>
-                    <Box
-                        sx={{
-                            ...editorToolBarSx,
-                        }}
-                    >
-                        <Typography sx={{ fontWeight: 500 }}>
-                            {originalSpec
-                                ? formatDate(originalSpec.published_at)
-                                : ''}
+                    <Box>
+                        <Typography>
+                            {isValidating
+                                ? intl.formatMessage({ id: 'common.loading' })
+                                : originalSpec
+                                  ? formatDate(originalSpec.published_at)
+                                  : ''}
                         </Typography>
                     </Box>
                 </Grid>
                 <Grid item xs={6}>
-                    <Box sx={editorToolBarSx}>
-                        <Typography sx={{ fontWeight: 500 }}>
-                            {modifiedSpec
-                                ? formatDate(modifiedSpec.published_at)
-                                : ''}
-                        </Typography>
-                    </Box>
+                    <Typography sx={{ fontWeight: 500 }}>
+                        {isValidating
+                            ? intl.formatMessage({ id: 'common.loading' })
+                            : modifiedSpec
+                              ? formatDate(modifiedSpec.published_at)
+                              : ''}
+                    </Typography>
                 </Grid>
             </Grid>
-            <DiffEditor
-                language="json"
-                height={`${HEIGHT}px`}
-                original={originalSpec ? stringifyJSON(originalSpec.spec) : ''}
-                modified={modifiedSpec ? stringifyJSON(modifiedSpec.spec) : ''}
-                theme={monacoEditorComponentBackground[theme.palette.mode]}
-                options={{ readOnly: true }}
-            />
+            {error ? (
+                <Error
+                    condensed
+                    error={
+                        error ?? {
+                            ...BASE_ERROR,
+                            message: intl.formatMessage({
+                                id: 'details.history.diffFailed',
+                            }),
+                        }
+                    }
+                />
+            ) : (
+                <DiffEditor
+                    language="json"
+                    height={`${HEIGHT}px`}
+                    loading={<LinearProgress />}
+                    original={
+                        !isValidating && originalSpec
+                            ? stringifyJSON(originalSpec.spec)
+                            : undefined
+                    }
+                    modified={
+                        !isValidating && modifiedSpec
+                            ? stringifyJSON(modifiedSpec.spec)
+                            : undefined
+                    }
+                    theme={monacoEditorComponentBackground[theme.palette.mode]}
+                    options={{
+                        readOnly: true,
+                        // Inline diff but need to mess with making header support that
+                        // enableSplitViewResizing: false,
+                        // renderSideBySide: false,
+                    }}
+                />
+            )}
         </>
     );
 }

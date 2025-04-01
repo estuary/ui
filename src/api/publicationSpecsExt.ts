@@ -44,8 +44,6 @@ export const getPublicationSpecByPublication = (
     catalogName: string,
     pubIds: [string | null, string | null]
 ) => {
-    console.log('getPublicationSpecByPublication', { catalogName, pubIds });
-
     let query = supabaseClient
         .from(TABLES.PUBLICATION_SPECS_EXT)
         .select(`pub_id, spec, published_at`)
@@ -53,14 +51,13 @@ export const getPublicationSpecByPublication = (
 
     // If we have both look for both
     //  Otherwise we're probably looking up a NEW entity and only
-    //  have a single pubId
+    //  have a single pubId.
     if (pubIds[0] && pubIds[1]) {
         query = query.in('pub_id', pubIds);
     } else {
         if (pubIds[0]) {
             query = query.eq('pub_id', pubIds[0]);
-        }
-        if (pubIds[1]) {
+        } else if (pubIds[1]) {
             query = query.eq('pub_id', pubIds[1]);
         }
     }

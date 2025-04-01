@@ -11,6 +11,7 @@ export enum GlobalSearchParams {
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     HOME_PAGE_ERROR = 'homePageError',
+    PUB_ID = 'pubId',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
     LOGIN_HINTS_GOOGLE = 'google_login_hint',
