@@ -42,7 +42,7 @@ export default function ConnectorCards({
     const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
     const RequestCard = condensed ? (
-        <div />
+        <div key="connector-tile-request" />
     ) : (
         <ConnectorRequestCard key="connector-tile-request" />
     );

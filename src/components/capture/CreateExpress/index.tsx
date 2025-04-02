@@ -45,7 +45,7 @@ export default function CaptureExpressCreate() {
     // Endpoint Config Store
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
-    const [initiateDiscovery, setInitiateDiscovery] = useState<boolean>(true);
+    const [initiateDiscovery, setInitiateDiscovery] = useState(true);
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
@@ -72,7 +72,7 @@ export default function CaptureExpressCreate() {
     }, [entityNameChanged]);
 
     return (
-        <WorkflowHydrator>
+        <WorkflowHydrator expressWorkflow>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
                 <EntityCreateExpress
                     entityType={entityType}

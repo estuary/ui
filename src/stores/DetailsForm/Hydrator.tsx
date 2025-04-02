@@ -6,6 +6,8 @@ import { logRocketConsole } from 'services/shared';
 import { BaseComponentProps } from 'types';
 import { useDetailsFormStore } from './Store';
 
+// TODO: Remove details form store hydrator and hydrateState action.
+//   It is only used by the test JSON forms page.
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();

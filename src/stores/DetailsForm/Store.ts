@@ -32,6 +32,7 @@ import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
 import { NAME_RE } from 'validation';
 import { create, StoreApi } from 'zustand';
 import { devtools, NamedSet } from 'zustand/middleware';
+import { initialDetails } from './shared';
 
 const STORE_KEY = 'Details Form';
 
@@ -98,21 +99,6 @@ const getDataPlane = (
     }
 
     return defaultOption ?? null;
-};
-
-const initialDetails: Details = {
-    data: {
-        connectorImage: {
-            connectorId: '',
-            id: '',
-            iconPath: '',
-            imageName: '',
-            imagePath: '',
-            imageTag: '',
-        },
-        entityName: '',
-    },
-    errors: [],
 };
 
 const getInitialStateData = (): Pick<
@@ -221,6 +207,10 @@ export const getInitialState = (
     },
 
     setDetails_dataPlane: (value) => {
+        if (value === null) {
+            return;
+        }
+
         set(
             produce((state: DetailsFormState) => {
                 state.details.data.dataPlane = value;

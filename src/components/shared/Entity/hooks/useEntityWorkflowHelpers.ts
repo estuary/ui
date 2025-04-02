@@ -27,6 +27,7 @@ import { FormStatus } from 'stores/FormState/types';
 import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
+import { useWorkflowStore } from 'stores/Workflow/Store';
 import { getPathWithParams } from 'utils/misc-utils';
 import { snackbarSettings } from 'utils/notification-utils';
 import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
@@ -76,6 +77,9 @@ function useEntityWorkflowHelpers() {
         (state) => state.resetState
     );
 
+    // Workflow Store
+    const resetWorkflowStore = useWorkflowStore((state) => state.resetState);
+
     const resetState = useCallback(() => {
         resetPreSavePrompt();
         resetFormState();
@@ -87,6 +91,7 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
+        resetWorkflowStore();
     }, [
         resetBindingState,
         resetBindingsEditorStore,
@@ -98,6 +103,7 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,
+        resetWorkflowStore,
     ]);
 
     const callFailed = useCallback(
