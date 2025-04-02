@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 
 import {
     formatDate,
+    getSpecAsString,
     HEIGHT,
 } from 'src/components/shared/Entity/Details/History/shared';
 import Error from 'src/components/shared/Error';
@@ -16,32 +17,18 @@ import {
     editorToolBarSx,
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import {
-    usePublicationSpecsExt_DiffViewer,
-    usePublicationSpecsExt_History,
-} from 'src/hooks/usePublicationSpecsExt';
-import { stringifyJSON } from 'src/services/stringify';
+import { useHistoryDiff } from 'src/hooks/searchParams/useHistoryDiff';
 import { BASE_ERROR } from 'src/services/supabase';
 
 // Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
 function DiffViewer() {
     // Data Fetching
-    const [catalogName, originalPubId, modifiedPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CATALOG_NAME,
-        GlobalSearchParams.LAST_PUB_ID,
-        GlobalSearchParams.PUB_ID,
-    ]);
-
-    const { publications, error } = usePublicationSpecsExt_DiffViewer(
-        catalogName,
-        [originalPubId, modifiedPubId]
-    );
-
-    const { publications: pubHistory } =
-        usePublicationSpecsExt_History(catalogName);
+    const {
+        findModifiedPublication,
+        findOriginalPublication,
+        pubSpecs,
+        pubHistory,
+    } = useHistoryDiff();
 
     // Hooks
     const intl = useIntl();
@@ -49,16 +36,23 @@ function DiffViewer() {
 
     // Editor State management
     const [editorReady, setEditorReady] = useState(false);
-    const monacoRef = useRef<typeof monacoEditor | null>(null);
-    const editorRef = useRef<monacoEditor.editor.IStandaloneDiffEditor | null>(
-        null
-    );
+    const originalModel = useRef<monacoEditor.editor.ITextModel | null>(null);
+    const modifiedModel = useRef<monacoEditor.editor.ITextModel | null>(null);
+
     const mountHandler = (
         editor: monacoEditor.editor.IStandaloneDiffEditor,
         monaco: typeof monacoEditor
     ) => {
-        editorRef.current = editor;
-        monacoRef.current = monaco;
+        // Create a model so we can keep the value updates and not have to
+        //  recreate these again
+        originalModel.current = monaco.editor.createModel('', 'json');
+        modifiedModel.current = monaco.editor.createModel('', 'json');
+
+        // Add the models into the editor.
+        editor.setModel({
+            original: originalModel.current,
+            modified: modifiedModel.current,
+        });
 
         // We keep this in state so that the useEffect down below will rerun when these are ready
         //  this is mainly here for when a users uses the browser back button.
@@ -68,65 +62,39 @@ function DiffViewer() {
     // Keep the column headers up to date
     const [modifiedPublishedAt, originalPublishedAt] = useMemo(
         () => [
-            pubHistory?.find(
-                (publication) => publication.pub_id === modifiedPubId
-            )?.published_at ?? null,
-            pubHistory?.find(
-                (publication) => publication.pub_id === originalPubId
-            )?.published_at ?? null,
+            pubHistory.publications?.find(findModifiedPublication)
+                ?.published_at ?? null,
+            pubHistory.publications?.find(findOriginalPublication)
+                ?.published_at ?? null,
         ],
-        [modifiedPubId, originalPubId, pubHistory]
+        [findModifiedPublication, findOriginalPublication, pubHistory]
     );
 
     // Keep the diff editor up to date
     useEffect(() => {
-        if (!editorReady || !publications || publications.length < 1) {
+        if (!editorReady || !pubSpecs.publications) {
             return;
         }
 
-        // Do not want to trust order and strictly find by pub_id
-        const modifiedPublicationSpec =
-            publications.find(
-                (publication) => publication.pub_id === modifiedPubId
-            )?.spec ?? null;
-
-        const originalPublicationSpec =
-            publications.find(
-                (publication) => publication.pub_id === originalPubId
-            )?.spec ?? null;
-
-        if (modifiedPublicationSpec || originalPublicationSpec) {
-            // Snag the view state BEFORE updating model so we know where the scroll was
-            const previousViewState = editorRef.current?.saveViewState();
-
-            // This is weird but required. Otherwise we get "null" in the editor
-            const modifiedPublicationSpecString = modifiedPublicationSpec
-                ? (stringifyJSON(modifiedPublicationSpec) ?? '')
-                : '';
-            const originalPublicationSpecString = originalPublicationSpec
-                ? (stringifyJSON(originalPublicationSpec) ?? '')
-                : '';
-
-            if (monacoRef.current) {
-                // Update the model with the latest
-                editorRef.current?.setModel({
-                    original: monacoRef.current.editor.createModel(
-                        originalPublicationSpecString,
-                        'json'
-                    ),
-                    modified: monacoRef.current.editor.createModel(
-                        modifiedPublicationSpecString,
-                        'json'
-                    ),
-                });
-            }
-
-            // Put the viewState back in so the scroll stays where it was
-            if (previousViewState) {
-                editorRef.current?.restoreViewState(previousViewState);
-            }
-        }
-    }, [editorReady, modifiedPubId, originalPubId, publications]);
+        // Update the model with the latest
+        originalModel.current?.setValue(
+            getSpecAsString(
+                pubSpecs.publications.find(findOriginalPublication)?.spec ??
+                    null
+            )
+        );
+        modifiedModel.current?.setValue(
+            getSpecAsString(
+                pubSpecs.publications.find(findModifiedPublication)?.spec ??
+                    null
+            )
+        );
+    }, [
+        editorReady,
+        findModifiedPublication,
+        findOriginalPublication,
+        pubSpecs.publications,
+    ]);
 
     return (
         <>
@@ -153,11 +121,11 @@ function DiffViewer() {
                     </Typography>
                 </Grid>
             </Grid>
-            {error ? (
+            {pubSpecs.error ? (
                 <Error
                     condensed
                     error={
-                        error ?? {
+                        pubSpecs.error ?? {
                             ...BASE_ERROR,
                             message: intl.formatMessage({
                                 id: 'details.history.diffFailed',

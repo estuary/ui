@@ -6,6 +6,8 @@ export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
     DATA_PLANE_ID = 'dataPlaneId',
+    DIFF_VIEW_ORIGINAL = 'diff_o',
+    DIFF_VIEW_MODIFIED = 'diff_m',
     DRAFT_ID = 'draftId',
     FORCED_SHARD_ENABLE = 'forcedEnable',
     GRANT_TOKEN = 'grantToken',

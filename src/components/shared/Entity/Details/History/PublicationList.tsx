@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useQueryParams } from 'use-query-params';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     List,
@@ -15,28 +14,30 @@ import { useIntl } from 'react-intl';
 import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
 import { formatDate } from 'src/components/shared/Entity/Details/History/shared';
 import Error from 'src/components/shared/Error';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { usePublicationSpecsExt_History } from 'src/hooks/usePublicationSpecsExt';
+import { useHistoryDiff } from 'src/hooks/searchParams/useHistoryDiff';
+import useScrollIntoView from 'src/hooks/useScrollIntoView';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 
 function PublicationList() {
     const intl = useIntl();
 
-    const { 1: setQuery } = useQueryParams();
-    const [catalogName, originalPubId] = useGlobalSearchParams([
-        GlobalSearchParams.CATALOG_NAME,
-        GlobalSearchParams.PUB_ID,
-    ]);
+    const {
+        modifiedPubId,
+        updateSelections,
+        pubHistory: { publications, isValidating, error },
+    } = useHistoryDiff();
 
-    const { publications, isValidating, error } =
-        usePublicationSpecsExt_History(catalogName);
+    const scrollToTarget = useRef<HTMLDivElement>(null);
+    const scrollIntoView = useScrollIntoView(scrollToTarget);
 
     const [selectedPublication, setSelectedPublication] = useState<string>(
-        originalPubId ?? ''
+        modifiedPubId ?? ''
     );
+
+    useEffect(() => {
+        scrollIntoView(scrollToTarget);
+    });
 
     useEffect(() => {
         if (
@@ -59,14 +60,13 @@ function PublicationList() {
             if (currIndex > -1) {
                 // Do not use `last_pub_id` as that is the same as `pub_id` when looking at the
                 //  most recent publication (Q2 2025)
-                setQuery({
-                    [GlobalSearchParams.PUB_ID]: selectedPublication,
-                    [GlobalSearchParams.LAST_PUB_ID]:
-                        publications[currIndex + 1]?.pub_id,
+                updateSelections({
+                    modifiedPubId: selectedPublication,
+                    originalPubId: publications[currIndex + 1]?.pub_id,
                 });
             }
         }
-    }, [publications, selectedPublication, setQuery]);
+    }, [publications, selectedPublication, updateSelections]);
 
     return (
         <>
@@ -96,38 +96,55 @@ function PublicationList() {
                 />
             ) : (
                 <List>
-                    {publications?.map((publication) => (
-                        <ListItemButton
-                            component="li"
-                            key={`history-timeline-${publication.pub_id}`}
-                            onClick={() =>
-                                setSelectedPublication(publication.pub_id)
-                            }
-                            selected={
-                                selectedPublication === publication.pub_id
-                            }
-                        >
-                            <ListItemText>
-                                <Stack component="span">
-                                    <Typography component="span">
-                                        {formatDate(publication.published_at)}
-                                    </Typography>
-                                    <Typography
-                                        component="span"
-                                        variant="caption"
-                                    >
-                                        {publication.detail}
-                                    </Typography>
-                                    <Typography
-                                        component="span"
-                                        variant="caption"
-                                    >
-                                        {publication.user_email}
-                                    </Typography>
-                                </Stack>
-                            </ListItemText>
-                        </ListItemButton>
-                    ))}
+                    {publications?.map((publication) => {
+                        const selected =
+                            selectedPublication === publication.pub_id;
+                        return (
+                            <ListItemButton
+                                component="li"
+                                key={`history-timeline-${publication.pub_id}`}
+                                onClick={() =>
+                                    setSelectedPublication(publication.pub_id)
+                                }
+                                selected={selected}
+                            >
+                                <ListItemText>
+                                    <Stack component="span">
+                                        <Typography
+                                            component="span"
+                                            variant={
+                                                selected
+                                                    ? 'subtitle2'
+                                                    : undefined
+                                            }
+                                        >
+                                            {formatDate(
+                                                publication.published_at
+                                            )}
+                                        </Typography>
+                                        <Typography
+                                            component="span"
+                                            variant="caption"
+                                        >
+                                            {publication.detail}
+                                        </Typography>
+                                        <Typography
+                                            component="span"
+                                            variant="caption"
+                                        >
+                                            {publication.user_email}
+                                        </Typography>
+                                        <Typography
+                                            component="span"
+                                            variant="caption"
+                                        >
+                                            {publication.pub_id}
+                                        </Typography>
+                                    </Stack>
+                                </ListItemText>
+                            </ListItemButton>
+                        );
+                    })}
                 </List>
             )}
         </>
