@@ -6,6 +6,7 @@ import {
     useFormStateStore_status,
 } from 'stores/FormState/hooks';
 import { FormStatus } from 'stores/FormState/types';
+import { useWorkflowStore } from 'stores/Workflow/Store';
 import useEntityWorkflowHelpers from './hooks/useEntityWorkflowHelpers';
 import LogDialog from './LogDialog';
 import LogDialogActions from './LogDialogActions';
@@ -18,11 +19,15 @@ function HeaderLogs() {
     const logToken = useFormStateStore_logToken();
     const formStatus = useFormStateStore_status();
 
+    const redirectUrl = useWorkflowStore((state) => state.redirectUrl);
+
     const testAction =
         formStatus === FormStatus.TESTED || formStatus === FormStatus.TESTING;
 
     const saveAction =
         formStatus === FormStatus.SAVED || formStatus === FormStatus.SAVING;
+
+    const externalRedirect = Boolean(saveAction && redirectUrl);
 
     return (
         <LogDialog
@@ -35,7 +40,17 @@ function HeaderLogs() {
                     }.waitMessage`}
                 />
             }
-            actionComponent={<LogDialogActions close={closeLogs} />}
+            actionComponent={
+                <LogDialogActions
+                    close={() =>
+                        closeLogs(
+                            externalRedirect ? redirectUrl : undefined,
+                            externalRedirect
+                        )
+                    }
+                    closeCtaKey={externalRedirect ? 'cta.exit' : undefined}
+                />
+            }
         />
     );
 }

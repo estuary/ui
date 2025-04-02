@@ -28,7 +28,7 @@ import { useSchemaEvolution_resetState } from 'stores/SchemaEvolution/hooks';
 import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'stores/TransformationCreate/hooks';
 import { useWorkflowStore } from 'stores/Workflow/Store';
-import { getPathWithParams } from 'utils/misc-utils';
+import { getPathWithParams, hasLength } from 'utils/misc-utils';
 import { snackbarSettings } from 'utils/notification-utils';
 import { usePreSavePromptStore } from '../prompts/store/usePreSavePromptStore';
 
@@ -135,35 +135,44 @@ function useEntityWorkflowHelpers() {
     const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
 
     const exit = useCallback(
-        (customRoute?: string) => {
+        (customRoute?: string, external?: boolean) => {
             logRocketConsole('EntityWorkflow:exit');
             resetState();
 
             let route: string;
-            if (!customRoute) {
+            if (!customRoute || !hasLength(customRoute)) {
                 route = generatePath({ catalog_name: catalogName });
             } else {
                 route = customRoute;
             }
 
             logRocketConsole('EntityWorkflow:exit:navigate');
+            if (external && hasLength(route)) {
+                window.location.href = route;
+
+                return;
+            }
+
             navigate(route, { replace: true });
         },
         [catalogName, generatePath, navigate, resetState]
     );
 
     // Form Event Handlers
-    const closeLogs = useCallback(() => {
-        logRocketConsole('EntityWorkflow:closeLogs');
-        setFormState({
-            showLogs: false,
-        });
+    const closeLogs = useCallback(
+        (customRoute?: string, external?: boolean) => {
+            logRocketConsole('EntityWorkflow:closeLogs');
+            setFormState({
+                showLogs: false,
+            });
 
-        if (exitWhenLogsClose) {
-            logRocketConsole('EntityWorkflow:closeLogs:exit');
-            exit();
-        }
-    }, [exit, setFormState, exitWhenLogsClose]);
+            if (exitWhenLogsClose) {
+                logRocketConsole('EntityWorkflow:closeLogs:exit');
+                exit(customRoute, external);
+            }
+        },
+        [exit, setFormState, exitWhenLogsClose]
+    );
 
     const materializeCollections = useCallback(async () => {
         // Go fetch the live spec that we want to materialize
