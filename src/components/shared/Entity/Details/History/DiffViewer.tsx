@@ -1,6 +1,6 @@
 import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Grid, Typography, useTheme } from '@mui/material';
 
@@ -48,6 +48,7 @@ function DiffViewer() {
     const theme = useTheme();
 
     // Editor State management
+    const [editorReady, setEditorReady] = useState(false);
     const monacoRef = useRef<typeof monacoEditor | null>(null);
     const editorRef = useRef<monacoEditor.editor.IStandaloneDiffEditor | null>(
         null
@@ -58,6 +59,10 @@ function DiffViewer() {
     ) => {
         editorRef.current = editor;
         monacoRef.current = monaco;
+
+        // We keep this in state so that the useEffect down below will rerun when these are ready
+        //  this is mainly here for when a users uses the browser back button.
+        setEditorReady(true);
     };
 
     // Keep the column headers up to date
@@ -75,12 +80,7 @@ function DiffViewer() {
 
     // Keep the diff editor up to date
     useEffect(() => {
-        if (
-            !editorRef.current ||
-            !monacoRef.current ||
-            !publications ||
-            publications.length < 1
-        ) {
+        if (!editorReady || !publications || publications.length < 1) {
             return;
         }
 
@@ -107,24 +107,26 @@ function DiffViewer() {
                 ? (stringifyJSON(originalPublicationSpec) ?? '')
                 : '';
 
-            // Update the model with the latest
-            editorRef.current.setModel({
-                original: monacoRef.current.editor.createModel(
-                    originalPublicationSpecString,
-                    'json'
-                ),
-                modified: monacoRef.current.editor.createModel(
-                    modifiedPublicationSpecString,
-                    'json'
-                ),
-            });
+            if (monacoRef.current) {
+                // Update the model with the latest
+                editorRef.current?.setModel({
+                    original: monacoRef.current.editor.createModel(
+                        originalPublicationSpecString,
+                        'json'
+                    ),
+                    modified: monacoRef.current.editor.createModel(
+                        modifiedPublicationSpecString,
+                        'json'
+                    ),
+                });
+            }
 
             // Put the viewState back in so the scroll stays where it was
             if (previousViewState) {
                 editorRef.current?.restoreViewState(previousViewState);
             }
         }
-    }, [modifiedPubId, originalPubId, publications]);
+    }, [editorReady, modifiedPubId, originalPubId, publications]);
 
     return (
         <>
