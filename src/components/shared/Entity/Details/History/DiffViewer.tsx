@@ -26,6 +26,7 @@ import {
 import { stringifyJSON } from 'src/services/stringify';
 import { BASE_ERROR } from 'src/services/supabase';
 
+// Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
 function DiffViewer() {
     // Data Fetching
     const [catalogName, originalPubId, modifiedPubId] = useGlobalSearchParams([
