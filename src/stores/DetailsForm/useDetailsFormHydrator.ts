@@ -2,7 +2,9 @@ import { getConnectors_detailsForm } from 'api/connectors';
 import { getDataPlaneOptions } from 'api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
 import { useEntityWorkflow } from 'context/Workflow';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'services/shared';
 import { CustomEvents } from 'services/types';
 import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
@@ -106,11 +108,9 @@ const evaluateDataPlaneOptions = async (
 };
 
 export const useDetailsFormHydrator = () => {
-    // Use global search params hook to grab params
-    const searchParams = new URLSearchParams(window.location.search);
-    const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
-    const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
-    const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
+    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const dataPlaneId = useGlobalSearchParams(GlobalSearchParams.DATA_PLANE_ID);
+    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
     const workflow = useEntityWorkflow();
 
