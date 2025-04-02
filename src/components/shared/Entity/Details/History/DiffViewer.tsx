@@ -17,7 +17,7 @@ import {
     editorToolBarSx,
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
-import { useHistoryDiff } from 'src/hooks/searchParams/useHistoryDiff';
+import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
 import { BASE_ERROR } from 'src/services/supabase';
 
 // Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
@@ -28,7 +28,7 @@ function DiffViewer() {
         findOriginalPublication,
         pubSpecs,
         pubHistory,
-    } = useHistoryDiff();
+    } = useHistoryDiffQueries();
 
     // Hooks
     const intl = useIntl();

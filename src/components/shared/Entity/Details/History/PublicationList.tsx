@@ -14,7 +14,7 @@ import { useIntl } from 'react-intl';
 import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
 import { formatDate } from 'src/components/shared/Entity/Details/History/shared';
 import Error from 'src/components/shared/Error';
-import { useHistoryDiff } from 'src/hooks/searchParams/useHistoryDiff';
+import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
@@ -26,7 +26,7 @@ function PublicationList() {
         modifiedPubId,
         updateSelections,
         pubHistory: { publications, isValidating, error },
-    } = useHistoryDiff();
+    } = useHistoryDiffQueries();
 
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
