@@ -103,9 +103,12 @@ function PublicationList() {
                             <ListItemButton
                                 component="li"
                                 key={`history-timeline-${publication.pub_id}`}
-                                onClick={() =>
-                                    setSelectedPublication(publication.pub_id)
-                                }
+                                onClick={() => {
+                                    setSelectedPublication(publication.pub_id);
+                                }}
+                                sx={{
+                                    cursor: selected ? 'unset' : undefined,
+                                }}
                                 selected={selected}
                             >
                                 <ListItemText>
