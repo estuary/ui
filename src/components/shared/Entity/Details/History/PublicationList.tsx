@@ -25,9 +25,11 @@ import { hasLength } from 'src/utils/misc-utils';
 function PublicationList() {
     const intl = useIntl();
 
-    const [_query, setQuery] = useQueryParams();
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-    const originalPubId = useGlobalSearchParams(GlobalSearchParams.PUB_ID);
+    const { 1: setQuery } = useQueryParams();
+    const [catalogName, originalPubId] = useGlobalSearchParams([
+        GlobalSearchParams.CATALOG_NAME,
+        GlobalSearchParams.PUB_ID,
+    ]);
 
     const { publications, isValidating, error } =
         usePublicationSpecsExt_History(catalogName);
@@ -36,17 +38,15 @@ function PublicationList() {
         originalPubId ?? ''
     );
 
-    // Default with the last on load if needed
     useEffect(() => {
         if (
             selectedPublication === '' &&
             publications &&
-            hasLength(publications)
+            publications.length > 0
         ) {
-            const defaultCur = publications[0];
-            const defaultPubId = defaultCur.pub_id;
-
-            setSelectedPublication(defaultPubId);
+            // If there is nothing in the URL then go ahead and
+            //  default to the newest publication we got back
+            setSelectedPublication(publications[0].pub_id);
         }
     }, [publications, selectedPublication]);
 
@@ -57,21 +57,15 @@ function PublicationList() {
             });
 
             if (currIndex > -1) {
-                // last_pub_id is the same as currValue when looking at the most recent publication
-                // so we need to look at the previous one
+                // Do not use `last_pub_id` as that is the same as `pub_id` when looking at the
+                //  most recent publication (Q2 2025)
                 setQuery({
                     [GlobalSearchParams.PUB_ID]: selectedPublication,
                     [GlobalSearchParams.LAST_PUB_ID]:
                         publications[currIndex + 1]?.pub_id,
                 });
-                return;
             }
         }
-
-        setQuery({
-            [GlobalSearchParams.PUB_ID]: null,
-            [GlobalSearchParams.LAST_PUB_ID]: null,
-        });
     }, [publications, selectedPublication, setQuery]);
 
     return (

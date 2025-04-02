@@ -23,7 +23,9 @@ function usePublicationSpecsExt_DiffViewer(
     pubIds?: [string | null, string | null]
 ) {
     const { data, error, mutate, isValidating } = useQuery(
-        catalogName && pubIds && pubIds.length === 2
+        catalogName &&
+            pubIds &&
+            (typeof pubIds[0] === 'string' || typeof pubIds[1] === 'string')
             ? getPublicationSpecByPublication(catalogName, pubIds)
             : null
     );

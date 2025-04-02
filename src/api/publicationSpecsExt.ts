@@ -24,7 +24,6 @@ export type PublicationSpecsExt_PubIds = Pick<
 >;
 
 export interface PublicationSpecsExt_Spec {
-    published_at: string;
     pub_id: string;
     spec: Schema;
 }
@@ -32,7 +31,7 @@ export interface PublicationSpecsExt_Spec {
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     return supabaseClient
         .from(TABLES.PUBLICATION_SPECS_EXT)
-        .select(`pub_id, published_at, detail, user_email`)
+        .select(`pub_id, published_at, detail, user_email, published_at`)
         .eq('catalog_name', catalogName)
         .order('published_at', {
             ascending: false,
@@ -46,7 +45,7 @@ export const getPublicationSpecByPublication = (
 ) => {
     let query = supabaseClient
         .from(TABLES.PUBLICATION_SPECS_EXT)
-        .select(`pub_id, spec, published_at`)
+        .select(`pub_id, spec`)
         .eq('catalog_name', catalogName);
 
     // If we have both look for both
