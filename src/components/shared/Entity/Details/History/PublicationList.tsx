@@ -38,7 +38,9 @@ function PublicationList() {
 
     useEffect(() => {
         if (!stopScrollingIntoView.current && scrollToTarget.current) {
-            scrollIntoView(scrollToTarget);
+            scrollIntoView(scrollToTarget, {
+                behavior: 'auto',
+            });
             stopScrollingIntoView.current = true;
         }
     });
