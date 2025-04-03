@@ -28,6 +28,7 @@ function PublicationList() {
         pubHistory: { publications, isValidating, error },
     } = useHistoryDiffQueries();
 
+    const stopScrollingIntoView = useRef(false);
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
 
@@ -36,7 +37,10 @@ function PublicationList() {
     );
 
     useEffect(() => {
-        scrollIntoView(scrollToTarget);
+        if (!stopScrollingIntoView.current && scrollToTarget.current) {
+            scrollIntoView(scrollToTarget);
+            stopScrollingIntoView.current = true;
+        }
     });
 
     useEffect(() => {
@@ -99,6 +103,7 @@ function PublicationList() {
                     {publications?.map((publication) => {
                         const selected =
                             selectedPublication === publication.pub_id;
+
                         return (
                             <ListItemButton
                                 component="li"
@@ -111,7 +116,14 @@ function PublicationList() {
                                 }}
                                 selected={selected}
                             >
-                                <ListItemText>
+                                <ListItemText
+                                    ref={
+                                        selected &&
+                                        !stopScrollingIntoView.current
+                                            ? scrollToTarget
+                                            : undefined
+                                    }
+                                >
                                     <Stack component="span">
                                         <Typography
                                             component="span"
