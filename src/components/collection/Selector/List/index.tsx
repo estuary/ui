@@ -1,6 +1,5 @@
 import type {
     GridColDef,
-    GridFilterModel,
     GridRowId,
     GridRowSelectionModel,
 } from '@mui/x-data-grid';
@@ -16,9 +15,9 @@ import {
     useGridApiRef,
 } from '@mui/x-data-grid';
 
-import { isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
@@ -41,6 +40,7 @@ import {
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength, stripPathing } from 'src/utils/misc-utils';
+import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 interface Props {
     disableActions?: boolean;
@@ -66,10 +66,6 @@ const initialState = {
             spec_type: false,
         },
     },
-};
-
-const defaultFilterModel = {
-    items: [],
 };
 
 function CollectionSelectorList({
@@ -98,6 +94,8 @@ function CollectionSelectorList({
             })
     );
     const [filterValue, setFilterValue] = useState('');
+    const previousFilterValue = usePrevious(filterValue);
+
     const [notificationMessage, setNotificationMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
 
@@ -112,9 +110,6 @@ function CollectionSelectorList({
         currentBindingUUID &&
         setCurrentBinding &&
         formStatus !== FormStatus.UPDATING;
-
-    const [filterModel, setFilterModel] =
-        useState<GridFilterModel>(defaultFilterModel);
 
     // We use mui`s selection model to store which collection was clicked on to display it
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
@@ -148,6 +143,53 @@ function CollectionSelectorList({
             };
         });
     }, [resourceConfigs]);
+
+    const debouncedFilter = useRef(
+        debounce((val) => {
+            setFilterValue(val);
+        }, QUICK_DEBOUNCE_WAIT)
+    );
+
+    const filteredRows = useMemo(() => {
+        if (filterValue === '') {
+            return null;
+        }
+
+        return rows.filter((row) => {
+            return row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue);
+        });
+    }, [filterValue, rows]);
+
+    // Used to set selected back to first when search is cleared
+    useEffect(() => {
+        if (!setCurrentBinding) {
+            return;
+        }
+
+        if (filteredRows) {
+            return;
+        }
+
+        if (previousFilterValue !== '' && Boolean(rows[0])) {
+            setCurrentBinding(rows[0][COLLECTION_SELECTOR_UUID_COL]);
+        }
+    }, [filteredRows, previousFilterValue, rows, setCurrentBinding]);
+
+    // Used to set while searching
+    useEffect(() => {
+        if (!setCurrentBinding || !filteredRows) {
+            return;
+        }
+
+        if (
+            filteredRows.length > 0 &&
+            Boolean(filteredRows[0][COLLECTION_SELECTOR_UUID_COL])
+        ) {
+            setCurrentBinding(filteredRows[0][COLLECTION_SELECTOR_UUID_COL]);
+        } else {
+            setCurrentBinding(null);
+        }
+    }, [filteredRows, setCurrentBinding]);
 
     const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
 
@@ -185,17 +227,7 @@ function CollectionSelectorList({
                         inputValue={filterValue}
                         itemType={collectionsLabel}
                         onChange={(value) => {
-                            setFilterValue(value);
-                            setFilterModel({
-                                items: [
-                                    {
-                                        id: 1,
-                                        field: collectionSelector,
-                                        value,
-                                        operator: 'contains',
-                                    },
-                                ],
-                            });
+                            debouncedFilter.current(value);
                         }}
                     />
                 ),
@@ -268,7 +300,6 @@ function CollectionSelectorList({
 
                             if (hasLength(filteredCollections)) {
                                 removeCollections(filteredCollections);
-                                setFilterModel(defaultFilterModel);
                                 setFilterValue('');
 
                                 showPopper(
@@ -328,12 +359,12 @@ function CollectionSelectorList({
                 components={{ NoRowsOverlay: SelectorEmpty }}
                 disableColumnMenu
                 disableColumnSelector
+                disableEval
                 disableRowSelectionOnClick={!selectionEnabled}
-                filterModel={filterModel}
                 hideFooterPagination={rowsEmpty}
                 hideFooterSelectedRowCount
                 initialState={initialState}
-                rows={rows}
+                rows={filteredRows ?? rows}
                 rowSelectionModel={
                     selectionEnabled ? selectionModel : undefined
                 }
