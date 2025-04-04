@@ -4,7 +4,7 @@ export const COLLECTION_SELECTOR_NAME_COL = 'name';
 export const COLLECTION_SELECTOR_STRIPPED_PATH_NAME = 'strippedPathName';
 export const COLLECTION_SELECTOR_VISIBLE = 'visible';
 
-export const getCollectionSelector = (isCapture: boolean) =>
-    isCapture
+export const getCollectionSelector = (endOnly: boolean) =>
+    endOnly
         ? COLLECTION_SELECTOR_STRIPPED_PATH_NAME
         : COLLECTION_SELECTOR_NAME_COL;

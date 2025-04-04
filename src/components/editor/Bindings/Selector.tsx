@@ -1,5 +1,5 @@
-import type { GridRenderCellParams } from '@mui/x-data-grid';
 import type { ReactNode } from 'react';
+import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
 
 import { Box } from '@mui/material';
 
@@ -97,8 +97,8 @@ function BindingSelector({
 
     const disableActions = formActive || readOnly;
 
-    const cellRenderers = {
-        name: (params: GridRenderCellParams) => {
+    const cellRenderers: CollectionSelectorListProps['renderers']['cell'] = {
+        name: (params) => {
             const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
 
             return (
@@ -108,7 +108,7 @@ function BindingSelector({
                 />
             );
         },
-        remove: (params: GridRenderCellParams) => {
+        remove: (params) => {
             if (isCapture) {
                 return null;
             }
@@ -125,7 +125,7 @@ function BindingSelector({
                 />
             );
         },
-        toggle: (params: GridRenderCellParams) => {
+        toggle: (params) => {
             const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
 
             return (

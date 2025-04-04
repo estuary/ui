@@ -1,9 +1,5 @@
-import type {
-    GridColDef,
-    GridRowId,
-    GridRowSelectionModel,
-} from '@mui/x-data-grid';
-import type { BindingState } from 'src/stores/Binding/types';
+import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
@@ -42,22 +38,6 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
-interface Props {
-    disableActions?: boolean;
-    renderers: {
-        cell: {
-            name: (params: any) => void;
-            remove?: (params: any) => void;
-            toggle?: (params: any) => void;
-        };
-    };
-    header?: string;
-    height?: number | string;
-    removeCollections?: (rows: GridRowId[]) => void;
-    toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
-    setCurrentBinding?: BindingState['setCurrentBinding'];
-}
-
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
 const initialState = {
@@ -76,7 +56,7 @@ function CollectionSelectorList({
     toggleCollections,
     renderers,
     setCurrentBinding,
-}: Props) {
+}: CollectionSelectorListProps) {
     const apiRef = useGridApiRef();
 
     const entityType = useEntityType();
@@ -155,9 +135,9 @@ function CollectionSelectorList({
             return null;
         }
 
-        return rows.filter((row) => {
-            return row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue);
-        });
+        return rows.filter((row) =>
+            row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue)
+        );
     }, [filterValue, rows]);
 
     // Used to set selected back to first when search is cleared
@@ -209,8 +189,8 @@ function CollectionSelectorList({
     }, []);
 
     const collectionSelector = useMemo(
-        () => getCollectionSelector(isCapture),
-        [isCapture]
+        () => getCollectionSelector(!filteredRows && isCapture),
+        [filteredRows, isCapture]
     );
 
     const columns = useMemo(() => {
@@ -231,7 +211,8 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell: renderers.cell.name,
+                renderCell: (params) =>
+                    renderers.cell.name(params, Boolean(filteredRows)),
             },
         ];
 
@@ -328,11 +309,10 @@ function CollectionSelectorList({
         collectionsLabel,
         disable,
         filterValue,
+        filteredRows,
         intl,
         removeCollections,
-        renderers.cell.name,
-        renderers.cell.remove,
-        renderers.cell.toggle,
+        renderers.cell,
         showPopper,
         toggleCollections,
     ]);
