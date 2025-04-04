@@ -8,6 +8,8 @@ export const Details: Record<string, string> = {
     'details.tabs.ops': `Logs`,
 
     'details.history.noPublications': `No publications were found.`,
+    'details.history.diffFailed': `Unable to get specs to compare.`,
+    'details.history.title': `Publication History`,
 
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,

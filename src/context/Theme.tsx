@@ -406,9 +406,6 @@ export const editorToolBarSx: SxProps<Theme> = {
     minHeight: DEFAULT_TOOLBAR_HEIGHT,
     py: 0.5,
     px: 1,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
 };
 
 export const hiddenButAccessibleInput: SxProps<Theme> = {
