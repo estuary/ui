@@ -1,20 +1,25 @@
-import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneOptions } from 'api/dataPlanes';
-import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { useEntityWorkflow } from 'context/Workflow';
+import type {
+    DataPlaneOption,
+    Details,
+    DetailsFormState,
+} from 'src/stores/DetailsForm/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
+
+import { getConnectors_detailsForm } from 'src/api/connectors';
+import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import { getConnectorMetadata } from 'utils/connector-utils';
-import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix } from 'utils/env-utils';
-import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
-import { initialDetails } from './shared';
-import { useDetailsFormStore } from './Store';
-import { DataPlaneOption, Details, DetailsFormState } from './types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { initialDetails } from 'src/stores/DetailsForm/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { getConnectorMetadata } from 'src/utils/connector-utils';
+import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 const getConnectorImage = async (
     connectorId: string,

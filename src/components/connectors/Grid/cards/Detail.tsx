@@ -1,5 +1,6 @@
+import type { MessageComponentProps } from 'src/components/connectors/Grid/cards/types';
+
 import { Stack, Typography } from '@mui/material';
-import { MessageComponentProps } from './types';
 
 function Detail({ content }: MessageComponentProps) {
     return (

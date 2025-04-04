@@ -1,6 +1,6 @@
-import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode } from 'react';
-import { EntityWithCreateWorkflow } from 'types';
+import type { ReactNode } from 'react';
+import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
+import type { EntityWithCreateWorkflow } from 'src/types';
 
 export interface BaseEntityCreateProps {
     entityType: EntityWithCreateWorkflow;

@@ -1,3 +1,16 @@
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import type { Pagination } from 'src/services/supabase';
+import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type {
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+} from 'src/types';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
     Box,
     Stack,
@@ -8,38 +21,19 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import Title from 'components/tables/Title';
-import { useZustandStore } from 'context/Zustand/provider';
+
 import { debounce } from 'lodash';
-import {
-    ChangeEvent,
-    MouseEvent,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
 import { useIntl } from 'react-intl';
 import { useEffectOnce } from 'react-use';
-import { Pagination } from 'services/supabase';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
-import { getPagination, getStartingPage } from 'utils/table-utils';
-import EntityTableBody from './TableBody';
-import EntityTableFooter from './TableFooter';
-import EntityTableHeader from './TableHeader';
+
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import Title from 'src/components/tables/Title';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { TableStatuses } from 'src/types';
+import { getPagination, getStartingPage } from 'src/utils/table-utils';
 
 export interface ColumnProps extends TableColumns {
     renderHeader?: (

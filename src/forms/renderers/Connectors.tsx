@@ -23,19 +23,23 @@
   THE SOFTWARE.
 */
 
-import {
-    and,
+import type {
     ControlProps,
-    isOneOfEnumControl,
     OwnPropsOfEnum,
     RankedTester,
+} from '@jsonforms/core';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+
+import {
+    and,
+    isOneOfEnumControl,
     rankWith,
     scopeEndsWith,
 } from '@jsonforms/core';
-import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import { ConnectorAutoComplete } from 'forms/renderers/ConnectorSelect/AutoComplete';
-import { CustomMaterialInputControl } from './Overrides/material/controls/MaterialInputControl';
+
+import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
+import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 

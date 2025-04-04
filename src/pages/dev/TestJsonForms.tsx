@@ -1,6 +1,5 @@
-import { materialCells } from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import Editor from '@monaco-editor/react';
+import { useMemo, useState } from 'react';
+
 import {
     Box,
     Button,
@@ -8,24 +7,29 @@ import {
     Stack,
     StyledEngineProvider,
 } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import PageContainer from 'components/shared/PageContainer';
-import { jsonFormsPadding } from 'context/Theme';
-import { WorkflowContextProvider } from 'context/Workflow';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import useConnectors from 'hooks/connectors/useConnectors';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useMemo, useState } from 'react';
+
+import { materialCells } from '@jsonforms/material-renderers';
+import { JsonForms } from '@jsonforms/react';
+
+import Editor from '@monaco-editor/react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
-import { customAjv } from 'services/ajv';
-import { custom_generateDefaultUISchema } from 'services/jsonforms';
-import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions } from 'services/jsonforms/shared';
-import { DetailsFormHydrator } from 'stores/DetailsForm/Hydrator';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { getDereffedSchema } from 'utils/misc-utils';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import PageContainer from 'src/components/shared/PageContainer';
+import { jsonFormsPadding } from 'src/context/Theme';
+import { WorkflowContextProvider } from 'src/context/Workflow';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
+import useConnectors from 'src/hooks/connectors/useConnectors';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { customAjv } from 'src/services/ajv';
+import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
+import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
+import { defaultOptions } from 'src/services/jsonforms/shared';
+import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { getDereffedSchema } from 'src/utils/misc-utils';
 
 const TestJsonForms = () => {
     const intl = useIntl();

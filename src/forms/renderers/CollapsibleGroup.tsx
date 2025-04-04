@@ -1,30 +1,33 @@
-import { RankedTester, rankWith, uiTypeIs } from '@jsonforms/core';
-import {
-    MaterialLayoutRenderer,
-    MaterialLayoutRendererProps,
-} from '@jsonforms/material-renderers';
+import type { RankedTester } from '@jsonforms/core';
+import type { MaterialLayoutRendererProps } from '@jsonforms/material-renderers';
+
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Button,
     Box,
+    Button,
     Hidden,
+    Tooltip,
     Typography,
     useTheme,
-    Tooltip,
 } from '@mui/material';
-import { defaultOutline, jsonFormsGroupHeaders } from 'context/Theme';
+
+import { rankWith, uiTypeIs } from '@jsonforms/core';
+import { MaterialLayoutRenderer } from '@jsonforms/material-renderers';
+
 import { NavArrowDown, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { withCustomJsonFormsLayoutProps } from 'services/jsonforms/JsonFormsContext';
+
+import { defaultOutline, jsonFormsGroupHeaders } from 'src/context/Theme';
+import SshEndpointInfo from 'src/forms/renderers/Informational/SshEndpoint';
+import { withCustomJsonFormsLayoutProps } from 'src/services/jsonforms/JsonFormsContext';
 import {
     ADVANCED,
     CHILDREN_HAVE_VALUE,
     CONTAINS_REQUIRED_FIELDS,
     SHOW_INFO_SSH_ENDPOINT,
-} from 'services/jsonforms/shared';
-import SshEndpointInfo from './Informational/SshEndpoint';
+} from 'src/services/jsonforms/shared';
 
 export const CollapsibleGroupType = 'CollapsibleGroup';
 

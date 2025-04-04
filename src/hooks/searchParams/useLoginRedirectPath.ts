@@ -1,7 +1,9 @@
-import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'app/routes';
-import useMarketplaceLocalStorage from 'hooks/useMarketplaceLocalStorage';
 import { useMemo } from 'react';
+
 import { useLocation } from 'react-router-dom';
+
+import { authenticatedRoutes, REDIRECT_TO_PARAM_NAME } from 'src/app/routes';
+import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 
 // If no redirectToBase is passed in then we assume you want to get redirected to the home page
 function useLoginRedirectPath(redirectToBase?: string) {
@@ -14,8 +16,8 @@ function useLoginRedirectPath(redirectToBase?: string) {
     const from = marketplaceVerify?.path
         ? `${marketplaceVerify.path}`
         : location.state?.from
-        ? `${location.state.from.pathname}${location.state.from.search}`
-        : authenticatedRoutes.home.path;
+          ? `${location.state.from.pathname}${location.state.from.search}`
+          : authenticatedRoutes.home.path;
 
     const redirectTo = useMemo(
         () =>

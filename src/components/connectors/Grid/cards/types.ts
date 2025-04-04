@@ -1,5 +1,5 @@
-import { TileProps } from 'components/shared/types';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { TileProps } from 'src/components/shared/types';
 
 export interface CardProps {
     Detail: ReactNode;

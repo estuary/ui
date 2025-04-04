@@ -1,9 +1,12 @@
+import type { Entity } from 'src/types';
+
 import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
-import useDiscoverCapture from 'components/capture/useDiscoverCapture';
-import { disabledButtonText } from 'context/Theme';
+
 import { RefreshDouble } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { Entity } from 'types';
+
+import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
+import { disabledButtonText } from 'src/context/Theme';
 
 interface Props {
     entityType: Entity;

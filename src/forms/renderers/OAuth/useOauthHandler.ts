@@ -1,14 +1,16 @@
-import { accessToken, authURL } from 'api/oauth';
-import { useOAuth2 } from 'hooks/forks/react-use-oauth2/components';
-import { isEmpty } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
+
+import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
-import { CREDENTIALS, INJECTED_VALUES } from './shared';
+
+import { accessToken, authURL } from 'src/api/oauth';
+import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
+import { useOAuth2 } from 'src/hooks/forks/react-use-oauth2/components';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.
 export const useOauthHandler = (

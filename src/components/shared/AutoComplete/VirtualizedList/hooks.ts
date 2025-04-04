@@ -1,5 +1,6 @@
+import type { VariableSizeList } from 'react-window';
+
 import React from 'react';
-import { VariableSizeList } from 'react-window';
 
 export function useResetCache(data: any) {
     const ref = React.useRef<VariableSizeList>(null);

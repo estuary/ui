@@ -1,8 +1,8 @@
-import { supabaseClient } from 'context/GlobalProviders';
-import {
-    ConnectorWithTagDetailQuery,
-    CONNECTOR_WITH_TAG_QUERY,
-} from 'hooks/connectors/shared';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { SortDirection } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { CONNECTOR_WITH_TAG_QUERY } from 'src/hooks/connectors/shared';
 import {
     CONNECTOR_DETAILS,
     CONNECTOR_NAME,
@@ -12,9 +12,8 @@ import {
     handleSuccess,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
-import { SortDirection } from 'types';
-import { requiredConnectorColumnsExist } from 'utils/connector-utils';
+} from 'src/services/supabase';
+import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
 
 // Table-specific queries
 const getConnectors = (

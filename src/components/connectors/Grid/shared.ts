@@ -1,4 +1,4 @@
-import { TableIntlConfig } from 'types';
+import type { TableIntlConfig } from 'src/types';
 
 export const intlConfig: TableIntlConfig = {
     header: 'connectors.main.message1',

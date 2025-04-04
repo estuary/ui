@@ -1,8 +1,10 @@
-import { DateTime } from 'luxon';
 import { useMemo } from 'react';
+
+import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
-import { logRocketConsole } from 'services/shared';
-import { stripTimeFromDate } from 'utils/billing-utils';
+
+import { logRocketConsole } from 'src/services/shared';
+import { stripTimeFromDate } from 'src/utils/billing-utils';
 
 interface Props {
     start_date: string;

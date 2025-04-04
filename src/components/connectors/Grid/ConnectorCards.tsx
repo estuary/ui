@@ -1,25 +1,32 @@
-import { Grid, Paper, Typography } from '@mui/material';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getConnectors } from 'api/connectors';
-import LegacyCard from 'components/connectors/Grid/cards/LegacyCard';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { semiTransparentBackground } from 'context/Theme';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
+import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { TableState } from 'src/types';
 
-import { TableState, TableStatuses } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import Card from './cards/Card';
-import ConnectorRequestCard from './cards/ConnectorRequestCard';
-import Detail from './cards/Detail';
-import Logo from './cards/Logo';
-import Title from './cards/Title';
-import { intlConfig } from './shared';
-import ConnectorsSkeleton from './Skeleton';
-import { ConnectorCardsProps } from './types';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { Grid, Paper, Typography } from '@mui/material';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { FormattedMessage } from 'react-intl';
+
+import { getConnectors } from 'src/api/connectors';
+import Card from 'src/components/connectors/Grid/cards/Card';
+import ConnectorRequestCard from 'src/components/connectors/Grid/cards/ConnectorRequestCard';
+import Detail from 'src/components/connectors/Grid/cards/Detail';
+import LegacyCard from 'src/components/connectors/Grid/cards/LegacyCard';
+import Logo from 'src/components/connectors/Grid/cards/Logo';
+import Title from 'src/components/connectors/Grid/cards/Title';
+import { intlConfig } from 'src/components/connectors/Grid/shared';
+import ConnectorsSkeleton from 'src/components/connectors/Grid/Skeleton';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
+import { semiTransparentBackground } from 'src/context/Theme';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
+import { TableStatuses } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
+import {
+    getEmptyTableHeader,
+    getEmptyTableMessage,
+} from 'src/utils/table-utils';
 
 export default function ConnectorCards({
     condensed,

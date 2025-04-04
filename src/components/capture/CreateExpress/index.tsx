@@ -1,22 +1,23 @@
-import { authenticatedRoutes } from 'app/routes';
-import CaptureGenerateButton from 'components/capture/GenerateButton';
+import { useCallback, useEffect, useState } from 'react';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import CaptureGenerateButton from 'src/components/capture/GenerateButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import EntityCreateExpress from 'components/shared/Entity/Create/Express';
-import EntityToolbar from 'components/shared/Entity/Header';
-import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
-import useDraftSpecs from 'hooks/useDraftSpecs';
-import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect, useState } from 'react';
-import { CustomEvents } from 'services/types';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import WorkflowHydrator from 'stores/Workflow/Hydrator';
-import { MAX_DISCOVER_TIME } from 'utils/misc-utils';
+} from 'src/components/editor/Store/hooks';
+import EntityCreateExpress from 'src/components/shared/Entity/Create/Express';
+import EntityToolbar from 'src/components/shared/Entity/Header';
+import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
+import useDraftSpecs from 'src/hooks/useDraftSpecs';
+import usePageTitle from 'src/hooks/usePageTitle';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
+import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 export default function CaptureExpressCreate() {
     usePageTitle({

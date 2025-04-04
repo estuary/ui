@@ -1,10 +1,13 @@
+import type { ConnectorRequestCardProps } from 'src/components/connectors/Grid/cards/types';
+
 import { Stack, Typography, useTheme } from '@mui/material';
-import LegacyCard from 'components/connectors/Grid/cards/LegacyCard';
+
 import { PlusSquare } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import Card from './Card';
-import Title from './Title';
-import { ConnectorRequestCardProps } from './types';
+
+import Card from 'src/components/connectors/Grid/cards/Card';
+import LegacyCard from 'src/components/connectors/Grid/cards/LegacyCard';
+import Title from 'src/components/connectors/Grid/cards/Title';
 
 function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
     const intl = useIntl();

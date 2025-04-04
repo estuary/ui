@@ -1,9 +1,12 @@
-import { singleCallSettings } from 'context/SWR';
 import { useEffect } from 'react';
-import useSWR from 'swr';
-import { stripPathing } from 'utils/misc-utils';
+
 import { useShallow } from 'zustand/react/shallow';
-import { useEntitiesStore } from './Store';
+
+import useSWR from 'swr';
+
+import { singleCallSettings } from 'src/context/SWR';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { stripPathing } from 'src/utils/misc-utils';
 
 // TODO (Entities Store)
 // We should move away from hardcoded hooks and just pass in the capability

@@ -1,17 +1,25 @@
-import { Box, useTheme } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityWorkflow } from 'context/Workflow';
-import useConnectorTag from 'hooks/connectors/useConnectorTag';
-import { isEqual } from 'lodash';
+import type { SectionContentProps } from 'src/components/shared/Entity/EndpointConfig/types';
+
 import { useEffect, useMemo } from 'react';
+
+import { Box, useTheme } from '@mui/material';
+
+import { isEqual } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
-import { createJSONFormDefaults } from 'services/ajv';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
+import { DOCUSAURUS_THEME } from 'src/components/shared/Entity/EndpointConfig/shared';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import useConnectorTag from 'src/hooks/connectors/useConnectorTag';
+import { createJSONFormDefaults } from 'src/services/ajv';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_setEndpointCanBeEmpty,
+    useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_previousEndpointConfig_data,
@@ -19,13 +27,9 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeEmpty,
-    useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
-import { configCanBeEmpty } from 'utils/misc-utils';
-import { DOCUSAURUS_THEME } from './shared';
-import { SectionContentProps } from './types';
+} from 'src/stores/EndpointConfig/hooks';
+import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { configCanBeEmpty } from 'src/utils/misc-utils';
 
 const SectionContent = ({
     connectorImage,

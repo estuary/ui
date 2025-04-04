@@ -1,7 +1,7 @@
-import { Invoice } from 'api/billing';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { CatalogStats_Billing, Entity } from 'types';
-import { InvoiceId } from 'utils/billing-utils';
+import type { Invoice } from 'src/api/billing';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { CatalogStats_Billing, Entity } from 'src/types';
+import type { InvoiceId } from 'src/utils/billing-utils';
 
 export interface DataVolumeByTask {
     catalogName: string;

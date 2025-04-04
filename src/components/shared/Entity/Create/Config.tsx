@@ -1,12 +1,16 @@
+import type { EntityCreateConfigProps } from 'src/components/shared/Entity/Create/types';
+
+import { useEffect } from 'react';
+
 import { Collapse, Typography } from '@mui/material';
-import ConnectorGrid from 'components/connectors/Grid';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
+import { FormattedMessage } from 'react-intl';
+
+import ConnectorGrid from 'src/components/connectors/Grid';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { EntityCreateConfigProps } from './types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function EntityCreateConfig({
     condensed,

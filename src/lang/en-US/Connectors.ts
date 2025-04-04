@@ -1,4 +1,4 @@
-import { CommonMessages } from './CommonMessages';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 export const Connectors: Record<string, string> = {
     'connectorTable.title': `Installed ${CommonMessages['terms.connectors']}`,

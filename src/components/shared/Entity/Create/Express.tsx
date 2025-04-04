@@ -1,31 +1,34 @@
+import type { BaseEntityCreateProps } from 'src/components/shared/Entity/Create/types';
+
+import { useEffect } from 'react';
+
 import { Box, Collapse } from '@mui/material';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
-import { useEffect } from 'react';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/components/editor/Store/hooks';
+import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
+import EntityError from 'src/components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
+import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+    useEndpointConfigStore_changed,
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
-} from 'stores/FormState/hooks';
-import EndpointConfig from '../EndpointConfig';
-import EntityError from '../Error';
-import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import useUnsavedChangesPrompt from '../hooks/useUnsavedChangesPrompt';
-import ValidationErrorSummary from '../ValidationErrorSummary';
-import { BaseEntityCreateProps } from './types';
+} from 'src/stores/FormState/hooks';
 
 const EntityCreateExpress = ({
     entityType,

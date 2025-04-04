@@ -1,22 +1,19 @@
-import produce from 'immer';
+import type { PreSavePromptStore } from 'src/components/shared/Entity/prompts/store/types';
+
+import { useMemo } from 'react';
+
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { devtoolsOptions } from 'utils/store-utils';
 import { useShallow } from 'zustand/react/shallow';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'services/supabase';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useMemo } from 'react';
-import { PromptStep } from '../types';
-import {
-    DataFlowResetSteps,
-    getInitialDataFlowResetContext,
-} from '../steps/dataFlowReset/shared';
-import { PublishStep } from '../steps/preSave/Publish/definition';
-import { ReviewSelectionStep } from '../steps/preSave/ReviewSelection/definition';
-import { PreSavePromptStore } from './types';
-import { defaultStepState } from './shared';
+
+import produce from 'immer';
+
+import { getInitialDataFlowResetContext } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/shared';
+import { defaultStepState } from 'src/components/shared/Entity/prompts/store/shared';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { logRocketEvent } from 'src/services/shared';
+import { JOB_STATUS_FAILURE, JOB_STATUS_SUCCESS } from 'src/services/supabase';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialState = (): Pick<
     PreSavePromptStore,
@@ -34,30 +31,15 @@ export const usePreSavePromptStore = create<PreSavePromptStore>()(
             ...getInitialState(),
             resetState: () => set(getInitialState(), false, 'resetState'),
 
-            initializeSteps: (backfillEnabled) =>
+            initializeSteps: (settings) =>
                 set(
                     produce((state: PreSavePromptStore) => {
+                        state.context.loggingEvent = settings.loggingEvent;
+                        state.context.dialogMessageId =
+                            settings.dialogMessageId;
+                        state.steps = settings.steps;
+
                         const initUUID = crypto.randomUUID();
-                        const newSteps: PromptStep[] = [];
-
-                        if (backfillEnabled) {
-                            newSteps.push(...DataFlowResetSteps);
-
-                            state.context.loggingEvent =
-                                CustomEvents.DATA_FLOW_RESET;
-                            state.context.dialogMessageId =
-                                'resetDataFlow.dialog.title';
-                        } else {
-                            newSteps.push(ReviewSelectionStep);
-                            newSteps.push(PublishStep);
-
-                            state.context.loggingEvent =
-                                CustomEvents.ENTITY_SAVE;
-                            state.context.dialogMessageId =
-                                'preSavePrompt.dialog.title';
-                        }
-
-                        state.steps = newSteps;
                         state.initUUID = initUUID;
                         logRocketEvent(state.context.loggingEvent, {
                             step: 'init',

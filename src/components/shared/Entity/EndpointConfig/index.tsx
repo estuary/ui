@@ -1,11 +1,12 @@
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { useEntityWorkflow } from 'context/Workflow';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useEndpointConfigStore_errorsExist } from 'stores/EndpointConfig/hooks';
-import SectionContent from './SectionContent';
-import { EndpointConfigProps } from './types';
+import type { EndpointConfigProps } from 'src/components/shared/Entity/EndpointConfig/types';
+
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import EndpointConfigHeader from 'src/components/shared/Entity/EndpointConfig/Header';
+import SectionContent from 'src/components/shared/Entity/EndpointConfig/SectionContent';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfigStore_errorsExist } from 'src/stores/EndpointConfig/hooks';
 
 function EndpointConfig({
     hideBorder,

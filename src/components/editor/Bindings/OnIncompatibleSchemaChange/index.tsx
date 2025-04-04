@@ -1,7 +1,10 @@
+import type { OnIncompatibleSchemaChangeProps } from 'src/components/incompatibleSchemaChange/types';
+
 import { Box, Stack, Typography } from '@mui/material';
-import { OnIncompatibleSchemaChangeProps } from 'components/incompatibleSchemaChange/types';
+
 import { useIntl } from 'react-intl';
-import Form from './Form';
+
+import Form from 'src/components/editor/Bindings/OnIncompatibleSchemaChange/Form';
 
 function OnIncompatibleSchemaChange({
     bindingIndex = -1,

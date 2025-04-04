@@ -1,5 +1,5 @@
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { BaseComponentProps } from 'types';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { BaseComponentProps } from 'src/types';
 
 export interface WorkflowHydratorProps extends BaseComponentProps {
     expressWorkflow?: boolean;

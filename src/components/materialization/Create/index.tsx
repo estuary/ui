@@ -1,21 +1,22 @@
-import { authenticatedRoutes } from 'app/routes';
+import { useCallback, useEffect } from 'react';
+
+import { authenticatedRoutes } from 'src/app/routes';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import MaterializeGenerateButton from 'components/materialization/GenerateButton';
-import EntityCreate from 'components/shared/Entity/Create';
-import EntityToolbar from 'components/shared/Entity/Header';
-import { MutateDraftSpecProvider } from 'components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'hooks/connectors/useHasConnectors';
-import useDraftSpecs from 'hooks/useDraftSpecs';
-import usePageTitle from 'hooks/usePageTitle';
-import { useCallback, useEffect } from 'react';
-import { CustomEvents } from 'services/types';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import WorkflowHydrator from 'stores/Workflow/Hydrator';
+} from 'src/components/editor/Store/hooks';
+import MaterializeGenerateButton from 'src/components/materialization/GenerateButton';
+import EntityCreate from 'src/components/shared/Entity/Create';
+import EntityToolbar from 'src/components/shared/Entity/Header';
+import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
+import useDraftSpecs from 'src/hooks/useDraftSpecs';
+import usePageTitle from 'src/hooks/usePageTitle';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 
 function MaterializationCreate() {
     usePageTitle({

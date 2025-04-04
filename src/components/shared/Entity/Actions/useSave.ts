@@ -1,41 +1,46 @@
+import type { CustomEvents } from 'src/services/types';
+
+import { useCallback, useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
+
 import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
-} from 'api/draftSpecs';
-import { createPublication, getPublicationByIdQuery } from 'api/publications';
-import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+} from 'src/api/draftSpecs';
+import {
+    createPublication,
+    getPublicationByIdQuery,
+} from 'src/api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setPubId,
-} from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { DEFAULT_FILTER } from 'services/supabase';
-import { CustomEvents } from 'services/types';
+} from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
     useFormStateStore_setShowSavePrompt,
     useFormStateStore_updateStatus,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
-} from 'stores/NotificationStore';
-import { hasLength } from 'utils/misc-utils';
-import { getCollectionName } from 'utils/workflow-utils';
+} from 'src/stores/NotificationStore';
+import { hasLength } from 'src/utils/misc-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 const trackEvent = (logEvent: any, payload: any) => {
     logRocketEvent(logEvent, {

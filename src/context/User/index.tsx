@@ -1,10 +1,15 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { getUserDetails } from 'services/supabase';
-import { supabaseClient } from 'context/GlobalProviders';
-import { useUserStore } from './useUserContextStore';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import {
+    getUserDetails,
+    logRocketConsole,
+    logRocketEvent,
+} from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 const UserStoreProvider = ({ children }: BaseComponentProps) => {
     const [setInitialized, setSession, setUser, setUserDetails] = useUserStore(

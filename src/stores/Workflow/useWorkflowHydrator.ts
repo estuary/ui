@@ -1,6 +1,6 @@
-import { logRocketConsole } from 'services/shared';
-import { useDetailsFormHydrator } from 'stores/DetailsForm/useDetailsFormHydrator';
-import { useWorkflowStore } from './Store';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const useWorkflowHydrator = () => {
     const { hydrateDetailsForm } = useDetailsFormHydrator();

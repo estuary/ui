@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction } from 'react';
-import { Entity, EntityWithCreateWorkflow } from 'types';
+import type { Dispatch, SetStateAction } from 'react';
+import type { Entity, EntityWithCreateWorkflow } from 'src/types';
 
 export interface ConnectorCardsProps {
     protocol: string | null;

@@ -1,12 +1,12 @@
-import {
+import type {
     ButtonProps,
     PopperProps,
     SxProps,
     Theme,
     ToggleButtonProps,
 } from '@mui/material';
-import { ReactNode } from 'react';
-import { BaseComponentProps } from 'types';
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from 'src/types';
 
 export type BooleanString = 'true' | 'false';
 

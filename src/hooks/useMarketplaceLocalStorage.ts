@@ -1,5 +1,6 @@
 import { useLocalStorage } from 'react-use';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
+
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 function useMarketplaceLocalStorage() {
     return useLocalStorage<{ path: string | null }>(

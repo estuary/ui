@@ -1,18 +1,22 @@
-import { Button } from '@mui/material';
-import { useEditorStore_queryResponse_draftSpecs } from 'components/editor/Store/hooks';
-import AddDialog from 'components/shared/Entity/AddDialog';
-import OptionalSettings from 'components/shared/Entity/AddDialog/OptionalSettings';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { isString } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { useSourceCaptureStore_setSourceCaptureDefinition } from 'stores/SourceCapture/hooks';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { getSourceCapture } from 'utils/entity-utils';
+
+import { Button } from '@mui/material';
+
 import { useShallow } from 'zustand/react/shallow';
-import AddSourceCaptureToSpecButton from './AddSourceCaptureToSpecButton';
-import CancelSourceCaptureButton from './CancelSourceCaptureButton';
+
+import { isString } from 'lodash';
+import { FormattedMessage } from 'react-intl';
+
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
+import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
+import AddDialog from 'src/components/shared/Entity/AddDialog';
+import OptionalSettings from 'src/components/shared/Entity/AddDialog/OptionalSettings';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { getSourceCapture } from 'src/utils/entity-utils';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
@@ -111,8 +115,8 @@ function SelectCapture() {
                         showLoading
                             ? 'workflows.sourceCapture.cta.loading'
                             : sourceCapture
-                            ? 'workflows.sourceCapture.cta.edit'
-                            : 'workflows.sourceCapture.cta'
+                              ? 'workflows.sourceCapture.cta.edit'
+                              : 'workflows.sourceCapture.cta'
                     }
                 />
             </Button>

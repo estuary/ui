@@ -1,6 +1,8 @@
-import { Skeleton, TableCell, TableRow } from '@mui/material';
 import { useMemo } from 'react';
-import { getTableComponents } from 'utils/table-utils';
+
+import { Skeleton, TableCell, TableRow } from '@mui/material';
+
+import { getTableComponents } from 'src/utils/table-utils';
 
 interface Props {
     columnKeys: string[];

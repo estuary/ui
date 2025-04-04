@@ -1,4 +1,4 @@
-import { Details } from './types';
+import type { Details } from 'src/stores/DetailsForm/types';
 
 export const initialDetails: Details = {
     data: {

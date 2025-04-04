@@ -1,4 +1,4 @@
-import { client } from 'services/client';
+import { client } from 'src/services/client';
 
 // These are generated in vite.config.ts 'writeVersionToFile'
 interface LatestVersionDetails {

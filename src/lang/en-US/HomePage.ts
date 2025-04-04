@@ -1,4 +1,4 @@
-import { CommonMessages } from './CommonMessages';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 export const HomePage: Record<string, string> = {
     'home.main.header': `Welcome to Flow!`,

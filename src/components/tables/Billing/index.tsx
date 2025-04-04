@@ -1,14 +1,19 @@
-import { Box, Table, TableContainer } from '@mui/material';
-import Rows from 'components/tables/Billing/Rows';
-import EntityTableBody from 'components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
-import { getTableHeaderWithoutHeaderColor } from 'context/Theme';
+import type { TableColumns } from 'src/types';
+
 import { useMemo } from 'react';
+
+import { Box, Table, TableContainer } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { useBilling_selectedInvoice } from 'stores/Billing/hooks';
-import { TableColumns, TableStatuses } from 'types';
-import { invoiceId } from 'utils/billing-utils';
+
+import Rows from 'src/components/tables/Billing/Rows';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
+import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { TableStatuses } from 'src/types';
+import { invoiceId } from 'src/utils/billing-utils';
 
 export const columns: TableColumns[] = [
     {
@@ -85,8 +90,8 @@ function BillingHistoryTable() {
                         billingHistory.length > 0
                             ? { status: TableStatuses.DATA_FETCHED }
                             : networkFailed
-                            ? { status: TableStatuses.NETWORK_FAILED }
-                            : { status: TableStatuses.NO_EXISTING_DATA }
+                              ? { status: TableStatuses.NETWORK_FAILED }
+                              : { status: TableStatuses.NO_EXISTING_DATA }
                     }
                     loading={Boolean(active || !hydrated)}
                     rows={dataRows}

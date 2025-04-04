@@ -6,11 +6,23 @@ A prompt is a `stepper` that is shown before an action is taken. The idea is to 
 
 A `prompt` is currently a dialog that is made up of `Title`, `Actions`, and `Content`(this consumes a list of `step`s to know what to render).
 
-Each `step` needs a `definition` file. This stores the interface of what data that `step` _adds_ to the context. Also, it defines a `promptstep` const which contains everything it needs to render the`step`.
+#### Prompts
 
-These `definition`s are then stored in an array. The order of the array is the order of the steps and how they will be stepped through.
+To create a `prompt` you need to add a {[`promptNameKey`]:`PromptSettings`} to the `PROMPT_SETTINGS` object stored in the `src/settings/prompts` file. This stores the dialog title key, logging prefix, and what `steps` are included. _!WARNING!_ The order of the `steps` array is the order of how they will be looped through.
 
-All this is _really_ close to a finite state machine... but missing some key features of those.
+For a `prompt`'s `step`s you should keep everything in a `./steps/{prompt name}/{step name}` directory.
+
+#### Steps
+
+To create a `step` for a `prompt` you need to add a `PromptStep` to the `definitions` file in `./steps/definitions.ts`. This is a dictionary of `key` and `promptstep`. The `promptStep` contains everything _required_ to render the`step`.
+
+In addition, each `step` has an _optional_ `types` files that stores the interface of what data that `step` _adds_ to the context.
+
+#### Notes
+
+We do some weird "breaking up" to prevent circular dependencies with the stores.
+
+All this is _really_ close to a finite state machine. However, _it is NOT_ one!
 
 ### Assumptions made in code
 

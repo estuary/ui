@@ -1,20 +1,24 @@
+import type { Props } from 'src/components/shared/Entity/DetailsForm/types';
+
+import { Box, Stack, Typography } from '@mui/material';
+
 import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
-import { Box, Stack, Typography } from '@mui/material';
-import { useEditorStore_isSaving } from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
-import { Props } from 'components/shared/Entity/DetailsForm/types';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
+
 import { FormattedMessage, useIntl } from 'react-intl';
-import defaultRenderers from 'services/jsonforms/defaultRenderers';
-import { defaultOptions, showValidation } from 'services/jsonforms/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
+import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import useFormFields from 'src/components/shared/Entity/DetailsForm/useFormFields';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
+import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
+import { defaultOptions, showValidation } from 'src/services/jsonforms/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useFormStateStore_displayValidation,
     useFormStateStore_isActive,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState/hooks';
-import useFormFields from './useFormFields';
+} from 'src/stores/FormState/hooks';
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 

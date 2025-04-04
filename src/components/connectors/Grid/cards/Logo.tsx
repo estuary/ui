@@ -1,5 +1,6 @@
+import type { LogoProps } from 'src/components/connectors/Grid/cards/types';
+
 import { NetworkLeft } from 'iconoir-react';
-import { LogoProps } from './types';
 
 function Logo({
     imageSrc,

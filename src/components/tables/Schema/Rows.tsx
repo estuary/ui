@@ -1,9 +1,17 @@
-import { Box, Stack, TableCell, TableRow } from '@mui/material';
-import { orderBy } from 'lodash';
+import type {
+    InferSchemaResponseProperty,
+    Schema,
+    SortDirection,
+} from 'src/types';
+
 import { useMemo } from 'react';
-import { InferSchemaResponseProperty, Schema, SortDirection } from 'types';
-import { basicSort_string } from 'utils/misc-utils';
-import ChipListCell from '../cells/ChipList';
+
+import { Box, Stack, TableCell, TableRow } from '@mui/material';
+
+import { orderBy } from 'lodash';
+
+import ChipListCell from 'src/components/tables/cells/ChipList';
+import { basicSort_string } from 'src/utils/misc-utils';
 
 interface RowProps {
     row: InferSchemaResponseProperty;
@@ -24,9 +32,8 @@ function Row({ row }: RowProps) {
                 (rowType) => rowType === rowTypeString
             );
             if (stringIndex > -1) {
-                row.types[
-                    stringIndex
-                ] = `${rowTypeString}: ${row.string_format}`;
+                row.types[stringIndex] =
+                    `${rowTypeString}: ${row.string_format}`;
             }
         }
 

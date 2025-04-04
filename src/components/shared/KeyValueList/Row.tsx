@@ -1,5 +1,6 @@
+import type { ListChildComponentProps } from 'react-window';
+
 import { ListItemText } from '@mui/material';
-import { ListChildComponentProps } from 'react-window';
 
 interface Props extends ListChildComponentProps {
     data: any;

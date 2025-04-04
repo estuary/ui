@@ -1,7 +1,7 @@
-import EntityExistenceGuard from 'app/guards/EntityExistenceGuard';
-import MaterializationEdit from 'components/materialization/Edit';
-import { EntityContextProvider } from 'context/EntityContext';
-import { WorkflowContextProvider } from 'context/Workflow';
+import EntityExistenceGuard from 'src/app/guards/EntityExistenceGuard';
+import MaterializationEdit from 'src/components/materialization/Edit';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import { WorkflowContextProvider } from 'src/context/Workflow';
 
 function MaterializationEditRoute() {
     return (

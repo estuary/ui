@@ -1,12 +1,14 @@
+import type { LogDialogProps } from 'src/components/shared/Entity/LogDialog/types';
+
 import {
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { useFormStateStore_message } from 'stores/FormState/hooks';
-import LogDialogContent from './Content';
-import { LogDialogProps } from './types';
+
+import LogDialogContent from 'src/components/shared/Entity/LogDialog/Content';
+import { useFormStateStore_message } from 'src/stores/FormState/hooks';
 
 const TITLE_ID = 'logs-dialog-title';
 

@@ -1,9 +1,11 @@
+import type { TileProps } from 'src/components/shared/types';
+
 import { ButtonBase } from '@mui/material';
+
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
-} from 'context/Theme';
-import { TileProps } from './types';
+} from 'src/context/Theme';
 
 const boxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';

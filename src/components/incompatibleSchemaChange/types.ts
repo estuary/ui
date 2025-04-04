@@ -1,4 +1,4 @@
-import { choices } from './shared';
+import type { choices } from 'src/components/incompatibleSchemaChange/shared';
 
 export interface BaseFormProps {
     currentSetting: any;

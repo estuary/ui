@@ -1,8 +1,11 @@
-import { Grid, useMediaQuery, useTheme } from '@mui/material';
-import ConnectorToolbar from 'components/connectors/Grid/ConnectorToolbar';
+import type { ConnectorGridProps } from 'src/components/connectors/Grid/types';
+
 import { useState } from 'react';
-import ConnectorCards from './ConnectorCards';
-import { ConnectorGridProps } from './types';
+
+import { Grid, useMediaQuery, useTheme } from '@mui/material';
+
+import ConnectorCards from 'src/components/connectors/Grid/ConnectorCards';
+import ConnectorToolbar from 'src/components/connectors/Grid/ConnectorToolbar';
 
 function ConnectorGrid({ condensed, protocolPreset }: ConnectorGridProps) {
     const theme = useTheme();

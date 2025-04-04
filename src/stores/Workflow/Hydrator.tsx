@@ -1,14 +1,17 @@
-import DraftInitializer from 'components/shared/Entity/Edit/DraftInitializer';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useExpressWorkflowAuth from 'hooks/useExpressWorkflowAuth';
+import type { WorkflowHydratorProps } from 'src/stores/Workflow/types';
+
 import { Fragment } from 'react';
+
 import { useEffectOnce } from 'react-use';
-import { logRocketConsole } from 'services/shared';
-import BindingHydrator from 'stores/Binding/Hydrator';
-import { EndpointConfigHydrator } from 'stores/EndpointConfig/Hydrator';
-import { useWorkflowStore } from './Store';
-import { WorkflowHydratorProps } from './types';
-import { useWorkflowHydrator } from './useWorkflowHydrator';
+
+import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useExpressWorkflowAuth from 'src/hooks/useExpressWorkflowAuth';
+import { logRocketConsole } from 'src/services/shared';
+import BindingHydrator from 'src/stores/Binding/Hydrator';
+import { EndpointConfigHydrator } from 'src/stores/EndpointConfig/Hydrator';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 
 // This hydrator is here without a store so that we can start working on moving a lot of
 //  these separate stores into a single "Workflow" store for Create and Edit.

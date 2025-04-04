@@ -1,31 +1,32 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { createEntityDraft, getDraftsByCatalogName } from 'api/drafts';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { Dispatch, SetStateAction } from 'react';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+import type { LiveSpecsExtQuery_ByLiveSpecId } from 'src/api/liveSpecsExt';
+
+import { useCallback } from 'react';
+
+import { createEntityDraft, getDraftsByCatalogName } from 'src/api/drafts';
 import {
     createDraftSpec,
-    DraftSpecsExtQuery_ByCatalogName,
     getDraftSpecsByCatalogName,
     modifyDraftSpec,
-} from 'api/draftSpecs';
-import {
-    getLiveSpecsByLiveSpecId,
-    LiveSpecsExtQuery_ByLiveSpecId,
-} from 'api/liveSpecsExt';
+} from 'src/api/draftSpecs';
+import { getLiveSpecsByLiveSpecId } from 'src/api/liveSpecsExt';
 import {
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
-import useEntityEditNavigate from 'components/shared/Entity/hooks/useEntityEditNavigate';
-import { useEntityType } from 'context/EntityContext';
+} from 'src/components/editor/Store/hooks';
+import useEntityEditNavigate from 'src/components/shared/Entity/hooks/useEntityEditNavigate';
+import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { Dispatch, SetStateAction, useCallback } from 'react';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 interface SupabaseConfig {
     createNew: boolean;

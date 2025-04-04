@@ -1,3 +1,7 @@
+import type { BaseFormProps } from 'src/components/incompatibleSchemaChange/types';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import {
     Autocomplete,
     Button,
@@ -5,16 +9,16 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import SelectorOption from 'components/incompatibleSchemaChange/SelectorOption';
-import AlertBox from 'components/shared/AlertBox';
-import useSupportedOptions from 'hooks/OnIncompatibleSchemaChange/useSupportedOptions';
-import { useEffect, useMemo, useState } from 'react';
+
 import { useIntl } from 'react-intl';
-import { stringifyJSON } from 'services/stringify';
-import { useBindingStore } from 'stores/Binding/Store';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { autoCompleteDefaultProps } from './shared';
-import { BaseFormProps } from './types';
+
+import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
+import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChange/shared';
+import AlertBox from 'src/components/shared/AlertBox';
+import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupportedOptions';
+import { stringifyJSON } from 'src/services/stringify';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export default function IncompatibleSchemaChangeForm({
     currentSetting,

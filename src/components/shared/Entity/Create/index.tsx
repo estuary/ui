@@ -1,43 +1,47 @@
+import type { EntityCreateProps } from 'src/components/shared/Entity/Create/types';
+
+import { useEffect, useMemo } from 'react';
+
 import { Box, Collapse } from '@mui/material';
-import CollectionConfig from 'components/collection/Config';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+
+import { FormattedMessage } from 'react-intl';
+
+import CollectionConfig from 'src/components/collection/Config';
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm from 'components/shared/Entity/DetailsForm';
-import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import EntityError from 'components/shared/Entity/Error';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
+} from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
+import DetailsForm from 'src/components/shared/Entity/DetailsForm';
+import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
+import EntityError from 'src/components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
+import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { BASE_ERROR } from 'src/services/supabase';
+import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+    useEndpointConfigStore_changed,
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
-import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import ValidationErrorSummary from '../ValidationErrorSummary';
-import { EntityCreateProps } from './types';
+} from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 function EntityCreate({
     entityType,

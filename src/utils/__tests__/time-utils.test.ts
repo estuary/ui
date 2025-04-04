@@ -1,4 +1,4 @@
-import { formatCaptureInterval } from 'utils/time-utils';
+import { formatCaptureInterval } from 'src/utils/time-utils';
 
 describe('formatCaptureInterval', () => {
     describe('returns null', () => {

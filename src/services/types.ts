@@ -1,4 +1,4 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export enum CustomEvents {
     AUTHORIZE_TASK = 'AuthorizeTask',

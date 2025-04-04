@@ -1,15 +1,16 @@
-import { Box, Button, Stack, SxProps, Theme, Toolbar } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import CapturesTable from 'components/tables/Captures';
-import usePageTitle from 'hooks/usePageTitle';
+import type { SxProps, Theme } from '@mui/material';
+
+import { Box, Button, Stack, Toolbar } from '@mui/material';
+
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
-const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
-    padding: 2,
-};
+import { authenticatedRoutes } from 'src/app/routes';
+import CapturesTable from 'src/components/tables/Captures';
+import usePageTitle from 'src/hooks/usePageTitle';
+
+const boxStyling: SxProps<Theme> = { marginBottom: 2, padding: 2 };
 
 const Capture = () => {
     usePageTitle({

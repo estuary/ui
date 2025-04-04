@@ -1,16 +1,21 @@
+import type { SortDirection, TableColumns, TableState } from 'src/types';
+import type { PublicationInfo } from 'src/types/controlPlane';
+
+import { useEffect, useState } from 'react';
+
 import { Box, Table, TableContainer } from '@mui/material';
-import EntityTableBody from 'components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'components/tables/EntityTable/TableHeader';
+
+import { useIntl } from 'react-intl';
+
+import Rows from 'src/components/tables/ControllerStatusHistory/Rows';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useEntityStatusStore_recentHistory } from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { SortDirection, TableColumns, TableState, TableStatuses } from 'types';
-import { PublicationInfo } from 'types/controlPlane';
-import Rows from './Rows';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_recentHistory } from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [
     {

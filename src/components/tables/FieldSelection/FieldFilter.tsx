@@ -1,12 +1,15 @@
+import type { ChangeEvent } from 'react';
+
 import { TextField } from '@mui/material';
+
 import { debounce } from 'lodash';
-import { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
+
 import {
     useBinding_searchQuery,
     useBinding_setSearchQuery,
-} from 'stores/Binding/hooks';
-import { TablePrefixes } from 'stores/Tables/hooks';
+} from 'src/stores/Binding/hooks';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 interface Props {
     disabled: boolean;

@@ -1,13 +1,16 @@
+import type { CardProps } from 'src/components/connectors/Grid/cards/types';
+
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import ExternalLink from 'components/shared/ExternalLink';
-import Tile from 'components/shared/Tile';
+
+import { FormattedMessage } from 'react-intl';
+
+import ExternalLink from 'src/components/shared/ExternalLink';
+import Tile from 'src/components/shared/Tile';
 import {
     connectorImageBackgroundRadius,
     connectorImageBackgroundSx,
     sample_grey,
-} from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
-import { CardProps } from './types';
+} from 'src/context/Theme';
 
 export default function LegacyCard({
     clickHandler,
@@ -35,11 +38,7 @@ export default function LegacyCard({
                     }}
                 >
                     <Box>
-                        <Stack
-                            sx={{
-                                marginBottom: recommended ? 1 : 2,
-                            }}
-                        >
+                        <Stack sx={{ marginBottom: recommended ? 1 : 2 }}>
                             <Stack
                                 style={{
                                     justifyContent: 'center',

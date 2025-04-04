@@ -1,20 +1,20 @@
-import {
+import type {
     PostgrestError,
     PostgrestFilterBuilder,
     PostgrestResponse,
 } from '@supabase/postgrest-js';
-import { User } from '@supabase/supabase-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { forEach, isEmpty } from 'lodash';
-import retry from 'retry';
-import {
+import type {
     JobStatus,
     SortDirection,
     SupabaseInvokeResponse,
-    UserDetails,
-} from 'types';
-import { logRocketEvent, retryAfterFailure } from './shared';
-import { CustomEvents } from './types';
+} from 'src/types';
+
+import { forEach } from 'lodash';
+import retry from 'retry';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph
 export const CONNECTOR_NAME = `title->>en-US`;
@@ -48,8 +48,6 @@ export const tokenHasIssues = (errorMessage?: string) => {
             errorMessage.includes(ERROR_MESSAGES.refreshInvalid))
     );
 };
-
-export const DEFAULT_FILTER = '__unknown__';
 
 export const BASE_ERROR = {
     code: '',
@@ -108,12 +106,6 @@ export enum FUNCTIONS {
     OAUTH = 'oauth',
     BILLING = 'billing',
 }
-
-export const OAUTH_OPERATIONS = {
-    AUTH_URL: 'auth-url',
-    ACCESS_TOKEN: 'access-token',
-    ENCRYPT_CONFIG: 'encrypt-config',
-};
 
 // https://github.com/orgs/supabase/discussions/19651
 const reservedWrapper = `%22`;
@@ -202,40 +194,6 @@ export const defaultTableFilter = <Response>(
     }
 
     return queryBuilder;
-};
-
-export const getUserDetails = (
-    user: User | null | undefined
-): UserDetails | null => {
-    if (!user) {
-        return null;
-    }
-
-    let userName, email, emailVerified, avatar, usedSSO;
-
-    if (!isEmpty(user.user_metadata)) {
-        email = user.user_metadata.email;
-        emailVerified = user.user_metadata.email_verified;
-        avatar = user.user_metadata.avatar_url;
-        userName = user.user_metadata.full_name ?? email;
-        usedSSO = user.app_metadata.provider
-            ? user.app_metadata.provider.startsWith('sso')
-            : false;
-    } else {
-        userName = user.email;
-        email = user.email;
-        emailVerified = false;
-        usedSSO = false;
-    }
-
-    return {
-        id: user.id,
-        userName,
-        email,
-        emailVerified,
-        avatar,
-        usedSSO,
-    };
 };
 
 export interface CallSupabaseResponse<T> {
@@ -465,8 +423,8 @@ export const handlePollerError = (failedResponse: any) => {
     return failedResponse.error === JOB_STATUS_POLLER_ERROR
         ? DEFAULT_POLLER_ERROR.error
         : failedResponse.error
-        ? failedResponse
-        : null;
+          ? failedResponse
+          : null;
 };
 
 export const JOB_TYPE_EMPTY = 'emptyDraft';

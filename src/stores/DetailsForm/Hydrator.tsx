@@ -1,10 +1,11 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+import type { BaseComponentProps } from 'src/types';
 
 import { useEffectOnce } from 'react-use';
-import { logRocketConsole } from 'services/shared';
-import { BaseComponentProps } from 'types';
-import { useDetailsFormStore } from './Store';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 // TODO: Remove details form store hydrator and hydrateState action.
 //   It is only used by the test JSON forms page.

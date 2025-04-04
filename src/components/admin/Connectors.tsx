@@ -1,9 +1,11 @@
 import { Stack, Toolbar, Typography } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import AdminTabs from 'components/admin/Tabs';
-import ConnectorGrid from 'components/connectors/Grid';
-import usePageTitle from 'hooks/usePageTitle';
+
 import { FormattedMessage } from 'react-intl';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import AdminTabs from 'src/components/admin/Tabs';
+import ConnectorGrid from 'src/components/connectors/Grid';
+import usePageTitle from 'src/hooks/usePageTitle';
 
 const AdminConnectors = () => {
     usePageTitle({

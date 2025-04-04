@@ -1,8 +1,8 @@
-import { authenticatedRoutes } from 'app/routes';
-import EntityDetails from 'components/shared/Entity/Details';
-import CatalogNameGuard from 'components/shared/guards/CatalogName';
-import { EntityContextProvider } from 'context/EntityContext';
-import usePageTitle from 'hooks/usePageTitle';
+import { authenticatedRoutes } from 'src/app/routes';
+import EntityDetails from 'src/components/shared/Entity/Details';
+import CatalogNameGuard from 'src/components/shared/guards/CatalogName';
+import { EntityContextProvider } from 'src/context/EntityContext';
+import usePageTitle from 'src/hooks/usePageTitle';
 
 function MaterializationDetails() {
     usePageTitle({

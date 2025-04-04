@@ -1,13 +1,13 @@
-import { invoiceId } from 'utils/billing-utils';
-import { useBillingStore } from './Store';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { invoiceId } from 'src/utils/billing-utils';
 
 // Selector Hooks
 export const useBilling_selectedInvoice = () => {
     return useBillingStore((state) =>
         state.selectedInvoiceId
-            ? state.invoices.find(
+            ? (state.invoices.find(
                   (inv) => invoiceId(inv) === state.selectedInvoiceId
-              ) ?? null
+              ) ?? null)
             : null
     );
 };

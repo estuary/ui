@@ -1,4 +1,11 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
+import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { Entity } from 'src/types';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { debounce, get, has, isEqual, set } from 'lodash';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
@@ -6,13 +13,9 @@ import {
     useEditorStore_queryResponse_isValidating,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setSpecs,
-} from 'components/editor/Store/hooks';
-import { DraftSpec, DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { debounce, get, has, isEqual, set } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
-import { DEFAULT_DEBOUNCE_WAIT } from 'utils/workflow-utils';
+} from 'src/components/editor/Store/hooks';
+import { stringifyJSON } from 'src/services/stringify';
+import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function useDraftSpecEditor(
     entityName: string | undefined,
