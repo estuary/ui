@@ -11,12 +11,12 @@ import {
 import EntityCreateExpress from 'src/components/shared/Entity/Create/Express';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import WorkflowInitializer from 'src/components/shared/Entity/WorkflowInitializer';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 export default function CaptureExpressCreate() {
@@ -73,7 +73,7 @@ export default function CaptureExpressCreate() {
     }, [entityNameChanged]);
 
     return (
-        <WorkflowHydrator expressWorkflow>
+        <WorkflowInitializer expressWorkflow>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
                 <EntityCreateExpress
                     entityType={entityType}
@@ -104,6 +104,6 @@ export default function CaptureExpressCreate() {
                     }
                 />
             </MutateDraftSpecProvider>
-        </WorkflowHydrator>
+        </WorkflowInitializer>
     );
 }

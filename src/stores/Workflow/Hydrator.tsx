@@ -1,11 +1,7 @@
-import type { WorkflowHydratorProps } from 'src/stores/Workflow/types';
-
-import { Fragment } from 'react';
+import type { WorkflowInitializerProps } from 'src/components/shared/Entity/types';
 
 import { useEffectOnce } from 'react-use';
 
-import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useExpressWorkflowAuth from 'src/hooks/useExpressWorkflowAuth';
 import { logRocketConsole } from 'src/services/shared';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
@@ -18,10 +14,7 @@ import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 function WorkflowHydrator({
     children,
     expressWorkflow,
-}: WorkflowHydratorProps) {
-    const isEdit = useEntityWorkflow_Editing();
-    const InitializerComponent = isEdit ? DraftInitializer : Fragment;
-
+}: WorkflowInitializerProps) {
     const { getExpressWorkflowAuth } = useExpressWorkflowAuth();
     const { hydrateState } = useWorkflowHydrator();
 
@@ -64,11 +57,9 @@ function WorkflowHydrator({
     }
 
     return (
-        <InitializerComponent>
-            <EndpointConfigHydrator>
-                <BindingHydrator>{children}</BindingHydrator>
-            </EndpointConfigHydrator>
-        </InitializerComponent>
+        <EndpointConfigHydrator>
+            <BindingHydrator>{children}</BindingHydrator>
+        </EndpointConfigHydrator>
     );
 }
 

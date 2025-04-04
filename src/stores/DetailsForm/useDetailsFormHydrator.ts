@@ -5,6 +5,8 @@ import type {
 } from 'src/stores/DetailsForm/types';
 import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 
+import { useCallback } from 'react';
+
 import { getConnectors_detailsForm } from 'src/api/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
@@ -141,124 +143,145 @@ export const useDetailsFormHydrator = () => {
         (state) => state.setUnsupportedConnectorVersion
     );
 
-    const hydrateDetailsForm = async (baseEntityName?: string) => {
-        setActive(true);
+    const hydrateDetailsForm = useCallback(
+        async (baseEntityName?: string) => {
+            setActive(true);
 
-        if (!connectorId) {
-            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
+            if (!connectorId) {
+                logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
 
-            // TODO (details hydration) should really show an error here
-            // setHydrationError(
-            //     'Unable to locate selected connector. If the issue persists, please contact support.'
-            // );
-            // setHydrationErrorsExist(true);
-
-            return Promise.reject();
-        }
-
-        const createWorkflow =
-            workflow === 'capture_create' ||
-            workflow === 'materialization_create';
-
-        const dataPlaneOptions = await evaluateDataPlaneOptions(
-            setDataPlaneOptions,
-            setHydrationError
-        );
-
-        if (createWorkflow) {
-            const connectorImage = await getConnectorImage(connectorId);
-            const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
-
-            if (!connectorImage) {
-                setHydrationErrorsExist(true);
+                // TODO (details hydration) should really show an error here
+                // setHydrationError(
+                //     'Unable to locate selected connector. If the issue persists, please contact support.'
+                // );
+                // setHydrationErrorsExist(true);
 
                 return Promise.reject();
             }
 
-            setDetails_connector(connectorImage);
+            const createWorkflow =
+                workflow === 'capture_create' ||
+                workflow === 'materialization_create';
 
-            const { data } = initialDetails;
-
-            const hydratedDetails: Details = {
-                data: {
-                    entityName: baseEntityName ?? data.entityName,
-                    connectorImage,
-                    dataPlane: dataPlane ?? undefined,
-                },
-            };
-
-            setDetails(hydratedDetails);
-            setPreviousDetails(hydratedDetails);
-
-            setHydrated(true);
-
-            return Promise.resolve();
-        }
-
-        if (liveSpecId) {
-            const { data, error } = await getLiveSpecs_detailsForm(liveSpecId);
-
-            if (error || !data || data.length === 0) {
-                setHydrationErrorsExist(true);
-
-                return Promise.reject();
-            }
-
-            const {
-                catalog_name,
-                connector_image_tag,
-                connector_tag_id,
-                data_plane_id,
-            } = data[0];
-
-            const connectorImage = await getConnectorImage(
-                connectorId,
-                connector_image_tag
+            const dataPlaneOptions = await evaluateDataPlaneOptions(
+                setDataPlaneOptions,
+                setHydrationError
             );
 
-            const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
+            if (createWorkflow) {
+                const connectorImage = await getConnectorImage(connectorId);
+                const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
-            if (!connectorImage || dataPlane === null) {
-                setHydrationErrorsExist(true);
+                if (!connectorImage) {
+                    setHydrationErrorsExist(true);
 
-                return Promise.reject();
+                    return Promise.reject();
+                }
+
+                setDetails_connector(connectorImage);
+
+                const { data } = initialDetails;
+
+                const hydratedDetails: Details = {
+                    data: {
+                        entityName: baseEntityName ?? data.entityName,
+                        connectorImage,
+                        dataPlane: dataPlane ?? undefined,
+                    },
+                };
+
+                setDetails(hydratedDetails);
+                setPreviousDetails(hydratedDetails);
+
+                setHydrated(true);
+
+                return Promise.resolve();
             }
 
-            const hydratedDetails: Details = {
-                data: {
-                    entityName: catalog_name,
-                    connectorImage,
-                    dataPlane,
-                },
-            };
+            if (liveSpecId) {
+                const { data, error } =
+                    await getLiveSpecs_detailsForm(liveSpecId);
 
-            setUnsupportedConnectorVersion(connectorImage.id, connector_tag_id);
+                if (error || !data || data.length === 0) {
+                    setHydrationErrorsExist(true);
 
-            setDetails(hydratedDetails);
-            setPreviousDetails(hydratedDetails);
+                    return Promise.reject();
+                }
 
-            setHydrated(true);
+                const {
+                    catalog_name,
+                    connector_image_tag,
+                    connector_tag_id,
+                    data_plane_id,
+                } = data[0];
 
-            return Promise.resolve();
-        }
+                const connectorImage = await getConnectorImage(
+                    connectorId,
+                    connector_image_tag
+                );
 
-        if (workflow === 'test_json_forms') {
-            setDetails_connector({
-                id: connectorId,
-                iconPath: '',
-                imageName: '',
-                imagePath: '',
-                imageTag: '',
-                connectorId,
-            });
+                const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
 
-            setHydrationErrorsExist(true);
+                if (!connectorImage || dataPlane === null) {
+                    setHydrationErrorsExist(true);
 
-            setHydrated(true);
+                    return Promise.reject();
+                }
 
-            return Promise.resolve();
-        }
-    };
+                const hydratedDetails: Details = {
+                    data: {
+                        entityName: catalog_name,
+                        connectorImage,
+                        dataPlane,
+                    },
+                };
+
+                setUnsupportedConnectorVersion(
+                    connectorImage.id,
+                    connector_tag_id
+                );
+
+                setDetails(hydratedDetails);
+                setPreviousDetails(hydratedDetails);
+
+                setHydrated(true);
+
+                return Promise.resolve();
+            }
+
+            if (workflow === 'test_json_forms') {
+                setDetails_connector({
+                    id: connectorId,
+                    iconPath: '',
+                    imageName: '',
+                    imagePath: '',
+                    imageTag: '',
+                    connectorId,
+                });
+
+                setHydrationErrorsExist(true);
+
+                setHydrated(true);
+
+                return Promise.resolve();
+            }
+        },
+        [
+            connectorId,
+            dataPlaneId,
+            liveSpecId,
+            setActive,
+            setDataPlaneOptions,
+            setDetails,
+            setDetails_connector,
+            setHydrated,
+            setHydrationError,
+            setHydrationErrorsExist,
+            setPreviousDetails,
+            setUnsupportedConnectorVersion,
+            workflow,
+        ]
+    );
 
     return { hydrateDetailsForm };
 };

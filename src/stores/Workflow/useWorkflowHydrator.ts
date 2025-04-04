@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -10,16 +12,16 @@ export const useWorkflowHydrator = () => {
         (state) => state.setHydrationErrorsExist
     );
 
-    const hydrateWorkflow = async (metadata?: {
-        customerId: string;
-        prefix: string;
-    }) => {
-        const baseEntityName = metadata
-            ? `${metadata.prefix}${metadata.customerId}`
-            : undefined;
+    const hydrateWorkflow = useCallback(
+        async (metadata?: { customerId: string; prefix: string }) => {
+            const baseEntityName = metadata
+                ? `${metadata.prefix}${metadata.customerId}`
+                : undefined;
 
-        hydrateDetailsForm(baseEntityName);
-    };
+            await hydrateDetailsForm(baseEntityName);
+        },
+        [hydrateDetailsForm]
+    );
 
     return {
         hydrateState: (metadata?: { customerId: string; prefix: string }) =>
