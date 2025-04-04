@@ -20,6 +20,7 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { initialDetails } from 'src/stores/DetailsForm/shared';
 import {
     fetchErrors,
     filterErrors,
@@ -105,21 +106,6 @@ const getDataPlane = (
     return defaultOption ?? null;
 };
 
-const initialDetails: Details = {
-    data: {
-        connectorImage: {
-            connectorId: '',
-            id: '',
-            iconPath: '',
-            imageName: '',
-            imagePath: '',
-            imageTag: '',
-        },
-        entityName: '',
-    },
-    errors: [],
-};
-
 const getInitialStateData = (): Pick<
     DetailsFormState,
     | 'connectors'
@@ -195,9 +181,7 @@ export const getInitialState = (
 
                 // Check if there are any errors from the forms
                 const endpointConfigErrors = filterErrors(fetchErrors(val)).map(
-                    (message) => ({
-                        message,
-                    })
+                    (message) => ({ message })
                 );
 
                 // Set the flag for error checking
@@ -226,6 +210,10 @@ export const getInitialState = (
     },
 
     setDetails_dataPlane: (value) => {
+        if (value === null) {
+            return;
+        }
+
         set(
             produce((state: DetailsFormState) => {
                 state.details.data.dataPlane = value;

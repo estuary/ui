@@ -11,6 +11,7 @@ import {
 import EntityEdit from 'src/components/shared/Entity/Edit';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import WorkflowInitializer from 'src/components/shared/Entity/WorkflowInitializer';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -18,7 +19,6 @@ import useGlobalSearchParams, {
 import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
-import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 const entityType = 'capture';
@@ -49,7 +49,7 @@ function CaptureEdit() {
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     return (
-        <WorkflowHydrator>
+        <WorkflowInitializer>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
                 <EntityEdit
                     title="routeTitle.captureEdit"
@@ -85,7 +85,7 @@ function CaptureEdit() {
                     }
                 />
             </MutateDraftSpecProvider>
-        </WorkflowHydrator>
+        </WorkflowInitializer>
     );
 }
 

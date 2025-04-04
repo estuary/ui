@@ -45,6 +45,10 @@ const CaptureCreateRoute = lazy(
 const CaptureCreateNewRoute = lazy(
     () => import('src/context/Router/CaptureCreateNew')
 );
+const CaptureExpressCreateRoute = lazy(() => import('./CaptureExpressCreate'));
+const CaptureExpressCreateNewRoute = lazy(
+    () => import('./CaptureExpressCreateNew')
+);
 const CaptureDetailsRoute = lazy(
     () => import('src/context/Router/CaptureDetails')
 );
@@ -364,6 +368,37 @@ const router = createBrowserRouter(
                                 >
                                     <Suspense fallback={null}>
                                         <CaptureCreateNewRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.captures.createExpress.path
+                            }
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureExpressCreateRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
+                            }
+                        />
+
+                        <Route
+                            path={
+                                authenticatedRoutes.captures.createExpress.new
+                                    .path
+                            }
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <CaptureExpressCreateNewRoute />
                                     </Suspense>
                                 </ErrorBoundary>
                             }

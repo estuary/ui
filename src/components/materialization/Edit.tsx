@@ -10,6 +10,7 @@ import MaterializeGenerateButton from 'src/components/materialization/GenerateBu
 import EntityEdit from 'src/components/shared/Entity/Edit';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import WorkflowInitializer from 'src/components/shared/Entity/WorkflowInitializer';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -17,7 +18,6 @@ import useGlobalSearchParams, {
 import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
-import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 
 function MaterializationEdit() {
     usePageTitle({
@@ -47,7 +47,7 @@ function MaterializationEdit() {
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     return (
-        <WorkflowHydrator>
+        <WorkflowInitializer>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
                 <EntityEdit
                     title="routeTitle.materializationEdit"
@@ -73,7 +73,7 @@ function MaterializationEdit() {
                     }
                 />
             </MutateDraftSpecProvider>
-        </WorkflowHydrator>
+        </WorkflowInitializer>
     );
 }
 
