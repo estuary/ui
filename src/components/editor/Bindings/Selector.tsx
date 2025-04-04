@@ -26,7 +26,7 @@ import {
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, splitPathAndName } from 'src/utils/misc-utils';
 
 interface BindingSelectorProps {
     disableSelect?: boolean;
@@ -98,13 +98,20 @@ function BindingSelector({
     const disableActions = formActive || readOnly;
 
     const cellRenderers: CollectionSelectorListProps['renderers']['cell'] = {
-        name: (params) => {
+        name: (params, filteringActive) => {
             const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+
+            const collectionParts = filteringActive
+                ? splitPathAndName(params.value)
+                : [params.value];
+
+            console.log('collectionParts', collectionParts);
 
             return (
                 <BindingsSelectorName
                     bindingUUID={bindingUUID}
-                    collection={params.value}
+                    collection={collectionParts}
+                    highlightName={filteringActive}
                 />
             );
         },

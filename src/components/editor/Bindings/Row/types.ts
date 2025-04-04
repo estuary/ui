@@ -5,6 +5,6 @@ export interface ErrorIndicatorProps {
 
 export interface SelectorNameProps {
     bindingUUID: string;
-    collection: string;
-    shortenName?: boolean;
+    collection: string[];
+    highlightName?: any; // TODO (search) we don't want booleans - need custom styling support
 }

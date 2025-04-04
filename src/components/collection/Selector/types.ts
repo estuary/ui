@@ -19,7 +19,7 @@ export interface BindingsEditorAddProps {
 
 export type CollectionSelectorCellRenderer = (
     params: GridRenderCellParams,
-    filteringEnabled?: boolean
+    filteringActive?: boolean
 ) => ReactNode;
 
 export interface CollectionSelectorListProps {

@@ -1,15 +1,14 @@
 import type { SelectorNameProps } from 'src/components/editor/Bindings/Row/types';
 
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
 import { typographyTruncation } from 'src/context/Theme';
-import { stripPathing } from 'src/utils/misc-utils';
 
 function BindingsSelectorName({
     bindingUUID,
     collection,
-    shortenName,
+    highlightName: foo,
 }: SelectorNameProps) {
     return (
         <Button
@@ -18,7 +17,7 @@ function BindingsSelectorName({
             startIcon={
                 <BindingsSelectorErrorIndicator
                     bindingUUID={bindingUUID}
-                    collection={collection}
+                    collection={collection[0]}
                 />
             }
             sx={{
@@ -32,8 +31,29 @@ function BindingsSelectorName({
                 },
             }}
         >
-            <Typography {...typographyTruncation}>
-                {shortenName ? stripPathing(collection) : collection}
+            <Typography
+                {...typographyTruncation}
+                sx={{
+                    ...typographyTruncation.sx,
+                    ...(foo
+                        ? {
+                              '& span:first-of-type': {
+                                  opacity: 0.7,
+                              },
+                          }
+                        : {}),
+                }}
+            >
+                {collection.map((part, index) => {
+                    return (
+                        <Box
+                            component="span"
+                            key={`binding_col_name_${part}_${index}`}
+                        >
+                            {part}
+                        </Box>
+                    );
+                })}
             </Typography>
         </Button>
     );
