@@ -156,7 +156,7 @@ export const useDetailsFormHydrator = () => {
                 // );
                 // setHydrationErrorsExist(true);
 
-                return Promise.reject();
+                return Promise.reject({ connectorTagId: null });
             }
 
             const createWorkflow =
@@ -175,7 +175,7 @@ export const useDetailsFormHydrator = () => {
                 if (!connectorImage) {
                     setHydrationErrorsExist(true);
 
-                    return Promise.reject();
+                    return Promise.reject({ connectorTagId: null });
                 }
 
                 setDetails_connector(connectorImage);
@@ -195,7 +195,9 @@ export const useDetailsFormHydrator = () => {
 
                 setHydrated(true);
 
-                return Promise.resolve();
+                return Promise.resolve({
+                    connectorTagId: hydratedDetails.data.connectorImage.id,
+                });
             }
 
             if (liveSpecId) {
@@ -205,7 +207,7 @@ export const useDetailsFormHydrator = () => {
                 if (error || !data || data.length === 0) {
                     setHydrationErrorsExist(true);
 
-                    return Promise.reject();
+                    return Promise.reject({ connectorTagId: null });
                 }
 
                 const {
@@ -225,7 +227,7 @@ export const useDetailsFormHydrator = () => {
                 if (!connectorImage || dataPlane === null) {
                     setHydrationErrorsExist(true);
 
-                    return Promise.reject();
+                    return Promise.reject({ connectorTagId: null });
                 }
 
                 const hydratedDetails: Details = {
@@ -246,7 +248,9 @@ export const useDetailsFormHydrator = () => {
 
                 setHydrated(true);
 
-                return Promise.resolve();
+                return Promise.resolve({
+                    connectorTagId: hydratedDetails.data.connectorImage.id,
+                });
             }
 
             if (workflow === 'test_json_forms') {
@@ -263,8 +267,10 @@ export const useDetailsFormHydrator = () => {
 
                 setHydrated(true);
 
-                return Promise.resolve();
+                return Promise.resolve({ connectorTagId: connectorId });
             }
+
+            return Promise.resolve({ connectorTagId: null });
         },
         [
             connectorId,

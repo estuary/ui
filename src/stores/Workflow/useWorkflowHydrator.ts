@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
 
+
 import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
 
 export const useWorkflowHydrator = () => {
     const { hydrateDetailsForm } = useDetailsFormHydrator();
+    const { hydrateEndpointConfig } = useEndpointConfigHydrator();
 
     const setHydrated = useWorkflowStore((state) => state.setHydrated);
     const setHydrationErrorsExist = useWorkflowStore(
@@ -18,9 +21,18 @@ export const useWorkflowHydrator = () => {
                 ? `${metadata.prefix}${metadata.customerId}`
                 : undefined;
 
-            await hydrateDetailsForm(baseEntityName);
+            try {
+                const { connectorTagId } =
+                    await hydrateDetailsForm(baseEntityName);
+
+                await hydrateEndpointConfig(connectorTagId);
+            } catch (error: unknown) {
+                return Promise.reject(error);
+            }
+
+            return Promise.resolve();
         },
-        [hydrateDetailsForm]
+        [hydrateDetailsForm, hydrateEndpointConfig]
     );
 
     return {

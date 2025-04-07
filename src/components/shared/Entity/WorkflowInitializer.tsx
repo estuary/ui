@@ -1,11 +1,11 @@
-import type { WorkflowInitializerProps } from './types';
 
 import { Fragment } from 'react';
 
-import DraftInitializer from './Edit/DraftInitializer';
 
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
+import type { WorkflowInitializerProps } from 'src/components/shared/Entity/types';
+import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 
 const WorkflowInitializer = ({
     children,

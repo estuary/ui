@@ -5,7 +5,6 @@ import { useEffectOnce } from 'react-use';
 import useExpressWorkflowAuth from 'src/hooks/useExpressWorkflowAuth';
 import { logRocketConsole } from 'src/services/shared';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
-import { EndpointConfigHydrator } from 'src/stores/EndpointConfig/Hydrator';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 
@@ -56,11 +55,7 @@ function WorkflowHydrator({
         return null;
     }
 
-    return (
-        <EndpointConfigHydrator>
-            <BindingHydrator>{children}</BindingHydrator>
-        </EndpointConfigHydrator>
-    );
+    return <BindingHydrator>{children}</BindingHydrator>;
 }
 
 export default WorkflowHydrator;
