@@ -105,8 +105,6 @@ function BindingSelector({
                 ? splitPathAndName(params.value)
                 : [params.value];
 
-            console.log('collectionParts', collectionParts);
-
             return (
                 <BindingsSelectorName
                     bindingUUID={bindingUUID}

@@ -140,36 +140,48 @@ function CollectionSelectorList({
         );
     }, [filterValue, rows]);
 
-    // Used to set selected back to first when search is cleared
     useEffect(() => {
+        // Selection disabled
         if (!setCurrentBinding) {
             return;
         }
 
-        if (filteredRows) {
+        if (filteredRows && filteredRows.length > 0) {
+            // If we have filtered values then see if this is a first search and default
+            if (previousFilterValue === '') {
+                setCurrentBinding(
+                    filteredRows[0][COLLECTION_SELECTOR_UUID_COL]
+                );
+            } else {
+                if (
+                    filteredRows.find(
+                        (filteredRow) =>
+                            filteredRow[COLLECTION_SELECTOR_UUID_COL] ===
+                            currentBindingUUID
+                    )
+                ) {
+                    return;
+                } else {
+                    setCurrentBinding(
+                        filteredRows[0][COLLECTION_SELECTOR_UUID_COL]
+                    );
+                }
+            }
+
             return;
         }
 
         if (previousFilterValue !== '' && Boolean(rows[0])) {
             setCurrentBinding(rows[0][COLLECTION_SELECTOR_UUID_COL]);
         }
-    }, [filteredRows, previousFilterValue, rows, setCurrentBinding]);
-
-    // Used to set while searching
-    useEffect(() => {
-        if (!setCurrentBinding || !filteredRows) {
-            return;
-        }
-
-        if (
-            filteredRows.length > 0 &&
-            Boolean(filteredRows[0][COLLECTION_SELECTOR_UUID_COL])
-        ) {
-            setCurrentBinding(filteredRows[0][COLLECTION_SELECTOR_UUID_COL]);
-        } else {
-            setCurrentBinding(null);
-        }
-    }, [filteredRows, setCurrentBinding]);
+    }, [
+        currentBindingUUID,
+        filterValue,
+        filteredRows,
+        previousFilterValue,
+        rows,
+        setCurrentBinding,
+    ]);
 
     const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
 
@@ -361,6 +373,7 @@ function CollectionSelectorList({
                             field === COLLECTION_SELECTOR_TOGGLE_COL) &&
                         id !== currentBindingUUID
                     ) {
+                        console.log('clearing');
                         // TODO (JSONForms) This is hacky but it works.
                         // It clears out the current binding before switching.
                         //  If a user is typing quickly in a form and then selects a
@@ -370,6 +383,7 @@ function CollectionSelectorList({
 
                         if (typeof id === 'string') {
                             hackyTimeout.current = window.setTimeout(() => {
+                                console.log('setting id', id);
                                 setCurrentBinding(id);
                             });
                         }
