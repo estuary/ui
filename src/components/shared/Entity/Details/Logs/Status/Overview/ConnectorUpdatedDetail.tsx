@@ -1,5 +1,6 @@
+import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+
 import TimestampDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/TimestampDetail';
-import { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
