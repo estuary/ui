@@ -27,7 +27,7 @@ export default function Overview() {
                 },
             }}
         >
-            <ConnectorOverview />
+            {entityType === 'collection' ? null : <ConnectorOverview />}
 
             <ControllerOverview />
 
