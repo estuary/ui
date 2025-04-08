@@ -1,10 +1,12 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/shared/CardWrapper';
-import { cardHeaderSx } from 'context/Theme';
+
 import { useIntl } from 'react-intl';
-import ConnectorStatus from './ConnectorStatus';
-import ConnectorStatusDetail from './ConnectorStatusDetail';
-import ConnectorUpdatedDetail from './ConnectorUpdatedDetail';
+
+import CardWrapper from 'src/components/shared/CardWrapper';
+import ConnectorStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatus';
+import ConnectorStatusDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatusDetail';
+import ConnectorUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorUpdatedDetail';
+import { cardHeaderSx } from 'src/context/Theme';
 
 export default function ConnectorOverview() {
     const intl = useIntl();

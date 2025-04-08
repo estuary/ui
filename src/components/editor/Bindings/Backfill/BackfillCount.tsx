@@ -1,14 +1,18 @@
-import { Chip } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
+import type { BackfillCountProps } from 'src/components/editor/Bindings/Backfill/types';
+
 import { useMemo } from 'react';
+
+import { Chip } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 import {
     useBinding_backfilledBindings_count,
     useBinding_collections_count,
     useBinding_evolvedCollections_count,
-} from 'stores/Binding/hooks';
-import { ENTITY_SETTINGS } from 'settings/entity';
-import { BackfillCountProps } from './types';
+} from 'src/stores/Binding/hooks';
 
 function BackfillCount({ disabled }: BackfillCountProps) {
     const intl = useIntl();
@@ -64,24 +68,24 @@ function BackfillCount({ disabled }: BackfillCountProps) {
                           }
                       )
                     : noBackfill
-                    ? intl.formatMessage(
-                          {
-                              id: 'workflows.collectionSelector.manualBackfill.count.empty',
-                          },
-                          {
-                              itemType: itemType_backfill,
-                          }
-                      )
-                    : intl.formatMessage(
-                          {
-                              id: 'workflows.collectionSelector.manualBackfill.count',
-                          },
-                          {
-                              backfillCount: calculatedCount,
-                              bindingsTotal,
-                              itemType: itemType_bindings,
-                          }
-                      )
+                      ? intl.formatMessage(
+                            {
+                                id: 'workflows.collectionSelector.manualBackfill.count.empty',
+                            },
+                            {
+                                itemType: itemType_backfill,
+                            }
+                        )
+                      : intl.formatMessage(
+                            {
+                                id: 'workflows.collectionSelector.manualBackfill.count',
+                            },
+                            {
+                                backfillCount: calculatedCount,
+                                bindingsTotal,
+                                itemType: itemType_bindings,
+                            }
+                        )
             }
         />
     );

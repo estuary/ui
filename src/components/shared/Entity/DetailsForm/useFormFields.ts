@@ -1,14 +1,17 @@
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import { CATALOG_NAME_SCOPE } from 'forms/renderers/CatalogName';
-import { CONNECTOR_IMAGE_SCOPE } from 'forms/renderers/Connectors';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type { Details } from 'src/stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
+
 import { useMemo } from 'react';
+
 import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
-import useConnectorField from './useConnectorField';
-import useDataPlaneField from './useDataPlaneField';
+
+import useConnectorField from 'src/components/shared/Entity/DetailsForm/useConnectorField';
+import useDataPlaneField from 'src/components/shared/Entity/DetailsForm/useDataPlaneField';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
+import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 export default function useFormFields(
     connectorTags: ConnectorWithTagDetailQuery[],

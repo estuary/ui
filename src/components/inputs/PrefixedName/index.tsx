@@ -1,3 +1,7 @@
+import type { PrefixedNameProps } from 'src/components/inputs/PrefixedName/types';
+
+import { useMemo } from 'react';
+
 import {
     FormControl,
     FormHelperText,
@@ -7,15 +11,15 @@ import {
     OutlinedInput,
     TextField,
 } from '@mui/material';
-import useValidatePrefix from 'components/inputs/PrefixedName/useValidatePrefix';
-import AlertBox from 'components/shared/AlertBox';
+
 import { capitalize } from 'lodash';
-import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
-import { hasLength } from 'utils/misc-utils';
-import { PrefixedNameProps } from './types';
-import PrefixSelector from './PrefixSelector';
+
+import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
+import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
+import AlertBox from 'src/components/shared/AlertBox';
+import { hasLength } from 'src/utils/misc-utils';
 
 // const UNCLEAN_PATH_RE = new RegExp(/[^a-zA-Z0-9-_.]\.{1,2}\/?/g);
 const DESCRIPTION_ID = 'prefixed-name-description';
@@ -81,8 +85,8 @@ function PrefixedName({
                     ? 'prefixedName.description.singlePrefix'
                     : 'prefixedName.description.singlePrefix.noEntityType'
                 : name.length > 0
-                ? 'prefixedName.description.noPrefix'
-                : 'prefixedName.description';
+                  ? 'prefixedName.description.noPrefix'
+                  : 'prefixedName.description';
 
         return intl.formatMessage(
             { id: messageKey },
@@ -100,8 +104,8 @@ function PrefixedName({
     const firstFormHelperText = description
         ? description
         : showErrors
-        ? errors
-        : null;
+          ? errors
+          : null;
     const secondFormHelperText = description && showErrors ? errors : null;
 
     // If needed we will validate on load. This is mainly just for

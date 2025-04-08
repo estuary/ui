@@ -1,13 +1,16 @@
-import { LoadingButtonProps } from '@mui/lab';
-import { createEntityDraft } from 'api/drafts';
-import { createDraftSpec, modifyDraftSpec } from 'api/draftSpecs';
-import { createRefreshToken } from 'api/tokens';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import { useSnackbar } from 'notistack';
+import type { LoadingButtonProps } from '@mui/lab';
+
 import { useCallback, useMemo, useState } from 'react';
+
+import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
-import { generateGitPodURL } from 'services/gitpod';
+
+import { createEntityDraft } from 'src/api/drafts';
+import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
+import { createRefreshToken } from 'src/api/tokens';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { generateGitPodURL } from 'src/services/gitpod';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
@@ -15,8 +18,8 @@ import {
     useTransformationCreate_name,
     useTransformationCreate_sourceCollections,
     useTransformationCreate_transformConfigs,
-} from 'stores/TransformationCreate/hooks';
-import { generateInitialSpec } from 'utils/derivation-utils';
+} from 'src/stores/TransformationCreate/hooks';
+import { generateInitialSpec } from 'src/utils/derivation-utils';
 
 interface Props {
     postWindowOpen?: (window: Window | null) => void;

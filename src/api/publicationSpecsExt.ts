@@ -1,14 +1,14 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { supabaseRetry, TABLES } from 'services/supabase';
-import { Schema } from 'types';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { Schema } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { supabaseRetry, TABLES } from 'src/services/supabase';
 
 export interface PublicationSpecsExt_PublicationHistory {
     live_spec_id: string;
     pub_id: string;
     detail: null;
     published_at: string; //timestamptz
-    spec: Schema;
     spec_type: string;
     user_id: string;
     catalog_name: string;
@@ -18,15 +18,50 @@ export interface PublicationSpecsExt_PublicationHistory {
     user_avatar_url: null;
 }
 
+export type PublicationSpecsExt_PubIds = Pick<
+    PublicationSpecsExt_PublicationHistory,
+    'pub_id' | 'published_at' | 'detail' | 'user_email'
+>;
+
+export interface PublicationSpecsExt_Spec {
+    pub_id: string;
+    spec: Schema;
+}
+
 export const getPublicationHistoryByCatalogName = (catalogName: string) => {
     return supabaseClient
         .from(TABLES.PUBLICATION_SPECS_EXT)
-        .select(`pub_id, published_at, detail, user_email, spec`)
+        .select(`pub_id, published_at, detail, user_email, published_at`)
         .eq('catalog_name', catalogName)
         .order('published_at', {
             ascending: false,
         })
-        .returns<PublicationSpecsExt_PublicationHistory[]>();
+        .returns<PublicationSpecsExt_PubIds[]>();
+};
+
+export const getPublicationSpecByPublication = (
+    catalogName: string,
+    pubIds: [string | null, string | null]
+) => {
+    let query = supabaseClient
+        .from(TABLES.PUBLICATION_SPECS_EXT)
+        .select(`pub_id, spec`)
+        .eq('catalog_name', catalogName);
+
+    // If we have both look for both
+    //  Otherwise we're probably looking up a NEW entity and only
+    //  have a single pubId.
+    if (pubIds[0] && pubIds[1]) {
+        query = query.in('pub_id', pubIds);
+    } else {
+        if (pubIds[0]) {
+            query = query.eq('pub_id', pubIds[0]);
+        } else if (pubIds[1]) {
+            query = query.eq('pub_id', pubIds[1]);
+        }
+    }
+
+    return query.returns<PublicationSpecsExt_Spec[]>();
 };
 
 export const getLiveSpecIdByPublication = (

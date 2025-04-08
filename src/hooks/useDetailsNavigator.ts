@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
+
 import { useNavigate } from 'react-router';
-import { getPathWithParams } from 'utils/misc-utils';
-import { GlobalSearchParams } from './searchParams/useGlobalSearchParams';
+
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Data {
     catalog_name: string;

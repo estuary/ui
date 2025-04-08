@@ -1,14 +1,17 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { Skeleton } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
+
+import { noop } from 'lodash';
+import { useIntl } from 'react-intl';
+
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { noop } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { useEntitiesStore_tenantsWithAdmin } from 'stores/Entities/hooks';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     updateStoreState?: (value?: string) => void;
@@ -55,9 +58,9 @@ function TenantSelector({ updateStoreState }: Props) {
                 tenantNames.includes(defaultSelectedTenant)
                     ? defaultSelectedTenant
                     : hasLength(selectedTenant) &&
-                      tenantNames.includes(selectedTenant)
-                    ? selectedTenant
-                    : tenantNames[0];
+                        tenantNames.includes(selectedTenant)
+                      ? selectedTenant
+                      : tenantNames[0];
 
             updateState(newVal);
 

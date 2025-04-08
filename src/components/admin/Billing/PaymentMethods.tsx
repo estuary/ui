@@ -1,3 +1,8 @@
+import type { AdminBillingProps } from 'src/components/admin/Billing/types';
+import type { TableColumns } from 'src/types';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import {
     Box,
     Stack,
@@ -9,28 +14,29 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
+
 import { loadStripe } from '@stripe/stripe-js';
+import { FormattedMessage } from 'react-intl';
+
 import {
     deleteTenantPaymentMethod,
     getSetupIntentSecret,
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
-} from 'api/billing';
-import { PaymentMethod } from 'components/admin/Billing/PaymentMethodRow';
-import AlertBox from 'components/shared/AlertBox';
-import TableLoadingRows from 'components/tables/Loading';
-
-import { useEffect, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useBillingStore } from 'stores/Billing/Store';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { TableColumns } from 'types';
-import { getColumnKeyList } from 'utils/table-utils';
-import AddPaymentMethod from './AddPaymentMethod';
-import { INTENT_SECRET_ERROR, INTENT_SECRET_LOADING } from './shared';
-import { AdminBillingProps } from './types';
+} from 'src/api/billing';
+import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
+import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
+import {
+    INTENT_SECRET_ERROR,
+    INTENT_SECRET_LOADING,
+} from 'src/components/admin/Billing/shared';
+import AlertBox from 'src/components/shared/AlertBox';
+import TableLoadingRows from 'src/components/tables/Loading';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useBillingStore } from 'src/stores/Billing/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { getColumnKeyList } from 'src/utils/table-utils';
 
 const columns: TableColumns[] = [
     {
@@ -89,9 +95,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
     useEffect(() => {
         void (async () => {
             if (selectedTenant) {
-                const setupResponse = await getSetupIntentSecret(
-                    selectedTenant
-                );
+                const setupResponse =
+                    await getSetupIntentSecret(selectedTenant);
 
                 if (setupResponse.data?.intent_secret) {
                     setSetupIntentSecret(setupResponse.data.intent_secret);
@@ -113,9 +118,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
 
                     // TODO (store payment method info) we load this for the first 5 tenants so we should just pull that info
-                    const methodsResponse = await getTenantPaymentMethods(
-                        selectedTenant
-                    );
+                    const methodsResponse =
+                        await getTenantPaymentMethods(selectedTenant);
 
                     setMethods(methodsResponse.data?.payment_methods);
                     setDefaultSource(methodsResponse.data?.primary);

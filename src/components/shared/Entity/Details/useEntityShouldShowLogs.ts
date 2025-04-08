@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { useEntityType } from 'context/EntityContext';
-import useIsCollectionDerivation from './useIsCollectionDerivation';
+
+import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
+import { useEntityType } from 'src/context/EntityContext';
 
 function useEntityShouldShowLogs() {
     const entityType = useEntityType();

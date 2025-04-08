@@ -1,7 +1,10 @@
-import { ReactNode } from 'react';
-import { DataPlaneOption } from 'stores/DetailsForm/types';
-import { Entity } from 'types';
-import { EntitySaveButtonProps, EntityTestButtonProps } from './Actions/types';
+import type { ReactNode } from 'react';
+import type {
+    EntitySaveButtonProps,
+    EntityTestButtonProps,
+} from 'src/components/shared/Entity/Actions/types';
+import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
+import type { Entity } from 'src/types';
 
 export interface AddCollectionDialogCTAProps {
     entity?: Entity;

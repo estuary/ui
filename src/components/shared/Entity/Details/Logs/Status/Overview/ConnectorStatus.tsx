@@ -1,10 +1,11 @@
 import { useTheme } from '@mui/material';
+
+import StatusIndicator from 'src/components/shared/Entity/Details/Logs/Status/Overview/StatusIndicator';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
-import { getConnectorStatusIndicatorState } from 'utils/entityStatus-utils';
-import StatusIndicator from './StatusIndicator';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
+import { getConnectorStatusIndicatorState } from 'src/utils/entityStatus-utils';
 
 export default function ConnectorStatus() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

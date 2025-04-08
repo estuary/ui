@@ -1,20 +1,21 @@
-import { expect, test, Page } from '@playwright/test';
 import { beforeEach } from 'node:test';
-import { USERS, USER_PREFIX } from '../helpers/users';
-import {
-    defaultLocalStorage,
-    defaultPageSetup,
-    inituser,
-    openDetailsFromTable,
-    startSessionWithUser,
-    saveAndPublish,
-} from '../helpers/utils';
+
 import {
     discover_HelloWorld,
     editEndpoint_HelloWorld,
     testConfig,
 } from '../helpers/captures';
 import { AuthProps } from '../helpers/types';
+import { USER_PREFIX, USERS } from '../helpers/users';
+import {
+    defaultLocalStorage,
+    defaultPageSetup,
+    inituser,
+    openDetailsFromTable,
+    saveAndPublish,
+    startSessionWithUser,
+} from '../helpers/utils';
+import { expect, Page, test } from '@playwright/test';
 
 const defaultBackfillMessage = 'no bindings marked for backfill';
 

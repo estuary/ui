@@ -1,17 +1,21 @@
+import type { CommonStatuses } from 'src/services/types';
+
+import { useEffect, useRef } from 'react';
+
+import { useSnackbar } from 'notistack';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import {
     authenticatedRoutes,
     REDIRECT_TO_PARAM_NAME,
     unauthenticatedRoutes,
-} from 'app/routes';
-import FullPageSpinner from 'components/fullPage/Spinner';
-import { supabaseClient } from 'context/GlobalProviders';
-import { useUserStore } from 'context/User/useUserContextStore';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import { useSnackbar } from 'notistack';
-import { useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { logRocketEvent } from 'services/shared';
-import { CommonStatuses, CustomEvents } from 'services/types';
+} from 'src/app/routes';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 const trackEvent = (status: CommonStatuses) => {
     logRocketEvent(CustomEvents.LOGIN, {

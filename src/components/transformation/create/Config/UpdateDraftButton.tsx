@@ -1,20 +1,23 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
-import SafeLoadingButton from 'components/SafeLoadingButton';
+import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Transform } from 'src/types';
+
+import { useCallback } from 'react';
+
+import { FormattedMessage } from 'react-intl';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
-} from 'components/editor/Store/hooks';
-import { AddCollectionDialogCTAProps } from 'components/shared/Entity/types';
-import { useZustandStore } from 'context/Zustand/provider';
-import { useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
+} from 'src/components/editor/Store/hooks';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_catalogUpdating,
@@ -25,11 +28,9 @@ import {
     useTransformationCreate_transformConfigs,
     useTransformationCreate_transformCount,
     useTransformationCreate_updateTransformConfigs,
-} from 'stores/TransformationCreate/hooks';
-import { SelectTableStoreNames } from 'stores/names';
-import { Transform } from 'types';
-import { evaluateTransformConfigs } from 'utils/derivation-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/TransformationCreate/hooks';
+import { evaluateTransformConfigs } from 'src/utils/derivation-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     const selected = useZustandStore<

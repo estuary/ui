@@ -1,20 +1,26 @@
+import type {
+    FetchMoreLogsOptions,
+    WaitingForRowProps,
+} from 'src/components/tables/Logs/types';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
-import SpinnerIcon from 'components/logs/SpinnerIcon';
-import { BaseTypographySx } from 'components/tables/cells/logs/shared';
-import {
-    errorOutlinedButtonBackground,
-    tableRowActive_Finished__Background,
-    tableRowActive__Background,
-} from 'context/Theme';
+
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection } from 'react-use';
 
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import { VIRTUAL_TABLE_BODY_PADDING } from '../shared';
-import { FetchMoreLogsOptions, WaitingForRowProps } from '../types';
+import SpinnerIcon from 'src/components/logs/SpinnerIcon';
+import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
+import { VIRTUAL_TABLE_BODY_PADDING } from 'src/components/tables/Logs/shared';
+import {
+    errorOutlinedButtonBackground,
+    tableRowActive__Background,
+    tableRowActive_Finished__Background,
+} from 'src/context/Theme';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
@@ -103,8 +109,8 @@ function WaitingForRowBase({
                 bgcolor: lastFetchFailed
                     ? errorOutlinedButtonBackground[theme.palette.mode]
                     : disabled
-                    ? tableRowActive_Finished__Background[theme.palette.mode]
-                    : tableRowActive__Background[theme.palette.mode],
+                      ? tableRowActive_Finished__Background[theme.palette.mode]
+                      : tableRowActive__Background[theme.palette.mode],
                 opacity:
                     lastFetchFailed || disabled || intersection?.isIntersecting
                         ? 1
@@ -138,8 +144,8 @@ function WaitingForRowBase({
                                 lastFetchFailed
                                     ? `${messageKey}.failed`
                                     : disabled
-                                    ? `${messageKey}.complete`
-                                    : messageKey
+                                      ? `${messageKey}.complete`
+                                      : messageKey
                             }
                         />
                     </Typography>

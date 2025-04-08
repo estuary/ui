@@ -1,4 +1,4 @@
-import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 
 export const TOGGLE_BUTTON_CLASS = 'toggle-button';
 

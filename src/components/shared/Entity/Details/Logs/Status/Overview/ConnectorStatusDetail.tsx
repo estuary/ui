@@ -1,11 +1,12 @@
 import { Skeleton, Typography } from '@mui/material';
+
+import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import DetailWrapper from './DetailWrapper';
-import { BaseDetailProps } from './types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function ConnectorStatusDetail({
     headerMessageId,

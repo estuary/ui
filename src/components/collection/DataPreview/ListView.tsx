@@ -1,20 +1,25 @@
-import ReactJson from '@microlink/react-json-view';
+import type { GridRowSelectionModel } from '@mui/x-data-grid';
+import type { JournalRecord } from 'src/hooks/journals/types';
+import type { useJournalData } from 'src/hooks/journals/useJournalData';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { Box, Grid, useTheme } from '@mui/material';
-import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
-import ListAndDetails from 'components/editor/ListAndDetails';
-import Error from 'components/shared/Error';
+import { DataGrid } from '@mui/x-data-grid';
+
+import ReactJson from '@microlink/react-json-view';
+import { JsonPointer } from 'json-ptr';
+import { isEmpty } from 'lodash';
+import { useIntl } from 'react-intl';
+
+import ListAndDetails from 'src/components/editor/ListAndDetails';
+import Error from 'src/components/shared/Error';
 import {
     dataGridListStyling,
     jsonViewTheme,
     semiTransparentBackground,
-} from 'context/Theme';
-import { JournalRecord } from 'hooks/journals/types';
-import { useJournalData } from 'hooks/journals/useJournalData';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
-import { JsonPointer } from 'json-ptr';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
+} from 'src/context/Theme';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_details;

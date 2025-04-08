@@ -1,9 +1,14 @@
-import { AlertColor, Typography } from '@mui/material';
-import { useStorageMappingStore } from 'components/admin/Settings/StorageMappings/Store/create';
-import Logs from 'components/logs';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
+import type { AlertColor } from '@mui/material';
+
 import { useMemo } from 'react';
+
+import { Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
+import Logs from 'src/components/logs';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 
 interface Props {
     errored: boolean;

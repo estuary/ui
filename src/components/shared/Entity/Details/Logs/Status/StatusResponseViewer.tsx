@@ -1,18 +1,22 @@
-import { Editor } from '@monaco-editor/react';
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+
+import { useRef } from 'react';
+
 import { Box, Divider, Paper, useTheme } from '@mui/material';
-import { MonacoEditorSkeleton } from 'components/editor/MonacoEditor/EditorSkeletons';
-import { editorToolBarSx } from 'context/Theme';
+
+import { Editor } from '@monaco-editor/react';
+
+import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
+import { editorToolBarSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useRef } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { stringifyJSON } from 'services/stringify';
-import { useEntityStatusStore_singleResponse } from 'stores/EntityStatus/hooks';
-import { useEntityStatusStore } from 'stores/EntityStatus/Store';
-import { DEFAULT_TOOLBAR_HEIGHT } from 'utils/editor-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketConsole } from 'src/services/shared';
+import { stringifyJSON } from 'src/services/stringify';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
+import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
+import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 const EDITOR_HEIGHT = 400;
 

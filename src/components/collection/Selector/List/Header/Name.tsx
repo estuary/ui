@@ -1,7 +1,10 @@
-import { TextField } from '@mui/material';
-import ClearInput from 'components/shared/Input/Clear';
 import { useCallback, useState } from 'react';
+
+import { TextField } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
+import ClearInput from 'src/components/shared/Input/Clear';
 
 interface Props {
     inputValue: string;

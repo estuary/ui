@@ -1,5 +1,11 @@
+import type { DataVolumeByTask } from 'src/stores/Billing/types';
+import type { SeriesConfig } from 'src/utils/billing-utils';
+
+import { useEffect, useMemo, useState } from 'react';
+import useConstant from 'use-constant';
+
 import { useTheme } from '@mui/material';
-import { defaultOutlineColor } from 'context/Theme';
+
 import {
     eachMonthOfInterval,
     isWithinInterval,
@@ -17,21 +23,22 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { sortBy, sum, uniq } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useBillingStore } from 'stores/Billing/Store';
-import { DataVolumeByTask } from 'stores/Billing/types';
-import useConstant from 'use-constant';
+
+import {
+    getTooltipItem,
+    getTooltipTitle,
+} from 'src/components/graphs/tooltips';
+import useLegendConfig from 'src/components/graphs/useLegendConfig';
+import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
+import { defaultOutlineColor } from 'src/context/Theme';
+import { useBillingStore } from 'src/stores/Billing/Store';
 import {
     BYTES_PER_GB,
     CARD_AREA_HEIGHT,
-    SeriesConfig,
     formatDataVolumeForDisplay,
-} from 'utils/billing-utils';
-import { hasLength } from 'utils/misc-utils';
-import { getTooltipItem, getTooltipTitle } from './tooltips';
-import useLegendConfig from './useLegendConfig';
-import useTooltipConfig from './useTooltipConfig';
+} from 'src/utils/billing-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 const chartContainerId = 'data-by-task';
 

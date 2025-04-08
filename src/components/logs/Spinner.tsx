@@ -1,12 +1,16 @@
-import { AlertColor } from '@mui/material';
+import type { AlertColor } from '@mui/material';
+import type { SpinnerMessageKeys } from 'src/components/logs/types';
+
 import { useMemo } from 'react';
-// import { MutableRefObject, useRef, useState } from 'react';
+
 import { useIntl } from 'react-intl';
-import { useLogsContext } from './Context';
+
+import { useLogsContext } from 'src/components/logs/Context';
 // import { useInterval } from 'react-use';
-import LogLine from './Line';
-import SpinnerIcon from './SpinnerIcon';
-import { SpinnerMessageKeys } from './types';
+import LogLine from 'src/components/logs/Line';
+import SpinnerIcon from 'src/components/logs/SpinnerIcon';
+
+// import { MutableRefObject, useRef, useState } from 'react';
 
 interface Props {
     severity?: AlertColor;
@@ -28,7 +32,7 @@ function Spinner({ severity, runningKey, stoppedKey }: Props) {
         }
 
         return intl.formatMessage({
-            id: stopped ? 'logs.paused' : runningKey ?? 'logs.default',
+            id: stopped ? 'logs.paused' : (runningKey ?? 'logs.default'),
         });
     }, [fetchingCanSafelyStop, intl, runningKey, stopped, stoppedKey]);
 

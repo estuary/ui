@@ -1,9 +1,11 @@
 import { Button } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import Error from 'components/shared/Error';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { usePreSavePromptStore } from '../../store/usePreSavePromptStore';
+
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import Error from 'src/components/shared/Error';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 
 function StepError() {
     const intl = useIntl();

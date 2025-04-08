@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { Details } from './Details';
-import { RouteTitles } from './RouteTitles';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { Details } from 'src/lang/en-US/Details';
+import { RouteTitles } from 'src/lang/en-US/RouteTitles';
 
 export const Collections: Record<string, string> = {
     'collectionsTable.title': `Collections`,
