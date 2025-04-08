@@ -21,7 +21,7 @@ import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 export default function CaptureExpressCreate() {
     usePageTitle({
-        header: authenticatedRoutes.captures.createExpress.new.title,
+        header: authenticatedRoutes.express.captureCreate.new.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });

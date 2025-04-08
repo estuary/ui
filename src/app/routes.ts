@@ -58,16 +58,6 @@ const captures = {
             fullPath: '/captures/create/new',
         },
     },
-    createExpress: {
-        title: 'routeTitle.captureCreate',
-        path: `createExpress`,
-        fullPath: '/captures/createExpress',
-        new: {
-            title: 'routeTitle.captureCreate',
-            path: `createExpress/new`,
-            fullPath: '/captures/createExpress/new',
-        },
-    },
     details: {
         title: 'routeTitle.captureDetails',
         path: 'details',
@@ -144,6 +134,19 @@ const collections = {
 const dataPlaneAuth = {
     title: 'routeTitle.dataPlaneAuthReq',
     path: '/data-plane-auth-req',
+};
+
+const express = {
+    captureCreate: {
+        title: 'routeTitle.captureCreate',
+        path: `express/captureCreate`,
+        fullPath: '/express/captureCreate',
+        new: {
+            title: 'routeTitle.captureCreate',
+            path: `new`,
+            fullPath: '/express/captureCreate/new',
+        },
+    },
 };
 
 const home = {
@@ -250,6 +253,7 @@ export const authenticatedRoutes = {
     captures,
     collections,
     dataPlaneAuth,
+    express,
     home,
     materializations,
     marketplace: marketplace.authenticated,

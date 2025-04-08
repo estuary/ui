@@ -6,7 +6,7 @@ const entityType = 'capture';
 
 export default function CaptureExpressCreateConfig() {
     usePageTitle({
-        header: authenticatedRoutes.captures.create.title,
+        header: authenticatedRoutes.express.captureCreate.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });

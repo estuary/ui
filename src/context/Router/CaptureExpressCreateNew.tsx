@@ -4,6 +4,7 @@ import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
 import ConnectorSelectedGuard from 'src/components/shared/guards/ConnectorSelected';
 import { EntityContextProvider } from 'src/context/EntityContext';
 import { WorkflowContextProvider } from 'src/context/Workflow';
+import { ExpressWorkflowWrapper } from 'src/pages/expressWorkflow/Wrapper';
 
 function CaptureExpressCreateNewRoute() {
     return (
@@ -12,10 +13,12 @@ function CaptureExpressCreateNewRoute() {
                 <AdminCapabilityGuard>
                     <ConnectorSelectedGuard
                         navigateToPath={
-                            authenticatedRoutes.captures.createExpress.fullPath
+                            authenticatedRoutes.express.captureCreate.fullPath
                         }
                     >
-                        <CaptureExpressCreate />
+                        <ExpressWorkflowWrapper>
+                            <CaptureExpressCreate />
+                        </ExpressWorkflowWrapper>
                     </ConnectorSelectedGuard>
                 </AdminCapabilityGuard>
             </WorkflowContextProvider>

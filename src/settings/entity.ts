@@ -19,7 +19,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         routes: {
             connectorSelect: authenticatedRoutes.captures.create.fullPath,
             createNewExpress:
-                authenticatedRoutes.captures.createExpress.new.fullPath,
+                authenticatedRoutes.express.captureCreate.new.fullPath,
             createNew: authenticatedRoutes.captures.create.new.fullPath,
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,

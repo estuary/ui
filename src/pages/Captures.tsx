@@ -42,7 +42,7 @@ const Capture = () => {
 
                     <NavLink
                         style={{ textDecoration: 'none' }}
-                        to={authenticatedRoutes.captures.createExpress.fullPath}
+                        to={authenticatedRoutes.express.captureCreate.fullPath}
                     >
                         <Button
                             color="info"

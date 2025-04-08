@@ -153,6 +153,31 @@ const router = createBrowserRouter(
                 element={<BasicLogin showRegistration />}
             />
 
+            <Route
+                path={authenticatedRoutes.express.captureCreate.fullPath}
+                element={
+                    <ErrorBoundary FallbackComponent={ErrorImporting}>
+                        <Suspense fallback={null}>
+                            <AuthenticatedOnlyContext hideSpinner>
+                                <CaptureExpressCreateRoute />
+                            </AuthenticatedOnlyContext>
+                        </Suspense>
+                    </ErrorBoundary>
+                }
+            />
+            <Route
+                path={authenticatedRoutes.express.captureCreate.new.fullPath}
+                element={
+                    <ErrorBoundary FallbackComponent={ErrorImporting}>
+                        <Suspense fallback={null}>
+                            <AuthenticatedOnlyContext hideSpinner>
+                                <CaptureExpressCreateNewRoute />
+                            </AuthenticatedOnlyContext>
+                        </Suspense>
+                    </ErrorBoundary>
+                }
+            />
+
             {/* This is not in the route below so that it does not include the applayout*/}
             <Route
                 path={authenticatedRoutes.oauth.path}
@@ -368,37 +393,6 @@ const router = createBrowserRouter(
                                 >
                                     <Suspense fallback={null}>
                                         <CaptureCreateNewRoute />
-                                    </Suspense>
-                                </ErrorBoundary>
-                            }
-                        />
-
-                        <Route
-                            path={
-                                authenticatedRoutes.captures.createExpress.path
-                            }
-                            element={
-                                <ErrorBoundary
-                                    FallbackComponent={ErrorImporting}
-                                >
-                                    <Suspense fallback={null}>
-                                        <CaptureExpressCreateRoute />
-                                    </Suspense>
-                                </ErrorBoundary>
-                            }
-                        />
-
-                        <Route
-                            path={
-                                authenticatedRoutes.captures.createExpress.new
-                                    .path
-                            }
-                            element={
-                                <ErrorBoundary
-                                    FallbackComponent={ErrorImporting}
-                                >
-                                    <Suspense fallback={null}>
-                                        <CaptureExpressCreateNewRoute />
                                     </Suspense>
                                 </ErrorBoundary>
                             }
