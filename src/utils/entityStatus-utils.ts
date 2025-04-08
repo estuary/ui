@@ -136,6 +136,32 @@ export const getAutoDiscoveryIndicatorState = (
     };
 };
 
+// This logic is bound to change and, more or less, functions as a placeholder. According to Phil,
+// a null connector_status could be indicative of one of three things:
+//   * A connector status has not come through yet.
+//   * The task is not working.
+//   * The ops catalog is not working.
+
+export const getConnectorStatusIndicatorState = (
+    _colorMode: PaletteMode,
+    connectorStatus: EntityStatusResponse['connector_status'] | undefined
+): StatusIndicatorState => {
+    if (!connectorStatus) {
+        return {
+            color: { hex: warningMain, id: 'warning' },
+            messageId: 'status.error.medium',
+        };
+    }
+
+    return {
+        color: {
+            hex: successMain,
+            id: 'success',
+        },
+        messageId: 'status.error.low',
+    };
+};
+
 export const isEntityControllerStatus = (
     value: ControllerStatus
 ): value is EntityControllerStatus =>
