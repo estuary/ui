@@ -1,5 +1,5 @@
-import AutoDiscoverChanges from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoverChanges';
-import TimestampDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/TimestampDetail';
+import AutoDiscoverChanges from 'src/components/shared/Entity/Details/Status/Overview/AutoDiscoverChanges';
+import TimestampDetail from 'src/components/shared/Entity/Details/Status/Overview/TimestampDetail';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

@@ -3,12 +3,11 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import ActivationDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ActivationDetail';
-import ControllerStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerStatus';
-import ControllerUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerUpdatedDetail';
+import AutoDiscoverOutcome from 'src/components/shared/Entity/Details/Status/Overview/AutoDiscoverOutcome';
+import AutoDiscoveryStatus from 'src/components/shared/Entity/Details/Status/Overview/AutoDiscoveryStatus';
 import { cardHeaderSx } from 'src/context/Theme';
 
-export default function ControllerOverview() {
+export default function AutoDiscoveryOverview() {
     const intl = useIntl();
 
     return (
@@ -18,19 +17,17 @@ export default function ControllerOverview() {
                     direction="row"
                     style={{ marginBottom: 16, marginLeft: -4 }}
                 >
-                    <ControllerStatus />
+                    <AutoDiscoveryStatus />
 
                     <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
                         {intl.formatMessage({
-                            id: 'details.ops.status.overview.controller.header',
+                            id: 'details.ops.status.overview.autoDiscovery.header',
                         })}
                     </Typography>
                 </Stack>
 
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
-                    <ActivationDetail headerMessageId="details.ops.status.overview.controller.subheaderActivation" />
-
-                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
+                    <AutoDiscoverOutcome />
                 </Stack>
             </CardWrapper>
         </Grid>

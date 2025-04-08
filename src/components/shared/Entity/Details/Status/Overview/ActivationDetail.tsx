@@ -1,10 +1,10 @@
-import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Status/Overview/types';
 
 import { Skeleton, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import DetailWrapper from 'src/components/shared/Entity/Details/Status/Overview/DetailWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

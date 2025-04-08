@@ -1,4 +1,4 @@
-import type { StatusIndicatorProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+import type { StatusIndicatorProps } from 'src/components/shared/Entity/Details/Status/Overview/types';
 
 import { Skeleton, Stack } from '@mui/material';
 

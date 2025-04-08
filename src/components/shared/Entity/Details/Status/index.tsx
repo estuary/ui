@@ -2,11 +2,11 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SectionUpdated from 'src/components/shared/Entity/Details/Logs/Status/Overview/SectionUpdated';
-import RefreshButton from 'src/components/shared/Entity/Details/Logs/Status/RefreshButton';
-import SectionFormatter from 'src/components/shared/Entity/Details/Logs/Status/SectionFormatter';
-import SectionViews from 'src/components/shared/Entity/Details/Logs/Status/SectionViews';
-import ServerError from 'src/components/shared/Entity/Details/Logs/Status/ServerError';
+import SectionUpdated from 'src/components/shared/Entity/Details/Status/Overview/SectionUpdated';
+import RefreshButton from 'src/components/shared/Entity/Details/Status/RefreshButton';
+import SectionFormatter from 'src/components/shared/Entity/Details/Status/SectionFormatter';
+import SectionViews from 'src/components/shared/Entity/Details/Status/SectionViews';
+import ServerError from 'src/components/shared/Entity/Details/Status/ServerError';
 import UnderDev from 'src/components/shared/UnderDev';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useGlobalSearchParams, {

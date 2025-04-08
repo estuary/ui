@@ -2,8 +2,8 @@ import { Divider, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import Overview from 'src/components/shared/Entity/Details/Logs/Status/Overview';
-import StatusResponseViewer from 'src/components/shared/Entity/Details/Logs/Status/StatusResponseViewer';
+import Overview from 'src/components/shared/Entity/Details/Status/Overview';
+import StatusResponseViewer from 'src/components/shared/Entity/Details/Status/StatusResponseViewer';
 import ControllerStatusHistoryTable from 'src/components/tables/ControllerStatusHistory';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 

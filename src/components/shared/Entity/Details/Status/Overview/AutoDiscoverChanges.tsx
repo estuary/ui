@@ -1,8 +1,8 @@
-import type { AutoDiscoverChangesProps } from 'src/components/shared/Entity/Details/Logs/Status/Overview/types';
+import type { AutoDiscoverChangesProps } from 'src/components/shared/Entity/Details/Status/Overview/types';
 
 import { Divider, Stack } from '@mui/material';
 
-import NumberDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/NumberDetail';
+import NumberDetail from 'src/components/shared/Entity/Details/Status/Overview/NumberDetail';
 
 export default function AutoDiscoverChanges({
     added,

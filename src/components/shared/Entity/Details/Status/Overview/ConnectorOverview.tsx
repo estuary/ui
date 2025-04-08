@@ -3,11 +3,12 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import AutoDiscoverOutcome from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoverOutcome';
-import AutoDiscoveryStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/AutoDiscoveryStatus';
+import ConnectorStatus from 'src/components/shared/Entity/Details/Status/Overview/ConnectorStatus';
+import ConnectorStatusDetail from 'src/components/shared/Entity/Details/Status/Overview/ConnectorStatusDetail';
+import ConnectorUpdatedDetail from 'src/components/shared/Entity/Details/Status/Overview/ConnectorUpdatedDetail';
 import { cardHeaderSx } from 'src/context/Theme';
 
-export default function AutoDiscoveryOverview() {
+export default function ConnectorOverview() {
     const intl = useIntl();
 
     return (
@@ -17,17 +18,19 @@ export default function AutoDiscoveryOverview() {
                     direction="row"
                     style={{ marginBottom: 16, marginLeft: -4 }}
                 >
-                    <AutoDiscoveryStatus />
+                    <ConnectorStatus />
 
                     <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
                         {intl.formatMessage({
-                            id: 'details.ops.status.overview.autoDiscovery.header',
+                            id: 'details.ops.status.overview.connector.header',
                         })}
                     </Typography>
                 </Stack>
 
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
-                    <AutoDiscoverOutcome />
+                    <ConnectorStatusDetail headerMessageId="details.ops.status.overview.connector.subheaderLastStatus" />
+
+                    <ConnectorUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
                 </Stack>
             </CardWrapper>
         </Grid>
