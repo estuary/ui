@@ -27,7 +27,11 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                     {data.map(({ title, val }, index) => (
                         <ListItem
                             key={`${title}-keyValueList-${index}`}
-                            style={{ paddingLeft: 0, paddingRight: 0 }}
+                            style={
+                                val
+                                    ? { paddingLeft: 0, paddingRight: 0 }
+                                    : undefined
+                            }
                         >
                             <ListItemText
                                 disableTypography={disableTypography}
@@ -35,7 +39,11 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 secondary={val}
                                 primaryTypographyProps={{
                                     color: (theme) =>
-                                        diminishedTextColor[theme.palette.mode],
+                                        val
+                                            ? diminishedTextColor[
+                                                  theme.palette.mode
+                                              ]
+                                            : theme.palette.text.primary,
                                     component: 'div',
                                     marginBottom: '2px',
                                 }}
