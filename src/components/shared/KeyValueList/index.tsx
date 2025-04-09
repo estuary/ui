@@ -45,7 +45,7 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                               ]
                                             : theme.palette.text.primary,
                                     component: 'div',
-                                    marginBottom: '2px',
+                                    marginBottom: val ? '2px' : undefined,
                                 }}
                                 secondaryTypographyProps={{
                                     color: (theme) =>
