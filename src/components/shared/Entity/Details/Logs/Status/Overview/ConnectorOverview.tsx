@@ -3,12 +3,12 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import ActivationDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ActivationDetail';
-import ControllerStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerStatus';
-import ControllerUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerUpdatedDetail';
+import ConnectorStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatus';
+import ConnectorStatusDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatusDetail';
+import ConnectorUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorUpdatedDetail';
 import { cardHeaderSx } from 'src/context/Theme';
 
-export default function ControllerOverview() {
+export default function ConnectorOverview() {
     const intl = useIntl();
 
     return (
@@ -18,19 +18,19 @@ export default function ControllerOverview() {
                     direction="row"
                     style={{ marginBottom: 16, marginLeft: -4 }}
                 >
-                    <ControllerStatus />
+                    <ConnectorStatus />
 
                     <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
                         {intl.formatMessage({
-                            id: 'details.ops.status.overview.controller.header',
+                            id: 'details.ops.status.overview.connector.header',
                         })}
                     </Typography>
                 </Stack>
 
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
-                    <ActivationDetail headerMessageId="details.ops.status.overview.controller.subheaderActivation" />
+                    <ConnectorStatusDetail headerMessageId="details.ops.status.overview.connector.subheaderLastStatus" />
 
-                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
+                    <ConnectorUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
                 </Stack>
             </CardWrapper>
         </Grid>

@@ -47,6 +47,13 @@ export interface CollectionControllerStatus extends EntityControllerStatus {
     inferred_schema?: InferredSchemaStatus | null;
 }
 
+interface ConnectorStatus {
+    message: string;
+    shard: ShardRef;
+    ts: string;
+    fields?: object;
+}
+
 interface DiscoverChange {
     disable: boolean;
     resource_path: string[];
@@ -61,6 +68,7 @@ export interface EntityControllerStatus extends PublicationControllerStatus {
 
 export interface EntityStatusResponse {
     catalog_name: string;
+    connector_status: ConnectorStatus | null;
     controller_failures: number;
     controller_next_run: string | null;
     controller_updated_at: string;
@@ -120,6 +128,13 @@ interface PublicationStatus {
     history: PublicationInfo[];
     dependency_hash?: string | null;
     max_observed_pub_id?: string;
+}
+
+interface ShardRef {
+    build: string;
+    keyBegin: string;
+    name: string;
+    rClockBegin: string;
 }
 
 interface SourceCaptureStatus {
