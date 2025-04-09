@@ -5,20 +5,20 @@ import { useMemo } from 'react';
 
 import { Grid } from '@mui/material';
 
+
 import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import Usage from 'src/components/shared/Entity/Details/Usage';
-import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
-import ShardInformation from 'src/components/shared/Entity/Shard/Information';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import JournalHydrator from 'src/stores/JournalData/Hydrator';
 import { hasLength } from 'src/utils/misc-utils';
+import { Status } from 'src/components/shared/Entity/Details/Overview/Status';
 
 function Overview({ name }: DetailsOverviewProps) {
     const entityType = useEntityType();
@@ -34,8 +34,6 @@ function Overview({ name }: DetailsOverviewProps) {
         () => (editorSpecs && hasLength(editorSpecs) ? editorSpecs[0] : null),
         [editorSpecs]
     );
-
-    const taskTypes = useDetailsEntityTaskTypes();
 
     return (
         <Grid container spacing={2}>
@@ -67,14 +65,7 @@ function Overview({ name }: DetailsOverviewProps) {
                 </Grid>
             ) : null}
 
-            {hasLength(taskTypes) ? (
-                <Grid item xs={12}>
-                    <ShardInformation
-                        taskTypes={taskTypes}
-                        taskName={entityName}
-                    />
-                </Grid>
-            ) : null}
+            <Status catalogName={entityName} />
 
             {isCollection && entityName ? (
                 <Grid item xs={12}>
