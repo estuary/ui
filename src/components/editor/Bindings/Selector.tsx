@@ -98,8 +98,9 @@ function BindingSelector({
     const disableActions = formActive || readOnly;
 
     const cellRenderers: CollectionSelectorListProps['renderers']['cell'] = {
-        name: (params, filteringActive) => {
+        name: (params, filterValue) => {
             const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+            const filteringActive = Boolean(filterValue);
 
             const collectionParts = filteringActive
                 ? splitPathAndName(params.value)
@@ -109,7 +110,7 @@ function BindingSelector({
                 <BindingsSelectorName
                     bindingUUID={bindingUUID}
                     collection={collectionParts}
-                    highlightName={filteringActive}
+                    filterValue={filterValue}
                 />
             );
         },

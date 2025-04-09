@@ -1,14 +1,21 @@
 import type { SelectorNameProps } from 'src/components/editor/Bindings/Row/types';
 
-import { Box, Button, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
+
+import Highlighter from 'react-highlight-words';
 
 import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
+import { NameHighlight } from 'src/components/editor/Bindings/Row/NameHighlight';
+import {
+    HIGHLIGHT_CLASS_NAME,
+    UNHIGHLIGHT_CLASS_NAME,
+} from 'src/components/editor/Bindings/Row/shared';
 import { typographyTruncation } from 'src/context/Theme';
 
 function BindingsSelectorName({
     bindingUUID,
     collection,
-    highlightName: foo,
+    filterValue,
 }: SelectorNameProps) {
     return (
         <Button
@@ -29,31 +36,20 @@ function BindingsSelectorName({
                 '&:focus, &:hover': {
                     bgcolor: 'transparent',
                 },
+                [`& .${HIGHLIGHT_CLASS_NAME}`]: {
+                    mx: 0.25,
+                },
             }}
         >
-            <Typography
-                {...typographyTruncation}
-                sx={{
-                    ...typographyTruncation.sx,
-                    ...(foo
-                        ? {
-                              '& span:first-of-type': {
-                                  opacity: 0.7,
-                              },
-                          }
-                        : {}),
-                }}
-            >
-                {collection.map((part, index) => {
-                    return (
-                        <Box
-                            component="span"
-                            key={`binding_col_name_${part}_${index}`}
-                        >
-                            {part}
-                        </Box>
-                    );
-                })}
+            <Typography component="span" {...typographyTruncation}>
+                <Highlighter
+                    autoEscape={false}
+                    highlightClassName={HIGHLIGHT_CLASS_NAME}
+                    highlightTag={NameHighlight}
+                    searchWords={[filterValue ?? '']}
+                    textToHighlight={collection.join('')}
+                    unhighlightClassName={UNHIGHLIGHT_CLASS_NAME}
+                />
             </Typography>
         </Button>
     );

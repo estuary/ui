@@ -1,3 +1,5 @@
+import type { BaseComponentProps } from 'src/types';
+
 export interface ErrorIndicatorProps {
     bindingUUID: string;
     collection: string;
@@ -6,5 +8,9 @@ export interface ErrorIndicatorProps {
 export interface SelectorNameProps {
     bindingUUID: string;
     collection: string[];
-    highlightName?: any; // TODO (search) we don't want booleans - need custom styling support
+    filterValue?: string;
+}
+
+export interface NameHighlightProps extends BaseComponentProps {
+    highlightIndex: number;
 }

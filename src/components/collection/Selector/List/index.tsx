@@ -224,7 +224,7 @@ function CollectionSelectorList({
                     />
                 ),
                 renderCell: (params) =>
-                    renderers.cell.name(params, Boolean(filteredRows)),
+                    renderers.cell.name(params, filterValue),
             },
         ];
 
@@ -321,7 +321,6 @@ function CollectionSelectorList({
         collectionsLabel,
         disable,
         filterValue,
-        filteredRows,
         intl,
         removeCollections,
         renderers.cell,
