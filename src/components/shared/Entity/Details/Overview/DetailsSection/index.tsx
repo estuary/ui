@@ -53,46 +53,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             return response;
         }
 
-        // Add last updated - without user as Estuary folks
-        //  sometimes update stuff and that might look odd
-        response.push({
-            title: intl.formatMessage({
-                id: 'entityTable.data.lastUpdated',
-            }),
-            val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
-        });
-
-        // At when it was created
-        response.push({
-            title: intl.formatMessage({
-                id: 'data.created_at',
-            }),
-            val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
-        });
-
-        if (hasLength(latestLiveSpec.data_plane_name)) {
-            const dataPlaneScope = getDataPlaneScope(
-                latestLiveSpec.data_plane_name
-            );
-
-            const dataPlaneName = parseDataPlaneName(
-                latestLiveSpec.data_plane_name,
-                dataPlaneScope
-            );
-
-            response.push({
-                title: intl.formatMessage({ id: 'data.dataPlane' }),
-                val: (
-                    <DataPlane
-                        dataPlaneName={dataPlaneName}
-                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
-                        logoSize={20}
-                        scope={dataPlaneScope}
-                    />
-                ),
-            });
-        }
-
         if (latestLiveSpec.connectorName) {
             response.push({
                 title: intl.formatMessage({
@@ -141,6 +101,46 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 ),
             });
         }
+
+        if (hasLength(latestLiveSpec.data_plane_name)) {
+            const dataPlaneScope = getDataPlaneScope(
+                latestLiveSpec.data_plane_name
+            );
+
+            const dataPlaneName = parseDataPlaneName(
+                latestLiveSpec.data_plane_name,
+                dataPlaneScope
+            );
+
+            response.push({
+                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                val: (
+                    <DataPlane
+                        dataPlaneName={dataPlaneName}
+                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
+                        logoSize={20}
+                        scope={dataPlaneScope}
+                    />
+                ),
+            });
+        }
+
+        // Add last updated - without user as Estuary folks
+        //  sometimes update stuff and that might look odd
+        response.push({
+            title: intl.formatMessage({
+                id: 'entityTable.data.lastUpdated',
+            }),
+            val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
+        });
+
+        // At when it was created
+        response.push({
+            title: intl.formatMessage({
+                id: 'data.created_at',
+            }),
+            val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
+        });
 
         if (hasLength(latestLiveSpec.writes_to)) {
             response.push({
