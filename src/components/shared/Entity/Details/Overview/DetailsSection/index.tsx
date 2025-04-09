@@ -1,18 +1,19 @@
-import type { FormatDateOptions } from 'react-intl';
-import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
+import type { DetailsSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
 
 import { useMemo } from 'react';
 
-import { CircularProgress, Skeleton, Stack } from '@mui/material';
+import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ConnectorName from 'src/components/connectors/ConnectorName';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
+import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
@@ -20,24 +21,12 @@ import {
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
-interface Props {
-    entityName: string;
-    latestLiveSpec: LiveSpecsQuery_details | null;
-    loading: boolean;
-}
-
-const TIME_SETTINGS: FormatDateOptions = {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZoneName: 'short',
-};
-
-function DetailsSection({ latestLiveSpec }: Props) {
+function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
+
+    const latestConnectorStatus =
+        useEntityStatusStore_singleResponse(entityName)?.connector_status
+            ?.message;
 
     const data = useMemo(() => {
         const response = [];
@@ -127,13 +116,26 @@ function DetailsSection({ latestLiveSpec }: Props) {
                                     latestLiveSpec.connector_tag_documentation_url
                                 }
                             >
-                                <FormattedMessage id="terms.documentation" />
+                                {intl.formatMessage({
+                                    id: 'terms.documentation',
+                                })}
                             </ExternalLink>
                         ) : null}
                     </Stack>
                 ),
             });
         }
+
+        response.push({
+            title: intl.formatMessage({
+                id: 'data.connectorStatus',
+            }),
+            val: (
+                <Typography component="div">
+                    {latestConnectorStatus ?? '--'}
+                </Typography>
+            ),
+        });
 
         if (hasLength(latestLiveSpec.writes_to)) {
             response.push({
@@ -162,11 +164,15 @@ function DetailsSection({ latestLiveSpec }: Props) {
         }
 
         return response;
-    }, [intl, latestLiveSpec]);
+    }, [intl, latestConnectorStatus, latestLiveSpec]);
 
     return (
         <CardWrapper
-            message={<FormattedMessage id="detailsPanel.details.title" />}
+            message={
+                <span>
+                    {intl.formatMessage({ id: 'detailsPanel.details.title' })}
+                </span>
+            }
         >
             {!hasLength(data) ? (
                 <CircularProgress />

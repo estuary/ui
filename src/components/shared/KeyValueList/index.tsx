@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 
 import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
+import { diminishedTextColor } from 'src/context/Theme';
+
 export type KeyValue = {
     title: string | ReactNode;
     val?: string | ReactNode;
@@ -20,17 +22,26 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-                <List dense sx={{ ml: 1, pt: 0, overflowY: 'auto' }}>
+
+                <List dense sx={{ pt: 0, overflowY: 'auto' }}>
                     {data.map(({ title, val }, index) => (
-                        <ListItem key={`${title}-keyValueList-${index}`}>
+                        <ListItem
+                            key={`${title}-keyValueList-${index}`}
+                            style={{ paddingLeft: 0, paddingRight: 0 }}
+                        >
                             <ListItemText
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
                                 primaryTypographyProps={{
+                                    color: (theme) =>
+                                        diminishedTextColor[theme.palette.mode],
                                     component: 'div',
+                                    marginBottom: '2px',
                                 }}
                                 secondaryTypographyProps={{
+                                    color: (theme) =>
+                                        theme.palette.text.primary,
                                     component: 'div',
                                 }}
                             />
