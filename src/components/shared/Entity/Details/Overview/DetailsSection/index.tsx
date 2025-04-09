@@ -13,6 +13,7 @@ import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/Det
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
+import { useEntityType } from 'src/context/EntityContext';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
@@ -23,6 +24,8 @@ import { hasLength } from 'src/utils/misc-utils';
 
 function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
+
+    const entityType = useEntityType();
 
     const latestConnectorStatus =
         useEntityStatusStore_singleResponse(entityName)?.connector_status
@@ -126,16 +129,18 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             });
         }
 
-        response.push({
-            title: intl.formatMessage({
-                id: 'data.connectorStatus',
-            }),
-            val: (
-                <Typography component="div">
-                    {latestConnectorStatus ?? '--'}
-                </Typography>
-            ),
-        });
+        if (entityType !== 'collection') {
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.connectorStatus',
+                }),
+                val: (
+                    <Typography component="div">
+                        {latestConnectorStatus ?? '--'}
+                    </Typography>
+                ),
+            });
+        }
 
         if (hasLength(latestLiveSpec.writes_to)) {
             response.push({
@@ -164,7 +169,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         }
 
         return response;
-    }, [intl, latestConnectorStatus, latestLiveSpec]);
+    }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);
 
     return (
         <CardWrapper
