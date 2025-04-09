@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 
 import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
+import { diminishedTextColor } from 'src/context/Theme';
+
 export type KeyValue = {
     title: string | ReactNode;
     val?: string | ReactNode;
@@ -20,17 +22,34 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-                <List dense sx={{ ml: 1, pt: 0, overflowY: 'auto' }}>
+
+                <List dense sx={{ pt: 0, overflowY: 'auto' }}>
                     {data.map(({ title, val }, index) => (
-                        <ListItem key={`${title}-keyValueList-${index}`}>
+                        <ListItem
+                            key={`${title}-keyValueList-${index}`}
+                            style={
+                                val
+                                    ? { paddingLeft: 0, paddingRight: 0 }
+                                    : undefined
+                            }
+                        >
                             <ListItemText
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
                                 primaryTypographyProps={{
+                                    color: (theme) =>
+                                        val
+                                            ? diminishedTextColor[
+                                                  theme.palette.mode
+                                              ]
+                                            : theme.palette.text.primary,
                                     component: 'div',
+                                    marginBottom: val ? '2px' : undefined,
                                 }}
                                 secondaryTypographyProps={{
+                                    color: (theme) =>
+                                        theme.palette.text.primary,
                                     component: 'div',
                                 }}
                             />
