@@ -11,12 +11,12 @@ import MaterializeGenerateButton from 'src/components/materialization/GenerateBu
 import EntityCreate from 'src/components/shared/Entity/Create';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import WorkflowInitializer from 'src/components/shared/Entity/WorkflowInitializer';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 
 function MaterializationCreate() {
     usePageTitle({
@@ -57,7 +57,7 @@ function MaterializationCreate() {
     }, [imageTag, setDraftId]);
 
     return (
-        <WorkflowInitializer>
+        <WorkflowHydrator>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
                 <EntityCreate
                     entityType={entityType}
@@ -81,7 +81,7 @@ function MaterializationCreate() {
                     }
                 />
             </MutateDraftSpecProvider>
-        </WorkflowInitializer>
+        </WorkflowHydrator>
     );
 }
 

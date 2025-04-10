@@ -9,9 +9,9 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import EntityEdit from 'src/components/shared/Entity/Edit';
+import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import WorkflowInitializer from 'src/components/shared/Entity/WorkflowInitializer';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -19,6 +19,7 @@ import useGlobalSearchParams, {
 import { useDraftSpecs_editWorkflow } from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
+import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 const entityType = 'capture';
@@ -49,43 +50,45 @@ function CaptureEdit() {
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     return (
-        <WorkflowInitializer>
-            <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <EntityEdit
-                    title="routeTitle.captureEdit"
-                    entityType={entityType}
-                    readOnly={{ detailsForm: true }}
-                    draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
-                        <EntityToolbar
-                            waitTimes={{
-                                generate: MAX_DISCOVER_TIME,
-                            }}
-                            primaryButtonProps={{
-                                disabled: !draftId,
-                                logEvent: CustomEvents.CAPTURE_EDIT,
-                            }}
-                            secondaryButtonProps={{
-                                disabled: !hasConnectors,
-                                logEvent: CustomEvents.CAPTURE_TEST,
-                            }}
-                            GenerateButton={
-                                <CaptureGenerateButton
-                                    entityType={entityType}
-                                    disabled={!hasConnectors}
-                                />
-                            }
-                        />
-                    }
-                    RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                        />
-                    }
-                />
-            </MutateDraftSpecProvider>
-        </WorkflowInitializer>
+        <DraftInitializer>
+            <WorkflowHydrator>
+                <MutateDraftSpecProvider value={updateDraftSpecs}>
+                    <EntityEdit
+                        title="routeTitle.captureEdit"
+                        entityType={entityType}
+                        readOnly={{ detailsForm: true }}
+                        draftSpecMetadata={draftSpecsMetadata}
+                        toolbar={
+                            <EntityToolbar
+                                waitTimes={{
+                                    generate: MAX_DISCOVER_TIME,
+                                }}
+                                primaryButtonProps={{
+                                    disabled: !draftId,
+                                    logEvent: CustomEvents.CAPTURE_EDIT,
+                                }}
+                                secondaryButtonProps={{
+                                    disabled: !hasConnectors,
+                                    logEvent: CustomEvents.CAPTURE_TEST,
+                                }}
+                                GenerateButton={
+                                    <CaptureGenerateButton
+                                        entityType={entityType}
+                                        disabled={!hasConnectors}
+                                    />
+                                }
+                            />
+                        }
+                        RediscoverButton={
+                            <RediscoverButton
+                                entityType={entityType}
+                                disabled={!hasConnectors}
+                            />
+                        }
+                    />
+                </MutateDraftSpecProvider>
+            </WorkflowHydrator>
+        </DraftInitializer>
     );
 }
 
