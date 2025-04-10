@@ -1,6 +1,4 @@
-import type { ReactNode } from 'react';
-import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
-import type { EntityWithCreateWorkflow } from 'src/types';
+import type { EntityCreateProps } from 'src/components/shared/Entity/Create/types';
 
 import { useEffect, useMemo } from 'react';
 
@@ -45,22 +43,12 @@ import {
 } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-    draftSpecMetadata: Pick<
-        DraftSpecSwrMetadata,
-        'draftSpecs' | 'isValidating' | 'error'
-    >;
-    toolbar: ReactNode;
-    RediscoverButton?: ReactNode;
-}
-
 function EntityCreate({
     entityType,
     draftSpecMetadata,
-    toolbar,
+    Toolbar: toolbar,
     RediscoverButton,
-}: Props) {
+}: EntityCreateProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { resetState } = useEntityWorkflowHelpers();
@@ -205,14 +193,9 @@ function EntityCreate({
                 </ErrorBoundryWrapper>
             ) : null}
 
-            {imageTag.connectorId ? (
-                <ErrorBoundryWrapper>
-                    <EndpointConfig
-                        connectorImage={imageTag.id}
-                        hideBorder={!displayResourceConfig}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
+            <ErrorBoundryWrapper>
+                <EndpointConfig hideBorder={!displayResourceConfig} />
+            </ErrorBoundryWrapper>
 
             {displayResourceConfig ? (
                 <ErrorBoundryWrapper>

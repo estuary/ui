@@ -45,6 +45,10 @@ const CaptureCreateRoute = lazy(
 const CaptureCreateNewRoute = lazy(
     () => import('src/context/Router/CaptureCreateNew')
 );
+const CaptureExpressCreateRoute = lazy(() => import('./CaptureExpressCreate'));
+const CaptureExpressCreateNewRoute = lazy(
+    () => import('./CaptureExpressCreateNew')
+);
 const CaptureDetailsRoute = lazy(
     () => import('src/context/Router/CaptureDetails')
 );
@@ -147,6 +151,31 @@ const router = createBrowserRouter(
             <Route
                 path={unauthenticatedRoutes.register.path}
                 element={<BasicLogin showRegistration />}
+            />
+
+            <Route
+                path={authenticatedRoutes.express.captureCreate.fullPath}
+                element={
+                    <ErrorBoundary FallbackComponent={ErrorImporting}>
+                        <Suspense fallback={null}>
+                            <AuthenticatedOnlyContext hideSpinner>
+                                <CaptureExpressCreateRoute />
+                            </AuthenticatedOnlyContext>
+                        </Suspense>
+                    </ErrorBoundary>
+                }
+            />
+            <Route
+                path={authenticatedRoutes.express.captureCreate.new.fullPath}
+                element={
+                    <ErrorBoundary FallbackComponent={ErrorImporting}>
+                        <Suspense fallback={null}>
+                            <AuthenticatedOnlyContext hideSpinner>
+                                <CaptureExpressCreateNewRoute />
+                            </AuthenticatedOnlyContext>
+                        </Suspense>
+                    </ErrorBoundary>
+                }
             />
 
             {/* This is not in the route below so that it does not include the applayout*/}

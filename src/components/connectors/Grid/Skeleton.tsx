@@ -1,6 +1,6 @@
 import { Box, Grid, Skeleton } from '@mui/material';
 
-import Tile from 'src/components/connectors/Tile';
+import Tile from 'src/components/connectors/Grid/Tile';
 
 const tileCount = 6;
 

@@ -2,14 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import CaptureGenerateButton from 'src/components/capture/GenerateButton';
-import RediscoverButton from 'src/components/capture/RediscoverButton';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
-import EntityCreate from 'src/components/shared/Entity/Create';
+import EntityCreateExpress from 'src/components/shared/Entity/Create/Express';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
@@ -20,9 +19,9 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
-function CaptureCreate() {
+export default function CaptureExpressCreate() {
     usePageTitle({
-        header: authenticatedRoutes.captures.create.new.title,
+        header: authenticatedRoutes.express.captureCreate.new.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
@@ -47,12 +46,11 @@ function CaptureCreate() {
     // Endpoint Config Store
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
-    const [initiateDiscovery, setInitiateDiscovery] = useState<boolean>(true);
+    const [initiateDiscovery, setInitiateDiscovery] = useState(true);
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs } = useDraftSpecs(persistedDraftId);
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();
@@ -75,11 +73,10 @@ function CaptureCreate() {
     }, [entityNameChanged]);
 
     return (
-        <WorkflowHydrator>
+        <WorkflowHydrator expressWorkflow>
             <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <EntityCreate
+                <EntityCreateExpress
                     entityType={entityType}
-                    draftSpecMetadata={draftSpecsMetadata}
                     Toolbar={
                         <EntityToolbar
                             waitTimes={{
@@ -105,16 +102,8 @@ function CaptureCreate() {
                             }
                         />
                     }
-                    RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                        />
-                    }
                 />
             </MutateDraftSpecProvider>
         </WorkflowHydrator>
     );
 }
-
-export default CaptureCreate;

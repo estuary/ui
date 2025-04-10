@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import { Box, Button, Toolbar } from '@mui/material';
+import { Box, Button, Stack, Toolbar } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -10,10 +10,7 @@ import { authenticatedRoutes } from 'src/app/routes';
 import CapturesTable from 'src/components/tables/Captures';
 import usePageTitle from 'src/hooks/usePageTitle';
 
-const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
-    padding: 2,
-};
+const boxStyling: SxProps<Theme> = { marginBottom: 2, padding: 2 };
 
 const Capture = () => {
     usePageTitle({
@@ -30,17 +27,32 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink
-                    style={{ textDecoration: 'none' }}
-                    to={authenticatedRoutes.captures.create.fullPath}
-                >
-                    <Button
-                        size="large"
-                        startIcon={<Plus style={{ fontSize: 14 }} />}
+                <Stack direction="row" spacing={1}>
+                    <NavLink
+                        style={{ textDecoration: 'none' }}
+                        to={authenticatedRoutes.captures.create.fullPath}
                     >
-                        <FormattedMessage id="capturesTable.cta.new" />
-                    </Button>
-                </NavLink>
+                        <Button
+                            size="large"
+                            startIcon={<Plus style={{ fontSize: 14 }} />}
+                        >
+                            <FormattedMessage id="capturesTable.cta.new" />
+                        </Button>
+                    </NavLink>
+
+                    <NavLink
+                        style={{ textDecoration: 'none' }}
+                        to={authenticatedRoutes.express.captureCreate.fullPath}
+                    >
+                        <Button
+                            color="info"
+                            size="large"
+                            startIcon={<Plus style={{ fontSize: 14 }} />}
+                        >
+                            <FormattedMessage id="capturesTable.cta.new" />
+                        </Button>
+                    </NavLink>
+                </Stack>
             </Toolbar>
 
             <Box sx={boxStyling}>
