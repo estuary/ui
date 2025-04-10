@@ -96,6 +96,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                     async () => {
                         fireGtmEvent('Register', {
                             tenant: requestedTenant,
+                            ignore_referrer: true,
                         });
                         trackEvent(`${directiveName}:Complete`, directive);
                         void mutate();
@@ -111,6 +112,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         fireGtmEvent('RegisterFailed', {
                             tenantAlreadyTaken: tenantTaken,
                             tenant: requestedTenant,
+                            ignore_referrer: true,
                         });
                         trackEvent(`${directiveName}:Error`, directive);
 
