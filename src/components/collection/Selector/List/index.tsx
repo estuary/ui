@@ -201,7 +201,6 @@ function CollectionSelectorList({
         const response: any[] = [
             {
                 field: collectionSelector,
-                fullWidth: true,
                 headerName: collectionsLabel,
                 renderFooHeader: () => {
                     return (
