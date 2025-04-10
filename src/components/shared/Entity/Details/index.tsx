@@ -17,6 +17,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { EditorStoreNames } from 'src/stores/names';
 
@@ -46,37 +47,39 @@ function EntityDetails() {
         <LocalZustandProvider createStore={localStore}>
             <LiveSpecsHydrator catalogName={catalogName} localZustandScope>
                 <ShardHydrator catalogName={catalogName}>
-                    <Stack spacing={2} sx={{ m: 1 }}>
-                        <Stack
-                            direction="row"
-                            sx={{ justifyContent: 'space-between' }}
-                        >
-                            <Typography
-                                component="span"
-                                variant="h6"
-                                sx={{
-                                    ...truncateTextSx,
-                                    alignItems: 'center',
-                                }}
+                    <EntityStatusHydrator catalogName={catalogName}>
+                        <Stack spacing={2} sx={{ m: 1 }}>
+                            <Stack
+                                direction="row"
+                                sx={{ justifyContent: 'space-between' }}
                             >
-                                {catalogName}
-                            </Typography>
+                                <Typography
+                                    component="span"
+                                    variant="h6"
+                                    sx={{
+                                        ...truncateTextSx,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    {catalogName}
+                                </Typography>
 
-                            <Stack direction="row">
-                                <EditButton buttonVariant="outlined" />
+                                <Stack direction="row">
+                                    <EditButton buttonVariant="outlined" />
 
-                                <MaterializeButton />
+                                    <MaterializeButton />
+                                </Stack>
                             </Stack>
+
+                            <Divider />
+
+                            <DetailTabs />
                         </Stack>
 
-                        <Divider />
-
-                        <DetailTabs />
-                    </Stack>
-
-                    <Box sx={{ m: 1 }}>
-                        <RenderTab />
-                    </Box>
+                        <Box sx={{ m: 1 }}>
+                            <RenderTab />
+                        </Box>
+                    </EntityStatusHydrator>
                 </ShardHydrator>
             </LiveSpecsHydrator>
         </LocalZustandProvider>
