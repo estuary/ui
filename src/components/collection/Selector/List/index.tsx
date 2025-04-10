@@ -10,6 +10,7 @@ import {
     TableBody,
     TableCell,
     TableContainer,
+    TableFooter,
     TableRow,
 } from '@mui/material';
 import {
@@ -465,6 +466,15 @@ function CollectionSelectorList({
                             }}
                         </AutoSizer>
                     </TableBody>
+                    <TableFooter component="div">
+                        <TableRow component="div">
+                            <TableCell component="div">
+                                {filterValue.length > 0
+                                    ? `Viewing: ${itemData.length} of ${rows.length}`
+                                    : `Total: ${rows.length}`}
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </TableContainer>
         </Box>
