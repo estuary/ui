@@ -7,6 +7,7 @@ export interface ColumnProps extends TableColumns {
         index: number,
         storeName: SelectTableStoreNames
     ) => ReactNode;
+    renderFooHeader?: (index: number) => ReactNode;
 }
 
 export interface StandAloneTableTitleProps {

@@ -33,11 +33,10 @@ import {
     COLLECTION_SELECTOR_UUID_COL,
     getCollectionSelector,
 } from 'src/components/collection/Selector/List/shared';
-import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
-import { defaultOutline_hovered } from 'src/context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
@@ -46,8 +45,6 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
-
-const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
 
 const DEFAULT_ROW_HEIGHT = 50;
 
@@ -95,18 +92,6 @@ function CollectionSelectorList({
             formStatus !== FormStatus.UPDATING
     );
 
-    // // We use mui`s selection model to store which collection was clicked on to display it
-    // const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-    //     []
-    // );
-    // useEffect(() => {
-    //     // TODO (keep current binding) we need to handle filtering better.
-    //     //  Waiting on us to handle client side filtering on our own first.
-    //     //  After that we should make sure the thing we're selecting is actually
-    //     //  visible with the filters enabled.
-    //     if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
-    // }, [currentBindingUUID]);
-
     const rows = useMemo(() => {
         // If we have no bindings we can just return an empty array
         if (isEmpty(resourceConfigs)) {
@@ -120,7 +105,6 @@ function CollectionSelectorList({
             const collection = config.meta.collectionName;
 
             return {
-                // [COLLECTION_SELECTOR_VISIBLE]: true,
                 [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
                 [COLLECTION_SELECTOR_NAME_COL]: collection,
                 [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
@@ -147,7 +131,7 @@ function CollectionSelectorList({
 
     useEffect(() => {
         // Selection disabled
-        if (!setCurrentBinding) {
+        if (!selectionEnabled || !setCurrentBinding) {
             return;
         }
 
@@ -181,10 +165,10 @@ function CollectionSelectorList({
         }
     }, [
         currentBindingUUID,
-        filterValue,
         filteredRows,
         previousFilterValue,
         rows,
+        selectionEnabled,
         setCurrentBinding,
     ]);
 
@@ -206,20 +190,20 @@ function CollectionSelectorList({
     }, []);
 
     const collectionSelector = useMemo(
-        () => getCollectionSelector(!filteredRows && isCapture),
-        [filteredRows, isCapture]
+        () =>
+            getCollectionSelector(
+                Boolean(filterValue && filterValue.length > 0) && isCapture
+            ),
+        [filterValue, isCapture]
     );
 
     const columns = useMemo(() => {
         const response: any[] = [
             {
-                cellClassName: cellClass_noPadding,
                 field: collectionSelector,
                 fullWidth: true,
                 headerName: collectionsLabel,
-                renderHeader: (...args: any) => {
-                    console.log('renderHeader.collection name', ...args);
-
+                renderFooHeader: () => {
                     return (
                         <CollectionSelectorHeaderName
                             disabled={disable}
@@ -238,13 +222,9 @@ function CollectionSelectorList({
 
         if (toggleCollections) {
             response.unshift({
-                cellClassName: cellClass_noPadding,
-                headerClassName: cellClass_noPadding,
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
-                minWidth: 110,
-                maxWidth: 125,
                 renderCell: renderers.cell.toggle,
-                renderHeader: () => (
+                renderFooHeader: () => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
                         itemType={collectionsLabel}
@@ -281,11 +261,10 @@ function CollectionSelectorList({
 
         if (removeCollections) {
             response.push({
+                align: 'right',
                 field: 'remove',
-                minWidth: 52,
-                maxWidth: 52,
                 renderCell: renderers.cell.remove,
-                renderHeader: () => (
+                renderFooHeader: () => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
                         itemType={collectionsLabel}
@@ -337,6 +316,8 @@ function CollectionSelectorList({
         if (popperTimeout.current) clearTimeout(popperTimeout.current);
     });
 
+    const itemData = filteredRows !== null ? filteredRows : rows;
+
     return (
         <Box sx={{ height: height ?? 480 }} ref={notificationAnchorEl}>
             <Popper
@@ -348,55 +329,74 @@ function CollectionSelectorList({
                     {notificationMessage}
                 </AlertBox>
             </Popper>
-            {rowsEmpty ? (
-                <SelectorEmpty />
-            ) : (
-                <TableContainer
+
+            <TableContainer
+                component={Box}
+                width="100%"
+                sx={{
+                    height: '100%',
+                }}
+            >
+                <Table
                     component={Box}
-                    width="100%"
                     sx={{
                         height: '100%',
+                        overflow: 'hidden',
+                        [`& .MuiTableCell-root`]: {
+                            height: DEFAULT_ROW_HEIGHT,
+                            padding: 0,
+                        },
+                        [`& .MuiTableCell-body`]: {
+                            cursor: selectionEnabled ? 'pointer' : undefined,
+                        },
+                        [`& .MuiTableRow-root`]: {
+                            display: 'flex',
+                        },
+                        // We do a lot of rendering down below - need to keep styling as fast as possible
+                        //  so just putting this on the wrapper
+                        [`& .MuiTableCell-head:nth-of-type(1),
+                        & .MuiTableCell-body:nth-of-type(1)`]: {
+                            minWidth: 125,
+                            width: 125,
+                        },
+                        [`& .MuiTableCell-head:nth-of-type(2),
+                        & .MuiTableCell-body:nth-of-type(2)`]: {
+                            ...(truncateTextSx as any),
+                            flexGrow: 1,
+                        },
+                        [`& .MuiTableCell-head:nth-of-type(3),
+                        & .MuiTableCell-body:nth-of-type(3)`]: {
+                            minWidth: 52,
+                            width: 52,
+                        },
                     }}
+                    stickyHeader
                 >
-                    <Table
-                        component={Box}
-                        sx={{
-                            // ...dataGridListStyling,
-                            height: '100%',
-                            border: 0,
-                            [`& .${cellClass_noPadding}`]: { padding: 0 },
-                        }}
-                        stickyHeader
-                    >
-                        <EntityTableHeader
-                            columns={columns}
-                            enableDivRendering
-                            height={35} // This is required for FF to render the body for some reason
-                        />
-                        <TableBody component="div">
-                            <AutoSizer>
-                                {({ height, width }: AutoSizer['state']) => (
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        height={DEFAULT_ROW_HEIGHT} // This is required for FF to render the body for some reason
+                    />
+                    <TableBody component="div">
+                        <AutoSizer>
+                            {({ height, width }: AutoSizer['state']) => {
+                                return (
                                     <FixedSizeList
+                                        overscanCount={10}
                                         height={height} // Adjust for header height
                                         itemSize={DEFAULT_ROW_HEIGHT} // Row height
                                         width={width}
-                                        itemCount={rows.length}
-                                        itemData={rows}
-                                        itemKey={(index, data) => {
-                                            return data[index][
+                                        itemCount={itemData.length}
+                                        itemData={itemData}
+                                        itemKey={(index, data) =>
+                                            data[index][
                                                 COLLECTION_SELECTOR_UUID_COL
-                                            ];
-                                        }}
+                                            ]
+                                        }
                                     >
                                         {({ index, style, data }) => {
-                                            if (!data) {
-                                                // eslint-disable-next-line react/jsx-no-useless-fragment
-                                                return <></>;
-                                            }
-
-                                            console.log('style', style);
-
                                             const row = data[index];
+
                                             return (
                                                 <TableRow
                                                     key={
@@ -404,6 +404,7 @@ function CollectionSelectorList({
                                                             COLLECTION_SELECTOR_UUID_COL
                                                         ]
                                                     }
+                                                    component={Box}
                                                     style={style}
                                                     onClick={
                                                         selectionEnabled
@@ -421,47 +422,19 @@ function CollectionSelectorList({
                                                         ] === currentBindingUUID
                                                     }
                                                     hover={selectionEnabled}
-                                                    sx={{
-                                                        cursor: selectionEnabled
-                                                            ? 'pointer'
-                                                            : undefined,
-                                                        borderBottomColor: (
-                                                            theme
-                                                        ) =>
-                                                            defaultOutline_hovered[
-                                                                theme.palette
-                                                                    .mode
-                                                            ],
-                                                    }}
                                                 >
                                                     {columns.map((column) => {
-                                                        console.log(
-                                                            'column',
-                                                            column
-                                                        );
-
                                                         return (
                                                             <TableCell
-                                                                key={
-                                                                    column.field
+                                                                align={
+                                                                    column.align
                                                                 }
-                                                                className={
-                                                                    column.cellClassName
-                                                                }
-                                                                style={{
-                                                                    height: `${style.height}px`,
-                                                                    width: column.fullWidth
-                                                                        ? '100%'
-                                                                        : undefined,
-                                                                    maxWidth:
-                                                                        column.maxWidth
-                                                                            ? `${column.maxWidth}px`
-                                                                            : undefined,
-                                                                    minWidth:
-                                                                        column.minWidth
-                                                                            ? `${column.minWidth}px`
-                                                                            : undefined,
-                                                                }}
+                                                                key={`${column.field}_${
+                                                                    row[
+                                                                        COLLECTION_SELECTOR_UUID_COL
+                                                                    ]
+                                                                }`}
+                                                                component="div"
                                                             >
                                                                 {column.renderCell
                                                                     ? column.renderCell(
@@ -481,12 +454,12 @@ function CollectionSelectorList({
                                             );
                                         }}
                                     </FixedSizeList>
-                                )}
-                            </AutoSizer>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            )}
+                                );
+                            }}
+                        </AutoSizer>
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     );
 }
