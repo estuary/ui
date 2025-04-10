@@ -15,7 +15,7 @@ function useCanEditEntity() {
 
     return useMemo(
         () =>
-            isEdit && entityName
+            isEdit && entityName && grants && grants.length > 0
                 ? Boolean(grants.some((grant) => entityName.startsWith(grant)))
                 : null,
         [entityName, isEdit, grants]

@@ -156,7 +156,6 @@ function BindingSelector({
             />
 
             <CollectionSelectorList
-                height="100%"
                 header={itemType}
                 disableActions={disableActions}
                 setCurrentBinding={

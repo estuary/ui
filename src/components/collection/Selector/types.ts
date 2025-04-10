@@ -32,7 +32,6 @@ export interface CollectionSelectorListProps {
         };
     };
     header?: string;
-    height?: number | string;
     removeCollections?: (rows: GridRowId[]) => void;
     toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
     setCurrentBinding?: BindingState['setCurrentBinding'];

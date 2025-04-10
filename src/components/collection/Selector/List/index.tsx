@@ -19,7 +19,7 @@ import {
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious, useUnmount } from 'react-use';
+import { usePrevious, useScrollbarWidth, useUnmount } from 'react-use';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 
@@ -51,12 +51,12 @@ const DEFAULT_ROW_HEIGHT = 50;
 function CollectionSelectorList({
     disableActions,
     header,
-    height,
     removeCollections,
     toggleCollections,
     renderers,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
+    const scrollBarWidth = useScrollbarWidth();
     const apiRef = useGridApiRef();
 
     const entityType = useEntityType();
@@ -318,7 +318,7 @@ function CollectionSelectorList({
     const itemData = filteredRows !== null ? filteredRows : rows;
 
     return (
-        <Box sx={{ height: height ?? 480 }} ref={notificationAnchorEl}>
+        <Box sx={{ height: '100%' }} ref={notificationAnchorEl}>
             <Popper
                 anchorEl={notificationAnchorEl.current}
                 open={Boolean(showNotification && notificationAnchorEl.current)}
@@ -338,6 +338,7 @@ function CollectionSelectorList({
             >
                 <Table
                     component={Box}
+                    stickyHeader
                     sx={{
                         height: '100%',
                         overflow: 'hidden',
@@ -348,6 +349,11 @@ function CollectionSelectorList({
                         },
                         [`& .MuiTableCell-body`]: {
                             cursor: selectionEnabled ? 'pointer' : undefined,
+                        },
+                        [`& .MuiTableHead-root .MuiTableRow-root`]: {
+                            pr: scrollBarWidth
+                                ? `${scrollBarWidth}px`
+                                : undefined,
                         },
                         [`& .MuiTableRow-root`]: {
                             display: 'flex',
@@ -372,7 +378,6 @@ function CollectionSelectorList({
                             alignItems: 'center',
                         },
                     }}
-                    stickyHeader
                 >
                     <EntityTableHeader
                         columns={columns}
