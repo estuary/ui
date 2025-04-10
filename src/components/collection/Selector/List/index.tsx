@@ -343,6 +343,7 @@ function CollectionSelectorList({
                         height: '100%',
                         overflow: 'hidden',
                         [`& .MuiTableCell-root`]: {
+                            display: 'flex',
                             height: DEFAULT_ROW_HEIGHT,
                             padding: 0,
                         },
@@ -368,6 +369,8 @@ function CollectionSelectorList({
                         & .MuiTableCell-body:nth-of-type(3)`]: {
                             minWidth: 52,
                             width: 52,
+                            justifyContent: 'center',
+                            alignItems: 'center',
                         },
                     }}
                     stickyHeader
