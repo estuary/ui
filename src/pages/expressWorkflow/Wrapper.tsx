@@ -1,8 +1,9 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { Container, Paper, Stack, useTheme } from '@mui/material';
 
 import { PoweredByEstuaryLogo } from 'src/components/graphics/PoweredByEstuaryLogo';
 import { paperBackground } from 'src/context/Theme';
-import { BaseComponentProps } from 'src/types';
 
 export const ExpressWorkflowWrapper = ({ children }: BaseComponentProps) => {
     const theme = useTheme();
