@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
 
-
 import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
-import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const useWorkflowHydrator = () => {
     const { hydrateDetailsForm } = useDetailsFormHydrator();
