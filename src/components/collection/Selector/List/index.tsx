@@ -1,12 +1,17 @@
-import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Popper } from '@mui/material';
 import {
-    DataGrid,
+    Box,
+    Popper,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+} from '@mui/material';
+import {
     gridPaginatedVisibleSortedGridRowIdsSelector,
     useGridApiRef,
 } from '@mui/x-data-grid';
@@ -14,6 +19,8 @@ import {
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { usePrevious, useUnmount } from 'react-use';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList } from 'react-window';
 
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
@@ -27,8 +34,8 @@ import {
 } from 'src/components/collection/Selector/List/shared';
 import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
-import { dataGridListStyling } from 'src/context/Theme';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
@@ -39,14 +46,6 @@ import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
-
-const initialState = {
-    columns: {
-        columnVisibilityModel: {
-            spec_type: false,
-        },
-    },
-};
 
 function CollectionSelectorList({
     disableActions,
@@ -91,17 +90,17 @@ function CollectionSelectorList({
         setCurrentBinding &&
         formStatus !== FormStatus.UPDATING;
 
-    // We use mui`s selection model to store which collection was clicked on to display it
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
-    );
-    useEffect(() => {
-        // TODO (keep current binding) we need to handle filtering better.
-        //  Waiting on us to handle client side filtering on our own first.
-        //  After that we should make sure the thing we're selecting is actually
-        //  visible with the filters enabled.
-        if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
-    }, [currentBindingUUID]);
+    // // We use mui`s selection model to store which collection was clicked on to display it
+    // const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
+    //     []
+    // );
+    // useEffect(() => {
+    //     // TODO (keep current binding) we need to handle filtering better.
+    //     //  Waiting on us to handle client side filtering on our own first.
+    //     //  After that we should make sure the thing we're selecting is actually
+    //     //  visible with the filters enabled.
+    //     if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
+    // }, [currentBindingUUID]);
 
     const rows = useMemo(() => {
         // If we have no bindings we can just return an empty array
@@ -206,14 +205,13 @@ function CollectionSelectorList({
     );
 
     const columns = useMemo(() => {
-        const response: GridColDef[] = [
+        const response: any[] = [
             {
                 cellClassName: cellClass_noPadding,
                 field: collectionSelector,
                 flex: 1,
                 headerName: collectionsLabel,
-                sortable: false,
-                renderHeader: (_params) => (
+                renderHeader: () => (
                     <CollectionSelectorHeaderName
                         disabled={disable}
                         inputValue={filterValue}
@@ -223,7 +221,7 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                renderCell: (params) =>
+                renderCell: (params: any) =>
                     renderers.cell.name(params, filterValue),
             },
         ];
@@ -233,11 +231,10 @@ function CollectionSelectorList({
                 cellClassName: cellClass_noPadding,
                 headerClassName: cellClass_noPadding,
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
-                sortable: false,
                 minWidth: 110,
                 maxWidth: 125,
                 renderCell: renderers.cell.toggle,
-                renderHeader: (_params) => (
+                renderHeader: () => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
                         itemType={collectionsLabel}
@@ -269,18 +266,16 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                valueGetter: () => null,
             });
         }
 
         if (removeCollections) {
             response.push({
                 field: 'remove',
-                sortable: false,
                 minWidth: 52,
                 maxWidth: 52,
                 renderCell: renderers.cell.remove,
-                renderHeader: (_params) => (
+                renderHeader: () => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
                         itemType={collectionsLabel}
@@ -311,7 +306,6 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                valueGetter: () => null,
             });
         }
         return response;
@@ -344,53 +338,131 @@ function CollectionSelectorList({
                     {notificationMessage}
                 </AlertBox>
             </Popper>
-            <DataGrid
-                apiRef={apiRef}
-                columns={columns}
-                components={{ NoRowsOverlay: SelectorEmpty }}
-                disableColumnMenu
-                disableColumnSelector
-                disableEval
-                disableRowSelectionOnClick={!selectionEnabled}
-                hideFooterPagination={rowsEmpty}
-                hideFooterSelectedRowCount
-                initialState={initialState}
-                rows={filteredRows ?? rows}
-                rowSelectionModel={
-                    selectionEnabled ? selectionModel : undefined
-                }
-                sx={{
-                    ...dataGridListStyling,
-                    border: 0,
-                    [`& .${cellClass_noPadding}`]: { padding: 0 },
-                }}
-                onCellClick={({ field, id }) => {
-                    if (
-                        selectionEnabled &&
-                        (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
-                            field === COLLECTION_SELECTOR_NAME_COL ||
-                            field === COLLECTION_SELECTOR_TOGGLE_COL) &&
-                        id !== currentBindingUUID
-                    ) {
-                        console.log('clearing');
-                        // TODO (JSONForms) This is hacky but it works.
-                        // It clears out the current binding before switching.
-                        //  If a user is typing quickly in a form and then selects a
-                        //  different binding VERY quickly it could cause the updates
-                        //  to go into the wrong form.
-                        setCurrentBinding(null);
-
-                        if (typeof id === 'string') {
-                            hackyTimeout.current = window.setTimeout(() => {
-                                console.log('setting id', id);
-                                setCurrentBinding(id);
-                            });
-                        }
-                    }
-                }}
-            />
+            {rowsEmpty ? (
+                <SelectorEmpty />
+            ) : (
+                <Table component={Box} size="small" stickyHeader>
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        height={35} // This is required for FF to render the body for some reason
+                    />
+                    <TableBody component="div">
+                        <AutoSizer>
+                            {({ height, width }: AutoSizer['state']) => (
+                                <FixedSizeList
+                                    height={height - 56} // Adjust for header height
+                                    width={width}
+                                    itemSize={50} // Row height
+                                    itemCount={rows.length}
+                                    itemData={rows}
+                                >
+                                    {({ index, style, data }) => {
+                                        console.log('{ index, style, data }', {
+                                            index,
+                                            style,
+                                            data,
+                                        });
+                                        if (!data) {
+                                            console.log('no data!');
+                                            return <></>;
+                                        }
+                                        const row = data[index];
+                                        return (
+                                            <TableRow
+                                                key={
+                                                    row[
+                                                        COLLECTION_SELECTOR_UUID_COL
+                                                    ]
+                                                }
+                                                style={style}
+                                                onClick={
+                                                    selectionEnabled
+                                                        ? () =>
+                                                              setCurrentBinding &&
+                                                              setCurrentBinding(
+                                                                  row[
+                                                                      COLLECTION_SELECTOR_UUID_COL
+                                                                  ]
+                                                              )
+                                                        : undefined
+                                                }
+                                                selected={
+                                                    row[
+                                                        COLLECTION_SELECTOR_UUID_COL
+                                                    ] === currentBindingUUID
+                                                }
+                                                hover
+                                                sx={{ cursor: 'pointer' }}
+                                            >
+                                                {columns.map((column) => (
+                                                    <TableCell
+                                                        key={column.field}
+                                                    >
+                                                        {column.renderCell
+                                                            ? column.renderCell(
+                                                                  { row }
+                                                              )
+                                                            : row[column.field]}
+                                                    </TableCell>
+                                                ))}
+                                            </TableRow>
+                                        );
+                                    }}
+                                </FixedSizeList>
+                            )}
+                        </AutoSizer>
+                    </TableBody>
+                </Table>
+            )}
         </Box>
     );
 }
 
 export default CollectionSelectorList;
+
+// <DataGrid
+//     apiRef={apiRef}
+//     columns={columns}
+//     components={{ NoRowsOverlay: SelectorEmpty }}
+//     disableColumnMenu
+//     disableColumnSelector
+//     disableEval
+//     disableRowSelectionOnClick={!selectionEnabled}
+//     hideFooterPagination={rowsEmpty}
+//     hideFooterSelectedRowCount
+//     initialState={initialState}
+//     rows={filteredRows ?? rows}
+//     rowSelectionModel={
+//         selectionEnabled ? selectionModel : undefined
+//     }
+//     sx={{
+//         ...dataGridListStyling,
+//         border: 0,
+//         [`& .${cellClass_noPadding}`]: { padding: 0 },
+//     }}
+//     onCellClick={({ field, id }) => {
+//         if (
+//             selectionEnabled &&
+//             (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
+//                 field === COLLECTION_SELECTOR_NAME_COL ||
+//                 field === COLLECTION_SELECTOR_TOGGLE_COL) &&
+//             id !== currentBindingUUID
+//         ) {
+//             console.log('clearing');
+//             // TODO (JSONForms) This is hacky but it works.
+//             // It clears out the current binding before switching.
+//             //  If a user is typing quickly in a form and then selects a
+//             //  different binding VERY quickly it could cause the updates
+//             //  to go into the wrong form.
+//             setCurrentBinding(null);
+
+//             if (typeof id === 'string') {
+//                 hackyTimeout.current = window.setTimeout(() => {
+//                     console.log('setting id', id);
+//                     setCurrentBinding(id);
+//                 });
+//             }
+//         }
+//     }}
+// }/>
