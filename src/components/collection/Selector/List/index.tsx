@@ -9,6 +9,7 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableContainer,
     TableRow,
 } from '@mui/material';
 import {
@@ -36,6 +37,7 @@ import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
+import { defaultOutline_hovered } from 'src/context/Theme';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
@@ -46,6 +48,8 @@ import { hasLength, stripPathing } from 'src/utils/misc-utils';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
+
+const DEFAULT_ROW_HEIGHT = 50;
 
 function CollectionSelectorList({
     disableActions,
@@ -85,10 +89,11 @@ function CollectionSelectorList({
     // Form State Store
     const formStatus = useFormStateStore_status();
 
-    const selectionEnabled =
+    const selectionEnabled = Boolean(
         currentBindingUUID &&
-        setCurrentBinding &&
-        formStatus !== FormStatus.UPDATING;
+            setCurrentBinding &&
+            formStatus !== FormStatus.UPDATING
+    );
 
     // // We use mui`s selection model to store which collection was clicked on to display it
     // const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
@@ -115,6 +120,7 @@ function CollectionSelectorList({
             const collection = config.meta.collectionName;
 
             return {
+                // [COLLECTION_SELECTOR_VISIBLE]: true,
                 [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
                 [COLLECTION_SELECTOR_NAME_COL]: collection,
                 [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
@@ -209,18 +215,22 @@ function CollectionSelectorList({
             {
                 cellClassName: cellClass_noPadding,
                 field: collectionSelector,
-                flex: 1,
+                fullWidth: true,
                 headerName: collectionsLabel,
-                renderHeader: () => (
-                    <CollectionSelectorHeaderName
-                        disabled={disable}
-                        inputValue={filterValue}
-                        itemType={collectionsLabel}
-                        onChange={(value) => {
-                            debouncedFilter.current(value);
-                        }}
-                    />
-                ),
+                renderHeader: (...args: any) => {
+                    console.log('renderHeader.collection name', ...args);
+
+                    return (
+                        <CollectionSelectorHeaderName
+                            disabled={disable}
+                            inputValue={filterValue}
+                            itemType={collectionsLabel}
+                            onChange={(value) => {
+                                debouncedFilter.current(value);
+                            }}
+                        />
+                    );
+                },
                 renderCell: (params: any) =>
                     renderers.cell.name(params, filterValue),
             },
@@ -341,79 +351,141 @@ function CollectionSelectorList({
             {rowsEmpty ? (
                 <SelectorEmpty />
             ) : (
-                <Table component={Box} size="small" stickyHeader>
-                    <EntityTableHeader
-                        columns={columns}
-                        enableDivRendering
-                        height={35} // This is required for FF to render the body for some reason
-                    />
-                    <TableBody component="div">
-                        <AutoSizer>
-                            {({ height, width }: AutoSizer['state']) => (
-                                <FixedSizeList
-                                    height={height - 56} // Adjust for header height
-                                    width={width}
-                                    itemSize={50} // Row height
-                                    itemCount={rows.length}
-                                    itemData={rows}
-                                >
-                                    {({ index, style, data }) => {
-                                        console.log('{ index, style, data }', {
-                                            index,
-                                            style,
-                                            data,
-                                        });
-                                        if (!data) {
-                                            console.log('no data!');
-                                            return <></>;
-                                        }
-                                        const row = data[index];
-                                        return (
-                                            <TableRow
-                                                key={
-                                                    row[
-                                                        COLLECTION_SELECTOR_UUID_COL
-                                                    ]
-                                                }
-                                                style={style}
-                                                onClick={
-                                                    selectionEnabled
-                                                        ? () =>
-                                                              setCurrentBinding &&
-                                                              setCurrentBinding(
-                                                                  row[
-                                                                      COLLECTION_SELECTOR_UUID_COL
-                                                                  ]
-                                                              )
-                                                        : undefined
-                                                }
-                                                selected={
-                                                    row[
-                                                        COLLECTION_SELECTOR_UUID_COL
-                                                    ] === currentBindingUUID
-                                                }
-                                                hover
-                                                sx={{ cursor: 'pointer' }}
-                                            >
-                                                {columns.map((column) => (
-                                                    <TableCell
-                                                        key={column.field}
-                                                    >
-                                                        {column.renderCell
-                                                            ? column.renderCell(
-                                                                  { row }
-                                                              )
-                                                            : row[column.field]}
-                                                    </TableCell>
-                                                ))}
-                                            </TableRow>
-                                        );
-                                    }}
-                                </FixedSizeList>
-                            )}
-                        </AutoSizer>
-                    </TableBody>
-                </Table>
+                <TableContainer
+                    component={Box}
+                    width="100%"
+                    sx={{
+                        height: '100%',
+                    }}
+                >
+                    <Table
+                        component={Box}
+                        sx={{
+                            // ...dataGridListStyling,
+                            height: '100%',
+                            border: 0,
+                            [`& .${cellClass_noPadding}`]: { padding: 0 },
+                        }}
+                        stickyHeader
+                    >
+                        <EntityTableHeader
+                            columns={columns}
+                            enableDivRendering
+                            height={35} // This is required for FF to render the body for some reason
+                        />
+                        <TableBody component="div">
+                            <AutoSizer>
+                                {({ height, width }: AutoSizer['state']) => (
+                                    <FixedSizeList
+                                        height={height} // Adjust for header height
+                                        itemSize={DEFAULT_ROW_HEIGHT} // Row height
+                                        width={width}
+                                        itemCount={rows.length}
+                                        itemData={rows}
+                                        itemKey={(index, data) => {
+                                            return data[index][
+                                                COLLECTION_SELECTOR_UUID_COL
+                                            ];
+                                        }}
+                                    >
+                                        {({ index, style, data }) => {
+                                            if (!data) {
+                                                // eslint-disable-next-line react/jsx-no-useless-fragment
+                                                return <></>;
+                                            }
+
+                                            console.log('style', style);
+
+                                            const row = data[index];
+                                            return (
+                                                <TableRow
+                                                    key={
+                                                        row[
+                                                            COLLECTION_SELECTOR_UUID_COL
+                                                        ]
+                                                    }
+                                                    style={style}
+                                                    onClick={
+                                                        selectionEnabled
+                                                            ? () =>
+                                                                  setCurrentBinding?.(
+                                                                      row[
+                                                                          COLLECTION_SELECTOR_UUID_COL
+                                                                      ]
+                                                                  )
+                                                            : undefined
+                                                    }
+                                                    selected={
+                                                        row[
+                                                            COLLECTION_SELECTOR_UUID_COL
+                                                        ] === currentBindingUUID
+                                                    }
+                                                    hover={selectionEnabled}
+                                                    sx={{
+                                                        cursor: selectionEnabled
+                                                            ? 'pointer'
+                                                            : undefined,
+                                                        borderBottomColor: (
+                                                            theme
+                                                        ) =>
+                                                            defaultOutline_hovered[
+                                                                theme.palette
+                                                                    .mode
+                                                            ],
+                                                    }}
+                                                >
+                                                    {columns.map((column) => {
+                                                        console.log(
+                                                            'column',
+                                                            column
+                                                        );
+
+                                                        return (
+                                                            <TableCell
+                                                                key={
+                                                                    column.field
+                                                                }
+                                                                className={
+                                                                    column.cellClassName
+                                                                }
+                                                                style={{
+                                                                    height: `${style.height}px`,
+                                                                    width: column.fullWidth
+                                                                        ? '100%'
+                                                                        : undefined,
+                                                                    maxWidth:
+                                                                        column.maxWidth
+                                                                            ? `${column.maxWidth}px`
+                                                                            : undefined,
+                                                                    minWidth:
+                                                                        column.minWidth
+                                                                            ? `${column.minWidth}px`
+                                                                            : undefined,
+                                                                }}
+                                                            >
+                                                                {column.renderCell
+                                                                    ? column.renderCell(
+                                                                          {
+                                                                              row,
+                                                                          },
+                                                                          filterValue
+                                                                      )
+                                                                    : row[
+                                                                          column
+                                                                              .field
+                                                                      ]}
+                                                            </TableCell>
+                                                        );
+                                                    })}
+                                                </TableRow>
+                                            );
+                                        }}
+                                    </FixedSizeList>
+                                )}
+                            </AutoSizer>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             )}
         </Box>
     );

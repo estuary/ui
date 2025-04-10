@@ -103,10 +103,8 @@ function BindingSelector({
             const filteringActive = Boolean(filterValue);
 
             const collectionParts = filteringActive
-                ? splitPathAndName(params.value)
-                : [params.value];
-
-            console.log('sup', { params, filterValue });
+                ? splitPathAndName(params.row[COLLECTION_SELECTOR_NAME_COL])
+                : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
             return (
                 <BindingsSelectorName
