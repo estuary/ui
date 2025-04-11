@@ -56,7 +56,8 @@ function CollectionSelectorList({
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
 
-    const notificationAnchorEl = useRef<any | null>();
+    const listRef = useRef<any | null>(null);
+    const notificationAnchorEl = useRef<any | null>(null);
     const popperTimeout = useRef<number | null>(null);
     const hackyTimeout = useRef<number | null>(null);
     const intl = useIntl();
@@ -106,6 +107,14 @@ function CollectionSelectorList({
             };
         });
     }, [resourceConfigs]);
+
+    useEffect(() => {
+        console.log('resourceConfigs changed', resourceConfigs);
+    }, [resourceConfigs]);
+
+    useEffect(() => {
+        console.log('mappedResourceConfigs changed', mappedResourceConfigs);
+    }, [mappedResourceConfigs]);
 
     const debouncedFilter = useRef(
         debounce((val) => {
@@ -410,6 +419,7 @@ function CollectionSelectorList({
                             {({ height, width }: AutoSizer['state']) => {
                                 return (
                                     <FixedSizeList
+                                        ref={listRef}
                                         overscanCount={10}
                                         height={height} // Adjust for header height
                                         itemSize={DEFAULT_ROW_HEIGHT} // Row height
