@@ -40,7 +40,7 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { hasLength, stripPathing } from 'src/utils/misc-utils';
+import { stripPathing } from 'src/utils/misc-utils';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 const DEFAULT_ROW_HEIGHT = 50;
@@ -86,7 +86,7 @@ function CollectionSelectorList({
             formStatus !== FormStatus.UPDATING
     );
 
-    const rows = useMemo(() => {
+    const mappedResourceConfigs = useMemo(() => {
         // If we have no bindings we can just return an empty array
         if (isEmpty(resourceConfigs)) {
             return [];
@@ -115,13 +115,13 @@ function CollectionSelectorList({
 
     const filteredRows = useMemo(() => {
         if (filterValue === '') {
-            return null;
+            return mappedResourceConfigs;
         }
 
-        return rows.filter((row) =>
+        return mappedResourceConfigs.filter((row) =>
             row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue)
         );
-    }, [filterValue, rows]);
+    }, [filterValue, mappedResourceConfigs]);
 
     useEffect(() => {
         // Selection disabled
@@ -129,13 +129,15 @@ function CollectionSelectorList({
             return;
         }
 
-        if (filteredRows && filteredRows.length > 0) {
+        if (filterValue !== '') {
             // If we have filtered values then see if this is a first search and default
             if (previousFilterValue === '') {
                 setCurrentBinding(
-                    filteredRows[0][COLLECTION_SELECTOR_UUID_COL]
+                    filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                 );
             } else {
+                // If the current binding is still in the filtered down list
+                //  go ahead and leave it selected
                 if (
                     filteredRows.find(
                         (filteredRow) =>
@@ -146,7 +148,7 @@ function CollectionSelectorList({
                     return;
                 } else {
                     setCurrentBinding(
-                        filteredRows[0][COLLECTION_SELECTOR_UUID_COL]
+                        filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                     );
                 }
             }
@@ -154,23 +156,30 @@ function CollectionSelectorList({
             return;
         }
 
-        if (previousFilterValue !== '' && Boolean(rows[0])) {
-            setCurrentBinding(rows[0][COLLECTION_SELECTOR_UUID_COL]);
+        if (previousFilterValue !== '' && Boolean(mappedResourceConfigs[0])) {
+            setCurrentBinding(
+                mappedResourceConfigs[0]?.[COLLECTION_SELECTOR_UUID_COL]
+            );
         }
     }, [
         currentBindingUUID,
+        filterValue,
         filteredRows,
+        mappedResourceConfigs,
         previousFilterValue,
-        rows,
         selectionEnabled,
         setCurrentBinding,
     ]);
 
-    const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
+    const resourceConfigsEmpty = useMemo(
+        () => mappedResourceConfigs.length <= 0,
+        [mappedResourceConfigs]
+    );
+    const rowsEmpty = useMemo(() => filteredRows.length <= 0, [filteredRows]);
 
     const disable = useMemo(
-        () => rowsEmpty || disableActions,
-        [disableActions, rowsEmpty]
+        () => resourceConfigsEmpty || disableActions,
+        [disableActions, resourceConfigsEmpty]
     );
 
     const showPopper = useCallback((target: any, message: string) => {
@@ -190,8 +199,6 @@ function CollectionSelectorList({
             ),
         [filterValue, isCapture]
     );
-
-    const itemData = filteredRows !== null ? filteredRows : rows;
 
     const columns = useMemo(() => {
         const response: any[] = [
@@ -221,11 +228,11 @@ function CollectionSelectorList({
                 renderCell: foo.toggle.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderToggle
-                        disabled={disable}
+                        disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         onClick={(event, value, scope) => {
                             const count = foo.toggle?.handler?.(
-                                itemData.map((datum) => {
+                                filteredRows.map((datum) => {
                                     return datum[COLLECTION_SELECTOR_UUID_COL];
                                 }),
                                 value
@@ -259,12 +266,12 @@ function CollectionSelectorList({
                 renderCell: foo.remove.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderRemove
-                        disabled={disable}
+                        disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         onClick={(event) => {
-                            if (itemData && itemData.length > 0) {
+                            if (filteredRows && filteredRows.length > 0) {
                                 foo.remove?.handler?.(
-                                    itemData.map((datum) => {
+                                    filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
                                         ];
@@ -279,7 +286,7 @@ function CollectionSelectorList({
                                             id: 'workflows.collectionSelector.notifications.remove',
                                         },
                                         {
-                                            count: itemData.length,
+                                            count: filteredRows.length,
                                             itemType: collectionsLabel,
                                         }
                                     )
@@ -295,12 +302,12 @@ function CollectionSelectorList({
         collectionSelector,
         collectionsLabel,
         disable,
+        filteredRows,
         filterValue,
         foo.name,
         foo.remove,
         foo.toggle,
         intl,
-        itemData,
         showPopper,
     ]);
 
@@ -406,8 +413,8 @@ function CollectionSelectorList({
                                         height={height} // Adjust for header height
                                         itemSize={DEFAULT_ROW_HEIGHT} // Row height
                                         width={width}
-                                        itemCount={itemData.length}
-                                        itemData={itemData}
+                                        itemCount={filteredRows.length}
+                                        itemData={filteredRows}
                                         itemKey={(index, data) =>
                                             data[index][
                                                 COLLECTION_SELECTOR_UUID_COL
@@ -485,8 +492,8 @@ function CollectionSelectorList({
                         <TableRow component="div">
                             <TableCell component="div">
                                 {filterValue.length > 0
-                                    ? `Viewing: ${itemData.length} of ${rows.length}`
-                                    : `Total: ${rows.length}`}
+                                    ? `Viewing: ${filteredRows.length} of ${mappedResourceConfigs.length}`
+                                    : `Total: ${mappedResourceConfigs.length}`}
                             </TableCell>
                         </TableRow>
                     </TableFooter>
