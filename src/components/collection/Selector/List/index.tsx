@@ -16,7 +16,7 @@ import {
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious, useScrollbarWidth, useUnmount } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 
@@ -34,6 +34,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
+import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
@@ -51,12 +52,16 @@ function CollectionSelectorList({
     foo,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
-    const scrollBarWidth = useScrollbarWidth();
-
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
 
-    const listRef = useRef<any | null>(null);
+    const scrollingElementRef = useRef<FixedSizeList | null>(null);
+    const virtualRows = useRef<any | null>(null);
+    const tableScroller = useRef<any | null>(null);
+
+    const { scrollGap, scrollingElementCallback } =
+        useReactWindowScrollbarGap(tableScroller);
+
     const notificationAnchorEl = useRef<any | null>(null);
     const popperTimeout = useRef<number | null>(null);
     const hackyTimeout = useRef<number | null>(null);
@@ -381,9 +386,7 @@ function CollectionSelectorList({
                             cursor: selectionEnabled ? 'pointer' : undefined,
                         },
                         [`& .MuiTableHead-root .MuiTableRow-root`]: {
-                            pr: scrollBarWidth
-                                ? `${scrollBarWidth}px`
-                                : undefined,
+                            pr: scrollGap ? `${scrollGap}px` : undefined,
                         },
                         [`& .MuiTableRow-root`]: {
                             display: 'flex',
@@ -419,7 +422,9 @@ function CollectionSelectorList({
                             {({ height, width }: AutoSizer['state']) => {
                                 return (
                                     <FixedSizeList
-                                        ref={listRef}
+                                        ref={scrollingElementCallback}
+                                        innerRef={virtualRows}
+                                        outerRef={scrollingElementRef}
                                         overscanCount={10}
                                         height={height} // Adjust for header height
                                         itemSize={DEFAULT_ROW_HEIGHT} // Row height
