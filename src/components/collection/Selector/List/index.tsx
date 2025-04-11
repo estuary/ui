@@ -263,6 +263,7 @@ function CollectionSelectorList({
             response.push({
                 align: 'right',
                 field: 'remove',
+                preventSelect: true,
                 renderCell: renderers.cell.remove,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderRemove
@@ -414,16 +415,6 @@ function CollectionSelectorList({
                                                     }
                                                     component={Box}
                                                     style={style}
-                                                    onClick={
-                                                        selectionEnabled
-                                                            ? () =>
-                                                                  setCurrentBinding?.(
-                                                                      row[
-                                                                          COLLECTION_SELECTOR_UUID_COL
-                                                                      ]
-                                                                  )
-                                                            : undefined
-                                                    }
                                                     selected={
                                                         row[
                                                             COLLECTION_SELECTOR_UUID_COL
@@ -443,6 +434,44 @@ function CollectionSelectorList({
                                                                     ]
                                                                 }`}
                                                                 component="div"
+                                                                onClick={() => {
+                                                                    const id =
+                                                                        row[
+                                                                            COLLECTION_SELECTOR_UUID_COL
+                                                                        ];
+                                                                    if (
+                                                                        selectionEnabled &&
+                                                                        setCurrentBinding &&
+                                                                        !Boolean(
+                                                                            column.preventSelect
+                                                                        ) &&
+                                                                        id !==
+                                                                            currentBindingUUID
+                                                                    ) {
+                                                                        // TODO (JSONForms) This is hacky but it works.
+                                                                        // It clears out the current binding before switching.
+                                                                        //  If a user is typing quickly in a form and then selects a
+                                                                        //  different binding VERY quickly it could cause the updates
+                                                                        //  to go into the wrong form.
+                                                                        setCurrentBinding(
+                                                                            null
+                                                                        );
+
+                                                                        if (
+                                                                            typeof id ===
+                                                                            'string'
+                                                                        ) {
+                                                                            hackyTimeout.current =
+                                                                                window.setTimeout(
+                                                                                    () => {
+                                                                                        setCurrentBinding(
+                                                                                            id
+                                                                                        );
+                                                                                    }
+                                                                                );
+                                                                        }
+                                                                    }
+                                                                }}
                                                             >
                                                                 {column.renderCell
                                                                     ? column.renderCell(
