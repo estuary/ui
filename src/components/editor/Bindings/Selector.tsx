@@ -97,51 +97,65 @@ function BindingSelector({
 
     const disableActions = formActive || readOnly;
 
-    const cellRenderers: CollectionSelectorListProps['renderers']['cell'] = {
-        name: (params, filterValue) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-            const filteringActive = Boolean(filterValue);
+    const cellRenderers: CollectionSelectorListProps['foo'] = {
+        name: {
+            cellRenderer: (params, filterValue) => {
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+                const filteringActive = Boolean(filterValue);
 
-            const collectionParts = filteringActive
-                ? splitPathAndName(params.row[COLLECTION_SELECTOR_NAME_COL])
-                : [params.row[COLLECTION_SELECTOR_NAME_COL]];
+                const collectionParts = filteringActive
+                    ? splitPathAndName(params.row[COLLECTION_SELECTOR_NAME_COL])
+                    : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
-            return (
-                <BindingsSelectorName
-                    bindingUUID={bindingUUID}
-                    collection={collectionParts}
-                    filterValue={filterValue}
-                />
-            );
-        },
-        remove: (params) => {
-            if (isCapture) {
-                return null;
-            }
-
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
-
-            return (
-                <BindingsSelectorRemove
-                    binding={{ uuid: bindingUUID, collection }}
-                    task={task}
-                    disabled={formActive}
-                    draftId={draftId}
-                />
-            );
-        },
-        toggle: (params) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-
-            return (
-                <BindingsSelectorToggle
-                    bindingUUID={bindingUUID}
-                    disableButton={formActive}
-                />
-            );
+                return (
+                    <BindingsSelectorName
+                        bindingUUID={bindingUUID}
+                        collection={collectionParts}
+                        filterValue={filterValue}
+                    />
+                );
+            },
         },
     };
+
+    if (!isCapture) {
+        cellRenderers.remove = {
+            handler: handlers.removeBindings,
+            cellRenderer: (params) => {
+                if (isCapture) {
+                    return null;
+                }
+
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+                const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+
+                return (
+                    <BindingsSelectorRemove
+                        binding={{ uuid: bindingUUID, collection }}
+                        task={task}
+                        disabled={formActive}
+                        draftId={draftId}
+                    />
+                );
+            },
+        };
+    }
+
+    if (!isCollection) {
+        cellRenderers.toggle = {
+            handler: handlers.toggleCollections,
+            cellRenderer: (params) => {
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+
+                return (
+                    <BindingsSelectorToggle
+                        bindingUUID={bindingUUID}
+                        disableButton={formActive}
+                    />
+                );
+            },
+        };
+    }
 
     return (
         <Box
@@ -161,15 +175,7 @@ function BindingSelector({
                 setCurrentBinding={
                     !disableSelect ? setCurrentBinding : undefined
                 }
-                renderers={{
-                    cell: cellRenderers,
-                }}
-                removeCollections={
-                    !isCapture ? handlers.removeBindings : undefined
-                }
-                toggleCollections={
-                    !isCollection ? handlers.toggleCollections : undefined
-                }
+                foo={cellRenderers}
             />
         </Box>
     );

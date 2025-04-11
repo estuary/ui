@@ -1,4 +1,4 @@
-import type { GridRenderCellParams, GridRowId } from '@mui/x-data-grid';
+import type { GridRenderCellParams } from '@mui/x-data-grid';
 import type { ReactNode } from 'react';
 import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
 import type { BindingState } from 'src/stores/Binding/types';
@@ -22,17 +22,18 @@ export type CollectionSelectorCellRenderer = (
     filterValue?: string
 ) => ReactNode;
 
+export interface CollectionSelectorFoo {
+    handler?: (rows: any, newVal?: any) => void;
+    cellRenderer: CollectionSelectorCellRenderer;
+}
+
 export interface CollectionSelectorListProps {
-    disableActions?: boolean;
-    renderers: {
-        cell: {
-            name: CollectionSelectorCellRenderer;
-            remove?: CollectionSelectorCellRenderer;
-            toggle?: CollectionSelectorCellRenderer;
-        };
+    foo: {
+        name: CollectionSelectorFoo;
+        remove?: CollectionSelectorFoo;
+        toggle?: CollectionSelectorFoo;
     };
+    disableActions?: boolean;
     header?: string;
-    removeCollections?: (rows: GridRowId[]) => void;
-    toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
     setCurrentBinding?: BindingState['setCurrentBinding'];
 }

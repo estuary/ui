@@ -13,10 +13,6 @@ import {
     TableFooter,
     TableRow,
 } from '@mui/material';
-import {
-    gridPaginatedVisibleSortedGridRowIdsSelector,
-    useGridApiRef,
-} from '@mui/x-data-grid';
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -52,13 +48,10 @@ const DEFAULT_ROW_HEIGHT = 50;
 function CollectionSelectorList({
     disableActions,
     header,
-    removeCollections,
-    toggleCollections,
-    renderers,
+    foo,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
     const scrollBarWidth = useScrollbarWidth();
-    const apiRef = useGridApiRef();
 
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
@@ -198,6 +191,8 @@ function CollectionSelectorList({
         [filterValue, isCapture]
     );
 
+    const itemData = filteredRows !== null ? filteredRows : rows;
+
     const columns = useMemo(() => {
         const response: any[] = [
             {
@@ -216,26 +211,23 @@ function CollectionSelectorList({
                     );
                 },
                 renderCell: (params: any) =>
-                    renderers.cell.name(params, filterValue),
+                    foo.name.cellRenderer(params, filterValue),
             },
         ];
 
-        if (toggleCollections) {
+        if (foo.toggle) {
             response.unshift({
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
-                renderCell: renderers.cell.toggle,
+                renderCell: foo.toggle.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable}
                         itemType={collectionsLabel}
                         onClick={(event, value, scope) => {
-                            const count = toggleCollections(
-                                scope === 'page'
-                                    ? gridPaginatedVisibleSortedGridRowIdsSelector(
-                                          apiRef.current.state,
-                                          apiRef.current.instanceId
-                                      )
-                                    : null,
+                            const count = foo.toggle?.handler?.(
+                                itemData.map((datum) => {
+                                    return datum[COLLECTION_SELECTOR_UUID_COL];
+                                }),
                                 value
                             );
 
@@ -259,25 +251,25 @@ function CollectionSelectorList({
             });
         }
 
-        if (removeCollections) {
+        if (foo.remove) {
             response.push({
                 align: 'right',
                 field: 'remove',
                 preventSelect: true,
-                renderCell: renderers.cell.remove,
+                renderCell: foo.remove.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable}
                         itemType={collectionsLabel}
                         onClick={(event) => {
-                            const filteredCollections =
-                                gridPaginatedVisibleSortedGridRowIdsSelector(
-                                    apiRef.current.state,
-                                    apiRef.current.instanceId
+                            if (itemData && itemData.length > 0) {
+                                foo.remove?.handler?.(
+                                    itemData.map((datum) => {
+                                        return datum[
+                                            COLLECTION_SELECTOR_UUID_COL
+                                        ];
+                                    })
                                 );
-
-                            if (hasLength(filteredCollections)) {
-                                removeCollections(filteredCollections);
                                 setFilterValue('');
 
                                 showPopper(
@@ -287,7 +279,7 @@ function CollectionSelectorList({
                                             id: 'workflows.collectionSelector.notifications.remove',
                                         },
                                         {
-                                            count: filteredCollections.length,
+                                            count: itemData.length,
                                             itemType: collectionsLabel,
                                         }
                                     )
@@ -300,24 +292,22 @@ function CollectionSelectorList({
         }
         return response;
     }, [
-        apiRef,
         collectionSelector,
         collectionsLabel,
         disable,
         filterValue,
+        foo.name,
+        foo.remove,
+        foo.toggle,
         intl,
-        removeCollections,
-        renderers.cell,
+        itemData,
         showPopper,
-        toggleCollections,
     ]);
 
     useUnmount(() => {
         if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
         if (popperTimeout.current) clearTimeout(popperTimeout.current);
     });
-
-    const itemData = filteredRows !== null ? filteredRows : rows;
 
     const handleCellClick = (id?: string) => {
         if (
