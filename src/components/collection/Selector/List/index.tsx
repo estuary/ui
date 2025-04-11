@@ -319,6 +319,27 @@ function CollectionSelectorList({
 
     const itemData = filteredRows !== null ? filteredRows : rows;
 
+    const handleCellClick = (id?: string) => {
+        if (
+            selectionEnabled &&
+            setCurrentBinding &&
+            id !== currentBindingUUID
+        ) {
+            // TODO (JSONForms) This is hacky but it works.
+            // It clears out the current binding before switching.
+            //  If a user is typing quickly in a form and then selects a
+            //  different binding VERY quickly it could cause the updates
+            //  to go into the wrong form.
+            setCurrentBinding(null);
+
+            if (typeof id === 'string') {
+                hackyTimeout.current = window.setTimeout(() => {
+                    setCurrentBinding(id);
+                });
+            }
+        }
+    };
+
     return (
         <Box sx={{ height: '100%' }} ref={notificationAnchorEl}>
             <Popper
@@ -434,44 +455,19 @@ function CollectionSelectorList({
                                                                     ]
                                                                 }`}
                                                                 component="div"
-                                                                onClick={() => {
-                                                                    const id =
-                                                                        row[
-                                                                            COLLECTION_SELECTOR_UUID_COL
-                                                                        ];
-                                                                    if (
-                                                                        selectionEnabled &&
-                                                                        setCurrentBinding &&
-                                                                        !Boolean(
-                                                                            column.preventSelect
-                                                                        ) &&
-                                                                        id !==
-                                                                            currentBindingUUID
-                                                                    ) {
-                                                                        // TODO (JSONForms) This is hacky but it works.
-                                                                        // It clears out the current binding before switching.
-                                                                        //  If a user is typing quickly in a form and then selects a
-                                                                        //  different binding VERY quickly it could cause the updates
-                                                                        //  to go into the wrong form.
-                                                                        setCurrentBinding(
-                                                                            null
-                                                                        );
-
-                                                                        if (
-                                                                            typeof id ===
-                                                                            'string'
-                                                                        ) {
-                                                                            hackyTimeout.current =
-                                                                                window.setTimeout(
-                                                                                    () => {
-                                                                                        setCurrentBinding(
-                                                                                            id
-                                                                                        );
-                                                                                    }
-                                                                                );
-                                                                        }
-                                                                    }
-                                                                }}
+                                                                onClick={
+                                                                    Boolean(
+                                                                        column.preventSelect
+                                                                    )
+                                                                        ? undefined
+                                                                        : () => {
+                                                                              handleCellClick(
+                                                                                  row[
+                                                                                      COLLECTION_SELECTOR_UUID_COL
+                                                                                  ]
+                                                                              );
+                                                                          }
+                                                                }
                                                             >
                                                                 {column.renderCell
                                                                     ? column.renderCell(
@@ -511,49 +507,3 @@ function CollectionSelectorList({
 }
 
 export default CollectionSelectorList;
-
-// <DataGrid
-//     apiRef={apiRef}
-//     columns={columns}
-//     components={{ NoRowsOverlay: SelectorEmpty }}
-//     disableColumnMenu
-//     disableColumnSelector
-//     disableEval
-//     disableRowSelectionOnClick={!selectionEnabled}
-//     hideFooterPagination={rowsEmpty}
-//     hideFooterSelectedRowCount
-//     initialState={initialState}
-//     rows={filteredRows ?? rows}
-//     rowSelectionModel={
-//         selectionEnabled ? selectionModel : undefined
-//     }
-//     sx={{
-//         ...dataGridListStyling,
-//         border: 0,
-//         [`& .${cellClass_noPadding}`]: { padding: 0 },
-//     }}
-//     onCellClick={({ field, id }) => {
-//         if (
-//             selectionEnabled &&
-//             (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
-//                 field === COLLECTION_SELECTOR_NAME_COL ||
-//                 field === COLLECTION_SELECTOR_TOGGLE_COL) &&
-//             id !== currentBindingUUID
-//         ) {
-//             console.log('clearing');
-//             // TODO (JSONForms) This is hacky but it works.
-//             // It clears out the current binding before switching.
-//             //  If a user is typing quickly in a form and then selects a
-//             //  different binding VERY quickly it could cause the updates
-//             //  to go into the wrong form.
-//             setCurrentBinding(null);
-
-//             if (typeof id === 'string') {
-//                 hackyTimeout.current = window.setTimeout(() => {
-//                     console.log('setting id', id);
-//                     setCurrentBinding(id);
-//                 });
-//             }
-//         }
-//     }}
-// }/>
