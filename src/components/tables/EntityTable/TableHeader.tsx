@@ -107,7 +107,9 @@ function EntityTableHeader({
                             }
                             sx={tableCellSX}
                         >
-                            {selectData && column.field && !hide ? (
+                            {column.renderFooHeader && !hide ? (
+                                column.renderFooHeader(index)
+                            ) : selectData && column.field && !hide ? (
                                 <TableSortLabel
                                     IconComponent={ArrowDown}
                                     active={columnToSort === column.field}

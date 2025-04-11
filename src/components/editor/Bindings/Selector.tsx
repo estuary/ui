@@ -1,5 +1,5 @@
-import type { GridRenderCellParams } from '@mui/x-data-grid';
 import type { ReactNode } from 'react';
+import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
 
 import { Box } from '@mui/material';
 
@@ -26,7 +26,7 @@ import {
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, splitPathAndName } from 'src/utils/misc-utils';
 
 interface BindingSelectorProps {
     disableSelect?: boolean;
@@ -97,45 +97,65 @@ function BindingSelector({
 
     const disableActions = formActive || readOnly;
 
-    const cellRenderers = {
-        name: (params: GridRenderCellParams) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+    const cellRenderers: CollectionSelectorListProps['foo'] = {
+        name: {
+            cellRenderer: (params, filterValue) => {
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+                const filteringActive = Boolean(filterValue);
 
-            return (
-                <BindingsSelectorName
-                    bindingUUID={bindingUUID}
-                    collection={params.value}
-                />
-            );
-        },
-        remove: (params: GridRenderCellParams) => {
-            if (isCapture) {
-                return null;
-            }
+                const collectionParts = filteringActive
+                    ? splitPathAndName(params.row[COLLECTION_SELECTOR_NAME_COL])
+                    : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
-
-            return (
-                <BindingsSelectorRemove
-                    binding={{ uuid: bindingUUID, collection }}
-                    task={task}
-                    disabled={formActive}
-                    draftId={draftId}
-                />
-            );
-        },
-        toggle: (params: GridRenderCellParams) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-
-            return (
-                <BindingsSelectorToggle
-                    bindingUUID={bindingUUID}
-                    disableButton={formActive}
-                />
-            );
+                return (
+                    <BindingsSelectorName
+                        bindingUUID={bindingUUID}
+                        collection={collectionParts}
+                        filterValue={filterValue}
+                    />
+                );
+            },
         },
     };
+
+    if (!isCapture) {
+        cellRenderers.remove = {
+            handler: handlers.removeBindings,
+            cellRenderer: (params) => {
+                if (isCapture) {
+                    return null;
+                }
+
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+                const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
+
+                return (
+                    <BindingsSelectorRemove
+                        binding={{ uuid: bindingUUID, collection }}
+                        task={task}
+                        disabled={formActive}
+                        draftId={draftId}
+                    />
+                );
+            },
+        };
+    }
+
+    if (!isCollection) {
+        cellRenderers.toggle = {
+            handler: handlers.toggleCollections,
+            cellRenderer: (params) => {
+                const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
+
+                return (
+                    <BindingsSelectorToggle
+                        bindingUUID={bindingUUID}
+                        disableButton={formActive}
+                    />
+                );
+            },
+        };
+    }
 
     return (
         <Box
@@ -150,21 +170,12 @@ function BindingSelector({
             />
 
             <CollectionSelectorList
-                height="100%"
                 header={itemType}
                 disableActions={disableActions}
                 setCurrentBinding={
                     !disableSelect ? setCurrentBinding : undefined
                 }
-                renderers={{
-                    cell: cellRenderers,
-                }}
-                removeCollections={
-                    !isCapture ? handlers.removeBindings : undefined
-                }
-                toggleCollections={
-                    !isCollection ? handlers.toggleCollections : undefined
-                }
+                foo={cellRenderers}
             />
         </Box>
     );

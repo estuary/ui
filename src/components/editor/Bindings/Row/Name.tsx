@@ -2,14 +2,20 @@ import type { SelectorNameProps } from 'src/components/editor/Bindings/Row/types
 
 import { Button, Typography } from '@mui/material';
 
+import Highlighter from 'react-highlight-words';
+
 import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
+import { NameHighlight } from 'src/components/editor/Bindings/Row/NameHighlight';
+import {
+    HIGHLIGHT_CLASS_NAME,
+    UNHIGHLIGHT_CLASS_NAME,
+} from 'src/components/editor/Bindings/Row/shared';
 import { typographyTruncation } from 'src/context/Theme';
-import { stripPathing } from 'src/utils/misc-utils';
 
 function BindingsSelectorName({
     bindingUUID,
     collection,
-    shortenName,
+    filterValue,
 }: SelectorNameProps) {
     return (
         <Button
@@ -18,7 +24,7 @@ function BindingsSelectorName({
             startIcon={
                 <BindingsSelectorErrorIndicator
                     bindingUUID={bindingUUID}
-                    collection={collection}
+                    collection={collection[0]}
                 />
             }
             sx={{
@@ -30,10 +36,20 @@ function BindingsSelectorName({
                 '&:focus, &:hover': {
                     bgcolor: 'transparent',
                 },
+                [`& .${HIGHLIGHT_CLASS_NAME}`]: {
+                    mx: 0.25,
+                },
             }}
         >
-            <Typography {...typographyTruncation}>
-                {shortenName ? stripPathing(collection) : collection}
+            <Typography component="span" {...typographyTruncation}>
+                <Highlighter
+                    autoEscape={false}
+                    highlightClassName={HIGHLIGHT_CLASS_NAME}
+                    highlightTag={NameHighlight}
+                    searchWords={[filterValue ?? '']}
+                    textToHighlight={collection.join('')}
+                    unhighlightClassName={UNHIGHLIGHT_CLASS_NAME}
+                />
             </Typography>
         </Button>
     );

@@ -44,14 +44,10 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.toggle.enable': `Enable Page`,
-    'workflows.collectionSelector.toggle.disable': `Disable Page`,
     'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} in the list below`,
     'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} in the list below`,
     'workflows.collectionSelector.toggle.enable.all': `Enable All`,
     'workflows.collectionSelector.toggle.disable.all': `Disable All`,
-    'workflows.collectionSelector.toggle.enable.all.tooltip': `Enable all {itemType} in this {entityType} (ignores any filtering)`,
-    'workflows.collectionSelector.toggle.disable.all.tooltip': `Disable all {itemType} in this {entityType} (ignores any filtering)`,
 
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,

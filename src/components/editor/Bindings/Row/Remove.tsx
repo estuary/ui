@@ -2,7 +2,7 @@ import type { BindingMetadata } from 'src/stores/Binding/types';
 
 import React, { useState } from 'react';
 
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
 
@@ -90,14 +90,17 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     };
 
     return (
-        <IconButton
-            disabled={removing || disabled}
-            size="small"
-            onClick={handlers.removeBinding}
-            sx={{ color: (theme) => theme.palette.text.primary }}
-        >
-            <Xmark />
-        </IconButton>
+        // This has a box around is so the button doesn't get all stretched out in the table cell
+        <Box>
+            <IconButton
+                disabled={removing || disabled}
+                size="small"
+                onClick={handlers.removeBinding}
+                sx={{ color: (theme) => theme.palette.text.primary }}
+            >
+                <Xmark />
+            </IconButton>
+        </Box>
     );
 }
 
