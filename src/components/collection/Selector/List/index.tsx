@@ -302,12 +302,13 @@ function CollectionSelectorList({
         collectionSelector,
         collectionsLabel,
         disable,
-        filteredRows,
         filterValue,
+        filteredRows,
         foo.name,
         foo.remove,
         foo.toggle,
         intl,
+        rowsEmpty,
         showPopper,
     ]);
 
