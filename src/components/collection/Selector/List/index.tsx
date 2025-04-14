@@ -416,6 +416,7 @@ function CollectionSelectorList({
                 >
                     <EntityTableHeader
                         columns={columns}
+                        disableBackground
                         enableDivRendering
                         height={DEFAULT_ROW_HEIGHT} // This is required for FF to render the body for some reason
                     />
