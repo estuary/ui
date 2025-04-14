@@ -2,7 +2,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Container, Paper, Stack, useTheme } from '@mui/material';
 
-import { PoweredByEstuaryLogo } from 'src/components/graphics/PoweredByEstuaryLogo';
+import { PoweredByEstuaryWatermark } from 'src/components/graphics/PoweredByEstuaryWatermark';
 import { paperBackground } from 'src/context/Theme';
 
 export const ExpressWorkflowWrapper = ({ children }: BaseComponentProps) => {
@@ -35,7 +35,7 @@ export const ExpressWorkflowWrapper = ({ children }: BaseComponentProps) => {
                     direction="row"
                     style={{ justifyContent: 'flex-end', paddingBottom: 8 }}
                 >
-                    <PoweredByEstuaryLogo />
+                    <PoweredByEstuaryWatermark />
                 </Stack>
             </Stack>
         </Container>

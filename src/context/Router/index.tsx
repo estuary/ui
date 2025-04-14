@@ -45,14 +45,16 @@ const CaptureCreateRoute = lazy(
 const CaptureCreateNewRoute = lazy(
     () => import('src/context/Router/CaptureCreateNew')
 );
-const CaptureExpressCreateRoute = lazy(() => import('./CaptureExpressCreate'));
-const CaptureExpressCreateNewRoute = lazy(
-    () => import('./CaptureExpressCreateNew')
-);
 const CaptureDetailsRoute = lazy(
     () => import('src/context/Router/CaptureDetails')
 );
 const CaptureEditRoute = lazy(() => import('src/context/Router/CaptureEdit'));
+const ExpressCaptureCreateRoute = lazy(
+    () => import('src/context/Router/ExpressCaptureCreate')
+);
+const ExpressCaptureCreateNewRoute = lazy(
+    () => import('src/context/Router/ExpressCaptureCreateNew')
+);
 
 // Collection
 const DerivationCreateComponent = lazy(
@@ -159,7 +161,7 @@ const router = createBrowserRouter(
                     <ErrorBoundary FallbackComponent={ErrorImporting}>
                         <Suspense fallback={null}>
                             <AuthenticatedOnlyContext hideSpinner>
-                                <CaptureExpressCreateRoute />
+                                <ExpressCaptureCreateRoute />
                             </AuthenticatedOnlyContext>
                         </Suspense>
                     </ErrorBoundary>
@@ -171,7 +173,7 @@ const router = createBrowserRouter(
                     <ErrorBoundary FallbackComponent={ErrorImporting}>
                         <Suspense fallback={null}>
                             <AuthenticatedOnlyContext hideSpinner>
-                                <CaptureExpressCreateNewRoute />
+                                <ExpressCaptureCreateNewRoute />
                             </AuthenticatedOnlyContext>
                         </Suspense>
                     </ErrorBoundary>

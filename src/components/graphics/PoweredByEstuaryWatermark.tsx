@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import multiBlueLogo from 'src/images/pictorial-marks/pictorial-mark__multi-blue.png';
 import whiteLogo from 'src/images/pictorial-marks/pictorial-mark__white.png';
 
-export const PoweredByEstuaryLogo = () => {
+export const PoweredByEstuaryWatermark = () => {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -21,13 +21,13 @@ export const PoweredByEstuaryLogo = () => {
                 component="span"
                 style={{
                     fontWeight: 500,
-                    marginBottom: 5,
+                    marginBottom: 4,
                     marginLeft: 6,
                     textTransform: 'uppercase',
                 }}
                 variant="caption"
             >
-                Streamed by Estuary
+                {intl.formatMessage({ id: 'expressFlowIntegration' })}
             </Typography>
         </Stack>
     );
