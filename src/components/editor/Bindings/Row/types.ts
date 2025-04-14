@@ -14,3 +14,7 @@ export interface SelectorNameProps {
 export interface NameHighlightProps extends BaseComponentProps {
     highlightIndex: number;
 }
+
+export interface BindingsSelectorToggleProps {
+    bindingUUID: string;
+}

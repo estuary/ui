@@ -22,17 +22,18 @@ export type CollectionSelectorCellRenderer = (
     filterValue?: string
 ) => ReactNode;
 
-export interface CollectionSelectorFoo {
+export interface CollectionSelectorCell {
     handler?: (rows: any, newVal?: any) => void;
     cellRenderer: CollectionSelectorCellRenderer;
 }
 
+export interface CollectionSelectorCellSettings {
+    name: CollectionSelectorCell;
+    remove?: CollectionSelectorCell;
+    toggle?: CollectionSelectorCell;
+}
+
 export interface CollectionSelectorListProps {
-    foo: {
-        name: CollectionSelectorFoo;
-        remove?: CollectionSelectorFoo;
-        toggle?: CollectionSelectorFoo;
-    };
     disableActions?: boolean;
     header?: string;
     setCurrentBinding?: BindingState['setCurrentBinding'];

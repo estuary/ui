@@ -34,6 +34,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
+import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
 import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
 import {
     useBinding_currentBindingUUID,
@@ -49,9 +50,10 @@ const DEFAULT_ROW_HEIGHT = 50;
 function CollectionSelectorList({
     disableActions,
     header,
-    foo,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
+    const foo = useBindingSelectorCells();
+
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
 
@@ -102,6 +104,7 @@ function CollectionSelectorList({
         // We have bindings so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
         //  `id` property.
+        console.log('resourceConfigs', resourceConfigs);
         return Object.entries(resourceConfigs).map(([bindingUUID, config]) => {
             const collection = config.meta.collectionName;
 
