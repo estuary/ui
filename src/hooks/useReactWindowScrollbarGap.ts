@@ -18,8 +18,6 @@ export const useReactWindowScrollbarGap = <
     const scrollbarWidth = useScrollbarWidth();
     const [scrollGap, setScrollGap] = useState<number | undefined>(undefined);
 
-    // const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
-
     useLayoutEffect(() => {
         let observedScrollingElement: HTMLDivElement;
         let resizeObserver: ResizeObserver;
