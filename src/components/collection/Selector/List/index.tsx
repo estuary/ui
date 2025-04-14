@@ -62,6 +62,7 @@ function CollectionSelectorList({
     const tableScroller = useRef<any | null>(null);
 
     const [filterValue, setFilterValue] = useState('');
+    const [filterInputValue, setFilterInputValue] = useState('');
     const previousFilterValue = usePrevious(filterValue);
 
     const { scrollGap, scrollingElementCallback, checkScrollbarVisibility } =
@@ -218,9 +219,10 @@ function CollectionSelectorList({
                     return (
                         <CollectionSelectorHeaderName
                             disabled={disable}
-                            inputValue={filterValue}
+                            inputValue={filterInputValue}
                             itemType={collectionsLabel}
                             onChange={(value) => {
+                                setFilterInputValue(value);
                                 debouncedFilter.current(value);
                             }}
                         />
@@ -289,7 +291,10 @@ function CollectionSelectorList({
                                         ];
                                     })
                                 );
+
+                                // We need to clear out the filter
                                 setFilterValue('');
+                                setFilterInputValue('');
 
                                 showPopper(
                                     event.currentTarget,
@@ -311,14 +316,15 @@ function CollectionSelectorList({
         }
         return response;
     }, [
-        collectionSelector,
-        collectionsLabel,
-        disable,
-        filterValue,
-        filteredRows,
         bindingSelectorCells.name,
         bindingSelectorCells.remove,
         bindingSelectorCells.toggle,
+        collectionSelector,
+        collectionsLabel,
+        disable,
+        filterInputValue,
+        filterValue,
+        filteredRows,
         intl,
         rowsEmpty,
         showPopper,
