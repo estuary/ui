@@ -52,7 +52,7 @@ function CollectionSelectorList({
     header,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
-    const foo = useBindingSelectorCells();
+    const bindingSelectorCells = useBindingSelectorCells();
 
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
@@ -227,25 +227,28 @@ function CollectionSelectorList({
                     );
                 },
                 renderCell: (params: any) =>
-                    foo.name.cellRenderer(params, filterValue),
+                    bindingSelectorCells.name.cellRenderer(params, filterValue),
             },
         ];
 
-        if (foo.toggle) {
+        if (bindingSelectorCells.toggle) {
             response.unshift({
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
-                renderCell: foo.toggle.cellRenderer,
+                renderCell: bindingSelectorCells.toggle.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         onClick={(event, value, scope) => {
-                            const count = foo.toggle?.handler?.(
-                                filteredRows.map((datum) => {
-                                    return datum[COLLECTION_SELECTOR_UUID_COL];
-                                }),
-                                value
-                            );
+                            const count =
+                                bindingSelectorCells.toggle?.handler?.(
+                                    filteredRows.map((datum) => {
+                                        return datum[
+                                            COLLECTION_SELECTOR_UUID_COL
+                                        ];
+                                    }),
+                                    value
+                                );
 
                             showPopper(
                                 event.currentTarget,
@@ -267,19 +270,19 @@ function CollectionSelectorList({
             });
         }
 
-        if (foo.remove) {
+        if (bindingSelectorCells.remove) {
             response.push({
                 align: 'right',
                 field: 'remove',
                 preventSelect: true,
-                renderCell: foo.remove.cellRenderer,
+                renderCell: bindingSelectorCells.remove.cellRenderer,
                 renderFooHeader: () => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         onClick={(event) => {
                             if (filteredRows && filteredRows.length > 0) {
-                                foo.remove?.handler?.(
+                                bindingSelectorCells.remove?.handler?.(
                                     filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
@@ -313,9 +316,9 @@ function CollectionSelectorList({
         disable,
         filterValue,
         filteredRows,
-        foo.name,
-        foo.remove,
-        foo.toggle,
+        bindingSelectorCells.name,
+        bindingSelectorCells.remove,
+        bindingSelectorCells.toggle,
         intl,
         rowsEmpty,
         showPopper,
