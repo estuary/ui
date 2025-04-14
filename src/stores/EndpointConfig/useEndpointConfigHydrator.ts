@@ -16,11 +16,15 @@ import useGlobalSearchParams, {
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { getEndpointConfig } from 'src/utils/connector-utils';
+import { configCanBeEmpty } from 'src/utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
 
 const useStoreEndpointSchema = () => {
     const setEndpointSchema = useEndpointConfigStore(
         (state) => state.setEndpointSchema
+    );
+    const setEndpointCanBeEmpty = useEndpointConfigStore(
+        (state) => state.setEndpointCanBeEmpty
     );
 
     const storeEndpointSchema = async (connectorTagId: string) => {
@@ -38,6 +42,10 @@ const useStoreEndpointSchema = () => {
         const endpointSchema = data.endpoint_spec_schema as unknown as Schema;
 
         await setEndpointSchema(endpointSchema);
+
+        // Storing if this endpointConfig can be empty or not
+        //  If so we know there will never be a "change" to the endpoint config
+        setEndpointCanBeEmpty(configCanBeEmpty(endpointSchema));
 
         return { endpointSchema, error: null };
     };

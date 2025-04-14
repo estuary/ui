@@ -183,6 +183,10 @@ const getInitialState = (
     },
 
     setServerUpdateRequired: (updateRequired) => {
+        if (get().serverUpdateRequired === updateRequired) {
+            return;
+        }
+
         set(
             produce((state: EndpointConfigState) => {
                 state.serverUpdateRequired = state.endpointCanBeEmpty
