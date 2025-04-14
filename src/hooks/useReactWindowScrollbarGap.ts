@@ -1,22 +1,52 @@
 import type { MutableRefObject } from 'react';
 import type { FixedSizeList, VariableSizeList } from 'react-window';
 
-import { useLayoutEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { debounce } from 'lodash';
 import { useScrollbarWidth } from 'react-use';
 
 import { useReactWindowReadyToScroll } from 'src/hooks/useReactWindowReadyToScroll';
+import { NEAR_INSTANT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 export const useReactWindowScrollbarGap = <
     T extends FixedSizeList<any> | VariableSizeList<any>,
 >(
-    scrollingElementRef: MutableRefObject<T | null>
+    scrollingElementRef: MutableRefObject<T | null>,
+    ignoreResize?: boolean
 ) => {
     const { readyToScroll, scrollingElementCallback } =
         useReactWindowReadyToScroll<T>(scrollingElementRef);
 
     const scrollbarWidth = useScrollbarWidth();
     const [scrollGap, setScrollGap] = useState<number | undefined>(undefined);
+
+    const debouncedSetter = useRef(
+        debounce(
+            (element: HTMLDivElement) => {
+                setScrollGap(
+                    element.scrollHeight > element.clientHeight
+                        ? scrollbarWidth
+                        : undefined
+                );
+            },
+            // If we are ignoringResize then we need to handle checking ourselves
+            //  so just run this right away
+            ignoreResize ? 0 : NEAR_INSTANT_DEBOUNCE_WAIT
+        )
+    );
+
+    const checkScrollbarVisibility = useCallback(() => {
+        if (
+            typeof scrollingElementRef?.current?.props?.outerRef !==
+                'function' &&
+            scrollingElementRef?.current?.props?.outerRef?.current
+        ) {
+            debouncedSetter.current(
+                scrollingElementRef.current.props.outerRef.current
+            );
+        }
+    }, [scrollingElementRef]);
 
     useLayoutEffect(() => {
         let observedScrollingElement: HTMLDivElement;
@@ -31,32 +61,17 @@ export const useReactWindowScrollbarGap = <
             observedScrollingElement =
                 scrollingElementRef?.current.props.outerRef.current;
 
-            const checkScrollbarVisibility = () => {
-                if (
-                    typeof scrollingElementRef?.current?.props?.outerRef !==
-                        'function' &&
-                    scrollingElementRef?.current?.props?.outerRef?.current
-                ) {
-                    setScrollGap(
-                        scrollingElementRef.current.props.outerRef.current
-                            .scrollHeight >
-                            scrollingElementRef.current.props.outerRef?.current
-                                .clientHeight
-                            ? scrollbarWidth
-                            : undefined
-                    );
-                }
-            };
-
             // Do a check right away to set this "on load"
             checkScrollbarVisibility();
 
-            // Create a ResizeObserver to monitor size changes
-            resizeObserver = new ResizeObserver(() => {
-                checkScrollbarVisibility();
-            });
+            if (!Boolean(ignoreResize)) {
+                // Create a ResizeObserver to monitor size changes
+                resizeObserver = new ResizeObserver(() => {
+                    checkScrollbarVisibility();
+                });
 
-            resizeObserver.observe(observedScrollingElement);
+                resizeObserver.observe(observedScrollingElement);
+            }
         }
 
         return () => {
@@ -64,10 +79,19 @@ export const useReactWindowScrollbarGap = <
                 resizeObserver.unobserve(observedScrollingElement);
             }
         };
-    }, [readyToScroll, scrollbarWidth, scrollingElementRef]);
+    }, [
+        checkScrollbarVisibility,
+        ignoreResize,
+        readyToScroll,
+        scrollingElementRef,
+    ]);
 
-    return {
-        scrollingElementCallback,
-        scrollGap,
-    };
+    return useMemo(
+        () => ({
+            checkScrollbarVisibility,
+            scrollingElementCallback,
+            scrollGap,
+        }),
+        [checkScrollbarVisibility, scrollGap, scrollingElementCallback]
+    );
 };

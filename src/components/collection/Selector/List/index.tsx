@@ -30,8 +30,6 @@ import {
     COLLECTION_SELECTOR_UUID_COL,
     getCollectionSelector,
 } from 'src/components/collection/Selector/List/shared';
-import NoResults from 'src/components/editor/Bindings/NoResults';
-import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
@@ -61,8 +59,11 @@ function CollectionSelectorList({
     const virtualRows = useRef<any | null>(null);
     const tableScroller = useRef<any | null>(null);
 
-    const { scrollGap, scrollingElementCallback } =
-        useReactWindowScrollbarGap(tableScroller);
+    const [filterValue, setFilterValue] = useState('');
+    const previousFilterValue = usePrevious(filterValue);
+
+    const { scrollGap, scrollingElementCallback, checkScrollbarVisibility } =
+        useReactWindowScrollbarGap(tableScroller, true);
 
     const notificationAnchorEl = useRef<any | null>(null);
     const popperTimeout = useRef<number | null>(null);
@@ -75,8 +76,6 @@ function CollectionSelectorList({
                 id: 'workflows.collectionSelector.label.listHeader',
             })
     );
-    const [filterValue, setFilterValue] = useState('');
-    const previousFilterValue = usePrevious(filterValue);
 
     const [notificationMessage, setNotificationMessage] = useState('');
     const [showNotification, setShowNotification] = useState(false);
@@ -421,118 +420,105 @@ function CollectionSelectorList({
                         height={DEFAULT_ROW_HEIGHT} // This is required for FF to render the body for some reason
                     />
 
-                    {mappedResourceConfigs.length === 0 ? (
-                        <SelectorEmpty />
-                    ) : filterValue !== '' && filteredRows.length === 0 ? (
-                        <NoResults />
-                    ) : (
-                        <>
-                            <TableBody component="div">
-                                <AutoSizer>
-                                    {({
-                                        height,
-                                        width,
-                                    }: AutoSizer['state']) => {
-                                        return (
-                                            <FixedSizeList
-                                                ref={scrollingElementCallback}
-                                                innerRef={virtualRows}
-                                                outerRef={scrollingElementRef}
-                                                overscanCount={10}
-                                                height={height} // Adjust for header height
-                                                itemSize={DEFAULT_ROW_HEIGHT} // Row height
-                                                width={width}
-                                                itemCount={filteredRows.length}
-                                                itemData={filteredRows}
-                                                itemKey={(index, data) =>
-                                                    data[index][
-                                                        COLLECTION_SELECTOR_UUID_COL
-                                                    ]
-                                                }
-                                            >
-                                                {({ index, style, data }) => {
-                                                    const row = data[index];
+                    <TableBody component="div">
+                        <AutoSizer>
+                            {({ height, width }: AutoSizer['state']) => {
+                                return (
+                                    <FixedSizeList
+                                        ref={scrollingElementCallback}
+                                        innerRef={virtualRows}
+                                        outerRef={scrollingElementRef}
+                                        overscanCount={10}
+                                        height={height} // Adjust for header height
+                                        itemSize={DEFAULT_ROW_HEIGHT} // Row height
+                                        width={width}
+                                        itemCount={filteredRows.length}
+                                        itemData={filteredRows}
+                                        onItemsRendered={() => {
+                                            checkScrollbarVisibility();
+                                        }}
+                                        itemKey={(index, data) =>
+                                            data[index][
+                                                COLLECTION_SELECTOR_UUID_COL
+                                            ]
+                                        }
+                                    >
+                                        {({ index, style, data }) => {
+                                            const row = data[index];
 
-                                                    return (
-                                                        <TableRow
-                                                            key={
-                                                                row[
-                                                                    COLLECTION_SELECTOR_UUID_COL
-                                                                ]
-                                                            }
-                                                            component={Box}
-                                                            style={style}
-                                                            selected={
-                                                                row[
-                                                                    COLLECTION_SELECTOR_UUID_COL
-                                                                ] ===
-                                                                currentBindingUUID
-                                                            }
-                                                            hover={
-                                                                selectionEnabled
-                                                            }
-                                                        >
-                                                            {columns.map(
-                                                                (column) => {
-                                                                    return (
-                                                                        <TableCell
-                                                                            align={
-                                                                                column.align
-                                                                            }
-                                                                            key={`${column.field}_${
-                                                                                row[
-                                                                                    COLLECTION_SELECTOR_UUID_COL
-                                                                                ]
-                                                                            }`}
-                                                                            component="div"
-                                                                            onClick={
-                                                                                Boolean(
-                                                                                    column.preventSelect
-                                                                                )
-                                                                                    ? undefined
-                                                                                    : () => {
-                                                                                          handleCellClick(
-                                                                                              row[
-                                                                                                  COLLECTION_SELECTOR_UUID_COL
-                                                                                              ]
-                                                                                          );
-                                                                                      }
-                                                                            }
-                                                                        >
-                                                                            {column.renderCell
-                                                                                ? column.renderCell(
-                                                                                      {
-                                                                                          row,
-                                                                                      },
-                                                                                      filterValue
-                                                                                  )
-                                                                                : row[
-                                                                                      column
-                                                                                          .field
-                                                                                  ]}
-                                                                        </TableCell>
-                                                                    );
+                                            return (
+                                                <TableRow
+                                                    key={
+                                                        row[
+                                                            COLLECTION_SELECTOR_UUID_COL
+                                                        ]
+                                                    }
+                                                    component={Box}
+                                                    style={style}
+                                                    selected={
+                                                        row[
+                                                            COLLECTION_SELECTOR_UUID_COL
+                                                        ] === currentBindingUUID
+                                                    }
+                                                    hover={selectionEnabled}
+                                                >
+                                                    {columns.map((column) => {
+                                                        return (
+                                                            <TableCell
+                                                                align={
+                                                                    column.align
                                                                 }
-                                                            )}
-                                                        </TableRow>
-                                                    );
-                                                }}
-                                            </FixedSizeList>
-                                        );
-                                    }}
-                                </AutoSizer>
-                            </TableBody>
-                            <TableFooter component="div">
-                                <TableRow component="div">
-                                    <TableCell component="div">
-                                        {filterValue.length > 0
-                                            ? `Viewing: ${filteredRows.length} of ${mappedResourceConfigs.length}`
-                                            : `Total: ${mappedResourceConfigs.length}`}
-                                    </TableCell>
-                                </TableRow>
-                            </TableFooter>
-                        </>
-                    )}
+                                                                key={`${column.field}_${
+                                                                    row[
+                                                                        COLLECTION_SELECTOR_UUID_COL
+                                                                    ]
+                                                                }`}
+                                                                component="div"
+                                                                onClick={
+                                                                    Boolean(
+                                                                        column.preventSelect
+                                                                    )
+                                                                        ? undefined
+                                                                        : () => {
+                                                                              handleCellClick(
+                                                                                  row[
+                                                                                      COLLECTION_SELECTOR_UUID_COL
+                                                                                  ]
+                                                                              );
+                                                                          }
+                                                                }
+                                                            >
+                                                                {column.renderCell
+                                                                    ? column.renderCell(
+                                                                          {
+                                                                              row,
+                                                                          },
+                                                                          filterValue
+                                                                      )
+                                                                    : row[
+                                                                          column
+                                                                              .field
+                                                                      ]}
+                                                            </TableCell>
+                                                        );
+                                                    })}
+                                                </TableRow>
+                                            );
+                                        }}
+                                    </FixedSizeList>
+                                );
+                            }}
+                        </AutoSizer>
+                    </TableBody>
+                    <TableFooter component="div">
+                        <TableRow component="div">
+                            <TableCell component="div">
+                                {filterValue.length > 0
+                                    ? `Viewing: ${filteredRows.length} of ${mappedResourceConfigs.length}`
+                                    : `Total: ${mappedResourceConfigs.length}`}
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </TableContainer>
         </Box>
