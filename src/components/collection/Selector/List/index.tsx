@@ -104,7 +104,6 @@ function CollectionSelectorList({
         // We have bindings so need to format them in a format that mui
         //  datagrid will handle. At a minimum each object must have an
         //  `id` property.
-        console.log('resourceConfigs', resourceConfigs);
         return Object.entries(resourceConfigs).map(([bindingUUID, config]) => {
             const collection = config.meta.collectionName;
 
@@ -116,14 +115,6 @@ function CollectionSelectorList({
             };
         });
     }, [resourceConfigs]);
-
-    useEffect(() => {
-        console.log('resourceConfigs changed', resourceConfigs);
-    }, [resourceConfigs]);
-
-    useEffect(() => {
-        console.log('mappedResourceConfigs changed', mappedResourceConfigs);
-    }, [mappedResourceConfigs]);
 
     const debouncedFilter = useRef(
         debounce((val) => {
