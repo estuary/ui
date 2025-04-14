@@ -93,7 +93,7 @@
         "react-router-dom": "^6.18.0",
         "react-stay-scrolled": "^8.0.1",
         "react-use": "^17.4.0",
-        "react-virtualized-auto-sizer": "^1.0.20",
+        "react-virtualized-auto-sizer": "^1.0.26",
         "react-window": "^1.8.9",
         "readable-numbers": "^1.0.7",
         "retry": "^0.13.1",
