@@ -12,7 +12,7 @@ import { NEAR_INSTANT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 export const useReactWindowScrollbarGap = <
     T extends FixedSizeList<any> | VariableSizeList<any>,
 >(
-    scrollingElementRef: MutableRefObject<T | null>,
+    scrollingElementRef: MutableRefObject<T | undefined>,
     ignoreResize?: boolean
 ) => {
     const { readyToScroll, scrollingElementCallback } =

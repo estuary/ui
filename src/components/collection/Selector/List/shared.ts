@@ -10,3 +10,5 @@ export const getCollectionSelector = (endOnly: boolean): CollectionNameKeys =>
     endOnly
         ? COLLECTION_SELECTOR_STRIPPED_PATH_NAME
         : COLLECTION_SELECTOR_NAME_COL;
+
+export const DEFAULT_ROW_HEIGHT = 50;

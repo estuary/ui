@@ -26,9 +26,9 @@ function LogsTable() {
             state.scrollToWhenDone,
         ]);
 
-    const tableScroller = useRef<any>(null);
-    const outerRef = useRef<any>(null);
-    const virtualRows = useRef<any>(null);
+    const tableScroller = useRef<VariableSizeList | undefined>(undefined);
+    const outerRef = useRef<HTMLDivElement | undefined>(undefined);
+    const virtualRows = useRef<HTMLDivElement | undefined>(undefined);
     const enableFetchingMore = useRef<boolean>(true);
 
     const { readyToScroll, scrollingElementCallback } =

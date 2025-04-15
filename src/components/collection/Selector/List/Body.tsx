@@ -1,0 +1,143 @@
+import type { CollectionSelectorBodyProps } from 'src/components/collection/Selector/List/types';
+
+import { useRef } from 'react';
+
+import { Box, TableBody, TableCell, TableRow } from '@mui/material';
+
+import { useUnmount } from 'react-use';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList } from 'react-window';
+
+import {
+    COLLECTION_SELECTOR_UUID_COL,
+    DEFAULT_ROW_HEIGHT,
+} from 'src/components/collection/Selector/List/shared';
+import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
+import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+
+function CollectionSelectorBody({
+    columns,
+    filterValue,
+    rows,
+    selectionEnabled,
+    setCurrentBinding,
+    tableScroller,
+}: CollectionSelectorBodyProps) {
+    const hackyTimeout = useRef<number | null>(null);
+    const scrollingElementRef = useRef<FixedSizeList | undefined>(undefined);
+    const virtualRows = useRef<any | null>(null);
+
+    const { scrollingElementCallback, checkScrollbarVisibility } =
+        useReactWindowScrollbarGap<FixedSizeList>(tableScroller, true);
+
+    const currentBindingUUID = useBinding_currentBindingUUID();
+
+    useUnmount(() => {
+        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
+    });
+
+    const handleCellClick = (id?: string) => {
+        if (
+            selectionEnabled &&
+            setCurrentBinding &&
+            id !== currentBindingUUID
+        ) {
+            // TODO (JSONForms) This is hacky but it works.
+            // It clears out the current binding before switching.
+            //  If a user is typing quickly in a form and then selects a
+            //  different binding VERY quickly it could cause the updates
+            //  to go into the wrong form.
+            setCurrentBinding(null);
+
+            if (typeof id === 'string') {
+                hackyTimeout.current = window.setTimeout(() => {
+                    setCurrentBinding(id);
+                });
+            }
+        }
+    };
+
+    return (
+        <TableBody component="div">
+            <AutoSizer>
+                {({ height, width }: AutoSizer['state']) => {
+                    return (
+                        <FixedSizeList
+                            ref={scrollingElementCallback}
+                            innerRef={virtualRows}
+                            outerRef={scrollingElementRef}
+                            overscanCount={10}
+                            height={height} // Adjust for header height
+                            itemSize={DEFAULT_ROW_HEIGHT} // Row height
+                            width={width}
+                            itemCount={rows.length}
+                            itemData={rows}
+                            onItemsRendered={() => {
+                                checkScrollbarVisibility();
+                            }}
+                            itemKey={(index, data) =>
+                                data[index][COLLECTION_SELECTOR_UUID_COL]
+                            }
+                        >
+                            {({ index, style, data }) => {
+                                const row = data[index];
+
+                                return (
+                                    <TableRow
+                                        key={row[COLLECTION_SELECTOR_UUID_COL]}
+                                        component={Box}
+                                        style={style}
+                                        selected={
+                                            row[
+                                                COLLECTION_SELECTOR_UUID_COL
+                                            ] === currentBindingUUID
+                                        }
+                                        hover={selectionEnabled}
+                                    >
+                                        {columns.map((column) => {
+                                            return (
+                                                <TableCell
+                                                    align={column.align}
+                                                    key={`${column.field}_${
+                                                        row[
+                                                            COLLECTION_SELECTOR_UUID_COL
+                                                        ]
+                                                    }`}
+                                                    component="div"
+                                                    onClick={
+                                                        Boolean(
+                                                            column.preventSelect
+                                                        )
+                                                            ? undefined
+                                                            : () => {
+                                                                  handleCellClick(
+                                                                      row[
+                                                                          COLLECTION_SELECTOR_UUID_COL
+                                                                      ]
+                                                                  );
+                                                              }
+                                                    }
+                                                >
+                                                    {column.renderCell
+                                                        ? column.renderCell(
+                                                              {
+                                                                  row,
+                                                              },
+                                                              filterValue
+                                                          )
+                                                        : row[column.field]}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            }}
+                        </FixedSizeList>
+                    );
+                }}
+            </AutoSizer>
+        </TableBody>
+    );
+}
+
+export default CollectionSelectorBody;

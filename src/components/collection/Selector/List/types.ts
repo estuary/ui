@@ -6,3 +6,12 @@ import type {
 export type CollectionNameKeys =
     | typeof COLLECTION_SELECTOR_NAME_COL
     | typeof COLLECTION_SELECTOR_STRIPPED_PATH_NAME;
+
+export interface CollectionSelectorBodyProps {
+    columns: any[];
+    filterValue: string;
+    rows: any[];
+    selectionEnabled: boolean;
+    setCurrentBinding?: any;
+    tableScroller: any;
+}

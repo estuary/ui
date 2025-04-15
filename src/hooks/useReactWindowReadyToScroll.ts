@@ -6,12 +6,12 @@ import { useCallback, useState } from 'react';
 export const useReactWindowReadyToScroll = <
     T extends FixedSizeList<any> | VariableSizeList<any>,
 >(
-    tableScroller: MutableRefObject<T | null>
+    tableScroller: MutableRefObject<T | undefined>
 ) => {
     const [readyToScroll, setReadyToScroll] = useState(false);
 
-    const scrollingElementCallback = useCallback(
-        (node?: T): T | null => {
+    const scrollingElementCallback: (node?: any) => T | undefined = useCallback(
+        (node?) => {
             if (node) {
                 tableScroller.current = node;
                 setReadyToScroll(true);
