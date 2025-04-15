@@ -101,8 +101,8 @@ function EntityTableHeader({
                             }
                             sx={tableCellSX}
                         >
-                            {column.renderFooHeader && !hide ? (
-                                column.renderFooHeader(index)
+                            {column.renderInlineHeader && !hide ? (
+                                column.renderInlineHeader(index)
                             ) : selectData && column.field && !hide ? (
                                 <TableSortLabel
                                     IconComponent={ArrowDown}

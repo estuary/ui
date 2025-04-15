@@ -1,5 +1,6 @@
 import type { FixedSizeList } from 'react-window';
 import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
@@ -190,11 +191,10 @@ function CollectionSelectorList({
     );
 
     const columns = useMemo(() => {
-        const response: any[] = [
+        const response: ColumnProps[] = [
             {
                 field: collectionSelector,
-                headerName: collectionsLabel,
-                renderFooHeader: () => {
+                renderInlineHeader: () => {
                     return (
                         <CollectionSelectorHeaderName
                             disabled={disable}
@@ -216,7 +216,7 @@ function CollectionSelectorList({
             response.unshift({
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
                 renderCell: bindingSelectorCells.toggle.cellRenderer,
-                renderFooHeader: () => (
+                renderInlineHeader: () => (
                     <CollectionSelectorHeaderToggle
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
@@ -257,7 +257,7 @@ function CollectionSelectorList({
                 field: 'remove',
                 preventSelect: true,
                 renderCell: bindingSelectorCells.remove.cellRenderer,
-                renderFooHeader: () => (
+                renderInlineHeader: () => (
                     <CollectionSelectorHeaderRemove
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
