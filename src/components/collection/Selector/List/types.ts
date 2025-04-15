@@ -14,6 +14,8 @@ export interface CollectionSelectorBodyProps {
     selectionEnabled: boolean;
     setCurrentBinding?: any;
     tableScroller: any;
+    scrollingElementCallback: any;
+    checkScrollbarVisibility: any;
 }
 
 export interface CollectionSelectorFooterProps {

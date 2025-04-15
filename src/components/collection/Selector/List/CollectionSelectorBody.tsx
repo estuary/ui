@@ -12,7 +12,6 @@ import {
     COLLECTION_SELECTOR_UUID_COL,
     DEFAULT_ROW_HEIGHT,
 } from 'src/components/collection/Selector/List/shared';
-import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorBody({
@@ -22,13 +21,12 @@ function CollectionSelectorBody({
     selectionEnabled,
     setCurrentBinding,
     tableScroller,
+    scrollingElementCallback,
+    checkScrollbarVisibility,
 }: CollectionSelectorBodyProps) {
     const hackyTimeout = useRef<number | null>(null);
     const scrollingElementRef = useRef<FixedSizeList | undefined>(undefined);
     const virtualRows = useRef<any | null>(null);
-
-    const { scrollingElementCallback, checkScrollbarVisibility } =
-        useReactWindowScrollbarGap<FixedSizeList>(tableScroller, true);
 
     const currentBindingUUID = useBinding_currentBindingUUID();
 

@@ -60,10 +60,8 @@ function CollectionSelectorList({
     const previousFilterValue = usePrevious(filterValue);
 
     const tableScroller = useRef<FixedSizeList | undefined>(undefined);
-    const { scrollGap } = useReactWindowScrollbarGap<FixedSizeList>(
-        tableScroller,
-        true
-    );
+    const { scrollGap, scrollingElementCallback, checkScrollbarVisibility } =
+        useReactWindowScrollbarGap<FixedSizeList>(tableScroller, true);
 
     const intl = useIntl();
     const collectionsLabel = useConstant(
@@ -348,7 +346,6 @@ function CollectionSelectorList({
                         [`& .MuiTableHead-root .MuiTableRow-root,
                         & .MuiTableFooter-root .MuiTableRow-root`]: {
                             pr: scrollGap ? `${scrollGap}px` : undefined,
-                            background: scrollGap ? 'red' : 'green',
                         },
                         [`& .MuiTableRow-root`]: {
                             display: 'flex',
@@ -388,6 +385,8 @@ function CollectionSelectorList({
                         selectionEnabled={selectionEnabled}
                         setCurrentBinding={setCurrentBinding}
                         tableScroller={tableScroller}
+                        scrollingElementCallback={scrollingElementCallback}
+                        checkScrollbarVisibility={checkScrollbarVisibility}
                     />
 
                     <CollectionSelectorFooter
