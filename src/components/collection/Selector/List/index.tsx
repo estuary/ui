@@ -1,5 +1,8 @@
 import type { FixedSizeList } from 'react-window';
-import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
+import type {
+    CollectionSelectorListProps,
+    CollectionSelectorMappedResourceConfig,
+} from 'src/components/collection/Selector/types';
 import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -86,26 +89,29 @@ function CollectionSelectorList({
             formStatus !== FormStatus.UPDATING
     );
 
-    const mappedResourceConfigs = useMemo(() => {
-        // If we have no bindings we can just return an empty array
-        if (isEmpty(resourceConfigs)) {
-            return [];
-        }
+    const mappedResourceConfigs: CollectionSelectorMappedResourceConfig[] =
+        useMemo(() => {
+            // If we have no bindings we can just return an empty array
+            if (isEmpty(resourceConfigs)) {
+                return [];
+            }
 
-        // We have bindings so need to format them in a format that mui
-        //  datagrid will handle. At a minimum each object must have an
-        //  `id` property.
-        return Object.entries(resourceConfigs).map(([bindingUUID, config]) => {
-            const collection = config.meta.collectionName;
+            // We have bindings so need to format them in a format that mui
+            //  datagrid will handle. At a minimum each object must have an
+            //  `id` property.
+            return Object.entries(resourceConfigs).map(
+                ([bindingUUID, config]) => {
+                    const collection = config.meta.collectionName;
 
-            return {
-                [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
-                [COLLECTION_SELECTOR_NAME_COL]: collection,
-                [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
-                    stripPathing(collection),
-            };
-        });
-    }, [resourceConfigs]);
+                    return {
+                        [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
+                        [COLLECTION_SELECTOR_NAME_COL]: collection,
+                        [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
+                            stripPathing(collection),
+                    };
+                }
+            );
+        }, [resourceConfigs]);
 
     const debouncedFilter = useRef(
         debounce((val) => {

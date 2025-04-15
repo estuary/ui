@@ -1,4 +1,4 @@
-import type { CollectionSelectorBodyProps } from 'src/components/collection/Selector/List/types';
+import type { CollectionSelectorBodyProps } from 'src/components/collection/Selector/types';
 
 import { useRef } from 'react';
 
@@ -116,14 +116,12 @@ function CollectionSelectorBody({
                                                               }
                                                     }
                                                 >
-                                                    {column.renderCell
-                                                        ? column.renderCell(
-                                                              {
-                                                                  row,
-                                                              },
-                                                              filterValue
-                                                          )
-                                                        : row[column.field]}
+                                                    {column.renderCell?.(
+                                                        {
+                                                            row,
+                                                        },
+                                                        filterValue
+                                                    )}
                                                 </TableCell>
                                             );
                                         })}

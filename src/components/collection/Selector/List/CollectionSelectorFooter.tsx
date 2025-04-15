@@ -1,4 +1,4 @@
-import type { CollectionSelectorFooterProps } from 'src/components/collection/Selector/List/types';
+import type { CollectionSelectorFooterProps } from 'src/components/collection/Selector/types';
 
 import { TableCell, TableFooter, TableRow } from '@mui/material';
 

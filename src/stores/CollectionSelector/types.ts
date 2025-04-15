@@ -1,4 +1,4 @@
-import type { CollectionNameKeys } from 'src/components/collection/Selector/List/types';
+import type { CollectionNameKeys } from 'src/components/collection/Selector/types';
 
 export interface CollectionSelectorState {
     collectionNameField: CollectionNameKeys;

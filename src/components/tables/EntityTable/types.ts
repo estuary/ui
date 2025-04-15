@@ -1,25 +1,17 @@
 import type { ReactNode } from 'react';
-import type { CollectionSelectorCellRenderer } from 'src/components/collection/Selector/types';
+import type {
+    CollectionSelectorColumnProps,
+    CollectionSelectorHeaderProps,
+} from 'src/components/collection/Selector/types';
+import type { Pagination } from 'src/services/supabase';
 import type { SelectTableStoreNames } from 'src/stores/names';
-import type { SortDirection, TableColumns } from 'src/types';
+import type { SortDirection, TableColumns, TableIntlConfig } from 'src/types';
 
 // These are settings that were added just for Collection Selector but might be useful elsewhere in the future (Q2 2025)
 
-export interface CollectionSelectorColumnProps {
-    renderCell?: CollectionSelectorCellRenderer;
-    renderInlineHeader?: (index: number) => ReactNode;
-    preventSelect?: boolean;
-}
-
-export interface CollectionSelectorHeaderProps {
-    disableBackground?: boolean;
-}
-
 export interface ColumnPropsBase
     extends TableColumns,
-        CollectionSelectorColumnProps {
-    // Common properties go here
-}
+        CollectionSelectorColumnProps {}
 
 export type ColumnProps =
     | (ColumnPropsBase & {
@@ -50,4 +42,36 @@ export interface EntityTableHeaderProps extends CollectionSelectorHeaderProps {
     selectData?: any;
     selectableTableStoreName?: SelectTableStoreNames;
     sortDirection?: SortDirection;
+}
+
+export interface EntityTableProps {
+    columns: ColumnProps[];
+    columnToSort: string;
+    filterLabel: string;
+    header: string | ReactNode | null;
+    noExistingDataContentIds: TableIntlConfig;
+    pagination: Pagination;
+    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
+    rowsPerPage: number;
+    searchQuery: string | null;
+    selectableTableStoreName: SelectTableStoreNames;
+    setColumnToSort: (data: any) => void;
+    setPagination: (data: any) => void;
+    setRowsPerPage: (data: any) => void;
+    setSearchQuery: (data: any) => void;
+    setSortDirection: (data: any) => void;
+    sortDirection: SortDirection;
+    hideFilter?: boolean;
+    hideHeaderAndFooter?: boolean;
+    keepSelectionOnFilterOrSearch?: boolean;
+    keepSelectionOnPagination?: boolean;
+    minWidth?: number;
+    rowsPerPageOptions?: number[];
+    showEntityStatus?: boolean;
+    showToolbar?: boolean;
+    toolbar?: ReactNode;
+    ExportComponent?: any;
+
+    // This is a HACK
+    tableAriaLabelKey?: string;
 }
