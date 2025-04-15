@@ -312,7 +312,7 @@ function CollectionSelectorList({
     ]);
 
     return (
-        <Box sx={{ height: '100%' }} ref={notificationAnchorEl}>
+        <Box sx={{ flex: 1 }} ref={notificationAnchorEl}>
             <Popper
                 anchorEl={notificationAnchorEl.current}
                 open={displayNotification}
@@ -345,8 +345,10 @@ function CollectionSelectorList({
                         [`& .MuiTableCell-body`]: {
                             cursor: selectionEnabled ? 'pointer' : undefined,
                         },
-                        [`& .MuiTableHead-root .MuiTableRow-root`]: {
+                        [`& .MuiTableHead-root .MuiTableRow-root,
+                        & .MuiTableFooter-root .MuiTableRow-root`]: {
                             pr: scrollGap ? `${scrollGap}px` : undefined,
+                            background: scrollGap ? 'red' : 'green',
                         },
                         [`& .MuiTableRow-root`]: {
                             display: 'flex',

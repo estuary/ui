@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 
 import CollectionSelectorList from 'src/components/collection/Selector/List';
 import BindingSearch from 'src/components/editor/Bindings/Search';
@@ -17,7 +17,6 @@ interface BindingSelectorProps {
 
 function BindingSelector({
     disableSelect,
-    height,
     itemType,
     readOnly,
     RediscoverButton,
@@ -28,11 +27,7 @@ function BindingSelector({
     const disableActions = formActive || readOnly;
 
     return (
-        <Box
-            sx={{
-                height,
-            }}
-        >
+        <Stack direction="column" sx={{ height: '100%' }}>
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}
@@ -46,7 +41,7 @@ function BindingSelector({
                     !disableSelect ? setCurrentBinding : undefined
                 }
             />
-        </Box>
+        </Stack>
     );
 }
 

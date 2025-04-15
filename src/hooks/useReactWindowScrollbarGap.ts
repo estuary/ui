@@ -24,11 +24,12 @@ export const useReactWindowScrollbarGap = <
     const debouncedSetter = useRef(
         debounce(
             (element: HTMLDivElement) => {
-                setScrollGap(
+                const newVal =
                     element.scrollHeight > element.clientHeight
                         ? scrollbarWidth
-                        : undefined
-                );
+                        : undefined;
+
+                setScrollGap(newVal);
             },
             // If we are ignoringResize then we need to handle checking ourselves
             //  so just run this right away

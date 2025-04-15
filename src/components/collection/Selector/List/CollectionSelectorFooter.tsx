@@ -1,8 +1,10 @@
 import type { CollectionSelectorFooterProps } from 'src/components/collection/Selector/List/types';
 
-import { Box, TableCell, TableFooter, TableRow } from '@mui/material';
+import { TableCell, TableFooter, TableRow } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+
+import { defaultOutlineColor } from 'src/context/Theme';
 
 function CollectionSelectorFooter({
     columnCount,
@@ -13,21 +15,33 @@ function CollectionSelectorFooter({
 
     return (
         <TableFooter component="div">
-            <TableRow component="div" sx={{}}>
-                <TableCell component="div" sx={{ flex: 1, p: 0.25 }}>
-                    <Box>
-                        {intl.formatMessage(
-                            {
-                                id: filteredCount
-                                    ? 'workflows.collectionSelector.footer.filteredCount'
-                                    : 'workflows.collectionSelector.footer.count',
-                            },
-                            {
-                                filteredCount,
-                                totalCount,
-                            }
-                        )}
-                    </Box>
+            <TableRow component="div">
+                <TableCell
+                    component="div"
+                    align="right"
+                    sx={{
+                        borderBottom: 'none',
+                        borderTop: (theme) =>
+                            `1px solid ${defaultOutlineColor[theme.palette.mode]}`,
+                        flex: 1,
+                        px: 1,
+                        py: 0.7,
+                    }}
+                >
+                    {intl.formatMessage(
+                        {
+                            id:
+                                filteredCount === 0
+                                    ? 'workflows.collectionSelector.footer.filteredCountEmpty'
+                                    : Boolean(filteredCount)
+                                      ? 'workflows.collectionSelector.footer.filteredCount'
+                                      : 'workflows.collectionSelector.footer.count',
+                        },
+                        {
+                            filteredCount,
+                            totalCount,
+                        }
+                    )}
                 </TableCell>
             </TableRow>
         </TableFooter>
