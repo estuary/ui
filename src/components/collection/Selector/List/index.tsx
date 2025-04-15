@@ -1,7 +1,7 @@
 import type { FixedSizeList } from 'react-window';
 import type { CollectionSelectorListProps } from 'src/components/collection/Selector/types';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
 import {
@@ -16,9 +16,9 @@ import {
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious, useUnmount } from 'react-use';
+import { usePrevious } from 'react-use';
 
-import CollectionSelectorBody from 'src/components/collection/Selector/List/Body';
+import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
@@ -35,6 +35,7 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
+import { useBindingSelectorNotification } from 'src/hooks/useBindingSelectorNotification';
 import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
 import {
     useBinding_currentBindingUUID,
@@ -51,6 +52,12 @@ function CollectionSelectorList({
     setCurrentBinding,
 }: CollectionSelectorListProps) {
     const bindingSelectorCells = useBindingSelectorCells();
+    const {
+        displayNotification,
+        notificationAnchorEl,
+        notificationMessage,
+        showPopper,
+    } = useBindingSelectorNotification();
 
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
@@ -66,8 +73,6 @@ function CollectionSelectorList({
         true
     );
 
-    const notificationAnchorEl = useRef<any | null>(null);
-    const popperTimeout = useRef<number | null>(null);
     const intl = useIntl();
     const collectionsLabel = useConstant(
         () =>
@@ -76,9 +81,6 @@ function CollectionSelectorList({
                 id: 'workflows.collectionSelector.label.listHeader',
             })
     );
-
-    const [notificationMessage, setNotificationMessage] = useState('');
-    const [showNotification, setShowNotification] = useState(false);
 
     // Binding Store
     const currentBindingUUID = useBinding_currentBindingUUID();
@@ -188,16 +190,6 @@ function CollectionSelectorList({
         () => resourceConfigsEmpty || disableActions,
         [disableActions, resourceConfigsEmpty]
     );
-
-    const showPopper = useCallback((target: any, message: string) => {
-        setNotificationMessage(message);
-        setShowNotification(true);
-
-        if (popperTimeout.current) clearTimeout(popperTimeout.current);
-        popperTimeout.current = window.setTimeout(() => {
-            setShowNotification(false);
-        }, 1000);
-    }, []);
 
     const collectionSelector = useMemo(
         () =>
@@ -327,15 +319,11 @@ function CollectionSelectorList({
         showPopper,
     ]);
 
-    useUnmount(() => {
-        if (popperTimeout.current) clearTimeout(popperTimeout.current);
-    });
-
     return (
         <Box sx={{ height: '100%' }} ref={notificationAnchorEl}>
             <Popper
                 anchorEl={notificationAnchorEl.current}
-                open={Boolean(showNotification && notificationAnchorEl.current)}
+                open={displayNotification}
                 placement="top"
             >
                 <AlertBox hideIcon short severity="success" title={null}>
