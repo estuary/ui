@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
     COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_UUID_COL,
 } from 'src/components/collection/Selector/List/shared';
 import BindingsSelectorName from 'src/components/editor/Bindings/Row/Name';
@@ -93,7 +94,9 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                         ? splitPathAndName(
                               params.row[COLLECTION_SELECTOR_NAME_COL]
                           )
-                        : [params.row[COLLECTION_SELECTOR_NAME_COL]];
+                        : isCapture
+                          ? [params.row[COLLECTION_SELECTOR_STRIPPED_PATH_NAME]]
+                          : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
                     return (
                         <BindingsSelectorName
