@@ -25,11 +25,11 @@ import {
     COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
     DEFAULT_ROW_HEIGHT,
-    getCollectionSelector,
 } from 'src/components/collection/Selector/List/shared';
+import NoResults from 'src/components/editor/Bindings/NoResults';
+import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
 import { useBindingSelectorNotification } from 'src/hooks/useBindingSelectorNotification';
@@ -56,9 +56,6 @@ function CollectionSelectorList({
         showPopper,
     } = useBindingSelectorNotification();
 
-    const entityType = useEntityType();
-    const isCapture = entityType === 'capture';
-
     const [filterValue, setFilterValue] = useState('');
     const [filterInputValue, setFilterInputValue] = useState('');
     const previousFilterValue = usePrevious(filterValue);
@@ -84,9 +81,7 @@ function CollectionSelectorList({
     const formStatus = useFormStateStore_status();
 
     const selectionEnabled = Boolean(
-        currentBindingUUID &&
-            setCurrentBinding &&
-            formStatus !== FormStatus.UPDATING
+        setCurrentBinding && formStatus !== FormStatus.UPDATING
     );
 
     const mappedResourceConfigs: CollectionSelectorMappedResourceConfig[] =
@@ -188,18 +183,10 @@ function CollectionSelectorList({
         [disableActions, resourceConfigsEmpty]
     );
 
-    const collectionSelector = useMemo(
-        () =>
-            getCollectionSelector(
-                Boolean(filterValue && filterValue.length > 0) && isCapture
-            ),
-        [filterValue, isCapture]
-    );
-
     const columns = useMemo(() => {
         const response: ColumnProps[] = [
             {
-                field: collectionSelector,
+                field: COLLECTION_SELECTOR_NAME_COL,
                 renderInlineHeader: () => {
                     return (
                         <CollectionSelectorHeaderName
@@ -304,7 +291,6 @@ function CollectionSelectorList({
         bindingSelectorCells.name,
         bindingSelectorCells.remove,
         bindingSelectorCells.toggle,
-        collectionSelector,
         collectionsLabel,
         disable,
         filterInputValue,
@@ -383,6 +369,12 @@ function CollectionSelectorList({
                         enableDivRendering
                         height={DEFAULT_ROW_HEIGHT}
                     />
+
+                    {mappedResourceConfigs.length === 0 ? (
+                        <SelectorEmpty />
+                    ) : filterValue.length > 0 && filteredRows.length === 0 ? (
+                        <NoResults />
+                    ) : null}
 
                     <CollectionSelectorBody
                         columns={columns}

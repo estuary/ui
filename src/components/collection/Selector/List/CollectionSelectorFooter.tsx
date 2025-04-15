@@ -35,7 +35,9 @@ function CollectionSelectorFooter({
                                     ? 'workflows.collectionSelector.footer.filteredCountEmpty'
                                     : Boolean(filteredCount)
                                       ? 'workflows.collectionSelector.footer.filteredCount'
-                                      : 'workflows.collectionSelector.footer.count',
+                                      : Boolean(totalCount)
+                                        ? 'workflows.collectionSelector.footer.count'
+                                        : 'workflows.collectionSelector.footer.countEmpty',
                         },
                         {
                             filteredCount,

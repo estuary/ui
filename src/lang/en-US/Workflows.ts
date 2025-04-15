@@ -54,7 +54,8 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
 
     'workflows.collectionSelector.footer.count': `Viewing all {totalCount}`,
-    'workflows.collectionSelector.footer.filteredCount': `Viewing {filteredCount} of {totalCount}`,
+    'workflows.collectionSelector.footer.countEmpty': ` `,
+    'workflows.collectionSelector.footer.filteredCount': `Filtering to {filteredCount} of {totalCount}`,
     'workflows.collectionSelector.footer.filteredCountEmpty': `No results`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,

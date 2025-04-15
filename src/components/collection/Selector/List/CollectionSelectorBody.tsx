@@ -64,18 +64,18 @@ function CollectionSelectorBody({
                             ref={scrollingElementCallback}
                             innerRef={virtualRows}
                             outerRef={scrollingElementRef}
-                            overscanCount={10}
                             height={height} // Adjust for header height
-                            itemSize={DEFAULT_ROW_HEIGHT} // Row height
-                            width={width}
                             itemCount={rows.length}
                             itemData={rows}
-                            onItemsRendered={() => {
-                                checkScrollbarVisibility();
-                            }}
                             itemKey={(index, data) =>
                                 data[index][COLLECTION_SELECTOR_UUID_COL]
                             }
+                            itemSize={DEFAULT_ROW_HEIGHT} // Row height
+                            overscanCount={10}
+                            width={width}
+                            onItemsRendered={() => {
+                                checkScrollbarVisibility();
+                            }}
                         >
                             {({ index, style, data }) => {
                                 const row = data[index];
