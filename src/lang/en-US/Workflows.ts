@@ -53,6 +53,9 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
 
+    'workflows.collectionSelector.footer.count': `Viewing all {totalCount}`,
+    'workflows.collectionSelector.footer.filteredCount': `Viewing {filteredCount} of {totalCount}`,
+
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,

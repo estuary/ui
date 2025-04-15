@@ -4,21 +4,14 @@ import type { CollectionSelectorListProps } from 'src/components/collection/Sele
 import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
-import {
-    Box,
-    Popper,
-    Table,
-    TableCell,
-    TableContainer,
-    TableFooter,
-    TableRow,
-} from '@mui/material';
+import { Box, Popper, Table, TableContainer } from '@mui/material';
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { usePrevious } from 'react-use';
 
 import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
+import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
@@ -62,12 +55,11 @@ function CollectionSelectorList({
     const entityType = useEntityType();
     const isCapture = entityType === 'capture';
 
-    const tableScroller = useRef<FixedSizeList | undefined>(undefined);
-
     const [filterValue, setFilterValue] = useState('');
     const [filterInputValue, setFilterInputValue] = useState('');
     const previousFilterValue = usePrevious(filterValue);
 
+    const tableScroller = useRef<FixedSizeList | undefined>(undefined);
     const { scrollGap } = useReactWindowScrollbarGap<FixedSizeList>(
         tableScroller,
         true
@@ -344,7 +336,8 @@ function CollectionSelectorList({
                     sx={{
                         height: '100%',
                         overflow: 'hidden',
-                        [`& .MuiTableCell-root`]: {
+                        [`& .MuiTableBody-root .MuiTableCell-root,
+                        & .MuiTableHead-root .MuiTableCell-root`]: {
                             display: 'flex',
                             height: DEFAULT_ROW_HEIGHT,
                             padding: 0,
@@ -395,15 +388,15 @@ function CollectionSelectorList({
                         tableScroller={tableScroller}
                     />
 
-                    <TableFooter component="div">
-                        <TableRow component="div">
-                            <TableCell component="div" colSpan={3}>
-                                {filterValue.length > 0
-                                    ? `Viewing: ${filteredRows.length} of ${mappedResourceConfigs.length}`
-                                    : `Total: ${mappedResourceConfigs.length}`}
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
+                    <CollectionSelectorFooter
+                        columnCount={columns.length}
+                        filteredCount={
+                            filterValue.length > 0
+                                ? filteredRows.length
+                                : undefined
+                        }
+                        totalCount={mappedResourceConfigs.length}
+                    />
                 </Table>
             </TableContainer>
         </Box>

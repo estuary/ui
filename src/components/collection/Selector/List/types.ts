@@ -15,3 +15,9 @@ export interface CollectionSelectorBodyProps {
     setCurrentBinding?: any;
     tableScroller: any;
 }
+
+export interface CollectionSelectorFooterProps {
+    columnCount: number;
+    filteredCount?: number;
+    totalCount: number;
+}
