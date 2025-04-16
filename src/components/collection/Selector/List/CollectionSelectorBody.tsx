@@ -12,6 +12,7 @@ import {
     COLLECTION_SELECTOR_UUID_COL,
     DEFAULT_ROW_HEIGHT,
 } from 'src/components/collection/Selector/List/shared';
+import { TABLE_BODY_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorBody({
@@ -95,6 +96,7 @@ function CollectionSelectorBody({
                                         {columns.map((column) => {
                                             return (
                                                 <TableCell
+                                                    className={`${TABLE_BODY_CELL_CLASS_PREFIX}${column.field}`}
                                                     align={column.align}
                                                     key={`${column.field}_${
                                                         row[

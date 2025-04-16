@@ -5,6 +5,7 @@ import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
+import { TABLE_HEADER_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
 import { getStickyTableCell } from 'src/context/Theme';
 import { getTableComponents } from 'src/utils/table-utils';
 
@@ -89,6 +90,7 @@ function EntityTableHeader({
 
                     return (
                         <TableCell
+                            className={`${TABLE_HEADER_CELL_CLASS_PREFIX}${column.field}`}
                             component={tdComponent}
                             key={`${column.field}-${index}`}
                             align={column.align}

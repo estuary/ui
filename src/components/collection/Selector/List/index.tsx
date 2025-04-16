@@ -21,6 +21,7 @@ import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/L
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
     COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_REMOVE,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
@@ -29,6 +30,10 @@ import {
 import NoResults from 'src/components/editor/Bindings/NoResults';
 import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
+import {
+    TABLE_BODY_CELL_CLASS_PREFIX,
+    TABLE_HEADER_CELL_CLASS_PREFIX,
+} from 'src/components/tables/EntityTable/shared';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { truncateTextSx } from 'src/context/Theme';
 import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
@@ -247,7 +252,7 @@ function CollectionSelectorList({
         if (bindingSelectorCells.remove) {
             response.push({
                 align: 'right',
-                field: 'remove',
+                field: COLLECTION_SELECTOR_REMOVE,
                 preventSelect: true,
                 renderCell: bindingSelectorCells.remove.cellRenderer,
                 renderInlineHeader: () => (
@@ -342,25 +347,30 @@ function CollectionSelectorList({
                         [`& .MuiTableRow-root`]: {
                             display: 'flex',
                         },
+                        // TODO (theme - kinda) Probably just move this chunk into the theme file. Also, we probably want to
+                        //  look into doing more styling based on the parent.
                         // We do a lot of rendering down below - need to keep styling as fast as possible
                         //  so just putting this on the wrapper
-                        [`& .MuiTableCell-head:nth-of-type(1),
-                        & .MuiTableCell-body:nth-of-type(1)`]: {
-                            minWidth: 125,
-                            width: 125,
-                        },
-                        [`& .MuiTableCell-head:nth-of-type(2),
-                        & .MuiTableCell-body:nth-of-type(2)`]: {
-                            ...(truncateTextSx as any),
-                            flexGrow: 1,
-                        },
-                        [`& .MuiTableCell-head:nth-of-type(3),
-                        & .MuiTableCell-body:nth-of-type(3)`]: {
-                            minWidth: 52,
-                            width: 52,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        },
+                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
+                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
+                            {
+                                minWidth: 125,
+                                width: 125,
+                            },
+                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
+                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
+                            {
+                                ...(truncateTextSx as any),
+                                flexGrow: 1,
+                            },
+                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
+                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
+                            {
+                                minWidth: 52,
+                                width: 52,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            },
                     }}
                 >
                     <EntityTableHeader

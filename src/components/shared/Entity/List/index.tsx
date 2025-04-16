@@ -1,6 +1,6 @@
 import type { EntityListProps } from 'src/components/shared/Entity/List/types';
 
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -12,7 +12,7 @@ function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
     const intl = useIntl();
 
     return (
-        <Box>
+        <Stack direction="column" sx={{ height: '100%' }}>
             <CollectionSelector
                 itemType={intl.formatMessage({
                     id: 'newTransform.config.transform.header',
@@ -33,7 +33,7 @@ function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
                 }}
                 height={532}
             />
-        </Box>
+        </Stack>
     );
 }
 
