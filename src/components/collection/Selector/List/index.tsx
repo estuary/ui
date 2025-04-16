@@ -351,20 +351,24 @@ function CollectionSelectorList({
                         //  look into doing more styling based on the parent.
                         // We do a lot of rendering down below - need to keep styling as fast as possible
                         //  so just putting this on the wrapper
-                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
-                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
+                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
+                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
                             {
                                 minWidth: 125,
                                 width: 125,
                             },
-                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
-                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
+                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
+                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
                             {
                                 ...(truncateTextSx as any),
                                 flexGrow: 1,
                             },
-                        [`& .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
-                            & .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
+                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
+                            {
+                                px: 1,
+                            },
+                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
+                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
                             {
                                 minWidth: 52,
                                 width: 52,
