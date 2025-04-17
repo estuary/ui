@@ -64,24 +64,3 @@ function CollectionSelectorHeaderToggle({
 }
 
 export default CollectionSelectorHeaderToggle;
-
-// <Button
-//     disabled={disabled}
-//     endIcon={<KeyboardArrowDown />}
-//     size="small"
-//     variant="text"
-//     sx={{
-//         ...dataGridEntireCellButtonStyling,
-//         py: 0,
-//         px: 0.5,
-//         textTransform: 'none',
-//     }}
-//     onClick={(event) => {
-//         event.stopPropagation();
-//         setAnchorEl(event.currentTarget);
-//     }}
-// >
-//     {intl.formatMessage({
-//         id: buttonTitle,
-//     })}
-// </Button>
