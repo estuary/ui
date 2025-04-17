@@ -28,6 +28,8 @@ import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { fireGtmEvent } from 'src/services/gtm';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 const directiveName = 'betaOnboard';
@@ -75,10 +77,21 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                 !hasLength(requestedTenant) ||
                 surveyResponse.origin === ''
             ) {
-                setNameMissing(!hasLength(requestedTenant));
-                setSurveryMissing(surveyResponse.origin === '');
+                const noNameProvided = Boolean(
+                    !requestedTenant || requestedTenant.length === 0
+                );
+                const noSurveryProvided = Boolean(surveyResponse.origin === '');
+                setNameMissing(noNameProvided);
+                setSurveryMissing(noSurveryProvided);
 
                 setServerError(null);
+
+                logRocketEvent(CustomEvents.ONBOARDING, {
+                    nameInvalid,
+                    nameMissing: noNameProvided,
+                    surveryMissing: noSurveryProvided,
+                });
+
                 return;
             }
 
