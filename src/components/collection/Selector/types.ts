@@ -64,6 +64,7 @@ export interface CollectionSelectorCellSettings {
 export interface CollectionSelectorListProps {
     disableActions?: boolean;
     header?: string;
+    hideFooter?: boolean;
     setCurrentBinding?: BindingState['setCurrentBinding'];
 }
 

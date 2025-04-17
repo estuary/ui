@@ -10,6 +10,7 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 interface BindingSelectorProps {
     disableSelect?: boolean;
     height?: number | string;
+    hideFooter?: boolean;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
@@ -18,6 +19,7 @@ interface BindingSelectorProps {
 function BindingSelector({
     disableSelect,
     itemType,
+    hideFooter,
     readOnly,
     RediscoverButton,
 }: BindingSelectorProps) {
@@ -36,6 +38,7 @@ function BindingSelector({
 
             <CollectionSelectorList
                 header={itemType}
+                hideFooter={hideFooter}
                 disableActions={disableActions}
                 setCurrentBinding={
                     !disableSelect ? setCurrentBinding : undefined

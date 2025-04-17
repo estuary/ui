@@ -49,6 +49,7 @@ import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 function CollectionSelectorList({
     disableActions,
     header,
+    hideFooter,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
     const bindingSelectorCells = useBindingSelectorCells();
@@ -349,15 +350,17 @@ function CollectionSelectorList({
                         checkScrollbarVisibility={checkScrollbarVisibility}
                     />
 
-                    <CollectionSelectorFooter
-                        columnCount={columns.length}
-                        filteredCount={
-                            filterValue.length > 0
-                                ? filteredRows.length
-                                : undefined
-                        }
-                        totalCount={mappedResourceConfigs.length}
-                    />
+                    {hideFooter ? undefined : (
+                        <CollectionSelectorFooter
+                            columnCount={columns.length}
+                            filteredCount={
+                                filterValue.length > 0
+                                    ? filteredRows.length
+                                    : undefined
+                            }
+                            totalCount={mappedResourceConfigs.length}
+                        />
+                    )}
                 </CollectionSelectorTable>
             </TableContainer>
         </Box>

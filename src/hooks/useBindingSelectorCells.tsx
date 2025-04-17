@@ -109,7 +109,11 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                                                 COLLECTION_SELECTOR_UUID_COL
                                             ]
                                         }
-                                        collection={collectionParts[0]}
+                                        collection={
+                                            params.row[
+                                                COLLECTION_SELECTOR_NAME_COL
+                                            ]
+                                        }
                                     />
                                 ),
                             }}
