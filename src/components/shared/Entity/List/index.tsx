@@ -31,7 +31,6 @@ function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
                 addButtonClickHandler={() => {
                     toggle(true);
                 }}
-                height={532}
             />
         </Stack>
     );
