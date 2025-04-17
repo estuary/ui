@@ -19,6 +19,8 @@ import {
     useOnboardingStore_requestedTenant,
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
+    useOnboardingStore_setSurveryMissing,
+    useOnboardingStore_surveryMissing,
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'src/directives/Onboard/Survey';
@@ -26,6 +28,8 @@ import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { fireGtmEvent } from 'src/services/gtm';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 const directiveName = 'betaOnboard';
@@ -54,6 +58,9 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const nameInvalid = useOnboardingStore_nameInvalid();
     const nameMissing = useOnboardingStore_nameMissing();
     const setNameMissing = useOnboardingStore_setNameMissing();
+    const surveryMissing = useOnboardingStore_surveryMissing();
+    const setSurveryMissing = useOnboardingStore_setSurveryMissing();
+
     const surveyResponse = useOnboardingStore_surveyResponse();
     const resetOnboardingState = useOnboardingStore_resetState();
 
@@ -65,64 +72,77 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
         submit: async (event: any) => {
             event.preventDefault();
 
-            if (nameInvalid || !hasLength(requestedTenant)) {
-                if (!hasLength(requestedTenant)) {
-                    setNameMissing(true);
-                }
-
-                setServerError(null);
-            } else {
-                setServerError(null);
-                setNameMissing(false);
-                setSaving(true);
-
-                const onboardingResponse = await submit_onboard(
-                    requestedTenant,
-                    directive,
-                    surveyResponse
+            if (
+                nameInvalid ||
+                !hasLength(requestedTenant) ||
+                surveyResponse.origin === ''
+            ) {
+                const noNameProvided = Boolean(
+                    !requestedTenant || requestedTenant.length === 0
                 );
+                const noSurveryProvided = Boolean(surveyResponse.origin === '');
+                setNameMissing(noNameProvided);
+                setSurveryMissing(noSurveryProvided);
 
-                if (onboardingResponse.error) {
-                    setSaving(false);
+                setServerError(null);
 
-                    return setServerError(
-                        (onboardingResponse.error as PostgrestError).message
-                    );
-                }
+                logRocketEvent(CustomEvents.ONBOARDING, {
+                    nameInvalid,
+                    nameMissing: noNameProvided,
+                    surveryMissing: noSurveryProvided,
+                });
 
-                const data = onboardingResponse.data[0];
-                jobStatusPoller(
-                    jobStatusQuery(data),
-                    async () => {
-                        fireGtmEvent('Register', {
-                            tenant: requestedTenant,
-                            ignore_referrer: true,
-                        });
-                        trackEvent(`${directiveName}:Complete`, directive);
-                        void mutate();
-                    },
-                    async (payload: any) => {
-                        const tenantTaken = Boolean(
-                            payload?.job_status?.error?.includes(
-                                NAME_TAKEN_MESSAGE
-                            )
-                        );
+                return;
+            }
 
-                        // Handle tracking right away
-                        fireGtmEvent('RegisterFailed', {
-                            tenantAlreadyTaken: tenantTaken,
-                            tenant: requestedTenant,
-                            ignore_referrer: true,
-                        });
-                        trackEvent(`${directiveName}:Error`, directive);
+            setServerError(null);
+            setNameMissing(false);
+            setSaving(true);
 
-                        // Update local state
-                        setSaving(false);
-                        setServerError(payload?.job_status?.error);
-                        setNameTaken(tenantTaken);
-                    }
+            const onboardingResponse = await submit_onboard(
+                requestedTenant,
+                directive,
+                surveyResponse
+            );
+
+            if (onboardingResponse.error) {
+                setSaving(false);
+
+                return setServerError(
+                    (onboardingResponse.error as PostgrestError).message
                 );
             }
+
+            const data = onboardingResponse.data[0];
+            jobStatusPoller(
+                jobStatusQuery(data),
+                async () => {
+                    fireGtmEvent('Register', {
+                        tenant: requestedTenant,
+                        ignore_referrer: true,
+                    });
+                    trackEvent(`${directiveName}:Complete`, directive);
+                    void mutate();
+                },
+                async (payload: any) => {
+                    const tenantTaken = Boolean(
+                        payload?.job_status?.error?.includes(NAME_TAKEN_MESSAGE)
+                    );
+
+                    // Handle tracking right away
+                    fireGtmEvent('RegisterFailed', {
+                        tenantAlreadyTaken: tenantTaken,
+                        tenant: requestedTenant,
+                        ignore_referrer: true,
+                    });
+                    trackEvent(`${directiveName}:Error`, directive);
+
+                    // Update local state
+                    setSaving(false);
+                    setServerError(payload?.job_status?.error);
+                    setNameTaken(tenantTaken);
+                }
+            );
         },
     };
 
@@ -164,18 +184,36 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                     </Box>
                 ) : null}
 
-                {nameMissing ? (
+                {nameMissing || surveryMissing || nameInvalid ? (
                     <Box>
                         <AlertBox
                             short
                             severity="error"
                             title={<FormattedMessage id="error.title" />}
                         >
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'tenant.errorMessage.empty',
-                                })}
-                            </Typography>
+                            {nameMissing ? (
+                                <Typography>
+                                    {intl.formatMessage({
+                                        id: 'tenant.errorMessage.empty',
+                                    })}
+                                </Typography>
+                            ) : null}
+
+                            {nameInvalid ? (
+                                <Typography>
+                                    {intl.formatMessage({
+                                        id: 'tenant.errorMessage.invalid',
+                                    })}
+                                </Typography>
+                            ) : null}
+
+                            {surveryMissing ? (
+                                <Typography>
+                                    {intl.formatMessage({
+                                        id: 'tenant.origin.errorMessage.empty',
+                                    })}
+                                </Typography>
+                            ) : null}
                         </AlertBox>
                     </Box>
                 ) : null}

@@ -14,6 +14,9 @@ export interface OnboardingState {
     nameMissing: boolean;
     setNameMissing: (value: boolean) => void;
 
+    surveyMissing: boolean;
+    setSurveyMissing: (value: boolean) => void;
+
     // Survey
     surveyOptionOther: string;
 
