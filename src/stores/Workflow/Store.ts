@@ -16,8 +16,9 @@ const STORE_KEY = 'workflow';
 
 const getInitialStateData = (): Pick<
     WorkflowState,
-    'customerId' | 'redirectUrl'
+    'connectorMetadata' | 'customerId' | 'redirectUrl'
 > => ({
+    connectorMetadata: [],
     customerId: '',
     redirectUrl: '',
 });
@@ -26,7 +27,15 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
 
-    hydrateState: () => Promise.resolve(),
+    setConnectorMetadata: (value) => {
+        set(
+            produce((state: WorkflowState) => {
+                state.connectorMetadata = value;
+            }),
+            false,
+            'connector metadata set'
+        );
+    },
 
     setCustomerId: (value) => {
         set(
@@ -34,7 +43,7 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
                 state.customerId = value;
             }),
             false,
-            'Customer ID set'
+            'customer ID set'
         );
     },
 
@@ -44,7 +53,7 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
                 state.redirectUrl = value;
             }),
             false,
-            'Redirect URL set'
+            'redirect URL set'
         );
     },
 

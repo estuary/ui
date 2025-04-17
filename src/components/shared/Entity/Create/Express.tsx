@@ -16,9 +16,7 @@ import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEnti
 import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
-import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -36,7 +34,6 @@ const EntityCreateExpress = ({
 }: BaseEntityCreateProps) => {
     const { resetState } = useEntityWorkflowHelpers();
 
-    const { error: connectorTagsError } = useConnectorWithTagDetail(entityType);
     const storeHydrationComplete = useFormHydrationChecker();
 
     const entityName = useDetailsFormStore((state) => state.draftedEntityName);
@@ -65,9 +62,7 @@ const EntityCreateExpress = ({
         resetState
     );
 
-    return connectorTagsError ? (
-        <Error condensed error={connectorTagsError} />
-    ) : !storeHydrationComplete ? null : (
+    return !storeHydrationComplete ? null : (
         <DraftSpecEditorHydrator
             entityType={entityType}
             entityName={entityName}

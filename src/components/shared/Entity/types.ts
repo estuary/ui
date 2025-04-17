@@ -31,6 +31,7 @@ export interface EntityToolbarProps {
     GenerateButton: ReactNode;
     primaryButtonProps: EntitySaveButtonProps | any;
     secondaryButtonProps: EntityTestButtonProps | any;
+    expressWorkflow?: boolean;
     PrimaryButtonComponent?: any;
     SecondaryButtonComponent?: any;
     hideLogs?: boolean;

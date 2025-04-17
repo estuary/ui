@@ -1,4 +1,4 @@
-import CaptureExpressCreateConfig from 'src/components/capture/CreateExpress/Config';
+import ExpressCaptureCreateConfig from 'src/components/capture/ExpressCreate/Config';
 import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
 import AuthenticatedHydrators from 'src/context/AuthenticatedHydrators';
 import { EntityContextProvider } from 'src/context/EntityContext';
@@ -12,7 +12,7 @@ const ExpressCaptureCreateRoute = () => {
                 <AuthenticatedHydrators>
                     <AdminCapabilityGuard>
                         <ExpressWorkflowWrapper>
-                            <CaptureExpressCreateConfig />
+                            <ExpressCaptureCreateConfig />
                         </ExpressWorkflowWrapper>
                     </AdminCapabilityGuard>
                 </AuthenticatedHydrators>

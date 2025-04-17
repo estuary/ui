@@ -1,3 +1,4 @@
+import type { ConnectorWithTagQuery } from 'src/api/connectors';
 import type {
     DataPlaneOption,
     Details,
@@ -7,7 +8,6 @@ import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-util
 
 import { useCallback } from 'react';
 
-import { getConnectors_detailsForm } from 'src/api/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { useEntityWorkflow } from 'src/context/Workflow';
@@ -25,20 +25,13 @@ import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 const getConnectorImage = async (
     connectorId: string,
+    connectorMetadata: ConnectorWithTagQuery,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    const { data, error } = await getConnectors_detailsForm(connectorId);
+    const options: ConnectorVersionEvaluationOptions | undefined =
+        existingImageTag ? { connectorId, existingImageTag } : undefined;
 
-    if (!error && data && data.length > 0) {
-        const connector = data[0];
-
-        const options: ConnectorVersionEvaluationOptions | undefined =
-            existingImageTag ? { connectorId, existingImageTag } : undefined;
-
-        return getConnectorMetadata(connector, options);
-    }
-
-    return null;
+    return getConnectorMetadata(connectorMetadata, options);
 };
 
 const getDataPlane = (
@@ -115,7 +108,6 @@ const evaluateDataPlaneOptions = async (
 };
 
 export const useDetailsFormHydrator = () => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
     const dataPlaneId = useGlobalSearchParams(GlobalSearchParams.DATA_PLANE_ID);
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -144,20 +136,12 @@ export const useDetailsFormHydrator = () => {
     );
 
     const hydrateDetailsForm = useCallback(
-        async (baseEntityName?: string) => {
+        async (
+            connectorId: string,
+            connectorMetadata: ConnectorWithTagQuery,
+            baseEntityName?: string
+        ) => {
             setActive(true);
-
-            if (!connectorId) {
-                logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
-
-                // TODO (details hydration) should really show an error here
-                // setHydrationError(
-                //     'Unable to locate selected connector. If the issue persists, please contact support.'
-                // );
-                // setHydrationErrorsExist(true);
-
-                return Promise.reject({ connectorTagId: null });
-            }
 
             const createWorkflow =
                 workflow === 'capture_create' ||
@@ -169,7 +153,10 @@ export const useDetailsFormHydrator = () => {
             );
 
             if (createWorkflow) {
-                const connectorImage = await getConnectorImage(connectorId);
+                const connectorImage = await getConnectorImage(
+                    connectorId,
+                    connectorMetadata
+                );
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (!connectorImage) {
@@ -219,6 +206,7 @@ export const useDetailsFormHydrator = () => {
 
                 const connectorImage = await getConnectorImage(
                     connectorId,
+                    connectorMetadata,
                     connector_image_tag
                 );
 
@@ -273,7 +261,6 @@ export const useDetailsFormHydrator = () => {
             return Promise.resolve({ connectorTagId: null });
         },
         [
-            connectorId,
             dataPlaneId,
             liveSpecId,
             setActive,

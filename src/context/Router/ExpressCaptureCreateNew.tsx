@@ -1,5 +1,5 @@
 import { authenticatedRoutes } from 'src/app/routes';
-import CaptureExpressCreate from 'src/components/capture/CreateExpress';
+import ExpressCaptureCreate from 'src/components/capture/ExpressCreate';
 import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
 import ConnectorSelectedGuard from 'src/components/shared/guards/ConnectorSelected';
 import AuthenticatedHydrators from 'src/context/AuthenticatedHydrators';
@@ -20,7 +20,7 @@ const ExpressCaptureCreateNewRoute = () => {
                             }
                         >
                             <ExpressWorkflowWrapper>
-                                <CaptureExpressCreate />
+                                <ExpressCaptureCreate />
                             </ExpressWorkflowWrapper>
                         </ConnectorSelectedGuard>
                     </AdminCapabilityGuard>

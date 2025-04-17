@@ -1,5 +1,5 @@
+import type { ConnectorWithTagQuery } from 'src/api/connectors';
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -54,7 +54,7 @@ export default function ConnectorCards({
         <ConnectorRequestCard key="connector-tile-request" />
     );
 
-    const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
+    const primaryCtaClick = (row: ConnectorWithTagQuery) => {
         navigateToCreate(row.connector_tags[0].protocol, {
             id: row.connector_tags[0].connector_id,
             advanceToForm: true,

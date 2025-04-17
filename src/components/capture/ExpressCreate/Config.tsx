@@ -4,7 +4,7 @@ import usePageTitle from 'src/hooks/usePageTitle';
 
 const entityType = 'capture';
 
-export default function CaptureExpressCreateConfig() {
+export default function ExpressCaptureCreateConfig() {
     usePageTitle({
         header: authenticatedRoutes.express.captureCreate.title,
         headerLink:

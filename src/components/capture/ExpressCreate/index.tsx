@@ -19,7 +19,7 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
-export default function CaptureExpressCreate() {
+export default function ExpressCaptureCreate() {
     usePageTitle({
         header: authenticatedRoutes.express.captureCreate.new.title,
         headerLink:
@@ -79,6 +79,7 @@ export default function CaptureExpressCreate() {
                     entityType={entityType}
                     Toolbar={
                         <EntityToolbar
+                            expressWorkflow
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,
                             }}

@@ -1,13 +1,11 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
+import type { ConnectorTag } from 'src/api/connectors';
 import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
-import {
-    getLiveSpecsByLiveSpecId,
-    getSchema_Endpoint,
-} from 'src/api/hydration';
+import { getLiveSpecsByLiveSpecId } from 'src/api/hydration';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
@@ -27,19 +25,20 @@ const useStoreEndpointSchema = () => {
         (state) => state.setEndpointCanBeEmpty
     );
 
-    const storeEndpointSchema = async (connectorTagId: string) => {
-        const { data, error } = await getSchema_Endpoint(connectorTagId);
+    const storeEndpointSchema = async (
+        connectorTagId: string,
+        connectorTags: ConnectorTag[]
+    ) => {
+        const endpointSchema = connectorTags.find(
+            (tag) => tag.id === connectorTagId
+        )?.endpoint_spec_schema;
 
-        if (error || !data) {
+        if (!endpointSchema) {
             return {
                 endpointSchema: null,
-                error: error
-                    ? (error as PostgrestError)
-                    : { ...BASE_ERROR, message: 'endpoint schema not found' },
+                error: { ...BASE_ERROR, message: 'endpoint schema not found' },
             };
         }
-
-        const endpointSchema = data.endpoint_spec_schema as unknown as Schema;
 
         await setEndpointSchema(endpointSchema);
 
@@ -136,7 +135,10 @@ export const useEndpointConfigHydrator = () => {
         useHydrateEndpointConfigDependentState();
 
     const hydrateEndpointConfig = useCallback(
-        async (connectorTagId: string | null) => {
+        async (
+            connectorTagId: string | null,
+            connectorTags: ConnectorTag[]
+        ) => {
             setActive(true);
 
             if (!connectorTagId || connectorTagId.length === 0) {
@@ -155,7 +157,7 @@ export const useEndpointConfigHydrator = () => {
             }
 
             const { endpointSchema, error: endpointSchemaError } =
-                await storeEndpointSchema(connectorTagId);
+                await storeEndpointSchema(connectorTagId, connectorTags);
 
             if (endpointSchemaError || !endpointSchema) {
                 setHydrated(true);

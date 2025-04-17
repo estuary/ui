@@ -11,10 +11,9 @@ import { useMount, useUnmount } from 'react-use';
 import AlertBox from 'src/components/shared/AlertBox';
 import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
 import { DOCUSAURUS_THEME } from 'src/components/shared/Entity/EndpointConfig/shared';
-import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import useConnectorTag from 'src/hooks/connectors/useConnectorTag';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
@@ -22,6 +21,7 @@ import {
 } from 'src/stores/EndpointConfig/hooks';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { useWorkflowStore_connectorTagProperty } from 'src/stores/Workflow/hooks';
 
 const SectionContent = ({
     connectorImage,
@@ -31,8 +31,11 @@ const SectionContent = ({
     const intl = useIntl();
     const theme = useTheme();
 
-    // The useConnectorTag hook can accept a connector ID or a connector tag ID.
-    const { connectorTag, error } = useConnectorTag(connectorImage);
+    // Detail Form Store
+    const [connectorId, connectorTagId] = useDetailsFormStore((state) => [
+        state.details.data.connectorImage.connectorId,
+        state.details.data.connectorImage.id,
+    ]);
 
     // Endpoint Config Store
     const endpointCanBeEmpty = useEndpointConfigStore(
@@ -42,6 +45,13 @@ const SectionContent = ({
     const previousEndpointConfig =
         useEndpointConfigStore_previousEndpointConfig_data();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
+
+    // Workflow Store
+    const documentationURL = useWorkflowStore_connectorTagProperty(
+        connectorId,
+        connectorTagId,
+        'documentation_url'
+    );
 
     // Workflow related props
     const editWorkflow = useEntityWorkflow_Editing();
@@ -66,20 +76,18 @@ const SectionContent = ({
         sidePanelResetState();
     });
     useEffect(() => {
-        if (connectorTag) {
-            const concatSymbol = connectorTag.documentation_url.includes('?')
-                ? '&'
-                : '?';
+        if (documentationURL) {
+            const concatSymbol = documentationURL.includes('?') ? '&' : '?';
 
             setDocsURL(
-                `${connectorTag.documentation_url}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
+                `${documentationURL}${concatSymbol}${DOCUSAURUS_THEME}=${theme.palette.mode}`
             );
         }
 
         // We do not want to trigger this if the theme changes so we just use the theme at load
         //  because we fire a message to the docs when the theme changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [connectorTag, setDocsURL]);
+    }, [documentationURL, setDocsURL]);
 
     // Default serverUpdateRequired for Create
     //  This prevents us from sending the empty object to get encrypted
@@ -90,14 +98,6 @@ const SectionContent = ({
             setServerUpdateRequired(true);
         }
     });
-
-    if (error) {
-        return <Error error={error} />;
-    }
-
-    if (!connectorTag) {
-        return null;
-    }
 
     return (
         <ErrorBoundryWrapper>
