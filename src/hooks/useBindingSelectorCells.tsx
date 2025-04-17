@@ -83,6 +83,8 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
         ]
     );
 
+    // TODO (collection selector)
+    //  We should make this return an object where the keys match the `COLLECTION_SELECTOR_...` props set as `field` on the columns
     return useMemo(() => {
         const cellRenderers: CollectionSelectorCellSettings = {
             name: {
