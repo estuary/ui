@@ -1,17 +1,26 @@
 import type { CollectionSelectorFooterProps } from 'src/components/collection/Selector/types';
 
-import { TableCell, TableFooter, TableRow } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Stack,
+    TableCell,
+    TableFooter,
+    TableRow,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { defaultOutlineColor } from 'src/context/Theme';
+import { useBinding_disabledBindings_count } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorFooter({
     columnCount,
-    filteredCount,
     totalCount,
 }: CollectionSelectorFooterProps) {
     const intl = useIntl();
+
+    const disabledBindingsCount = useBinding_disabledBindings_count();
 
     return (
         <TableFooter component="div">
@@ -28,22 +37,39 @@ function CollectionSelectorFooter({
                         py: 0.7,
                     }}
                 >
-                    {intl.formatMessage(
-                        {
-                            id:
-                                filteredCount === 0
-                                    ? 'workflows.collectionSelector.footer.filteredCountEmpty'
-                                    : Boolean(filteredCount)
-                                      ? 'workflows.collectionSelector.footer.filteredCount'
-                                      : Boolean(totalCount)
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: 'center', justifyContent: 'end' }}
+                        divider={<Divider orientation="vertical" flexItem />}
+                    >
+                        <Box>
+                            {intl.formatMessage(
+                                {
+                                    id: Boolean(disabledBindingsCount)
+                                        ? disabledBindingsCount === totalCount
+                                            ? 'workflows.collectionSelector.footer.disabledCount.all'
+                                            : 'workflows.collectionSelector.footer.disabledCount'
+                                        : 'workflows.collectionSelector.footer.disabledCount.empty',
+                                },
+                                {
+                                    disabledBindingsCount,
+                                }
+                            )}
+                        </Box>
+                        <Box>
+                            {intl.formatMessage(
+                                {
+                                    id: Boolean(totalCount)
                                         ? 'workflows.collectionSelector.footer.count'
-                                        : 'workflows.collectionSelector.footer.countEmpty',
-                        },
-                        {
-                            filteredCount,
-                            totalCount,
-                        }
-                    )}
+                                        : 'workflows.collectionSelector.footer.count.empty',
+                                },
+                                {
+                                    totalCount,
+                                }
+                            )}
+                        </Box>
+                    </Stack>
                 </TableCell>
             </TableRow>
         </TableFooter>

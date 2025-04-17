@@ -53,10 +53,11 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
 
-    'workflows.collectionSelector.footer.count': `Viewing all {totalCount}`,
-    'workflows.collectionSelector.footer.countEmpty': ` `,
-    'workflows.collectionSelector.footer.filteredCount': `Filtering to {filteredCount} of {totalCount}`,
-    'workflows.collectionSelector.footer.filteredCountEmpty': `No results`,
+    'workflows.collectionSelector.footer.count': `total: {totalCount}`,
+    'workflows.collectionSelector.footer.count.empty': ` `,
+    'workflows.collectionSelector.footer.disabledCount': `disabled: {disabledBindingsCount}`,
+    'workflows.collectionSelector.footer.disabledCount.all': `all disabled`,
+    'workflows.collectionSelector.footer.disabledCount.empty': `all enabled`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,

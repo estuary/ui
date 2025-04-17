@@ -81,6 +81,5 @@ export interface CollectionSelectorBodyProps {
 
 export interface CollectionSelectorFooterProps {
     columnCount: number;
-    filteredCount: number | undefined;
     totalCount: number;
 }

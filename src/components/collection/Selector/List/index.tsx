@@ -353,11 +353,6 @@ function CollectionSelectorList({
                     {hideFooter ? undefined : (
                         <CollectionSelectorFooter
                             columnCount={columns.length}
-                            filteredCount={
-                                filterValue.length > 0
-                                    ? filteredRows.length
-                                    : undefined
-                            }
                             totalCount={mappedResourceConfigs.length}
                         />
                     )}
