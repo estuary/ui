@@ -1,3 +1,5 @@
+import type { BindingsSelectorToggleProps } from 'src/components/editor/Bindings/Row/types';
+
 import { Button, Switch } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -7,14 +9,12 @@ import {
     useBinding_resourceConfigOfMetaBindingProperty,
     useBinding_toggleDisable,
 } from 'src/stores/Binding/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-interface Props {
-    bindingUUID: string;
-    disableButton: boolean;
-}
-
-function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
+function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
     const intl = useIntl();
+
+    const formActive = useFormStateStore_isActive();
 
     const toggleDisable = useBinding_toggleDisable();
     const disabled = useBinding_resourceConfigOfMetaBindingProperty(
@@ -27,7 +27,7 @@ function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
             aria-label={intl.formatMessage({
                 id: disabled ? 'common.disabled' : 'common.enabled',
             })}
-            disabled={disableButton}
+            disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
             variant="text"
             onClick={() => {
@@ -35,7 +35,7 @@ function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
             }}
         >
             <Switch
-                disabled={disableButton}
+                disabled={formActive}
                 size="small"
                 checked={!disabled}
                 color="success"

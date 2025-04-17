@@ -2,7 +2,7 @@ import type { BindingMetadata } from 'src/stores/Binding/types';
 
 import React, { useState } from 'react';
 
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
 
@@ -15,19 +15,21 @@ import {
     useBinding_setRestrictedDiscoveredCollections,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     binding: BindingMetadata;
-    disabled: boolean;
     draftId: string | null;
     task: string;
 }
 
-function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
+function BindingsSelectorRemove({ binding, draftId, task }: Props) {
     const [removing, setRemoving] = useState(false);
 
     const workflow = useEntityWorkflow();
+
+    const formActive = useFormStateStore_isActive();
 
     const removeBinding = useBinding_removeBinding();
     const discoveredCollections = useBinding_discoveredCollections();
@@ -90,14 +92,17 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     };
 
     return (
-        <IconButton
-            disabled={removing || disabled}
-            size="small"
-            onClick={handlers.removeBinding}
-            sx={{ color: (theme) => theme.palette.text.primary }}
-        >
-            <Xmark />
-        </IconButton>
+        // This has a box around is so the button doesn't get all stretched out in the table cell
+        <Box>
+            <IconButton
+                disabled={removing || formActive}
+                size="small"
+                onClick={handlers.removeBinding}
+                sx={{ color: (theme) => theme.palette.text.primary }}
+            >
+                <Xmark />
+            </IconButton>
+        </Box>
     );
 }
 

@@ -33,6 +33,8 @@ import { hasLength } from 'src/utils/misc-utils';
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 export const DEFAULT_DEBOUNCE_WAIT = 500;
+export const QUICK_DEBOUNCE_WAIT = DEFAULT_DEBOUNCE_WAIT / 2;
+export const NEAR_INSTANT_DEBOUNCE_WAIT = QUICK_DEBOUNCE_WAIT / 2;
 
 export const getBackfillCounter = (binding: any): number => {
     return Object.hasOwn(binding, 'backfill') ? binding.backfill : 0;

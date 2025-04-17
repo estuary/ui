@@ -57,6 +57,13 @@ export const stripPathing = (stringVal: string, tenantOnly?: boolean) => {
     );
 };
 
+export const splitPathAndName = (stringVal: string): string[] => {
+    if (!stringVal) return [];
+
+    const lastSlash = stringVal.lastIndexOf('/') + 1;
+    return [stringVal.substr(0, lastSlash), stringVal.substr(lastSlash)];
+};
+
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };

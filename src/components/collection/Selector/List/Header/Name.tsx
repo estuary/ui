@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -21,16 +21,11 @@ function CollectionSelectorHeaderName({
 }: Props) {
     const intl = useIntl();
 
-    // Need a local copy so as the user types the component does not force the
-    //  input focus to the end of the string.
-    const [localValue, setLocalValue] = useState(inputValue);
-
     // Store off the update function to make sure both the onChange and onClear
     //  update both the local and parent value
     const updateParent = useCallback(
         (newValue: any) => {
             onChange(newValue);
-            setLocalValue(newValue);
         },
         [onChange]
     );
@@ -48,11 +43,11 @@ function CollectionSelectorHeaderName({
             )}
             size="small"
             variant="outlined"
-            value={localValue}
+            value={inputValue}
             InputProps={{
                 endAdornment: (
                     <ClearInput
-                        show={Boolean(!disabled && localValue)}
+                        show={Boolean(!disabled && inputValue)}
                         onClear={updateParent}
                     />
                 ),
