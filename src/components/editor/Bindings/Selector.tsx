@@ -9,17 +9,20 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface BindingSelectorProps {
     disableSelect?: boolean;
-    height?: number | string;
+    legacyTransformHeightHack?: number;
     hideFooter?: boolean;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
 }
 
+// TODO (transform / legacy wrapper) we only pass in height to support the narrow version
+//  of the legacy wrapper for transformation create
 function BindingSelector({
     disableSelect,
     itemType,
     hideFooter,
+    legacyTransformHeightHack,
     readOnly,
     RediscoverButton,
 }: BindingSelectorProps) {
@@ -29,7 +32,10 @@ function BindingSelector({
     const disableActions = formActive || readOnly;
 
     return (
-        <Stack direction="column" sx={{ height: '100%' }}>
+        <Stack
+            direction="column"
+            sx={{ height: legacyTransformHeightHack ?? '100%' }}
+        >
             <BindingSearch
                 itemType={itemType}
                 readOnly={disableActions}

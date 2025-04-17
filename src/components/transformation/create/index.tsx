@@ -109,6 +109,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
             <Stack direction={belowSm ? 'column' : 'row'}>
                 <LegacyStepWrapper>
                     <BindingSelector
+                        legacyTransformHeightHack={370}
                         hideFooter
                         disableSelect
                         readOnly={!collectionsHydrated}
