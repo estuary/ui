@@ -1,4 +1,4 @@
-import { Box, Table } from '@mui/material';
+import { Box, Table, useTheme } from '@mui/material';
 
 import { useScrollbarWidth } from 'react-use';
 
@@ -14,9 +14,10 @@ import {
     TABLE_BODY_CELL_CLASS_PREFIX,
     TABLE_HEADER_CELL_CLASS_PREFIX,
 } from 'src/components/tables/EntityTable/shared';
-import { truncateTextSx } from 'src/context/Theme';
+import { defaultOutline, truncateTextSx } from 'src/context/Theme';
 
 function CollectionSelectorTable({ children, selectionEnabled }: any) {
+    const theme = useTheme();
     const scrollGap = useScrollbarWidth();
 
     return (
@@ -42,11 +43,27 @@ function CollectionSelectorTable({ children, selectionEnabled }: any) {
                 [`.${ENABLE_SELECTION} & .MuiTableCell-body`]: {
                     cursor: 'pointer',
                 },
-                [`.${ENABLE_SCROLL_GAP} & .MuiTableHead-root .MuiTableRow-root,
-                 .${ENABLE_SCROLL_GAP} & .MuiTableFooter-root .MuiTableRow-root`]:
+                [`.${ENABLE_SCROLL_GAP} & .MuiTableHead-root .MuiTableRow-root:last-of-type,
+                 .${ENABLE_SCROLL_GAP} & .MuiTableFooter-root .MuiTableRow-root:last-of-type`]:
                     {
                         pr: `${scrollGap}px`,
                     },
+
+                // This allows us to add the scroll gap in and still have a border over/under the scrollbar
+                [`& .MuiTableHead-root .MuiTableRow-root`]: {
+                    borderBottom: defaultOutline[theme.palette.mode],
+                    [`& .MuiTableCell-root`]: {
+                        borderBottom: 'none',
+                    },
+                },
+                [`& .MuiTableFooter-root .MuiTableRow-root`]: {
+                    borderTop: defaultOutline[theme.palette.mode],
+                    [`& .MuiTableCell-root`]: {
+                        borderTop: 'none',
+                    },
+                },
+
+                // Control column width without having to hardcode on each row
                 [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
                             & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
                     {
