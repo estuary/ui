@@ -4,7 +4,6 @@ import { Button, Typography } from '@mui/material';
 
 import Highlighter from 'react-highlight-words';
 
-import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
 import { NameHighlight } from 'src/components/editor/Bindings/Row/NameHighlight';
 import {
     HIGHLIGHT_CLASS_NAME,
@@ -13,20 +12,14 @@ import {
 import { typographyTruncation } from 'src/context/Theme';
 
 function BindingsSelectorName({
-    bindingUUID,
     collection,
     filterValue,
+    buttonProps = {},
 }: SelectorNameProps) {
     return (
         <Button
             variant="text"
             disableFocusRipple
-            startIcon={
-                <BindingsSelectorErrorIndicator
-                    bindingUUID={bindingUUID}
-                    collection={collection[0]}
-                />
-            }
             sx={{
                 'color': (theme) => theme.palette.text.primary,
                 'height': '100%',
@@ -40,6 +33,7 @@ function BindingsSelectorName({
                     mx: 0.25,
                 },
             }}
+            {...buttonProps}
         >
             <Typography component="span" {...typographyTruncation}>
                 <Highlighter

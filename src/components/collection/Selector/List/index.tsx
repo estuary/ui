@@ -8,7 +8,7 @@ import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Popper, Table, TableContainer } from '@mui/material';
+import { Box, Popper, TableContainer } from '@mui/material';
 
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -16,6 +16,7 @@ import { usePrevious } from 'react-use';
 
 import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
 import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
+import CollectionSelectorTable from 'src/components/collection/Selector/List/CollectionSelectorTable';
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
@@ -26,16 +27,13 @@ import {
     COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
     DEFAULT_ROW_HEIGHT,
+    ENABLE_SCROLL_GAP,
+    ENABLE_SELECTION,
 } from 'src/components/collection/Selector/List/shared';
 import NoResults from 'src/components/editor/Bindings/NoResults';
 import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
-import {
-    TABLE_BODY_CELL_CLASS_PREFIX,
-    TABLE_HEADER_CELL_CLASS_PREFIX,
-} from 'src/components/tables/EntityTable/shared';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import { truncateTextSx } from 'src/context/Theme';
 import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
 import { useBindingSelectorNotification } from 'src/hooks/useBindingSelectorNotification';
 import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
@@ -320,63 +318,13 @@ function CollectionSelectorList({
 
             <TableContainer
                 component={Box}
-                width="100%"
+                className={`${Boolean(scrollGap) ? ENABLE_SCROLL_GAP : ''} ${selectionEnabled ? ENABLE_SELECTION : ''}`}
                 sx={{
                     height: '100%',
+                    width: '100%',
                 }}
             >
-                <Table
-                    component={Box}
-                    stickyHeader
-                    sx={{
-                        height: '100%',
-                        overflow: 'hidden',
-                        [`& .MuiTableBody-root .MuiTableCell-root,
-                        & .MuiTableHead-root .MuiTableCell-root`]: {
-                            display: 'flex',
-                            height: DEFAULT_ROW_HEIGHT,
-                            padding: 0,
-                        },
-                        [`& .MuiTableCell-body`]: {
-                            cursor: selectionEnabled ? 'pointer' : undefined,
-                        },
-                        [`& .MuiTableHead-root .MuiTableRow-root,
-                        & .MuiTableFooter-root .MuiTableRow-root`]: {
-                            pr: scrollGap ? `${scrollGap}px` : undefined,
-                        },
-                        [`& .MuiTableRow-root`]: {
-                            display: 'flex',
-                        },
-                        // TODO (theme - kinda) Probably just move this chunk into the theme file. Also, we probably want to
-                        //  look into doing more styling based on the parent.
-                        // We do a lot of rendering down below - need to keep styling as fast as possible
-                        //  so just putting this on the wrapper
-                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
-                            {
-                                minWidth: 125,
-                                width: 125,
-                            },
-                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
-                            {
-                                ...(truncateTextSx as any),
-                                flexGrow: 1,
-                            },
-                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
-                            {
-                                px: 1,
-                            },
-                        [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
-                            {
-                                minWidth: 52,
-                                width: 52,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            },
-                    }}
-                >
+                <CollectionSelectorTable>
                     <EntityTableHeader
                         columns={columns}
                         disableBackground
@@ -410,7 +358,7 @@ function CollectionSelectorList({
                         }
                         totalCount={mappedResourceConfigs.length}
                     />
-                </Table>
+                </CollectionSelectorTable>
             </TableContainer>
         </Box>
     );

@@ -1,3 +1,4 @@
+import type { ButtonProps } from '@mui/material';
 import type { BaseComponentProps } from 'src/types';
 
 export interface ErrorIndicatorProps {
@@ -6,9 +7,9 @@ export interface ErrorIndicatorProps {
 }
 
 export interface SelectorNameProps {
-    bindingUUID: string;
     collection: string[];
     filterValue?: string;
+    buttonProps?: Partial<ButtonProps>;
 }
 
 export interface NameHighlightProps extends BaseComponentProps {

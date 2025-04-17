@@ -8,6 +8,7 @@ import {
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_UUID_COL,
 } from 'src/components/collection/Selector/List/shared';
+import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
 import BindingsSelectorName from 'src/components/editor/Bindings/Row/Name';
 import BindingsSelectorRemove from 'src/components/editor/Bindings/Row/Remove';
 import BindingsSelectorToggle from 'src/components/editor/Bindings/Row/Toggle';
@@ -86,8 +87,6 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
         const cellRenderers: CollectionSelectorCellSettings = {
             name: {
                 cellRenderer: (params, filterValue) => {
-                    const bindingUUID =
-                        params.row[COLLECTION_SELECTOR_UUID_COL];
                     const filteringActive = Boolean(filterValue);
 
                     const collectionParts = filteringActive
@@ -100,9 +99,20 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
 
                     return (
                         <BindingsSelectorName
-                            bindingUUID={bindingUUID}
                             collection={collectionParts}
                             filterValue={filterValue}
+                            buttonProps={{
+                                startIcon: isCollection ? undefined : (
+                                    <BindingsSelectorErrorIndicator
+                                        bindingUUID={
+                                            params.row[
+                                                COLLECTION_SELECTOR_UUID_COL
+                                            ]
+                                        }
+                                        collection={collectionParts[0]}
+                                    />
+                                ),
+                            }}
                         />
                     );
                 },
