@@ -22,7 +22,7 @@ import {
 
 export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
-function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
+function DetailsFormForm({ entityType, readOnly }: Props) {
     const intl = useIntl();
 
     // Details Form Store
@@ -38,10 +38,7 @@ function DetailsFormForm({ connectorTags, entityType, readOnly }: Props) {
     const isActive = useFormStateStore_isActive();
 
     // TODO: Create a new component to render the form.
-    const { schema, uiSchema, updateDetails } = useFormFields(
-        connectorTags,
-        entityType
-    );
+    const { schema, uiSchema, updateDetails } = useFormFields(entityType);
 
     return (
         <>

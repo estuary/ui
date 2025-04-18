@@ -8,6 +8,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import MaterializeGenerateButton from 'src/components/materialization/GenerateButton';
 import EntityEdit from 'src/components/shared/Entity/Edit';
+import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
@@ -47,33 +48,35 @@ function MaterializationEdit() {
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
     return (
-        <WorkflowHydrator>
-            <MutateDraftSpecProvider value={updateDraftSpecs}>
-                <EntityEdit
-                    title="routeTitle.materializationEdit"
-                    entityType={entityType}
-                    readOnly={{ detailsForm: true }}
-                    draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
-                        <EntityToolbar
-                            GenerateButton={
-                                <MaterializeGenerateButton
-                                    disabled={!hasConnectors}
-                                />
-                            }
-                            primaryButtonProps={{
-                                disabled: !draftId,
-                                logEvent: CustomEvents.MATERIALIZATION_EDIT,
-                            }}
-                            secondaryButtonProps={{
-                                disabled: !hasConnectors,
-                                logEvent: CustomEvents.MATERIALIZATION_TEST,
-                            }}
-                        />
-                    }
-                />
-            </MutateDraftSpecProvider>
-        </WorkflowHydrator>
+        <DraftInitializer>
+            <WorkflowHydrator>
+                <MutateDraftSpecProvider value={updateDraftSpecs}>
+                    <EntityEdit
+                        title="routeTitle.materializationEdit"
+                        entityType={entityType}
+                        readOnly={{ detailsForm: true }}
+                        draftSpecMetadata={draftSpecsMetadata}
+                        toolbar={
+                            <EntityToolbar
+                                GenerateButton={
+                                    <MaterializeGenerateButton
+                                        disabled={!hasConnectors}
+                                    />
+                                }
+                                primaryButtonProps={{
+                                    disabled: !draftId,
+                                    logEvent: CustomEvents.MATERIALIZATION_EDIT,
+                                }}
+                                secondaryButtonProps={{
+                                    disabled: !hasConnectors,
+                                    logEvent: CustomEvents.MATERIALIZATION_TEST,
+                                }}
+                            />
+                        }
+                    />
+                </MutateDraftSpecProvider>
+            </WorkflowHydrator>
+        </DraftInitializer>
     );
 }
 

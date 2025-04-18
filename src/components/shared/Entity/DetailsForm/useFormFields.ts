@@ -1,4 +1,3 @@
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 
@@ -13,10 +12,7 @@ import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
-export default function useFormFields(
-    connectorTags: ConnectorWithTagDetailQuery[],
-    entityType: EntityWithCreateWorkflow
-) {
+export default function useFormFields(entityType: EntityWithCreateWorkflow) {
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
@@ -29,7 +25,7 @@ export default function useFormFields(
     );
 
     const { connectorSchema, connectorUISchema, evaluateConnector } =
-        useConnectorField(connectorTags, entityType);
+        useConnectorField(entityType);
 
     const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
         useDataPlaneField(entityType);

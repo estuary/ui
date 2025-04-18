@@ -62,7 +62,7 @@ function MaterializationCreate() {
                 <EntityCreate
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
+                    Toolbar={
                         <EntityToolbar
                             GenerateButton={
                                 <MaterializeGenerateButton
