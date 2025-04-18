@@ -13,8 +13,8 @@ function EndpointConfig({
     hideWrapper,
     readOnly = false,
 }: EndpointConfigProps) {
-    const imageTag = useDetailsFormStore(
-        (state) => state.details.data.connectorImage
+    const connectorId = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.connectorId
     );
 
     // Draft Editor Store
@@ -34,14 +34,12 @@ function EndpointConfig({
     const forceClose =
         !editWorkflow && draftId !== null && !endpointConfigErrorsExist;
 
-    if (!imageTag.connectorId) {
+    if (!connectorId) {
         return null;
     }
 
     if (hideWrapper) {
-        return (
-            <SectionContent connectorImage={imageTag.id} readOnly={readOnly} />
-        );
+        return <SectionContent readOnly={readOnly} />;
     }
 
     return (
@@ -52,7 +50,7 @@ function EndpointConfig({
             hideBorder={hideBorder}
             header={<EndpointConfigHeader />}
         >
-            <SectionContent connectorImage={imageTag.id} readOnly={readOnly} />
+            <SectionContent readOnly={readOnly} />
         </WrapperWithHeader>
     );
 }

@@ -5,6 +5,5 @@ export interface EndpointConfigProps {
 }
 
 export interface SectionContentProps {
-    connectorImage: string;
     readOnly?: boolean;
 }

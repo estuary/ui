@@ -23,10 +23,7 @@ import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 import { useWorkflowStore_connectorTagProperty } from 'src/stores/Workflow/hooks';
 
-const SectionContent = ({
-    connectorImage,
-    readOnly = false,
-}: SectionContentProps) => {
+const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     // General hooks
     const intl = useIntl();
     const theme = useTheme();
