@@ -115,10 +115,12 @@ export interface ConnectorWithTagQuery {
 const getSingleConnectorWithTag = async (connectorId: string) => {
     const data = await supabaseRetry(
         () =>
-            supabaseClient
-                .from(TABLES.CONNECTORS)
-                .select(CONNECTOR_WITH_TAG_QUERY)
-                .eq('id', connectorId),
+            requiredConnectorColumnsExist<ConnectorWithTagQuery[]>(
+                supabaseClient
+                    .from(TABLES.CONNECTORS)
+                    .select(CONNECTOR_WITH_TAG_QUERY)
+                    .eq('id', connectorId)
+            ),
         'getSingleConnectorWithTag'
     ).then(handleSuccess<ConnectorWithTagQuery[]>, handleFailure);
 
