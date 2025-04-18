@@ -1,8 +1,8 @@
 import type {
-    EntityWithCreateWorkflow,
-    Schema,
-    SortDirection,
-} from 'src/types';
+    ConnectorsQuery_DetailsForm,
+    ConnectorWithTagQuery,
+} from 'src/api/types';
+import type { SortDirection } from 'src/types';
 
 import { CONNECTOR_WITH_TAG_QUERY } from 'src/api/shared';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -50,19 +50,6 @@ const getConnectors = (
 };
 
 // Hydration-specific queries
-export interface BaseConnectorTag {
-    id: string;
-    connector_id: string;
-    image_tag: string;
-}
-
-export interface ConnectorsQuery_DetailsForm {
-    id: string;
-    image_name: string;
-    image: string;
-    connector_tags: BaseConnectorTag[];
-}
-
 const DETAILS_FORM_QUERY = `
     id,
     image_name,
@@ -89,28 +76,6 @@ const getConnectors_detailsForm = async (connectorId: string) => {
 
     return data;
 };
-
-export interface ConnectorTag extends BaseConnectorTag {
-    documentation_url: string;
-    endpoint_spec_schema: Schema;
-    image_name: string;
-    protocol: EntityWithCreateWorkflow;
-    title: string;
-}
-
-export interface ConnectorWithTagQuery {
-    connector_tags: ConnectorTag[];
-    id: string;
-    detail: string;
-    image_name: string;
-    image: string;
-    recommended: boolean;
-    title: string;
-    // FILTERING TYPES HACK
-    ['connector_tags.protocol']: undefined;
-    ['connector_tags.image_tag']: undefined;
-    [CONNECTOR_NAME]: undefined;
-}
 
 const getSingleConnectorWithTag = async (connectorId: string) => {
     const data = await supabaseRetry(

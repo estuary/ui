@@ -5,12 +5,12 @@
 
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { ConnectorConfig } from 'deps/flow/flow';
+import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
 import type {
     BaseConnectorTag,
     ConnectorsQuery_DetailsForm,
     ConnectorWithTagQuery,
-} from 'src/api/connectors';
-import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
+} from 'src/api/types';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
     ConnectorMetadata,

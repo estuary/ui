@@ -1,4 +1,4 @@
-import type { ConnectorWithTagQuery } from 'src/api/connectors';
+import type { ConnectorWithTagQuery } from 'src/api/types';
 import type {
     DataPlaneOption,
     Details,

@@ -1,4 +1,4 @@
-import type { ConnectorTag, ConnectorWithTagQuery } from 'src/api/connectors';
+import type { ConnectorTag, ConnectorWithTagQuery } from 'src/api/types';
 
 import { useShallow } from 'zustand/react/shallow';
 

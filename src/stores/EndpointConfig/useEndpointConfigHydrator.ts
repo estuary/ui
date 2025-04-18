@@ -1,5 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { ConnectorTag } from 'src/api/connectors';
+import type { ConnectorTag } from 'src/api/types';
 import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';

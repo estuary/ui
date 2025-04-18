@@ -1,4 +1,4 @@
-import type { ConnectorWithTagQuery } from 'src/api/connectors';
+import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
 import type { TableState } from 'src/types';
 
