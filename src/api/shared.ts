@@ -1,7 +1,6 @@
-// TODO (endpoints) - we need to start moving these lists out of the `services/supabase`
-
 import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'src/services/supabase';
 
+// TODO (endpoints) - we need to start moving these lists out of the `services/supabase`
 //  file and into here. Do not really like the name `shared` but it follows the standard.
 const CONNECTOR_TAG_INNER_COLS = [
     'connector_id',
