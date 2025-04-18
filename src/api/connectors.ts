@@ -86,7 +86,8 @@ const getSingleConnectorWithTag = async (connectorId: string) => {
                 supabaseClient
                     .from(TABLES.CONNECTORS)
                     .select(CONNECTOR_WITH_TAG_QUERY)
-                    .eq('id', connectorId)
+                    .eq('id', connectorId),
+                'connector_tags'
             ),
         'getSingleConnectorWithTag'
     ).then(handleSuccess<ConnectorWithTagQuery[]>, handleFailure);
