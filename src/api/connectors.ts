@@ -4,12 +4,14 @@ import type {
 } from 'src/api/types';
 import type { SortDirection } from 'src/types';
 
-import { CONNECTOR_WITH_TAG_QUERY } from 'src/api/shared';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     CONNECTOR_DETAILS,
     CONNECTOR_NAME,
     CONNECTOR_RECOMMENDED,
+    CONNECTOR_WITH_TAG_QUERY,
+} from 'src/api/shared';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,

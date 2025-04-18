@@ -1,4 +1,8 @@
-import { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'src/services/supabase';
+export const CONNECTOR_NAME = `title->>en-US`;
+export const CONNECTOR_DETAILS = `detail`;
+export const CONNECTOR_RECOMMENDED = `recommended`;
+export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
+export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
 
 // TODO (endpoints) - we need to start moving these lists out of the `services/supabase`
 //  file and into here. Do not really like the name `shared` but it follows the standard.

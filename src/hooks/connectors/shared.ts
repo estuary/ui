@@ -1,7 +1,4 @@
-import type {
-    CONNECTOR_NAME,
-    CONNECTOR_RECOMMENDED,
-} from 'src/services/supabase';
+import type { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'src/api/shared';
 
 //////////////////////////
 // useConnectors

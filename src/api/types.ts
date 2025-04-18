@@ -1,4 +1,4 @@
-import type { CONNECTOR_NAME } from 'src/services/supabase';
+import type { CONNECTOR_NAME } from 'src/api/shared';
 import type { EntityWithCreateWorkflow, Schema } from 'src/types';
 
 export interface BaseConnectorTag {
