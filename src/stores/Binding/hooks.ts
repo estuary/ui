@@ -187,16 +187,6 @@ export const useBinding_disabledBindings_count = () => {
     );
 };
 
-export const useBinding_someBindingsDisabled = () => {
-    return useBindingStore(
-        useShallow((state) =>
-            Object.values(state.resourceConfigs).some(
-                (config) => config.meta.disable
-            )
-        )
-    );
-};
-
 export const useBinding_bindingErrorsExist = () => {
     return useBindingStore((state) => state.bindingErrorsExist);
 };

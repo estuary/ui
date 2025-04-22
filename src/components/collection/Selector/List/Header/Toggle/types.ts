@@ -6,4 +6,5 @@ export interface CollectionSelectorHeaderToggleProps {
     itemType: string;
     onClick: (event: SyntheticEvent, value: boolean, scope: Scopes) => void;
     disabled?: boolean;
+    defaultValue: boolean;
 }

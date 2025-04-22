@@ -7,18 +7,16 @@ import { Box, Button, Switch, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
-import { useBinding_someBindingsDisabled } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorHeaderToggle({
     disabled,
     itemType,
     onClick,
+    defaultValue,
 }: CollectionSelectorHeaderToggleProps) {
     const intl = useIntl();
 
-    const someBindingsDisabled = useBinding_someBindingsDisabled();
-
-    const [enabled, setEnabled] = useState(someBindingsDisabled);
+    const [enabled, setEnabled] = useState(defaultValue);
 
     const tooltipTitle = intl.formatMessage(
         {
@@ -30,8 +28,8 @@ function CollectionSelectorHeaderToggle({
     );
 
     useEffect(() => {
-        setEnabled(someBindingsDisabled);
-    }, [setEnabled, someBindingsDisabled]);
+        setEnabled(defaultValue);
+    }, [setEnabled, defaultValue]);
 
     return (
         <Box

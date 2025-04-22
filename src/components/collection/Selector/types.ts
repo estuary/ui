@@ -3,6 +3,7 @@ import type { FixedSizeList } from 'react-window';
 import type {
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
+    COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
 } from 'src/components/collection/Selector/List/shared';
 import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
@@ -14,16 +15,25 @@ export type CollectionSelectorCellRenderer = (
     filterValue?: string
 ) => ReactNode;
 
-export type CollectionNameKeys =
+export type CollectionNameKey =
     | typeof COLLECTION_SELECTOR_NAME_COL
     | typeof COLLECTION_SELECTOR_STRIPPED_PATH_NAME;
 
-export type CollectionSelectorKeys =
-    | CollectionNameKeys
+export type CollectionSelectorStringKey =
+    | CollectionNameKey
     | typeof COLLECTION_SELECTOR_UUID_COL;
 
+export type CollectionSelectorBooleanKey =
+    | CollectionNameKey
+    | typeof COLLECTION_SELECTOR_TOGGLE_COL;
+
 export type CollectionSelectorMappedResourceConfig = {
-    [key in CollectionSelectorKeys]: string;
+    [key in CollectionSelectorStringKey]: string;
+} & {
+    [key in Exclude<
+        CollectionSelectorBooleanKey,
+        CollectionSelectorStringKey
+    >]: boolean;
 };
 
 export interface BindingsEditorAddProps {

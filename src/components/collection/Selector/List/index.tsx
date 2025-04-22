@@ -103,6 +103,9 @@ function CollectionSelectorList({
                     const collection = config.meta.collectionName;
 
                     return {
+                        [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
+                            config.meta.disable
+                        ),
                         [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
                         [COLLECTION_SELECTOR_NAME_COL]: collection,
                         [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
@@ -187,6 +190,12 @@ function CollectionSelectorList({
         [disableActions, resourceConfigsEmpty]
     );
 
+    const someBindingsDisabled = useMemo(() => {
+        return Object.values(filteredRows).some((row) => {
+            return row.disable;
+        });
+    }, [filteredRows]);
+
     const columns = useMemo(() => {
         const response: ColumnProps[] = [
             {
@@ -217,6 +226,7 @@ function CollectionSelectorList({
                     <CollectionSelectorHeaderToggle
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
+                        defaultValue={someBindingsDisabled}
                         onClick={(event, value, scope) => {
                             const count =
                                 bindingSelectorCells.toggle?.handler?.(
@@ -296,6 +306,7 @@ function CollectionSelectorList({
         bindingSelectorCells.remove,
         bindingSelectorCells.toggle,
         collectionsLabel,
+        someBindingsDisabled,
         disable,
         filterInputValue,
         filterValue,
