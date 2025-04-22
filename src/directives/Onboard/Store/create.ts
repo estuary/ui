@@ -87,7 +87,7 @@ const getInitialState = (
                 state.surveyMissing = value;
             }),
             false,
-            'Survery Missing Set'
+            'Survey Missing Set'
         );
     },
 

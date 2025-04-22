@@ -8,9 +8,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import { hiddenButAccessibleRadio } from 'src/context/Theme';
 import {
-    useOnboardingStore_setSurveryMissing,
+    useOnboardingStore_setSurveyMissing,
     useOnboardingStore_setSurveyResponse,
-    useOnboardingStore_surveryMissing,
+    useOnboardingStore_surveyMissing,
     useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
@@ -23,8 +23,8 @@ function OnboardingSurvey() {
     const surveyOptionOther = useOnboardingStore_surveyOptionOther();
     const surveyResponse = useOnboardingStore_surveyResponse();
     const setSurveyResponse = useOnboardingStore_setSurveyResponse();
-    const surveryMissing = useOnboardingStore_surveryMissing();
-    const setSurveryMissing = useOnboardingStore_setSurveryMissing();
+    const surveyMissing = useOnboardingStore_surveyMissing();
+    const setSurveyMissing = useOnboardingStore_setSurveyMissing();
 
     const originOptions: string[] = useConstant(() => [
         intl.formatMessage({ id: 'tenant.origin.radio.browserSearch.label' }),
@@ -46,21 +46,21 @@ function OnboardingSurvey() {
             const { details } = surveyResponse;
 
             setSurveyResponse({ origin: value, details });
-            setSurveryMissing(false);
+            setSurveyMissing(false);
         },
     };
 
     return (
         <FormControl
             component="fieldset"
-            error={surveryMissing}
+            error={surveyMissing}
             required
             sx={{
                 border: 'none',
             }}
         >
             <FormLabel
-                error={surveryMissing}
+                error={surveyMissing}
                 component="legend"
                 id="survey-radio-buttons-group-label"
                 required

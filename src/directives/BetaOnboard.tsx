@@ -19,8 +19,8 @@ import {
     useOnboardingStore_requestedTenant,
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
-    useOnboardingStore_setSurveryMissing,
-    useOnboardingStore_surveryMissing,
+    useOnboardingStore_setSurveyMissing,
+    useOnboardingStore_surveyMissing,
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'src/directives/Onboard/Survey';
@@ -58,8 +58,8 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const nameInvalid = useOnboardingStore_nameInvalid();
     const nameMissing = useOnboardingStore_nameMissing();
     const setNameMissing = useOnboardingStore_setNameMissing();
-    const surveryMissing = useOnboardingStore_surveryMissing();
-    const setSurveryMissing = useOnboardingStore_setSurveryMissing();
+    const surveyMissing = useOnboardingStore_surveyMissing();
+    const setSurveyMissing = useOnboardingStore_setSurveyMissing();
 
     const surveyResponse = useOnboardingStore_surveyResponse();
     const resetOnboardingState = useOnboardingStore_resetState();
@@ -80,16 +80,16 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                 const noNameProvided = Boolean(
                     !requestedTenant || requestedTenant.length === 0
                 );
-                const noSurveryProvided = Boolean(surveyResponse.origin === '');
+                const noSurveyProvided = Boolean(surveyResponse.origin === '');
                 setNameMissing(noNameProvided);
-                setSurveryMissing(noSurveryProvided);
+                setSurveyMissing(noSurveyProvided);
 
                 setServerError(null);
 
                 logRocketEvent(CustomEvents.ONBOARDING, {
                     nameInvalid,
                     nameMissing: noNameProvided,
-                    surveryMissing: noSurveryProvided,
+                    surveyMissing: noSurveyProvided,
                 });
 
                 return;
@@ -184,7 +184,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                     </Box>
                 ) : null}
 
-                {nameMissing || surveryMissing || nameInvalid ? (
+                {nameMissing || surveyMissing || nameInvalid ? (
                     <Box>
                         <AlertBox
                             short
@@ -207,7 +207,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                                 </Typography>
                             ) : null}
 
-                            {surveryMissing ? (
+                            {surveyMissing ? (
                                 <Typography>
                                     {intl.formatMessage({
                                         id: 'tenant.origin.errorMessage.empty',
