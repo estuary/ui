@@ -25,6 +25,7 @@ function EntityToolbar({
                     {expressWorkflow ? <ExpressHeaderText /> : null}
 
                     <HeaderActions
+                        expressWorkflow={expressWorkflow}
                         GenerateButton={GenerateButton}
                         PrimaryButtonComponent={PrimaryButtonComponent}
                         SecondaryButtonComponent={SecondaryButtonComponent}

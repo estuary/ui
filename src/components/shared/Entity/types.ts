@@ -42,6 +42,7 @@ export interface EntityToolbarProps {
 
 export type EntityToolbarActionProps = Pick<
     EntityToolbarProps,
+    | 'expressWorkflow'
     | 'GenerateButton'
     | 'PrimaryButtonComponent'
     | 'SecondaryButtonComponent'
