@@ -1,13 +1,17 @@
 import { Grid, Skeleton } from '@mui/material';
 
+import {
+    CONNECTOR_GRID_COLUMNS,
+    CONNECTOR_GRID_SPACING,
+} from 'src/components/connectors/Grid/shared';
 import ConnectorSkeleton from 'src/components/connectors/Grid/Skeleton';
 
 export const ConnectorGridSkeleton = () => {
     return (
         <Grid
             container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 4, md: 12, lg: 12, xl: 12 }}
+            spacing={CONNECTOR_GRID_SPACING}
+            columns={CONNECTOR_GRID_COLUMNS}
             margin="auto"
         >
             <Grid item xs={12}>

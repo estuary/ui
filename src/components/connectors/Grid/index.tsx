@@ -6,6 +6,10 @@ import { Grid, useMediaQuery, useTheme } from '@mui/material';
 
 import ConnectorCards from 'src/components/connectors/Grid/ConnectorCards';
 import ConnectorToolbar from 'src/components/connectors/Grid/ConnectorToolbar';
+import {
+    CONNECTOR_GRID_COLUMNS,
+    CONNECTOR_GRID_SPACING,
+} from 'src/components/connectors/Grid/shared';
 
 function ConnectorGrid({ condensed, protocolPreset }: ConnectorGridProps) {
     const theme = useTheme();
@@ -19,8 +23,8 @@ function ConnectorGrid({ condensed, protocolPreset }: ConnectorGridProps) {
     return (
         <Grid
             container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 4, md: 12, lg: 12, xl: 12 }}
+            spacing={CONNECTOR_GRID_SPACING}
+            columns={CONNECTOR_GRID_COLUMNS}
             paddingRight={2}
             margin="auto"
         >
