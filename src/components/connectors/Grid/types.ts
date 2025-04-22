@@ -12,6 +12,10 @@ export interface ConnectorGridProps {
     protocolPreset?: EntityWithCreateWorkflow;
 }
 
+export interface ConnectorSkeletonProps {
+    condensed?: boolean;
+}
+
 export interface ConnectorToolbarProps {
     belowMd: boolean;
     gridSpacing: number;

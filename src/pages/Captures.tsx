@@ -5,10 +5,12 @@ import { Box, Button, Stack, Toolbar } from '@mui/material';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
+import { useUnmount } from 'react-use';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import CapturesTable from 'src/components/tables/Captures';
 import usePageTitle from 'src/hooks/usePageTitle';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 const boxStyling: SxProps<Theme> = { marginBottom: 2, padding: 2 };
 
@@ -17,6 +19,10 @@ const Capture = () => {
         header: authenticatedRoutes.captures.title,
         headerLink: 'https://docs.estuary.dev/concepts/#captures',
     });
+
+    const resetState = useWorkflowStore((state) => state.resetState);
+
+    useUnmount(() => resetState());
 
     return (
         <>

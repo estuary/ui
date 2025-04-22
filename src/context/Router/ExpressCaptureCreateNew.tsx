@@ -1,3 +1,4 @@
+import { ExpressWorkflowGuard } from 'src/app/guards/ExpressWorkflowGuard/index';
 import { authenticatedRoutes } from 'src/app/routes';
 import ExpressCaptureCreate from 'src/components/capture/ExpressCreate';
 import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
@@ -20,7 +21,9 @@ const ExpressCaptureCreateNewRoute = () => {
                             }
                         >
                             <ExpressWorkflowWrapper>
-                                <ExpressCaptureCreate />
+                                <ExpressWorkflowGuard>
+                                    <ExpressCaptureCreate />
+                                </ExpressWorkflowGuard>
                             </ExpressWorkflowWrapper>
                         </ConnectorSelectedGuard>
                     </AdminCapabilityGuard>

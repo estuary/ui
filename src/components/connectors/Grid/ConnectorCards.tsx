@@ -17,7 +17,7 @@ import LegacyCard from 'src/components/connectors/Grid/cards/LegacyCard';
 import Logo from 'src/components/connectors/Grid/cards/Logo';
 import Title from 'src/components/connectors/Grid/cards/Title';
 import { intlConfig } from 'src/components/connectors/Grid/shared';
-import ConnectorsSkeleton from 'src/components/connectors/Grid/Skeleton';
+import ConnectorSkeleton from 'src/components/connectors/Grid/Skeleton';
 import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'src/context/Theme';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
@@ -75,7 +75,7 @@ export default function ConnectorCards({
     }, [selectData, isValidating, error?.message]);
 
     if (isValidating || tableState.status === TableStatuses.LOADING) {
-        return <ConnectorsSkeleton />;
+        return <ConnectorSkeleton condensed={condensed} />;
     }
 
     if (!hasLength(selectData)) {

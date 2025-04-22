@@ -1,28 +1,51 @@
-import { Box, Grid, Skeleton } from '@mui/material';
+import type { ConnectorSkeletonProps } from 'src/components/connectors/Grid/types';
+
+import { Box, Grid, Skeleton, Stack } from '@mui/material';
 
 import Tile from 'src/components/connectors/Grid/Tile';
 
 const tileCount = 6;
 
-function ConnectorsSkeleton() {
+function ConnectorSkeleton({ condensed }: ConnectorSkeletonProps) {
     return (
         <>
             {Array(tileCount)
                 .fill(
                     <Tile>
-                        <Box>
-                            <Skeleton
-                                variant="rectangular"
-                                height={125}
-                                sx={{ mb: 2, borderRadius: 3 }}
-                            />
+                        {condensed ? (
+                            <Stack direction="row" spacing={1}>
+                                <Skeleton
+                                    variant="rectangular"
+                                    height={50}
+                                    sx={{ mb: 2, borderRadius: 3 }}
+                                    width={50}
+                                />
 
-                            <Skeleton />
+                                <Stack style={{ flexGrow: 1 }}>
+                                    <Skeleton
+                                        style={{ height: 27, width: 125 }}
+                                    />
 
-                            <Skeleton />
+                                    <Skeleton
+                                        style={{ height: 24, width: 75 }}
+                                    />
+                                </Stack>
+                            </Stack>
+                        ) : (
+                            <Box>
+                                <Skeleton
+                                    variant="rectangular"
+                                    height={125}
+                                    sx={{ mb: 2, borderRadius: 3 }}
+                                />
 
-                            <Skeleton sx={{ mb: 5 }} />
-                        </Box>
+                                <Skeleton />
+
+                                <Skeleton />
+
+                                <Skeleton sx={{ mb: 5 }} />
+                            </Box>
+                        )}
                     </Tile>
                 )
                 .map((skeleton, index) => (
@@ -42,4 +65,4 @@ function ConnectorsSkeleton() {
     );
 }
 
-export default ConnectorsSkeleton;
+export default ConnectorSkeleton;

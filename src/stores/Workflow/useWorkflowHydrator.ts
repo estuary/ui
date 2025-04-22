@@ -11,16 +11,16 @@ import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpoint
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-export const useWorkflowHydrator = () => {
+export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { hydrateDetailsForm } = useDetailsFormHydrator();
     const { hydrateEndpointConfig } = useEndpointConfigHydrator();
 
+    const catalogName = useWorkflowStore((state) => state.catalogName.whole);
     const setConnectorMetadata = useWorkflowStore(
         (state) => state.setConnectorMetadata
     );
-    const setCustomerId = useWorkflowStore((state) => state.setCustomerId);
     const setHydrated = useWorkflowStore((state) => state.setHydrated);
     const setHydrationError = useWorkflowStore(
         (state) => state.setHydrationError
@@ -28,72 +28,57 @@ export const useWorkflowHydrator = () => {
     const setHydrationErrorsExist = useWorkflowStore(
         (state) => state.setHydrationErrorsExist
     );
-    const setRedirectUrl = useWorkflowStore((state) => state.setRedirectUrl);
 
-    const hydrateWorkflow = useCallback(
-        async (metadata?: { customerId: string; prefix: string }) => {
-            const { data: connectorMetadata, error: connectorError } =
-                await getSingleConnectorWithTag(connectorId);
+    const hydrateWorkflow = useCallback(async () => {
+        const { data: connectorMetadata, error: connectorError } =
+            await getSingleConnectorWithTag(connectorId);
 
-            if (
-                !hasLength(connectorId) ||
-                connectorError ||
-                !connectorMetadata ||
-                connectorMetadata.length === 0
-            ) {
-                logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
+        if (
+            !hasLength(connectorId) ||
+            connectorError ||
+            !connectorMetadata ||
+            connectorMetadata.length === 0
+        ) {
+            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
 
-                return Promise.reject(
-                    connectorError ?? 'Connector information not found'
-                );
-            }
+            return Promise.reject(
+                connectorError ?? 'Connector information not found'
+            );
+        }
 
-            setConnectorMetadata(connectorMetadata);
+        setConnectorMetadata(connectorMetadata);
 
-            const baseEntityName = metadata
-                ? `${metadata.prefix}${metadata.customerId}`
-                : undefined;
+        const baseEntityName = expressWorkflow ? catalogName : undefined;
 
-            try {
-                const { connectorTagId } = await hydrateDetailsForm(
-                    connectorId,
-                    connectorMetadata[0],
-                    baseEntityName
-                );
+        try {
+            const { connectorTagId } = await hydrateDetailsForm(
+                connectorId,
+                connectorMetadata[0],
+                baseEntityName
+            );
 
-                await hydrateEndpointConfig(
-                    connectorTagId,
-                    connectorMetadata[0].connector_tags
-                );
-            } catch (error: unknown) {
-                return Promise.reject(error);
-            }
+            await hydrateEndpointConfig(
+                connectorTagId,
+                connectorMetadata[0].connector_tags
+            );
+        } catch (error: unknown) {
+            return Promise.reject(error);
+        }
 
-            return Promise.resolve();
-        },
-        [
-            connectorId,
-            hydrateDetailsForm,
-            hydrateEndpointConfig,
-            setConnectorMetadata,
-        ]
-    );
+        return Promise.resolve();
+    }, [
+        catalogName,
+        connectorId,
+        expressWorkflow,
+        hydrateDetailsForm,
+        hydrateEndpointConfig,
+        setConnectorMetadata,
+    ]);
 
     return {
-        hydrateState: (metadata?: {
-            customerId: string;
-            prefix: string;
-            redirectURL: string;
-        }) =>
-            hydrateWorkflow(metadata).then(
+        hydrateState: () =>
+            hydrateWorkflow().then(
                 () => {
-                    if (metadata) {
-                        const { customerId, redirectURL } = metadata;
-
-                        setCustomerId(customerId);
-                        setRedirectUrl(redirectURL);
-                    }
-
                     setHydrated(true);
                 },
                 (error) => {
