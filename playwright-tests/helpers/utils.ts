@@ -191,7 +191,6 @@ export const inituser = async (
 
         // Tell how we heard
         await page.getByText('Other').click();
-        await page.getByText('Where did you hear about').click();
 
         // Finish
         await page
