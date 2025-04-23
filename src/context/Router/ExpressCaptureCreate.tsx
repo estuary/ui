@@ -8,9 +8,9 @@ import { ExpressWorkflowWrapper } from 'src/pages/expressWorkflow/Wrapper';
 
 const ExpressCaptureCreateRoute = () => {
     return (
-        <EntityContextProvider value="capture">
-            <WorkflowContextProvider value="capture_create">
-                <AuthenticatedHydrators>
+        <AuthenticatedHydrators>
+            <EntityContextProvider value="capture">
+                <WorkflowContextProvider value="capture_create">
                     <AdminCapabilityGuard>
                         <ExpressWorkflowWrapper>
                             <ExpressWorkflowGuard>
@@ -18,9 +18,9 @@ const ExpressCaptureCreateRoute = () => {
                             </ExpressWorkflowGuard>
                         </ExpressWorkflowWrapper>
                     </AdminCapabilityGuard>
-                </AuthenticatedHydrators>
-            </WorkflowContextProvider>
-        </EntityContextProvider>
+                </WorkflowContextProvider>
+            </EntityContextProvider>
+        </AuthenticatedHydrators>
     );
 };
 
