@@ -101,4 +101,25 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
     };
 }
 
-export { useLiveSpecs, useLiveSpecs_details };
+export interface LiveSpecsQuery_parentCapture {
+    catalog_name: string;
+    target_id: string;
+    live_specs: {
+        catalog_name: string;
+    };
+}
+function useLiveSpecs_parentCapture(id: string | null) {
+    return useQuery(
+        id
+            ? supabaseClient
+                  .from(TABLES.LIVE_SPEC_FLOWS)
+                  .select(
+                      'target_id, live_specs!live_spec_flows_source_id_fkey(catalog_name)'
+                  )
+                  .eq('target_id', id)
+                  .returns<LiveSpecsQuery_parentCapture[]>()
+            : null
+    );
+}
+
+export { useLiveSpecs, useLiveSpecs_details, useLiveSpecs_parentCapture };

@@ -10,6 +10,7 @@ import ConnectorName from 'src/components/connectors/ConnectorName';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
+import ParentCapture from 'src/components/shared/Entity/Details/ParentCapture';
 import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
@@ -165,6 +166,15 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                         collections={latestLiveSpec.reads_from}
                     />
                 ),
+            });
+        }
+
+        if (entityType === 'collection') {
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.parentCapture',
+                }),
+                val: <ParentCapture collectionId={latestLiveSpec.id} />,
             });
         }
 

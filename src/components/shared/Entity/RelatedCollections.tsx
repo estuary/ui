@@ -29,7 +29,7 @@ function RelatedCollections({ collections, newWindow }: Props) {
             newWindow,
             title: intl.formatMessage(
                 {
-                    id: 'detailsPanel.details.linkToCollection',
+                    id: 'detailsPanel.details.linkToEntity',
                 },
                 {
                     catalogName: collection,

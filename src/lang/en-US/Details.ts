@@ -77,7 +77,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
-    'detailsPanel.details.linkToCollection': `View details for {catalogName}`,
+    'detailsPanel.details.linkToEntity': `View details for {catalogName}`,
 
     'detailsPanel.graph.timezone': `{relativeUnit} in`,
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
