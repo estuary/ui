@@ -121,7 +121,6 @@ function BindingsMultiEditor({
             <ListAndDetails
                 list={
                     <BindingSelector
-                        height={height - 25}
                         itemType={itemType}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
