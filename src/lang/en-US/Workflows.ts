@@ -44,18 +44,20 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.tab.collectionSchema': `Collection`,
     'workflows.collectionSelector.tab.resourceConfig': `Config`,
 
-    'workflows.collectionSelector.toggle.enable': `Enable Page`,
-    'workflows.collectionSelector.toggle.disable': `Disable Page`,
     'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} in the list below`,
     'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} in the list below`,
     'workflows.collectionSelector.toggle.enable.all': `Enable All`,
     'workflows.collectionSelector.toggle.disable.all': `Disable All`,
-    'workflows.collectionSelector.toggle.enable.all.tooltip': `Enable all {itemType} in this {entityType} (ignores any filtering)`,
-    'workflows.collectionSelector.toggle.disable.all.tooltip': `Disable all {itemType} in this {entityType} (ignores any filtering)`,
 
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
+
+    'workflows.collectionSelector.footer.count': `total: {totalCount}`,
+    'workflows.collectionSelector.footer.count.empty': ` `,
+    'workflows.collectionSelector.footer.disabledCount': `disabled: {disabledBindingsCount}`,
+    'workflows.collectionSelector.footer.disabledCount.all': `all disabled`,
+    'workflows.collectionSelector.footer.disabledCount.empty': `all enabled`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -350,6 +352,7 @@ export const Workflows: Record<string, string> = {
     'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
     'entityCreate.bindingsConfig.noRows': `Start by clicking the 'add' button above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
+    'entityCreate.bindingsConfig.noResults': `No results found.`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
     'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,
 
