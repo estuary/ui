@@ -117,6 +117,7 @@ function useLiveSpecs_parentCapture(id: string | null) {
                       'target_id, live_specs!live_spec_flows_source_id_fkey(catalog_name)'
                   )
                   .eq('target_id', id)
+                  .eq('flow_type', 'capture')
                   .returns<LiveSpecsQuery_parentCapture[]>()
             : null
     );
