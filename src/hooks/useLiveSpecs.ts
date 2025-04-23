@@ -122,5 +122,42 @@ function useLiveSpecs_parentCapture(id: string | null) {
             : null
     );
 }
+// Used the query below to test out where the slow down was exactly
+// export interface LiveSpecsFlowQuery_parentCapture {
+//     source_id: string;
+// }
+// export interface LiveSpecsQuery_parentCapture {
+//     catalog_name: string;
+// }
+// function useLiveSpecs_parentCapture(id: string | null) {
+//     const { data, error, isValidating } = useQuery(
+//         id
+//             ? supabaseClient
+//                   .from(TABLES.LIVE_SPEC_FLOWS)
+//                   .select('source_id')
+//                   .eq('target_id', id)
+//                   .eq('flow_type', 'capture')
+//                   .returns<LiveSpecsFlowQuery_parentCapture[]>()
+//             : null
+//     );
+
+//     const liveSpecsQuery = useQuery(
+//         !error && data && data[0].source_id
+//             ? supabaseClient
+//                   .from(TABLES.LIVE_SPECS)
+//                   .select('catalog_name')
+//                   .in(
+//                       'id',
+//                       data.map((datum) => datum.source_id)
+//                   )
+//                   .returns<LiveSpecsQuery_parentCapture[]>()
+//             : null
+//     );
+
+//     return {
+//         ...liveSpecsQuery,
+//         isValidating: Boolean(isValidating || liveSpecsQuery.isValidating),
+//     };
+// }
 
 export { useLiveSpecs, useLiveSpecs_details, useLiveSpecs_parentCapture };
