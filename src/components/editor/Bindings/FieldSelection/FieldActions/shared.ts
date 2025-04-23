@@ -29,7 +29,8 @@ export const evaluateUpdatedFields = (
 
         if (recommendedFlag) {
             selectionType =
-                (selectedValue === 'exclude' && required) || recommended
+                (selectedValue === 'exclude' && required) ||
+                (selectedValue === null && recommended)
                     ? 'default'
                     : selectedValue;
         }
