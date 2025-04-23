@@ -83,6 +83,8 @@ export const Authentication: Record<string, string> = {
     'tenant.input.label': `Organization Name`,
     'tenant.input.placeholder': `acmeCo`,
     'tenant.errorMessage.empty': `You must provide an organization name before continuing.`,
+    'tenant.errorMessage.invalid': `Your organization name is invalid.`,
+    'tenant.origin.errorMessage.empty': `Please let us know where you heard about us.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,

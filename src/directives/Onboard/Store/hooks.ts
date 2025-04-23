@@ -45,6 +45,20 @@ export const useOnboardingStore_setNameMissing = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.setNameMissing);
 };
 
+export const useOnboardingStore_surveyMissing = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['surveyMissing']
+    >(OnboardingStoreNames.GENERAL, (state) => state.surveyMissing);
+};
+
+export const useOnboardingStore_setSurveyMissing = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['setSurveyMissing']
+    >(OnboardingStoreNames.GENERAL, (state) => state.setSurveyMissing);
+};
+
 export const useOnboardingStore_surveyOptionOther = () => {
     return useLocalZustandStore<
         OnboardingState,
