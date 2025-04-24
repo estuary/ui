@@ -55,9 +55,9 @@ export const Workflows: Record<string, string> = {
 
     'workflows.collectionSelector.footer.count': `total: {totalCount}`,
     'workflows.collectionSelector.footer.count.empty': ` `,
-    'workflows.collectionSelector.footer.disabledCount': `disabled: {disabledBindingsCount}`,
-    'workflows.collectionSelector.footer.disabledCount.all': `all disabled`,
-    'workflows.collectionSelector.footer.disabledCount.empty': `all enabled`,
+    'workflows.collectionSelector.footer.enabledCount': `enabled: {disabledBindingsCount}`,
+    'workflows.collectionSelector.footer.enabledCount.all': `all enabled`,
+    'workflows.collectionSelector.footer.enabledCount.empty': `all disabled`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,

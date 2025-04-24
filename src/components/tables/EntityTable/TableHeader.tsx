@@ -27,7 +27,7 @@ function EntityTableHeader({
         getTableComponents(enableDivRendering);
 
     return (
-        <TableHead component={theaderComponent}>
+        <TableHead component={theaderComponent} sx={{ height }}>
             <TableRow
                 component={trComponent}
                 sx={{
