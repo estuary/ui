@@ -88,11 +88,12 @@ function CollectionSelectorBody({
                                         key={row[COLLECTION_SELECTOR_UUID_COL]}
                                         component={Box}
                                         style={style}
-                                        selected={
-                                            row[
-                                                COLLECTION_SELECTOR_UUID_COL
-                                            ] === currentBindingUUID
-                                        }
+                                        selected={Boolean(
+                                            selectionEnabled &&
+                                                row[
+                                                    COLLECTION_SELECTOR_UUID_COL
+                                                ] === currentBindingUUID
+                                        )}
                                         hover={selectionEnabled}
                                     >
                                         {columns.map((column) => {

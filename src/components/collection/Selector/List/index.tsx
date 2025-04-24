@@ -369,11 +369,12 @@ function CollectionSelectorList({
                         checkScrollbarVisibility={checkScrollbarVisibility}
                     />
 
-                    <CollectionSelectorFooter
-                        columnCount={columns.length}
-                        totalCount={mappedResourceConfigs.length}
-                        hideFooter={hideFooter}
-                    />
+                    {hideFooter ? null : (
+                        <CollectionSelectorFooter
+                            columnCount={columns.length}
+                            totalCount={mappedResourceConfigs.length}
+                        />
+                    )}
                 </CollectionSelectorTable>
             </TableContainer>
         </Box>

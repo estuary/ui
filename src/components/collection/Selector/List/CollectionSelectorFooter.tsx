@@ -18,7 +18,6 @@ import { useBinding_enabledBindings_count } from 'src/stores/Binding/hooks';
 function CollectionSelectorFooter({
     columnCount,
     totalCount,
-    hideFooter,
 }: CollectionSelectorFooterProps) {
     const intl = useIntl();
 
@@ -41,45 +40,39 @@ function CollectionSelectorFooter({
                         py: 0.7,
                     }}
                 >
-                    {hideFooter ? null : (
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            sx={{ alignItems: 'center', justifyContent: 'end' }}
-                            divider={
-                                <Divider orientation="vertical" flexItem />
-                            }
-                        >
-                            <Box>
-                                {intl.formatMessage(
-                                    {
-                                        id: Boolean(enabledBindingsCount)
-                                            ? enabledBindingsCount ===
-                                              totalCount
-                                                ? 'workflows.collectionSelector.footer.enabledCount.all'
-                                                : 'workflows.collectionSelector.footer.enabledCount'
-                                            : 'workflows.collectionSelector.footer.enabledCount.empty',
-                                    },
-                                    {
-                                        disabledBindingsCount:
-                                            enabledBindingsCount,
-                                    }
-                                )}
-                            </Box>
-                            <Box>
-                                {intl.formatMessage(
-                                    {
-                                        id: Boolean(totalCount)
-                                            ? 'workflows.collectionSelector.footer.count'
-                                            : 'workflows.collectionSelector.footer.count.empty',
-                                    },
-                                    {
-                                        totalCount,
-                                    }
-                                )}
-                            </Box>
-                        </Stack>
-                    )}
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: 'center', justifyContent: 'end' }}
+                        divider={<Divider orientation="vertical" flexItem />}
+                    >
+                        <Box>
+                            {intl.formatMessage(
+                                {
+                                    id: Boolean(enabledBindingsCount)
+                                        ? enabledBindingsCount === totalCount
+                                            ? 'workflows.collectionSelector.footer.enabledCount.all'
+                                            : 'workflows.collectionSelector.footer.enabledCount'
+                                        : 'workflows.collectionSelector.footer.enabledCount.empty',
+                                },
+                                {
+                                    disabledBindingsCount: enabledBindingsCount,
+                                }
+                            )}
+                        </Box>
+                        <Box>
+                            {intl.formatMessage(
+                                {
+                                    id: Boolean(totalCount)
+                                        ? 'workflows.collectionSelector.footer.count'
+                                        : 'workflows.collectionSelector.footer.count.empty',
+                                },
+                                {
+                                    totalCount,
+                                }
+                            )}
+                        </Box>
+                    </Stack>
                 </TableCell>
             </TableRow>
         </TableFooter>

@@ -94,5 +94,4 @@ export interface CollectionSelectorBodyProps {
 export interface CollectionSelectorFooterProps {
     columnCount: number;
     totalCount: number;
-    hideFooter?: boolean;
 }
