@@ -12,7 +12,7 @@ import {
 import { useIntl } from 'react-intl';
 
 import { defaultOutlineColor } from 'src/context/Theme';
-import { useBinding_disabledBindings_count } from 'src/stores/Binding/hooks';
+import { useBinding_enabledBindings_count } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorFooter({
     columnCount,
@@ -20,7 +20,7 @@ function CollectionSelectorFooter({
 }: CollectionSelectorFooterProps) {
     const intl = useIntl();
 
-    const disabledBindingsCount = useBinding_disabledBindings_count();
+    const enabledBindingsCount = useBinding_enabledBindings_count();
 
     return (
         <TableFooter component="div">
@@ -46,14 +46,14 @@ function CollectionSelectorFooter({
                         <Box>
                             {intl.formatMessage(
                                 {
-                                    id: Boolean(disabledBindingsCount)
-                                        ? disabledBindingsCount === totalCount
-                                            ? 'workflows.collectionSelector.footer.disabledCount.all'
-                                            : 'workflows.collectionSelector.footer.disabledCount'
-                                        : 'workflows.collectionSelector.footer.disabledCount.empty',
+                                    id: Boolean(enabledBindingsCount)
+                                        ? enabledBindingsCount === totalCount
+                                            ? 'workflows.collectionSelector.footer.enabledCount.all'
+                                            : 'workflows.collectionSelector.footer.enabledCount'
+                                        : 'workflows.collectionSelector.footer.enabledCount.empty',
                                 },
                                 {
-                                    disabledBindingsCount,
+                                    disabledBindingsCount: enabledBindingsCount,
                                 }
                             )}
                         </Box>
