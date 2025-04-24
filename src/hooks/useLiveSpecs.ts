@@ -106,12 +106,9 @@ export interface LiveSpecsQuery_parentCapture {
         catalog_name: string;
     };
 }
-function useLiveSpecs_parentCapture(
-    id: string | null,
-    entityType: 'capture' | 'materialization'
-) {
+function useLiveSpecs_parentCapture(id: string | null, entityType: Entity) {
     return useQuery(
-        id
+        id && entityType !== 'collection'
             ? supabaseClient
                   .from(TABLES.LIVE_SPEC_FLOWS)
                   .select(

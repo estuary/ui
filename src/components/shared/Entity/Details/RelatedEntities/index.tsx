@@ -1,5 +1,7 @@
 import type { RelatedEntitiesProps } from 'src/components/shared/Entity/Details/RelatedEntities/types';
 
+import { useMemo } from 'react';
+
 import { Skeleton } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -9,23 +11,53 @@ import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { useLiveSpecs_parentCapture } from 'src/hooks/useLiveSpecs';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 
-function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
+function RelatedEntities({
+    collectionId,
+    entityType,
+    newWindow,
+    preferredList,
+}: RelatedEntitiesProps) {
     const intl = useIntl();
-
-    const { data, isValidating } = useLiveSpecs_parentCapture(
-        collectionId ?? null,
-        entityType
-    );
 
     const { generatePath } = useDetailsNavigator(
         ENTITY_SETTINGS[entityType].routes.details
     );
 
+    const { data, error, isValidating } = useLiveSpecs_parentCapture(
+        collectionId ?? null,
+        entityType
+    );
+
+    console.log('{ data, error, isValidating }', { data, error, isValidating });
+
+    const dataToShow = useMemo(() => {
+        if (preferredList) {
+            return preferredList;
+        } else {
+            return data?.map((datum) => datum.live_specs.catalog_name);
+        }
+    }, [data, preferredList]);
+
     if (isValidating) {
         return <Skeleton />;
     }
 
-    if (!data || data.length < 1) {
+    if (error) {
+        return (
+            <ChipList
+                disabled
+                stripPath={false}
+                values={[
+                    intl.formatMessage({
+                        id: 'detailsPanel.details.relatedEntity.failed',
+                    }),
+                ]}
+                maxChips={1}
+            />
+        );
+    }
+
+    if (!dataToShow || dataToShow.length < 1) {
         return (
             <ChipList
                 disabled
@@ -36,8 +68,7 @@ function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
         );
     }
 
-    const collectionList = data.map((datum) => {
-        const catalogName = datum.live_specs.catalog_name;
+    const entityNameList = dataToShow.map((catalogName) => {
         return {
             display: catalogName,
             link: generatePath({
@@ -46,7 +77,7 @@ function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
             newWindow: false,
             title: intl.formatMessage(
                 {
-                    id: 'detailsPanel.details.linkToEntity',
+                    id: 'detailsPanel.details.relatedEntity.link',
                 },
                 {
                     catalogName,
@@ -55,7 +86,9 @@ function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
         };
     });
 
-    return <ChipList values={collectionList} maxChips={5} />;
+    return (
+        <ChipList values={entityNameList} maxChips={5} newWindow={newWindow} />
+    );
 }
 
 export default RelatedEntities;

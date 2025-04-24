@@ -12,7 +12,6 @@ import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
 import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
-import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
@@ -151,8 +150,10 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.writes_to',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.writes_to}
+                    <RelatedEntities
+                        collectionId={null}
+                        entityType="collection"
+                        preferredList={latestLiveSpec.writes_to}
                     />
                 ),
             });
@@ -164,8 +165,10 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.reads_from',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.reads_from}
+                    <RelatedEntities
+                        collectionId={null}
+                        entityType="collection"
+                        preferredList={latestLiveSpec.reads_from}
                     />
                 ),
             });
