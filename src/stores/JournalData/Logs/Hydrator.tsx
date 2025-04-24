@@ -1,9 +1,9 @@
-import useOpsLogs from 'hooks/journals/useOpsLogs';
+import type { BaseComponentProps } from 'src/types';
 
 import { useEffect } from 'react';
-import { BaseComponentProps } from 'types';
 
-import { useJournalDataLogsStore } from './Store';
+import useOpsLogs from 'src/hooks/journals/useOpsLogs';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
     const [resetState, setActive, hydrate] = useJournalDataLogsStore(

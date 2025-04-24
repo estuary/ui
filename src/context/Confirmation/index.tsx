@@ -1,3 +1,11 @@
+import type {
+    IConfirmationModalContext,
+    IConfirmationModalOptions,
+} from 'src/context/Confirmation/types';
+import type { BaseComponentProps } from 'src/types';
+
+import { createContext, useContext, useRef, useState } from 'react';
+
 import {
     Box,
     Button,
@@ -6,10 +14,8 @@ import {
     DialogContent,
     DialogTitle,
 } from '@mui/material';
-import { createContext, useContext, useRef, useState } from 'react';
+
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
-import { IConfirmationModalContext, IConfirmationModalOptions } from './types';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';
@@ -27,9 +33,8 @@ const ConfirmationModalContext =
     createContext<IConfirmationModalContext | null>(null);
 
 const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
-    const [settings, setSettings] = useState<IConfirmationModalOptions>(
-        getDefaultSettings()
-    );
+    const [settings, setSettings] =
+        useState<IConfirmationModalOptions>(getDefaultSettings());
     const [showConfirmationModal, setShowConfirmationModal] =
         useState<boolean>(false);
     const resolver = useRef<any>();
@@ -76,6 +81,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 onClose={handlers.dismiss}
                 aria-labelledby={LABEL_ID}
                 aria-describedby={DESCRIPTION_ID}
+                {...(settings.dialogProps ?? {})}
             >
                 <DialogTitle id={LABEL_ID}>
                     <FormattedMessage id={settings.title} />

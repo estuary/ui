@@ -1,13 +1,18 @@
-import { hasLength } from 'utils/misc-utils';
+import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
+import type {
+    CollectionMetadata,
+    ResourceConfig,
+} from 'src/stores/Binding/types';
+
 import { useShallow } from 'zustand/react/shallow';
+
 import {
     getCollectionNames,
     getCollections,
     getEnabledCollectionNames,
-} from './shared';
-import { FullSourceJsonForms } from './slices/TimeTravel';
-import { useBindingStore } from './Store';
-import { CollectionMetadata, ResourceConfig } from './types';
+} from 'src/stores/Binding/shared';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const useBinding_hydrated = () => {
     return useBindingStore((state) => state.hydrated);
@@ -172,12 +177,12 @@ export const useBinding_allBindingsDisabled = () => {
     );
 };
 
-export const useBinding_someBindingsDisabled = () => {
+export const useBinding_disabledBindings_count = () => {
     return useBindingStore(
         useShallow((state) =>
-            Object.values(state.resourceConfigs).some(
-                (config) => config.meta.disable
-            )
+            Object.values(state.resourceConfigs).reduce((count, config) => {
+                return config.meta?.disable ? count + 1 : count;
+            }, 0)
         )
     );
 };

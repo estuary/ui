@@ -1,8 +1,12 @@
-import { Button } from '@mui/material';
-import EditProjectionDialog from 'components/editor/Bindings/FieldSelection/EditProjection/Dialog';
-import { Projection } from 'components/editor/Bindings/FieldSelection/types';
+import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
+
 import { useState } from 'react';
+
+import { Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
+
+import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/EditProjection/Dialog';
 
 interface Props {
     operation: 'addProjection' | 'renameField';

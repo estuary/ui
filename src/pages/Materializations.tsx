@@ -1,10 +1,14 @@
-import { Box, Button, SxProps, Theme, Toolbar } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import MaterializationsTable from 'components/tables/Materializations';
-import usePageTitle from 'hooks/usePageTitle';
+import type { SxProps, Theme } from '@mui/material';
+
+import { Box, Button, Toolbar } from '@mui/material';
+
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import MaterializationsTable from 'src/components/tables/Materializations';
+import usePageTitle from 'src/hooks/usePageTitle';
 
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,

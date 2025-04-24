@@ -1,4 +1,5 @@
 import { Checkbox, TableCell } from '@mui/material';
+
 import { isBoolean } from 'lodash';
 
 interface Props {

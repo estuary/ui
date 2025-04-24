@@ -1,44 +1,28 @@
-import { Button, Dialog } from '@mui/material';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
-import { ReactNode, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import { SettingMetadata } from './NestedListItem';
+import type { RowActionButtonProps } from 'src/components/tables/RowActions/Shared/types';
+import type { RowConfirmation } from 'src/components/tables/RowActions/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-interface Props {
-    messageID: string;
-    renderProgress: (
-        item: any,
-        index: number,
-        onFinish: (response: any) => void
-    ) => ReactNode;
-    selectableTableStoreName:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-    confirmationMessage?: ReactNode;
-    settings?: SettingMetadata[];
-}
+import { useState } from 'react';
+
+import { Button, Dialog } from '@mui/material';
+
+import { FormattedMessage } from 'react-intl';
+
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 function RowActionButton({
     messageID,
+    renderConfirmationMessage,
     renderProgress,
     selectableTableStoreName,
-    confirmationMessage,
-    settings,
-}: Props) {
+}: RowActionButtonProps) {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
-    const [targets, setTargets] = useState<any[]>([]);
+    const [targets, setTargets] = useState<RowConfirmation[]>([]);
 
     const selectedRows = useZustandStore<
         SelectableTableStore,
@@ -78,16 +62,7 @@ function RowActionButton({
 
                 confirmationModalContext
                     ?.showConfirmation({
-                        message: (
-                            <RowActionConfirmation
-                                selected={selectedNames}
-                                message={confirmationMessage}
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
-                                settings={settings}
-                            />
-                        ),
+                        message: renderConfirmationMessage(selectedNames),
                     })
                     .then(async (confirmed: any) => {
                         if (confirmed) {

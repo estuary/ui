@@ -1,21 +1,21 @@
-import { discover } from 'api/discovers';
-import { createEntityDraft } from 'api/drafts';
+import type { Entity } from 'src/types';
 
+import { useCallback } from 'react';
+
+import { discover } from 'src/api/discovers';
+import { createEntityDraft } from 'src/api/drafts';
+import useDiscoverStartSubscription from 'src/components/capture/useDiscoverStartSubscription';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_setCatalogName,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useCallback } from 'react';
-import { useEndpointConfigStore_endpointConfig_data } from 'stores/EndpointConfig/hooks';
-import { useFormStateStore_setFormState } from 'stores/FormState/hooks';
-
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { Entity } from 'types';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import useDiscoverStartSubscription from './useDiscoverStartSubscription';
+} from 'src/components/editor/Store/hooks';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
     const createDiscoversSubscription =

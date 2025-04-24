@@ -1,12 +1,17 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { AuthApiError } from '@supabase/supabase-js';
-import { authenticatedRoutes } from 'app/routes';
-import AlertBox from 'components/shared/AlertBox';
-import { isEmpty } from 'lodash';
-import { useSnackbar, VariantType } from 'notistack';
+import type { AuthApiError } from '@supabase/supabase-js';
+import type { VariantType } from 'notistack';
+
 import React, { useState } from 'react';
+
+import { Box, Button, TextField, Typography } from '@mui/material';
+
+import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import AlertBox from 'src/components/shared/AlertBox';
 
 interface Props {
     onSubmit: Function;

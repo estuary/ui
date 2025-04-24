@@ -1,4 +1,4 @@
-import { checkForErrors } from '../utils';
+import { checkForErrors } from 'src/stores/utils';
 
 test('checkForErrors will handle different states for errors', () => {
     expect(checkForErrors({})).toBe(undefined);

@@ -1,27 +1,18 @@
+import type { EntityTableHeaderProps } from 'src/components/tables/EntityTable/types';
+
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import { getStickyTableCell } from 'context/Theme';
+
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import { SortDirection } from 'types';
-import { getTableComponents } from 'utils/table-utils';
-import { ColumnProps } from './types';
 
-interface Props {
-    columns: ColumnProps[];
-    headerClick?: (column: any) => (event: React.MouseEvent<unknown>) => void;
-    height?: number;
-    hide?: boolean;
-    columnToSort?: string;
-    selectData?: any;
-    selectableTableStoreName?: SelectTableStoreNames;
-    sortDirection?: SortDirection;
-    enableDivRendering?: boolean;
-}
+import { TABLE_HEADER_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
+import { getStickyTableCell } from 'src/context/Theme';
+import { getTableComponents } from 'src/utils/table-utils';
 
 function EntityTableHeader({
     columns,
     columnToSort,
+    disableBackground,
     enableDivRendering,
     headerClick,
     height,
@@ -29,7 +20,7 @@ function EntityTableHeader({
     selectData,
     selectableTableStoreName,
     sortDirection,
-}: Props) {
+}: EntityTableHeaderProps) {
     const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
     const { theaderComponent, tdComponent, trComponent } =
@@ -40,8 +31,15 @@ function EntityTableHeader({
             <TableRow
                 component={trComponent}
                 sx={{
-                    background: (theme) => theme.palette.background.default,
+                    background: disableBackground
+                        ? 'transparent'
+                        : (theme) => theme.palette.background.default,
                     height,
+                    ['& .MuiTableCell-root']: {
+                        background: disableBackground
+                            ? 'transparent'
+                            : undefined,
+                    },
                 }}
             >
                 {columns.map((column, index) => {
@@ -92,6 +90,7 @@ function EntityTableHeader({
 
                     return (
                         <TableCell
+                            className={`${TABLE_HEADER_CELL_CLASS_PREFIX}${column.field}`}
                             component={tdComponent}
                             key={`${column.field}-${index}`}
                             align={column.align}
@@ -104,7 +103,9 @@ function EntityTableHeader({
                             }
                             sx={tableCellSX}
                         >
-                            {selectData && column.field && !hide ? (
+                            {column.renderInlineHeader && !hide ? (
+                                column.renderInlineHeader(index)
+                            ) : selectData && column.field && !hide ? (
                                 <TableSortLabel
                                     IconComponent={ArrowDown}
                                     active={columnToSort === column.field}

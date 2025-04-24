@@ -1,31 +1,41 @@
-import { IconButton } from '@mui/material';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import { useEntityWorkflow } from 'context/Workflow';
-import { Xmark } from 'iconoir-react';
+import type { BindingMetadata } from 'src/stores/Binding/types';
+
 import React, { useState } from 'react';
+
+import { Box, IconButton } from '@mui/material';
+
+import { Xmark } from 'iconoir-react';
+
+import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import {
     useBinding_discoveredCollections,
     useBinding_removeBinding,
     useBinding_removeFullSourceConfig,
     useBinding_setRestrictedDiscoveredCollections,
-} from 'stores/Binding/hooks';
-import { BindingMetadata } from 'stores/Binding/types';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     binding: BindingMetadata;
-    disabled: boolean;
     draftId: string | null;
     task: string;
 }
 
-function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
+function BindingsSelectorRemove({ binding, draftId, task }: Props) {
     const [removing, setRemoving] = useState(false);
 
     const workflow = useEntityWorkflow();
 
+    const formActive = useFormStateStore_isActive();
+
     const removeBinding = useBinding_removeBinding();
     const discoveredCollections = useBinding_discoveredCollections();
+    const resetCollectionMetadata = useBindingStore(
+        (state) => state.resetCollectionMetadata
+    );
 
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
@@ -53,11 +63,15 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
                 }
             }
 
-            // We need to reset this before actully fully removing so that the component is not unmounted
+            // We need to reset this before actually fully removing so that the component is not unmounted
             setRemoving(false);
 
             removeBinding(binding);
             removeFullSourceConfig(uuid);
+
+            if (workflow === 'materialization_edit') {
+                resetCollectionMetadata([binding.collection], []);
+            }
 
             if (
                 workflow === 'capture_edit' &&
@@ -78,14 +92,17 @@ function BindingsSelectorRemove({ binding, disabled, draftId, task }: Props) {
     };
 
     return (
-        <IconButton
-            disabled={removing || disabled}
-            size="small"
-            onClick={handlers.removeBinding}
-            sx={{ color: (theme) => theme.palette.text.primary }}
-        >
-            <Xmark />
-        </IconButton>
+        // This has a box around is so the button doesn't get all stretched out in the table cell
+        <Box>
+            <IconButton
+                disabled={removing || formActive}
+                size="small"
+                onClick={handlers.removeBinding}
+                sx={{ color: (theme) => theme.palette.text.primary }}
+            >
+                <Xmark />
+            </IconButton>
+        </Box>
     );
 }
 

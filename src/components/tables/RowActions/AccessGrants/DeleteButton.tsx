@@ -1,33 +1,35 @@
-import { Button, Dialog } from '@mui/material';
-import ProgressDialog from 'components/tables/RowActions/ProgressDialog';
-import RowActionConfirmation from 'components/tables/RowActions/Shared/Confirmation';
-import { useConfirmationModalContext } from 'context/Confirmation';
-import { useZustandStore } from 'context/Zustand/provider';
+import type {
+    AccessGrantDeleteButtonProps,
+    AccessGrantRowConfirmation,
+} from 'src/components/tables/RowActions/AccessGrants/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { SelectTableStoreNames } from 'stores/names';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import ConfirmationAlert from '../Shared/ConfirmationAlert';
-import RevokeGrant from './RevokeGrant';
 
-interface Props {
-    selectTableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_USERS
-        | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-}
+import { Button, Dialog } from '@mui/material';
 
-function DeleteButton({ selectTableStoreName }: Props) {
-    const intl = useIntl();
+import { FormattedMessage } from 'react-intl';
+
+import GrantWhatIsChanging from 'src/components/tables/RowActions/AccessGrants/GrantWhatIsChanging';
+import RevokeGrant from 'src/components/tables/RowActions/AccessGrants/RevokeGrant';
+import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
+import ConfirmationAlert from 'src/components/tables/RowActions/Shared/ConfirmationAlert';
+import ConfirmationWithExplanation from 'src/components/tables/RowActions/Shared/ConfirmationWithExplination';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import useAccessGrantRemovalDescriptions from 'src/hooks/useAccessGrantRemovalDescriptions';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+
+// TODO (capabilities) - need to see if they remove their own capabilities
+//  and then refresh local cache of access grants.
+function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
+    const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState<boolean>(false);
-    const [targets, setTargets] = useState<{ id: string; message: string }[]>(
-        []
-    );
+    const [targets, setTargets] = useState<AccessGrantRowConfirmation[]>([]);
 
     const setAllSelected = useZustandStore<
         SelectableTableStore,
@@ -43,49 +45,42 @@ function DeleteButton({ selectTableStoreName }: Props) {
 
     const handlers = {
         showConfirmationDialog: () => {
-            const grants: { id: string; message: string }[] = [];
+            const grants: AccessGrantRowConfirmation[] = [];
 
             selectedRows.forEach((value, _key) => {
-                if (
+                const identifier =
                     selectTableStoreName ===
                     SelectTableStoreNames.ACCESS_GRANTS_USERS
-                ) {
-                    const identifier: string =
-                        value?.user_full_name ??
-                        value?.user_email ??
-                        value?.subject_role ??
-                        'User';
+                        ? (value?.user_full_name ??
+                          value?.user_email ??
+                          value?.subject_role ??
+                          'User')
+                        : value.subject_role;
 
-                    grants.push({
-                        id: value.id,
-                        message: intl.formatMessage(
-                            { id: 'admin.users.confirmation.listItem' },
-                            { identifier, capability: value.capability }
-                        ),
-                    });
-                } else {
-                    grants.push({
-                        id: value.id,
-                        message: intl.formatMessage(
-                            { id: 'admin.prefix.confirmation.listItem' },
-                            {
-                                subjectRole: value.subject_role,
-                                capability: value.capability,
-                                objectRole: value.object_role,
-                            }
-                        ),
-                    });
-                }
+                grants.push({
+                    id: value.id,
+                    details: describeAllRemovals(value),
+                    message: (
+                        <GrantWhatIsChanging
+                            capability={value.capability}
+                            identifier={identifier}
+                            grantScope={value.object_role}
+                        />
+                    ),
+                });
             });
 
             confirmationModalContext
                 ?.showConfirmation({
+                    dialogProps: {
+                        maxWidth: 'md',
+                    },
                     message: (
-                        <RowActionConfirmation
-                            selected={grants.map(({ message }) => message)}
+                        <ConfirmationWithExplanation
                             message={
                                 <ConfirmationAlert messageId="admin.grants.confirmation.alert" />
                             }
+                            selected={grants}
                         />
                     ),
                 })
@@ -117,9 +112,13 @@ function DeleteButton({ selectTableStoreName }: Props) {
             <Dialog open={showProgress} maxWidth="md">
                 {targets.length > 0 ? (
                     <ProgressDialog
-                        selectedEntities={targets}
                         finished={handlers.resetState}
-                        renderComponent={(item, index, onFinish) => (
+                        selectedEntities={targets}
+                        renderComponent={(
+                            item: AccessGrantRowConfirmation,
+                            index,
+                            onFinish
+                        ) => (
                             <RevokeGrant
                                 key={`revoke-grant-${index}`}
                                 grant={item}

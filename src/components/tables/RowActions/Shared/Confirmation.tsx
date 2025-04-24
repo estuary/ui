@@ -1,19 +1,12 @@
+import type { RowActionConfirmationProps } from 'src/components/tables/RowActions/Shared/types';
+import type { RowConfirmation } from 'src/components/tables/RowActions/types';
+
 import { List, ListItem, Typography } from '@mui/material';
-import { ReactNode } from 'react';
-import { SelectTableStoreNames } from 'stores/names';
-import NestedListItem, { SettingMetadata } from './NestedListItem';
 
-interface RowActionConfirmationProps {
-    message: ReactNode;
-    selected: any; //SelectableTableStore['selected'];
-    selectableTableStoreName?:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-    settings?: SettingMetadata[];
-}
+import NestedListItem from 'src/components/tables/RowActions/Shared/NestedListItem';
 
+// TODO (typing) - eventually we should remove supporting passing in string arrays
+//  so that we always have an `id` and `message` to use.
 function RowActionConfirmation({
     message,
     selected,
@@ -22,24 +15,36 @@ function RowActionConfirmation({
 }: RowActionConfirmationProps) {
     const renderListItems =
         settings && settings.length > 0 && selectableTableStoreName
-            ? (value: string) => (
-                  <NestedListItem
-                      key={`confirmation-selected-items-${value}`}
-                      catalogName={value}
-                      selectableTableStoreName={selectableTableStoreName}
-                      settings={settings}
-                  />
-              )
-            : (value: string) => (
-                  <ListItem
-                      component="div"
-                      key={`confirmation-selected-items-${value}`}
-                  >
-                      <Typography component="span" sx={{ fontWeight: 500 }}>
-                          {value}
-                      </Typography>
-                  </ListItem>
-              );
+            ? (value: string | RowConfirmation) => {
+                  const valueIsString = typeof value === 'string';
+
+                  return (
+                      <NestedListItem
+                          key={`confirmation-selected-items-${
+                              valueIsString ? value : value.id
+                          }`}
+                          catalogName={valueIsString ? value : value.message}
+                          selectableTableStoreName={selectableTableStoreName}
+                          settings={settings}
+                      />
+                  );
+              }
+            : (value: string | RowConfirmation) => {
+                  const valueIsString = typeof value === 'string';
+
+                  return (
+                      <ListItem
+                          component="div"
+                          key={`confirmation-selected-items-${
+                              valueIsString ? value : value.id
+                          }`}
+                      >
+                          <Typography component="span" sx={{ fontWeight: 500 }}>
+                              {valueIsString ? value : value.message}
+                          </Typography>
+                      </ListItem>
+                  );
+              };
 
     return (
         <>

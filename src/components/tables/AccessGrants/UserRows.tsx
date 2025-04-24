@@ -1,13 +1,13 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { TableCell, TableRow } from '@mui/material';
-import TimeStamp from 'components/tables/cells/TimeStamp';
-import UserName from 'components/tables/cells/UserName';
-import { useZustandStore } from 'context/Zustand/provider';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { SelectTableStoreNames } from 'stores/names';
-import RowSelect from '../cells/RowSelect';
+
+import RowSelect from 'src/components/tables/cells/RowSelect';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import UserName from 'src/components/tables/cells/UserName';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface RowProps {
     row: any;
@@ -38,6 +38,11 @@ export const userTableColumns = [
         field: 'object_role',
         headerIntlKey: 'entityTable.data.objectRole',
     },
+    // This basically only ever said "applied via directive" so hiding for now
+    // {
+    //     field: 'detail',
+    //     headerIntlKey: 'entityTable.data.detail',
+    // },
     {
         field: 'updated_at',
         headerIntlKey: 'entityTable.data.lastUpdated',
@@ -73,6 +78,8 @@ function Row({ row, selected, setSelected }: RowProps) {
             <TableCell>{row.capability}</TableCell>
 
             <TableCell>{row.object_role}</TableCell>
+
+            {/*<TableCell>{row.detail}</TableCell>*/}
 
             <TimeStamp time={row.updated_at} enableRelative />
         </TableRow>

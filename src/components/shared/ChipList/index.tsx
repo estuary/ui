@@ -1,8 +1,12 @@
-import { Box } from '@mui/material';
+import type { ChipListProps } from 'src/components/shared/ChipList/types';
+
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { Box } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { ChipListProps } from './types';
-import ChipWrapper from './Wrapper';
+
+import ChipWrapper from 'src/components/shared/ChipList/Wrapper';
 
 function ChipList({
     values,

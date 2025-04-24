@@ -1,3 +1,5 @@
+import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+
 import {
     Box,
     CircularProgress,
@@ -6,11 +8,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import ErrorLogs from 'components/shared/Entity/Error/Logs';
-import Error from 'components/shared/Error';
+
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
-import { ProgressStates, SharedProgressProps } from './types';
+
+import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
+import Error from 'src/components/shared/Error';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 
@@ -63,10 +67,10 @@ function SharedProgress({
                                 state === ProgressStates.SUCCESS
                                     ? successMessageID
                                     : state === ProgressStates.SKIPPED
-                                    ? 'common.skipped'
-                                    : state === ProgressStates.FAILED
-                                    ? 'common.fail'
-                                    : runningMessageID
+                                      ? 'common.skipped'
+                                      : state === ProgressStates.FAILED
+                                        ? 'common.fail'
+                                        : runningMessageID
                             }
                         />
                     }

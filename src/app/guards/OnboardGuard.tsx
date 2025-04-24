@@ -1,11 +1,16 @@
-import { LocalZustandProvider } from 'context/LocalZustand';
-import BetaOnboard from 'directives/BetaOnboard';
-import FullPageWrapper from 'app/FullPageWrapper';
-import { createOnboardingStore } from 'directives/Onboard/Store/create';
+import type { BaseComponentProps } from 'src/types';
+
 import { useMemo } from 'react';
-import { OnboardingStoreNames } from 'stores/names';
-import { BaseComponentProps } from 'types';
-import useDirectiveGuard from './hooks';
+
+import { Grid } from '@mui/material';
+
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import { LocalZustandProvider } from 'src/context/LocalZustand';
+import BetaOnboard from 'src/directives/BetaOnboard';
+import CustomerQuote from 'src/directives/Onboard/CustomerQuote';
+import { createOnboardingStore } from 'src/directives/Onboard/Store/create';
+import { OnboardingStoreNames } from 'src/stores/names';
 
 const SELECTED_DIRECTIVE = 'betaOnboard';
 
@@ -34,14 +39,26 @@ function OnboardGuard({ children, forceDisplay, grantsMutate }: Props) {
         return null;
     } else if (forceDisplay || status !== 'fulfilled') {
         return (
-            <FullPageWrapper fullWidth={true}>
-                <LocalZustandProvider createStore={localStore}>
-                    <BetaOnboard
-                        directive={directive}
-                        status={status}
-                        mutate={grantsMutate}
-                    />
-                </LocalZustandProvider>
+            <FullPageWrapper fullWidth>
+                <Grid
+                    container
+                    sx={{
+                        p: 2,
+                    }}
+                >
+                    <Grid item xs={0} md={6}>
+                        <CustomerQuote />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <LocalZustandProvider createStore={localStore}>
+                            <BetaOnboard
+                                directive={directive}
+                                status={status}
+                                mutate={grantsMutate}
+                            />
+                        </LocalZustandProvider>
+                    </Grid>
+                </Grid>
             </FullPageWrapper>
         );
     } else {

@@ -1,4 +1,4 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export enum CustomEvents {
     AUTHORIZE_TASK = 'AuthorizeTask',
@@ -17,6 +17,7 @@ export enum CustomEvents {
     CAPTURE_MATERIALIZE_SUCCESS = 'Capture_Materialize_Success',
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
+    CONNECTOR_VERSION_MISSING = 'Connector_Version:Missing',
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
     DATA_PLANE_SELECTOR = 'Data_Pane_Selector',
     DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
@@ -31,6 +32,7 @@ export enum CustomEvents {
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',
     ERROR_MISSING_MESSAGE = 'Error_Missing_Message',
+    FIELD_SELECTION = 'FieldSelection',
     FIELD_SELECTION_REFRESH_AUTO = 'Field_Selection_Refresh:Auto',
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
     FORM_STATE_PREVENTED = 'FormState:Prevented',
@@ -58,6 +60,7 @@ export enum CustomEvents {
     OAUTH_SUCCESS_HANDLER = 'Oauth_Success_Handler',
     OAUTH_WINDOW_OPENING = 'Oauth_Window_Opening',
     OAUTH_WINDOW_OPENER = 'Oauth_Window_Opener',
+    ONBOARDING = 'Onboarding',
     REPUBLISH_PREFIX_FAILED = 'Republish_Prefix:Failed',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SYNC_SCHEDULE = 'Sync_Schedule',

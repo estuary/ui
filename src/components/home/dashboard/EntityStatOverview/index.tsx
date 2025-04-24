@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material';
-import StatOverview from './StatOverview';
-import useMonthlyUsage from './useMonthlyUsage';
+
+import StatOverview from 'src/components/home/dashboard/EntityStatOverview/StatOverview';
+import useMonthlyUsage from 'src/components/home/dashboard/EntityStatOverview/useMonthlyUsage';
 
 export default function EntityStatOverview() {
     const {

@@ -1,36 +1,41 @@
+import type { FormState } from 'src/stores/FormState/types';
+
+import { useCallback } from 'react';
+
 import { Button } from '@mui/material';
-import { createEvolution, toEvolutionRequest } from 'api/evolutions';
+
+import { FormattedMessage } from 'react-intl';
+
+import { createEvolution, toEvolutionRequest } from 'src/api/evolutions';
 import {
     useBindingsEditorStore_incompatibleCollections,
     useBindingsEditorStore_setIncompatibleCollections,
-} from 'components/editor/Bindings/Store/hooks';
+} from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_queryResponse_mutate,
-} from 'components/editor/Store/hooks';
-import { buttonSx } from 'components/shared/Entity/Header';
-import { useEntityType } from 'context/EntityContext';
-import { supabaseClient } from 'context/GlobalProviders';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
-import useStoreDiscoveredCaptures from 'hooks/useStoreDiscoveredCaptures';
-import { useCallback } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
+} from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { entityHeaderButtonSx } from 'src/context/Theme';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
+import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
+import { logRocketEvent } from 'src/services/shared';
 import {
     DEFAULT_POLLER_ERROR,
     JOB_STATUS_COLUMNS,
     JOB_STATUS_POLLER_ERROR,
     TABLES,
-} from 'services/supabase';
-import { useBindingStore } from 'stores/Binding/Store';
+} from 'src/services/supabase';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
     useFormStateStore_updateStatus,
-} from 'stores/FormState/hooks';
-import { FormState, FormStatus } from 'stores/FormState/types';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
     onFailure: (formState: Partial<FormState>) => void;
@@ -177,7 +182,11 @@ function SchemaEvolution({ onFailure }: Props) {
         return null;
     }
     return (
-        <Button onClick={save} disabled={isSaving || formActive} sx={buttonSx}>
+        <Button
+            onClick={save}
+            disabled={isSaving || formActive}
+            sx={entityHeaderButtonSx}
+        >
             <FormattedMessage id="cta.evolve" />
         </Button>
     );

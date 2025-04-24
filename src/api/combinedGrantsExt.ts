@@ -1,15 +1,16 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import type { SortingProps } from 'src/services/supabase';
+import type { AuthRoles, Capability, Grant_UserExt } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    defaultTableFilter,
-    parsePagedFetchAllResponse,
-    pagedFetchAll,
-    RPCS,
-    SortingProps,
-    TABLES,
     DEFAULT_PAGING_SIZE,
-} from 'services/supabase';
-import { AuthRoles, Capability, Grant_UserExt } from 'types';
-import { getCountSettings } from 'utils/table-utils';
+    defaultTableFilter,
+    pagedFetchAll,
+    parsePagedFetchAllResponse,
+    RPCS,
+    TABLES,
+} from 'src/services/supabase';
+import { getCountSettings } from 'src/utils/table-utils';
 
 // Used to display prefix grants in admin page
 const getGrants = (
@@ -26,7 +27,8 @@ const getGrants = (
             subject_role, 
             object_role, 
             capability,
-            updated_at
+            updated_at,
+            detail
         `,
                 {
                     count: getCountSettings(pagination),

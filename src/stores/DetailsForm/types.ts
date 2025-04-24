@@ -1,7 +1,7 @@
-import { JsonFormsCore } from '@jsonforms/core';
-import { StoreWithCustomErrors } from 'stores/extensions/CustomErrors';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import { EntityWorkflow } from 'types';
+import type { JsonFormsCore } from '@jsonforms/core';
+import type { StoreWithCustomErrors } from 'src/stores/extensions/CustomErrors';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { EntityWorkflow } from 'src/types';
 
 export interface DataPlaneName {
     cluster: string;
@@ -44,6 +44,14 @@ export interface Details extends Pick<JsonFormsCore, 'data' | 'errors'> {
         dataPlane?: DataPlaneOption;
     };
 }
+
+// TODO (search params) - need to stop getting search params from within zustand
+//  should pass in with optiosn like this one
+// export interface DetailsHydrateOptions {
+//     connectorId: string | null;
+//     dataPlaneId: string | null;
+//     liveSpecId: string | null;
+// }
 
 export interface DetailsFormState
     extends StoreWithHydration,

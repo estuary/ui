@@ -1,4 +1,4 @@
-import { isProduction } from './env-utils';
+import { isProduction } from 'src/utils/env-utils';
 
 export const devtoolsOptions = (name: string) => {
     return {

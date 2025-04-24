@@ -1,10 +1,14 @@
-import { AlertColor, AlertTitle, Box } from '@mui/material';
-import { ReactNode } from 'react';
+import type { AlertColor } from '@mui/material';
+import type { ReactNode } from 'react';
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
+
+import { AlertTitle, Box } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import AlertBox from '../AlertBox';
-import { ExternalLinkOptions } from '../ExternalLink';
-import Message from './Message';
-import { ErrorDetails } from './types';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import Message from 'src/components/shared/Error/Message';
 
 export interface ErrorProps {
     condensed?: boolean;
@@ -43,7 +47,7 @@ function Error({
         <Box sx={{ width: '100%' }}>
             <AlertBox
                 severity={severity ?? 'error'}
-                short={condensed}
+                short={Boolean(condensed)}
                 hideIcon={hideIcon}
                 title={
                     !hideTitle ? (

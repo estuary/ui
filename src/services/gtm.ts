@@ -1,22 +1,30 @@
-import { Schema } from 'types';
-import { getGoogleTageManagerSettings, isProduction } from 'utils/env-utils';
+import type { Schema } from 'src/types';
 
-const googleTagManagerSettings = getGoogleTageManagerSettings();
-
-type EVENTS = 'Connector_Search' | 'Register' | 'Payment_Entered';
+import { getGoogleTageManagerSettings } from 'src/utils/env-utils';
 
 // GTM is loaded/initialized in index.html
 
+type EVENTS =
+    | 'Connector_Search'
+    | 'Register'
+    | 'RegisterFailed'
+    | 'Payment_Entered';
+
+const { allowedToRun } = getGoogleTageManagerSettings();
+
 export const fireGtmEvent = (event: EVENTS, data: Schema | undefined = {}) => {
-    if (
-        isProduction &&
-        googleTagManagerSettings.enabled &&
-        googleTagManagerSettings.id
-    ) {
+    if (allowedToRun) {
         window.dataLayer = window.dataLayer ?? [];
         window.dataLayer.push({
-            ...data,
             event,
+            ...data,
         });
+    }
+};
+
+export const setGtmData = (data?: Schema) => {
+    if (allowedToRun) {
+        window.dataLayer = window.dataLayer ?? [];
+        window.dataLayer.push(data);
     }
 };

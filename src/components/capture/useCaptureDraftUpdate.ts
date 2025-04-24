@@ -1,31 +1,30 @@
-import {
-    DraftSpecsExtQuery_ByCatalogName,
-    getDraftSpecsByCatalogName,
-} from 'api/draftSpecs';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+
+import { useCallback } from 'react';
+
+import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useMutateDraftSpec } from 'components/shared/Entity/MutateDraftSpecContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
-import useEntityNameSuffix from 'hooks/useEntityNameSuffix';
-import { useCallback } from 'react';
+} from 'src/components/editor/Store/hooks';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import {
     useBinding_bindings,
     useBinding_resourceConfigs,
     useBinding_serverUpdateRequired,
-} from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
-} from 'stores/EndpointConfig/hooks';
-import { isDekafConnector } from 'utils/connector-utils';
-
-import { modifyExistingCaptureDraftSpec } from 'utils/workflow-utils';
+} from 'src/stores/EndpointConfig/hooks';
+import { isDekafConnector } from 'src/utils/connector-utils';
+import { modifyExistingCaptureDraftSpec } from 'src/utils/workflow-utils';
 
 function useDiscoverDraftUpdate(options?: {
     initiateRediscovery?: boolean;

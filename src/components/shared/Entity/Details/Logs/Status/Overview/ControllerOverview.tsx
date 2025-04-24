@@ -1,10 +1,12 @@
 import { Grid, Stack, Typography } from '@mui/material';
-import CardWrapper from 'components/shared/CardWrapper';
-import { cardHeaderSx } from 'context/Theme';
+
 import { useIntl } from 'react-intl';
-import ActivationDetail from './ActivationDetail';
-import ControllerStatus from './ControllerStatus';
-import ControllerUpdatedDetail from './ControllerUpdatedDetail';
+
+import CardWrapper from 'src/components/shared/CardWrapper';
+import ActivationDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ActivationDetail';
+import ControllerStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerStatus';
+import ControllerUpdatedDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerUpdatedDetail';
+import { cardHeaderSx } from 'src/context/Theme';
 
 export default function ControllerOverview() {
     const intl = useIntl();
@@ -28,7 +30,7 @@ export default function ControllerOverview() {
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
                     <ActivationDetail headerMessageId="details.ops.status.overview.controller.subheaderActivation" />
 
-                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.controller.subheaderLastUpdated" />
+                    <ControllerUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
                 </Stack>
             </CardWrapper>
         </Grid>

@@ -1,9 +1,11 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffectOnce } from 'react-use';
-import { logRocketConsole } from 'services/shared';
-import { BaseComponentProps } from 'types';
-import { useDetailsFormStore } from './Store';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
@@ -37,6 +39,11 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
             );
         }
     });
+
+    // Until details is hydrated we should wait to load in the other hydrator children
+    if (!hydrated) {
+        return null;
+    }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

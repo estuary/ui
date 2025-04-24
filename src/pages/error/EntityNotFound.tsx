@@ -1,9 +1,11 @@
 import { Typography } from '@mui/material';
-import usePageTitle from 'hooks/usePageTitle';
+
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
+
+import usePageTitle from 'src/hooks/usePageTitle';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 interface Props {
     catalogName?: string;

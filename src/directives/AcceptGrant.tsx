@@ -1,19 +1,23 @@
-import { Box, Stack, Typography } from '@mui/material';
-import {
+import type {
     PostgrestError,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
-import { submitDirective } from 'api/directives';
-import SafeLoadingButton from 'components/SafeLoadingButton';
-import AlertBox from 'components/shared/AlertBox';
-import { defaultOutline } from 'context/Theme';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'directives/shared';
-import useJobStatusPoller from 'hooks/useJobStatusPoller';
+import type { AppliedDirective, JoinedAppliedDirective } from 'src/types';
+import type { KeyedMutator } from 'swr';
+
 import { useState } from 'react';
+
+import { Box, LinearProgress, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
+
+import { submitDirective } from 'src/api/directives';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import AlertBox from 'src/components/shared/AlertBox';
+import { defaultOutline } from 'src/context/Theme';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;
@@ -103,8 +107,11 @@ function AcceptGrant({
         }
     };
 
+    // TODO (RegistrationProgress) get this wired up to know what step it is and use the RegistrationProgress component
     return (
         <Stack spacing={2}>
+            {saving ? <LinearProgress variant="indeterminate" /> : null}
+
             {serverError ? (
                 <AlertBox
                     severity="error"

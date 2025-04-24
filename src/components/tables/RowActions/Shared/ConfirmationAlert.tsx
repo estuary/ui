@@ -1,18 +1,16 @@
+import type { ConfirmationAlertProps } from 'src/components/tables/RowActions/Shared/types';
+
 import { Typography } from '@mui/material';
-import AlertBox from 'components/shared/AlertBox';
-import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    messageId: string;
-}
+import { useIntl } from 'react-intl';
 
-function ConfirmationAlert({ messageId }: Props) {
+function ConfirmationAlert({ messageId }: ConfirmationAlertProps) {
+    const intl = useIntl();
+
     return (
-        <AlertBox severity="warning" short>
-            <Typography component="div">
-                <FormattedMessage id={messageId} />
-            </Typography>
-        </AlertBox>
+        <Typography component="div">
+            {intl.formatMessage({ id: messageId })}
+        </Typography>
     );
 }
 

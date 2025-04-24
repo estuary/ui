@@ -1,10 +1,12 @@
 import { Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
+
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,
-} from '../Store/hooks';
+} from 'src/components/editor/Bindings/Store/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditToggle() {
     const formActive = useFormStateStore_isActive();

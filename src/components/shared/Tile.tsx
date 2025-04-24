@@ -1,9 +1,11 @@
+import type { BaseComponentProps } from 'src/types';
+
 import { ButtonBase } from '@mui/material';
+
 import {
     semiTransparentBackground,
     semiTransparentBackgroundIntensified,
-} from 'context/Theme';
-import { BaseComponentProps } from 'types';
+} from 'src/context/Theme';
 
 interface TileProps extends BaseComponentProps {
     clickHandler?: () => void;

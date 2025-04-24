@@ -1,9 +1,12 @@
-import { Button } from '@mui/material';
 import { useState } from 'react';
+
+import { Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { useTenantStore } from 'stores/Tenant/Store';
-import { hasLength } from 'utils/misc-utils';
-import ConfigureStorageDialog from './Dialog';
+
+import ConfigureStorageDialog from 'src/components/admin/Settings/StorageMappings/Dialog';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 function StorageMappingsGenerateButton() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);

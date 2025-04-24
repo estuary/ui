@@ -1,5 +1,5 @@
-import StandAloneTableTitle from 'components/tables/EntityTable/StandAloneTableTitle';
-import StorageMappingsTable from 'components/tables/StorageMappings';
+import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
+import StorageMappingsTable from 'src/components/tables/StorageMappings';
 
 const docsUrl = 'https://docs.estuary.dev/concepts/storage-mappings/';
 

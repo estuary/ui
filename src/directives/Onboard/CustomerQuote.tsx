@@ -1,26 +1,68 @@
-import { Box, useTheme } from '@mui/material';
-import customerQuoteDark from 'images/customer_quote-dark.png';
-import customerQuoteLight from 'images/customer_quote-light.png';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
-interface Props {
-    hideQuote: boolean;
-}
-function CustomerQuote({ hideQuote }: Props) {
+import customerQuoteDark from 'src/images/customer_quote-dark.png';
+import customerQuoteLight from 'src/images/customer_quote-light.png';
+
+function CustomerQuote() {
     const theme = useTheme();
     const intl = useIntl();
+    const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    if (hideQuote) {
+    if (belowMd) {
         return null;
     } else {
         return (
+            // TODO (customer quote) should switch this to HTML to load faster
+            // <Stack
+            //     sx={{
+            //         alignItems: 'flex-start',
+
+            //         px: 3,
+            //     }}
+            // >
+            //     <Typography
+            //         color="primary"
+            //         sx={{
+            //             transform: 'rotate(180deg)',
+            //         }}
+            //     >
+            //         <QuoteSolid style={{ fontSize: 50 }} />
+            //     </Typography>
+            //     <Typography
+            //         variant="body2"
+            //         sx={{
+            //             color: '#777b82',
+            //             fontSize: 28,
+            //             mt: 1,
+            //             pl: 1.5,
+            //         }}
+            //     >
+            //         {`"${intl.formatMessage({
+            //             id: 'tenant.customer.quote',
+            //         })}"`}
+            //     </Typography>
+            //     <Box
+            //         sx={{
+            //             mt: 3,
+            //         }}
+            //     >
+            //         <img
+            //             src={customerLogo}
+            //             height="36px"
+            //             width="100px"
+            //             alt={intl.formatMessage({ id: 'company' })}
+            //         />
+            //     </Box>
+            // </Stack>
             <Box
                 sx={{
-                    width: '50%',
-                    mr: 2,
-                    display: 'flex',
                     alignItems: 'center',
+                    display: 'flex',
+                    height: '100%',
                     justifyContent: 'center',
+                    width: '100%',
                 }}
             >
                 <img
@@ -30,7 +72,7 @@ function CustomerQuote({ hideQuote }: Props) {
                             : customerQuoteDark
                     }
                     width="85%"
-                    alt={intl.formatMessage({ id: 'company' })}
+                    alt={intl.formatMessage({ id: 'tenant.customer.quote' })}
                 />
             </Box>
         );

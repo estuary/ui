@@ -1,6 +1,7 @@
+import path from 'path';
+
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import path from 'path';
 
 /**
  * Read environment variables from file.
@@ -36,6 +37,17 @@ export default defineConfig({
 
     // Need to allow more time because our discovers can take 30 seconds
     timeout: 60000,
+
+    expect: {
+        // Defaults on image matching are EXACT so lowering them a bit
+        toHaveScreenshot: {
+            maxDiffPixels: 10,
+        },
+
+        toMatchSnapshot: {
+            maxDiffPixelRatio: 0.05,
+        },
+    },
 
     /* Configure projects for major browsers */
     projects: [

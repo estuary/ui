@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
     FormControl,
     FormHelperText,
@@ -5,10 +7,10 @@ import {
     InputLabel,
     Stack,
 } from '@mui/material';
-import DateTimePickerCTA from 'components/shared/pickers/DateTimePickerCTA';
-import { validateDateTime } from 'components/shared/pickers/shared';
-import useDatePickerState from 'components/shared/pickers/useDatePickerState';
-import { useState } from 'react';
+
+import DateTimePickerCTA from 'src/components/shared/pickers/DateTimePickerCTA';
+import { validateDateTime } from 'src/components/shared/pickers/shared';
+import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
 
 interface Props {
     collectionName: string;
@@ -45,8 +47,8 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
     const firstFormHelperText = description
         ? description
         : showErrors
-        ? errors
-        : null;
+          ? errors
+          : null;
     const secondFormHelperText = description && showErrors ? errors : null;
 
     const updateState = (updateValue: any) => {

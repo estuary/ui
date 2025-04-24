@@ -1,23 +1,24 @@
-import { EvolvedCollections } from 'api/evolutions';
-import { TrialCollectionQuery } from 'api/liveSpecsExt';
-import { BooleanString } from 'components/shared/buttons/types';
-import { LiveSpecsExt_MaterializeOrTransform } from 'hooks/useLiveSpecsExt';
-import { DurationObjectUnits } from 'luxon';
-import { ResourceConfigPointers } from 'services/ajv';
-import { CallSupabaseResponse } from 'services/supabase';
-import { StoreWithHydration } from 'stores/extensions/Hydration';
-import {
+import type { DurationObjectUnits } from 'luxon';
+import type { EvolvedCollections } from 'src/api/evolutions';
+import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
+import type { ResourceConfigPointers } from 'src/services/ajv';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type {
     Entity,
     EntityWorkflow,
     JsonFormsData,
     Schema,
     SourceCaptureDef,
-} from 'types';
-import { StoreWithFieldSelection } from './slices/FieldSelection';
-import { StoreWithTimeTravel } from './slices/TimeTravel';
+} from 'src/types';
 
 export interface CollectionMetadata {
     added?: boolean;
+    previouslyBound?: boolean;
     sourceBackfillRecommended?: boolean;
     trialStorage?: boolean;
     updatedAt?: string;
@@ -138,6 +139,10 @@ export interface BindingState
     setSourceBackfillRecommended: (
         collections: string[],
         value: CollectionMetadata['sourceBackfillRecommended']
+    ) => void;
+    resetCollectionMetadata: (
+        targetCollections: string[],
+        targetBindingUUIDs: string[]
     ) => void;
 
     // Control sourceCapture optional settings

@@ -1,9 +1,9 @@
-import {
+import type {
     PostgrestFilterBuilder,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
-import { KeyedMutator } from 'swr';
-import { AppliedDirective, JoinedAppliedDirective } from 'types';
+import type { AppliedDirective, JoinedAppliedDirective } from 'src/types';
+import type { KeyedMutator } from 'swr';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {
@@ -12,6 +12,11 @@ export interface Directives {
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
     grant: DirectiveSettings<GrantClaim>;
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
+}
+
+export interface ActionsProps {
+    primaryMessageId: string;
+    saving: boolean;
 }
 
 export type DirectiveStates =
@@ -61,6 +66,9 @@ export interface DirectiveSettings<T> {
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null
     ) => DirectiveStates;
+    // TODO (RegistrationProgress) - we need to know if a directive was used during the current session (this can be just in memory)
+    //  so we need to store off if the user used something. That way we know which directive is which step in the process.
+    // updatedThisSession: boolean;
 }
 
 export interface DirectiveProps {

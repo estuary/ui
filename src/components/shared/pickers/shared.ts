@@ -1,6 +1,7 @@
-import { PopoverOrigin } from '@mui/material';
-import { hasLength } from 'utils/misc-utils';
-import { DATE_TIME_RE } from 'validation';
+import type { PopoverOrigin } from '@mui/material';
+
+import { hasLength } from 'src/utils/misc-utils';
+import { DATE_TIME_RE } from 'src/validation';
 
 export const CLEAR_BUTTON_ID_SUFFIX = '__clear-button';
 export const INVALID_DATE = 'Invalid Date';

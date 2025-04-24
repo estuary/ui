@@ -1,13 +1,15 @@
-import ShardsEditor from 'components/editor/Shards';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import DetailsFormForm from 'components/shared/Entity/DetailsForm/Form';
-import DetailsFormHeader from 'components/shared/Entity/DetailsForm/Header';
-import { Props } from 'components/shared/Entity/DetailsForm/types';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_messagePrefix } from 'stores/FormState/hooks';
+import type { Props } from 'src/components/shared/Entity/DetailsForm/types';
+
 import { BooleanParam, useQueryParam } from 'use-query-params';
+
+import ShardsEditor from 'src/components/editor/Shards';
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import DetailsFormForm from 'src/components/shared/Entity/DetailsForm/Form';
+import DetailsFormHeader from 'src/components/shared/Entity/DetailsForm/Header';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
 
 function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
     const [forcedToEnable] = useQueryParam(

@@ -1,9 +1,13 @@
-import { AlertColor, Stack } from '@mui/material';
+import type { AlertColor } from '@mui/material';
+import type { SpinnerMessageKeys } from 'src/components/logs/types';
+
 import { useMemo } from 'react';
-import { LogsContextProvider } from './Context';
-import LogLines from './Lines';
-import StoppedAlert from './StoppedAlert';
-import { SpinnerMessageKeys } from './types';
+
+import { Stack } from '@mui/material';
+
+import { LogsContextProvider } from 'src/components/logs/Context';
+import LogLines from 'src/components/logs/Lines';
+import StoppedAlert from 'src/components/logs/StoppedAlert';
 
 export interface LogProps {
     token: string | null;

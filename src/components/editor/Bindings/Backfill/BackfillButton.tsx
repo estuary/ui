@@ -1,10 +1,23 @@
-import { Box, Stack, Typography } from '@mui/material';
-import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
-import { BooleanString } from 'components/shared/buttons/types';
-import { useEntityWorkflow } from 'context/Workflow';
-import useTrialCollections from 'hooks/trialStorage/useTrialCollections';
+import type { BackfillButtonProps } from 'src/components/editor/Bindings/Backfill/types';
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { BindingMetadata } from 'src/types';
+
 import { useCallback, useMemo } from 'react';
+
+import { Box, Stack, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
+
+import BackfillCount from 'src/components/editor/Bindings/Backfill/BackfillCount';
+import BackfillDataFlowOption from 'src/components/editor/Bindings/Backfill/BackfillDataFlowOption';
+import BackfillNotSupportedAlert from 'src/components/editor/Bindings/Backfill/BackfillNotSupportedAlert';
+import EvolvedAlert from 'src/components/editor/Bindings/Backfill/EvolvedAlert';
+import EvolvedCount from 'src/components/editor/Bindings/Backfill/EvolvedCount';
+import useUpdateBackfillCounter from 'src/components/editor/Bindings/Backfill/useUpdateBackfillCounter';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_allBindingsDisabled,
     useBinding_backfillAllBindings,
@@ -14,23 +27,14 @@ import {
     useBinding_currentCollection,
     useBinding_enabledCollections_count,
     useBinding_setBackfilledBindings,
-} from 'stores/Binding/hooks';
-import { useBindingStore } from 'stores/Binding/Store';
+} from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { BindingMetadata } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { useEditorStore_queryResponse_draftSpecs } from '../../Store/hooks';
-import BackfillCount from './BackfillCount';
-import BackfillDataFlowOption from './BackfillDataFlowOption';
-import BackfillNotSupportedAlert from './BackfillNotSupportedAlert';
-import EvolvedAlert from './EvolvedAlert';
-import EvolvedCount from './EvolvedCount';
-import { BackfillButtonProps } from './types';
-import useUpdateBackfillCounter from './useUpdateBackfillCounter';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 function BackfillButton({
     description,
@@ -225,7 +229,7 @@ function BackfillButton({
 
             <Stack direction="row" spacing={2}>
                 <BooleanToggleButton
-                    size={bindingIndex === -1 ? 'large' : undefined}
+                    size="small"
                     selected={Boolean(selected || reversioned)}
                     disabled={disabled || reversioned}
                     onClick={(event, checked: string) => {

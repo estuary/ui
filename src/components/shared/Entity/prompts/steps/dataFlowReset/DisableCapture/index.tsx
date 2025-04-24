@@ -1,23 +1,25 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
-import { createPublication } from 'api/publications';
-import { useBindingsEditorStore_setIncompatibleCollections } from 'components/editor/Bindings/Store/hooks';
+import { useEffect } from 'react';
+
+import { useIntl } from 'react-intl';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
+import { createPublication } from 'src/api/publications';
+import { useBindingsEditorStore_setIncompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
-} from 'components/editor/Store/hooks';
-import DraftErrors from 'components/shared/Entity/Error/DraftErrors';
-import { ProgressStates } from 'components/tables/RowActions/Shared/types';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import useCheckPublicationForIncompatibleCollections from 'hooks/prompts/useCheckPublicationForIncompatibleCollections';
-import usePublicationHandler from 'hooks/prompts/usePublicationHandler';
-import useStepIsIdle from 'hooks/prompts/useStepIsIdle';
-import { useEffect } from 'react';
-import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { generateDisabledSpec } from 'utils/entity-utils';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
+} from 'src/components/editor/Store/hooks';
+import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
+import useCheckPublicationForIncompatibleCollections from 'src/hooks/prompts/useCheckPublicationForIncompatibleCollections';
+import usePublicationHandler from 'src/hooks/prompts/usePublicationHandler';
+import useStepIsIdle from 'src/hooks/prompts/useStepIsIdle';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { generateDisabledSpec } from 'src/utils/entity-utils';
 
 function DisableCapture() {
     const intl = useIntl();

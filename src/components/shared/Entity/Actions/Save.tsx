@@ -1,13 +1,16 @@
+import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/Actions/types';
+
 import { Button } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
-} from 'components/editor/Store/hooks';
-import { buttonSx } from 'components/shared/Entity/Header';
-import { useIntl } from 'react-intl';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { EntityCreateSaveButtonProps } from './types';
-import useSave from './useSave';
+} from 'src/components/editor/Store/hooks';
+import useSave from 'src/components/shared/Entity/Actions/useSave';
+import { entityHeaderButtonSx } from 'src/context/Theme';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function EntityCreateSave({
     buttonLabelId,
@@ -29,7 +32,7 @@ function EntityCreateSave({
     return (
         <Button
             disabled={disabled || isSaving || formActive}
-            sx={buttonSx}
+            sx={entityHeaderButtonSx}
             onClick={async () => {
                 await save(draftId);
             }}
@@ -38,8 +41,8 @@ function EntityCreateSave({
                 id: buttonLabelId
                     ? buttonLabelId
                     : dryRun === true
-                    ? `cta.testConfig${loading ? '.active' : ''}`
-                    : `cta.saveEntity${loading ? '.active' : ''}`,
+                      ? `cta.testConfig${loading ? '.active' : ''}`
+                      : `cta.saveEntity${loading ? '.active' : ''}`,
             })}
         </Button>
     );

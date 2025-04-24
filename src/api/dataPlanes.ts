@@ -1,12 +1,13 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import type { SortingProps } from 'src/services/supabase';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
     handleFailure,
     handleSuccess,
-    SortingProps,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
+} from 'src/services/supabase';
 
 export interface AwsDnsEntry {
     dns_name: string;
@@ -35,7 +36,7 @@ const COLUMNS = [
     'cidr_blocks',
     'gcp_service_account_email',
     'aws_iam_user_arn',
-    // 'aws_link_endpoints', uncomment after https://github.com/estuary/flow/pull/1816 is done
+    // 'aws_link_endpoints', TODO uncomment after https://github.com/estuary/flow/pull/1816 is done
 ];
 
 const QUERY = COLUMNS.join(',');

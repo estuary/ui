@@ -1,17 +1,19 @@
-import { Box } from '@mui/material';
-import { getLiveSpecs_collections } from 'api/liveSpecsExt';
-import Rows from 'components/tables/Collections/Rows';
-import EntityTable from 'components/tables/EntityTable';
 import { useMemo } from 'react';
-import TableHydrator from 'stores/Tables/Hydrator';
-import StatsHydrator from 'stores/Tables/StatsHydrator';
-import { useTableState } from 'stores/Tables/hooks';
-import { SelectTableStoreNames } from 'stores/names';
-import { ENTITY_SETTINGS } from 'settings/entity';
-import RowSelector from '../RowActions/RowSelector';
-import { selectKeyValueName } from '../shared';
-import useCollectionColumns from './useCollectionColumns';
-import CollectionExportButton from './Export';
+
+import { Box } from '@mui/material';
+
+import { getLiveSpecs_collections } from 'src/api/liveSpecsExt';
+import CollectionExportButton from 'src/components/tables/Collections/Export';
+import Rows from 'src/components/tables/Collections/Rows';
+import useCollectionColumns from 'src/components/tables/Collections/useCollectionColumns';
+import EntityTable from 'src/components/tables/EntityTable';
+import RowSelector from 'src/components/tables/RowActions/RowSelector';
+import { selectKeyValueName } from 'src/components/tables/shared';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { useTableState } from 'src/stores/Tables/hooks';
+import TableHydrator from 'src/stores/Tables/Hydrator';
+import StatsHydrator from 'src/stores/Tables/StatsHydrator';
 
 const selectableTableStoreName = SelectTableStoreNames.COLLECTION;
 

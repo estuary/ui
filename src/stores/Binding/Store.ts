@@ -1,10 +1,14 @@
-import {
-    getLiveSpecsById_writesTo,
-    getLiveSpecsByLiveSpecId,
-} from 'api/hydration';
-import { isBeforeTrialInterval } from 'components/materialization/shared';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { evaluateTrialCollections } from 'hooks/trialStorage/useTrialCollections';
+import type {
+    BindingMetadata,
+    BindingState,
+    ResourceConfig,
+} from 'src/stores/Binding/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import produce from 'immer';
 import {
     difference,
@@ -17,26 +21,21 @@ import {
     pick,
     union,
 } from 'lodash';
+
+import {
+    getLiveSpecsById_writesTo,
+    getLiveSpecsByLiveSpecId,
+} from 'src/api/hydration';
+import { isBeforeTrialInterval } from 'src/components/materialization/shared';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { evaluateTrialCollections } from 'src/hooks/trialStorage/useTrialCollections';
 import {
     createJSONFormDefaults,
     generateMaterializationResourceSpec,
     getResourceConfigPointers,
-} from 'services/ajv';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { getStoreWithHydrationSettings } from 'stores/extensions/Hydration';
-import { BindingStoreNames } from 'stores/names';
-import { getDereffedSchema, hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { parsePostgresInterval } from 'utils/time-utils';
-import {
-    getBackfillCounter,
-    getBindingIndex,
-    getCollectionName,
-} from 'utils/workflow-utils';
-import { POSTGRES_INTERVAL_RE } from 'validation';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+} from 'src/services/ajv';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import {
     getCollectionNames,
     getInitialMiscData,
@@ -47,20 +46,32 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
+    resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    updateBackfilledBindingState,
     whatChanged,
-} from './shared';
+} from 'src/stores/Binding/shared';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
-} from './slices/FieldSelection';
+} from 'src/stores/Binding/slices/FieldSelection';
 import {
     getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
-} from './slices/TimeTravel';
-import { BindingMetadata, BindingState, ResourceConfig } from './types';
+} from 'src/stores/Binding/slices/TimeTravel';
+import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
+import { BindingStoreNames } from 'src/stores/names';
+import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { parsePostgresInterval } from 'src/utils/time-utils';
+import {
+    getBackfillCounter,
+    getBindingIndex,
+    getCollectionName,
+} from 'src/utils/workflow-utils';
+import { POSTGRES_INTERVAL_RE } from 'src/validation';
 
 const getInitialState = (
     set: NamedSet<BindingState>,
@@ -291,9 +302,8 @@ const getInitialState = (
         if (prefillLiveSpecIds.length > 0) {
             // Prefills bindings in materialization workflows when the Materialize CTA
             // on the Captures page, Collections page, or captures/collections Details page is clicked.
-            const { data, error } = await getLiveSpecsById_writesTo(
-                prefillLiveSpecIds
-            );
+            const { data, error } =
+                await getLiveSpecsById_writesTo(prefillLiveSpecIds);
 
             if (error) {
                 get().setHydrationErrorsExist(true);
@@ -374,6 +384,23 @@ const getInitialState = (
                         ) {
                             state.backfilledBindings.push(UUID);
                         }
+
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        if (state.collectionMetadata?.[collection]) {
+                            // This condition only exists as a safeguard in the event this action
+                            // is called outside of hydration.
+
+                            state.collectionMetadata[
+                                collection
+                            ].previouslyBound = liveBindingIndex > -1;
+                        } else {
+                            state.collectionMetadata = {
+                                ...state.collectionMetadata,
+                                [collection]: {
+                                    previouslyBound: liveBindingIndex > -1,
+                                },
+                            };
+                        }
                     }
                 });
 
@@ -385,8 +412,9 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 state.backfillAllBindings =
+                    state.backfilledBindings.length > 0 &&
                     state.backfilledBindings.length ===
-                    Object.keys(state.resourceConfigs).length;
+                        Object.keys(state.resourceConfigs).length;
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
@@ -470,6 +498,11 @@ const getInitialState = (
                         meta: {
                             bindingIndex: reducedBindingCount + index,
                             collectionName,
+                            // When adding default this so the first click on the binding
+                            //  does not cause extra renders
+                            disable: undefined,
+                            previouslyDisabled: undefined,
+                            onIncompatibleSchemaChange: undefined,
                         },
                     };
                 });
@@ -561,6 +594,12 @@ const getInitialState = (
                             : null;
                     }
 
+                    // Update backfill-related state.
+                    updateBackfilledBindingState(
+                        state,
+                        mappedUUIDsAndResourceConfigs
+                    );
+
                     // Remove the binding from the bindings dictionary.
                     const evaluatedBindings = state.bindings;
 
@@ -595,7 +634,8 @@ const getInitialState = (
                 state.resourceConfigs = evaluatedResourceConfigs;
                 populateResourceConfigErrors(state, evaluatedResourceConfigs);
 
-                // Repopulate the bindings dictionary and update the value of the current binding.
+                // Repopulate the bindings dictionary, update the value of the current binding,
+                // and update the backfill-related state.
                 const mappedUUIDsAndResourceConfigs = Object.entries(
                     evaluatedResourceConfigs
                 );
@@ -618,9 +658,17 @@ const getInitialState = (
                         uuid,
                         collection: resourceConfig.meta.collectionName,
                     };
+
+                    updateBackfilledBindingState(
+                        state,
+                        mappedUUIDsAndResourceConfigs
+                    );
                 } else {
                     state.bindings = {};
                     state.currentBinding = null;
+
+                    state.backfillAllBindings = false;
+                    state.backfilledBindings = [];
                 }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
@@ -711,6 +759,37 @@ const getInitialState = (
             }),
             false,
             'Discovered bindings removed'
+        );
+    },
+
+    resetCollectionMetadata: (targetCollections, targetBindingUUIDs) => {
+        set(
+            produce((state: BindingState) => {
+                let evaluatedCollections = targetCollections;
+
+                if (
+                    !hasLength(evaluatedCollections) &&
+                    hasLength(targetBindingUUIDs)
+                ) {
+                    evaluatedCollections = Object.entries(state.resourceConfigs)
+                        .filter(([uuid, _resourceConfig]) =>
+                            targetBindingUUIDs.includes(uuid)
+                        )
+                        .map(
+                            ([_uuid, resourceConfig]) =>
+                                resourceConfig.meta.collectionName
+                        );
+                }
+
+                resetCollectionMetadata(
+                    state,
+                    hasLength(evaluatedCollections)
+                        ? evaluatedCollections
+                        : undefined
+                );
+            }),
+            false,
+            'Collection Metadata Reset'
         );
     },
 
@@ -824,12 +903,18 @@ const getInitialState = (
                 );
 
                 values.forEach(({ catalog_name, updated_at }) => {
-                    const added =
-                        addedCollections.includes(catalog_name) ||
+                    const previouslyBound =
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                        state.collectionMetadata[catalog_name]?.added;
+                        state.collectionMetadata[catalog_name]?.previouslyBound;
+
+                    const added =
+                        !previouslyBound &&
+                        (addedCollections.includes(catalog_name) ||
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                            state.collectionMetadata[catalog_name]?.added);
 
                     state.collectionMetadata[catalog_name] = {
+                        ...state.collectionMetadata[catalog_name],
                         added,
                         sourceBackfillRecommended:
                             isBeforeTrialInterval(updated_at) &&
@@ -1030,8 +1115,8 @@ const getInitialState = (
                     typeof targetUUIDs === 'string'
                         ? [targetUUIDs]
                         : Array.isArray(targetUUIDs)
-                        ? targetUUIDs
-                        : Object.keys(state.resourceConfigs);
+                          ? targetUUIDs
+                          : Object.keys(state.resourceConfigs);
 
                 evaluatedUUIDs.forEach((uuid) => {
                     const { collectionName, disable, previouslyDisabled } =
@@ -1123,6 +1208,11 @@ const getInitialState = (
                     meta: {
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         collectionName: targetCollection,
+                        // When adding default this so the first click on the binding
+                        //  does not cause extra renders
+                        disable: undefined,
+                        previouslyDisabled: undefined,
+                        onIncompatibleSchemaChange: undefined,
                     },
                 };
 

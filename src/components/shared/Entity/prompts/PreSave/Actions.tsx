@@ -1,14 +1,16 @@
 import { Button, DialogActions, Stack } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { useFormStateStore_setShowSavePrompt } from 'stores/FormState/hooks';
-import useEntityWorkflowHelpers from '../../hooks/useEntityWorkflowHelpers';
+
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import {
     usePreSavePromptStore,
     usePreSavePromptStore_done,
     usePreSavePromptStore_onFirstStep,
     usePreSavePromptStore_onLastStep,
     usePreSavePromptStore_stepValid,
-} from '../store/usePreSavePromptStore';
+} from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useFormStateStore_setShowSavePrompt } from 'src/stores/FormState/hooks';
 
 function Actions() {
     const intl = useIntl();
@@ -38,8 +40,8 @@ function Actions() {
                         onLastStep
                             ? true
                             : onFirstStep
-                            ? disableClose
-                            : disableBack
+                              ? disableClose
+                              : disableBack
                     }
                     onClick={
                         onFirstStep

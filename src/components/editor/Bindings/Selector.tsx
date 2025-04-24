@@ -1,137 +1,40 @@
-import { Box } from '@mui/material';
-import { GridRenderCellParams } from '@mui/x-data-grid';
-import { deleteDraftSpecsByCatalogName } from 'api/draftSpecs';
-import CollectionSelectorList from 'components/collection/Selector/List';
-import {
-    COLLECTION_SELECTOR_NAME_COL,
-    COLLECTION_SELECTOR_UUID_COL,
-} from 'components/collection/Selector/List/shared';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
-import { ReactNode } from 'react';
-import {
-    useBinding_collections,
-    useBinding_discoveredCollections,
-    useBinding_removeBindings,
-    useBinding_setCurrentBinding,
-    useBinding_toggleDisable,
-} from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useFormStateStore_isActive } from 'stores/FormState/hooks';
-import { hasLength } from 'utils/misc-utils';
-import BindingsSelectorName from './Row/Name';
-import BindingsSelectorRemove from './Row/Remove';
-import BindingsSelectorToggle from './Row/Toggle';
-import BindingSearch from './Search';
+import type { ReactNode } from 'react';
+
+import { Stack } from '@mui/material';
+
+import CollectionSelectorList from 'src/components/collection/Selector/List';
+import BindingSearch from 'src/components/editor/Bindings/Search';
+import { useBinding_setCurrentBinding } from 'src/stores/Binding/hooks';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface BindingSelectorProps {
     disableSelect?: boolean;
-    height?: number | string;
+    legacyTransformHeightHack?: number;
+    hideFooter?: boolean;
     itemType?: string;
     readOnly?: boolean;
     RediscoverButton?: ReactNode;
 }
 
+// TODO (transform / legacy wrapper) we only pass in height to support the narrow version
+//  of the legacy wrapper for transformation create
 function BindingSelector({
     disableSelect,
-    height,
     itemType,
+    hideFooter,
+    legacyTransformHeightHack,
     readOnly,
     RediscoverButton,
 }: BindingSelectorProps) {
-    const workflow = useEntityWorkflow();
-    const entityType = useEntityType();
-    const isCapture = entityType === 'capture';
-    const isCollection = entityType === 'collection';
-
-    // Details Form Store
-    const task = useDetailsFormStore((state) => state.details.data.entityName);
-
-    // Draft Editor Store
-    const draftId = useEditorStore_persistedDraftId();
-
-    // Form State Store
     const formActive = useFormStateStore_isActive();
-
-    // Binding Store
     const setCurrentBinding = useBinding_setCurrentBinding();
-    const collections = useBinding_collections();
-    const discoveredCollections = useBinding_discoveredCollections();
-    const removeBindings = useBinding_removeBindings();
-    const toggleCollections = useBinding_toggleDisable();
-
-    const handlers = {
-        removeBindings: (rows: any[]) => {
-            removeBindings(rows, workflow, task);
-
-            const publishedCollections =
-                hasLength(discoveredCollections) && hasLength(collections)
-                    ? collections.filter(
-                          (collection) =>
-                              !discoveredCollections.includes(collection)
-                      )
-                    : [];
-
-            if (draftId && publishedCollections.length > 0) {
-                void deleteDraftSpecsByCatalogName(
-                    draftId,
-                    'collection',
-                    publishedCollections
-                );
-            }
-        },
-        toggleCollections: (rows: any[] | null, value: boolean) =>
-            toggleCollections(rows, value),
-    };
 
     const disableActions = formActive || readOnly;
 
-    const cellRenderers = {
-        name: (params: GridRenderCellParams) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-
-            return (
-                <BindingsSelectorName
-                    bindingUUID={bindingUUID}
-                    collection={params.value}
-                />
-            );
-        },
-        remove: (params: GridRenderCellParams) => {
-            if (isCapture) {
-                return null;
-            }
-
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-            const collection = params.row[COLLECTION_SELECTOR_NAME_COL];
-
-            return (
-                <BindingsSelectorRemove
-                    binding={{ uuid: bindingUUID, collection }}
-                    task={task}
-                    disabled={formActive}
-                    draftId={draftId}
-                />
-            );
-        },
-        toggle: (params: GridRenderCellParams) => {
-            const bindingUUID = params.row[COLLECTION_SELECTOR_UUID_COL];
-
-            return (
-                <BindingsSelectorToggle
-                    bindingUUID={bindingUUID}
-                    disableButton={formActive}
-                />
-            );
-        },
-    };
-
     return (
-        <Box
-            sx={{
-                height,
-            }}
+        <Stack
+            direction="column"
+            sx={{ height: legacyTransformHeightHack ?? '100%' }}
         >
             <BindingSearch
                 itemType={itemType}
@@ -140,23 +43,14 @@ function BindingSelector({
             />
 
             <CollectionSelectorList
-                height="100%"
                 header={itemType}
+                hideFooter={hideFooter}
                 disableActions={disableActions}
                 setCurrentBinding={
                     !disableSelect ? setCurrentBinding : undefined
                 }
-                renderers={{
-                    cell: cellRenderers,
-                }}
-                removeCollections={
-                    !isCapture ? handlers.removeBindings : undefined
-                }
-                toggleCollections={
-                    !isCollection ? handlers.toggleCollections : undefined
-                }
             />
-        </Box>
+        </Stack>
     );
 }
 

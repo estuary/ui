@@ -1,11 +1,12 @@
-import AppGuards from 'app/guards';
-import { ZustandProvider } from 'context/Zustand/provider';
-import { BaseComponentProps } from 'types';
-import RequireAuth from 'context/Router/RequireAuth';
-import { OnLoadSpinnerProvider } from './OnLoadSpinner/OnLoadSpinnerContext';
-import QueryParamProvider from './QueryParam';
-import { UserInfoSummaryStoreProvider } from './UserInfoSummary';
-import ConfirmationModalContextProvider from './Confirmation';
+import type { BaseComponentProps } from 'src/types';
+
+import AppGuards from 'src/app/guards';
+import ConfirmationModalContextProvider from 'src/context/Confirmation';
+import { OnLoadSpinnerProvider } from 'src/context/OnLoadSpinner/OnLoadSpinnerContext';
+import QueryParamProvider from 'src/context/QueryParam';
+import RequireAuth from 'src/context/Router/RequireAuth';
+import { UserInfoSummaryStoreProvider } from 'src/context/UserInfoSummary';
+import { ZustandProvider } from 'src/context/Zustand/provider';
 
 interface Props extends BaseComponentProps {
     hideSpinner?: boolean;

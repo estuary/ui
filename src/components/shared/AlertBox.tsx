@@ -1,14 +1,18 @@
+import type { AlertBoxProps } from 'src/components/shared/types';
+
+import { forwardRef, useMemo } from 'react';
+
 import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
-import { alertBackground, alertTextPrimary } from 'context/Theme';
+
 import {
     CheckCircle,
     InfoCircle,
-    WarningCircle,
-    XmarkCircle,
+    WarningHexagon,
+    WarningTriangle,
 } from 'iconoir-react';
-import { forwardRef, useMemo } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { AlertBoxProps } from './types';
+import { useIntl } from 'react-intl';
+
+import { alertBackground, alertTextPrimary } from 'src/context/Theme';
 
 const SHARED_STYLING = {
     borderRadius: 2,
@@ -24,9 +28,10 @@ const HEADER_MESSAGE = {
 };
 
 const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
-    { short, severity, hideIcon, title, children, onClose, sx },
+    { short, severity, headerMessage, hideIcon, title, children, onClose, sx },
     ref
 ) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const iconComponentStyling = useMemo(
@@ -42,9 +47,22 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
         [short, theme.palette.mode]
     );
 
-    const header = useMemo(
-        () =>
-            !short && HEADER_MESSAGE[severity] ? (
+    const header = useMemo(() => {
+        if (short) {
+            return null;
+        }
+
+        let headerChild;
+        if (headerMessage) {
+            headerChild = headerMessage;
+        } else if (HEADER_MESSAGE[severity]) {
+            headerChild = intl.formatMessage({
+                id: HEADER_MESSAGE[severity],
+            });
+        }
+
+        if (headerChild) {
+            return (
                 <Typography
                     variant="h4"
                     component="div"
@@ -52,11 +70,13 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
                         pb: 1,
                     }}
                 >
-                    <FormattedMessage id={HEADER_MESSAGE[severity]} />
+                    {headerChild}
                 </Typography>
-            ) : null,
-        [severity, short]
-    );
+            );
+        }
+
+        return null;
+    }, [headerMessage, intl, severity, short]);
 
     return (
         <Alert
@@ -65,8 +85,8 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
             severity={severity}
             variant="outlined"
             iconMapping={{
-                error: <XmarkCircle style={iconComponentStyling} />,
-                warning: <WarningCircle style={iconComponentStyling} />,
+                error: <WarningHexagon style={iconComponentStyling} />,
+                warning: <WarningTriangle style={iconComponentStyling} />,
                 info: <InfoCircle style={iconComponentStyling} />,
                 success: <CheckCircle style={iconComponentStyling} />,
             }}

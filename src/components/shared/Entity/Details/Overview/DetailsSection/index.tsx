@@ -1,38 +1,35 @@
-import { CircularProgress, Skeleton, Stack } from '@mui/material';
-import ConnectorName from 'components/connectors/ConnectorName';
-import CardWrapper from 'components/shared/CardWrapper';
-import DataPlane from 'components/shared/Entity/DataPlane';
-import RelatedCollections from 'components/shared/Entity/RelatedCollections';
-import ExternalLink from 'components/shared/ExternalLink';
-import KeyValueList from 'components/shared/KeyValueList';
-import { LiveSpecsQuery_details } from 'hooks/useLiveSpecs';
+import type { DetailsSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
+
 import { useMemo } from 'react';
-import { FormatDateOptions, FormattedMessage, useIntl } from 'react-intl';
+
+import { CircularProgress, Skeleton, Stack, Typography } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
+import ConnectorName from 'src/components/connectors/ConnectorName';
+import CardWrapper from 'src/components/shared/CardWrapper';
+import DataPlane from 'src/components/shared/Entity/DataPlane';
+import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
+import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import KeyValueList from 'src/components/shared/KeyValueList';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
     parseDataPlaneName,
-} from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
+} from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
-interface Props {
-    entityName: string;
-    latestLiveSpec: LiveSpecsQuery_details | null;
-    loading: boolean;
-}
-
-const TIME_SETTINGS: FormatDateOptions = {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZoneName: 'short',
-};
-
-function DetailsSection({ latestLiveSpec }: Props) {
+function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
+
+    const entityType = useEntityType();
+
+    const latestConnectorStatus =
+        useEntityStatusStore_singleResponse(entityName)?.connector_status
+            ?.message;
 
     const data = useMemo(() => {
         const response = [];
@@ -54,46 +51,6 @@ function DetailsSection({ latestLiveSpec }: Props) {
                 }
             );
             return response;
-        }
-
-        // Add last updated - without user as Estuary folks
-        //  sometimes update stuff and that might look odd
-        response.push({
-            title: intl.formatMessage({
-                id: 'entityTable.data.lastUpdated',
-            }),
-            val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
-        });
-
-        // At when it was created
-        response.push({
-            title: intl.formatMessage({
-                id: 'data.created_at',
-            }),
-            val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
-        });
-
-        if (hasLength(latestLiveSpec.data_plane_name)) {
-            const dataPlaneScope = getDataPlaneScope(
-                latestLiveSpec.data_plane_name
-            );
-
-            const dataPlaneName = parseDataPlaneName(
-                latestLiveSpec.data_plane_name,
-                dataPlaneScope
-            );
-
-            response.push({
-                title: intl.formatMessage({ id: 'data.dataPlane' }),
-                val: (
-                    <DataPlane
-                        dataPlaneName={dataPlaneName}
-                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
-                        logoSize={20}
-                        scope={dataPlaneScope}
-                    />
-                ),
-            });
         }
 
         if (latestLiveSpec.connectorName) {
@@ -122,13 +79,68 @@ function DetailsSection({ latestLiveSpec }: Props) {
                                     latestLiveSpec.connector_tag_documentation_url
                                 }
                             >
-                                <FormattedMessage id="terms.documentation" />
+                                {intl.formatMessage({
+                                    id: 'terms.documentation',
+                                })}
                             </ExternalLink>
                         ) : null}
                     </Stack>
                 ),
             });
         }
+
+        if (entityType !== 'collection') {
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.connectorStatus',
+                }),
+                val: (
+                    <Typography component="div">
+                        {latestConnectorStatus ?? '--'}
+                    </Typography>
+                ),
+            });
+        }
+
+        if (hasLength(latestLiveSpec.data_plane_name)) {
+            const dataPlaneScope = getDataPlaneScope(
+                latestLiveSpec.data_plane_name
+            );
+
+            const dataPlaneName = parseDataPlaneName(
+                latestLiveSpec.data_plane_name,
+                dataPlaneScope
+            );
+
+            response.push({
+                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                val: (
+                    <DataPlane
+                        dataPlaneName={dataPlaneName}
+                        formattedSuffix={formatDataPlaneName(dataPlaneName)}
+                        logoSize={20}
+                        scope={dataPlaneScope}
+                    />
+                ),
+            });
+        }
+
+        // Add last updated - without user as Estuary folks
+        //  sometimes update stuff and that might look odd
+        response.push({
+            title: intl.formatMessage({
+                id: 'entityTable.data.lastUpdated',
+            }),
+            val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
+        });
+
+        // At when it was created
+        response.push({
+            title: intl.formatMessage({
+                id: 'data.created_at',
+            }),
+            val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
+        });
 
         if (hasLength(latestLiveSpec.writes_to)) {
             response.push({
@@ -157,11 +169,15 @@ function DetailsSection({ latestLiveSpec }: Props) {
         }
 
         return response;
-    }, [intl, latestLiveSpec]);
+    }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);
 
     return (
         <CardWrapper
-            message={<FormattedMessage id="detailsPanel.details.title" />}
+            message={
+                <span>
+                    {intl.formatMessage({ id: 'detailsPanel.details.title' })}
+                </span>
+            }
         >
             {!hasLength(data) ? (
                 <CircularProgress />
