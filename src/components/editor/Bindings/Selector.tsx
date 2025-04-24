@@ -31,10 +31,14 @@ function BindingSelector({
 
     const disableActions = formActive || readOnly;
 
+    // TODO (FireFox Height Hack) - added overflow so the scroll bar does not show up
     return (
         <Stack
             direction="column"
-            sx={{ height: legacyTransformHeightHack ?? '100%' }}
+            sx={{
+                height: legacyTransformHeightHack ?? '100%',
+                overflow: 'hidden',
+            }}
         >
             <BindingSearch
                 itemType={itemType}
@@ -44,6 +48,7 @@ function BindingSelector({
 
             <CollectionSelectorList
                 header={itemType}
+                height={legacyTransformHeightHack ?? 570}
                 hideFooter={hideFooter}
                 disableActions={disableActions}
                 setCurrentBinding={

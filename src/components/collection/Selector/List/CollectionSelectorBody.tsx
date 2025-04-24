@@ -18,6 +18,7 @@ import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 function CollectionSelectorBody({
     columns,
     filterValue,
+    height: parentHeight,
     rows,
     selectionEnabled,
     setCurrentBinding,
@@ -56,8 +57,9 @@ function CollectionSelectorBody({
         }
     };
 
+    // TODO (FireFox Height Hack) - hardcoded height to make life easier
     return (
-        <TableBody component="div">
+        <TableBody component="div" sx={{ height: parentHeight }}>
             <AutoSizer>
                 {({ height, width }: AutoSizer['state']) => {
                     return (

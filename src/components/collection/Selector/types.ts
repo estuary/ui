@@ -72,6 +72,7 @@ export interface CollectionSelectorCellSettings {
 }
 
 export interface CollectionSelectorListProps {
+    height: number; // Remove once FF can handle settings heights right https://bugzilla.mozilla.org/show_bug.cgi?id=1904559
     disableActions?: boolean;
     header?: string;
     hideFooter?: boolean;
@@ -82,6 +83,7 @@ export interface CollectionSelectorBodyProps {
     checkScrollbarVisibility: () => void;
     columns: ColumnProps[];
     filterValue: string;
+    height: number;
     rows: CollectionSelectorMappedResourceConfig[];
     scrollingElementCallback: (node?: any) => FixedSizeList | undefined;
     selectionEnabled: boolean;
@@ -92,4 +94,5 @@ export interface CollectionSelectorBodyProps {
 export interface CollectionSelectorFooterProps {
     columnCount: number;
     totalCount: number;
+    hideFooter?: boolean;
 }
