@@ -102,22 +102,26 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
 }
 
 export interface LiveSpecsQuery_parentCapture {
-    catalog_name: string;
-    target_id: string;
     live_specs: {
         catalog_name: string;
     };
 }
-function useLiveSpecs_parentCapture(id: string | null) {
+function useLiveSpecs_parentCapture(
+    id: string | null,
+    entityType: 'capture' | 'materialization'
+) {
     return useQuery(
         id
             ? supabaseClient
                   .from(TABLES.LIVE_SPEC_FLOWS)
                   .select(
-                      'target_id, live_specs!live_spec_flows_source_id_fkey(catalog_name)'
+                      `live_specs!${entityType === 'materialization' ? 'live_spec_flows_target_id_fkey' : 'live_spec_flows_source_id_fkey'}(catalog_name)`
                   )
-                  .eq('target_id', id)
-                  .eq('flow_type', 'capture')
+                  .eq(
+                      `${entityType === 'materialization' ? 'source_id' : 'target_id'}`,
+                      id
+                  )
+                  .eq('flow_type', entityType)
                   .returns<LiveSpecsQuery_parentCapture[]>()
             : null
     );

@@ -1,25 +1,24 @@
+import type { RelatedEntitiesProps } from 'src/components/shared/Entity/Details/RelatedEntities/types';
+
 import { Skeleton } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { authenticatedRoutes } from 'src/app/routes';
 import ChipList from 'src/components/shared/ChipList';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { useLiveSpecs_parentCapture } from 'src/hooks/useLiveSpecs';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 
-interface Props {
-    collectionId: string | null;
-}
-
-function ParentCapture({ collectionId }: Props) {
+function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
     const intl = useIntl();
 
     const { data, isValidating } = useLiveSpecs_parentCapture(
-        collectionId ?? null
+        collectionId ?? null,
+        entityType
     );
 
     const { generatePath } = useDetailsNavigator(
-        authenticatedRoutes.captures.details.overview.fullPath
+        ENTITY_SETTINGS[entityType].routes.details
     );
 
     if (isValidating) {
@@ -52,4 +51,4 @@ function ParentCapture({ collectionId }: Props) {
     return <ChipList values={collectionList} maxChips={5} />;
 }
 
-export default ParentCapture;
+export default RelatedEntities;
