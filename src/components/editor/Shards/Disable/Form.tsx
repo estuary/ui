@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import useShards from 'src/components/editor/Shards/Disable/useShards';
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
@@ -62,11 +62,9 @@ function ShardsDisableForm() {
                 update(checked === 'true');
             }}
         >
-            {!localState ? (
-                <FormattedMessage id="common.enabled" />
-            ) : (
-                <FormattedMessage id="common.disabled" />
-            )}
+            {intl.formatMessage({
+                id: !localState ? 'common.enabled' : 'common.disabled',
+            })}
         </BooleanToggleButton>
     );
 }
