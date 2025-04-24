@@ -1,8 +1,16 @@
 import type { Entity } from 'src/types';
 
-export interface RelatedEntitiesProps {
-    collectionId: string | null;
+export interface RelatedEntitiesBaseProps {
     entityType: Entity;
     newWindow?: boolean;
-    preferredList?: string[] | null;
 }
+
+export type RelatedEntitiesProps =
+    | (RelatedEntitiesBaseProps & {
+          collectionId: string | null;
+          preferredList?: never;
+      })
+    | (RelatedEntitiesBaseProps & {
+          preferredList: string[] | null;
+          collectionId?: never;
+      });

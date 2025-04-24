@@ -9,11 +9,7 @@ interface Props {
 function RelatedCollectionsCell({ values }: Props) {
     return (
         <TableCell>
-            <RelatedEntities
-                preferredList={values}
-                collectionId={null}
-                entityType="collection"
-            />
+            <RelatedEntities preferredList={values} entityType="collection" />
         </TableCell>
     );
 }

@@ -23,12 +23,11 @@ function RelatedEntities({
         ENTITY_SETTINGS[entityType].routes.details
     );
 
+    // If we have a list then just send null over and never run a query
     const { data, error, isValidating } = useLiveSpecs_parentCapture(
-        collectionId ?? null,
+        preferredList ? null : (collectionId ?? null),
         entityType
     );
-
-    console.log('{ data, error, isValidating }', { data, error, isValidating });
 
     const dataToShow = useMemo(() => {
         if (preferredList) {

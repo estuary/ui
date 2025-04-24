@@ -151,7 +151,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 }),
                 val: (
                     <RelatedEntities
-                        collectionId={null}
                         entityType="collection"
                         preferredList={latestLiveSpec.writes_to}
                     />
@@ -166,7 +165,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 }),
                 val: (
                     <RelatedEntities
-                        collectionId={null}
                         entityType="collection"
                         preferredList={latestLiveSpec.reads_from}
                     />

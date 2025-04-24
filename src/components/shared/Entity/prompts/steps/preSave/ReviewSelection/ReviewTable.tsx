@@ -60,7 +60,6 @@ function ReviewTable() {
                 entityType: 'collection',
                 cell: (
                     <RelatedEntities
-                        collectionId={null}
                         entityType="collection"
                         newWindow
                         preferredList={collectionsBeingBackfilled}
