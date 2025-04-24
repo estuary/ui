@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
@@ -24,15 +24,32 @@ function ShardsDisableForm() {
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
+    // Mainly here for initial loading of page since it takes a little bit
+    //  of time to populate `shardDisabled`
+    useEffect(() => {
+        setLocalState((prevVal) => {
+            if (prevVal === shardDisabled) {
+                return prevVal;
+            }
+
+            return shardDisabled;
+        });
+    }, [shardDisabled]);
+
     const update = useCallback(
         (newVal: boolean) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
+            // Set local state right away so the button feels fast
             setLocalState(newVal);
+
+            // Update the actual spec
             updateDisable(newVal)
                 .then(() => {})
                 .catch(() => {
+                    // If there was any kind of error put the opposite back in
                     setLocalState(!newVal);
+
                     enqueueSnackbar(
                         intl.formatMessage(
                             {
