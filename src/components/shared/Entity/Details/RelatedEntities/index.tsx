@@ -26,7 +26,14 @@ function RelatedEntities({ collectionId, entityType }: RelatedEntitiesProps) {
     }
 
     if (!data || data.length < 1) {
-        return null;
+        return (
+            <ChipList
+                disabled
+                stripPath={false}
+                values={[intl.formatMessage({ id: 'common.missing' })]}
+                maxChips={1}
+            />
+        );
     }
 
     const collectionList = data.map((datum) => {
