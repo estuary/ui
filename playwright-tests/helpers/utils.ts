@@ -35,42 +35,31 @@ const updateSavedAuth = (filePath: string, updates: Partial<AuthFile>) => {
 
 // Used to fetch the OTP we need during login. This hits your actual local InBucket from Supabase
 export const getLoginMessage = async (username: string) => {
+    console.log('getLoginMessage:latest message:searching');
+
     const requestContext = await request.newContext();
     const messages = await requestContext
-        .get(`${inbucketURL}/api/v1/mailbox/${username}`)
-        .then((res) => res.json())
-        // InBucket doesn't have any params for sorting, so here
-        // we're sorting the messages by date
-        .then((items) =>
-            [...items].sort((a, b) => {
-                if (a.date < b.date) {
-                    return 1;
-                }
+        .get(`${inbucketURL}/api/v1/search?query=to:"${username}"&limit=1`)
+        .then((res) => res.json());
 
-                if (a.date > b.date) {
-                    return -1;
-                }
-
-                return 0;
-            })
-        );
-
-    // As we've sorted the messages by date, the first message in
-    // the `messages` array will be the latest one
-    const latestMessageId = messages[0]?.id;
+    const latestMessageId = messages?.messages[0]?.ID;
 
     if (latestMessageId) {
+        console.log('getLoginMessage:latest message:narrowing');
         const message = await requestContext
-            .get(`${inbucketURL}/api/v1/mailbox/${username}/${latestMessageId}`)
+            .get(`${inbucketURL}/api/v1/message/${latestMessageId}`)
             .then((res) => res.json());
 
         // We've got the latest email. We're going to use regular
         // expressions to match the bits we need.
-        const token = message.body.text.match(/enter the code: ([0-9]+)/)[1];
-        const url = message.body.text.match(/Log In \( (.+) \)/)[1];
+        const token = message.Text.match(/enter the code: ([0-9]+)/)[1];
+        const url = message.Text.match(/Log In \( (.+) \)/)[1];
 
+        console.log('getLoginMessage:latest message:found');
         return { token, url };
     }
+
+    console.warn('getLoginMessage:latest message:not found');
 
     return {
         token: '',
@@ -86,10 +75,18 @@ export const startSessionWithUser = async (
 ): Promise<StartSessionWithUserResponse> => {
     console.log('startingSession:start');
     const name = `${originalName}`;
-    const filePath = `${test.info().project.testDir}/.auth/${name}.json`;
-    const authFileExists = fs.existsSync(filePath);
+
+    console.log('startingSession:directory:checking');
+    const fileDir = `${test.info().project.testDir}/.auth`;
+    const authDirExists = fs.existsSync(fileDir);
+    if (!authDirExists) {
+        console.log('startingSession:directory:creating');
+        fs.mkdirSync(fileDir);
+    }
 
     console.log('startingSession:saved:checking');
+    const filePath = `${fileDir}/${name}.json`;
+    const authFileExists = fs.existsSync(filePath);
     let authSettings: AuthFile | undefined;
     if (authFileExists) {
         console.log('startingSession:saved:found');
@@ -182,10 +179,23 @@ export const inituser = async (
         newTenant = `${name}${tenantSuffix}`;
         console.log(`tenant:started:${name},${newTenant}`);
 
+        // Wait for load
+        await expect(
+            page.getByText(`Get started with Estuary Flow`)
+        ).toBeVisible();
+        await expect(page.getByText(`Where did you hear about`)).toBeVisible();
+
         // Create Tenant
-        await expect(page.getByText(`Let's get started`)).toBeVisible();
+        await page.getByRole('textbox', { name: 'Organization' }).click();
         await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
-        await page.getByRole('button', { name: 'Continue' }).click();
+
+        // Tell how we heard
+        await page.getByText('Other').click();
+
+        // Finish
+        await page
+            .getByRole('button', { name: 'Complete Registration' })
+            .click();
 
         updateSavedAuth(filePath, {
             tenant: newTenant,
