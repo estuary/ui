@@ -121,7 +121,7 @@
         "@types/react-window": "^1.8.5",
         "@types/retry": "^0.12.5",
         "@vitejs/plugin-react": "^4.3.4",
-        "@vitest/ui": "^3.0.9",
+        "@vitest/ui": "^3.1.2",
         "browserslist-to-esbuild": "^2.1.1",
         "eslint": "^8.57.1",
         "eslint-config-kentcdodds": "^20.3.1",
@@ -145,7 +145,7 @@
         "vite-plugin-sri3": "^1.0.6",
         "vite-plugin-wasm": "^3.4.1",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.0.9",
+        "vitest": "^3.1.2",
         "vitest-mock-extended": "^3.0.1"
     },
     "overrides": {
