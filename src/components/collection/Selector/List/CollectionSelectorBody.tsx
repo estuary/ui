@@ -57,9 +57,16 @@ function CollectionSelectorBody({
         }
     };
 
-    // TODO (FireFox Height Hack) - hardcoded height to make life easier
     return (
-        <TableBody component="div" sx={{ height: parentHeight }}>
+        <TableBody
+            component="div"
+            sx={{
+                // TODO (Safari Height Hack) - Safari ignores the height when the display is `table-row-group`
+                display: 'table-cell',
+                // TODO (FireFox Height Hack) - hardcoded height to make life easier
+                height: parentHeight,
+            }}
+        >
             <AutoSizer>
                 {({ height, width }: AutoSizer['state']) => {
                     return (
