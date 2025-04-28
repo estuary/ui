@@ -11,8 +11,9 @@ import {
 
 import { useIntl } from 'react-intl';
 
+import { DEFAULT_ROW_HEIGHT } from 'src/components/collection/Selector/List/shared';
 import { defaultOutlineColor } from 'src/context/Theme';
-import { useBinding_disabledBindings_count } from 'src/stores/Binding/hooks';
+import { useBinding_enabledBindings_count } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorFooter({
     columnCount,
@@ -20,15 +21,17 @@ function CollectionSelectorFooter({
 }: CollectionSelectorFooterProps) {
     const intl = useIntl();
 
-    const disabledBindingsCount = useBinding_disabledBindings_count();
+    const enabledBindingsCount = useBinding_enabledBindings_count();
 
+    // TODO (FireFox Height Hack) - hardcoded height to make life easier
     return (
-        <TableFooter component="div">
-            <TableRow component="div">
+        <TableFooter component="div" sx={{ height: DEFAULT_ROW_HEIGHT }}>
+            <TableRow component="div" sx={{ height: DEFAULT_ROW_HEIGHT }}>
                 <TableCell
                     component="div"
                     align="right"
                     sx={{
+                        alignContents: 'center',
                         borderBottom: 'none',
                         borderTop: (theme) =>
                             `1px solid ${defaultOutlineColor[theme.palette.mode]}`,
@@ -46,14 +49,14 @@ function CollectionSelectorFooter({
                         <Box>
                             {intl.formatMessage(
                                 {
-                                    id: Boolean(disabledBindingsCount)
-                                        ? disabledBindingsCount === totalCount
-                                            ? 'workflows.collectionSelector.footer.disabledCount.all'
-                                            : 'workflows.collectionSelector.footer.disabledCount'
-                                        : 'workflows.collectionSelector.footer.disabledCount.empty',
+                                    id: Boolean(enabledBindingsCount)
+                                        ? enabledBindingsCount === totalCount
+                                            ? 'workflows.collectionSelector.footer.enabledCount.all'
+                                            : 'workflows.collectionSelector.footer.enabledCount'
+                                        : 'workflows.collectionSelector.footer.enabledCount.empty',
                                 },
                                 {
-                                    disabledBindingsCount,
+                                    disabledBindingsCount: enabledBindingsCount,
                                 }
                             )}
                         </Box>
