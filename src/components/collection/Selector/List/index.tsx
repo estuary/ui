@@ -49,6 +49,7 @@ import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 function CollectionSelectorList({
     disableActions,
     header,
+    height,
     hideFooter,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
@@ -334,6 +335,8 @@ function CollectionSelectorList({
                 sx={{
                     height: '100%',
                     width: '100%',
+                    // TODO (FireFox Height Hack) - added overflow so the scroll bar does not show up
+                    overflow: 'hidden',
                 }}
             >
                 <CollectionSelectorTable>
@@ -352,6 +355,11 @@ function CollectionSelectorList({
 
                     <CollectionSelectorBody
                         columns={columns}
+                        // TODO (FireFox Height Hack)
+                        // Magic number - it works and I hate it.
+                        // Do not copy this anywhere.
+                        // You need the height to hit some super magic special thing that makes no sense so FireFox will render the footer at the bottom.
+                        height={height - 120}
                         filterValue={filterValue}
                         rows={filteredRows}
                         selectionEnabled={selectionEnabled}
@@ -361,7 +369,7 @@ function CollectionSelectorList({
                         checkScrollbarVisibility={checkScrollbarVisibility}
                     />
 
-                    {hideFooter ? undefined : (
+                    {hideFooter ? null : (
                         <CollectionSelectorFooter
                             columnCount={columns.length}
                             totalCount={mappedResourceConfigs.length}
