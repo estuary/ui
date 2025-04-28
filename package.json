@@ -112,7 +112,6 @@
         "@types/lodash": "^4.14.191",
         "@types/logrocket-react": "^3.0.0",
         "@types/luxon": "^3.3.2",
-        "@types/node": "^20.14.2",
         "@types/react": "^17.0.52",
         "@types/react-dom": "^17.0.18",
         "@types/react-highlight-words": "^0.20.0",
