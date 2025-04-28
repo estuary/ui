@@ -77,5 +77,8 @@ module.exports = {
         'import/first': 'error',
         'import/newline-after-import': 'error',
         'import/no-duplicates': 'error',
+
+        // Just do not agree with this rule as I think it makes parsing imports harder
+        'import/consistent-type-specifier-style': 'off',
     },
 };
