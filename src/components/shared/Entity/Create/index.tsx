@@ -133,6 +133,9 @@ function EntityCreate({
         bindingServerUpdateRequired,
     ]);
 
+    console.log('>>> exitWhenLogsClose', exitWhenLogsClose);
+    console.log('>>> endpointConfigChanged', endpointConfigChanged);
+
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
     useUnsavedChangesPrompt(
         !exitWhenLogsClose && endpointConfigChanged,
