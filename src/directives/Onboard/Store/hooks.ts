@@ -1,6 +1,7 @@
-import { useLocalZustandStore } from 'context/LocalZustand';
-import { OnboardingState } from 'directives/Onboard/Store/types';
-import { OnboardingStoreNames } from 'stores/names';
+import type { OnboardingState } from 'src/directives/Onboard/Store/types';
+
+import { useLocalZustandStore } from 'src/context/LocalZustand';
+import { OnboardingStoreNames } from 'src/stores/names';
 
 export const useOnboardingStore_requestedTenant = () => {
     return useLocalZustandStore<
@@ -42,6 +43,20 @@ export const useOnboardingStore_setNameMissing = () => {
         OnboardingState,
         OnboardingState['setNameMissing']
     >(OnboardingStoreNames.GENERAL, (state) => state.setNameMissing);
+};
+
+export const useOnboardingStore_surveyMissing = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['surveyMissing']
+    >(OnboardingStoreNames.GENERAL, (state) => state.surveyMissing);
+};
+
+export const useOnboardingStore_setSurveyMissing = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['setSurveyMissing']
+    >(OnboardingStoreNames.GENERAL, (state) => state.setSurveyMissing);
 };
 
 export const useOnboardingStore_surveyOptionOther = () => {

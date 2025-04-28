@@ -1,3 +1,9 @@
+import type { ReactNode } from 'react';
+import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+import type { RelatedMaterializationSelectorProps } from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/types';
+
+import { useEffect, useState } from 'react';
+
 import {
     Autocomplete,
     Grid,
@@ -5,15 +11,14 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { autoCompleteDefaults_Virtual } from 'components/shared/AutoComplete/DefaultProps';
-import { ReactNode, useEffect, useState } from 'react';
+
 import { useIntl } from 'react-intl';
-import { useLoopIndex } from 'context/LoopIndex/useLoopIndex';
-import { LiveSpecsExt_Related } from 'api/liveSpecsExt';
-import { usePreSavePromptStore } from '../../../store/usePreSavePromptStore';
-import { RelatedMaterializationSelectorProps } from './types';
-import SelectorOption from './SelectorOption';
-import NoMaterializationsFound from './NoMaterializationsFound';
+
+import { autoCompleteDefaults_Virtual } from 'src/components/shared/AutoComplete/DefaultProps';
+import NoMaterializationsFound from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/NoMaterializationsFound';
+import SelectorOption from 'src/components/shared/Entity/prompts/steps/dataFlowReset/SelectMaterialization/SelectorOption';
+import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
+import { useLoopIndex } from 'src/context/LoopIndex/useLoopIndex';
 
 const getValue = (option: any) =>
     typeof option === 'string' ? option : option?.catalog_name;

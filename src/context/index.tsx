@@ -1,15 +1,16 @@
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import IconoirProvider from 'context/Iconoir';
-import NotificationProvider from 'context/Notifications';
-import SwrConfigProvider from 'context/SWR';
-import { BaseComponentProps } from 'types';
-import ThemeProvider from 'context/Theme';
-import ContentProvider from 'context/Content';
-import { SidePanelDocsProvider } from 'context/SidePanelDocs';
-import { TableSettingsProvider } from 'context/TableSettings';
-import { UserStoreProvider } from './User';
-import GlobalProviders from './GlobalProviders';
-import { UpdateHelmetProvider } from './UpdateHelmet';
+import type { BaseComponentProps } from 'src/types';
+
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import ContentProvider from 'src/context/Content';
+import GlobalProviders from 'src/context/GlobalProviders';
+import IconoirProvider from 'src/context/Iconoir';
+import NotificationProvider from 'src/context/Notifications';
+import { SidePanelDocsProvider } from 'src/context/SidePanelDocs';
+import SwrConfigProvider from 'src/context/SWR';
+import { TableSettingsProvider } from 'src/context/TableSettings';
+import ThemeProvider from 'src/context/Theme';
+import { UpdateHelmetProvider } from 'src/context/UpdateHelmet';
+import { UserStoreProvider } from 'src/context/User';
 
 const AppProviders = ({ children }: BaseComponentProps) => {
     return (

@@ -1,40 +1,23 @@
+import type { ConstraintDetailsProps } from 'src/components/tables/cells/fieldSelection/types';
+
 import { TableCell, Typography } from '@mui/material';
-import {
-    ConstraintTypes,
-    TranslatedConstraint,
-} from 'components/editor/Bindings/FieldSelection/types';
+
 import { FormattedMessage } from 'react-intl';
 
-interface Props {
-    constraint: TranslatedConstraint;
-}
+import {
+    constraintMessages,
+    recoverableConstraintTypes,
+} from 'src/components/tables/cells/fieldSelection/shared';
 
-const getConstraintHeaderSettings = (
-    constraintType: ConstraintTypes
-): [string, 'success' | 'error'] => {
-    switch (constraintType) {
-        case ConstraintTypes.FIELD_REQUIRED:
-            return ['fieldSelection.table.label.fieldRequired', 'success'];
-        case ConstraintTypes.LOCATION_REQUIRED:
-            return ['fieldSelection.table.label.locationRequired', 'success'];
-        case ConstraintTypes.LOCATION_RECOMMENDED:
-            return [
-                'fieldSelection.table.label.locationRecommended',
-                'success',
-            ];
-        case ConstraintTypes.FIELD_OPTIONAL:
-            return ['fieldSelection.table.label.fieldOptional', 'success'];
-        case ConstraintTypes.FIELD_FORBIDDEN:
-            return ['fieldSelection.table.label.fieldForbidden', 'error'];
-        case ConstraintTypes.UNSATISFIABLE:
-            return ['fieldSelection.table.label.unsatisfiable', 'error'];
-        default:
-            return ['fieldSelection.table.label.unknown', 'error'];
-    }
-};
+function ConstraintDetails({ constraint }: ConstraintDetailsProps) {
+    const messageId =
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        constraintMessages[constraint.type]?.id ??
+        'fieldSelection.table.label.unknown';
 
-function ConstraintDetails({ constraint }: Props) {
-    const [messageId, textColor] = getConstraintHeaderSettings(constraint.type);
+    const textColor = recoverableConstraintTypes.includes(constraint.type)
+        ? 'success'
+        : 'error';
 
     return (
         <TableCell sx={{ minWidth: 275 }}>

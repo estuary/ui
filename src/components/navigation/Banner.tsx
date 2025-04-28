@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import {
     Collapse,
     IconButton,
@@ -5,15 +7,15 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+
 import { NavArrowDown } from 'iconoir-react';
-import { useEffect, useRef, useState } from 'react';
-import { useTopBarStore } from 'stores/TopBar/Store';
+
 import {
     BANNER_HEIGHT,
     getSemanticBackgroundColor,
-    getSemanticBorder,
     isOverflown,
-} from './shared';
+} from 'src/components/navigation/shared';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 export default function Banner() {
     const theme = useTheme();
@@ -43,7 +45,7 @@ export default function Banner() {
                         theme.palette.mode,
                         severity
                     ),
-                    border: getSemanticBorder(theme.palette.mode, severity),
+                    border: theme.palette[severity].alpha_50,
                     height: expanded ? 'fit-content' : BANNER_HEIGHT,
                     justifyContent: 'space-between',
                     paddingBottom: 4,

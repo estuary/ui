@@ -34,4 +34,7 @@ export const Data: Record<string, string> = {
     'data.awsIamUserArn': `AWS IAM User ARN`,
     'data.errors': `Errors`,
     'data.completed': `Completed`,
+    'data.ipv4': `IPv4`,
+    'data.ipv6': `IPv6`,
+    'data.connectorStatus': `Connector Status`,
 };

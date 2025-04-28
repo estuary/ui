@@ -1,7 +1,17 @@
-import { PostgrestResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
-import { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { SortingProps } from 'src/services/supabase';
+import type {
+    CatalogStats,
+    Entity,
+    EntityWithCreateWorkflow,
+    LiveSpecsExtBaseQuery,
+} from 'src/types';
+
+import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     CONNECTOR_IMAGE,
     CONNECTOR_TITLE,
@@ -10,20 +20,15 @@ import {
     handleFailure,
     handleSuccess,
     QUERY_PARAM_CONNECTOR_TITLE,
-    SHARDS_DISABLE,
     SHARD_LABELS,
-    SortingProps,
+    SHARDS_DISABLE,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
-import {
-    CatalogStats,
-    Entity,
-    EntityWithCreateWorkflow,
-    LiveSpecsExtBaseQuery,
-} from 'types';
-import { CHUNK_SIZE, DEMO_TENANT } from 'utils/misc-utils';
-import { getCountSettings } from 'utils/table-utils';
+} from 'src/services/supabase';
+import { CHUNK_SIZE, DEMO_TENANT } from 'src/utils/misc-utils';
+import { getCountSettings } from 'src/utils/table-utils';
+
+const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 
 const baseColumns = [
     'catalog_name',
@@ -429,6 +434,53 @@ const getLiveSpecShards = (tenant: string, entityType: Entity) => {
         .eq('spec_type', entityType);
 };
 
+export interface TrialCollectionQuery {
+    catalog_name: string;
+    updated_at: string;
+}
+
+const getTrialCollections = async (
+    trialPrefixes: string[],
+    catalogNames: string[]
+) => {
+    const limiter = pLimit(3);
+    const promises: Promise<PostgrestResponse<TrialCollectionQuery>>[] = [];
+    let index = 0;
+
+    const trialCollections = catalogNames.filter((name) =>
+        trialPrefixes.some((prefix) => name.startsWith(prefix))
+    );
+
+    const promiseGenerator = (idx: number) => {
+        const trialThreshold = DateTime.utc().minus({
+            days: trialDuration,
+        });
+        const catalogNameFilter = trialCollections
+            .slice(idx, idx + CHUNK_SIZE)
+            .map((name) => `catalog_name.eq.${name}`)
+            .join(',');
+
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select('catalog_name,updated_at')
+            .or(catalogNameFilter)
+            .eq('spec_type', 'collection')
+            .lt('updated_at', trialThreshold);
+    };
+
+    while (index < trialCollections.length) {
+        const prom = promiseGenerator(index);
+        promises.push(limiter(() => prom));
+
+        index = index + CHUNK_SIZE;
+    }
+
+    const response = await Promise.all(promises);
+    const errors = response.filter((r) => r.error);
+
+    return errors[0] ?? { data: response.flatMap((r) => r.data) };
+};
+
 const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
 export const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
 export interface LiveSpecsExt_Related {
@@ -482,4 +534,5 @@ export {
     getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getTrialCollections,
 };

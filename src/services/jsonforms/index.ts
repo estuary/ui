@@ -23,35 +23,46 @@
   THE SOFTWARE.
 */
 
-import {
+import type {
     ControlElement,
-    deriveTypes,
-    encode,
-    Generate,
     GroupLayout,
-    isGroup,
-    isLayout,
     JsonSchema,
     LabelElement,
     Layout,
+    UISchemaElement,
+} from '@jsonforms/core';
+
+import {
+    deriveTypes,
+    encode,
+    Generate,
+    isGroup,
+    isLayout,
     resolveSchema,
     toDataPath,
     toDataPathSegments,
-    UISchemaElement,
 } from '@jsonforms/core';
+
+import JsonRefs from 'json-refs';
 import { concat, includes, isPlainObject, orderBy } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import { logRocketConsole, logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { Annotations, CustomTypes, Formats, Options } from 'types/jsonforms';
-import JsonRefs from 'json-refs';
+
 import {
     ADVANCED,
     allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
     LAYOUT_PATH,
     SHOW_INFO_SSH_ENDPOINT,
-} from './shared';
+} from 'src/services/jsonforms/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import {
+    Annotations,
+    CustomTypes,
+    Formats,
+    Options,
+} from 'src/types/jsonforms';
+import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
@@ -80,8 +91,10 @@ const addTitle = (
 };
 
 type DateTimeFormats = 'date' | 'date-time' | 'time';
+type HandledFormats = 'duration';
+
 const schemaHasFormat = (
-    format: DateTimeFormats,
+    format: DateTimeFormats | HandledFormats,
     schema: JsonSchema
 ): boolean => {
     if (Object.hasOwn(schema, 'format')) {
@@ -651,6 +664,8 @@ const generateUISchema = (
             addOption(controlObject, Options.format, Formats.date);
         } else if (schemaHasFormat('time', jsonSchema)) {
             addOption(controlObject, Options.format, Formats.time);
+        } else if (schemaHasFormat('duration', jsonSchema)) {
+            jsonSchema.pattern ??= ISO_8601_DURATION_PATTERN;
         }
     }
 

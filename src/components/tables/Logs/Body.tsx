@@ -1,20 +1,17 @@
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListChildComponentProps, VariableSizeList } from 'react-window';
-import { OpsLogFlowDocument, TableStatuses } from 'types';
-import { TableBody } from '@mui/material';
-import {
-    MutableRefObject,
-    useCallback,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-} from 'react';
-import { isEmpty } from 'lodash';
+import type { MutableRefObject } from 'react';
+import type { ListChildComponentProps } from 'react-window';
+import type { OpsLogFlowDocument } from 'src/types';
 
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import EntityTableBody from '../EntityTable/TableBody';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+
+import { TableBody } from '@mui/material';
+
+import { isEmpty } from 'lodash';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { VariableSizeList } from 'react-window';
+
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import { LogsTableRow } from 'src/components/tables/Logs/Row';
 import {
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
@@ -22,14 +19,17 @@ import {
     UUID_OLDEST_LOG,
     VIRTUAL_TABLE_BODY_PADDING,
     WAITING_ROW_HEIGHT,
-} from './shared';
-import useLogColumns from './useLogColumns';
-import { LogsTableRow } from './Row';
+} from 'src/components/tables/Logs/shared';
+import useLogColumns from 'src/components/tables/Logs/useLogColumns';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
+import { TableStatuses } from 'src/types';
 
 interface Props {
-    outerRef: MutableRefObject<any>;
-    tableScroller: (node?: any) => VariableSizeList | null;
-    virtualRows: MutableRefObject<any>;
+    outerRef: MutableRefObject<HTMLDivElement | undefined>;
+    tableScroller: (node?: any) => VariableSizeList | undefined;
+    virtualRows: MutableRefObject<HTMLDivElement | undefined>;
 }
 
 function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
@@ -145,8 +145,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                                     return customHeight && customHeight > 0
                                         ? customHeight
                                         : isEmpty(row.fields)
-                                        ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
-                                        : DEFAULT_ROW_HEIGHT;
+                                          ? DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS
+                                          : DEFAULT_ROW_HEIGHT;
                                 }}
                                 overscanCount={10}
                                 style={{
@@ -177,8 +177,8 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
                 status: noData
                     ? TableStatuses.NO_EXISTING_DATA
                     : networkFailed
-                    ? TableStatuses.NETWORK_FAILED
-                    : TableStatuses.LOADING,
+                      ? TableStatuses.NETWORK_FAILED
+                      : TableStatuses.LOADING,
             }}
             loading={!hydrated}
             rows={null}

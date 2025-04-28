@@ -1,6 +1,7 @@
-import { useJournalDataLogsStore } from 'stores/JournalData/Logs/Store';
-import { WaitingForRowProps } from '../types';
-import WaitingForRowBase from './Base';
+import type { WaitingForRowProps } from 'src/components/tables/Logs/types';
+
+import WaitingForRowBase from 'src/components/tables/Logs/WaitingForRow/Base';
+import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 function WaitingForOldLogsRow(props: WaitingForRowProps) {
     const olderFinished = useJournalDataLogsStore(

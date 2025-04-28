@@ -1,17 +1,22 @@
-import { Grid, Toolbar } from '@mui/material';
-import AutocompletedField from 'components/shared/toolbar/AutocompletedField';
-import SearchField from 'components/shared/toolbar/SearchField';
-import { debounce } from 'lodash';
-import {
+import type {
     ChangeEvent,
     Dispatch,
     SetStateAction,
     SyntheticEvent,
-    useRef,
 } from 'react';
-import { useIntl } from 'react-intl';
-import { Entity } from 'types';
+import type { Entity } from 'src/types';
+
+import { useRef } from 'react';
 import useConstant from 'use-constant';
+
+import { Grid, Toolbar } from '@mui/material';
+
+import { debounce } from 'lodash';
+import { useIntl } from 'react-intl';
+
+import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import SearchField from 'src/components/shared/toolbar/SearchField';
+import { fireGtmEvent } from 'src/services/gtm';
 
 interface Props {
     belowMd: boolean;
@@ -73,6 +78,13 @@ function ConnectorToolbar({
                 isFiltering.current = hasQuery;
 
                 setSearchQuery(hasQuery ? filterQuery : null);
+
+                // Only fire the event if there is a query to send back
+                if (hasQuery) {
+                    fireGtmEvent('Connector_Search', {
+                        filterQuery,
+                    });
+                }
             },
             750
         ),

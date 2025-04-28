@@ -1,16 +1,22 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow, useEntityWorkflow_Editing } from 'context/Workflow';
+import type { BaseComponentProps } from 'src/types';
+
 import { useEffect, useRef } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { useSourceCaptureStore } from 'stores/SourceCapture/Store';
-import { BaseComponentProps } from 'types';
+
+import { useEntityType } from 'src/context/EntityContext';
+import {
+    useEntityWorkflow,
+    useEntityWorkflow_Editing,
+} from 'src/context/Workflow';
+import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
+import { logRocketConsole } from 'src/services/shared';
 import {
     useBinding_hydrateState,
     useBinding_setActive,
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
-} from './hooks';
+} from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
@@ -20,6 +26,8 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const workflow = useEntityWorkflow();
     const editWorkflow = useEntityWorkflow_Editing();
+
+    const getTrialPrefixes = useTrialPrefixes();
 
     const connectorTagId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.id
@@ -44,6 +52,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 editWorkflow,
                 entityType,
                 connectorTagId,
+                getTrialPrefixes,
                 rehydrating.current
             )
                 .then(
@@ -77,6 +86,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         connectorTagId,
         editWorkflow,
         entityType,
+        getTrialPrefixes,
         hydrateState,
         setActive,
         setHydrated,

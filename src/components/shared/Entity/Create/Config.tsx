@@ -1,12 +1,16 @@
+import type { EntityWithCreateWorkflow } from 'src/types';
+
+import { useEffect } from 'react';
+
 import { Collapse, Typography } from '@mui/material';
-import ConnectorTiles from 'components/connectors/ConnectorTiles';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
+
+import { FormattedMessage } from 'react-intl';
+
+import ConnectorTiles from 'src/components/connectors/ConnectorTiles';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { EntityWithCreateWorkflow } from 'types';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 interface Props {
     entityType: EntityWithCreateWorkflow;
@@ -19,7 +23,10 @@ function EntityCreateConfig({ entityType }: Props) {
 
     useEffect(() => {
         if (connectorId) {
-            navigateToCreate(entityType, connectorId, true, true);
+            navigateToCreate(entityType, {
+                id: connectorId,
+                advanceToForm: true,
+            });
         }
     }, [navigateToCreate, connectorId, entityType]);
 
@@ -29,7 +36,7 @@ function EntityCreateConfig({ entityType }: Props) {
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>
 
-            <ConnectorTiles protocolPreset={entityType} replaceOnNavigate />
+            <ConnectorTiles protocolPreset={entityType} />
         </Collapse>
     );
 }

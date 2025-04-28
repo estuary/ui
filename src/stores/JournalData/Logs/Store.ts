@@ -1,14 +1,19 @@
+import type { JournalDataLogsState } from 'src/stores/JournalData/Logs/types';
+import type { OpsLogFlowDocument } from 'src/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import produce from 'immer';
+
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
-import { JournalDataStoreNames } from 'stores/names';
-import { OpsLogFlowDocument } from 'types';
-import { devtoolsOptions } from 'utils/store-utils';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
-import { JournalDataLogsState } from './types';
+} from 'src/stores/extensions/Hydration';
+import { JournalDataStoreNames } from 'src/stores/names';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 // Since journal data reads data and always returns an array it gets a little weird
 //  to hydrate the store synchronously. This means we have to wait for one of two

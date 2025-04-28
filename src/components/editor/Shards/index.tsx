@@ -1,17 +1,21 @@
 import { Box, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
-import { useEditorStore_persistedDraftId } from 'components/editor/Store/hooks';
+
+import { useIntl } from 'react-intl';
+
+import ShardsDisable from 'src/components/editor/Shards/Disable';
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import ShardsDisable from './Disable';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
 interface Props {
     renderOpen: boolean;
 }
 
 function ShardsEditor({ renderOpen }: Props) {
+    const intl = useIntl();
+
     const forcedToEnable = useGlobalSearchParams(
         GlobalSearchParams.FORCED_SHARD_ENABLE
     );
@@ -28,7 +32,9 @@ function ShardsEditor({ renderOpen }: Props) {
                 forceOpen={Boolean(forcedToEnable || renderOpen)}
                 header={
                     <Typography>
-                        <FormattedMessage id="workflows.advancedSettings.title" />
+                        {intl.formatMessage({
+                            id: 'workflows.advancedSettings.title',
+                        })}
                     </Typography>
                 }
             >

@@ -1,18 +1,18 @@
-import { optionalColumnIntlKeys } from 'components/tables/FieldSelection';
-import SelectColumnMenu from 'components/tables/SelectColumnMenu';
-import { useDisplayTableColumns } from 'context/TableSettings';
-import { SyntheticEvent } from 'react';
-import { TablePrefixes } from 'stores/Tables/hooks';
-import { TableColumns } from 'types';
-import { WithRequiredNonNullProperty } from 'types/utils';
-import { hasLength } from 'utils/misc-utils';
+import type { SyntheticEvent } from 'react';
+import type { TableColumnSelectorProps } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { TableColumns } from 'src/types';
+import type { WithRequiredNonNullProperty } from 'src/types/utils';
 
-interface Props {
-    columns: TableColumns[];
-    loading: boolean;
-}
+import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
+import SelectColumnMenu from 'src/components/tables/SelectColumnMenu';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
-export default function TableColumnSelector({ columns, loading }: Props) {
+export default function TableColumnSelector({
+    columns,
+    loading,
+}: TableColumnSelectorProps) {
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
 
     const optionalColumns = columns.filter(
@@ -61,16 +61,16 @@ export default function TableColumnSelector({ columns, loading }: Props) {
                       },
                   }
                 : checked && !columnShown
-                ? {
-                      ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
-                          shownOptionalColumns: [
-                              ...shownOptionalColumns,
-                              column,
-                          ],
-                      },
-                  }
-                : existingSettings;
+                  ? {
+                        ...existingSettings,
+                        [TablePrefixes.fieldSelection]: {
+                            shownOptionalColumns: [
+                                ...shownOptionalColumns,
+                                column,
+                            ],
+                        },
+                    }
+                  : existingSettings;
 
         setTableSettings(evaluatedSettings);
     };

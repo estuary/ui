@@ -1,5 +1,5 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { KeyedMutator } from 'swr';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { KeyedMutator } from 'swr';
 
 export interface UserInfoSummary {
     hasDemoAccess: boolean;

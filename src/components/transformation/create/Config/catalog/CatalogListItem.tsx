@@ -1,3 +1,7 @@
+import type { DerivationAttribute } from 'src/stores/TransformationCreate/types';
+
+import { useState } from 'react';
+
 import {
     Collapse,
     IconButton,
@@ -7,25 +11,25 @@ import {
     Stack,
     useTheme,
 } from '@mui/material';
+
 import {
-    useEditorStore_removeStaleStatus,
-    useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import { defaultOutline } from 'context/Theme';
-import {
-    Xmark,
     NavArrowDown,
     NavArrowRight,
     WarningCircle,
+    Xmark,
 } from 'iconoir-react';
-import { useState } from 'react';
+
+import {
+    useEditorStore_removeStaleStatus,
+    useEditorStore_setId,
+} from 'src/components/editor/Store/hooks';
+import { defaultOutline } from 'src/context/Theme';
 import {
     useTransformationCreate_removeAttribute,
     useTransformationCreate_selectedAttribute,
     useTransformationCreate_setAttributeType,
     useTransformationCreate_setSelectedAttribute,
-} from 'stores/TransformationCreate/hooks';
-import { DerivationAttribute } from 'stores/TransformationCreate/types';
+} from 'src/stores/TransformationCreate/hooks';
 
 interface Props {
     fixedAttributeType: DerivationAttribute;

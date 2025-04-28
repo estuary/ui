@@ -1,5 +1,8 @@
-import { createContext, useContext } from 'react';
-import { BaseComponentProps, Entity } from 'types';
+import type { BaseComponentProps, Entity } from 'src/types';
+
+import { createContext, useContext, useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
 
 interface Props extends BaseComponentProps {
     value: Entity;
@@ -27,4 +30,32 @@ const useEntityType = () => {
     return context;
 };
 
-export { EntityContextProvider, useEntityType };
+// This is for WORKFLOWS only. This means "collections" = "transformations"
+const useEntityTypeTranslatedForWorkflows = () => {
+    const intl = useIntl();
+
+    const entityTypeValue = useEntityType();
+
+    return useMemo(() => {
+        switch (entityTypeValue) {
+            case 'capture':
+                return intl.formatMessage({ id: 'terms.capture' });
+                break;
+            case 'materialization':
+                return intl.formatMessage({ id: 'terms.materialization' });
+                break;
+            case 'collection':
+                return intl.formatMessage({ id: 'terms.transformation' });
+                break;
+            default:
+                return intl.formatMessage({ id: 'terms.entity' });
+                break;
+        }
+    }, [entityTypeValue, intl]);
+};
+
+export {
+    EntityContextProvider,
+    useEntityType,
+    useEntityTypeTranslatedForWorkflows,
+};

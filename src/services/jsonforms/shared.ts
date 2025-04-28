@@ -1,4 +1,4 @@
-import { ValidationMode } from '@jsonforms/core';
+import type { ValidationMode } from '@jsonforms/core';
 
 export const CONTAINS_REQUIRED_FIELDS = 'containsRequiredFields';
 export const CHILDREN_HAVE_VALUE = 'childrenHaveValue';

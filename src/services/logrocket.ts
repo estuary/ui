@@ -1,13 +1,13 @@
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
+
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import {
-    DEFAULT_FILTER,
-    getUserDetails,
-    OAUTH_OPERATIONS,
-} from 'services/supabase';
-import { getLogRocketSettings } from 'utils/env-utils';
+import setupLogRocketReact from 'logrocket-react';
+
+import { OAUTH_OPERATIONS } from 'src/api/shared';
+import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
+import { getLogRocketSettings } from 'src/utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -36,8 +36,8 @@ const shouldMaskEverything = (url?: string) =>
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
-    maskEverythingOperations.some(
-        (el) => operation?.toLowerCase().includes(el)
+    maskEverythingOperations.some((el) =>
+        operation?.toLowerCase().includes(el)
     );
 
 // for endpoints where we do not want to mess with the request at all
@@ -201,6 +201,7 @@ export const initLogRocket = () => {
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
+        setupLogRocketReact(LogRocket);
     }
 };
 

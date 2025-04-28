@@ -1,6 +1,7 @@
-import { DEFAULT_FILTER, insertSupabase, TABLES } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
-import { suggestedName } from 'utils/name-utils';
+import { DEFAULT_FILTER } from 'src/services/shared';
+import { insertSupabase, TABLES } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
+import { suggestedName } from 'src/utils/name-utils';
 
 export type RequiresRecreation =
     // The collection key in the draft differs from that of the live spec.

@@ -23,20 +23,22 @@
   THE SOFTWARE.
 */
 
-import {
+import type {
     ControlProps,
     OwnPropsOfEnum,
     RankedTester,
-    rankWith,
-    scopeEndsWith,
 } from '@jsonforms/core';
-import { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
-import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
-import PrefixedName from 'components/inputs/PrefixedName';
-import { PrefixedName_Change } from 'components/inputs/PrefixedName/types';
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow_Editing } from 'context/Workflow';
+import type { WithOptionLabel } from '@jsonforms/material-renderers/lib/mui-controls/MuiAutocomplete';
+import type { PrefixedName_Change } from 'src/components/inputs/PrefixedName/types';
+
 import { useCallback } from 'react';
+
+import { rankWith, scopeEndsWith } from '@jsonforms/core';
+import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
+
+import PrefixedName from 'src/components/inputs/PrefixedName';
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 
 export const CATALOG_NAME_SCOPE = 'entityName';
 

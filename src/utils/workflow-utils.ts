@@ -1,37 +1,40 @@
-import { ConnectorsQuery_DetailsForm, ConnectorTag_Base } from 'api/connectors';
-import {
-    DraftSpecsExtQuery_ByCatalogName,
-    modifyDraftSpec,
-} from 'api/draftSpecs';
-import { ConstraintTypes } from 'components/editor/Bindings/FieldSelection/types';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
-import { isBoolean, isEmpty } from 'lodash';
-import { CallSupabaseResponse } from 'services/supabase';
-import { REMOVE_DURING_GENERATION } from 'stores/Binding/shared';
-import {
+import type { ConnectorConfig } from 'deps/flow/flow';
+import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
+import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { CallSupabaseResponse } from 'src/services/supabase';
+import type {
     FullSource,
     FullSourceDictionary,
-} from 'stores/Binding/slices/TimeTravel';
-import { Bindings, ResourceConfigDictionary } from 'stores/Binding/types';
-import {
+} from 'src/stores/Binding/slices/TimeTravel';
+import type {
+    Bindings,
+    ResourceConfigDictionary,
+} from 'src/stores/Binding/types';
+import type {
     DekafConfig,
     Entity,
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
-} from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { ConnectorConfig } from '../../deps/flow/flow';
-import { isDekafEndpointConfig } from './connector-utils';
+} from 'src/types';
+
+import { isBoolean, isEmpty } from 'lodash';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
+import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
-} from './entity-utils';
+} from 'src/utils/entity-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 export const DEFAULT_DEBOUNCE_WAIT = 500;
+export const QUICK_DEBOUNCE_WAIT = DEFAULT_DEBOUNCE_WAIT / 2;
+export const NEAR_INSTANT_DEBOUNCE_WAIT = QUICK_DEBOUNCE_WAIT / 2;
 
 export const getBackfillCounter = (binding: any): number => {
     return Object.hasOwn(binding, 'backfill') ? binding.backfill : 0;
@@ -41,8 +44,8 @@ export const getSourceOrTarget = (binding: any) => {
     return Object.hasOwn(binding ?? {}, 'source')
         ? binding.source
         : Object.hasOwn(binding ?? {}, 'target')
-        ? binding.target
-        : binding;
+          ? binding.target
+          : binding;
 };
 
 export const getBindingAsFullSource = (binding: any) => {
@@ -106,6 +109,10 @@ export const getDisableProps = (disable: boolean | undefined) => {
     return disable ? { disable } : {};
 };
 
+// Used to mark fields that should be removed during generation. This is
+//      only here because if we set something to null and then check for nulls
+//      we might end up overwritting a value a user specifically wants a null for.
+export const REMOVE_DURING_GENERATION = undefined;
 export const getFullSource = (
     fullSource: FullSource | string | undefined,
     filterOutName?: boolean,
@@ -208,8 +215,8 @@ export const generateTaskSpec = (
                           iteratedIndex
                       )
                     : hasLength(draftSpec.bindings)
-                    ? bindingIndex
-                    : -1;
+                      ? bindingIndex
+                      : -1;
 
                 if (existingBindingIndex > -1) {
                     // Include disable otherwise totally remove it
@@ -373,7 +380,7 @@ export const modifyExistingCaptureDraftSpec = async (
 };
 
 // Common materialization field selection checks
-export const evaluateRequiredIncludedFields = (
+export const isRequireOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (
@@ -382,18 +389,15 @@ export const evaluateRequiredIncludedFields = (
     );
 };
 
-export const evaluateRecommendedIncludedFields = (
+export const isRecommendedField = (
     constraintType: ConstraintTypes
 ): boolean => {
-    const includeRequired = evaluateRequiredIncludedFields(constraintType);
+    const required = isRequireOnlyField(constraintType);
 
-    return (
-        includeRequired ||
-        constraintType === ConstraintTypes.LOCATION_RECOMMENDED
-    );
+    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
 };
 
-export const evaluateRequiredExcludedFields = (
+export const isExcludeOnlyField = (
     constraintType: ConstraintTypes
 ): boolean => {
     return (
@@ -402,30 +406,6 @@ export const evaluateRequiredExcludedFields = (
     );
 };
 
-export interface ConnectorVersionEvaluationOptions {
-    connectorId: string;
-    existingImageTag: string;
-}
-
-export function evaluateConnectorVersions(
-    connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
-    options?: ConnectorVersionEvaluationOptions
-): ConnectorTag_Base {
-    // Return the version of the connector that is used by the existing task in an edit workflow.
-    if (options && options.connectorId === connector.id) {
-        const connectorsInUse = connector.connector_tags.filter(
-            (version) => version.image_tag === options.existingImageTag
-        );
-
-        if (hasLength(connectorsInUse)) {
-            return connectorsInUse[0];
-        }
-    }
-
-    // Return the latest version of a given connector.
-    const { connector_id, id, image_tag } = connector.connector_tags.sort(
-        (a, b) => b.image_tag.localeCompare(a.image_tag)
-    )[0];
-
-    return { connector_id, id, image_tag };
-}
+export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
+    typeof value === 'string' &&
+    (value === 'default' || value === 'exclude' || value === 'require');

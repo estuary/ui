@@ -1,4 +1,5 @@
-import { supabaseClient } from 'context/GlobalProviders';
+import type { BaseComponentProps, ViewLogs_Line } from 'src/types';
+
 import {
     createContext,
     useCallback,
@@ -7,9 +8,14 @@ import {
     useRef,
     useState,
 } from 'react';
-import { DEFAULT_POLLING_INTERVAL, RPCS } from 'services/supabase';
-import { BaseComponentProps, ViewLogs_Line } from 'types';
-import { hasLength, incrementInterval, timeoutCleanUp } from 'utils/misc-utils';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { DEFAULT_POLLING_INTERVAL, RPCS } from 'src/services/supabase';
+import {
+    hasLength,
+    incrementInterval,
+    timeoutCleanUp,
+} from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {
     token: string | null;

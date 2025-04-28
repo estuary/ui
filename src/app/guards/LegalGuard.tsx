@@ -1,9 +1,13 @@
-import FullPageError from 'components/fullPage/Error';
-import ClickToAccept from 'directives/ClickToAccept';
-import FullPageWrapper from 'app/FullPageWrapper';
+import type { BaseComponentProps } from 'src/types';
+
+import { Box } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import { BaseComponentProps } from 'types';
-import useDirectiveGuard from './hooks';
+
+import FullPageWrapper from 'src/app/FullPageWrapper';
+import useDirectiveGuard from 'src/app/guards/hooks';
+import FullPageError from 'src/components/fullPage/Error';
+import ClickToAccept from 'src/directives/ClickToAccept';
 
 const SELECTED_DIRECTIVE = 'clickToAccept';
 
@@ -37,11 +41,17 @@ function LegalGuard({ children }: BaseComponentProps) {
     if (status !== 'fulfilled') {
         return (
             <FullPageWrapper>
-                <ClickToAccept
-                    directive={directive}
-                    status={status}
-                    mutate={mutate}
-                />
+                <Box
+                    sx={{
+                        p: 2,
+                    }}
+                >
+                    <ClickToAccept
+                        directive={directive}
+                        status={status}
+                        mutate={mutate}
+                    />
+                </Box>
             </FullPageWrapper>
         );
     } else {

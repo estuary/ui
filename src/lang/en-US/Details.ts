@@ -1,4 +1,4 @@
-import { CTAs } from './CTAs';
+import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Details: Record<string, string> = {
     'details.tabs.overview': `Overview`,
@@ -8,6 +8,8 @@ export const Details: Record<string, string> = {
     'details.tabs.ops': `Logs`,
 
     'details.history.noPublications': `No publications were found.`,
+    'details.history.diffFailed': `Unable to get specs to compare.`,
+    'details.history.title': `Publication History`,
 
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,
@@ -19,9 +21,11 @@ export const Details: Record<string, string> = {
     'details.ops.status.overview.autoDiscovery.subheaderAdded': `Added`,
     'details.ops.status.overview.autoDiscovery.subheaderModified': `Modified`,
     'details.ops.status.overview.autoDiscovery.subheaderRemoved': `Removed`,
+    'details.ops.status.overview.connector.header': `Connector`,
+    'details.ops.status.overview.connector.subheaderLastStatus': `Status`,
     'details.ops.status.overview.controller.header': `Controller`,
     'details.ops.status.overview.controller.subheaderActivation': `Data Plane Activation`,
-    'details.ops.status.overview.controller.subheaderLastUpdated': `Last Updated`,
+    'details.ops.status.overview.generic.subheaderLastUpdated': `Last Updated`,
     'details.ops.status.overview.menuLabel.details': `View details`,
     'details.ops.status.overview.menuLabel.troubleshoot': `Contact support`,
     'details.ops.status.table.label': `Controller Status History Table`,

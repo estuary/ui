@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
-import { Errors } from './Errors';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+import { Errors } from 'src/lang/en-US/Errors';
 
 export const AdminPage: Record<string, string> = {
     'admin.header': `Administration`,
@@ -76,7 +76,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
-    'admin.billing.paymentMethods.description': `Enter your payment information.  You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.description': `Enter your payment information. You won’t be charged until your account usage exceeds free tier limits.`,
     'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
     'admin.billing.paymentMethods.cta.addPaymentMethod.error': `There was an issue attempting to get a token from Stripe. You cannot currently add a payment method. ${Errors['error.tryAgain']}`,
     'admin.billing.paymentMethods.table.label.cardType': `Type`,
@@ -96,19 +96,16 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
-    'admin.users.confirmation.listItem': `{identifier} with {capability} access.`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
-    'admin.prefix.issueGrant.message': `This is a placeholder for a description.`,
     'admin.prefix.issueGrant.label.capability': `Capability`,
     'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
     'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
     'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
     'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
-    'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}.`,
+    'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}`,
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
-    'admin.prefix.confirmation.listItem': `{subjectRole} having {capability} over {objectRole}.`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.alerts.header': `Organization Notifications`,
@@ -168,28 +165,4 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
-
-    // Access Grants
-    'accessGrantsTable.header': `Captures`,
-    'accessGrantsTable.users.title': `Organization Membership`,
-    'accessGrantsTable.users.table.aria.label': `Organization Membership Table`,
-    'accessGrantsTable.prefixes.title': `Data Sharing`,
-    'accessGrantsTable.prefixes.table.aria.label': `Data Sharing Table`,
-    'accessGrantsTable.users.filterLabel': `Filter User or Object`,
-    'accessGrantsTable.prefixes.filterLabel': `Filter Prefixes`,
-    'accessGrants.message1': `No results found.`,
-    'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
-
-    'accessGrants.table.accessLinks.title': `Active Invite Links`,
-    'accessGrants.table.accessLinks.cta.generate': `Create Links`,
-    'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
-    'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Create Invite Link" button above. Invitations will be listed here while they are live.`,
-    'accessGrants.table.accessLinks.label.filter': `Filter Prefix or Capability`,
-    'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
-    'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
-    'accessGrants.table.accessLinks.label.capability': `Capability`,
-    'accessGrants.table.accessLinks.label.url': `Invite Link`,
-    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
-    'accessGrants.table.accessLinks.label.actions': `Actions`,
-    'accessGrants.table.accessLinks.delete.confirm': `All items will be disabled and this action cannot be undone. Please review the list to continue.`,
 };

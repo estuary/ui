@@ -1,20 +1,25 @@
-import { Box, useTheme } from '@mui/material';
-import { useEditorStore_id } from 'components/editor/Store/hooks';
-import AlertBox from 'components/shared/AlertBox';
-import EndpointConfigForm from 'components/shared/Entity/EndpointConfig/Form';
-import EndpointConfigHeader from 'components/shared/Entity/EndpointConfig/Header';
-import WrapperWithHeader from 'components/shared/Entity/WrapperWithHeader';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import { useEntityWorkflow } from 'context/Workflow';
-import useConnectorTag from 'hooks/connectors/useConnectorTag';
-import { isEqual } from 'lodash';
 import { useEffect, useMemo } from 'react';
+
+import { Box, useTheme } from '@mui/material';
+
+import { isEqual } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
-import { createJSONFormDefaults } from 'services/ajv';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+
+import { useEditorStore_id } from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
+import EndpointConfigHeader from 'src/components/shared/Entity/EndpointConfig/Header';
+import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import useConnectorTag from 'src/hooks/connectors/useConnectorTag';
+import { createJSONFormDefaults } from 'src/services/ajv';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
+    useEndpointConfig_setEndpointCanBeEmpty,
+    useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
@@ -23,11 +28,9 @@ import {
     useEndpointConfigStore_setEndpointConfig,
     useEndpointConfigStore_setEndpointSchema,
     useEndpointConfigStore_setPreviousEndpointConfig,
-    useEndpointConfig_setEndpointCanBeEmpty,
-    useEndpointConfig_setServerUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
-import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
-import { configCanBeEmpty } from 'utils/misc-utils';
+} from 'src/stores/EndpointConfig/hooks';
+import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { configCanBeEmpty } from 'src/utils/misc-utils';
 
 interface Props {
     connectorImage: string;
@@ -118,6 +121,9 @@ function EndpointConfig({
             //  connector schema changes should be backwards compatible (as of Q1 2024)
             resetConfig = false;
         } else {
+            // TODO (create load) this should not be true anymore. The user cannot change the connector
+            //  but without this the create flow will not load in.
+
             // In create if the schema changed it probably means the user selected
             //  a different connector in the dropdown. So we need to clear out data
             //  and update the schema
@@ -171,6 +177,11 @@ function EndpointConfig({
                 //  and pass it along (to save a tiny bit of processing)
                 const defaultConfig = createJSONFormDefaults(schema);
                 setEndpointConfig(defaultConfig);
+
+                // TODO (endpoint header errors / server update required)
+                // I think this is a mistake when initially loading create. As the previous endpoint config
+                //  at that point is nothing. This extra call causes some issues with showing the error
+                //  notification properly. But it feels like removing this is a pretty big change.
                 setPreviousEndpointConfig(defaultConfig);
             }
         };

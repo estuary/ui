@@ -1,14 +1,17 @@
-import { SortDirection } from '@mui/material';
-import {
+import type { SortDirection } from '@mui/material';
+import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { ReactElement, ReactNode } from 'react';
+import type { BaseGrant, Grant_UserExt } from 'src/types';
+
 import { isEmpty, isObject } from 'lodash';
-import { ReactElement, ReactNode } from 'react';
 import { createSearchParams } from 'react-router-dom';
-import { derefSchema } from 'services/jsonforms';
-import { logRocketConsole } from 'services/shared';
-import { CustomEvents } from 'services/types';
+
+import { derefSchema } from 'src/services/jsonforms';
+import { logRocketConsole } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -52,6 +55,13 @@ export const stripPathing = (stringVal: string, tenantOnly?: boolean) => {
         stringVal.lastIndexOf('/') + 1,
         stringVal.length
     );
+};
+
+export const splitPathAndName = (stringVal: string): string[] => {
+    if (!stringVal) return [];
+
+    const lastSlash = stringVal.lastIndexOf('/') + 1;
+    return [stringVal.substr(0, lastSlash), stringVal.substr(lastSlash)];
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
@@ -222,3 +232,7 @@ export const isPostgrestFetcher = (
     | PostgrestFilterBuilder<any, any, any, any, any>
     | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
+
+export const isGrant_UserExt = (
+    value: Grant_UserExt | BaseGrant
+): value is Grant_UserExt => isObject(value) && 'user_email' in value;

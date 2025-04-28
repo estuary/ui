@@ -1,8 +1,8 @@
-import {
+import type {
     AutocompleteChangeReason,
     AutocompleteInputChangeReason,
 } from '@mui/material';
-import { KeyboardEvent, SyntheticEvent } from 'react';
+import type { KeyboardEvent, SyntheticEvent } from 'react';
 
 // This function detects whether the user is attempting to remove
 // one of the selected autocomplete options via the backspace key.

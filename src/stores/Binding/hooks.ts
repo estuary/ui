@@ -1,13 +1,18 @@
-import { hasLength } from 'utils/misc-utils';
+import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
+import type {
+    CollectionMetadata,
+    ResourceConfig,
+} from 'src/stores/Binding/types';
+
 import { useShallow } from 'zustand/react/shallow';
+
 import {
     getCollectionNames,
     getCollections,
     getEnabledCollectionNames,
-} from './shared';
-import { FullSourceJsonForms } from './slices/TimeTravel';
-import { useBindingStore } from './Store';
-import { ResourceConfig } from './types';
+} from 'src/stores/Binding/shared';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const useBinding_hydrated = () => {
     return useBindingStore((state) => state.hydrated);
@@ -128,6 +133,24 @@ export const useBinding_collections = () =>
         useShallow((state) => getCollectionNames(state.resourceConfigs))
     );
 
+export const useBinding_collectionMetadataProperty = <
+    K extends keyof CollectionMetadata,
+>(
+    collection: string | null | undefined,
+    property: K
+): CollectionMetadata[K] | null => {
+    return useBindingStore(
+        useShallow((state) => {
+            if (!collection) {
+                return null;
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            return state.collectionMetadata[collection]?.[property];
+        })
+    );
+};
+
 export const useBinding_collections_count = () =>
     useBindingStore(
         useShallow((state) => getCollections(state.resourceConfigs).length)
@@ -154,12 +177,12 @@ export const useBinding_allBindingsDisabled = () => {
     );
 };
 
-export const useBinding_someBindingsDisabled = () => {
+export const useBinding_enabledBindings_count = () => {
     return useBindingStore(
         useShallow((state) =>
-            Object.values(state.resourceConfigs).some(
-                (config) => config.meta.disable
-            )
+            Object.values(state.resourceConfigs).reduce((count, config) => {
+                return config.meta?.disable ? count : count + 1;
+            }, 0)
         )
     );
 };
@@ -224,6 +247,17 @@ export const useBinding_backfilledBindings = () => {
     return useBindingStore((state) => state.backfilledBindings);
 };
 
+export const useBinding_backfilledCollections = () => {
+    return useBindingStore(
+        useShallow((state) =>
+            state.backfilledBindings
+                .filter((uuid) =>
+                    Object.keys(state.resourceConfigs).includes(uuid)
+                )
+                .map((uuid) => state.resourceConfigs[uuid].meta.collectionName)
+        )
+    );
+};
 export const useBinding_setBackfilledBindings = () => {
     return useBindingStore((state) => state.setBackfilledBindings);
 };

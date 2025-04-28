@@ -1,17 +1,20 @@
-import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
-import Navigation from 'components/navigation/Navigation';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import PageContainer from 'components/shared/PageContainer';
-import DocsSidePanel from 'components/sidePanelDocs/SidePanel';
-import { useShowSidePanelDocs } from 'context/SidePanelDocs';
-import { NavWidths } from 'context/Theme';
 import { useEffect, useState } from 'react';
+
+import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
-import { useSidePanelDocsStore } from 'stores/SidePanelDocs/Store';
-import { LocalStorageKeys } from 'utils/localStorage-utils';
-import { hasLength } from 'utils/misc-utils';
+
+import Navigation from 'src/components/navigation/Navigation';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import PageContainer from 'src/components/shared/PageContainer';
+import DocsSidePanel from 'src/components/sidePanelDocs/SidePanel';
+import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
+import { NavWidths } from 'src/context/Theme';
+import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 function AppLayout() {
     const theme = useTheme();

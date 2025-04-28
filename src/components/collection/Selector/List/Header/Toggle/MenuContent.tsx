@@ -1,9 +1,14 @@
+import type { SyntheticEvent } from 'react';
+import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
+
+import { useState } from 'react';
+
 import { Box, Button, Divider, RadioGroup, Stack } from '@mui/material';
-import { useEntityType } from 'context/EntityContext';
-import { SyntheticEvent, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import ScopeMenuItem from './MenuItem';
-import { Scopes } from './types';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import RadioMenuItem from 'src/components/shared/RadioMenuItem';
+import { useEntityType } from 'src/context/EntityContext';
 
 interface MenuOption {
     title: string;
@@ -18,6 +23,11 @@ interface Props {
     updateScope: (event: SyntheticEvent, newScope: Scopes) => void;
 }
 
+// TODO (accessibility) this menu is not acessible and we have some options
+//  - wait for https://github.com/mui/material-ui/issues/43330 to be fixed
+//  - Write some tricky CSS in the parent that allows things to look the way they do but have all the items have a `MenuItem` around them
+//  - fork MUI's Menu just for these and disable the up/down keyboard interactions
+//  - Overhaul the entire approach to this menu and redesign it to somehow not need menu... let's not do this one
 function ScopeMenuContent({
     closeMenu,
     initialScope,
@@ -25,6 +35,7 @@ function ScopeMenuContent({
     menuOptions,
     updateScope,
 }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const [scope, setScope] = useState(initialScope);
@@ -36,26 +47,22 @@ function ScopeMenuContent({
                 value={scope}
                 style={{ maxWidth: 320, textWrap: 'wrap' }}
             >
-                <ScopeMenuItem
-                    desc={
-                        <FormattedMessage
-                            id={menuOptions[0].desc}
-                            values={{ itemType, entityType }}
-                        />
-                    }
-                    scope="all"
-                    title={<FormattedMessage id={menuOptions[0].title} />}
+                <RadioMenuItem
+                    description={intl.formatMessage(
+                        { id: menuOptions[0].desc },
+                        { itemType, entityType }
+                    )}
+                    label={intl.formatMessage({ id: menuOptions[0].title })}
+                    value="all"
                 />
 
-                <ScopeMenuItem
-                    desc={
-                        <FormattedMessage
-                            id={menuOptions[1].desc}
-                            values={{ itemType, entityType }}
-                        />
-                    }
-                    scope="page"
-                    title={<FormattedMessage id={menuOptions[1].title} />}
+                <RadioMenuItem
+                    description={intl.formatMessage(
+                        { id: menuOptions[1].desc },
+                        { itemType, entityType }
+                    )}
+                    label={intl.formatMessage({ id: menuOptions[1].title })}
+                    value="page"
                 />
             </RadioGroup>
 

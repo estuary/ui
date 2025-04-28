@@ -1,3 +1,12 @@
+import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type {
+    EntityWithCreateWorkflow,
+    TableIntlConfig,
+    TableState,
+} from 'src/types';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import {
     Grid,
     Paper,
@@ -5,34 +14,30 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { getConnectors } from 'api/connectors';
-import ConnectorCard from 'components/connectors/card';
-import ConnectorToolbar from 'components/connectors/ConnectorToolbar';
-import useEntityCreateNavigate from 'components/shared/Entity/hooks/useEntityCreateNavigate';
-import { semiTransparentBackground } from 'context/Theme';
-import { ConnectorWithTagDetailQuery } from 'hooks/connectors/shared';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'services/shared';
 
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { FormattedMessage } from 'react-intl';
+
+import { getConnectors } from 'src/api/connectors';
+import ConnectorCard from 'src/components/connectors/card';
+import ConnectorCardDetails from 'src/components/connectors/card/Details';
+import ConnectorLogo from 'src/components/connectors/card/Logo';
+import ConnectorCardTitle from 'src/components/connectors/card/Title';
+import ConnectorRequestTile from 'src/components/connectors/ConnectorRequestTile';
+import ConnectorToolbar from 'src/components/connectors/ConnectorToolbar';
+import ConnectorsSkeleton from 'src/components/connectors/Skeleton';
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
+import { semiTransparentBackground } from 'src/context/Theme';
+import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
+import { TableStatuses } from 'src/types';
+import { hasLength } from 'src/utils/misc-utils';
 import {
-    EntityWithCreateWorkflow,
-    TableIntlConfig,
-    TableState,
-    TableStatuses,
-} from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getEmptyTableHeader, getEmptyTableMessage } from 'utils/table-utils';
-import ConnectorCardDetails from './card/Details';
-import ConnectorLogo from './card/Logo';
-import ConnectorCardTitle from './card/Title';
-import ConnectorRequestTile from './ConnectorRequestTile';
-import ConnectorsSkeleton from './Skeleton';
+    getEmptyTableHeader,
+    getEmptyTableMessage,
+} from 'src/utils/table-utils';
 
 interface ConnectorTilesProps {
     protocolPreset?: EntityWithCreateWorkflow;
-    replaceOnNavigate?: boolean;
 }
 
 const intlConfig: TableIntlConfig = {
@@ -40,10 +45,7 @@ const intlConfig: TableIntlConfig = {
     message: 'connectors.main.message2',
 };
 
-function ConnectorTiles({
-    protocolPreset,
-    replaceOnNavigate,
-}: ConnectorTilesProps) {
+function ConnectorTiles({ protocolPreset }: ConnectorTilesProps) {
     const navigateToCreate = useEntityCreateNavigate();
     const isFiltering = useRef(false);
 
@@ -68,12 +70,10 @@ function ConnectorTiles({
     const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
 
     const primaryCtaClick = (row: ConnectorWithTagDetailQuery) => {
-        navigateToCreate(
-            row.connector_tags[0].protocol,
-            row.connector_tags[0].connector_id,
-            replaceOnNavigate,
-            row.connector_tags[0].protocol === 'capture'
-        );
+        navigateToCreate(row.connector_tags[0].protocol, {
+            id: row.connector_tags[0].connector_id,
+            advanceToForm: true,
+        });
     };
 
     useEffect(() => {

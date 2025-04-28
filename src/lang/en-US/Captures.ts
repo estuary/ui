@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
-import { RouteTitles } from './RouteTitles';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+import { RouteTitles } from 'src/lang/en-US/RouteTitles';
 
 export const Captures: Record<string, string> = {
     'captureTable.header': `Captures`,

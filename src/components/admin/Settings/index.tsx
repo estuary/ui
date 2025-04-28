@@ -1,21 +1,17 @@
 import { Divider, Grid, Stack } from '@mui/material';
-import { authenticatedRoutes } from 'app/routes';
-import PrefixAlerts from 'components/admin/Settings/PrefixAlerts';
-import AdminTabs from 'components/admin/Tabs';
-import TenantSelector from 'components/shared/TenantSelector';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import usePageTitle from 'hooks/usePageTitle';
-import DataPlanes from './DataPlanes';
-import StorageMappings from './StorageMappings';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import DataPlanes from 'src/components/admin/Settings/DataPlanes';
+import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
+import StorageMappings from 'src/components/admin/Settings/StorageMappings';
+import AdminTabs from 'src/components/admin/Tabs';
+import TenantSelector from 'src/components/shared/TenantSelector';
+import usePageTitle from 'src/hooks/usePageTitle';
 
 function Settings() {
     usePageTitle({
         header: authenticatedRoutes.admin.settings.title,
     });
-
-    const hasSupportRole = useUserInfoSummaryStore(
-        (state) => state.hasSupportAccess
-    );
 
     return (
         <>
@@ -44,13 +40,11 @@ function Settings() {
                 <StorageMappings />
             </Stack>
 
-            {hasSupportRole ? (
-                <Stack>
-                    <Divider sx={{ mt: 2, mb: 4 }} />
+            <Stack>
+                <Divider sx={{ mt: 2, mb: 4 }} />
 
-                    <DataPlanes />
-                </Stack>
-            ) : null}
+                <DataPlanes />
+            </Stack>
         </>
     );
 }

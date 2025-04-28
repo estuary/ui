@@ -1,17 +1,18 @@
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-import { PostgrestError } from '@supabase/postgrest-js';
-import {
-    liveSpecsExtRelatedQuery,
-    LiveSpecsExt_Related,
-} from 'api/liveSpecsExt';
-import { supabaseClient } from 'context/GlobalProviders';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
+import type { Entity } from 'src/types';
+
 import { useMemo } from 'react';
+
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+
+import { liveSpecsExtRelatedQuery } from 'src/api/liveSpecsExt';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     ENABLED_SHARDS,
     escapeReservedCharacters,
     TABLES,
-} from 'services/supabase';
-import { Entity } from 'types';
+} from 'src/services/supabase';
 
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
@@ -127,6 +128,8 @@ export function useLiveSpecsExt_related(captureName: string) {
             .or(ENABLED_SHARDS)
             .or(
                 `spec->>sourceCapture.eq.${escapeReservedCharacters(
+                    captureName
+                )},spec->sourceCapture->>capture.eq.${escapeReservedCharacters(
                     captureName
                 )}`
             )

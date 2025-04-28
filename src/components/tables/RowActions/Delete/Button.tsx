@@ -1,18 +1,13 @@
-import DeleteConfirmation from 'components/tables/RowActions/Delete/Confirmation';
-import RowActionButton from 'components/tables/RowActions/Shared/Button';
-import UpdateEntity from 'components/tables/RowActions/Shared/UpdateEntity';
-import { SelectTableStoreNames } from 'stores/names';
-import { SettingMetadata } from '../Shared/NestedListItem';
+import type { SettingMetadata } from 'src/components/tables/RowActions/Shared/types';
+import type { DeleteButtonProps } from 'src/components/tables/RowActions/types';
 
-interface Props {
-    selectableTableStoreName:
-        | SelectTableStoreNames.CAPTURE
-        | SelectTableStoreNames.COLLECTION
-        | SelectTableStoreNames.ENTITY_SELECTOR
-        | SelectTableStoreNames.MATERIALIZATION;
-}
+import DeleteConfirmation from 'src/components/tables/RowActions/Delete/Confirmation';
+import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
+import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
+import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
+import { SelectTableStoreNames } from 'src/stores/names';
 
-function DeleteButton({ selectableTableStoreName }: Props) {
+function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
     const generator = () => null;
 
     const isCapture =
@@ -29,8 +24,17 @@ function DeleteButton({ selectableTableStoreName }: Props) {
 
     return (
         <RowActionButton
-            confirmationMessage={<DeleteConfirmation />}
             messageID="cta.delete"
+            renderConfirmationMessage={(selectedNames) => {
+                return (
+                    <RowActionConfirmation
+                        selected={selectedNames}
+                        message={<DeleteConfirmation />}
+                        selectableTableStoreName={selectableTableStoreName}
+                        settings={settings}
+                    />
+                );
+            }}
             renderProgress={(item, index, onFinish) => (
                 <UpdateEntity
                     key={`Item-delete-${index}`}
@@ -44,7 +48,6 @@ function DeleteButton({ selectableTableStoreName }: Props) {
                 />
             )}
             selectableTableStoreName={selectableTableStoreName}
-            settings={settings}
         />
     );
 }

@@ -1,4 +1,4 @@
-import { Schema } from 'types';
+import type { Schema, TableColumns } from 'src/types';
 
 export interface Projection {
     field: string;
@@ -59,7 +59,7 @@ export interface ValidationResponse_Binding {
     resourcePath: string[];
 }
 
-export type FieldSelectionType = 'default' | 'include' | 'exclude';
+export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
 export interface TranslatedConstraint {
     type: ConstraintTypes;
@@ -70,4 +70,9 @@ export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
     selectionType: FieldSelectionType | null;
     selectionMetadata?: Schema;
+}
+
+export interface TableColumnSelectorProps {
+    columns: TableColumns[];
+    loading: boolean;
 }

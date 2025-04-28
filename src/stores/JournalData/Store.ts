@@ -1,8 +1,10 @@
-import produce from 'immer';
-import { authorizeCollection, authorizeTask } from 'utils/dataPlane-utils';
-import { devtoolsOptions } from 'utils/store-utils';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+
+import produce from 'immer';
+
+import { authorizeCollection, authorizeTask } from 'src/utils/dataPlane-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 // TODO: Remove the action, getAuthToken, from the store. Store actions
 //   should be limited to simple functions that set or manipulate state.

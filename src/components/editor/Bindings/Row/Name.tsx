@@ -1,26 +1,25 @@
-import { Button, Typography } from '@mui/material';
-import { typographyTruncation } from 'context/Theme';
-import { stripPathing } from 'utils/misc-utils';
-import BindingsSelectorErrorIndicator from './ErrorIndicator';
+import type { SelectorNameProps } from 'src/components/editor/Bindings/Row/types';
 
-interface RowProps {
-    bindingUUID: string;
-    collection: string;
-    shortenName?: boolean;
-}
+import { Button, Typography } from '@mui/material';
+
+import Highlighter from 'react-highlight-words';
+
+import { NameHighlight } from 'src/components/editor/Bindings/Row/NameHighlight';
+import {
+    HIGHLIGHT_CLASS_NAME,
+    UNHIGHLIGHT_CLASS_NAME,
+} from 'src/components/editor/Bindings/Row/shared';
+import { typographyTruncation } from 'src/context/Theme';
 
 function BindingsSelectorName({
-    bindingUUID,
     collection,
-    shortenName,
-}: RowProps) {
+    filterValue,
+    buttonProps = {},
+}: SelectorNameProps) {
     return (
         <Button
             variant="text"
             disableFocusRipple
-            startIcon={
-                <BindingsSelectorErrorIndicator bindingUUID={bindingUUID} />
-            }
             sx={{
                 'color': (theme) => theme.palette.text.primary,
                 'height': '100%',
@@ -30,10 +29,21 @@ function BindingsSelectorName({
                 '&:focus, &:hover': {
                     bgcolor: 'transparent',
                 },
+                [`& .${HIGHLIGHT_CLASS_NAME}`]: {
+                    mx: 0.25,
+                },
             }}
+            {...buttonProps}
         >
-            <Typography {...typographyTruncation}>
-                {shortenName ? stripPathing(collection) : collection}
+            <Typography component="span" {...typographyTruncation}>
+                <Highlighter
+                    autoEscape={false}
+                    highlightClassName={HIGHLIGHT_CLASS_NAME}
+                    highlightTag={NameHighlight}
+                    searchWords={[filterValue ?? '']}
+                    textToHighlight={collection.join('')}
+                    unhighlightClassName={UNHIGHLIGHT_CLASS_NAME}
+                />
             </Typography>
         </Button>
     );

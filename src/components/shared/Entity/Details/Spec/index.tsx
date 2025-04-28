@@ -1,12 +1,15 @@
-import { Grid, Stack, ToggleButtonGroup, Typography } from '@mui/material';
-import LiveSpecEditor from 'components/editor/LiveSpec';
-import ExternalLink from 'components/shared/ExternalLink';
-import OutlinedToggleButton from 'components/shared/buttons/OutlinedToggleButton';
-import { useEntityType } from 'context/EntityContext';
-import { outlinedToggleButtonGroupStyling } from 'context/Theme';
 import { useCallback, useMemo, useState } from 'react';
+
+import { Grid, Stack, Typography } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
-import CollectionSpecViews from './CollectionViews';
+
+import LiveSpecEditor from 'src/components/editor/LiveSpec';
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+import CollectionSpecViews from 'src/components/shared/Entity/Details/Spec/CollectionViews';
+import ExternalLink from 'src/components/shared/ExternalLink';
+import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
+import { useEntityType } from 'src/context/EntityContext';
 
 export type SpecPresentation = 'table' | 'code';
 
@@ -61,11 +64,7 @@ function Spec() {
                         </Stack>
 
                         {entityType === 'collection' ? (
-                            <ToggleButtonGroup
-                                size="small"
-                                exclusive
-                                sx={outlinedToggleButtonGroupStyling}
-                            >
+                            <OutlinedToggleButtonGroup size="small" exclusive>
                                 <OutlinedToggleButton
                                     size="small"
                                     value="table"
@@ -87,7 +86,7 @@ function Spec() {
                                 >
                                     <FormattedMessage id="details.spec.cta.raw" />
                                 </OutlinedToggleButton>
-                            </ToggleButtonGroup>
+                            </OutlinedToggleButtonGroup>
                         ) : null}
                     </Stack>
 

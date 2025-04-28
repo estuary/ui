@@ -1,48 +1,53 @@
+import type { ReactNode } from 'react';
+import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
+import type { EntityWithCreateWorkflow } from 'src/types';
+
+import { useEffect, useMemo } from 'react';
+
 import { Box, Collapse } from '@mui/material';
-import CollectionConfig from 'components/collection/Config';
-import DraftSpecEditorHydrator from 'components/editor/Store/DraftSpecsHydrator';
+
+import { useIntl } from 'react-intl';
+
+import CollectionConfig from 'src/components/collection/Config';
+import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
     useEditorStore_draftInitializationError,
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
-} from 'components/editor/Store/hooks';
-import CatalogEditor from 'components/shared/Entity/CatalogEditor';
-import DetailsForm from 'components/shared/Entity/DetailsForm';
-import EndpointConfig from 'components/shared/Entity/EndpointConfig';
-import EntityError from 'components/shared/Entity/Error';
-import useEntityWorkflowHelpers from 'components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import useUnsavedChangesPrompt from 'components/shared/Entity/hooks/useUnsavedChangesPrompt';
-import Error from 'components/shared/Error';
-import ErrorBoundryWrapper from 'components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'hooks/connectors/useConnectorWithTagDetail';
-import useBrowserTitle from 'hooks/useBrowserTitle';
-import { DraftSpecSwrMetadata } from 'hooks/useDraftSpecs';
-import { ReactNode, useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { logRocketEvent } from 'services/shared';
-import { BASE_ERROR } from 'services/supabase';
-import { CustomEvents } from 'services/types';
-import { useBinding_serverUpdateRequired } from 'stores/Binding/hooks';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+} from 'src/components/editor/Store/hooks';
+import AlertBox from 'src/components/shared/AlertBox';
+import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
+import DetailsForm from 'src/components/shared/Entity/DetailsForm';
+import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
+import EntityError from 'src/components/shared/Entity/Error';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
+import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
+import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
+import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
+import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
+import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
+import Error from 'src/components/shared/Error';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import { logRocketEvent } from 'src/services/shared';
+import { BASE_ERROR } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
+import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfigStore_changed,
     useEndpointConfig_serverUpdateRequired,
-} from 'stores/EndpointConfig/hooks';
+    useEndpointConfigStore_changed,
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_error,
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
-} from 'stores/FormState/hooks';
-import { EntityWithCreateWorkflow } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import AlertBox from '../../AlertBox';
-import { useFormHydrationChecker } from '../hooks/useFormHydrationChecker';
-import IncompatibleCollections from '../IncompatibleCollections';
-import PreSavePrompt from '../prompts/PreSave';
-import PromptsHydrator from '../prompts/store/Hydrator';
-import ValidationErrorSummary from '../ValidationErrorSummary';
+} from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     title: string;
@@ -190,6 +195,7 @@ function EntityEdit({
 
                         {draftInitializationError ? (
                             <AlertBox
+                                short={false}
                                 severity={draftInitializationError.severity}
                                 sx={{
                                     mb: 2,

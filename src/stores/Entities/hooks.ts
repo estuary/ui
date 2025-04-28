@@ -1,9 +1,12 @@
-import { singleCallSettings } from 'context/SWR';
 import { useEffect } from 'react';
-import useSWR from 'swr';
-import { stripPathing } from 'utils/misc-utils';
+
 import { useShallow } from 'zustand/react/shallow';
-import { useEntitiesStore } from './Store';
+
+import useSWR from 'swr';
+
+import { singleCallSettings } from 'src/context/SWR';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { stripPathing } from 'src/utils/misc-utils';
 
 // TODO (Entities Store)
 // We should move away from hardcoded hooks and just pass in the capability
@@ -23,17 +26,16 @@ export const useEntitiesStore_capabilities_readable = () => {
     );
 };
 
-// Not being used right now but commenting out to make the pattern more clear
-// export const useEntitiesStore_capabilities_writable = () => {
-//     return useEntitiesStore(
-//         useShallow((state) => {
-//             return {
-//                 ...state.capabilities.admin,
-//                 ...state.capabilities.write,
-//             };
-//         })
-//     );
-// };
+export const useEntitiesStore_capabilities_writable = () => {
+    return useEntitiesStore(
+        useShallow((state) => [
+            ...new Set([
+                ...state.capabilities.admin,
+                ...state.capabilities.write,
+            ]),
+        ])
+    );
+};
 
 export const useEntitiesStore_atLeastOneAdminTenant = () => {
     return useEntitiesStore(

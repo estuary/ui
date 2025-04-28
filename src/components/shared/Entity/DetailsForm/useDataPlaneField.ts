@@ -1,15 +1,18 @@
-import { DATA_PLANE_SCOPE } from 'forms/renderers/DataPlanes';
+import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
+
+import { useCallback, useMemo } from 'react';
+
+import { useIntl } from 'react-intl';
+
+import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
+import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import { useCallback, useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
-import { DataPlaneOption, Details } from 'stores/DetailsForm/types';
-import { EntityWithCreateWorkflow } from 'types';
-import { formatDataPlaneName } from 'utils/dataPlane-utils';
-import { hasLength } from 'utils/misc-utils';
-import useEntityCreateNavigate from '../hooks/useEntityCreateNavigate';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { formatDataPlaneName } from 'src/utils/dataPlane-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface OneOfElement {
     const: DataPlaneOption;
@@ -77,13 +80,11 @@ export default function useDataPlaneField(
                     setEntityNameChanged(details.data.entityName);
 
                     // TODO (data-plane): Set search param of interest instead of using navigate function.
-                    navigateToCreate(
-                        entityType,
-                        details.data.connectorImage.connectorId,
-                        true,
-                        true,
-                        selectedDataPlaneId ?? null
-                    );
+                    navigateToCreate(entityType, {
+                        id: details.data.connectorImage.connectorId,
+                        advanceToForm: true,
+                        dataPlaneId: selectedDataPlaneId ?? null,
+                    });
                 }
             }
         },

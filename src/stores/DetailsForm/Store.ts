@@ -1,37 +1,42 @@
-import { getConnectors_detailsForm } from 'api/connectors';
-import { getDataPlaneOptions } from 'api/dataPlanes';
-import { getLiveSpecs_detailsForm } from 'api/liveSpecsExt';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import produce from 'immer';
-import { isEmpty } from 'lodash';
-import { logRocketEvent } from 'services/shared';
-import { CustomEvents } from 'services/types';
-import { DATA_PLANE_SETTINGS } from 'settings/dataPlanes';
-import {
+import type {
     DataPlaneOption,
     Details,
     DetailsFormState,
-} from 'stores/DetailsForm/types';
+} from 'src/stores/DetailsForm/types';
+import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+import produce from 'immer';
+import { isEmpty } from 'lodash';
+
+import { getConnectors_detailsForm } from 'src/api/connectors';
+import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import {
     fetchErrors,
     filterErrors,
     generateCustomError,
     getInitialCustomErrorsData,
     getStoreWithCustomErrorsSettings,
-} from 'stores/extensions/CustomErrors';
+} from 'src/stores/extensions/CustomErrors';
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
-} from 'stores/extensions/Hydration';
-import { getConnectorMetadata } from 'utils/connector-utils';
-import { generateDataPlaneOption } from 'utils/dataPlane-utils';
-import { defaultDataPlaneSuffix, isProduction } from 'utils/env-utils';
-import { hasLength } from 'utils/misc-utils';
-import { devtoolsOptions } from 'utils/store-utils';
-import { ConnectorVersionEvaluationOptions } from 'utils/workflow-utils';
-import { NAME_RE } from 'validation';
-import { create, StoreApi } from 'zustand';
-import { devtools, NamedSet } from 'zustand/middleware';
+} from 'src/stores/extensions/Hydration';
+import { getConnectorMetadata } from 'src/utils/connector-utils';
+import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { devtoolsOptions } from 'src/utils/store-utils';
+import { NAME_RE } from 'src/validation';
 
 const STORE_KEY = 'Details Form';
 
@@ -65,6 +70,25 @@ const getDataPlane = (
         return selectedOption;
     }
 
+    // TODO (private data plane) - we need to add support for allowing tenants to configure their
+    //  preferred data plane.
+
+    // If we are not trying to find a specific data plane and there is only one option
+    //  and it is private we are pretty safe in prefilling that one.
+    if (
+        !dataPlaneId &&
+        dataPlaneOptions.length === 1 &&
+        dataPlaneOptions[0].dataPlaneName.whole.includes(
+            DATA_PLANE_SETTINGS.private.prefix
+        )
+    ) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            defaultedPrivate: true,
+        });
+        return dataPlaneOptions[0];
+    }
+
+    // Try to find the default public data plane
     const defaultOption = dataPlaneOptions.find(
         ({ dataPlaneName }) =>
             dataPlaneName.whole ===
@@ -319,7 +343,7 @@ export const getInitialState = (
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
-                if (!isProduction && connectorImage && dataPlane === null) {
+                if (connectorImage && dataPlane === null) {
                     get().setDetails_connector(connectorImage);
 
                     const {
@@ -348,9 +372,8 @@ export const getInitialState = (
                     get().setHydrationErrorsExist(true);
                 }
             } else if (liveSpecId) {
-                const { data, error } = await getLiveSpecs_detailsForm(
-                    liveSpecId
-                );
+                const { data, error } =
+                    await getLiveSpecs_detailsForm(liveSpecId);
 
                 if (!error && data && data.length > 0) {
                     const {
@@ -403,6 +426,13 @@ export const getInitialState = (
                 });
                 get().setHydrationErrorsExist(true);
             }
+        } else {
+            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
+            // TODO (details hydration) should really show an error here
+            // get().setHydrationError(
+            //     'Unable to locate selected connector. If the issue persists, please contact support.'
+            // );
+            // get().setHydrationErrorsExist(true);
         }
     },
 

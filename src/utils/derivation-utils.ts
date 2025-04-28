@@ -1,11 +1,17 @@
-import { isArray } from 'lodash';
-import {
+import type {
     MigrationDictionary,
     TransformConfig,
     TransformConfigDictionary,
-} from 'stores/TransformationCreate/types';
-import { DerivationLanguage, Transform, Transform_Shuffle } from 'types';
-import { stripPathing } from 'utils/misc-utils';
+} from 'src/stores/TransformationCreate/types';
+import type {
+    DerivationLanguage,
+    Transform,
+    Transform_Shuffle,
+} from 'src/types';
+
+import { isArray } from 'lodash';
+
+import { stripPathing } from 'src/utils/misc-utils';
 
 // Constants for part of the templates down below
 const key = ['/your_key'];

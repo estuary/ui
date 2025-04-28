@@ -1,10 +1,11 @@
+import type { BaseComponentProps } from 'src/types';
+
 import useGlobalSearchParams, {
     GlobalSearchParams,
-} from 'hooks/searchParams/useGlobalSearchParams';
-import EntityNotFound from 'pages/error/EntityNotFound';
-import { BaseComponentProps } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { validateCatalogName } from 'validation';
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import EntityNotFound from 'src/pages/error/EntityNotFound';
+import { hasLength } from 'src/utils/misc-utils';
+import { validateCatalogName } from 'src/validation';
 
 function CatalogNameGuard({ children }: BaseComponentProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);

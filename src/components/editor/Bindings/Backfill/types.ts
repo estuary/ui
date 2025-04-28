@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from 'src/types';
 
 export interface BackfillButtonProps {
     description: ReactNode;
@@ -16,4 +17,10 @@ export interface BackfillDataflowOptionProps {
 export interface BackfillProps {
     bindingIndex: number;
     collectionEnabled: boolean;
+    collection?: string;
+}
+
+export interface SectionWrapperProps extends BaseComponentProps {
+    alertMessageId: string;
+    collection?: string;
 }

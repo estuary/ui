@@ -1,30 +1,28 @@
-import { PostgrestError } from '@supabase/postgrest-js';
-import { getDraftSpecsByDraftId } from 'api/draftSpecs';
-import { getSchema_Resource } from 'api/hydration';
-import { GlobalSearchParams } from 'hooks/searchParams/useGlobalSearchParams';
-import { LiveSpecsExtQuery } from 'hooks/useLiveSpecsExt';
-import { difference, intersection } from 'lodash';
-import { BASE_ERROR } from 'services/supabase';
-import { getInitialHydrationData } from 'stores/extensions/Hydration';
-import { populateErrors } from 'stores/utils';
-import { Entity, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { formatCaptureInterval } from 'utils/time-utils';
-import { getCollectionName, getDisableProps } from 'utils/workflow-utils';
-import { StoreApi } from 'zustand';
-import { getInitialFieldSelectionData } from './slices/FieldSelection';
-import { getInitialTimeTravelData } from './slices/TimeTravel';
-import {
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
+import type {
+    BindingChanges,
     Bindings,
     BindingState,
     ResourceConfig,
     ResourceConfigDictionary,
-} from './types';
+} from 'src/stores/Binding/types';
+import type { Entity, Schema } from 'src/types';
+import type { StoreApi } from 'zustand';
 
-// Used to mark fields that should be removed during generation. This is
-//      only here because if we set something to null and then check for nulls
-//      we might end up overwritting a value a user specifically wants a null for.
-export const REMOVE_DURING_GENERATION = undefined;
+import { difference, intersection } from 'lodash';
+
+import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
+import { getSchema_Resource } from 'src/api/hydration';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { BASE_ERROR } from 'src/services/supabase';
+import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
+import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
+import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
+import { populateErrors } from 'src/stores/utils';
+import { hasLength } from 'src/utils/misc-utils';
+import { formatCaptureInterval } from 'src/utils/time-utils';
+import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
 export const getCollections = (configs: ResourceConfigDictionary) => {
     return Object.values(configs);
@@ -40,6 +38,34 @@ export const getEnabledCollectionNames = (
     return getCollections(configs)
         .filter(({ meta }) => !meta.disable)
         .map(({ meta }) => meta.collectionName);
+};
+
+const resetSingleCollectionMetadata = (
+    state: BindingState,
+    collection: string
+) => {
+    state.collectionMetadata[collection].added = false;
+    state.collectionMetadata[collection].sourceBackfillRecommended = false;
+};
+
+export const resetCollectionMetadata = (
+    state: BindingState,
+    targetCollections?: string[]
+) => {
+    if (targetCollections) {
+        targetCollections.forEach((collection) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (state.collectionMetadata?.[collection]) {
+                resetSingleCollectionMetadata(state, collection);
+            }
+        });
+
+        return;
+    }
+
+    Object.keys(state.collectionMetadata).forEach((collection) => {
+        resetSingleCollectionMetadata(state, collection);
+    });
 };
 
 export const populateResourceConfigErrors = (
@@ -117,18 +143,31 @@ export const initializeBinding = (
 
 export const initializeCurrentBinding = (
     state: BindingState,
-    resourceConfigs: ResourceConfigDictionary
+    resourceConfigs: ResourceConfigDictionary,
+    maintainPreviousCurrentBinding?: boolean
 ) => {
-    const initialConfig = Object.entries(resourceConfigs).at(0);
+    const allResourceConfigs = Object.entries(resourceConfigs);
+    const initialConfig = allResourceConfigs.at(0);
 
-    if (initialConfig) {
-        const [bindingUUID, resourceConfig] = initialConfig;
-
-        state.currentBinding = {
-            uuid: bindingUUID,
-            collection: resourceConfig.meta.collectionName,
-        };
+    if (!initialConfig) {
+        return;
     }
+
+    // We will just match based on name and that is not perfect but good enough
+    //  since very few use cases of duplication bindings exist.
+    let preferredConfig;
+    if (maintainPreviousCurrentBinding && state.currentBinding) {
+        preferredConfig = allResourceConfigs.find(
+            ([_uuid, datum]) =>
+                datum.meta.collectionName === state.currentBinding?.collection
+        );
+    }
+
+    const [bindingUUID, resourceConfig] = preferredConfig ?? initialConfig;
+    state.currentBinding = {
+        uuid: bindingUUID,
+        collection: resourceConfig.meta.collectionName,
+    };
 };
 
 export const getResourceConfig = (
@@ -210,6 +249,25 @@ export const initializeAndGenerateUUID = (
     };
 };
 
+export const updateBackfilledBindingState = (
+    state: BindingState,
+    mappedUUIDsAndResourceConfigs: [string, ResourceConfig][]
+) => {
+    if (state.backfilledBindings.length > 0) {
+        const evaluatedBackfilledBindings = mappedUUIDsAndResourceConfigs
+            .map(([bindingUUID, _resourceConfig]) => bindingUUID)
+            .filter((bindingUUID) =>
+                state.backfilledBindings.includes(bindingUUID)
+            );
+
+        state.backfilledBindings = evaluatedBackfilledBindings;
+
+        state.backfillAllBindings =
+            state.backfilledBindings.length ===
+            Object.keys(state.resourceConfigs).length;
+    }
+};
+
 export const STORE_KEY = 'Bindings';
 
 export const hydrateConnectorTagDependentState = async (
@@ -241,8 +299,13 @@ export const hydrateSpecificationDependentState = async (
     get: StoreApi<BindingState>['getState'],
     liveSpec: LiveSpecsExtQuery['spec'],
     searchParams: URLSearchParams
-): Promise<PostgrestError | null> => {
+): Promise<{
+    bindingChanges: BindingChanges;
+    error: PostgrestError | null;
+}> => {
     const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
+
+    let bindingChanges: BindingChanges = { addedCollections: [] };
 
     if (draftId) {
         const { data: draftSpecs, error } = await getDraftSpecsByDraftId(
@@ -251,15 +314,16 @@ export const hydrateSpecificationDependentState = async (
         );
 
         if (error || !draftSpecs || draftSpecs.length === 0) {
-            return (
-                error ?? {
+            return {
+                bindingChanges,
+                error: error ?? {
                     ...BASE_ERROR,
                     message: `An issue was encountered fetching the drafted specification for this ${entityType}`,
-                }
-            );
+                },
+            };
         }
 
-        get().prefillBindingDependentState(
+        bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
             draftSpecs[0].spec.bindings
@@ -278,7 +342,10 @@ export const hydrateSpecificationDependentState = async (
             draftSpecs[0].spec?.onIncompatibleSchemaChange
         );
     } else {
-        get().prefillBindingDependentState(entityType, liveSpec.bindings);
+        bindingChanges = get().prefillBindingDependentState(
+            entityType,
+            liveSpec.bindings
+        );
 
         get().setCaptureInterval(
             liveSpec?.interval ?? fallbackInterval,
@@ -290,7 +357,7 @@ export const hydrateSpecificationDependentState = async (
         );
     }
 
-    return null;
+    return { bindingChanges, error: null };
 };
 
 export const getInitialBindingData = (): Pick<
@@ -310,6 +377,7 @@ export const getInitialMiscData = (): Pick<
     | 'backfillDataFlowTarget'
     | 'backfillSupported'
     | 'captureInterval'
+    | 'collectionMetadata'
     | 'collectionsRequiringRediscovery'
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
@@ -331,6 +399,7 @@ export const getInitialMiscData = (): Pick<
     backfillSupported: true,
     backfilledBindings: [],
     captureInterval: null,
+    collectionMetadata: {},
     collectionsRequiringRediscovery: [],
     defaultCaptureInterval: null,
     discoveredCollections: [],

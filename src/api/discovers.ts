@@ -1,5 +1,5 @@
-import { insertSupabase, TABLES } from 'services/supabase';
-import { hasLength } from 'utils/misc-utils';
+import { insertSupabase, TABLES } from 'src/services/supabase';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface DiscoverRequest {
     capture_name: string;

@@ -1,4 +1,8 @@
-import Editor, { DiffEditor } from '@monaco-editor/react';
+import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import type { Entity } from 'src/types';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
     Box,
     Divider,
@@ -7,29 +11,29 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import Invalid from 'components/editor/Status/Invalid';
-import ServerDiff from 'components/editor/Status/ServerDiff';
-import Synchronized from 'components/editor/Status/Synchronized';
-import Synchronizing from 'components/editor/Status/Synchronizing';
+
+import Editor, { DiffEditor } from '@monaco-editor/react';
+import { debounce } from 'lodash';
+
+import Invalid from 'src/components/editor/Status/Invalid';
+import ServerDiff from 'src/components/editor/Status/ServerDiff';
+import Synchronized from 'src/components/editor/Status/Synchronized';
+import Synchronizing from 'src/components/editor/Status/Synchronizing';
 import {
     useEditorStore_currentCatalog,
     useEditorStore_serverUpdate,
     useEditorStore_setStatus,
     useEditorStore_statuses,
-} from 'components/editor/Store/hooks';
-import { EditorStatus } from 'components/editor/Store/types';
-import { editorToolBarSx } from 'context/Theme';
-import { debounce } from 'lodash';
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { stringifyJSON } from 'services/stringify';
-import { Entity } from 'types';
+} from 'src/components/editor/Store/hooks';
+import { EditorStatus } from 'src/components/editor/Store/types';
+import { editorToolBarSx } from 'src/context/Theme';
+import { logRocketConsole } from 'src/services/shared';
+import { stringifyJSON } from 'src/services/stringify';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
-} from 'utils/editor-utils';
+} from 'src/utils/editor-utils';
 
 type EditorChangeHandler = (
     newVal: any,
@@ -169,11 +173,6 @@ function MonacoEditor({
 
                 // Make sure we have all the props needed to update the value
                 if (validValue && catalogName && catalogType) {
-                    logRocketConsole('editor:update:saving', {
-                        processedVal,
-                        catalogName,
-                        catalogType,
-                    });
                     setStatus(EditorStatus.SAVING, evaluatedPath);
 
                     // Check if there is a scope to update (ex: Schema editing for bindings editor)

@@ -1,21 +1,29 @@
-import { modifyDraftSpec } from 'api/draftSpecs';
-import { BooleanString } from 'components/shared/buttons/types';
-import { useEntityType } from 'context/EntityContext';
-import { DraftSpecQuery } from 'hooks/useDraftSpecs';
+import type { BooleanString } from 'src/components/shared/buttons/types';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { BindingMetadata, Schema } from 'src/types';
+
 import { useCallback } from 'react';
+
 import { useIntl } from 'react-intl';
-import { BASE_ERROR } from 'services/supabase';
-import {
-    useBinding_backfilledBindings,
-    useBinding_bindings,
-} from 'stores/Binding/hooks';
-import { BindingMetadata, Schema } from 'types';
-import { hasLength } from 'utils/misc-utils';
-import { getBackfillCounter, getBindingIndex } from 'utils/workflow-utils';
+
+import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
-} from '../../Store/hooks';
+} from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
+import { BASE_ERROR } from 'src/services/supabase';
+import {
+    useBinding_backfilledBindings,
+    useBinding_bindings,
+} from 'src/stores/Binding/hooks';
+import { hasLength } from 'src/utils/misc-utils';
+import { getBackfillCounter, getBindingIndex } from 'src/utils/workflow-utils';
+
+interface BackfillChangeSummary {
+    counterDecremented: string[];
+    counterIncremented: string[];
+}
 
 const evaluateBackfillCounter = (
     binding: Schema,
@@ -79,11 +87,22 @@ function useUpdateBackfillCounter() {
                 });
             }
 
+            const response: BackfillChangeSummary = {
+                counterDecremented: [],
+                counterIncremented: [],
+            };
+            const targetChangeSummaryProp: keyof BackfillChangeSummary =
+                increment === 'true'
+                    ? 'counterIncremented'
+                    : 'counterDecremented';
+
             const spec: Schema = draftSpec.spec;
 
             if (bindingMetadataExists) {
-                bindingMetadata.forEach(({ bindingIndex }) => {
+                bindingMetadata.forEach(({ bindingIndex, collection }) => {
                     if (bindingIndex > -1) {
+                        response[targetChangeSummaryProp].push(collection);
+
                         spec.bindings[bindingIndex].backfill =
                             evaluateBackfillCounter(
                                 spec.bindings[bindingIndex],
@@ -112,6 +131,10 @@ function useUpdateBackfillCounter() {
                                     backfilled && increment === 'false';
 
                                 if (shouldIncrement || shouldDecrement) {
+                                    response[targetChangeSummaryProp].push(
+                                        collection
+                                    );
+
                                     spec.bindings[
                                         existingBindingIndex
                                     ].backfill = evaluateBackfillCounter(
@@ -135,7 +158,13 @@ function useUpdateBackfillCounter() {
                 return Promise.reject(updateResponse.error);
             }
 
-            return mutateDraftSpecs();
+            const mutateResponse = await mutateDraftSpecs();
+
+            if (!mutateResponse) {
+                return Promise.reject();
+            }
+
+            return response;
         },
         [
             backfilledBindings,

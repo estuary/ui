@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react';
+
 import { AppBar, Toolbar } from '@mui/material';
-import { ReactNode } from 'react';
 
 interface Props {
     children: ReactNode;

@@ -1,9 +1,14 @@
+import type { TenantState } from 'src/stores/Tenant/types';
+import type { StoreApi } from 'zustand';
+import type { NamedSet } from 'zustand/middleware';
+
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+
 import produce from 'immer';
-import { devtoolsOptions } from 'utils/store-utils';
-import { StoreApi, create } from 'zustand';
-import { NamedSet, devtools, persist } from 'zustand/middleware';
-import { TenantState } from './types';
-import { persistOptions } from './shared';
+
+import { persistOptions } from 'src/stores/Tenant/shared';
+import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<TenantState, 'selectedTenant'> => ({
     selectedTenant: '',

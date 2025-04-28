@@ -1,3 +1,8 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { Dispatch, SetStateAction } from 'react';
+
+import { useState } from 'react';
+
 import {
     Box,
     Dialog,
@@ -7,13 +12,13 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { PostgrestError } from '@supabase/postgrest-js';
-import AlertBox from 'components/shared/AlertBox';
-import Error from 'components/shared/Error';
-import GenerateGrant from 'components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
+
 import { Xmark } from 'iconoir-react';
-import { Dispatch, SetStateAction, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
+
+import AlertBox from 'src/components/shared/AlertBox';
+import Error from 'src/components/shared/Error';
+import GenerateGrant from 'src/components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 
 const TITLE_ID = 'share-data-dialog-title';
 
@@ -65,10 +70,6 @@ function ShareDataDialog({ open, setOpen }: Props) {
             </DialogTitle>
 
             <DialogContent>
-                {/* <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="admin.prefix.issueGrant.message" />
-                </Typography> */}
-
                 {serverError ? (
                     <Box sx={{ mb: 3 }}>
                         {serverError.code === '42501' ? (

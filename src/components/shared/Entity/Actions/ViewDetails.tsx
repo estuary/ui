@@ -1,9 +1,9 @@
 import { Button } from '@mui/material';
 
-import { buttonSx } from 'components/shared/Entity/Header';
 import { FormattedMessage } from 'react-intl';
 
-import useEntityWorkflowHelpers from '../hooks/useEntityWorkflowHelpers';
+import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { entityHeaderButtonSx } from 'src/context/Theme';
 
 function EntityViewDetails() {
     const { exit } = useEntityWorkflowHelpers();
@@ -14,7 +14,7 @@ function EntityViewDetails() {
                 event.preventDefault();
                 exit();
             }}
-            sx={buttonSx}
+            sx={entityHeaderButtonSx}
         >
             <FormattedMessage id="cta.goToDetails" />
         </Button>

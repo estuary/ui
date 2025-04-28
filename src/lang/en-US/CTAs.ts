@@ -11,6 +11,7 @@ export const CTAs: Record<string, string> = {
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
+    'cta.registerFinish': `Complete Registration`,
     'cta.resetPassword': `Reset Password`,
     'cta.magicLink': `Sign in with magic link`,
     'cta.verifyOTP': `Sign in with OTP`,

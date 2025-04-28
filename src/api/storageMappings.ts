@@ -1,14 +1,16 @@
-import { PostgrestSingleResponse } from '@supabase/postgrest-js';
-import { supabaseClient } from 'context/GlobalProviders';
+import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type { Pagination, SortingProps } from 'src/services/supabase';
+import type { StorageMappings } from 'src/types';
+
+import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
-    Pagination,
+    handleFailure,
+    handleSuccess,
     RPCS,
-    SortingProps,
     supabaseRetry,
     TABLES,
-} from 'services/supabase';
-import { StorageMappings } from 'types';
+} from 'src/services/supabase';
 
 const getStorageMappings = (
     catalogPrefix: string,
@@ -51,6 +53,20 @@ const getStorageMapping = (catalog_prefix: string) => {
         .returns<StorageMappings[]>();
 };
 
+const getStorageMappingStores = async (prefixes: string[]) => {
+    return supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.STORAGE_MAPPINGS)
+                .select('catalog_prefix,spec')
+                .in('catalog_prefix', prefixes),
+        'getStorageMappingStores'
+    ).then(
+        handleSuccess<Pick<StorageMappings, 'catalog_prefix' | 'spec'>[]>,
+        handleFailure
+    );
+};
+
 const republishPrefix = async (prefix: string) => {
     return supabaseRetry<PostgrestSingleResponse<string>>(
         () =>
@@ -61,4 +77,9 @@ const republishPrefix = async (prefix: string) => {
     );
 };
 
-export { getStorageMapping, getStorageMappings, republishPrefix };
+export {
+    getStorageMapping,
+    getStorageMappingStores,
+    getStorageMappings,
+    republishPrefix,
+};

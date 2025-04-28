@@ -1,5 +1,5 @@
-import FullPageSpinner from 'components/fullPage/Spinner';
-import useBrowserTitle from 'hooks/useBrowserTitle';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
+import useBrowserTitle from 'src/hooks/useBrowserTitle';
 
 // This is the main "controller" for handling the response from providers that entity
 //  creation with OAuth

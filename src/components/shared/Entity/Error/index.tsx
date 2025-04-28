@@ -1,13 +1,19 @@
+import type { DraftErrorProps } from 'src/components/shared/Entity/Error/DraftErrors';
+import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/Logs';
+import type { ErrorProps } from 'src/components/shared/Error';
+
+import { useRef } from 'react';
+
 import { Box, Divider, Stack } from '@mui/material';
-import { useEditorStore_discoveredDraftId } from 'components/editor/Store/hooks';
-import DraftErrors, {
-    DraftErrorProps,
-} from 'components/shared/Entity/Error/DraftErrors';
-import ErrorLogs, { ErrorLogsProps } from 'components/shared/Entity/Error/Logs';
-import HeaderSummary from 'components/shared/Entity/HeaderSummary';
-import Error, { ErrorProps } from 'components/shared/Error';
-import useScrollIntoView from 'hooks/useScrollIntoView';
-import { useEffect, useRef } from 'react';
+
+import { useEffectOnce } from 'react-use';
+
+import { useEditorStore_discoveredDraftId } from 'src/components/editor/Store/hooks';
+import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
+import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
+import HeaderSummary from 'src/components/shared/Entity/HeaderSummary';
+import Error from 'src/components/shared/Error';
+import useScrollIntoView from 'src/hooks/useScrollIntoView';
 
 interface Props {
     title: string;
@@ -27,12 +33,12 @@ function EntityError({ logToken, error, title, draftId }: Props) {
     const idForDraftErrors = discoveredDraftId
         ? discoveredDraftId
         : draftId
-        ? draftId
-        : null;
+          ? draftId
+          : null;
 
     // The parent component hides this unless there is an error to show so we should be
     //  fine only calling this once.
-    useEffect(() => {
+    useEffectOnce(() => {
         scrollIntoView(scrollToTarget);
     });
 

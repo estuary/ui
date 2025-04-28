@@ -1,4 +1,4 @@
-import { FETCH_DEFAULT_ERROR, logRocketConsole } from './shared';
+import { FETCH_DEFAULT_ERROR, logRocketConsole } from 'src/services/shared';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
@@ -51,8 +51,8 @@ export const client = <Response, Request = {}>(
                 message: returnOriginalMessage
                     ? error.message
                     : error?.message === AUTH_ERROR
-                    ? AUTH_ERROR
-                    : FETCH_DEFAULT_ERROR,
+                      ? AUTH_ERROR
+                      : FETCH_DEFAULT_ERROR,
                 ...error,
             });
         });

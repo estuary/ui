@@ -1,15 +1,19 @@
+import type { ErrorIndicatorProps } from 'src/components/editor/Bindings/Row/types';
+
 import { Typography, useTheme } from '@mui/material';
+
 import { WarningCircle } from 'iconoir-react';
+
 import {
+    useBinding_collectionMetadataProperty,
     useBinding_fullSourceOfBindingProperty,
     useBinding_resourceConfigOfBindingProperty,
-} from 'stores/Binding/hooks';
+} from 'src/stores/Binding/hooks';
 
-interface Props {
-    bindingUUID: string;
-}
-
-function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
+function BindingsSelectorErrorIndicator({
+    bindingUUID,
+    collection,
+}: ErrorIndicatorProps) {
     const theme = useTheme();
 
     const configErrors = useBinding_resourceConfigOfBindingProperty(
@@ -22,14 +26,23 @@ function BindingsSelectorErrorIndicator({ bindingUUID }: Props) {
         'errors'
     );
 
-    if (bindingErrors?.length > 0 || configErrors?.length > 0) {
+    const sourceBackfillRecommended = useBinding_collectionMetadataProperty(
+        collection,
+        'sourceBackfillRecommended'
+    );
+
+    const errorExists = bindingErrors?.length > 0 || configErrors?.length > 0;
+
+    if (errorExists || Boolean(sourceBackfillRecommended)) {
         return (
             <Typography>
                 <WarningCircle
                     style={{
                         marginRight: 4,
                         fontSize: 12,
-                        color: theme.palette.error.main,
+                        color: errorExists
+                            ? theme.palette.error.main
+                            : theme.palette.warning.main,
                     }}
                 />
             </Typography>

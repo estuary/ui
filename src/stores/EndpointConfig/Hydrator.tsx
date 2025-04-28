@@ -1,22 +1,24 @@
-import { useEntityType } from 'context/EntityContext';
-import { useEntityWorkflow } from 'context/Workflow';
-import { useEffect, useState } from 'react';
-import { logRocketConsole } from 'services/shared';
-import { useDetailsFormStore } from 'stores/DetailsForm/Store';
+import type { BaseComponentProps } from 'src/types';
+
+import { useEffect, useRef } from 'react';
+
+import { useEntityType } from 'src/context/EntityContext';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { logRocketConsole } from 'src/services/shared';
+import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
-    useEndpointConfig_hydrateState,
     useEndpointConfig_hydrated,
+    useEndpointConfig_hydrateState,
     useEndpointConfig_setActive,
     useEndpointConfig_setHydrated,
     useEndpointConfig_setHydrationErrorsExist,
-} from 'stores/EndpointConfig/hooks';
-import { BaseComponentProps } from 'types';
+} from 'src/stores/EndpointConfig/hooks';
 
 export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
 
-    const [runHydration, setRunHydration] = useState(true);
+    const runHydration = useRef(true);
 
     const connectorTagId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.id
@@ -30,12 +32,12 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
 
     useEffect(() => {
         if (
-            runHydration &&
+            runHydration.current &&
             !hydrated &&
             connectorTagId.length > 0 &&
             (entityType === 'capture' || entityType === 'materialization')
         ) {
-            setRunHydration(false);
+            runHydration.current = false;
             setActive(true);
             hydrateState(entityType, workflow, connectorTagId).then(
                 () => {
@@ -57,7 +59,6 @@ export const EndpointConfigHydrator = ({ children }: BaseComponentProps) => {
         entityType,
         hydrateState,
         hydrated,
-        runHydration,
         setActive,
         setHydrated,
         setHydrationErrorsExist,

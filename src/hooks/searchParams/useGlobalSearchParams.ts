@@ -1,15 +1,19 @@
 import { useCallback, useMemo } from 'react';
+
 import { useSearchParams } from 'react-router-dom';
 
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
     DATA_PLANE_ID = 'dataPlaneId',
+    DIFF_VIEW_ORIGINAL = 'diff_o',
+    DIFF_VIEW_MODIFIED = 'diff_m',
     DRAFT_ID = 'draftId',
     FORCED_SHARD_ENABLE = 'forcedEnable',
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     HOME_PAGE_ERROR = 'homePageError',
+    PUB_ID = 'pubId',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
     LOGIN_HINTS_GOOGLE = 'google_login_hint',

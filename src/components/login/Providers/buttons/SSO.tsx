@@ -1,37 +1,49 @@
-import { Box, Button, useTheme } from '@mui/material';
-import { loginButtonStyling } from 'context/Theme';
-import { FormattedMessage } from 'react-intl';
-import { unauthenticatedRoutes } from 'app/routes';
-import { Lock } from 'iconoir-react';
-import MessageWithLink from 'components/content/MessageWithLink';
-import { LoginProps } from '../types';
+import type { HTMLAttributeAnchorTarget, ReactNode } from 'react';
+import type { LoginProps } from 'src/components/login/Providers/types';
+
+import { Button, Typography, useTheme } from '@mui/material';
+
+import { Lock, OpenNewWindow } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
+import { unauthenticatedRoutes } from 'src/app/routes';
+import { loginButtonStyling } from 'src/context/Theme';
 
 function SSOButton({ isRegister }: LoginProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
+    let href: string = unauthenticatedRoutes.sso.login.fullPath;
+    let endIcon: ReactNode | undefined;
+    let startIcon: ReactNode | undefined = <Lock />;
+    let labelMessageId: string = 'cta.login.sso';
+    let target: HTMLAttributeAnchorTarget = '_self';
     if (isRegister) {
-        return (
-            <Box
-                sx={{
-                    ...loginButtonStyling[theme.palette.mode],
-                    borderWidth: 0,
-                }}
-            >
-                <MessageWithLink messageID="login.sso.register.message.help" />
-            </Box>
+        endIcon = (
+            <Typography>
+                <OpenNewWindow />
+            </Typography>
         );
+        href = intl.formatMessage({
+            id: 'login.sso.register.message.help.docPath',
+        });
+        startIcon = undefined;
+        labelMessageId = 'login.sso.register.message.help';
+        target = '_blank';
     }
 
     return (
         <Button
+            endIcon={endIcon}
             fullWidth
-            startIcon={<Lock />}
-            sx={loginButtonStyling[theme.palette.mode]}
+            href={href}
             size="large"
+            startIcon={startIcon}
+            target={target}
             variant="text"
-            href={unauthenticatedRoutes.sso.login.fullPath}
+            sx={loginButtonStyling[theme.palette.mode]}
         >
-            <FormattedMessage id="cta.login.sso" />
+            {intl.formatMessage({ id: labelMessageId })}
         </Button>
     );
 }

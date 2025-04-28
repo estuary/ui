@@ -1,15 +1,17 @@
-import { TableCell, Typography } from '@mui/material';
-import DateFilter from 'components/filters/Date';
-import useHideStatsColumnsSx from 'components/tables/hooks/useHideStatsColumnsSx';
-import { useUserInfoSummaryStore } from 'context/UserInfoSummary/useUserInfoSummaryStore';
-import { useZustandStore } from 'context/Zustand/provider';
+import type { StatsHeaderProps } from 'src/components/tables/cells/stats/types';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
+
 import { useMemo } from 'react';
+
+import { TableCell, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import {
-    SelectableTableStore,
-    selectableTableStoreSelectors,
-} from 'stores/Tables/Store';
-import { StatsHeaderProps } from './types';
+
+import DateFilter from 'src/components/filters/Date';
+import useHideStatsColumnsSx from 'src/components/tables/hooks/useHideStatsColumnsSx';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 const StatsHeader = ({
     selectableTableStoreName,
@@ -55,7 +57,11 @@ const StatsHeader = ({
             ),
             intl.formatMessage(
                 {
-                    id: secondHeaderSuffix ? secondHeaderSuffix : 'data.read',
+                    id: secondHeaderSuffix
+                        ? secondHeaderSuffix
+                        : firstHeaderSuffix
+                          ? firstHeaderSuffix
+                          : 'data.read',
                 },
                 {
                     type: intl.formatMessage({

@@ -1,16 +1,17 @@
-import BooleanToggleButton from 'components/shared/buttons/BooleanToggleButton';
-import { useEntityType } from 'context/EntityContext';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useCallback, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
+
+import useShards from 'src/components/editor/Shards/Disable/useShards';
+import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
+import { useEntityType } from 'src/context/EntityContext';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-} from 'stores/FormState/hooks';
-import { FormStatus } from 'stores/FormState/types';
-import { snackbarSettings } from 'utils/notification-utils';
-import useShards from './useShards';
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 function ShardsDisableForm() {
     const intl = useIntl();
@@ -23,15 +24,32 @@ function ShardsDisableForm() {
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
 
+    // Mainly here for initial loading of page since it takes a little bit
+    //  of time to populate `shardDisabled`
+    useEffect(() => {
+        setLocalState((prevVal) => {
+            if (prevVal === shardDisabled) {
+                return prevVal;
+            }
+
+            return shardDisabled;
+        });
+    }, [shardDisabled]);
+
     const update = useCallback(
         (newVal: boolean) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
+            // Set local state right away so the button feels fast
             setLocalState(newVal);
+
+            // Update the actual spec
             updateDisable(newVal)
                 .then(() => {})
                 .catch(() => {
+                    // If there was any kind of error put the opposite back in
                     setLocalState(!newVal);
+
                     enqueueSnackbar(
                         intl.formatMessage(
                             {
@@ -61,11 +79,9 @@ function ShardsDisableForm() {
                 update(checked === 'true');
             }}
         >
-            {!localState ? (
-                <FormattedMessage id="common.enabled" />
-            ) : (
-                <FormattedMessage id="common.disabled" />
-            )}
+            {intl.formatMessage({
+                id: !localState ? 'common.enabled' : 'common.disabled',
+            })}
         </BooleanToggleButton>
     );
 }

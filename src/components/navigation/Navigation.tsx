@@ -1,4 +1,6 @@
 //TODO (UI / UX) - These icons are not final
+import type { NavigationProps } from 'src/components/navigation/types';
+
 import {
     Box,
     List,
@@ -11,9 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { authenticatedRoutes } from 'app/routes';
-import ModeSwitch from 'components/navigation/ModeSwitch';
-import { paperBackground } from 'context/Theme';
+
 import {
     CloudDownload,
     CloudUpload,
@@ -23,10 +23,13 @@ import {
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { useTopBarStore } from 'stores/TopBar/Store';
-import ListItemLink from './ListItemLink';
-import { BANNER_HEIGHT } from './shared';
-import { NavigationProps } from './types';
+
+import { authenticatedRoutes } from 'src/app/routes';
+import ListItemLink from 'src/components/navigation/ListItemLink';
+import ModeSwitch from 'src/components/navigation/ModeSwitch';
+import { BANNER_HEIGHT } from 'src/components/navigation/shared';
+import { paperBackground } from 'src/context/Theme';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();

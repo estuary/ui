@@ -1,4 +1,10 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type {
+    RowActionSupportedTableStoreName,
+    RowConfirmation,
+} from 'src/components/tables/RowActions/types';
+import type { TableActionSettings } from 'src/stores/Tables/Store';
 
 export const ProgressFinished = 60;
 
@@ -25,4 +31,45 @@ export interface SharedProgressProps {
     runningMessageID: string;
     successMessageID: string;
     state: ProgressStates;
+}
+
+export interface ConfirmationAlertProps {
+    messageId: string;
+    potentiallyDangerousUpdate?: boolean;
+}
+
+export interface SettingMetadata {
+    messageId: string;
+    setting: keyof TableActionSettings;
+}
+
+export interface NestedListItemProps {
+    catalogName: string;
+    selectableTableStoreName: RowActionSupportedTableStoreName;
+    settings: SettingMetadata[];
+}
+
+export interface RowActionConfirmationProps {
+    message: any;
+    selected: string[] | RowConfirmation[]; //SelectableTableStore['selected'];
+    selectableTableStoreName?: RowActionSupportedTableStoreName;
+    settings?: SettingMetadata[];
+    detailTable?: boolean;
+}
+
+export interface RowActionButtonProps {
+    messageID: string;
+    renderConfirmationMessage: (selectedNames: string[]) => ReactNode;
+    renderProgress: (
+        item: any,
+        index: number,
+        onFinish: (response: any) => void
+    ) => ReactNode;
+    selectableTableStoreName: RowActionSupportedTableStoreName;
+}
+
+// Mainly for Access Grants and Data Sharing
+export interface ConfirmationWithExplanationProps {
+    message: string | ReactNode;
+    selected: AccessGrantRowConfirmation[];
 }

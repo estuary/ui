@@ -1,6 +1,6 @@
-import { CommonMessages } from './CommonMessages';
-import { CTAs } from './CTAs';
-import { Data } from './Data';
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+import { Data } from 'src/lang/en-US/Data';
 
 export const EntityTable: Record<string, string> = {
     'entityTable.title': `Entity Table`,
@@ -17,6 +17,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
+    'entityTable.data.detail': `Detail`,
     'entityTable.data.objectRole': `Object`,
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
     'entityTable.data.catalogPrefix': `Catalog Prefix`,
@@ -73,8 +74,8 @@ export const EntityTable: Record<string, string> = {
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 
     // Entity Selector / Add Dialog
-    'entityTable.captures.missing.header': `You currently have no captures.  Click the captures icon on the menu bar to get started.`,
-    'entityTable.materializations.missing.header': `You currently have no materializations.  Click the materializations icon on the menu bar to get started.`,
+    'entityTable.captures.missing.header': `You currently have no captures. Click the captures icon on the menu bar to get started.`,
+    'entityTable.materializations.missing.header': `You currently have no materializations. Click the materializations icon on the menu bar to get started.`,
 
     'entityTable.collections.missing.header': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
     'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,

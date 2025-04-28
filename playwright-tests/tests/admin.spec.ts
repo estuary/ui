@@ -1,7 +1,7 @@
-import { expect, Page, test } from '@playwright/test';
 import { AuthProps } from '../helpers/types';
 import { USERS } from '../helpers/users';
 import { defaultPageSetup } from '../helpers/utils';
+import { expect, Page, test } from '@playwright/test';
 
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];

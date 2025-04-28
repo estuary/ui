@@ -1,15 +1,18 @@
-import { Box } from '@mui/material';
-import CollectionSelector from 'components/collection/Selector';
-import CatalogList from 'components/transformation/create/Config/catalog/CatalogList';
-import CollectionList from 'components/transformation/create/Config/catalog/CollectionList';
+import type { EntityListProps } from 'src/components/shared/Entity/List/types';
+
+import { Stack } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import { EntityListProps } from './types';
+
+import CollectionSelector from 'src/components/collection/Selector';
+import CatalogList from 'src/components/transformation/create/Config/catalog/CatalogList';
+import CollectionList from 'src/components/transformation/create/Config/catalog/CollectionList';
 
 function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
     const intl = useIntl();
 
     return (
-        <Box>
+        <Stack direction="column" sx={{ height: '100%' }}>
             <CollectionSelector
                 itemType={intl.formatMessage({
                     id: 'newTransform.config.transform.header',
@@ -28,9 +31,8 @@ function EntityList({ content, PrimaryCTA, toggle }: EntityListProps) {
                 addButtonClickHandler={() => {
                     toggle(true);
                 }}
-                height={532}
             />
-        </Box>
+        </Stack>
     );
 }
 

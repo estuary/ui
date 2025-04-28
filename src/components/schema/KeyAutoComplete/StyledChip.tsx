@@ -1,8 +1,12 @@
-import { UniqueIdentifier } from '@dnd-kit/core';
-import { Chip, ChipProps, IconButton, IconButtonProps } from '@mui/material';
-import { CommonProps } from '@mui/material/OverridableComponent';
-import { draggableChipIconSx } from 'context/Theme';
+import type { UniqueIdentifier } from '@dnd-kit/core';
+import type { ChipProps, IconButtonProps } from '@mui/material';
+import type { CommonProps } from '@mui/material/OverridableComponent';
+
+import { Chip, IconButton } from '@mui/material';
+
 import { MoreVert } from 'iconoir-react';
+
+import { draggableChipIconSx } from 'src/context/Theme';
 
 interface Props {
     label: UniqueIdentifier;

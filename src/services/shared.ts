@@ -1,6 +1,47 @@
+import type { User } from '@supabase/supabase-js';
+import type { CustomEvents } from 'src/services/types';
+import type { UserDetails } from 'src/types';
+
+import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import { isProduction } from 'utils/env-utils';
-import { CustomEvents } from './types';
+
+import { isProduction } from 'src/utils/env-utils';
+
+export const DEFAULT_FILTER = '__unknown__';
+
+export const getUserDetails = (
+    user: User | null | undefined
+): UserDetails | null => {
+    if (!user) {
+        return null;
+    }
+
+    let userName, email, emailVerified, avatar, usedSSO;
+
+    if (!isEmpty(user.user_metadata)) {
+        email = user.user_metadata.email;
+        emailVerified = user.user_metadata.email_verified;
+        avatar = user.user_metadata.avatar_url;
+        userName = user.user_metadata.full_name ?? email;
+        usedSSO = user.app_metadata.provider
+            ? user.app_metadata.provider.startsWith('sso')
+            : false;
+    } else {
+        userName = user.email;
+        email = user.email;
+        emailVerified = false;
+        usedSSO = false;
+    }
+
+    return {
+        id: user.id,
+        userName,
+        email,
+        emailVerified,
+        avatar,
+        usedSSO,
+    };
+};
 
 export const logRocketConsole = (message: string, ...props: any[]) => {
     // Just want to be very very safe

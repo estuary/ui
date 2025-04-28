@@ -1,13 +1,15 @@
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+
 import { Box, TableCell, TableRow, useTheme } from '@mui/material';
-import { BaseDataPlaneQuery } from 'api/dataPlanes';
-import SingleLineCode from 'components/content/SingleLineCode';
-import DataPlane from 'components/shared/Entity/DataPlane';
-import { getEntityTableRowSx } from 'context/Theme';
-import useCidrBlocks from 'hooks/useCidrBlocks';
+
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
+import DataPlane from 'src/components/shared/Entity/DataPlane';
+import { getEntityTableRowSx } from 'src/context/Theme';
 import {
     formatDataPlaneName,
     generateDataPlaneOption,
-} from 'utils/dataPlane-utils';
+} from 'src/utils/dataPlane-utils';
 
 interface RowsProps {
     data: BaseDataPlaneQuery[];
@@ -20,7 +22,6 @@ interface RowProps {
 function Row({ row }: RowProps) {
     const theme = useTheme();
 
-    const cidrBlocks = useCidrBlocks();
     const dataPlaneOption = generateDataPlaneOption(row);
 
     return (
@@ -51,7 +52,7 @@ function Row({ row }: RowProps) {
                 ) : null}
             </TableCell>
             <TableCell>
-                <SingleLineCode value={cidrBlocks(row.cidr_blocks)} />
+                <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
             </TableCell>
         </TableRow>
     );

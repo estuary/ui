@@ -25,19 +25,23 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
-import {
-    Autocomplete,
+import type { EnumCellProps, EnumOption, WithClassname } from '@jsonforms/core';
+import type {
     AutocompleteRenderOptionState,
     FilterOptionsState,
-    MenuList,
-    Typography,
 } from '@mui/material';
-import DataPlaneIcon from 'components/shared/Entity/DataPlaneIcon';
-import React, { ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
+
+import React, { useMemo } from 'react';
+
+import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
-import AutoCompleteInputWithStartAdornment from '../AutoCompleteInputWithStartAdornment';
-import Option from './Option';
+
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { defaultOutline_hovered } from 'src/context/Theme';
+import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
+import Option from 'src/forms/renderers/DataPlaneSelector/Option';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;
@@ -116,27 +120,57 @@ export const DataPlaneAutoComplete = ({
                     <MenuList style={{ padding: 0 }}>{children}</MenuList>
                 </li>
             )}
-            renderInput={(textFieldProps) => (
-                <AutoCompleteInputWithStartAdornment
-                    textFieldProps={textFieldProps}
-                    startAdornment={
-                        currentOption ? (
-                            <DataPlaneIcon
-                                provider={
-                                    currentOption.value.dataPlaneName.provider
-                                }
-                                scope={currentOption.value.scope}
-                            />
-                        ) : null
-                    }
-                />
-            )}
+            renderInput={(textFieldProps) => {
+                return (
+                    <AutoCompleteInputWithStartAdornment
+                        textFieldProps={textFieldProps}
+                        startAdornment={
+                            currentOption ? (
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    {currentOption.value.dataPlaneName
+                                        .prefix ? (
+                                        <Box
+                                            sx={{
+                                                borderRight: (theme) =>
+                                                    defaultOutline_hovered[
+                                                        theme.palette.mode
+                                                    ],
+                                                fontsize: 9,
+                                                pr: 1,
+                                            }}
+                                        >
+                                            {
+                                                currentOption.value
+                                                    .dataPlaneName.prefix
+                                            }
+                                        </Box>
+                                    ) : null}
+
+                                    <DataPlaneIcon
+                                        provider={
+                                            currentOption.value.dataPlaneName
+                                                .provider
+                                        }
+                                        scope={currentOption.value.scope}
+                                    />
+                                </Stack>
+                            ) : null
+                        }
+                    />
+                );
+            }}
             renderOption={(renderOptionProps, option) => {
                 return (
                     <Option
                         renderOptionProps={renderOptionProps}
                         option={option}
-                        key={option.label}
+                        key={option.value.id}
                     />
                 );
             }}
