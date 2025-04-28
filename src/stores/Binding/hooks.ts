@@ -177,12 +177,12 @@ export const useBinding_allBindingsDisabled = () => {
     );
 };
 
-export const useBinding_someBindingsDisabled = () => {
+export const useBinding_enabledBindings_count = () => {
     return useBindingStore(
         useShallow((state) =>
-            Object.values(state.resourceConfigs).some(
-                (config) => config.meta.disable
-            )
+            Object.values(state.resourceConfigs).reduce((count, config) => {
+                return config.meta?.disable ? count : count + 1;
+            }, 0)
         )
     );
 };

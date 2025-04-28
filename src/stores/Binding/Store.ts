@@ -498,6 +498,11 @@ const getInitialState = (
                         meta: {
                             bindingIndex: reducedBindingCount + index,
                             collectionName,
+                            // When adding default this so the first click on the binding
+                            //  does not cause extra renders
+                            disable: undefined,
+                            previouslyDisabled: undefined,
+                            onIncompatibleSchemaChange: undefined,
                         },
                     };
                 });
@@ -1203,6 +1208,11 @@ const getInitialState = (
                     meta: {
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         collectionName: targetCollection,
+                        // When adding default this so the first click on the binding
+                        //  does not cause extra renders
+                        disable: undefined,
+                        previouslyDisabled: undefined,
+                        onIncompatibleSchemaChange: undefined,
                     },
                 };
 
