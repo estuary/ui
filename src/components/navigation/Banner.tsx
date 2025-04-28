@@ -10,11 +10,7 @@ import {
 
 import { NavArrowDown } from 'iconoir-react';
 
-import {
-    BANNER_HEIGHT,
-    getSemanticBackgroundColor,
-    isOverflown,
-} from 'src/components/navigation/shared';
+import { BANNER_HEIGHT, isOverflown } from 'src/components/navigation/shared';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 export default function Banner() {
@@ -35,17 +31,20 @@ export default function Banner() {
         setOverflown(isOverflown(contentEl.current));
     }, [setBannerOpen, setOverflown, setSeverity]);
 
+    if (severity.length === 0) {
+        return null;
+    }
+
+    // The background color is a tad dark in light mode for the success
+    // and info variants.
     return (
         <Collapse in={bannerOpen}>
             <Stack
                 direction="row"
                 style={{
                     alignItems: 'flex-start',
-                    backgroundColor: getSemanticBackgroundColor(
-                        theme.palette.mode,
-                        severity
-                    ),
-                    border: theme.palette[severity].alpha_50,
+                    backgroundColor: theme.palette[severity].alpha_50,
+                    border: `1px solid ${theme.palette[severity].main}`,
                     height: expanded ? 'fit-content' : BANNER_HEIGHT,
                     justifyContent: 'space-between',
                     paddingBottom: 4,
