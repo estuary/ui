@@ -15,7 +15,8 @@ export const nullableArrayTester: RankedTester = rankWith(
 );
 
 const NullableArrayRenderer = (props: ArrayLayoutProps) => {
-    return <MaterialArrayControlRenderer {...props} />;
+    // TODO (JsonForms Translations) - Start moving content into translate files
+    return <MaterialArrayControlRenderer {...props} translations={{}} />;
 };
 
 export const NullableArrayControl = withJsonFormsArrayLayoutProps(
