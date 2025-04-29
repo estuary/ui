@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { isString } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
@@ -21,6 +21,7 @@ import { getSourceCapture } from 'src/utils/entity-utils';
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
 function SelectCapture() {
+    const intl = useIntl();
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
     const prefilledOnce = useRef(false);
@@ -110,15 +111,13 @@ function SelectCapture() {
     return (
         <>
             <Button disabled={showLoading || formActive} onClick={toggleDialog}>
-                <FormattedMessage
-                    id={
-                        showLoading
-                            ? 'workflows.sourceCapture.cta.loading'
-                            : sourceCapture
-                              ? 'workflows.sourceCapture.cta.edit'
-                              : 'workflows.sourceCapture.cta'
-                    }
-                />
+                {intl.formatMessage({
+                    id: showLoading
+                        ? 'workflows.sourceCapture.cta.loading'
+                        : sourceCapture
+                          ? 'cta.modify'
+                          : 'cta.modify',
+                })}
             </Button>
             <AddDialog
                 entity="capture"
@@ -128,7 +127,7 @@ function SelectCapture() {
                 SecondaryCTA={CancelSourceCaptureButton}
                 selectedCollections={selectedCollections}
                 toggle={toggleDialog}
-                title={<FormattedMessage id="captureTable.header" />}
+                title={intl.formatMessage({ id: 'captureTable.header' })}
                 OptionalSettings={OptionalSettings}
             />
         </>
