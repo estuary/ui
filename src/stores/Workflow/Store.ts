@@ -16,8 +16,13 @@ const STORE_KEY = 'workflow';
 
 const getInitialStateData = (): Pick<
     WorkflowState,
-    'catalogName' | 'connectorMetadata' | 'customerId' | 'redirectUrl'
+    | 'authenticating'
+    | 'catalogName'
+    | 'connectorMetadata'
+    | 'customerId'
+    | 'redirectUrl'
 > => ({
+    authenticating: false,
     catalogName: { root: '', suffix: '', tenant: '', whole: '' },
     connectorMetadata: [],
     customerId: '',
@@ -27,6 +32,16 @@ const getInitialStateData = (): Pick<
 const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
+
+    setAuthenticating: (value) => {
+        set(
+            produce((state: WorkflowState) => {
+                state.authenticating = value;
+            }),
+            false,
+            'authenticating set'
+        );
+    },
 
     setCatalogName: (segments) => {
         set(

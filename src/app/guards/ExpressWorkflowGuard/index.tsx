@@ -1,6 +1,6 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { ConnectorGridSkeleton } from 'src/app/guards/ExpressWorkflowGuard/ConnectorGridSkeleton';
 import { FormSkeleton } from 'src/app/guards/ExpressWorkflowGuard/FormSkeleton';
@@ -12,15 +12,17 @@ import { logRocketConsole } from 'src/services/shared';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const ExpressWorkflowGuard = ({ children }: BaseComponentProps) => {
-    const authenticating = useRef(false);
-
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { getExpressWorkflowAuth } = useExpressWorkflowAuth();
 
+    const authenticating = useWorkflowStore((state) => state.authenticating);
     const stateEmpty = useWorkflowStore(
         (state) =>
             !state.catalogName.whole || !state.customerId || !state.redirectUrl
+    );
+    const setAuthenticating = useWorkflowStore(
+        (state) => state.setAuthenticating
     );
     const setCatalogName = useWorkflowStore((state) => state.setCatalogName);
     const setCustomerId = useWorkflowStore((state) => state.setCustomerId);
@@ -30,8 +32,8 @@ export const ExpressWorkflowGuard = ({ children }: BaseComponentProps) => {
     const setRedirectUrl = useWorkflowStore((state) => state.setRedirectUrl);
 
     useEffect(() => {
-        if (!authenticating.current && stateEmpty) {
-            authenticating.current = true;
+        if (!authenticating && stateEmpty) {
+            setAuthenticating(true);
 
             getExpressWorkflowAuth()
                 .then(
@@ -53,20 +55,21 @@ export const ExpressWorkflowGuard = ({ children }: BaseComponentProps) => {
                     }
                 )
                 .finally(() => {
-                    authenticating.current = false;
+                    setAuthenticating(false);
                 });
         }
     }, [
         authenticating,
         getExpressWorkflowAuth,
         stateEmpty,
+        setAuthenticating,
         setCatalogName,
         setCustomerId,
         setHydrationErrorsExist,
         setRedirectUrl,
     ]);
 
-    if (authenticating.current && stateEmpty) {
+    if (authenticating && stateEmpty) {
         return connectorId ? <FormSkeleton /> : <ConnectorGridSkeleton />;
     }
 
