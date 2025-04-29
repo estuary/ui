@@ -114,9 +114,7 @@ function SelectCapture() {
                 {intl.formatMessage({
                     id: showLoading
                         ? 'workflows.sourceCapture.cta.loading'
-                        : sourceCapture
-                          ? 'cta.modify'
-                          : 'cta.modify',
+                        : 'cta.modify',
                 })}
             </Button>
             <AddDialog

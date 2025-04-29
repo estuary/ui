@@ -126,7 +126,7 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
-    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
+    'workflows.sourceCapture.optionalSettings.header': `Linked Capture Binding Settings`,
 
     'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
@@ -185,7 +185,7 @@ export const Workflows: Record<string, string> = {
 
     'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
     'resetDataFlow.materializations.empty.header': `No related materializations`,
-    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found. Pick one manually or skip this step.`,
+    'resetDataFlow.materializations.empty.message': `No materializations with a linked capture found. Pick one manually or skip this step.`,
     'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
     'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
     'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
