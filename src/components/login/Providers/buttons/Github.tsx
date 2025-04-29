@@ -15,6 +15,8 @@ const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
             {...props}
             onClick={login}
             startIcon={
+                // TODO (linting)
+                // eslint-disable-next-line jsx-a11y/prefer-tag-over-role
                 <svg
                     role="img"
                     viewBox="0 0 24 24"

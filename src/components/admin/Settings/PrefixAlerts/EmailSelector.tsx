@@ -181,7 +181,7 @@ function EmailSelector({
                     return typeof option === 'string' ? (
                         <Typography>{option}</Typography>
                     ) : (
-                        <ListItem key={option.user_id} {...renderOptionProps}>
+                        <ListItem {...renderOptionProps} key={option.user_id}>
                             <UserAvatar
                                 userName={option.user_full_name}
                                 avatarUrl={option.user_avatar_url}
