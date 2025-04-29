@@ -72,7 +72,6 @@ export const mapCustomStateToCombinatorRendererProps = (
         keyword
     );
 
-    // @ts-expect-error this is how it works in the original so leaving it
     return {
         data,
         schema,

@@ -53,7 +53,7 @@ function useDraftSpecEditor(
             // If there is a schema scope make sure it exists first
             //  otherwise we will fall back to the schema prop
             // This is just being super safe
-            spec = has(draftSpec.spec, editorSchemaScope)
+            spec = has<any>(draftSpec.spec, editorSchemaScope)
                 ? get(draftSpec.spec, editorSchemaScope)
                 : draftSpec.spec.schema;
         }
