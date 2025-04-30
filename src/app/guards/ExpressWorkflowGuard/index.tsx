@@ -63,7 +63,7 @@ export const ExpressWorkflowGuard = ({
         stateEmpty,
     ]);
 
-    if (authenticating.current && stateEmpty) {
+    if (authenticating && stateEmpty) {
         return connectorId ? <FormSkeleton /> : <ConnectorGridSkeleton />;
     }
 
