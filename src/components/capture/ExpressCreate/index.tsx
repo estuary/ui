@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { authenticatedRoutes } from 'src/app/routes';
 import CaptureGenerateButton from 'src/components/capture/GenerateButton';
 import {
     useEditorStore_id,
@@ -11,23 +10,16 @@ import {
 import EntityCreateExpress from 'src/components/shared/Entity/Create/Express';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { useEntityType } from 'src/context/EntityContext';
 import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
-import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 export default function ExpressCaptureCreate() {
-    usePageTitle({
-        header: authenticatedRoutes.express.captureCreate.new.title,
-        headerLink:
-            'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
-    });
-
-    const entityType = 'capture';
-
+    const entityType = useEntityType();
     const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
@@ -71,6 +63,10 @@ export default function ExpressCaptureCreate() {
             setInitiateDiscovery(true);
         }
     }, [entityNameChanged]);
+
+    if (entityType !== 'capture') {
+        return null;
+    }
 
     return (
         <WorkflowHydrator expressWorkflow>
