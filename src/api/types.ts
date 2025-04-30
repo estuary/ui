@@ -15,6 +15,14 @@ export interface ConnectorTag extends BaseConnectorTag {
     title: string;
 }
 
+// This interface is only used to type the data returned by getSchema_Resource.
+export interface ConnectorTagResourceData {
+    connector_id: string;
+    default_capture_interval: string | null;
+    disable_backfill: boolean;
+    resource_spec_schema: Schema;
+}
+
 export interface ConnectorWithTagQuery {
     connector_tags: ConnectorTag[];
     id: string;

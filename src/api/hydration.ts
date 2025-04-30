@@ -1,8 +1,9 @@
+import type { ConnectorTagResourceData } from 'src/api/types';
 import type {
     LiveSpecsExt_MaterializeOrTransform,
     LiveSpecsExtQuery,
 } from 'src/hooks/useLiveSpecsExt';
-import type { Entity, Schema } from 'src/types';
+import type { Entity } from 'src/types';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
@@ -12,30 +13,8 @@ import {
     TABLES,
 } from 'src/services/supabase';
 
-interface ConnectorTag {
-    connectors: {
-        image_name: string;
-    };
-    disable_backfill: boolean;
-    id: string;
-    connector_id: string;
-    default_capture_interval: string | null;
-    image_tag: string;
-    endpoint_spec_schema: Schema;
-    resource_spec_schema: Schema;
-    documentation_url: string;
-}
-
 // TODO (optimization): Consider removing the tight coupling between this file and the stores.
 //  These APIs are truly general purpose. Perhaps break them out by supabase table.
-type ConnectorTagResourceData = Pick<
-    ConnectorTag,
-    | 'connector_id'
-    | 'default_capture_interval'
-    | 'disable_backfill'
-    | 'resource_spec_schema'
->;
-
 export const getSchema_Resource = async (connectorTagId: string | null) => {
     const resourceSchema = await supabaseRetry(
         () =>
