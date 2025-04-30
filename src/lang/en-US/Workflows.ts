@@ -103,6 +103,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
 
+    // TODO (collection reset) - Still should probably inform users of this... but probably stop saying "reversioned" ?
     'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
     'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
@@ -368,6 +369,7 @@ export const Workflows: Record<string, string> = {
     'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
     'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
 
+    // TODO (collection reset) - need to review ALL content
     // Entity Evolution
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,

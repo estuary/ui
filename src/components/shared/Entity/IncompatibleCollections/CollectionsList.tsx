@@ -1,27 +1,27 @@
-import type { IncompatibleCollections } from 'src/api/evolutions';
+import type { CollectionActionProps } from 'src/components/shared/Entity/IncompatibleCollections/types';
 
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import Description from 'src/components/shared/Entity/IncompatibleCollections/Description';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { hasLength } from 'src/utils/misc-utils';
-import { suggestedName } from 'src/utils/name-utils';
-
-interface CollectionActionProps {
-    incompatibleCollection: IncompatibleCollections;
-}
 
 function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
+    const intl = useIntl();
+
     const recreateCause = hasLength(incompatibleCollection.requires_recreation)
         ? incompatibleCollection.requires_recreation[0]
         : null;
+
+    // TODO (collection reset) - we'll no longer have a "newName" but still need to show user
+    // what collections are getting reset
     const newName =
         recreateCause !== null && recreateCause !== 'authoritativeSourceSchema'
-            ? suggestedName(incompatibleCollection.collection)
+            ? 'TODO____previously_the_v2_name_shown_here'
             : null;
 
     const helpMessage =
@@ -47,11 +47,9 @@ function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
                 />
             </Typography>
             <Tooltip
-                title={
-                    <FormattedMessage
-                        id={`entityEvolution.action.${helpMessage}.help`}
-                    />
-                }
+                title={intl.formatMessage({
+                    id: `entityEvolution.action.${helpMessage}.help`,
+                })}
             >
                 <IconButton>
                     <HelpCircle />

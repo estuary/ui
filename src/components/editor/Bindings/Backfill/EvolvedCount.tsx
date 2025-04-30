@@ -8,6 +8,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { useBinding_evolvedCollections_count } from 'src/stores/Binding/hooks';
 
+// TODO (collection reset) - I doubt we'll want to call out this specific call... but maybe?
 function EvolvedCount() {
     const intl = useIntl();
     const entityType = useEntityType();
