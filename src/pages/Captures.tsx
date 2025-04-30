@@ -3,7 +3,7 @@ import type { SxProps, Theme } from '@mui/material';
 import { Box, Button, Stack, Toolbar } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -17,6 +17,8 @@ const Capture = () => {
         header: authenticatedRoutes.captures.title,
         headerLink: 'https://docs.estuary.dev/concepts/#captures',
     });
+
+    const intl = useIntl();
 
     return (
         <>
@@ -36,7 +38,9 @@ const Capture = () => {
                             size="large"
                             startIcon={<Plus style={{ fontSize: 14 }} />}
                         >
-                            <FormattedMessage id="capturesTable.cta.new" />
+                            {intl.formatMessage({
+                                id: 'capturesTable.cta.new',
+                            })}
                         </Button>
                     </NavLink>
 
@@ -49,7 +53,9 @@ const Capture = () => {
                             size="large"
                             startIcon={<Plus style={{ fontSize: 14 }} />}
                         >
-                            <FormattedMessage id="capturesTable.cta.new" />
+                            {intl.formatMessage({
+                                id: 'capturesTable.cta.new',
+                            })}
                         </Button>
                     </NavLink>
                 </Stack>
