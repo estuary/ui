@@ -1,4 +1,4 @@
-import type { ConnectorTag, ConnectorWithTagQuery } from 'src/api/types';
+import type { ConnectorTag, ConnectorWithTag } from 'src/api/types';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -6,11 +6,11 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const useWorkflowStore_connectorMetadataProperty = <
-    K extends keyof ConnectorWithTagQuery,
+    K extends keyof ConnectorWithTag,
 >(
     connectorId: string | null | undefined,
     property: K
-): ConnectorWithTagQuery[K] | undefined => {
+): ConnectorWithTag[K] | undefined => {
     return useWorkflowStore(
         useShallow((state) => {
             if (!connectorId || !hasLength(state.connectorMetadata)) {

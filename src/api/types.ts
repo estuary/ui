@@ -23,7 +23,7 @@ export interface ConnectorTagResourceData {
     resource_spec_schema: Schema;
 }
 
-export interface ConnectorWithTagQuery {
+export interface ConnectorWithTag {
     connector_tags: ConnectorTag[];
     id: string;
     detail: string;
@@ -31,6 +31,9 @@ export interface ConnectorWithTagQuery {
     image: string;
     recommended: boolean;
     title: string;
+}
+
+export interface ConnectorWithTagQuery extends ConnectorWithTag {
     // FILTERING TYPES HACK
     ['connector_tags.protocol']: undefined;
     ['connector_tags.image_tag']: undefined;
