@@ -34,6 +34,8 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
+type RouteHandler = (customRoute?: string, external?: boolean) => void;
+
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
@@ -136,7 +138,7 @@ function useEntityWorkflowHelpers() {
 
     const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
 
-    const exit = useCallback(
+    const exit: RouteHandler = useCallback(
         (customRoute?: string, external?: boolean) => {
             logRocketConsole('EntityWorkflow:exit');
             resetState();
@@ -161,7 +163,7 @@ function useEntityWorkflowHelpers() {
     );
 
     // Form Event Handlers
-    const closeLogs = useCallback(
+    const closeLogs: RouteHandler = useCallback(
         (customRoute?: string, external?: boolean) => {
             logRocketConsole('EntityWorkflow:closeLogs');
             setFormState({ showLogs: false });
