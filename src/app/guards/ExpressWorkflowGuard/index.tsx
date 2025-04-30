@@ -38,10 +38,7 @@ export const ExpressWorkflowGuard = ({
 
             getExpressWorkflowAuth().then(
                 ({ customerId, prefix, redirectURL }) => {
-                    setCatalogName([
-                        { key: 'tenant', value: prefix },
-                        { key: 'root', value: customerId },
-                    ]);
+                    setCatalogName({ root: customerId, tenant: prefix });
                     setCustomerId(customerId);
                     setRedirectUrl(redirectURL);
                 },

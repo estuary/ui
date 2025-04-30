@@ -14,9 +14,7 @@ export interface WorkflowState extends StoreWithHydration {
     customerId: string;
     redirectUrl: string;
     resetState: () => void;
-    setCatalogName: (
-        segments: { key: keyof CatalogName; value: string }[]
-    ) => void;
+    setCatalogName: (segments: Partial<CatalogName>) => void;
     setConnectorMetadata: (value: WorkflowState['connectorMetadata']) => void;
     setCustomerId: (value: WorkflowState['customerId']) => void;
     setRedirectUrl: (value: WorkflowState['redirectUrl']) => void;

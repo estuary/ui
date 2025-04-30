@@ -31,10 +31,7 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     setCatalogName: (segments) => {
         set(
             produce((state: WorkflowState) => {
-                segments.forEach(({ key, value }) => {
-                    state.catalogName[key] = value;
-                });
-
+                state.catalogName = { ...state.catalogName, ...segments };
                 state.catalogName.whole = `${state.catalogName.tenant}${state.catalogName.root}${state.catalogName.suffix}`;
             }),
             false,
