@@ -1,3 +1,7 @@
+import { useRef } from 'react';
+
+import { useUnmount } from 'react-use';
+
 import { ExpressWorkflowGuard } from 'src/app/guards/ExpressWorkflowGuard/index';
 import { authenticatedRoutes } from 'src/app/routes';
 import ExpressCaptureCreate from 'src/components/capture/ExpressCreate';
@@ -9,6 +13,12 @@ import { WorkflowContextProvider } from 'src/context/Workflow';
 import { ExpressWorkflowWrapper } from 'src/pages/expressWorkflow/Wrapper';
 
 const ExpressCaptureCreateNewRoute = () => {
+    const authenticatingWorkflow = useRef(false);
+
+    useUnmount(() => {
+        authenticatingWorkflow.current = false;
+    });
+
     return (
         <AuthenticatedHydrators>
             <EntityContextProvider value="capture">
@@ -21,7 +31,9 @@ const ExpressCaptureCreateNewRoute = () => {
                             }
                         >
                             <ExpressWorkflowWrapper>
-                                <ExpressWorkflowGuard>
+                                <ExpressWorkflowGuard
+                                    authenticating={authenticatingWorkflow}
+                                >
                                     <ExpressCaptureCreate />
                                 </ExpressWorkflowGuard>
                             </ExpressWorkflowWrapper>

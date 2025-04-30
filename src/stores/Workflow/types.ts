@@ -9,13 +9,11 @@ interface CatalogName {
 }
 
 export interface WorkflowState extends StoreWithHydration {
-    authenticating: boolean;
     catalogName: CatalogName;
     connectorMetadata: ConnectorWithTagQuery[];
     customerId: string;
     redirectUrl: string;
     resetState: () => void;
-    setAuthenticating: (value: WorkflowState['authenticating']) => void;
     setCatalogName: (
         segments: { key: keyof CatalogName; value: string }[]
     ) => void;

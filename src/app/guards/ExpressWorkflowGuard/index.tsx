@@ -1,4 +1,4 @@
-import type { BaseComponentProps } from 'src/types';
+import type { ExpressWorkflowGuardProps } from 'src/app/guards/types';
 
 import { useEffect } from 'react';
 
@@ -11,19 +11,19 @@ import useExpressWorkflowAuth from 'src/hooks/useExpressWorkflowAuth';
 import { logRocketConsole } from 'src/services/shared';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
-export const ExpressWorkflowGuard = ({ children }: BaseComponentProps) => {
+export const ExpressWorkflowGuard = ({
+    authenticating,
+    children,
+}: ExpressWorkflowGuardProps) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { getExpressWorkflowAuth } = useExpressWorkflowAuth();
 
-    const authenticating = useWorkflowStore((state) => state.authenticating);
     const stateEmpty = useWorkflowStore(
         (state) =>
             !state.catalogName.whole || !state.customerId || !state.redirectUrl
     );
-    const setAuthenticating = useWorkflowStore(
-        (state) => state.setAuthenticating
-    );
+    const resetState = useWorkflowStore((state) => state.resetState);
     const setCatalogName = useWorkflowStore((state) => state.setCatalogName);
     const setCustomerId = useWorkflowStore((state) => state.setCustomerId);
     const setHydrationErrorsExist = useWorkflowStore(
@@ -32,41 +32,35 @@ export const ExpressWorkflowGuard = ({ children }: BaseComponentProps) => {
     const setRedirectUrl = useWorkflowStore((state) => state.setRedirectUrl);
 
     useEffect(() => {
-        if (!authenticating && stateEmpty) {
-            setAuthenticating(true);
+        if (!authenticating.current && stateEmpty) {
+            authenticating.current = true;
+            resetState();
 
-            getExpressWorkflowAuth()
-                .then(
-                    ({ customerId, prefix, redirectURL }) => {
-                        setCatalogName([
-                            { key: 'tenant', value: prefix },
-                            { key: 'root', value: customerId },
-                        ]);
-                        setCustomerId(customerId);
-                        setRedirectUrl(redirectURL);
-                    },
-                    (error) => {
-                        setHydrationErrorsExist(true);
+            getExpressWorkflowAuth().then(
+                ({ customerId, prefix, redirectURL }) => {
+                    setCatalogName([
+                        { key: 'tenant', value: prefix },
+                        { key: 'root', value: customerId },
+                    ]);
+                    setCustomerId(customerId);
+                    setRedirectUrl(redirectURL);
+                },
+                (error) => {
+                    setHydrationErrorsExist(true);
 
-                        logRocketConsole(
-                            'Failed to authenticate workflow',
-                            error
-                        );
-                    }
-                )
-                .finally(() => {
-                    setAuthenticating(false);
-                });
+                    logRocketConsole('Failed to authenticate workflow', error);
+                }
+            );
         }
     }, [
         authenticating,
         getExpressWorkflowAuth,
-        stateEmpty,
-        setAuthenticating,
+        resetState,
         setCatalogName,
         setCustomerId,
         setHydrationErrorsExist,
         setRedirectUrl,
+        stateEmpty,
     ]);
 
     if (authenticating && stateEmpty) {

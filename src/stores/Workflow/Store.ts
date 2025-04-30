@@ -1,4 +1,5 @@
 import type { WorkflowState } from 'src/stores/Workflow/types';
+import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -16,32 +17,20 @@ const STORE_KEY = 'workflow';
 
 const getInitialStateData = (): Pick<
     WorkflowState,
-    | 'authenticating'
-    | 'catalogName'
-    | 'connectorMetadata'
-    | 'customerId'
-    | 'redirectUrl'
+    'catalogName' | 'connectorMetadata' | 'customerId' | 'redirectUrl'
 > => ({
-    authenticating: false,
     catalogName: { root: '', suffix: '', tenant: '', whole: '' },
     connectorMetadata: [],
     customerId: '',
     redirectUrl: '',
 });
 
-const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
+const getInitialState = (
+    set: NamedSet<WorkflowState>,
+    get: StoreApi<WorkflowState>['getState']
+): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
-
-    setAuthenticating: (value) => {
-        set(
-            produce((state: WorkflowState) => {
-                state.authenticating = value;
-            }),
-            false,
-            'authenticating set'
-        );
-    },
 
     setCatalogName: (segments) => {
         set(
@@ -100,5 +89,8 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
 });
 
 export const useWorkflowStore = create<WorkflowState>()(
-    devtools((set, _get) => getInitialState(set), devtoolsOptions(STORE_KEY))
+    devtools(
+        (set, get) => getInitialState(set, get),
+        devtoolsOptions(STORE_KEY)
+    )
 );
