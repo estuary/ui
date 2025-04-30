@@ -1,5 +1,4 @@
 import type { WorkflowState } from 'src/stores/Workflow/types';
-import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -25,10 +24,7 @@ const getInitialStateData = (): Pick<
     redirectUrl: '',
 });
 
-const getInitialState = (
-    set: NamedSet<WorkflowState>,
-    get: StoreApi<WorkflowState>['getState']
-): WorkflowState => ({
+const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
 
@@ -89,8 +85,5 @@ const getInitialState = (
 });
 
 export const useWorkflowStore = create<WorkflowState>()(
-    devtools(
-        (set, get) => getInitialState(set, get),
-        devtoolsOptions(STORE_KEY)
-    )
+    devtools((set, _get) => getInitialState(set), devtoolsOptions(STORE_KEY))
 );
