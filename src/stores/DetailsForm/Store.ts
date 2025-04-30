@@ -13,7 +13,7 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 
-import { getConnectors_detailsForm } from 'src/api/connectors';
+import { getConnectors_detailsFormTestPage } from 'src/api/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -45,7 +45,8 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    const { data, error } = await getConnectors_detailsForm(connectorId);
+    const { data, error } =
+        await getConnectors_detailsFormTestPage(connectorId);
 
     if (!error && data && data.length > 0) {
         const connector = data[0];

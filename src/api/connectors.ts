@@ -65,7 +65,7 @@ const DETAILS_FORM_QUERY = `
 
 // TODO: Remove getConnectors_detailsForm and related assets.
 //   It is only used by the test JSON forms page.
-const getConnectors_detailsForm = async (connectorId: string) => {
+const getConnectors_detailsFormTestPage = async (connectorId: string) => {
     const data = await supabaseRetry(
         () =>
             supabaseClient
@@ -73,7 +73,7 @@ const getConnectors_detailsForm = async (connectorId: string) => {
                 .select(DETAILS_FORM_QUERY)
                 .eq('id', connectorId)
                 .eq('connector_tags.connector_id', connectorId),
-        'getConnectors_detailsForm'
+        'getConnectors_detailsFormTestPage'
     ).then(handleSuccess<ConnectorsQuery_DetailsForm[]>, handleFailure);
 
     return data;
@@ -95,4 +95,8 @@ const getSingleConnectorWithTag = async (connectorId: string) => {
     return data;
 };
 
-export { getConnectors, getConnectors_detailsForm, getSingleConnectorWithTag };
+export {
+    getConnectors,
+    getConnectors_detailsFormTestPage,
+    getSingleConnectorWithTag,
+};
