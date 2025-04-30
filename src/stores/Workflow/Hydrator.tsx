@@ -20,6 +20,8 @@ function WorkflowHydrator({
     const hydrated = useWorkflowStore((state) => state.hydrated);
     const setActive = useWorkflowStore((state) => state.setActive);
 
+    // TODO: Replace with useEffect and alter the logic in a fashion where
+    //   `hydrateState` is called once. Simply using a ref is not sufficient.
     useEffectOnce(() => {
         if (!hydrated) {
             setActive(true);

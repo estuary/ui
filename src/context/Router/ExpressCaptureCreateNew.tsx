@@ -13,6 +13,8 @@ import { WorkflowContextProvider } from 'src/context/Workflow';
 import { ExpressWorkflowWrapper } from 'src/pages/expressWorkflow/Wrapper';
 
 const ExpressCaptureCreateNewRoute = () => {
+    // TODO: Move the ref to a higher component so that all express workflow routes
+    //   access the same ref.
     const authenticatingWorkflow = useRef(false);
 
     useUnmount(() => {
