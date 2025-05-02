@@ -210,9 +210,9 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.editor.warning.title': `Editing disabled`,
     'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
-    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
+    // TODO (collection seletor) - need to update content
+    'workflows.collectionSelector.dataFlowBackfill.header': `TODO: Backfill the entire ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `TODO: Backfill capture and reset corresponding tables in all linked materializations.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
