@@ -51,14 +51,14 @@ export default function useEntityCreateNavigate() {
                 ? appendSearchParams(searchParamConfig)
                 : null;
 
-            let newPath: string = advanceToForm
+            const newPath: string = advanceToForm
                 ? ENTITY_SETTINGS[entity].routes.createNew
                 : ENTITY_SETTINGS[entity].routes.connectorSelect;
 
-            if (entity === 'capture' && expressWorkflow && advanceToForm) {
-                // TODO (powered-by-estuary): Use an error page as a fallback.
-                newPath = ENTITY_SETTINGS[entity].routes.createNewExpress;
-            }
+            // if (entity === 'capture' && expressWorkflow && advanceToForm) {
+            //     // TODO (powered-by-estuary): Use an error page as a fallback.
+            //     newPath = ENTITY_SETTINGS[entity].routes.createNewExpress;
+            // }
 
             navigate(
                 newSearchParams

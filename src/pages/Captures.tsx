@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import { Box, Button, Stack, Toolbar } from '@mui/material';
+import { Box, Button, Toolbar } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -29,36 +29,19 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <Stack direction="row" spacing={1}>
-                    <NavLink
-                        style={{ textDecoration: 'none' }}
-                        to={authenticatedRoutes.captures.create.fullPath}
+                <NavLink
+                    style={{ textDecoration: 'none' }}
+                    to={authenticatedRoutes.captures.create.fullPath}
+                >
+                    <Button
+                        size="large"
+                        startIcon={<Plus style={{ fontSize: 14 }} />}
                     >
-                        <Button
-                            size="large"
-                            startIcon={<Plus style={{ fontSize: 14 }} />}
-                        >
-                            {intl.formatMessage({
-                                id: 'capturesTable.cta.new',
-                            })}
-                        </Button>
-                    </NavLink>
-
-                    <NavLink
-                        style={{ textDecoration: 'none' }}
-                        to={authenticatedRoutes.express.captureCreate.fullPath}
-                    >
-                        <Button
-                            color="info"
-                            size="large"
-                            startIcon={<Plus style={{ fontSize: 14 }} />}
-                        >
-                            {intl.formatMessage({
-                                id: 'capturesTable.cta.new',
-                            })}
-                        </Button>
-                    </NavLink>
-                </Stack>
+                        {intl.formatMessage({
+                            id: 'capturesTable.cta.new',
+                        })}
+                    </Button>
+                </NavLink>
             </Toolbar>
 
             <Box sx={boxStyling}>
