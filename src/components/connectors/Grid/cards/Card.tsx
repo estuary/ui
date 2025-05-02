@@ -4,6 +4,7 @@ import { Box, Grid, Stack } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import { TitleContainer } from 'src/components/connectors/Grid/cards/TitleContainer';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import Tile from 'src/components/shared/Tile';
 import {
@@ -16,14 +17,13 @@ export default function Card({
     clickHandler,
     Detail,
     docsUrl,
-    // entityType,
     externalLink,
     Logo,
     Title,
     recommended,
 }: CardProps) {
     return (
-        <Grid item xs={2} md={4} lg={2} xl={2}>
+        <Grid item xs={2} md={4} lg={3} xl={2}>
             <Tile clickHandler={clickHandler} externalLink={externalLink}>
                 <Stack>
                     <Stack
@@ -38,7 +38,11 @@ export default function Card({
                             }}
                         >
                             <Stack
-                                style={{ height: 50, padding: '8px 0px' }}
+                                style={{
+                                    height: 50,
+                                    padding: '8px 0px',
+                                    width: 'inherit',
+                                }}
                                 sx={
                                     recommended
                                         ? {
@@ -71,8 +75,11 @@ export default function Card({
                             ) : null}
                         </Stack>
 
-                        <Stack>
-                            <Stack style={{ alignItems: 'flex-start' }}>
+                        <Stack
+                            className="connector-info"
+                            style={{ flexGrow: 1 }}
+                        >
+                            <TitleContainer>
                                 {Title}
 
                                 {docsUrl ? (
@@ -82,7 +89,7 @@ export default function Card({
                                         </ExternalLink>
                                     </Box>
                                 ) : null}
-                            </Stack>
+                            </TitleContainer>
 
                             {Detail}
                         </Stack>

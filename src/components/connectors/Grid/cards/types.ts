@@ -29,6 +29,5 @@ export interface LogoProps {
 
 export interface MessageComponentProps {
     content: string;
-    height?: string | number;
     marginBottom?: string | number;
 }

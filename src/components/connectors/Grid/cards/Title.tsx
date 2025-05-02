@@ -2,14 +2,14 @@ import type { MessageComponentProps } from 'src/components/connectors/Grid/cards
 
 import { Typography } from '@mui/material';
 
-function Title({ content, height, marginBottom }: MessageComponentProps) {
+function Title({ content, marginBottom }: MessageComponentProps) {
     return (
         <Typography
             align="left"
             component="div"
+            className="connector-title"
             fontSize={18}
             fontWeight="400"
-            height={height}
             marginBottom={marginBottom ?? 1}
         >
             {content}

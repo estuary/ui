@@ -52,8 +52,6 @@ function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
                     content={intl.formatMessage({
                         id: 'connectorTable.data.connectorRequest',
                     })}
-                    height={condensed ? 50 : undefined}
-                    marginBottom={condensed ? '4px' : undefined}
                 />
             }
         />
