@@ -58,20 +58,23 @@ function DataCells({ store }: DataCellProps) {
 }
 
 function Row({ row }: RowProps) {
-    const key = `StorageMappings-${row.id}`;
+    const key = `StorageMappings-${row.id}-stores-`;
 
     return (
         <>
             {row.spec.stores.map((store, index) =>
                 index === 0 ? (
-                    <TableRow key={`${key}_stores_${index}`}>
+                    <TableRow key={`${key}${index}`}>
                         <TableCell>{row.catalog_prefix}</TableCell>
-                        <ChipStatus color="success" messageId="data.active" />
+                        <ChipStatus
+                            color="success"
+                            messageId="storageMappings.status.active"
+                        />
                         <DataCells store={store} />
                         <TimeStamp time={row.updated_at} enableRelative />
                     </TableRow>
                 ) : (
-                    <TableRow key={`${key}_stores_${index}`}>
+                    <TableRow key={`${key}${index}`}>
                         <TableCell />
                         <TableCell />
                         <DataCells store={store} />
