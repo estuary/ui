@@ -29,6 +29,12 @@ function OptionalSettings() {
                 })}
             </Typography>
 
+            <Typography>
+                {intl.formatMessage({
+                    id: 'workflows.sourceCapture.optionalSettings.message',
+                })}
+            </Typography>
+
             <Stack spacing={2} direction="row">
                 {sourceCaptureDeltaUpdatesSupported ? <DeltaUpdates /> : null}
 

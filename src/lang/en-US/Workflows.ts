@@ -122,14 +122,12 @@ export const Workflows: Record<string, string> = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
-    'workflows.sourceCapture.cta': `Source From Capture`,
-    'workflows.sourceCapture.cta.edit': `Edit Source Capture`,
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
-    'workflows.sourceCapture.optin.message': `Select a capture to link to your materialization. Collections added to your capture will automatically be added to your materialization.`,
-    'workflows.sourceCapture.optin.message2': `Removing this will not remove associated collections.`,
+    'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
     'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
+    'workflows.sourceCapture.optionalSettings.message': `Newly added collections will use these defaults`,
 
     'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
