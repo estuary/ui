@@ -211,8 +211,10 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     // TODO (collection seletor) - need to update content
-    'workflows.collectionSelector.dataFlowBackfill.header': `TODO: Backfill the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `TODO: Backfill capture and reset corresponding tables in all linked materializations.`,
+    'workflows.collectionSelector.dataFlowBackfill.header': `Backfill and reset ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Data will be backfilled from your source, inferred schemas will be reset and all destination tables and derivations will be dropped and recreated.`,
+    'workflows.collectionSelector.dataFlowBackfill.input': `Don’t reset related entities.`,
+    'workflows.collectionSelector.dataFlowBackfill.input.description': `Only re-capture all data from my source into the same collections and downstream tables.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -368,6 +370,9 @@ export const Workflows: Record<string, string> = {
     'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
 
     // TODO (collection reset) - need to review ALL content
+    'manualBackfill.header': `Skip Linked Materializations`,
+    'manualBackfill.message': `This will make Flow skip updating linked materializations during the backfill process.`,
+
     // Entity Evolution
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,

@@ -1,6 +1,13 @@
 import type { BackfillDataflowOptionProps } from 'src/components/editor/Bindings/Backfill/types';
 
-import { Box, Typography } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    Typography,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -16,22 +23,33 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     }
 
     return (
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ maxWidth: 'fit-content', mt: 3 }}>
             <AlertBox
-                sx={{
-                    maxWidth: 'fit-content',
-                }}
                 severity="info"
                 short
-                title={intl.formatMessage({
-                    id: 'workflows.collectionSelector.dataFlowBackfill.header',
-                })}
+                // title={intl.formatMessage({
+                //     id: 'workflows.collectionSelector.dataFlowBackfill.header',
+                // })}
             >
                 <Typography component="div">
                     {intl.formatMessage({
                         id: 'workflows.collectionSelector.dataFlowBackfill.message',
                     })}
                 </Typography>
+
+                <FormControl>
+                    <FormControlLabel
+                        control={<Checkbox value="true" checked={false} />}
+                        label={`${intl.formatMessage({
+                            id: 'workflows.collectionSelector.dataFlowBackfill.input',
+                        })}`}
+                    />
+                    <FormHelperText>
+                        {`${intl.formatMessage({
+                            id: 'workflows.collectionSelector.dataFlowBackfill.input.description',
+                        })}`}
+                    </FormHelperText>
+                </FormControl>
             </AlertBox>
         </Box>
     );
