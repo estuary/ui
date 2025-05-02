@@ -103,6 +103,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
     'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
 
+    // TODO (collection reset) - Still should probably inform users of this... but probably stop saying "reversioned" ?
     'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
     'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
@@ -209,9 +210,11 @@ export const Workflows: Record<string, string> = {
     'resetDataFlow.editor.warning.title': `Editing disabled`,
     'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
-    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
+    // TODO (collection seletor) - need to update content
+    'workflows.collectionSelector.dataFlowBackfill.header': `Backfill and reset ${CommonMessages['terms.dataFlow']}.`,
+    'workflows.collectionSelector.dataFlowBackfill.message': `Data will be backfilled from your source, inferred schemas will be reset and all destination tables and derivations will be dropped and recreated.`,
+    'workflows.collectionSelector.dataFlowBackfill.input': `Don’t reset related entities.`,
+    'workflows.collectionSelector.dataFlowBackfill.input.description': `Only re-capture all data from my source into the same collections and downstream tables.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -365,6 +368,10 @@ export const Workflows: Record<string, string> = {
     // Entity Edit
     'entityEdit.alert.detailsFormDisabled': `The details form cannot be edited at this time.`,
     'entityEdit.alert.endpointConfigDisabled': `Editing of the endpoint configuration form disabled.`,
+
+    // TODO (collection reset) - need to review ALL content
+    'manualBackfill.header': `Skip Linked Materializations`,
+    'manualBackfill.message': `This will make Flow skip updating linked materializations during the backfill process.`,
 
     // Entity Evolution
     'entityEvolution.failure.errorTitle': `Update Failed`,

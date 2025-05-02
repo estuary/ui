@@ -1,7 +1,6 @@
 import { DEFAULT_FILTER } from 'src/services/shared';
 import { insertSupabase, TABLES } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
-import { suggestedName } from 'src/utils/name-utils';
 
 export type RequiresRecreation =
     // The collection key in the draft differs from that of the live spec.
@@ -38,7 +37,7 @@ export function toEvolutionRequest(
 ): EvolutionRequest {
     const req: EvolutionRequest = { current_name: ic.collection };
     if (hasLength(ic.requires_recreation)) {
-        req.new_name = suggestedName(ic.collection);
+        req.reset = true;
     } else if (ic.affected_materializations) {
         // since we're _not_ re-creating the collection, restrict the evolution to only apply to
         // the materializations that were affected.
@@ -66,6 +65,9 @@ export interface EvolutionRequest {
     // At most one of `new_name` or `materializations` may be specified, since
     // re-creating the collection must apply to all materializations.
     materializations?: string[];
+
+    // This triggers the backend to kick off `Collection Reset` and do a full proper backfill
+    reset?: boolean;
 }
 
 export const createEvolution = (

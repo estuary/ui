@@ -46,8 +46,8 @@ function BackfillButton({
     const workflow = useEntityWorkflow();
     const evaluateTrialCollections = useTrialCollections();
 
-    const evolvedCollections = useBindingStore(
-        (state) => state.evolvedCollections
+    const [evolvedCollections, setBackfillDataFlow] = useBindingStore(
+        (state) => [state.evolvedCollections, state.setBackfillDataFlow]
     );
 
     // Binding Store
@@ -86,6 +86,7 @@ function BackfillButton({
             return false;
         }
 
+        // TODO (collection reset) - pretty sure the backend handles updating the `backfill` prop
         return evolvedCollections.some(
             (evolvedCollection) =>
                 evolvedCollection.new_name === currentCollection
@@ -184,6 +185,10 @@ function BackfillButton({
                             }
                         }
 
+                        if (workflow === 'capture_edit') {
+                            setBackfillDataFlow(increment === 'true');
+                        }
+
                         setFormState({ status: FormStatus.UPDATED });
                     },
                     (error) => {
@@ -205,6 +210,7 @@ function BackfillButton({
             draftSpec,
             evaluateServerDifferences,
             evaluateTrialCollections,
+            setBackfillDataFlow,
             setBackfilledBindings,
             setCollectionMetadata,
             setFormState,
