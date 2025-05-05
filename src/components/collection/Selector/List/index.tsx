@@ -10,6 +10,7 @@ import useConstant from 'use-constant';
 
 import { Box, Popper, TableContainer } from '@mui/material';
 
+import { findAll } from 'highlight-words-core';
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 import { usePrevious } from 'react-use';
@@ -127,9 +128,20 @@ function CollectionSelectorList({
             return mappedResourceConfigs;
         }
 
-        return mappedResourceConfigs.filter((row) =>
-            row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue)
-        );
+        return mappedResourceConfigs.filter((row) => {
+            const chunks = findAll({
+                // autoEscape,
+                // caseSensitive,
+                // findChunks,
+                // sanitize,
+                searchWords: [filterValue],
+                textToHighlight: row[COLLECTION_SELECTOR_NAME_COL],
+            });
+
+            console.log('chunks', chunks);
+
+            return row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue);
+        });
     }, [filterValue, mappedResourceConfigs]);
 
     useEffect(() => {
