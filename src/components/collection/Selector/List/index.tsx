@@ -22,6 +22,7 @@ import CollectionSelectorHeaderName from 'src/components/collection/Selector/Lis
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_REMOVE,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
@@ -105,6 +106,7 @@ function CollectionSelectorList({
                     const collection = config.meta.collectionName;
 
                     return {
+                        [COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS]: [],
                         [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
                             config.meta.disable
                         ),
@@ -128,20 +130,27 @@ function CollectionSelectorList({
             return mappedResourceConfigs;
         }
 
-        return mappedResourceConfigs.filter((row) => {
-            const chunks = findAll({
-                // autoEscape,
-                // caseSensitive,
-                // findChunks,
-                // sanitize,
-                searchWords: [filterValue],
-                textToHighlight: row[COLLECTION_SELECTOR_NAME_COL],
+        // If you want to match on multiple words you can. However, this search is as
+        //  inclusive as possible. So if a name only matches a _single_ searchWord it will
+        //  be returned. searchWords = filterValue.split(',').map((val) => val.trim());
+        const searchWords = [filterValue];
+
+        return mappedResourceConfigs
+            .map((row) => {
+                row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS] = findAll({
+                    autoEscape: true,
+                    caseSensitive: false,
+                    searchWords,
+                    textToHighlight: row[COLLECTION_SELECTOR_NAME_COL],
+                });
+
+                return row;
+            })
+            .filter((row) => {
+                return row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS].some(
+                    (chunk) => chunk.highlight
+                );
             });
-
-            console.log('chunks', chunks);
-
-            return row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue);
-        });
     }, [filterValue, mappedResourceConfigs]);
 
     useEffect(() => {
