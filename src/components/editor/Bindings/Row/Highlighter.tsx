@@ -10,16 +10,21 @@ function Highlighter({ chunks, output }: HighlighterProps) {
     return (
         <span>
             {chunks.map((chunk, index) => {
-                return (
-                    <span
-                        className={
-                            chunk.highlight ? HIGHLIGHT_CLASS_NAME : undefined
-                        }
-                        key={`hl__${index}`}
-                    >
-                        {output.substr(chunk.start, chunk.end - chunk.start)}
-                    </span>
+                const outputChunk = output.substr(
+                    chunk.start,
+                    chunk.end - chunk.start
                 );
+                const key = `hl__${index}`;
+
+                if (chunk.highlight) {
+                    return (
+                        <mark key={key} className={HIGHLIGHT_CLASS_NAME}>
+                            {outputChunk}
+                        </mark>
+                    );
+                }
+
+                return <span key={key}>{outputChunk}</span>;
             })}
         </span>
     );
