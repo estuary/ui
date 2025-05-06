@@ -1,7 +1,7 @@
 name: UI Build
 
-permissions:
-    contents: read
+# permissions:
+#     contents: read
 
 on:
     push:
