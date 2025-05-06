@@ -4,7 +4,6 @@ import { Box, Grid, Stack } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import { TitleContainer } from 'src/components/connectors/Grid/cards/TitleContainer';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import Tile from 'src/components/shared/Tile';
 import {
@@ -13,6 +12,7 @@ import {
     sample_grey,
 } from 'src/context/Theme';
 
+// TODO: Determine a means to handle connector title names.
 export default function Card({
     clickHandler,
     Detail,
@@ -79,9 +79,19 @@ export default function Card({
                             className="connector-info"
                             style={{ flexGrow: 1 }}
                         >
-                            <TitleContainer>
+                            <Stack
+                                sx={{
+                                    'alignItems': 'flex-start',
+                                    '.connector-title': {
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        width: 200,
+                                    },
+                                }}
+                            >
+                                {' '}
                                 {Title}
-
                                 {docsUrl ? (
                                     <Box>
                                         <ExternalLink link={docsUrl}>
@@ -89,7 +99,7 @@ export default function Card({
                                         </ExternalLink>
                                     </Box>
                                 ) : null}
-                            </TitleContainer>
+                            </Stack>
 
                             {Detail}
                         </Stack>
