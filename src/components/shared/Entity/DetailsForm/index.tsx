@@ -11,7 +11,7 @@ import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
 
-function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
+function DetailsForm({ entityType, readOnly }: Props) {
     const [forcedToEnable] = useQueryParam(
         GlobalSearchParams.FORCED_SHARD_ENABLE,
         BooleanParam
@@ -37,11 +37,7 @@ function DetailsForm({ connectorTags, entityType, readOnly }: Props) {
             header={<DetailsFormHeader messagePrefix={messagePrefix} />}
             readOnly={Boolean(!forcedToEnable && readOnly)}
         >
-            <DetailsFormForm
-                connectorTags={connectorTags}
-                entityType={entityType}
-                readOnly={readOnly}
-            />
+            <DetailsFormForm entityType={entityType} readOnly={readOnly} />
             <ShardsEditor renderOpen={forceOpen} />
         </WrapperWithHeader>
     );

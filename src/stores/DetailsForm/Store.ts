@@ -13,13 +13,14 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 
-import { getConnectors_detailsForm } from 'src/api/connectors';
+import { getConnectors_detailsFormTestPage } from 'src/api/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { initialDetails } from 'src/stores/DetailsForm/shared';
 import {
     fetchErrors,
     filterErrors,
@@ -44,7 +45,8 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    const { data, error } = await getConnectors_detailsForm(connectorId);
+    const { data, error } =
+        await getConnectors_detailsFormTestPage(connectorId);
 
     if (!error && data && data.length > 0) {
         const connector = data[0];
@@ -103,21 +105,6 @@ const getDataPlane = (
     }
 
     return defaultOption ?? null;
-};
-
-const initialDetails: Details = {
-    data: {
-        connectorImage: {
-            connectorId: '',
-            id: '',
-            iconPath: '',
-            imageName: '',
-            imagePath: '',
-            imageTag: '',
-        },
-        entityName: '',
-    },
-    errors: [],
 };
 
 const getInitialStateData = (): Pick<
@@ -195,9 +182,7 @@ export const getInitialState = (
 
                 // Check if there are any errors from the forms
                 const endpointConfigErrors = filterErrors(fetchErrors(val)).map(
-                    (message) => ({
-                        message,
-                    })
+                    (message) => ({ message })
                 );
 
                 // Set the flag for error checking
@@ -226,6 +211,10 @@ export const getInitialState = (
     },
 
     setDetails_dataPlane: (value) => {
+        if (value === null) {
+            return;
+        }
+
         set(
             produce((state: DetailsFormState) => {
                 state.details.data.dataPlane = value;
