@@ -87,12 +87,12 @@ const evaluateDataPlaneOptions = async (
     setHydrationError: DetailsFormState['setHydrationError'],
     existingDataPlane?: { name: string; id: string }
 ): Promise<DataPlaneOption[]> => {
-    let dataPlaneResponse = await getDataPlaneOptions();
+    const dataPlaneResponse = await getDataPlaneOptions();
 
     if (dataPlaneResponse.error) {
         setHydrationError(
             dataPlaneResponse.error?.message ??
-                'An error was encountered initializing the data-plane selector in details form. If the issue persists, please contact support.'
+                'An error was encountered initializing the data-plane selector in the details form. If the issue persists, please contact support.'
         );
     }
 
