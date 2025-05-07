@@ -59,4 +59,5 @@ export const CTAs: Record<string, string> = {
     'cta.resetDataFlow.showDiff': `See spec changes`,
     'cta.resetDataFlow.retry': `Retry`,
     'cta.modify': `modify`,
+    'cta.exit': `Exit`,
 };

@@ -11,10 +11,9 @@ import type {
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
+import { CONNECTOR_IMAGE, CONNECTOR_TITLE } from 'src/api/shared';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    CONNECTOR_IMAGE,
-    CONNECTOR_TITLE,
     defaultTableFilter,
     escapeReservedCharacters,
     handleFailure,

@@ -203,7 +203,7 @@ function useInitializeTaskDraft() {
         [taskSpecType]
     );
 
-    return useCallback(
+    const initializeTaskDraft = useCallback(
         async (
             setLoading: Dispatch<SetStateAction<boolean>>
         ): Promise<void> => {
@@ -289,6 +289,8 @@ function useInitializeTaskDraft() {
             taskSpecType,
         ]
     );
+
+    return { initializeTaskDraft };
 }
 
 export default useInitializeTaskDraft;

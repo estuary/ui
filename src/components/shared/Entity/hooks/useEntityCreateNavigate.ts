@@ -13,6 +13,7 @@ import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 export interface HookEntityCreateNavigateProps {
     advanceToForm?: boolean;
     dataPlaneId?: string | null;
+    expressWorkflow?: boolean;
     id?: string | null | undefined;
 }
 
@@ -23,7 +24,12 @@ export default function useEntityCreateNavigate() {
     return useCallback(
         (
             entity: EntityWithCreateWorkflow,
-            { id, advanceToForm, dataPlaneId }: HookEntityCreateNavigateProps
+            {
+                id,
+                advanceToForm,
+                dataPlaneId,
+                expressWorkflow,
+            }: HookEntityCreateNavigateProps
         ) => {
             const searchParamConfig: { [param: string]: any } = {};
 
@@ -48,6 +54,11 @@ export default function useEntityCreateNavigate() {
             const newPath: string = advanceToForm
                 ? ENTITY_SETTINGS[entity].routes.createNew
                 : ENTITY_SETTINGS[entity].routes.connectorSelect;
+
+            // if (entity === 'capture' && expressWorkflow && advanceToForm) {
+            //     // TODO (powered-by-estuary): Use an error page as a fallback.
+            //     newPath = ENTITY_SETTINGS[entity].routes.createNewExpress;
+            // }
 
             navigate(
                 newSearchParams
