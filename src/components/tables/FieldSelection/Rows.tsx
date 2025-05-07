@@ -11,6 +11,7 @@ import { orderBy } from 'lodash';
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
+import ProjectionActions from 'src/components/tables/cells/fieldSelection/ProjectionActions';
 import {
     constraintTypeSort,
     displayOptionalColumn,
@@ -75,6 +76,15 @@ function Row({ columns, row }: RowProps) {
                     field={row.field}
                     constraint={row.constraint}
                     selectionType={row.selectionType}
+                />
+            ) : (
+                <TableCell />
+            )}
+
+            {row.constraint ? (
+                <ProjectionActions
+                    projection={row}
+                    constraint={row.constraint}
                 />
             ) : (
                 <TableCell />

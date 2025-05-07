@@ -227,7 +227,7 @@ export const Workflows: Record<string, string> = {
 
     'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
-    'fieldSelection.dialog.updateProjection.header': `Update Projection`,
+    'fieldSelection.dialog.updateProjection.header': `Alternate Field`,
     'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
     'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,
     'fieldSelection.dialog.updateProjection.cta.apply': `Apply`,

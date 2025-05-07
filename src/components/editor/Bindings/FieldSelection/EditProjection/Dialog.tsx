@@ -56,7 +56,7 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
                 </Typography>
 
                 <Stack spacing={1}>
-                    {projection.ptr ? (
+                    {/* {projection.ptr ? (
                         <FieldEditor
                             disabled={operation === 'renameField'}
                             labelMessageId="fieldSelection.dialog.updateProjection.label.pointer"
@@ -68,7 +68,7 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
                         disabled={operation === 'renameField'}
                         labelMessageId="fieldSelection.dialog.updateProjection.label.type"
                         value={projection.inference.types[0]}
-                    />
+                    /> */}
 
                     <FieldEditor
                         labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
@@ -78,7 +78,11 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
             </DialogContent>
 
             <DialogActions>
-                <Button>
+                <Button onClick={() => setOpen(false)} variant="text">
+                    <FormattedMessage id="cta.cancel" />
+                </Button>
+
+                <Button onClick={() => setOpen(false)} variant="outlined">
                     <FormattedMessage id="cta.testConfig" />
                 </Button>
 
