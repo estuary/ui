@@ -50,6 +50,26 @@ export default function useDataPlaneField(
 
                 dataPlanesOneOf.push({ const: option, title });
             });
+        } else {
+            // The details form store hydrator does not fail loudly when no data-plane options are found
+            // and the create workflow does not have a fallback data-plane option to use in that scenario.
+            dataPlanesOneOf.push({
+                const: {
+                    dataPlaneName: {
+                        cluster: '',
+                        prefix: '',
+                        provider: '',
+                        region: '',
+                        whole: '',
+                    },
+                    id: '',
+                    reactorAddress: '',
+                    scope: 'public',
+                },
+                title: intl.formatMessage({
+                    id: 'workflows.dataPlane.label.noOptionsFound',
+                }),
+            });
         }
 
         return {
