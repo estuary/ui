@@ -85,7 +85,11 @@ const getDataPlane = (
 const evaluateDataPlaneOptions = async (
     setDataPlaneOptions: DetailsFormState['setDataPlaneOptions'],
     setHydrationError: DetailsFormState['setHydrationError'],
-    existingDataPlane?: { name: string | null; id: string }
+    existingDataPlane?: {
+        name: string | null;
+        id: string;
+        reactorAddress: string | null;
+    }
 ): Promise<DataPlaneOption[]> => {
     const dataPlaneResponse = await getDataPlaneOptions();
 
@@ -106,7 +110,7 @@ const evaluateDataPlaneOptions = async (
             ? generateDataPlaneOption({
                   data_plane_name: existingDataPlane.name ?? '',
                   id: existingDataPlane.id,
-                  reactor_address: '',
+                  reactor_address: existingDataPlane.reactorAddress ?? '',
                   cidr_blocks: null,
                   gcp_service_account_email: null,
                   aws_iam_user_arn: null,
@@ -224,6 +228,7 @@ export const useDetailsFormHydrator = () => {
                     connector_tag_id,
                     data_plane_id,
                     data_plane_name,
+                    reactor_address,
                 } = data[0];
 
                 const connectorImage = await getConnectorImage(
@@ -235,7 +240,11 @@ export const useDetailsFormHydrator = () => {
                 const dataPlaneOptions = await evaluateDataPlaneOptions(
                     setDataPlaneOptions,
                     setHydrationError,
-                    { name: data_plane_name, id: data_plane_id }
+                    {
+                        name: data_plane_name,
+                        id: data_plane_id,
+                        reactorAddress: reactor_address,
+                    }
                 );
                 const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
 

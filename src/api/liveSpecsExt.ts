@@ -215,6 +215,7 @@ export interface LiveSpecsExtQuery_DetailsForm {
     spec: any;
     data_plane_id: string;
     data_plane_name: string | null;
+    reactor_address: string | null;
     connector_tag_id: string;
     connector_image_name: string;
     connector_image_tag: string;
@@ -228,6 +229,7 @@ const DETAILS_FORM_QUERY = `
     spec,
     data_plane_id,
     data_plane_name,
+    reactor_address,
     connector_tag_id,
     connector_image_name,
     connector_image_tag,
