@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import { Stack, TextField, Typography, useTheme } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
@@ -6,11 +8,13 @@ import { diminishedTextColor } from 'src/context/Theme';
 
 interface Props {
     labelMessageId: string;
+    input: string;
+    setInput: Dispatch<SetStateAction<string>>;
     value: string;
     disabled?: boolean;
 }
 
-function FieldEditor({ value, disabled }: Props) {
+function FieldEditor({ disabled, input, setInput, value }: Props) {
     const theme = useTheme();
 
     return (
@@ -43,8 +47,11 @@ function FieldEditor({ value, disabled }: Props) {
 
             <TextField
                 disabled={disabled}
+                value={input}
+                onChange={(event) => {
+                    setInput(event.target.value);
+                }}
                 size="small"
-                defaultValue={disabled ? value : ''}
                 sx={{
                     'flexGrow': 1,
                     '& .MuiInputBase-root': {

@@ -1,6 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
 
+import { useState } from 'react';
+
 import {
     Button,
     Dialog,
@@ -15,6 +17,7 @@ import { FormattedMessage } from 'react-intl';
 
 import FieldEditor from 'src/components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 interface Props {
     open: boolean;
@@ -28,6 +31,12 @@ const TITLE_ID = 'field-selection-dialog-title';
 function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
     // Binding Store
     const currentCollection = useBinding_currentCollection();
+
+    const setSingleProjection = useWorkflowStore(
+        (state) => state.setSingleProjection
+    );
+
+    const [fieldInput, setFieldInput] = useState('');
 
     return (
         <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
@@ -72,6 +81,8 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
 
                     <FieldEditor
                         labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
+                        input={fieldInput}
+                        setInput={setFieldInput}
                         value={projection.field}
                     />
                 </Stack>
@@ -86,7 +97,26 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
                     <FormattedMessage id="cta.testConfig" />
                 </Button>
 
-                <Button onClick={() => setOpen(false)}>
+                <Button
+                    disabled={fieldInput.trim().length === 0}
+                    onClick={() => {
+                        const formattedFieldInput = fieldInput.trim();
+
+                        if (
+                            formattedFieldInput.length > 0 &&
+                            projection.ptr &&
+                            currentCollection
+                        ) {
+                            setSingleProjection(
+                                { location: projection.ptr },
+                                formattedFieldInput,
+                                currentCollection
+                            );
+                        }
+
+                        setOpen(false);
+                    }}
+                >
                     <FormattedMessage id="fieldSelection.dialog.updateProjection.cta.apply" />
                 </Button>
             </DialogActions>
