@@ -42,6 +42,7 @@ import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { defaultOutline_hovered } from 'src/context/Theme';
 import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
 import Option from 'src/forms/renderers/DataPlaneSelector/Option';
+import { DATA_PLANE_OPTION_TEMPLATE } from 'src/utils/dataPlane-utils';
 
 export interface WithOptionLabel {
     getOptionLabel?(option: EnumOption): string;
@@ -57,7 +58,12 @@ export interface WithOptionLabel {
 }
 
 const areOptionsEqual = (option?: any, value?: any) => {
-    return typeof value?.id === 'string' && option.id === value.id;
+    return (
+        (typeof value?.id === 'string' && option.id === value.id) ||
+        (value === undefined &&
+            option.dataPlaneName.whole ===
+                DATA_PLANE_OPTION_TEMPLATE.dataPlaneName.whole)
+    );
 };
 
 export const DataPlaneAutoComplete = ({

@@ -47,7 +47,7 @@ export const DATA_PLANE_OPTION_TEMPLATE: DataPlaneOption = {
         prefix: '',
         provider: '',
         region: '',
-        whole: '',
+        whole: 'template',
     },
     id: '',
     reactorAddress: '',
