@@ -214,7 +214,7 @@ export interface LiveSpecsExtQuery_DetailsForm {
     spec_type: Entity;
     spec: any;
     data_plane_id: string;
-    data_plane_name: string;
+    data_plane_name: string | null;
     connector_tag_id: string;
     connector_image_name: string;
     connector_image_tag: string;

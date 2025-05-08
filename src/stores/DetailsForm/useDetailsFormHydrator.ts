@@ -85,7 +85,7 @@ const getDataPlane = (
 const evaluateDataPlaneOptions = async (
     setDataPlaneOptions: DetailsFormState['setDataPlaneOptions'],
     setHydrationError: DetailsFormState['setHydrationError'],
-    existingDataPlane?: { name: string; id: string }
+    existingDataPlane?: { name: string | null; id: string }
 ): Promise<DataPlaneOption[]> => {
     const dataPlaneResponse = await getDataPlaneOptions();
 
@@ -104,7 +104,7 @@ const evaluateDataPlaneOptions = async (
 
         const stubOption = existingDataPlane
             ? generateDataPlaneOption({
-                  data_plane_name: existingDataPlane.name,
+                  data_plane_name: existingDataPlane.name ?? '',
                   id: existingDataPlane.id,
                   reactor_address: '',
                   cidr_blocks: null,
