@@ -71,6 +71,9 @@ jobs:
             - name: Test
               run: npm run test
 
+            - name: Build
+              run: npm run build
+
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy

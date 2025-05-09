@@ -5,6 +5,7 @@ import path from 'path';
 
 import react from '@vitejs/plugin-react';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
+import license from 'rollup-plugin-license';
 import { type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import circleDependency from 'vite-plugin-circular-dependency';
@@ -30,11 +31,20 @@ const getCommitId = () => {
     }
 };
 
+function getCommitHash() {
+    try {
+        // Try local branch first
+        return ChildProcess.execSync('git rev-parse HEAD').toString().trim();
+    } catch {
+        return null;
+    }
+}
+
 const writeVersionToFile: () => Plugin = () => ({
     name: 'write-version-to-file',
     async config(config) {
         try {
-            const commitId = getCommitId();
+            const commitId = getCommitHash();
 
             // Make sure we got something
             if (!commitId) {
@@ -88,6 +98,19 @@ export default defineConfig({
         assetsDir: 'static',
         outDir: './build',
         target: browserslistToEsbuild(),
+        rollupOptions: {
+            plugins: [
+                license({
+                    sourcemap: true,
+                    thirdParty: {
+                        output: {
+                            // Output file into public directory which is included in the build output.
+                            file: './public/vendor.license.txt',
+                        },
+                    },
+                }),
+            ],
+        },
     },
 
     optimizeDeps: {
