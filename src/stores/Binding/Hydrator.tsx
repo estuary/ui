@@ -50,6 +50,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             workflow === 'collection_create'
         ) {
             setActive(true);
+
+            // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
+            //  make sure that we allow resetting everything in the store except for the bindings
+            //  themselves. That way `hydrateState` won't have to call `resetState` with a bunch of flags... hopefully
             hydrateState(
                 editWorkflow,
                 entityType,

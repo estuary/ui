@@ -809,23 +809,43 @@ const getInitialState = (
     // to true when hydration is initiated and false once completed. Consequently, this property
     // value should be preserved by default when the `resetState` action is called.
     resetState: (keepCollections, resetActive) => {
-        const { active, ...currentState } = get();
+        if (resetActive) {
+            // If we are resetting active then we should fully replace state back to
+            //  the original state
+            const newState = {
+                ...getInitialStoreData(),
+                active: false,
+            };
 
-        const initState = keepCollections
-            ? {
-                  ...getInitialFieldSelectionData(),
-                  ...getInitialMiscData(),
-                  ...getInitialTimeTravelData(),
-              }
-            : getInitialStoreData();
+            set(newState, false, 'Binding State Reset');
+        } else {
+            // If we are not doing a full reset then we need to merge in the current state
+            //  that way any changes that have been happening are not lost.
+            // This is mainly to help BindingHydrator to be more resilient to ordering
+            //  once we move binding stuff into the general workflow hydrator we should
+            //  not need this split in logic
 
-        const newState = {
-            ...currentState,
-            ...initState,
-            active: resetActive ? false : active,
-        };
+            const initState = keepCollections
+                ? {
+                      ...getInitialFieldSelectionData(),
+                      ...getInitialMiscData(),
+                      ...getInitialTimeTravelData(),
+                  }
+                : getInitialStoreData();
 
-        set(newState, false, 'Binding State Reset');
+            set(
+                produce((state: BindingState) => {
+                    const newState = {
+                        ...state,
+                        ...initState,
+                    };
+
+                    state = newState;
+                }),
+                false,
+                'Binding State Reset'
+            );
+        }
     },
 
     setBackfilledBindings: (increment, targetBindingUUID) => {
