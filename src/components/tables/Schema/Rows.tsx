@@ -11,6 +11,7 @@ import { Box, Stack, TableCell, TableRow } from '@mui/material';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
+import { EditableField } from 'src/components/tables/cells/EditableField';
 import { basicSort_string } from 'src/utils/misc-utils';
 
 interface RowProps {
@@ -42,19 +43,15 @@ function Row({ row }: RowProps) {
 
     return (
         <TableRow hover>
-            <TableCell>
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    style={
-                        row.exists === 'must'
-                            ? { fontWeight: 700 }
-                            : { fontStyle: 'italic' }
-                    }
-                >
-                    <Box>{row.name}</Box>
-                </Stack>
-            </TableCell>
+            <EditableField
+                buttonStyles={
+                    row.exists === 'must'
+                        ? { fontWeight: 700 }
+                        : { fontStyle: 'italic' }
+                }
+                field={row.name ?? ''}
+                pointer={row.pointer}
+            />
 
             <TableCell>
                 <Box>{row.pointer}</Box>

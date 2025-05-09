@@ -9,6 +9,7 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
+import { EditableField } from 'src/components/tables/cells/EditableField';
 import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import {
@@ -16,10 +17,7 @@ import {
     displayOptionalColumn,
     optionalColumnIntlKeys,
 } from 'src/components/tables/FieldSelection/shared';
-import {
-    doubleElevationHoverBackground,
-    getStickyTableCell,
-} from 'src/context/Theme';
+import { doubleElevationHoverBackground } from 'src/context/Theme';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { basicSort_string } from 'src/utils/misc-utils';
 
@@ -45,9 +43,12 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <TableCell sx={getStickyTableCell()}>
-                <Typography>{row.field}</Typography>
-            </TableCell>
+            <EditableField
+                field={row.field}
+                pointer={row.ptr}
+                readOnly
+                sticky
+            />
 
             {pointerColumnDisplayed ? (
                 <TableCell>

@@ -1,19 +1,18 @@
-import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { CSSProperties } from 'react';
 
 import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/EditProjection/Dialog';
 
 interface Props {
-    operation: 'addProjection' | 'renameField';
-    projection: Projection;
+    field: string;
+    pointer: string | undefined;
+    buttonStyles?: CSSProperties;
 }
 
-function EditProjectionButton({ operation, projection }: Props) {
+function EditProjectionButton({ buttonStyles, field, pointer }: Props) {
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,17 +23,31 @@ function EditProjectionButton({ operation, projection }: Props) {
 
     return (
         <>
-            <Button size="small" variant="outlined" onClick={openDialog}>
-                <FormattedMessage
-                    id={`fieldSelection.table.cta.${operation}`}
-                />
+            <Button
+                onClick={openDialog}
+                size="small"
+                variant="text"
+                sx={{
+                    borderBottom: (theme) =>
+                        `1px dashed ${theme.palette.primary.alpha_50}`,
+                    borderRadius: 0,
+                    fontWeight: 400,
+                    height: 20,
+                    minWidth: 'unset',
+                    px: '3px',
+                    py: '4px',
+                    textTransform: 'unset',
+                    ...buttonStyles,
+                }}
+            >
+                {field}
             </Button>
 
             <EditProjectionDialog
+                field={field}
                 open={open}
-                operation={operation}
                 setOpen={setOpen}
-                projection={projection}
+                pointer={pointer}
             />
         </>
     );

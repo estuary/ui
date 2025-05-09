@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
+
+import { useState } from 'react';
 
 import {
     Button,
@@ -7,83 +8,115 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Stack,
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import FieldEditor from 'src/components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
+import { useStoreProjection } from 'src/hooks/projections/useStoreProjections';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 interface Props {
+    field: string;
     open: boolean;
-    operation: 'addProjection' | 'renameField';
-    projection: Projection;
+    pointer: string | undefined;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const TITLE_ID = 'field-selection-dialog-title';
 
-function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
+function EditProjectionDialog({ field, open, setOpen, pointer }: Props) {
+    const intl = useIntl();
+
+    const { storeSingleProjection } = useStoreProjection();
+
     // Binding Store
     const currentCollection = useBinding_currentCollection();
+
+    const setSingleProjection = useWorkflowStore(
+        (state) => state.setSingleProjection
+    );
+
+    const [fieldInput, setFieldInput] = useState('');
 
     return (
         <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
             <DialogTitle>
-                <FormattedMessage
-                    id={
-                        operation === 'renameField'
-                            ? 'fieldSelection.dialog.updateProjection.header'
-                            : 'fieldSelection.dialog.updateProjection.header.new'
-                    }
-                />
+                {intl.formatMessage({
+                    id: 'fieldSelection.dialog.updateProjection.header',
+                })}
             </DialogTitle>
 
             <DialogContent>
                 <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage
-                        id="fieldSelection.dialog.updateProjection.message"
-                        values={{
+                    {intl.formatMessage(
+                        {
+                            id: 'fieldSelection.dialog.updateProjection.message',
+                        },
+                        {
                             collection: (
                                 <span style={{ fontWeight: 500 }}>
                                     {currentCollection}
                                 </span>
                             ),
-                        }}
-                    />
+                        }
+                    )}
                 </Typography>
 
-                <Stack spacing={1}>
-                    {projection.ptr ? (
-                        <FieldEditor
-                            disabled={operation === 'renameField'}
-                            labelMessageId="fieldSelection.dialog.updateProjection.label.pointer"
-                            value={projection.ptr}
-                        />
-                    ) : null}
-
-                    <FieldEditor
-                        disabled={operation === 'renameField'}
-                        labelMessageId="fieldSelection.dialog.updateProjection.label.type"
-                        value={projection.inference.types[0]}
-                    />
-
-                    <FieldEditor
-                        labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
-                        value={projection.field}
-                    />
-                </Stack>
+                <FieldEditor
+                    labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
+                    input={fieldInput}
+                    setInput={setFieldInput}
+                    value={field}
+                />
             </DialogContent>
 
             <DialogActions>
-                <Button>
-                    <FormattedMessage id="cta.testConfig" />
+                <Button
+                    onClick={() => {
+                        setFieldInput('');
+                        setOpen(false);
+                    }}
+                    variant="text"
+                >
+                    {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
 
-                <Button onClick={() => setOpen(false)}>
-                    <FormattedMessage id="fieldSelection.dialog.updateProjection.cta.apply" />
+                <Button
+                    disabled={fieldInput.trim().length === 0}
+                    onClick={() => {
+                        const formattedFieldInput = fieldInput.trim();
+
+                        if (
+                            formattedFieldInput.length > 0 &&
+                            pointer &&
+                            currentCollection
+                        ) {
+                            setSingleProjection(
+                                {
+                                    field: formattedFieldInput,
+                                    location: pointer,
+                                },
+                                currentCollection
+                            );
+
+                            storeSingleProjection(
+                                currentCollection,
+                                formattedFieldInput,
+                                pointer
+                            );
+                        }
+
+                        setFieldInput('');
+                        setOpen(false);
+                    }}
+                    variant="outlined"
+                >
+                    {intl.formatMessage({
+                        id: 'fieldSelection.dialog.updateProjection.cta.apply',
+                    })}
                 </Button>
             </DialogActions>
         </Dialog>
