@@ -94,32 +94,10 @@ export default defineConfig({
                 license({
                     sourcemap: true,
                     thirdParty: {
-                        includeSelf: true,
-                        includePrivate: true,
-                        // output: {
-                        //     // Output file into public directory which is included in the build output.
-                        //     file: './public/vendor.LICENSE.txt',
-                        //     template(dependencies) {
-                        //         return dependencies
-                        //             .map(
-                        //                 (dependency) =>
-                        //                     `
-                        //                     ${dependency.name}:${dependency.version} -- ${dependency.license}
-                        //                     \n
-                        //                     repository: ${dependency.repository}
-                        //                                                                 \n
-                        //                     notice: ${dependency.noticeText}
-                        //                     \n
-                        //                     license: ${dependency.licenseText}
-                        //                 `
-                        //             )
-                        //             .join('\n');
-                        //     },
-                        // },
-                        output: path.resolve(
-                            __dirname,
-                            './public/vendor.LICENSE.txt'
-                        ),
+                        output: {
+                            // Output file into public directory which is included in the build output.
+                            file: './public/vendor.license.txt',
+                        },
                     },
                 }),
             ],
