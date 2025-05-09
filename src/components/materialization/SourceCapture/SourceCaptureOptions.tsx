@@ -6,7 +6,7 @@ import DeltaUpdates from 'src/components/editor/Bindings/DeltaUpdates';
 import SchemaMode from 'src/components/editor/Bindings/SchemaMode';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 
-function OptionalSettings() {
+function SourceCaptureOptions() {
     const intl = useIntl();
 
     const {
@@ -22,16 +22,10 @@ function OptionalSettings() {
     }
 
     return (
-        <Stack spacing={1} sx={{ mt: 2 }}>
+        <Stack spacing={1} sx={{ pt: 2 }}>
             <Typography variant="formSectionHeader">
                 {intl.formatMessage({
                     id: 'workflows.sourceCapture.optionalSettings.header',
-                })}
-            </Typography>
-
-            <Typography>
-                {intl.formatMessage({
-                    id: 'workflows.sourceCapture.optionalSettings.message',
                 })}
             </Typography>
 
@@ -44,4 +38,4 @@ function OptionalSettings() {
     );
 }
 
-export default OptionalSettings;
+export default SourceCaptureOptions;

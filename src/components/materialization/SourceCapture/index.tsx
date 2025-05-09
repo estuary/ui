@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl';
 
 import SelectCapture from 'src/components/materialization/SourceCapture/SelectCapture';
 import SourceCaptureChip from 'src/components/materialization/SourceCapture/SourceCaptureChip';
+import SourceCaptureOptions from 'src/components/materialization/SourceCapture/SourceCaptureOptions';
 
 function SourceCapture() {
     const intl = useIntl();
@@ -29,6 +30,8 @@ function SourceCapture() {
                 <SourceCaptureChip />
                 <SelectCapture />
             </Stack>
+
+            <SourceCaptureOptions />
         </Stack>
     );
 }

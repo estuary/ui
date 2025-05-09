@@ -2,7 +2,6 @@ import { Box, Chip, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SourceCaptureChipOptionalSettings from 'src/components/materialization/SourceCapture/SourceCaptureChipOptionalSettings';
 import useSourceCapture from 'src/components/materialization/useSourceCapture';
 import { chipOutlinedStyling, truncateTextSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -42,7 +41,6 @@ function SourceCaptureChip() {
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
-                    <SourceCaptureChipOptionalSettings />
                 </Stack>
             }
             sx={{

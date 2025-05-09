@@ -11,7 +11,6 @@ import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/S
 import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
 import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
-import OptionalSettings from 'src/components/shared/Entity/AddDialog/OptionalSettings';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
@@ -126,7 +125,6 @@ function SelectCapture() {
                 selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={intl.formatMessage({ id: 'captureTable.header' })}
-                OptionalSettings={OptionalSettings}
             />
         </>
     );
