@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_UUID_COL,
@@ -99,10 +100,17 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                           ? [params.row[COLLECTION_SELECTOR_STRIPPED_PATH_NAME]]
                           : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
+                    // This is kinda gross - but it is better than constantly resetting this value
+                    //    after the filter value is removed.
+                    const highlightChunks = filteringActive
+                        ? params.row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS]
+                        : [];
+
                     return (
                         <BindingsSelectorName
                             collection={collectionParts}
                             filterValue={filterValue}
+                            highlightChunks={highlightChunks}
                             buttonProps={{
                                 startIcon: isCollection ? undefined : (
                                     <BindingsSelectorErrorIndicator

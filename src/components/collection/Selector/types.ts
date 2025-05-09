@@ -1,6 +1,8 @@
+import type { Chunk } from 'highlight-words-core';
 import type { MutableRefObject, ReactNode } from 'react';
 import type { FixedSizeList } from 'react-window';
 import type {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_TOGGLE_COL,
@@ -27,6 +29,10 @@ export type CollectionSelectorBooleanKey =
     | CollectionNameKey
     | typeof COLLECTION_SELECTOR_TOGGLE_COL;
 
+export type CollectionSelectorChunkKey =
+    | CollectionNameKey
+    | typeof COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS;
+
 export type CollectionSelectorMappedResourceConfig = {
     [key in CollectionSelectorStringKey]: string;
 } & {
@@ -34,6 +40,11 @@ export type CollectionSelectorMappedResourceConfig = {
         CollectionSelectorBooleanKey,
         CollectionSelectorStringKey
     >]: boolean;
+} & {
+    [key in Exclude<
+        CollectionSelectorChunkKey,
+        CollectionSelectorBooleanKey
+    >]: Chunk[];
 };
 
 export interface BindingsEditorAddProps {
