@@ -81,26 +81,52 @@ const getDataPlane = (
     return defaultOption ?? null;
 };
 
+// TODO: Determine a means to fetch data-plane options that is not workflow-dependent.
 const evaluateDataPlaneOptions = async (
     setDataPlaneOptions: DetailsFormState['setDataPlaneOptions'],
-    setHydrationError: DetailsFormState['setHydrationError']
+    setHydrationError: DetailsFormState['setHydrationError'],
+    existingDataPlane?: {
+        name: string | null;
+        id: string;
+        reactorAddress: string | null;
+    }
 ): Promise<DataPlaneOption[]> => {
     const dataPlaneResponse = await getDataPlaneOptions();
 
-    if (
-        dataPlaneResponse.error ||
-        !dataPlaneResponse.data ||
-        dataPlaneResponse.data.length === 0
-    ) {
+    if (dataPlaneResponse.error) {
         setHydrationError(
             dataPlaneResponse.error?.message ??
-                'An error was encountered initializing the details form. If the issue persists, please contact support.'
+                'An error was encountered initializing the data-plane selector in the details form. If the issue persists, please contact support.'
         );
-
-        return [];
     }
 
-    const options = dataPlaneResponse.data.map(generateDataPlaneOption);
+    if (!dataPlaneResponse.data || dataPlaneResponse.data.length === 0) {
+        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+            noOptionsFound: true,
+            fallbackExists: Boolean(existingDataPlane),
+        });
+
+        const stubOption = existingDataPlane
+            ? generateDataPlaneOption({
+                  data_plane_name: existingDataPlane.name ?? '',
+                  id: existingDataPlane.id,
+                  reactor_address: existingDataPlane.reactorAddress ?? '',
+                  cidr_blocks: null,
+                  gcp_service_account_email: null,
+                  aws_iam_user_arn: null,
+              })
+            : null;
+
+        const fallbackOptions = stubOption ? [stubOption] : [];
+
+        setDataPlaneOptions(fallbackOptions);
+
+        return fallbackOptions;
+    }
+
+    const options = dataPlaneResponse.data
+        ? dataPlaneResponse.data.map(generateDataPlaneOption)
+        : [];
 
     setDataPlaneOptions(options);
 
@@ -147,15 +173,14 @@ export const useDetailsFormHydrator = () => {
                 workflow === 'capture_create' ||
                 workflow === 'materialization_create';
 
-            const dataPlaneOptions = await evaluateDataPlaneOptions(
-                setDataPlaneOptions,
-                setHydrationError
-            );
-
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(
                     connectorId,
                     connectorMetadata
+                );
+                const dataPlaneOptions = await evaluateDataPlaneOptions(
+                    setDataPlaneOptions,
+                    setHydrationError
                 );
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
@@ -202,6 +227,8 @@ export const useDetailsFormHydrator = () => {
                     connector_image_tag,
                     connector_tag_id,
                     data_plane_id,
+                    data_plane_name,
+                    reactor_address,
                 } = data[0];
 
                 const connectorImage = await getConnectorImage(
@@ -210,9 +237,18 @@ export const useDetailsFormHydrator = () => {
                     connector_image_tag
                 );
 
+                const dataPlaneOptions = await evaluateDataPlaneOptions(
+                    setDataPlaneOptions,
+                    setHydrationError,
+                    {
+                        name: data_plane_name,
+                        id: data_plane_id,
+                        reactorAddress: reactor_address,
+                    }
+                );
                 const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
 
-                if (!connectorImage || dataPlane === null) {
+                if (!connectorImage) {
                     setHydrationErrorsExist(true);
 
                     return Promise.reject({ connectorTagId: null });
@@ -222,7 +258,7 @@ export const useDetailsFormHydrator = () => {
                     data: {
                         entityName: catalog_name,
                         connectorImage,
-                        dataPlane,
+                        dataPlane: dataPlane ?? undefined,
                     },
                 };
 
