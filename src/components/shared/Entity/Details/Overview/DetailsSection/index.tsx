@@ -10,7 +10,8 @@ import ConnectorName from 'src/components/connectors/ConnectorName';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
-import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
+import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
@@ -26,6 +27,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
+    const isDerivation = useIsCollectionDerivation();
 
     const latestConnectorStatus =
         useEntityStatusStore_singleResponse(entityName)?.connector_status
@@ -148,8 +150,9 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.writes_to',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.writes_to}
+                    <RelatedEntities
+                        entityType="collection"
+                        preferredList={latestLiveSpec.writes_to}
                     />
                 ),
             });
@@ -161,15 +164,45 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.reads_from',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.reads_from}
+                    <RelatedEntities
+                        entityType="collection"
+                        preferredList={latestLiveSpec.reads_from}
+                    />
+                ),
+            });
+        }
+
+        // Do not show for derivations as right now the query that is used
+        //  only returns DIRECTLY connected entities and this will fail for
+        //  derivations Q2 2025
+        if (!isDerivation && entityType === 'collection') {
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.parentCapture',
+                }),
+                val: (
+                    <RelatedEntities
+                        collectionId={latestLiveSpec.id}
+                        entityType="capture"
+                    />
+                ),
+            });
+
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.consumers',
+                }),
+                val: (
+                    <RelatedEntities
+                        collectionId={latestLiveSpec.id}
+                        entityType="materialization"
                     />
                 ),
             });
         }
 
         return response;
-    }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);
+    }, [entityType, intl, isDerivation, latestConnectorStatus, latestLiveSpec]);
 
     return (
         <CardWrapper
