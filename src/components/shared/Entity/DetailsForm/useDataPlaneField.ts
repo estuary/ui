@@ -11,7 +11,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { formatDataPlaneName } from 'src/utils/dataPlane-utils';
+import {
+    DATA_PLANE_OPTION_TEMPLATE,
+    formatDataPlaneName,
+} from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface OneOfElement {
@@ -49,6 +52,15 @@ export default function useDataPlaneField(
                 const title = formatDataPlaneName(option.dataPlaneName);
 
                 dataPlanesOneOf.push({ const: option, title });
+            });
+        } else {
+            // The details form store hydrator does not fail loudly when no data-plane options are found
+            // and the create workflow does not have a fallback data-plane option to use in that scenario.
+            dataPlanesOneOf.push({
+                const: DATA_PLANE_OPTION_TEMPLATE,
+                title: intl.formatMessage({
+                    id: 'workflows.dataPlane.label.noOptionsFound',
+                }),
             });
         }
 

@@ -215,6 +215,7 @@ export const Workflows: Record<string, string> = {
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
+    'workflows.dataPlane.label.noOptionsFound': `No options found`,
 
     'workflows.alert.endpointConfigEmpty': `This endpoint requires configuration of the external system only.`,
 
