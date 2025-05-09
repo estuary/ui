@@ -4,16 +4,14 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/EditProjection/Dialog';
 
 interface Props {
-    operation: 'addProjection' | 'renameField';
+    field: string;
     projection: Projection;
 }
 
-function EditProjectionButton({ operation, projection }: Props) {
+function EditProjectionButton({ field, projection }: Props) {
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,15 +22,30 @@ function EditProjectionButton({ operation, projection }: Props) {
 
     return (
         <>
-            <Button size="small" variant="outlined" onClick={openDialog}>
-                <FormattedMessage
-                    id={`fieldSelection.table.cta.${operation}`}
-                />
+            <Button
+                onClick={openDialog}
+                size="small"
+                variant="text"
+                sx={{
+                    borderBottom: (theme) =>
+                        `1px dashed ${theme.palette.primary.alpha_50}`,
+                    borderRadius: 0,
+                    // color: (theme) => theme.palette.text.primary,
+                    fontWeight: 400,
+                    height: 20,
+                    minWidth: 'unset',
+                    pb: '4px',
+                    pt: 0,
+                    px: '3px',
+                    textTransform: 'unset',
+                }}
+            >
+                {field}
             </Button>
 
             <EditProjectionDialog
+                field={field}
                 open={open}
-                operation={operation}
                 setOpen={setOpen}
                 projection={projection}
             />

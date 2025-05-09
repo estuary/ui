@@ -37,14 +37,14 @@ function ProjectionActions({ projection, constraint }: Props) {
                 <Stack spacing={1} direction="row">
                     {actionTypes.includes('add') ? (
                         <EditProjectionButton
-                            operation="addProjection"
+                            field={projection.field}
                             projection={projection}
                         />
                     ) : null}
 
                     {actionTypes.includes('rename') ? (
                         <EditProjectionButton
-                            operation="renameField"
+                            field={projection.field}
                             projection={projection}
                         />
                     ) : null}

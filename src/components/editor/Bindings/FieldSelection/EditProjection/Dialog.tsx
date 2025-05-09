@@ -9,26 +9,30 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Stack,
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import FieldEditor from 'src/components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
+import { useStoreProjection } from 'src/hooks/projections/useStoreProjections';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 interface Props {
+    field: string;
     open: boolean;
-    operation: 'addProjection' | 'renameField';
     projection: Projection;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const TITLE_ID = 'field-selection-dialog-title';
 
-function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
+function EditProjectionDialog({ field, open, setOpen, projection }: Props) {
+    const intl = useIntl();
+
+    const { storeSingleProjection } = useStoreProjection();
+
     // Binding Store
     const currentCollection = useBinding_currentCollection();
 
@@ -41,60 +45,44 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
     return (
         <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
             <DialogTitle>
-                <FormattedMessage
-                    id={
-                        operation === 'renameField'
-                            ? 'fieldSelection.dialog.updateProjection.header'
-                            : 'fieldSelection.dialog.updateProjection.header.new'
-                    }
-                />
+                {intl.formatMessage({
+                    id: 'fieldSelection.dialog.updateProjection.header',
+                })}
             </DialogTitle>
 
             <DialogContent>
                 <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage
-                        id="fieldSelection.dialog.updateProjection.message"
-                        values={{
+                    {intl.formatMessage(
+                        {
+                            id: 'fieldSelection.dialog.updateProjection.message',
+                        },
+                        {
                             collection: (
                                 <span style={{ fontWeight: 500 }}>
                                     {currentCollection}
                                 </span>
                             ),
-                        }}
-                    />
+                        }
+                    )}
                 </Typography>
 
-                <Stack spacing={1}>
-                    {/* {projection.ptr ? (
-                        <FieldEditor
-                            disabled={operation === 'renameField'}
-                            labelMessageId="fieldSelection.dialog.updateProjection.label.pointer"
-                            value={projection.ptr}
-                        />
-                    ) : null}
-
-                    <FieldEditor
-                        disabled={operation === 'renameField'}
-                        labelMessageId="fieldSelection.dialog.updateProjection.label.type"
-                        value={projection.inference.types[0]}
-                    /> */}
-
-                    <FieldEditor
-                        labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
-                        input={fieldInput}
-                        setInput={setFieldInput}
-                        value={projection.field}
-                    />
-                </Stack>
+                <FieldEditor
+                    labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
+                    input={fieldInput}
+                    setInput={setFieldInput}
+                    value={field}
+                />
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={() => setOpen(false)} variant="text">
-                    <FormattedMessage id="cta.cancel" />
-                </Button>
-
-                <Button onClick={() => setOpen(false)} variant="outlined">
-                    <FormattedMessage id="cta.testConfig" />
+                <Button
+                    onClick={() => {
+                        setFieldInput('');
+                        setOpen(false);
+                    }}
+                    variant="text"
+                >
+                    {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
 
                 <Button
@@ -108,16 +96,28 @@ function EditProjectionDialog({ open, setOpen, projection, operation }: Props) {
                             currentCollection
                         ) {
                             setSingleProjection(
-                                { location: projection.ptr },
-                                formattedFieldInput,
+                                {
+                                    field: formattedFieldInput,
+                                    location: projection.ptr,
+                                },
                                 currentCollection
+                            );
+
+                            storeSingleProjection(
+                                currentCollection,
+                                formattedFieldInput,
+                                projection.ptr
                             );
                         }
 
+                        setFieldInput('');
                         setOpen(false);
                     }}
+                    variant="outlined"
                 >
-                    <FormattedMessage id="fieldSelection.dialog.updateProjection.cta.apply" />
+                    {intl.formatMessage({
+                        id: 'fieldSelection.dialog.updateProjection.cta.apply',
+                    })}
                 </Button>
             </DialogActions>
         </Dialog>

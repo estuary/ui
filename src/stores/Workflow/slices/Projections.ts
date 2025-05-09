@@ -3,24 +3,24 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-interface ProjectionDef {
+interface ProjectionMetadata {
+    field: string;
     location: string;
     partition?: boolean;
 }
 
-interface Projections {
-    [field: string]: string | ProjectionDef;
+interface FlatProjections {
+    [location: string]: ProjectionMetadata;
 }
 
 interface ProjectionDictionary {
-    [collection: string]: Projections;
+    [collection: string]: FlatProjections;
 }
 
 export interface StoreWithProjections {
     projections: ProjectionDictionary;
     setSingleProjection: (
-        projection: ProjectionDef,
-        field: string,
+        metadata: ProjectionMetadata,
         collection: string
     ) => void;
 }
@@ -37,12 +37,12 @@ export const getStoreWithProjectionSettings = (
 ): StoreWithProjections => ({
     ...getInitialProjectionData(),
 
-    setSingleProjection: (projection, field, collection) => {
+    setSingleProjection: (metadata, collection) => {
         set(
             produce((state: WorkflowState) => {
                 state.projections[collection] = {
                     ...state.projections[collection],
-                    [field]: projection,
+                    [metadata.location]: metadata,
                 };
             }),
             false,

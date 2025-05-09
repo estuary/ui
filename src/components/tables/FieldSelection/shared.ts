@@ -31,11 +31,6 @@ export const tableColumns: TableColumns[] = [
         headerIntlKey: 'data.actions',
         width: 148,
     },
-    {
-        field: null,
-        headerIntlKey: 'data.actions',
-        width: 148,
-    },
 ];
 
 const compareConstraintTypes = (
