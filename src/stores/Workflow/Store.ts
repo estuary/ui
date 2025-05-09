@@ -10,7 +10,10 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import { getStoreWithProjectionSettings } from 'src/stores/Workflow/slices/Projections';
+import {
+    getInitialProjectionData,
+    getStoreWithProjectionSettings,
+} from 'src/stores/Workflow/slices/Projections';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'workflow';
@@ -76,6 +79,7 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
             {
                 ...getInitialStateData(),
                 ...getInitialHydrationData(),
+                ...getInitialProjectionData(),
             },
             false,
             'Workflow state reset'
