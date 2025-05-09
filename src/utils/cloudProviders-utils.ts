@@ -245,7 +245,7 @@ const gcp = {
     'us-west4': { location: `Las Vegas, Nevada, North America`, flag: `🇺🇸` },
 };
 
-export const getProviderFlag = (
+export const getProviderLocationDetails = (
     provider: string | undefined,
     region: string | undefined
 ) => {
