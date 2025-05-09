@@ -31,11 +31,20 @@ const getCommitId = () => {
     }
 };
 
+function getCommitHash() {
+    try {
+        // Try local branch first
+        return ChildProcess.execSync('git rev-parse HEAD').toString().trim();
+    } catch {
+        return null;
+    }
+}
+
 const writeVersionToFile: () => Plugin = () => ({
     name: 'write-version-to-file',
     async config(config) {
         try {
-            const commitId = getCommitId();
+            const commitId = getCommitHash();
 
             // Make sure we got something
             if (!commitId) {
