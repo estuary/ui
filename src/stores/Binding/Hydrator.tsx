@@ -10,6 +10,7 @@ import {
 import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { logRocketConsole } from 'src/services/shared';
 import {
+    useBinding_hydrated,
     useBinding_hydrateState,
     useBinding_setActive,
     useBinding_setHydrated,
@@ -33,6 +34,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         (state) => state.details.data.connectorImage.id
     );
 
+    const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
     const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
     const setActive = useBinding_setActive();
@@ -98,6 +100,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         setPrefilledCapture,
         workflow,
     ]);
+
+    if (!hydrated) {
+        return null;
+    }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
