@@ -1,7 +1,7 @@
 import type { ToggleButtonProps, TooltipProps } from '@mui/material';
+import type { CSSProperties } from 'react';
 import type {
     FieldSelectionType,
-    Projection,
     TranslatedConstraint,
 } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
@@ -11,7 +11,10 @@ export interface ConstraintDetailsProps {
 }
 
 export interface EditableFieldProps {
-    projection: Projection;
+    field: string;
+    pointer: string | undefined;
+    buttonStyles?: CSSProperties;
+    readOnly?: boolean;
     sticky?: boolean;
 }
 

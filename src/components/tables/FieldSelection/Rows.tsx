@@ -9,8 +9,8 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
+import { EditableField } from 'src/components/tables/cells/EditableField';
 import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
-import { EditableField } from 'src/components/tables/cells/fieldSelection/EditableField';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import {
     constraintTypeSort,
@@ -43,7 +43,12 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <EditableField projection={row} sticky />
+            <EditableField
+                field={row.field}
+                pointer={row.ptr}
+                readOnly
+                sticky
+            />
 
             {pointerColumnDisplayed ? (
                 <TableCell>

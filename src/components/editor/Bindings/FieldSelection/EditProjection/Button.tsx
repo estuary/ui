@@ -1,4 +1,4 @@
-import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { CSSProperties } from 'react';
 
 import { useState } from 'react';
 
@@ -8,10 +8,11 @@ import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/
 
 interface Props {
     field: string;
-    projection: Projection;
+    pointer: string | undefined;
+    buttonStyles?: CSSProperties;
 }
 
-function EditProjectionButton({ field, projection }: Props) {
+function EditProjectionButton({ buttonStyles, field, pointer }: Props) {
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,14 +31,13 @@ function EditProjectionButton({ field, projection }: Props) {
                     borderBottom: (theme) =>
                         `1px dashed ${theme.palette.primary.alpha_50}`,
                     borderRadius: 0,
-                    // color: (theme) => theme.palette.text.primary,
                     fontWeight: 400,
                     height: 20,
                     minWidth: 'unset',
-                    pb: '4px',
-                    pt: 0,
                     px: '3px',
+                    py: '4px',
                     textTransform: 'unset',
+                    ...buttonStyles,
                 }}
             >
                 {field}
@@ -47,7 +47,7 @@ function EditProjectionButton({ field, projection }: Props) {
                 field={field}
                 open={open}
                 setOpen={setOpen}
-                projection={projection}
+                pointer={pointer}
             />
         </>
     );

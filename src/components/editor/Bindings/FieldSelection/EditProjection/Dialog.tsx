@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Projection } from 'src/components/editor/Bindings/FieldSelection/types';
 
 import { useState } from 'react';
 
@@ -22,13 +21,13 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 interface Props {
     field: string;
     open: boolean;
-    projection: Projection;
+    pointer: string | undefined;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const TITLE_ID = 'field-selection-dialog-title';
 
-function EditProjectionDialog({ field, open, setOpen, projection }: Props) {
+function EditProjectionDialog({ field, open, setOpen, pointer }: Props) {
     const intl = useIntl();
 
     const { storeSingleProjection } = useStoreProjection();
@@ -92,13 +91,13 @@ function EditProjectionDialog({ field, open, setOpen, projection }: Props) {
 
                         if (
                             formattedFieldInput.length > 0 &&
-                            projection.ptr &&
+                            pointer &&
                             currentCollection
                         ) {
                             setSingleProjection(
                                 {
                                     field: formattedFieldInput,
-                                    location: projection.ptr,
+                                    location: pointer,
                                 },
                                 currentCollection
                             );
@@ -106,7 +105,7 @@ function EditProjectionDialog({ field, open, setOpen, projection }: Props) {
                             storeSingleProjection(
                                 currentCollection,
                                 formattedFieldInput,
-                                projection.ptr
+                                pointer
                             );
                         }
 

@@ -1,6 +1,6 @@
 import type { EditableFieldProps } from 'src/components/tables/cells/fieldSelection/types';
 
-import { Box, Stack, TableCell, useTheme } from '@mui/material';
+import { Box, Stack, TableCell, Typography, useTheme } from '@mui/material';
 
 import { TextSquare } from 'iconoir-react';
 
@@ -9,23 +9,33 @@ import { getStickyTableCell } from 'src/context/Theme';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
-export const EditableField = ({ projection, sticky }: EditableFieldProps) => {
+export const EditableField = ({
+    buttonStyles,
+    field,
+    pointer,
+    readOnly,
+    sticky,
+}: EditableFieldProps) => {
     const theme = useTheme();
 
     const currentCollection = useBinding_currentCollection();
 
     const alternateField = useWorkflowStore((state) =>
-        projection.ptr &&
-        currentCollection &&
-        state.projections?.[currentCollection]
+        pointer && currentCollection && state.projections?.[currentCollection]
             ? Object.entries(state.projections[currentCollection])
-                  .filter(
-                      ([location, _metadata]) => location === projection.ptr
-                  )
+                  .filter(([location, _metadata]) => location === pointer)
                   .map(([_location, metadata]) => metadata.field)
                   .at(0)
             : undefined
     );
+
+    if (field.length === 0 || readOnly) {
+        return (
+            <TableCell sx={sticky ? getStickyTableCell() : undefined}>
+                <Typography>{alternateField ?? field}</Typography>
+            </TableCell>
+        );
+    }
 
     return (
         <TableCell sx={sticky ? getStickyTableCell() : undefined}>
@@ -42,8 +52,9 @@ export const EditableField = ({ projection, sticky }: EditableFieldProps) => {
                 )}
 
                 <EditProjectionButton
-                    field={alternateField ?? projection.field}
-                    projection={projection}
+                    buttonStyles={buttonStyles}
+                    field={alternateField ?? field}
+                    pointer={pointer}
                 />
             </Stack>
         </TableCell>
