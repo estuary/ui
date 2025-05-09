@@ -1,5 +1,9 @@
 name: UI Build
 
+permissions:
+    contents: read
+    packages: read # needed for `npm install` of `@estuary/flow-web
+
 on:
     push:
         branches: [main]

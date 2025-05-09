@@ -30,8 +30,11 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSchemaEvolution_resetState } from 'src/stores/SchemaEvolution/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
-import { getPathWithParams } from 'src/utils/misc-utils';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
+
+type RouteHandler = (customRoute?: string, external?: boolean) => void;
 
 function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
@@ -78,6 +81,9 @@ function useEntityWorkflowHelpers() {
         (state) => state.resetState
     );
 
+    // Workflow Store
+    const resetWorkflowStore = useWorkflowStore((state) => state.resetState);
+
     const resetState = useCallback(() => {
         resetPreSavePrompt();
         resetFormState();
@@ -89,6 +95,7 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState();
         resetSourceCapture();
         resetTransformationCreateState();
+        resetWorkflowStore();
     }, [
         resetBindingState,
         resetBindingsEditorStore,
@@ -100,6 +107,7 @@ function useEntityWorkflowHelpers() {
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,
+        resetWorkflowStore,
     ]);
 
     const callFailed = useCallback(
@@ -130,36 +138,43 @@ function useEntityWorkflowHelpers() {
 
     const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
 
-    const exit = useCallback(
-        (customRoute?: string) => {
+    const exit: RouteHandler = useCallback(
+        (customRoute?: string, external?: boolean) => {
             logRocketConsole('EntityWorkflow:exit');
             resetState();
 
             let route: string;
-            if (!customRoute) {
+            if (!customRoute || !hasLength(customRoute)) {
                 route = generatePath({ catalog_name: catalogName });
             } else {
                 route = customRoute;
             }
 
             logRocketConsole('EntityWorkflow:exit:navigate');
+            if (external && hasLength(route)) {
+                window.location.href = route;
+
+                return;
+            }
+
             navigate(route, { replace: true });
         },
         [catalogName, generatePath, navigate, resetState]
     );
 
     // Form Event Handlers
-    const closeLogs = useCallback(() => {
-        logRocketConsole('EntityWorkflow:closeLogs');
-        setFormState({
-            showLogs: false,
-        });
+    const closeLogs: RouteHandler = useCallback(
+        (customRoute?: string, external?: boolean) => {
+            logRocketConsole('EntityWorkflow:closeLogs');
+            setFormState({ showLogs: false });
 
-        if (exitWhenLogsClose) {
-            logRocketConsole('EntityWorkflow:closeLogs:exit');
-            exit();
-        }
-    }, [exit, setFormState, exitWhenLogsClose]);
+            if (exitWhenLogsClose) {
+                logRocketConsole('EntityWorkflow:closeLogs:exit');
+                exit(customRoute, external);
+            }
+        },
+        [exit, setFormState, exitWhenLogsClose]
+    );
 
     const materializeCollections = useCallback(async () => {
         // Go fetch the live spec that we want to materialize
@@ -175,10 +190,7 @@ function useEntityWorkflowHelpers() {
                 intl.formatMessage({
                     id: 'entityCreate.errors.cannotFetchLiveSpec',
                 }),
-                {
-                    ...snackbarSettings,
-                    variant: 'error',
-                }
+                { ...snackbarSettings, variant: 'error' }
             );
             logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
         } else {
@@ -186,9 +198,7 @@ function useEntityWorkflowHelpers() {
             exit(
                 getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
-                    {
-                        [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]: liveSpecId,
-                    }
+                    { [GlobalSearchParams.PREFILL_LIVE_SPEC_ID]: liveSpecId }
                 )
             );
         }

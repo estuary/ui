@@ -127,7 +127,9 @@ function DateTimePickerCTA(props: PickerProps) {
                 slots={{
                     layout: CustomLayout,
                 }}
-                onAccept={state.close}
+                onAccept={(_value) => {
+                    state.close();
+                }}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);

@@ -14,7 +14,7 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
 function DraftInitializer({ children }: BaseComponentProps) {
-    const initializeTaskDraft = useInitializeTaskDraft();
+    const { initializeTaskDraft } = useInitializeTaskDraft();
 
     // Draft Editor Store
     const draftInitializationError = useEditorStore_draftInitializationError();

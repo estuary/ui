@@ -1,10 +1,8 @@
+import type { ChangeEvent, SyntheticEvent } from 'react';
 import type {
-    ChangeEvent,
-    Dispatch,
-    SetStateAction,
-    SyntheticEvent,
-} from 'react';
-import type { Entity } from 'src/types';
+    ConnectorToolbarProps,
+    ProtocolOption,
+} from 'src/components/connectors/Grid/types';
 
 import { useRef } from 'react';
 import useConstant from 'use-constant';
@@ -18,47 +16,28 @@ import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField
 import SearchField from 'src/components/shared/toolbar/SearchField';
 import { fireGtmEvent } from 'src/services/gtm';
 
-interface Props {
-    belowMd: boolean;
-    gridSpacing: number;
-    hideProtocol?: boolean;
-    setProtocol: Dispatch<SetStateAction<string | null>>;
-    setSearchQuery: Dispatch<SetStateAction<string | null>>;
-}
-
-interface ProtocolOption {
-    protocol: Entity | null;
-    message: string;
-}
-
 function ConnectorToolbar({
     belowMd,
     gridSpacing,
     hideProtocol,
     setProtocol,
     setSearchQuery,
-}: Props) {
+}: ConnectorToolbarProps) {
     const intl = useIntl();
     const isFiltering = useRef(false);
 
     const protocolOptions: ProtocolOption[] = useConstant(() => [
         {
             protocol: null,
-            message: intl.formatMessage({
-                id: 'common.optionsAll',
-            }),
+            message: intl.formatMessage({ id: 'common.optionsAll' }),
         },
         {
             protocol: 'capture',
-            message: intl.formatMessage({
-                id: 'terms.capture',
-            }),
+            message: intl.formatMessage({ id: 'terms.capture' }),
         },
         {
             protocol: 'materialization',
-            message: intl.formatMessage({
-                id: 'terms.materialization',
-            }),
+            message: intl.formatMessage({ id: 'terms.materialization' }),
         },
     ]);
 
@@ -81,9 +60,7 @@ function ConnectorToolbar({
 
                 // Only fire the event if there is a query to send back
                 if (hasQuery) {
-                    fireGtmEvent('Connector_Search', {
-                        filterQuery,
-                    });
+                    fireGtmEvent('Connector_Search', { filterQuery });
                 }
             },
             750
@@ -100,9 +77,7 @@ function ConnectorToolbar({
                 container
                 spacing={gridSpacing}
                 wrap="wrap"
-                sx={{
-                    justifyContent: 'flex-end',
-                }}
+                sx={{ justifyContent: 'flex-end' }}
             >
                 <Grid item xs={12} md={hideProtocol ? 12 : 6}>
                     <SearchField

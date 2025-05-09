@@ -30,7 +30,6 @@ import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
@@ -79,12 +78,6 @@ function EntityEdit({
     const intl = useIntl();
 
     const { resetState } = useEntityWorkflowHelpers();
-
-    const {
-        connectorTags,
-        error: connectorTagsError,
-        isValidating,
-    } = useConnectorWithTagDetail(entityType);
 
     // Binding Store
     const resourceConfigServerUpdateRequired =
@@ -164,15 +157,13 @@ function EntityEdit({
                 <ValidationErrorSummary />
             </Box>
 
-            {connectorTagsError || detailsHydrationError ? (
+            {detailsHydrationError ? (
                 <Error
                     condensed
-                    error={
-                        connectorTagsError ?? {
-                            ...BASE_ERROR,
-                            message: detailsHydrationError,
-                        }
-                    }
+                    error={{
+                        ...BASE_ERROR,
+                        message: detailsHydrationError,
+                    }}
                 />
             ) : !persistedDraftId || !storeHydrationComplete ? null : (
                 <DraftSpecEditorHydrator
@@ -207,33 +198,19 @@ function EntityEdit({
                             </AlertBox>
                         ) : null}
 
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <AlertBox severity="warning" short>
-                                {intl.formatMessage({
-                                    id: `${messagePrefix}.missingConnectors`,
-                                })}
-                            </AlertBox>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    readOnly={readOnly.detailsForm}
-                                    entityType={entityType}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                        <ErrorBoundryWrapper>
+                            <DetailsForm
+                                readOnly={readOnly.detailsForm}
+                                entityType={entityType}
+                            />
+                        </ErrorBoundryWrapper>
 
-                        {imageTag.connectorId ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    readOnly={readOnly.endpointConfigForm}
-                                    hideBorder={
-                                        !hasLength(imageTag.connectorId)
-                                    }
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig
+                                readOnly={readOnly.endpointConfigForm}
+                                hideBorder={!hasLength(imageTag.connectorId)}
+                            />
+                        </ErrorBoundryWrapper>
 
                         {hasLength(imageTag.connectorId) ? (
                             <ErrorBoundryWrapper>

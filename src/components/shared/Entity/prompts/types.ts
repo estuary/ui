@@ -1,4 +1,4 @@
-import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { EmotionJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
 import type { PublicationJobStatus } from 'src/api/publications';
 import type { ErrorDetails } from 'src/components/shared/Error/types';
 import type { ProgressStates } from 'src/components/tables/RowActions/Shared/types';

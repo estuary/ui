@@ -41,6 +41,19 @@ export enum ErrorFlags {
     TOKEN_NOT_FOUND = 'Unauthenticated',
 }
 
+export const DATA_PLANE_OPTION_TEMPLATE: DataPlaneOption = {
+    dataPlaneName: {
+        cluster: '',
+        prefix: '',
+        provider: '',
+        region: '',
+        whole: 'template',
+    },
+    id: '',
+    reactorAddress: '',
+    scope: 'public',
+};
+
 export const shouldRefreshToken = (errorMessage?: string | null) => {
     return (
         errorMessage &&

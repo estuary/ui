@@ -136,6 +136,19 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
+const express = {
+    captureCreate: {
+        title: 'routeTitle.captureCreate',
+        path: `express/captureCreate`,
+        fullPath: '/express/captureCreate',
+        new: {
+            title: 'routeTitle.captureCreate',
+            path: `new`,
+            fullPath: '/express/captureCreate/new',
+        },
+    },
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -240,6 +253,7 @@ export const authenticatedRoutes = {
     captures,
     collections,
     dataPlaneAuth,
+    express,
     home,
     materializations,
     marketplace: marketplace.authenticated,
