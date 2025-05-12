@@ -44,12 +44,12 @@ function Row({ row }: RowProps) {
     return (
         <TableRow hover>
             <EditableField
+                field={row.name ?? ''}
                 fieldTextStyles={
                     row.exists === 'must'
                         ? { fontWeight: 700 }
                         : { fontStyle: 'italic' }
                 }
-                field={row.name ?? ''}
                 pointer={row.pointer}
             />
 

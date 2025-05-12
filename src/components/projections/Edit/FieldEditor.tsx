@@ -1,12 +1,20 @@
 import type { FieldEditorProps } from 'src/components/projections/Edit/types';
 
-import { Stack, TextField, Typography, useTheme } from '@mui/material';
+import {
+    FormLabel,
+    Stack,
+    TextField,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
 function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -18,17 +26,29 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                 flexGrow: 1,
             }}
         >
-            <Typography
-                style={{
-                    borderBottom: `1px dashed ${diminishedTextColor[theme.palette.mode]}`,
-                    color: diminishedTextColor[theme.palette.mode],
-                    flex: '1 1 0px',
-                    paddingBottom: 4,
-                    paddingTop: 1,
-                }}
-            >
-                {value}
-            </Typography>
+            <Stack style={{ flex: '1 1 0px' }}>
+                <FormLabel
+                    style={{
+                        color: diminishedTextColor[theme.palette.mode],
+                        fontSize: 10,
+                    }}
+                >
+                    {intl.formatMessage({
+                        id: 'fieldSelection.dialog.updateProjection.label.fieldName.current',
+                    })}
+                </FormLabel>
+
+                <Typography
+                    style={{
+                        borderBottom: `1px dashed ${diminishedTextColor[theme.palette.mode]}`,
+                        color: diminishedTextColor[theme.palette.mode],
+                        paddingBottom: 4,
+                        paddingTop: 3,
+                    }}
+                >
+                    {value}
+                </Typography>
+            </Stack>
 
             <ArrowRight
                 style={{
@@ -39,7 +59,9 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
 
             <TextField
                 disabled={disabled}
-                value={input}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.dialog.updateProjection.label.fieldName.new',
+                })}
                 onChange={(event) => {
                     setInput(event.target.value);
                 }}
@@ -50,6 +72,7 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                         borderRadius: 3,
                     },
                 }}
+                value={input}
             />
         </Stack>
     );

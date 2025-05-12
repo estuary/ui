@@ -53,8 +53,8 @@ export const EditableField = ({
                     )}
 
                     <EditProjectionButton
-                        fieldTextStyles={fieldTextStyles}
                         field={alternateField ?? field}
+                        fieldTextStyles={fieldTextStyles}
                         pointer={pointer}
                     />
                 </Stack>

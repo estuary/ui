@@ -7,8 +7,8 @@ import { Button } from '@mui/material';
 import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
 
 function EditProjectionButton({
-    fieldTextStyles,
     field,
+    fieldTextStyles,
     pointer,
 }: EditProjectionButtonProps) {
     const [open, setOpen] = useState(false);
