@@ -22,7 +22,7 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                 style={{
                     borderBottom: `1px dashed ${diminishedTextColor[theme.palette.mode]}`,
                     color: diminishedTextColor[theme.palette.mode],
-                    flexGrow: 1,
+                    flex: '1 1 0px',
                     paddingBottom: 4,
                     paddingTop: 1,
                 }}
@@ -45,7 +45,7 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                 }}
                 size="small"
                 sx={{
-                    'flexGrow': 1,
+                    'flex': '1 1 0px',
                     '& .MuiInputBase-root': {
                         borderRadius: 3,
                     },
