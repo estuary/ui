@@ -1,12 +1,11 @@
 import type { WorkflowState } from 'src/stores/Workflow/types';
+import type { ProjectionDef, Projections } from 'src/types/schemaModels';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-interface ProjectionMetadata {
+interface ProjectionMetadata extends ProjectionDef {
     field: string;
-    location: string;
-    partition?: boolean;
 }
 
 interface FlatProjections {
@@ -18,6 +17,10 @@ interface ProjectionDictionary {
 }
 
 export interface StoreWithProjections {
+    initializeProjections: (
+        existingProjections: Projections | undefined,
+        collection: string
+    ) => void;
     projections: ProjectionDictionary;
     setSingleProjection: (
         metadata: ProjectionMetadata,
@@ -36,6 +39,32 @@ export const getStoreWithProjectionSettings = (
     set: NamedSet<StoreWithProjections>
 ): StoreWithProjections => ({
     ...getInitialProjectionData(),
+
+    initializeProjections: (existingProjections, collection) => {
+        if (!existingProjections) {
+            return;
+        }
+
+        set(
+            produce((state: WorkflowState) => {
+                Object.entries(existingProjections)
+                    .map(
+                        ([field, value]): ProjectionMetadata =>
+                            typeof value === 'string'
+                                ? { field, location: value }
+                                : { field, ...value }
+                    )
+                    .forEach((metadata) => {
+                        state.projections[collection] = {
+                            ...state.projections[collection],
+                            [metadata.location]: metadata,
+                        };
+                    });
+            }),
+            false,
+            'Projections Initialized'
+        );
+    },
 
     setSingleProjection: (metadata, collection) => {
         set(

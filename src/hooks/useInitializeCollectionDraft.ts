@@ -21,6 +21,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 const specType = 'collection';
 
@@ -67,6 +68,11 @@ function useInitializeCollectionDraft() {
     // Local Draft Editor Store
     const setLocalDraftId = useEditorStore_setId({ localScope: true });
 
+    // Workflow Store
+    const initializeProjections = useWorkflowStore(
+        (state) => state.initializeProjections
+    );
+
     const createCollectionDraftSpec = useCallback(
         async (
             collectionName: string,
@@ -90,6 +96,10 @@ function useInitializeCollectionDraft() {
                     spec: newDraftSpecResponse.data[0].spec,
                     belongsToDraft: true,
                 });
+                initializeProjections(
+                    newDraftSpecResponse.data[0].spec?.projections,
+                    collectionName
+                );
 
                 setCollectionInitializationDone(true);
             } else {
@@ -97,6 +107,7 @@ function useInitializeCollectionDraft() {
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
+                initializeProjections(liveSpec?.projections, collectionName);
 
                 setCollectionInitializationDone(false);
                 setCollectionInitializationAlert({
@@ -107,6 +118,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
+            initializeProjections,
             setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
@@ -138,6 +150,10 @@ function useInitializeCollectionDraft() {
                         spec: draftSpecResponse.data[0].spec,
                         belongsToDraft: true,
                     });
+                    initializeProjections(
+                        draftSpecResponse.data[0].spec?.projections,
+                        collectionName
+                    );
 
                     if (lastPubId && expectedPubId !== lastPubId) {
                         setCollectionInitializationDone(false);
@@ -189,6 +205,7 @@ function useInitializeCollectionDraft() {
         },
         [
             createCollectionDraftSpec,
+            initializeProjections,
             setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
