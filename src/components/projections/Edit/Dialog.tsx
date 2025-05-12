@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { EditProjectionDialogProps } from 'src/components/projections/Edit/types';
 
 import { useState } from 'react';
 
@@ -13,28 +13,23 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import FieldEditor from 'src/components/editor/Bindings/FieldSelection/EditProjection/FieldEditor';
+import FieldEditor from 'src/components/projections/Edit/FieldEditor';
+import { TITLE_ID } from 'src/components/projections/Edit/shared';
 import { useStoreProjection } from 'src/hooks/projections/useStoreProjections';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
-interface Props {
-    field: string;
-    open: boolean;
-    pointer: string | undefined;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-const TITLE_ID = 'field-selection-dialog-title';
-
-function EditProjectionDialog({ field, open, setOpen, pointer }: Props) {
+function EditProjectionDialog({
+    field,
+    open,
+    pointer,
+    setOpen,
+}: EditProjectionDialogProps) {
     const intl = useIntl();
 
     const { storeSingleProjection } = useStoreProjection();
 
-    // Binding Store
     const currentCollection = useBinding_currentCollection();
-
     const setSingleProjection = useWorkflowStore(
         (state) => state.setSingleProjection
     );

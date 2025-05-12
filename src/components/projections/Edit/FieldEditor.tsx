@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { FieldEditorProps } from 'src/components/projections/Edit/types';
 
 import { Stack, TextField, Typography, useTheme } from '@mui/material';
 
@@ -6,15 +6,7 @@ import { ArrowRight } from 'iconoir-react';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
-interface Props {
-    labelMessageId: string;
-    input: string;
-    setInput: Dispatch<SetStateAction<string>>;
-    value: string;
-    disabled?: boolean;
-}
-
-function FieldEditor({ disabled, input, setInput, value }: Props) {
+function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
     const theme = useTheme();
 
     return (

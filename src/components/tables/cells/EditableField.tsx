@@ -4,7 +4,7 @@ import { Box, Stack, TableCell, Typography, useTheme } from '@mui/material';
 
 import { TextSquare } from 'iconoir-react';
 
-import EditProjectionButton from 'src/components/editor/Bindings/FieldSelection/EditProjection/Button';
+import EditProjectionButton from 'src/components/projections/Edit/Button';
 import { getStickyTableCell } from 'src/context/Theme';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';

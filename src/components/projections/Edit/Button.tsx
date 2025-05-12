@@ -1,18 +1,16 @@
-import type { CSSTextProperties } from 'src/components/tables/cells/types';
+import type { EditProjectionButtonProps } from 'src/components/projections/Edit/types';
 
 import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/EditProjection/Dialog';
+import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
 
-interface Props {
-    field: string;
-    pointer: string | undefined;
-    fieldTextStyles?: CSSTextProperties;
-}
-
-function EditProjectionButton({ fieldTextStyles, field, pointer }: Props) {
+function EditProjectionButton({
+    fieldTextStyles,
+    field,
+    pointer,
+}: EditProjectionButtonProps) {
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
