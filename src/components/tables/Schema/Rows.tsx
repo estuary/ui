@@ -44,7 +44,7 @@ function Row({ row }: RowProps) {
     return (
         <TableRow hover>
             <EditableField
-                buttonStyles={
+                fieldTextStyles={
                     row.exists === 'must'
                         ? { fontWeight: 700 }
                         : { fontStyle: 'italic' }

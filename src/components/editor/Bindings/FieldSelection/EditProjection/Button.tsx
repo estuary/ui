@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSTextProperties } from 'src/components/tables/cells/types';
 
 import { useState } from 'react';
 
@@ -9,10 +9,10 @@ import EditProjectionDialog from 'src/components/editor/Bindings/FieldSelection/
 interface Props {
     field: string;
     pointer: string | undefined;
-    buttonStyles?: CSSProperties;
+    fieldTextStyles?: CSSTextProperties;
 }
 
-function EditProjectionButton({ buttonStyles, field, pointer }: Props) {
+function EditProjectionButton({ fieldTextStyles, field, pointer }: Props) {
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -37,7 +37,7 @@ function EditProjectionButton({ buttonStyles, field, pointer }: Props) {
                     px: '3px',
                     py: '4px',
                     textTransform: 'unset',
-                    ...buttonStyles,
+                    ...fieldTextStyles,
                 }}
             >
                 {field}
