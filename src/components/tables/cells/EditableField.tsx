@@ -1,5 +1,7 @@
 import type { EditableFieldProps } from 'src/components/tables/cells/types';
 
+import { useMemo } from 'react';
+
 import { Box, Stack, TableCell, Typography, useTheme } from '@mui/material';
 
 import { TextSquare } from 'iconoir-react';
@@ -20,13 +22,20 @@ export const EditableField = ({
 
     const currentCollection = useBinding_currentCollection();
 
-    const alternateField = useWorkflowStore((state) =>
+    const projectedFields = useWorkflowStore((state) =>
         pointer && currentCollection && state.projections?.[currentCollection]
             ? Object.entries(state.projections[currentCollection])
                   .filter(([location, _metadata]) => location === pointer)
-                  .map(([_location, metadata]) => metadata.field)
-                  .at(0)
-            : undefined
+                  .flatMap(([_location, metadata]) => metadata)
+            : []
+    );
+
+    const alternateField: string | undefined = useMemo(
+        () =>
+            projectedFields.length > 0
+                ? projectedFields[projectedFields.length - 1].field
+                : undefined,
+        [projectedFields]
     );
 
     return (

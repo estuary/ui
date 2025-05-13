@@ -1,4 +1,3 @@
-import type { WorkflowState } from 'src/stores/Workflow/types';
 import type { ProjectionDef, Projections } from 'src/types/schemaModels';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -9,7 +8,7 @@ interface ProjectionMetadata extends ProjectionDef {
 }
 
 interface FlatProjections {
-    [location: string]: ProjectionMetadata;
+    [location: string]: ProjectionMetadata[];
 }
 
 interface ProjectionDictionary {
@@ -46,7 +45,7 @@ export const getStoreWithProjectionSettings = (
         }
 
         set(
-            produce((state: WorkflowState) => {
+            produce((state: StoreWithProjections) => {
                 Object.entries(existingProjections)
                     .map(
                         ([field, value]): ProjectionMetadata =>
@@ -55,9 +54,15 @@ export const getStoreWithProjectionSettings = (
                                 : { field, ...value }
                     )
                     .forEach((metadata) => {
+                        const cumulativeProjections =
+                            state.projections[collection]?.[
+                                metadata.location
+                            ] ?? [];
+
                         state.projections[collection] = {
                             ...state.projections[collection],
-                            [metadata.location]: metadata,
+                            [metadata.location]:
+                                cumulativeProjections.concat(metadata),
                         };
                     });
             }),
@@ -68,10 +73,13 @@ export const getStoreWithProjectionSettings = (
 
     setSingleProjection: (metadata, collection) => {
         set(
-            produce((state: WorkflowState) => {
+            produce((state: StoreWithProjections) => {
+                const existingProjections =
+                    state.projections[collection]?.[metadata.location] ?? [];
+
                 state.projections[collection] = {
                     ...state.projections[collection],
-                    [metadata.location]: metadata,
+                    [metadata.location]: existingProjections.concat(metadata),
                 };
             }),
             false,

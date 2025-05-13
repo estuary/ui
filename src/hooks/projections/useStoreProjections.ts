@@ -1,9 +1,7 @@
 import type { Schema } from 'src/types';
-import type { ProjectionDef, Projections } from 'src/types/schemaModels';
+import type { Projections } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
-
-import { omit } from 'lodash';
 
 import {
     getDraftSpecsByCatalogName,
@@ -11,7 +9,7 @@ import {
 } from 'src/api/draftSpecs';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 
-const removeExistingProjection = (spec: Schema, location: string) => {
+const getExistingPartition = (spec: Schema, location: string) => {
     const existingProjection = spec?.projections
         ? Object.entries(spec.projections as Projections).find(
               ([_projectedField, projectedMetadata]) =>
@@ -21,18 +19,6 @@ const removeExistingProjection = (spec: Schema, location: string) => {
           )
         : undefined;
 
-    if (existingProjection) {
-        const [existingField, _existingMetadata] = existingProjection;
-
-        spec.projections = omit(spec.projections, existingField);
-    }
-
-    return existingProjection;
-};
-
-const getExistingPartition = (
-    existingProjection: [string, string | ProjectionDef] | undefined
-) => {
     if (!existingProjection || typeof existingProjection[1] === 'string') {
         return undefined;
     }
@@ -69,15 +55,10 @@ export const useStoreProjection = () => {
             const spec: Schema = draftSpec.spec;
 
             if (spec?.projections) {
-                const existingProjection = removeExistingProjection(
-                    spec,
-                    location
-                );
-
                 spec.projections[field] = {
                     location,
                     partition:
-                        partition ?? getExistingPartition(existingProjection),
+                        partition ?? getExistingPartition(spec, location),
                 };
             } else {
                 spec.projections = { [field]: { location, partition } };
