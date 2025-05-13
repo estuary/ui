@@ -1,32 +1,29 @@
-import type {
-    AffectedMaterialization,
-    RequiresRecreation,
-} from 'src/api/evolutions';
+import type { DescriptionProps } from 'src/components/shared/Entity/IncompatibleCollections/types';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
-interface Props {
-    newName: string | null;
-    recreateCause: RequiresRecreation | null;
-    affectedMaterializations?: AffectedMaterialization[];
-}
+import { useIntl } from 'react-intl';
 
 function Description({
     affectedMaterializations,
     newName,
     recreateCause,
-}: Props) {
+}: DescriptionProps) {
     const intl = useIntl();
 
+    // TODO (collection reset) - we need to replace this and inform the user here what will happen
+    //  but without the new name stuff
     if (newName !== null) {
         const reason = intl.formatMessage({
             id: `entityEvolution.action.recreateCollection.reason.${recreateCause}`,
         });
         return (
-            <FormattedMessage
-                id="entityEvolution.action.recreateCollection.description"
-                values={{ newName, reason }}
-            />
+            <>
+                {intl.formatMessage(
+                    {
+                        id: 'entityEvolution.action.recreateCollection.description',
+                    },
+                    { newName, reason }
+                )}
+            </>
         );
     }
 
@@ -41,22 +38,26 @@ function Description({
         // are way too verbose. We'd need to update connectors to provide much more concise reasons before we present them here. Once/if we do that, then we
         // should be able to format a message using the fields and reasons for each one.
         return (
-            <FormattedMessage
-                id="entityEvolution.action.recreateOneBinding.description"
-                values={{
-                    materializationName,
-                }}
-            />
+            <>
+                {intl.formatMessage(
+                    {
+                        id: 'entityEvolution.action.recreateOneBinding.description',
+                    },
+                    { materializationName }
+                )}
+            </>
         );
     }
 
     return (
-        <FormattedMessage
-            id="entityEvolution.action.recreateBindings.description"
-            values={{
-                materializationCount,
-            }}
-        />
+        <>
+            {intl.formatMessage(
+                {
+                    id: 'entityEvolution.action.recreateBindings.description',
+                },
+                { materializationCount }
+            )}
+        </>
     );
 }
 

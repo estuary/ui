@@ -211,6 +211,8 @@ export interface BindingState
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
 
+    // TODO (collection reset) - pretty sure this will no longer be needed as the backend will
+    //  update the `backfill` property themselves.
     evolvedCollections: EvolvedCollections[];
     setEvolvedCollections: (value: BindingState['evolvedCollections']) => void;
 
