@@ -1,23 +1,20 @@
-import type {
-    BaseAutoCompleteOption,
-    BaseFormProps,
-} from 'src/components/shared/specPropertyEditor/types';
+import type { BaseFormProps } from 'src/components/shared/specPropertyEditor/types';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
 import SpecPropertyEditorForm from 'src/components/shared/specPropertyEditor/SpecPropertyEditorForm';
-import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupportedOptions';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
-export default function IncompatibleSchemaChangeForm({
+export default function TargetSchemaForm({
     currentSetting,
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
-    const setOnIncompatibleSchemaChangeErrorExists = useBindingStore(
-        (state) => state.setOnIncompatibleSchemaChangeErrorExists
-    );
+    const [setTargetSchemaHasError] = useSourceCaptureStore((state) => [
+        state.setTargetSchemaHasError,
+    ]);
 
-    const options = useSupportedOptions();
+    const options = useTargetNamingOptions();
 
     return (
         <SpecPropertyEditorForm
@@ -33,11 +30,9 @@ export default function IncompatibleSchemaChangeForm({
                     </li>
                 );
             }}
-            updateDraftedSetting={(selectedOption?: BaseAutoCompleteOption) => {
-                updateDraftedSetting(selectedOption?.val ?? undefined);
-            }}
-            setErrorExists={(errorExists, scope) => {
-                setOnIncompatibleSchemaChangeErrorExists(errorExists, scope);
+            updateDraftedSetting={updateDraftedSetting}
+            setErrorExists={(errorExists) => {
+                setTargetSchemaHasError(errorExists);
             }}
         />
     );

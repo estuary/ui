@@ -38,7 +38,7 @@ function SourceCaptureChip() {
             onDelete={
                 sourceCaptureDefinition?.capture
                     ? async () => {
-                          setSourceCapture(null);
+                          setSourceCapture(undefined);
                           await updateDraft(null);
                       }
                     : undefined

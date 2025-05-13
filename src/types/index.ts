@@ -475,10 +475,19 @@ export interface DekafConfig {
     variant: string;
 }
 
-export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
+// Keep in sync with estuary/flow/crates/models/src/source_capture.rs
+export type TargetSchemas =
+    | 'prefixSchema'
+    | 'prefixNonDefaultSchema'
+    // fromSourceName renamed to withSchema
+    | 'fromSourceName'
+    | 'withSchema'
+    // leaveEmpty renamed to noSchema
+    | 'noSchema'
+    | 'leaveEmpty';
 
 export interface SourceCaptureDef {
-    capture: string;
+    capture?: string;
     deltaUpdates?: boolean;
     targetSchema?: TargetSchemas;
 }

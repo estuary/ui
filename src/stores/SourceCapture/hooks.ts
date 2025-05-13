@@ -54,7 +54,7 @@ export const useSourceCaptureStore_setSourceCaptureDefinition = () => {
     return useCallback(
         (newVal: SourceCaptureDef | null) => {
             if (!newVal) {
-                setSourceCapture(null);
+                setSourceCapture(undefined);
                 setDeltaUpdates(undefined);
                 setTargetSchema(undefined);
                 return;
@@ -62,7 +62,7 @@ export const useSourceCaptureStore_setSourceCaptureDefinition = () => {
 
             // Mainly here to handle defaulting this different on
             //  edit and create
-            if (newVal.capture.length > 0) {
+            if (newVal.capture && newVal.capture.length > 0) {
                 setSourceCapture(newVal.capture);
             }
 

@@ -25,7 +25,7 @@ interface CreateMatchData {
     expect_pub_id?: string;
 }
 
-interface UpdateMatchData {
+export interface UpdateMatchData {
     draft_id: string | null;
     catalog_name?: string;
     expect_pub_id?: string;
