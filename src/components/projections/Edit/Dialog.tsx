@@ -37,7 +37,7 @@ function EditProjectionDialog({
     const [fieldInput, setFieldInput] = useState('');
 
     return (
-        <Dialog open={open} maxWidth="lg" aria-labelledby={TITLE_ID}>
+        <Dialog open={open} maxWidth="md" aria-labelledby={TITLE_ID}>
             <DialogTitle>
                 {intl.formatMessage({
                     id: 'fieldSelection.dialog.updateProjection.header',
