@@ -59,11 +59,22 @@ export const getStoreWithProjectionSettings = (
                                 metadata.location
                             ] ?? [];
 
-                        state.projections[collection] = {
-                            ...state.projections[collection],
-                            [metadata.location]:
-                                cumulativeProjections.concat(metadata),
-                        };
+                        const storedProjectionIndex =
+                            cumulativeProjections.findIndex(
+                                ({ field }) => field === metadata.field
+                            );
+
+                        if (storedProjectionIndex === -1) {
+                            state.projections[collection] = {
+                                ...state.projections[collection],
+                                [metadata.location]:
+                                    cumulativeProjections.concat(metadata),
+                            };
+                        } else {
+                            state.projections[collection][metadata.location][
+                                storedProjectionIndex
+                            ] = metadata;
+                        }
                     });
             }),
             false,
