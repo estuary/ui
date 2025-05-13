@@ -8,6 +8,7 @@ export interface EditableFieldProps {
     field: string;
     pointer: string | undefined;
     fieldTextStyles?: CSSTextProperties;
+    rawNameOnly?: boolean;
     readOnly?: boolean;
     sticky?: boolean;
 }

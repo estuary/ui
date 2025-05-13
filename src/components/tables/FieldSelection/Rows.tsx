@@ -46,6 +46,7 @@ function Row({ columns, row }: RowProps) {
             <EditableField
                 field={row.field}
                 pointer={row.ptr}
+                rawNameOnly
                 readOnly
                 sticky
             />

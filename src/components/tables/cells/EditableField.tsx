@@ -15,6 +15,7 @@ export const EditableField = ({
     field,
     fieldTextStyles,
     pointer,
+    rawNameOnly,
     readOnly,
     sticky,
 }: EditableFieldProps) => {
@@ -32,10 +33,10 @@ export const EditableField = ({
 
     const alternateField: string | undefined = useMemo(
         () =>
-            projectedFields.length > 0
+            !rawNameOnly && projectedFields.length > 0
                 ? projectedFields[projectedFields.length - 1].field
                 : undefined,
-        [projectedFields]
+        [projectedFields, rawNameOnly]
     );
 
     return (
