@@ -58,6 +58,7 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
             />
 
             <TextField
+                autoFocus
                 disabled={disabled}
                 label={intl.formatMessage({
                     id: 'fieldSelection.dialog.updateProjection.label.fieldName.new',
