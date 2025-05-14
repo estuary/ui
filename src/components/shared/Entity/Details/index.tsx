@@ -17,6 +17,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import EntityRelationshipsHydrator from 'src/stores/EntityRelationships/Hydrator';
 import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { EditorStoreNames } from 'src/stores/names';
@@ -48,37 +49,39 @@ function EntityDetails() {
             <LiveSpecsHydrator catalogName={catalogName} localZustandScope>
                 <ShardHydrator catalogName={catalogName}>
                     <EntityStatusHydrator catalogName={catalogName}>
-                        <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack
-                                direction="row"
-                                sx={{ justifyContent: 'space-between' }}
-                            >
-                                <Typography
-                                    component="span"
-                                    variant="h6"
-                                    sx={{
-                                        ...truncateTextSx,
-                                        alignItems: 'center',
-                                    }}
+                        <EntityRelationshipsHydrator catalogName={catalogName}>
+                            <Stack spacing={2} sx={{ m: 1 }}>
+                                <Stack
+                                    direction="row"
+                                    sx={{ justifyContent: 'space-between' }}
                                 >
-                                    {catalogName}
-                                </Typography>
+                                    <Typography
+                                        component="span"
+                                        variant="h6"
+                                        sx={{
+                                            ...truncateTextSx,
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        {catalogName}
+                                    </Typography>
 
-                                <Stack direction="row">
-                                    <EditButton buttonVariant="outlined" />
+                                    <Stack direction="row">
+                                        <EditButton buttonVariant="outlined" />
 
-                                    <MaterializeButton />
+                                        <MaterializeButton />
+                                    </Stack>
                                 </Stack>
+
+                                <Divider />
+
+                                <DetailTabs />
                             </Stack>
 
-                            <Divider />
-
-                            <DetailTabs />
-                        </Stack>
-
-                        <Box sx={{ m: 1 }}>
-                            <RenderTab />
-                        </Box>
+                            <Box sx={{ m: 1 }}>
+                                <RenderTab />
+                            </Box>
+                        </EntityRelationshipsHydrator>
                     </EntityStatusHydrator>
                 </ShardHydrator>
             </LiveSpecsHydrator>

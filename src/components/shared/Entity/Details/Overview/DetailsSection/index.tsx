@@ -11,10 +11,10 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
+import useRelatedEntities from 'src/components/shared/Entity/Details/useRelatedEntities';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
-import { useEntityRelationships } from 'src/hooks/entityStatus/useEntityRelationships';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
@@ -32,64 +32,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         useEntityStatusStore_singleResponse(entityName)?.connector_status
             ?.message;
 
-    const {
-        data: relationshipData,
-        error: relationshipError,
-        isValidating: relationshipValidating,
-    } = useEntityRelationships(entityType === 'collection' ? entityName : null);
-
-    const relatedEntities = useMemo(() => {
-        const response = [];
-
-        if (entityType === 'collection' && !relationshipValidating) {
-            const captures: any[] = [];
-            const materializations: any[] = [];
-
-            if (relationshipData && relationshipData.length > 0) {
-                relationshipData.forEach((datum) => {
-                    if (datum.spec_type === 'capture') {
-                        captures.push(datum.catalog_name);
-                    } else if (datum.spec_type === 'materialization') {
-                        materializations.push(datum.catalog_name);
-                    }
-                });
-            }
-
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.parentCapture',
-                }),
-                val: (
-                    <RelatedEntities
-                        entityType="capture"
-                        entities={captures}
-                        error={relationshipError}
-                    />
-                ),
-            });
-
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.consumers',
-                }),
-                val: (
-                    <RelatedEntities
-                        entityType="materialization"
-                        entities={materializations}
-                        error={relationshipError}
-                    />
-                ),
-            });
-        }
-
-        return response;
-    }, [
-        entityType,
-        intl,
-        relationshipData,
-        relationshipError,
-        relationshipValidating,
-    ]);
+    const relatedEntities = useRelatedEntities();
 
     const data = useMemo(() => {
         const response = [];

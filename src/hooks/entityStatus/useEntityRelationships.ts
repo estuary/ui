@@ -26,14 +26,6 @@ export const useEntityRelationships = (catalogName: string | null) => {
         catalogName && session?.access_token && authorizedPrefix
             ? [catalogName, session.access_token]
             : null,
-        relationshipFetcher,
-        {
-            onError: (err) => {
-                console.log('call failed', err);
-            },
-            onSuccess: (responses) => {
-                console.log('call worked', responses);
-            },
-        }
+        relationshipFetcher
     );
 };
