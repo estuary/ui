@@ -62,7 +62,7 @@ function ReviewTable() {
                     <RelatedEntities
                         entityType="collection"
                         newWindow
-                        preferredList={collectionsBeingBackfilled}
+                        entities={collectionsBeingBackfilled}
                     />
                 ),
                 count: collectionsBeingBackfilled.length,

@@ -1,45 +1,22 @@
 import type { RelatedEntitiesProps } from 'src/components/shared/Entity/Details/RelatedEntities/types';
 
-import { useMemo } from 'react';
-
-import { Skeleton } from '@mui/material';
-
 import { useIntl } from 'react-intl';
 
 import ChipList from 'src/components/shared/ChipList';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { useLiveSpecs_parentCapture } from 'src/hooks/useLiveSpecs';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 
 function RelatedEntities({
-    collectionId,
+    entities,
     entityType,
+    error,
     newWindow,
-    preferredList,
 }: RelatedEntitiesProps) {
     const intl = useIntl();
 
     const { generatePath } = useDetailsNavigator(
         ENTITY_SETTINGS[entityType].routes.details
     );
-
-    // If we have a list then just send null over and never run a query
-    const { data, error, isValidating } = useLiveSpecs_parentCapture(
-        preferredList ? null : (collectionId ?? null),
-        entityType
-    );
-
-    const dataToShow = useMemo(() => {
-        if (preferredList) {
-            return preferredList;
-        } else {
-            return data?.map((datum) => datum.live_specs.catalog_name);
-        }
-    }, [data, preferredList]);
-
-    if (isValidating) {
-        return <Skeleton />;
-    }
 
     if (error) {
         return (
@@ -56,7 +33,7 @@ function RelatedEntities({
         );
     }
 
-    if (!dataToShow || dataToShow.length < 1) {
+    if (!entities || entities.length < 1) {
         return (
             <ChipList
                 disabled
@@ -67,7 +44,7 @@ function RelatedEntities({
         );
     }
 
-    const entityNameList = dataToShow.map((catalogName) => {
+    const entityNameList = entities.map((catalogName) => {
         return {
             display: catalogName,
             link: generatePath({

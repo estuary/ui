@@ -101,27 +101,4 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
     };
 }
 
-export interface LiveSpecsQuery_parentCapture {
-    live_specs: {
-        catalog_name: string;
-    };
-}
-function useLiveSpecs_parentCapture(id: string | null, entityType: Entity) {
-    return useQuery(
-        id && entityType !== 'collection'
-            ? supabaseClient
-                  .from(TABLES.LIVE_SPEC_FLOWS)
-                  .select(
-                      `live_specs!${entityType === 'materialization' ? 'live_spec_flows_target_id_fkey' : 'live_spec_flows_source_id_fkey'}(catalog_name)`
-                  )
-                  .eq(
-                      `${entityType === 'materialization' ? 'source_id' : 'target_id'}`,
-                      id
-                  )
-                  .eq('flow_type', entityType)
-                  .returns<LiveSpecsQuery_parentCapture[]>()
-            : null
-    );
-}
-
-export { useLiveSpecs, useLiveSpecs_details, useLiveSpecs_parentCapture };
+export { useLiveSpecs, useLiveSpecs_details };

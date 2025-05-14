@@ -11,10 +11,10 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
-import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
+import { useEntityRelationships } from 'src/hooks/entityStatus/useEntityRelationships';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
@@ -27,11 +27,69 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
-    const isDerivation = useIsCollectionDerivation();
 
     const latestConnectorStatus =
         useEntityStatusStore_singleResponse(entityName)?.connector_status
             ?.message;
+
+    const {
+        data: relationshipData,
+        error: relationshipError,
+        isValidating: relationshipValidating,
+    } = useEntityRelationships(entityType === 'collection' ? entityName : null);
+
+    const relatedEntities = useMemo(() => {
+        const response = [];
+
+        if (entityType === 'collection' && !relationshipValidating) {
+            const captures: any[] = [];
+            const materializations: any[] = [];
+
+            if (relationshipData && relationshipData.length > 0) {
+                relationshipData.forEach((datum) => {
+                    if (datum.spec_type === 'capture') {
+                        captures.push(datum.catalog_name);
+                    } else if (datum.spec_type === 'materialization') {
+                        materializations.push(datum.catalog_name);
+                    }
+                });
+            }
+
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.parentCapture',
+                }),
+                val: (
+                    <RelatedEntities
+                        entityType="capture"
+                        entities={captures}
+                        error={relationshipError}
+                    />
+                ),
+            });
+
+            response.push({
+                title: intl.formatMessage({
+                    id: 'data.consumers',
+                }),
+                val: (
+                    <RelatedEntities
+                        entityType="materialization"
+                        entities={materializations}
+                        error={relationshipError}
+                    />
+                ),
+            });
+        }
+
+        return response;
+    }, [
+        entityType,
+        intl,
+        relationshipData,
+        relationshipError,
+        relationshipValidating,
+    ]);
 
     const data = useMemo(() => {
         const response = [];
@@ -152,7 +210,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 val: (
                     <RelatedEntities
                         entityType="collection"
-                        preferredList={latestLiveSpec.writes_to}
+                        entities={latestLiveSpec.writes_to}
                     />
                 ),
             });
@@ -166,43 +224,14 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 val: (
                     <RelatedEntities
                         entityType="collection"
-                        preferredList={latestLiveSpec.reads_from}
-                    />
-                ),
-            });
-        }
-
-        // Do not show for derivations as right now the query that is used
-        //  only returns DIRECTLY connected entities and this will fail for
-        //  derivations Q2 2025
-        if (!isDerivation && entityType === 'collection') {
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.parentCapture',
-                }),
-                val: (
-                    <RelatedEntities
-                        collectionId={latestLiveSpec.id}
-                        entityType="capture"
-                    />
-                ),
-            });
-
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.consumers',
-                }),
-                val: (
-                    <RelatedEntities
-                        collectionId={latestLiveSpec.id}
-                        entityType="materialization"
+                        entities={latestLiveSpec.reads_from}
                     />
                 ),
             });
         }
 
         return response;
-    }, [entityType, intl, isDerivation, latestConnectorStatus, latestLiveSpec]);
+    }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);
 
     return (
         <CardWrapper
@@ -215,7 +244,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             {!hasLength(data) ? (
                 <CircularProgress />
             ) : (
-                <KeyValueList data={data} />
+                <KeyValueList data={[...data, ...relatedEntities]} />
             )}
         </CardWrapper>
     );
