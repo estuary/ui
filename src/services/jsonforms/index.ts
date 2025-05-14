@@ -39,6 +39,7 @@ import {
     isGroup,
     isLayout,
     resolveSchema,
+    RuleEffect,
     toDataPath,
     toDataPathSegments,
 } from '@jsonforms/core';
@@ -468,7 +469,19 @@ const generateUISchema = (
     const isRequired = isRequiredField(schemaName, rootSchema);
 
     if (isPlainObject(jsonSchema)) {
-        if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+        // We never want to show this part of the spec
+        if (schemaName === '_meta') {
+            const controlObject = createControlElement(currentRef);
+
+            controlObject.rule = {
+                effect: RuleEffect.HIDE,
+                condition: {
+                    type: 'true',
+                },
+            };
+
+            return controlObject;
+        } else if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
             // Always create a Group for "advanced" configuration objects, so that we can collapse it and
             // see the label.
 
