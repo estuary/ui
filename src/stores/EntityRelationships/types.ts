@@ -15,4 +15,5 @@ export interface EntityRelationshipsState extends StoreWithHydration {
 
 export interface HydratorProps extends BaseComponentProps {
     catalogName: string;
+    lastChecked: string;
 }
