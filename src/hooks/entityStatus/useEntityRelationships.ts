@@ -15,7 +15,7 @@ const fetcher = async ({ 0: catalogName, 1: accessToken }: FetcherArgs) => {
 
 export const useEntityRelationships = (
     catalogName: string | null,
-    lastChecked: string
+    swrCacheBuster: string
 ) => {
     const session = useUserStore((state) => state.session);
 
@@ -41,7 +41,7 @@ export const useEntityRelationships = (
 
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix
-            ? [catalogName, session.access_token, lastChecked]
+            ? [catalogName, session.access_token, swrCacheBuster]
             : null,
         fetcher,
         {
