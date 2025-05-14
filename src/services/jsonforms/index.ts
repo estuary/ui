@@ -471,16 +471,18 @@ const generateUISchema = (
     if (isPlainObject(jsonSchema)) {
         // We never want to show this part of the spec
         if (schemaName === '_meta') {
-            const controlObject = createControlElement(currentRef);
-
-            controlObject.rule = {
-                effect: RuleEffect.HIDE,
-                condition: {
-                    type: 'true',
+            const group: GroupLayout = {
+                type: 'Group',
+                elements: [],
+                rule: {
+                    effect: RuleEffect.HIDE,
+                    condition: {
+                        type: 'fake-to-hopefully-always-return-true',
+                    },
                 },
             };
 
-            return controlObject;
+            return group;
         } else if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
             // Always create a Group for "advanced" configuration objects, so that we can collapse it and
             // see the label.
