@@ -1,4 +1,5 @@
 import type { ButtonProps } from '@mui/material';
+import type { Chunk } from 'highlight-words-core';
 import type { BaseComponentProps } from 'src/types';
 
 export interface ErrorIndicatorProps {
@@ -8,8 +9,9 @@ export interface ErrorIndicatorProps {
 
 export interface SelectorNameProps {
     collection: string[];
-    filterValue?: string;
+    highlightChunks: Chunk[];
     buttonProps?: Partial<ButtonProps>;
+    filterValue?: string;
 }
 
 export interface NameHighlightProps extends BaseComponentProps {
@@ -18,4 +20,9 @@ export interface NameHighlightProps extends BaseComponentProps {
 
 export interface BindingsSelectorToggleProps {
     bindingUUID: string;
+}
+
+export interface HighlighterProps {
+    chunks: Chunk[];
+    output: string;
 }
