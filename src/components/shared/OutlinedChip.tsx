@@ -3,7 +3,11 @@ import type { CSSProperties } from 'react';
 
 import { Chip, styled } from '@mui/material';
 
-import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
+import {
+    defaultOutline,
+    defaultOutline_hovered,
+    diminishedTextColor,
+} from 'src/context/Theme';
 
 export const OutlinedChip = styled(Chip, {
     // TODO (typing): Consider creating a typed, utility function for this behavior.
@@ -37,6 +41,7 @@ export const OutlinedChip = styled(Chip, {
 
     return {
         'border': border,
+        'cursor': 'pointer',
         'maxWidth': maxWidth,
         // Specifying a minWidth helps prevent the SVG delete icon from
         // overlapping the label as the chip resizes.
@@ -45,7 +50,7 @@ export const OutlinedChip = styled(Chip, {
             background,
             border:
                 colorKey === 'default'
-                    ? defaultOutline[theme.palette.mode]
+                    ? defaultOutline_hovered[theme.palette.mode]
                     : theme.palette.mode === 'light' &&
                         ['success', 'info'].includes(colorKey)
                       ? `1px solid ${theme.palette[colorKey].dark}`
