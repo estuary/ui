@@ -3,16 +3,17 @@ import type { CSSProperties } from 'react';
 
 import { Chip, styled } from '@mui/material';
 
-import { defaultOutline } from 'src/context/Theme';
+import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
 
 export const OutlinedChip = styled(Chip, {
     shouldForwardProp: (props) => props !== 'maxWidth',
 })<
     ChipProps & {
+        diminishedText?: boolean;
         maxWidth?: CSSProperties['maxWidth'];
         minWidth?: CSSProperties['minWidth'];
     }
->(({ color, maxWidth, minWidth, theme }) => {
+>(({ color, diminishedText, maxWidth, minWidth, theme }) => {
     const colorKey = color ?? 'default';
 
     const background =
@@ -58,6 +59,9 @@ export const OutlinedChip = styled(Chip, {
             marginRight: '1px',
         },
         '& .MuiChip-label': {
+            color: diminishedText
+                ? diminishedTextColor[theme.palette.mode]
+                : undefined,
             display: 'block',
             whiteSpace: 'normal',
         },

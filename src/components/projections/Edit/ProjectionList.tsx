@@ -26,6 +26,7 @@ export const ProjectionList = ({
                 >
                     <OutlinedChip
                         label={metadata.field}
+                        diminishedText={index > 0}
                         onDelete={() =>
                             removeSingleProjection(metadata, collection)
                         }

@@ -26,6 +26,7 @@ export const FieldList = ({ field, pointer }: AliasListProps) => {
 
                 <Box style={{ alignItems: 'center', display: 'inline-flex' }}>
                     <OutlinedChip
+                        diminishedText={projectedFields.length > 0}
                         label={field}
                         size="small"
                         variant="outlined"
