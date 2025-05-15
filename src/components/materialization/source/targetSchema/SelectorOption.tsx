@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
 import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/types';
 
 import { Stack, Typography } from '@mui/material';
@@ -19,6 +19,15 @@ function SelectorOption({ option }: SelectorOptionProps<AutoCompleteOption>) {
                 }}
             >
                 {description}
+            </Typography>
+
+            <Typography
+                component="span"
+                sx={{
+                    pl: 1.5,
+                }}
+            >
+                example goes here
             </Typography>
         </Stack>
     );

@@ -71,7 +71,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
                             id:
                                 err === 'no binding'
                                     ? 'updateBinding.error.noBinding'
-                                    : 'incompatibleSchemaChange.update.error',
+                                    : 'specPropEditor.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );

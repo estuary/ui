@@ -133,7 +133,9 @@ export interface ResourceConfigPointers {
     ['x_delta_updates']: string | undefined;
 }
 
-export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
+export const prepareSourceCaptureForServer = (
+    arg: SourceCaptureDef | Partial<SourceCaptureDef>
+) => {
     const response = {
         ...arg,
     };
@@ -170,7 +172,7 @@ export const getResourceConfigPointers = (
 };
 
 export const generateMaterializationResourceSpec = (
-    sourceCapture: SourceCaptureDef,
+    sourceCapture: SourceCaptureDef | Partial<SourceCaptureDef>,
     resourceSpecPointers: ResourceConfigPointers,
     collectionName: string
 ) => {
@@ -192,6 +194,7 @@ export const generateMaterializationResourceSpec = (
 
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
+        console.error('generateMaterializationResourceSpec failed', e);
         return null;
     }
 };

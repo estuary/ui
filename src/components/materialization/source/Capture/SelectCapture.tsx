@@ -8,15 +8,13 @@ import { isString } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
-import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
-import CancelSourceCaptureButton from 'src/components/materialization/SourceCapture/CancelSourceCaptureButton';
+import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
-import OptionalSettings from 'src/components/shared/Entity/AddDialog/OptionalSettings';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { getSourceCapture } from 'src/utils/entity-utils';
+import { readSourceCaptureFromSpec } from 'src/utils/entity-utils';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
@@ -38,16 +36,18 @@ function SelectCapture() {
     const toggleDialog = (args: any) => {
         const opening = typeof args === 'boolean' ? args : !open;
 
+        // TODO (source capture) - do we want to change this?
+
         // On create default settings when going to set the
         //  source capture for the first time
         // Make sure we ONLY do this when OPENING
-        if (!isEdit && !sourceCapture && opening) {
-            setSourceCaptureDefinition({
-                capture: '',
-                deltaUpdates: false,
-                targetSchema: 'fromSourceName',
-            });
-        }
+        // if (!isEdit && !sourceCapture && opening) {
+        //     setSourceCaptureDefinition({
+        //         capture: '',
+        //         deltaUpdates: false,
+        //         targetSchema: 'fromSourceName',
+        //     });
+        // }
         setOpen(opening);
     };
 
@@ -56,7 +56,7 @@ function SelectCapture() {
     const existingSourceCaptureDefinition = useMemo(
         () =>
             draftSpecs.length > 0
-                ? getSourceCapture(draftSpecs[0].spec.sourceCapture)
+                ? readSourceCaptureFromSpec(draftSpecs[0].spec)
                 : null,
         [draftSpecs]
     );
@@ -122,11 +122,9 @@ function SelectCapture() {
                 id={DIALOG_ID}
                 open={open}
                 PrimaryCTA={AddSourceCaptureToSpecButton}
-                SecondaryCTA={CancelSourceCaptureButton}
                 selectedCollections={selectedCollections}
                 toggle={toggleDialog}
                 title={intl.formatMessage({ id: 'captureTable.header' })}
-                OptionalSettings={OptionalSettings}
             />
         </>
     );

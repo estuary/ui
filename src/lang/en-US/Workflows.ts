@@ -126,15 +126,6 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
-    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
-    'workflows.sourceCapture.optionalSettings.message': `Newly added collections will use these defaults`,
-
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
-
-    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
-    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
-
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 
@@ -278,16 +269,16 @@ export const Workflows: Record<string, string> = {
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
 
+    'specPropEditor.update.error': `Changes to draft not saved.`,
+    'specPropEditor.error.cta': `Remove Setting`,
+
     // Incompatible Schema Change
     'incompatibleSchemaChange.header': `Incompatible Schema Change`,
     'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.message.specificationSetting': `The action to take when a schema change is rejected due to incompatibility. If blank, all bindings will backfill and be re-materialized.`,
-    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'incompatibleSchemaChange.error.cta': `Remove Setting`,
-    'incompatibleSchemaChange.error.title': `Invalid setting`,
     'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
@@ -302,22 +293,38 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
+    // Source Settings
+    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
+
     // Delta Updates
-    'deltaUpdates.header': `Delta Updates`,
-    'deltaUpdates.message': `Mark new bindings as delta updates`,
+    'deltaUpdates.input.label': `Delta Updates`,
+    'deltaUpdates.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // Schema Mode
     'schemaMode.header': `Source Capture Schema Mode`,
     'schemaMode.message': `How should the schema of the materialization binding be set.`,
     'schemaMode.input.label': `Set new bindings schemas as`,
 
-    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
-    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
-    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+    // These keys are dynamically build in - useSupportedOptions
+    'schemaMode.options.noSchema.label': `No Schema`,
+    'schemaMode.options.noSchema.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+    'schemaMode.options.noSchema.example': `acmeCo/mySchema/myTable -> myTable | schema -> nothing`,
 
-    'schemaMode.options.fromSourceName.label': `From Source Name`,
-    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
+    'schemaMode.options.withSchema.label': `From Source Name`,
+    'schemaMode.options.withSchema.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
+    'schemaMode.options.withSchema.example': `acmeCo/mySchema/myTable -> myTable | schema -> mySchema`,
+
+    'schemaMode.options.prefixSchema.label': `Prefix Schema`,
+    'schemaMode.options.prefixSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    'schemaMode.options.prefixSchema.example': `acmeCo/mySchema/myTable -> mySchema_myTable | schema -> nothing`,
+
+    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    'schemaMode.options.prefixNonDefaultSchema.example': `acmeCo/mySchema/myTable -> mySchema_myTable | schema -> nothing (ignores "public")`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

@@ -13,7 +13,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import {
     addOrRemoveSourceCapture,
-    getSourceCapture,
+    readSourceCaptureFromSpec,
 } from 'src/utils/entity-utils';
 
 function useSourceCapture() {
@@ -31,7 +31,7 @@ function useSourceCapture() {
             return null;
         }
 
-        return getSourceCapture(draftSpecs[0].spec.sourceCapture);
+        return readSourceCaptureFromSpec(draftSpecs[0].spec);
     }, [draftSpecs]);
 
     const update = useCallback(

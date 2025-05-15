@@ -2,11 +2,11 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import DeltaUpdates from 'src/components/editor/Bindings/DeltaUpdates';
-import SchemaMode from 'src/components/editor/Bindings/SchemaMode';
+import DeltaUpdatesUpdateWrapper from 'src/components/materialization/source/deltaUpdates/UpdateWrapper';
+import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 
-function OptionalSettings() {
+function SourceConfiguration() {
     const intl = useIntl();
 
     const {
@@ -22,26 +22,24 @@ function OptionalSettings() {
     }
 
     return (
-        <Stack spacing={1} sx={{ mt: 2 }}>
+        <Stack spacing={1} sx={{ pt: 2 }}>
             <Typography variant="formSectionHeader">
                 {intl.formatMessage({
                     id: 'workflows.sourceCapture.optionalSettings.header',
                 })}
             </Typography>
 
-            <Typography>
-                {intl.formatMessage({
-                    id: 'workflows.sourceCapture.optionalSettings.message',
-                })}
-            </Typography>
+            <Stack spacing={2}>
+                {sourceCaptureDeltaUpdatesSupported ? (
+                    <DeltaUpdatesUpdateWrapper />
+                ) : null}
 
-            <Stack spacing={2} direction="row">
-                {sourceCaptureDeltaUpdatesSupported ? <DeltaUpdates /> : null}
-
-                {sourceCaptureTargetSchemaSupported ? <SchemaMode /> : null}
+                {sourceCaptureTargetSchemaSupported ? (
+                    <TargetSchemaUpdateWrapper />
+                ) : null}
             </Stack>
         </Stack>
     );
 }
 
-export default OptionalSettings;
+export default SourceConfiguration;

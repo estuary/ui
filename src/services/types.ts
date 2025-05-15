@@ -1,5 +1,7 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 
+export type KnownEvents = 'SourceCapture';
+
 export enum CustomEvents {
     AUTHORIZE_TASK = 'AuthorizeTask',
     AUTH_SIGNOUT = 'Auth_Signout',

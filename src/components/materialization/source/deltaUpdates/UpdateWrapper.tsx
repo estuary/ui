@@ -1,37 +1,35 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
-
 import { useCallback } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
-import useSpecificationIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useSpecificationIncompatibleSchemaSetting';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import DeltaUpdatesForm from 'src/components/materialization/source/deltaUpdates/Form';
+import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-export default function Form() {
+export default function DeltaUpdatesUpdateWrapper() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    const setIncompatibleSchemaChange = useBindingStore(
-        (state) => state.setSpecOnIncompatibleSchemaChange
-    );
-
     const setFormState = useFormStateStore_setFormState();
 
-    const { currentSetting, updateOnIncompatibleSchemaChange } =
-        useSpecificationIncompatibleSchemaSetting();
+    const [setDeltaUpdates] = useSourceCaptureStore((state) => [
+        state.setDeltaUpdates,
+    ]);
+
+    const { currentSetting, updateSourceSetting } =
+        useSourceSetting<boolean>('deltaUpdates');
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption['val']) => {
+        async (option?: boolean) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(option)
+            updateSourceSetting(option)
                 .then(() => {
-                    setIncompatibleSchemaChange(option);
+                    setDeltaUpdates(Boolean(option));
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
@@ -43,7 +41,7 @@ export default function Form() {
                         { ...snackbarSettings, variant: 'error' }
                     );
 
-                    setIncompatibleSchemaChange(currentSetting);
+                    setDeltaUpdates(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
                 });
         },
@@ -51,14 +49,14 @@ export default function Form() {
             currentSetting,
             enqueueSnackbar,
             intl,
+            setDeltaUpdates,
             setFormState,
-            setIncompatibleSchemaChange,
-            updateOnIncompatibleSchemaChange,
+            updateSourceSetting,
         ]
     );
 
     return (
-        <IncompatibleSchemaChangeForm
+        <DeltaUpdatesForm
             currentSetting={currentSetting}
             scope="spec"
             updateDraftedSetting={updateServer}

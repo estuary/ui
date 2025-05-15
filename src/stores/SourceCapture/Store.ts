@@ -15,14 +15,18 @@ const getInitialStateData = (): Pick<
     | 'saving'
     | 'prefilledCapture'
     | 'deltaUpdates'
+    | 'deltaUpdatesHasError'
     | 'targetSchema'
+    | 'targetSchemaHasError'
 > => ({
     error: null,
-    sourceCapture: null,
+    sourceCapture: undefined,
     saving: false,
-    prefilledCapture: null,
+    prefilledCapture: undefined,
     deltaUpdates: undefined,
-    targetSchema: undefined,
+    deltaUpdatesHasError: false,
+    targetSchema: 'prefixNonDefaultSchema',
+    targetSchemaHasError: false,
 });
 
 const getInitialState = (
@@ -81,6 +85,16 @@ const getInitialState = (
         );
     },
 
+    setDeltaUpdatesHasError: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.deltaUpdatesHasError = value;
+            }),
+            false,
+            'setDeltaUpdatesHasError'
+        );
+    },
+
     setTargetSchema: (value: SourceCaptureState['error']) => {
         set(
             produce((state: SourceCaptureState) => {
@@ -88,6 +102,15 @@ const getInitialState = (
             }),
             false,
             'Source Capture Target Schema Set'
+        );
+    },
+    setTargetSchemaHasError: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.targetSchemaHasError = value;
+            }),
+            false,
+            'setTargetSchemaHasError'
         );
     },
 
