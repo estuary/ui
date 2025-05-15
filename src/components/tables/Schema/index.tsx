@@ -25,7 +25,7 @@ export const columns: TableColumns[] = [
     },
     {
         field: 'pointer',
-        headerIntlKey: 'data.pointer',
+        headerIntlKey: 'data.location',
     },
     {
         field: null,
