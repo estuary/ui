@@ -16,7 +16,7 @@ export interface SelectorOptionProps<T> {
     option: T;
 }
 
-export interface SpecPropertyEditorFormProps<T = any> extends BaseFormProps {
+export interface SpecPropAutoCompleteProps<T = any> extends BaseFormProps {
     inputLabelId: string;
     invalidSettingsMessageId: string;
     options: any[];

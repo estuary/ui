@@ -1,4 +1,4 @@
-import type { SpecPropertyEditorFormProps } from 'src/components/shared/specPropertyEditor/types';
+import type { SpecPropAutoCompleteProps } from 'src/components/shared/specPropertyEditor/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -17,7 +17,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-export default function SpecPropertyEditorForm({
+export default function SpecPropAutoComplete({
     currentSetting,
     inputLabelId: invalidSettingsLabelKey,
     invalidSettingsMessageId: invalidSettingsMessageKey,
@@ -26,7 +26,7 @@ export default function SpecPropertyEditorForm({
     scope,
     setErrorExists,
     updateDraftedSetting,
-}: SpecPropertyEditorFormProps) {
+}: SpecPropAutoCompleteProps) {
     const intl = useIntl();
 
     const [inputValue, setInputValue] = useState('');

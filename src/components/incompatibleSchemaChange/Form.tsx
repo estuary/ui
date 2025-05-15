@@ -4,7 +4,7 @@ import type {
 } from 'src/components/shared/specPropertyEditor/types';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
-import SpecPropertyEditorForm from 'src/components/shared/specPropertyEditor/SpecPropertyEditorForm';
+import SpecPropAutoComplete from 'src/components/shared/specPropertyEditor/SpecPropAutoComplete';
 import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupportedOptions';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
@@ -20,7 +20,7 @@ export default function IncompatibleSchemaChangeForm({
     const options = useSupportedOptions();
 
     return (
-        <SpecPropertyEditorForm
+        <SpecPropAutoComplete
             currentSetting={currentSetting}
             inputLabelId="schemaMode.input.label"
             invalidSettingsMessageId="schemaMode.error.message"

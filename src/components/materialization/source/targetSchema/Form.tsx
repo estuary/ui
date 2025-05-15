@@ -1,7 +1,7 @@
 import type { BaseFormProps } from 'src/components/shared/specPropertyEditor/types';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
-import SpecPropertyEditorForm from 'src/components/shared/specPropertyEditor/SpecPropertyEditorForm';
+import SpecPropAutoComplete from 'src/components/shared/specPropertyEditor/SpecPropAutoComplete';
 import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
@@ -17,7 +17,7 @@ export default function TargetSchemaForm({
     const options = useTargetNamingOptions();
 
     return (
-        <SpecPropertyEditorForm
+        <SpecPropAutoComplete
             currentSetting={currentSetting}
             inputLabelId="schemaMode.input.label"
             invalidSettingsMessageId="schemaMode.error.message"
