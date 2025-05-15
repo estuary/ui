@@ -12,6 +12,7 @@ import { useLiveSpecs_details } from 'src/hooks/useLiveSpecs';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props extends BaseComponentProps {
@@ -34,6 +35,10 @@ function LiveSpecsHydrator({
     const setSpecs = useEditorStore_setSpecs({ localScope: localZustandScope });
     const setId = useEditorStore_setId({ localScope: localZustandScope });
 
+    const initializeProjections = useWorkflowStore(
+        (state) => state.initializeProjections
+    );
+
     useEffect(() => {
         if (hasLength(liveSpecs)) {
             logRocketEvent(CustomEvents.DRAFT_ID_SET, {
@@ -43,7 +48,14 @@ function LiveSpecsHydrator({
             setSpecs(liveSpecs);
             setId(liveSpecs[0].last_pub_id);
         }
-    }, [liveSpecs, setId, setSpecs]);
+
+        if (entityType === 'collection' && liveSpecs.length === 1) {
+            initializeProjections(
+                liveSpecs[0].spec?.projections,
+                liveSpecs[0].catalog_name
+            );
+        }
+    }, [entityType, initializeProjections, liveSpecs, setId, setSpecs]);
 
     // TODO (details) make this error handling better
     // 1. Store this in the store

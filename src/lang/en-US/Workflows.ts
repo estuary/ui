@@ -239,7 +239,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.includeField': `Include`,
-    'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.cta.requireField': `Require`,
     'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,

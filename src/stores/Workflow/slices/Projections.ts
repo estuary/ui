@@ -3,7 +3,7 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-interface ProjectionMetadata extends ProjectionDef {
+export interface ProjectionMetadata extends ProjectionDef {
     field: string;
 }
 
@@ -21,6 +21,10 @@ export interface StoreWithProjections {
         collection: string
     ) => void;
     projections: ProjectionDictionary;
+    removeSingleProjection: (
+        metadata: ProjectionMetadata,
+        collection: string
+    ) => void;
     setSingleProjection: (
         metadata: ProjectionMetadata,
         collection: string
@@ -79,6 +83,24 @@ export const getStoreWithProjectionSettings = (
             }),
             false,
             'Projections Initialized'
+        );
+    },
+
+    removeSingleProjection: (metadata, collection) => {
+        set(
+            produce((state: StoreWithProjections) => {
+                const existingProjections =
+                    state.projections[collection]?.[metadata.location] ?? [];
+
+                state.projections[collection] = {
+                    ...state.projections[collection],
+                    [metadata.location]: existingProjections.filter(
+                        ({ field }) => field !== metadata.field
+                    ),
+                };
+            }),
+            false,
+            'Single Projection Removed'
         );
     },
 

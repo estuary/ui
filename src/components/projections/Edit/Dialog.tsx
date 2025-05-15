@@ -66,6 +66,8 @@ function EditProjectionDialog({
                     setInput={setFieldInput}
                     value={field}
                 />
+
+                {/* <ProjectionDefinitions field={field} pointer={pointer} /> */}
             </DialogContent>
 
             <DialogActions>

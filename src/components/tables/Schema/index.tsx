@@ -35,6 +35,10 @@ export const columns: TableColumns[] = [
         field: null,
         headerIntlKey: 'data.details',
     },
+    {
+        field: null,
+        headerIntlKey: 'data.alias',
+    },
 ];
 
 interface Props {

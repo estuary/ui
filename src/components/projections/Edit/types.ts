@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { CSSTextProperties } from 'src/components/tables/cells/types';
+import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
 export interface FieldEditorProps {
     labelMessageId: string;
@@ -9,15 +10,21 @@ export interface FieldEditorProps {
     disabled?: boolean;
 }
 
-export interface EditProjectionButtonProps {
+interface BaseEditProjectionProps {
     field: string;
     pointer: string | undefined;
+}
+
+export interface EditProjectionButtonProps extends BaseEditProjectionProps {
     fieldTextStyles?: CSSTextProperties;
 }
 
-export interface EditProjectionDialogProps {
-    field: string;
+export interface EditProjectionDialogProps extends BaseEditProjectionProps {
     open: boolean;
-    pointer: string | undefined;
     setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface ProjectionDefinitionsProps {
+    collection: string | undefined;
+    projectedFields: ProjectionMetadata[];
 }
