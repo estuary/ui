@@ -1,4 +1,4 @@
-import type { AliasListProps } from 'src/components/tables/cells/types';
+import type { FieldListProps } from 'src/components/tables/cells/types';
 
 import { Box, Stack, TableCell } from '@mui/material';
 
@@ -8,7 +8,12 @@ import { OutlinedChip } from 'src/components/shared/OutlinedChip';
 import { useCollectionIndex } from 'src/hooks/projections/useCollectionIndex';
 import { useProjectedFields } from 'src/hooks/projections/useProjectedFields';
 
-export const FieldList = ({ field, pointer }: AliasListProps) => {
+export const FieldList = ({
+    deletable,
+    diminishedText,
+    field,
+    pointer,
+}: FieldListProps) => {
     const { collection } = useCollectionIndex();
     const { projectedFields } = useProjectedFields(collection, pointer);
 
@@ -21,6 +26,8 @@ export const FieldList = ({ field, pointer }: AliasListProps) => {
 
                 <ProjectionList
                     collection={collection}
+                    deletable={deletable}
+                    diminishedText={diminishedText}
                     projectedFields={projectedFields.reverse()}
                 />
 

@@ -7,6 +7,8 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const ProjectionList = ({
     collection,
+    deletable,
+    diminishedText,
     projectedFields,
 }: ProjectionListProps) => {
     const removeSingleProjection = useWorkflowStore(
@@ -26,9 +28,15 @@ export const ProjectionList = ({
                 >
                     <OutlinedChip
                         label={metadata.field}
-                        diminishedText={index > 0}
-                        onDelete={() =>
-                            removeSingleProjection(metadata, collection)
+                        diminishedText={diminishedText ? index > 0 : undefined}
+                        onDelete={
+                            deletable
+                                ? () =>
+                                      removeSingleProjection(
+                                          metadata,
+                                          collection
+                                      )
+                                : undefined
                         }
                         size="small"
                         variant="outlined"

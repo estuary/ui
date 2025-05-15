@@ -12,6 +12,7 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
 
 interface RowProps {
@@ -27,6 +28,11 @@ interface RowsProps {
 const rowTypeString = 'string';
 
 function Row({ row }: RowProps) {
+    // const entityType = useEntityType();
+    const workflow = useEntityWorkflow();
+    const isCaptureWorkflow =
+        workflow === 'capture_create' || workflow === 'capture_edit';
+
     const formattedTypes = useMemo(() => {
         if (row.string_format) {
             const stringIndex = row.types.findIndex(
@@ -75,7 +81,12 @@ function Row({ row }: RowProps) {
             </TableCell>
 
             {row.name ? (
-                <FieldList field={row.name} pointer={row.pointer} />
+                <FieldList
+                    deletable={isCaptureWorkflow}
+                    diminishedText={Boolean(workflow)}
+                    field={row.name}
+                    pointer={row.pointer}
+                />
             ) : (
                 <TableCell />
             )}
