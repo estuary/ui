@@ -1,38 +1,35 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
-import type { TargetSchemas } from 'src/types';
-
 import { useCallback } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import TargetSchemaForm from 'src/components/materialization/source/targetSchema/Form';
+import DeltaUpdatesForm from 'src/components/materialization/source/deltaUpdates/Form';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-export default function TargetSchemaUpdateWrapper() {
+export default function DeltaUpdatesUpdateWrapper() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setTargetSchema] = useSourceCaptureStore((state) => [
-        state.setTargetSchema,
+    const [setDeltaUpdates] = useSourceCaptureStore((state) => [
+        state.setDeltaUpdates,
     ]);
 
     const { currentSetting, updateSourceSetting } =
-        useSourceSetting<TargetSchemas>('targetSchema');
+        useSourceSetting<boolean>('deltaUpdates');
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption | null) => {
+        async (option?: boolean) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateSourceSetting(option?.val)
+            updateSourceSetting(option)
                 .then(() => {
-                    setTargetSchema(option?.val);
+                    setDeltaUpdates(Boolean(option));
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
@@ -44,7 +41,7 @@ export default function TargetSchemaUpdateWrapper() {
                         { ...snackbarSettings, variant: 'error' }
                     );
 
-                    setTargetSchema(currentSetting);
+                    setDeltaUpdates(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
                 });
         },
@@ -52,14 +49,14 @@ export default function TargetSchemaUpdateWrapper() {
             currentSetting,
             enqueueSnackbar,
             intl,
+            setDeltaUpdates,
             setFormState,
-            setTargetSchema,
             updateSourceSetting,
         ]
     );
 
     return (
-        <TargetSchemaForm
+        <DeltaUpdatesForm
             currentSetting={currentSetting}
             scope="spec"
             updateDraftedSetting={updateServer}

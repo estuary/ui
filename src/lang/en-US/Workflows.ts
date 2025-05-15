@@ -269,15 +269,16 @@ export const Workflows: Record<string, string> = {
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
 
+    'specPropEditor.update.error': `Changes to draft not saved.`,
+    'specPropEditor.error.cta': `Remove Setting`,
+
     // Incompatible Schema Change
     'incompatibleSchemaChange.header': `Incompatible Schema Change`,
     'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.message.specificationSetting': `The action to take when a schema change is rejected due to incompatibility. If blank, all bindings will backfill and be re-materialized.`,
-    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'specPropEditor.error.cta': `Remove Setting`,
     'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
@@ -298,14 +299,15 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
-    'deltaUpdates.header': `Delta Updates`,
-    'deltaUpdates.message': `Mark new bindings as delta updates`,
+    'deltaUpdates.input.label': `Delta Updates`,
+    'deltaUpdates.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // Schema Mode
     'schemaMode.header': `Source Capture Schema Mode`,
     'schemaMode.message': `How should the schema of the materialization binding be set.`,
     'schemaMode.input.label': `Set new bindings schemas as`,
-    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+
+    'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.options.noSchema.label': `No Schema`,

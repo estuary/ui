@@ -19,8 +19,8 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export default function SpecPropAutoComplete({
     currentSetting,
-    inputLabelId: invalidSettingsLabelKey,
-    invalidSettingsMessageId: invalidSettingsMessageKey,
+    inputLabelId,
+    invalidSettingsMessageId = 'specPropUpdater.error.message',
     options,
     renderOption,
     scope,
@@ -77,7 +77,7 @@ export default function SpecPropAutoComplete({
                     <Typography>
                         {intl.formatMessage(
                             {
-                                id: invalidSettingsMessageKey,
+                                id: invalidSettingsMessageId,
                             },
                             {
                                 currentSetting:
@@ -140,7 +140,7 @@ export default function SpecPropAutoComplete({
                                 invalidSetting
                                     ? intl.formatMessage(
                                           {
-                                              id: invalidSettingsMessageKey,
+                                              id: invalidSettingsMessageId,
                                           },
                                           {
                                               currentSetting:
@@ -155,7 +155,7 @@ export default function SpecPropAutoComplete({
                                     : undefined
                             }
                             label={intl.formatMessage({
-                                id: invalidSettingsLabelKey,
+                                id: inputLabelId,
                             })}
                             variant="standard"
                         />

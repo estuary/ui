@@ -3,7 +3,7 @@ type FormScope = 'binding' | 'spec';
 export interface BaseFormProps {
     currentSetting: any;
     scope: FormScope;
-    updateDraftedSetting: (selectedOption?: BaseAutoCompleteOption) => void;
+    updateDraftedSetting: any; // TODO (source capture) typing
 }
 
 export interface BaseAutoCompleteOption<T = any> {
@@ -16,13 +16,17 @@ export interface SelectorOptionProps<T> {
     option: T;
 }
 
-export interface SpecPropAutoCompleteProps<T = any> extends BaseFormProps {
+export interface SpecPropInputProps extends BaseFormProps {
+    updateDraftedSetting: (selectedOption?: any) => void; // TODO (source capture) typing
     inputLabelId: string;
-    invalidSettingsMessageId: string;
+    setErrorExists: (errorExists: boolean, scope: FormScope) => void;
+    invalidSettingsMessageId?: string;
+}
+
+export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
     options: any[];
     renderOption: (
         props: React.HTMLAttributes<HTMLLIElement> & { key: any },
-        option: T
+        option: any // TODO (source capture) typing
     ) => React.ReactNode;
-    setErrorExists: (errorExists: boolean, scope: FormScope) => void;
 }

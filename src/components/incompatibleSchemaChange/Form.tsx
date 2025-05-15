@@ -23,7 +23,6 @@ export default function IncompatibleSchemaChangeForm({
         <SpecPropAutoComplete
             currentSetting={currentSetting}
             inputLabelId="schemaMode.input.label"
-            invalidSettingsMessageId="schemaMode.error.message"
             options={options}
             scope={scope}
             renderOption={(renderOptionProps, option) => {

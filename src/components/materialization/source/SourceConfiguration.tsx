@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import DeltaUpdates from 'src/components/editor/Bindings/DeltaUpdates';
+import DeltaUpdatesUpdateWrapper from 'src/components/materialization/source/deltaUpdates/UpdateWrapper';
 import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 
@@ -30,18 +30,13 @@ function SourceConfiguration() {
             </Typography>
 
             <Stack spacing={2}>
-                {sourceCaptureDeltaUpdatesSupported ? <DeltaUpdates /> : null}
+                {sourceCaptureDeltaUpdatesSupported ? (
+                    <DeltaUpdatesUpdateWrapper />
+                ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
                     <TargetSchemaUpdateWrapper />
-                ) : // <TargetSchemaForm
-                //     currentSetting={targetSchema}
-                //     scope="spec"
-                //     updateDraftedSetting={() => {
-                //         console.log('updatine', { setTargetSchema });
-                //     }}
-                // />
-                null}
+                ) : null}
             </Stack>
         </Stack>
     );

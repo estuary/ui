@@ -38,7 +38,7 @@ export default function Form() {
                 .catch(() => {
                     enqueueSnackbar(
                         intl.formatMessage({
-                            id: 'incompatibleSchemaChange.update.error',
+                            id: 'specPropEditor.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );

@@ -1,3 +1,4 @@
+import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
@@ -20,10 +21,9 @@ export default function TargetSchemaForm({
         <SpecPropAutoComplete
             currentSetting={currentSetting}
             inputLabelId="schemaMode.input.label"
-            invalidSettingsMessageId="schemaMode.error.message"
             options={options}
             scope={scope}
-            renderOption={(renderOptionProps, option) => {
+            renderOption={(renderOptionProps, option: AutoCompleteOption) => {
                 return (
                     <li {...renderOptionProps}>
                         <SelectorOption option={option} />
