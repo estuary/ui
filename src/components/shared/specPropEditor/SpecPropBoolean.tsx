@@ -27,7 +27,6 @@ export default function SpecPropBoolean({
 }: SpecPropInputProps) {
     const intl = useIntl();
 
-    const [localValue, setLocalValue] = useState(false);
     const [invalidSetting, setInvalidSetting] = useState(false);
 
     const formActive = useFormStateStore_isActive();
@@ -43,7 +42,6 @@ export default function SpecPropBoolean({
     useEffect(() => {
         // No setting at all so we're good
         if (!currentSetting) {
-            setLocalValue(false);
             setInvalidSetting(false);
             return;
         }
@@ -51,12 +49,10 @@ export default function SpecPropBoolean({
         // We have a setting but could not find a matching option
         //  Set a flag to show an error and empty out the input
         if (selection === null) {
-            setLocalValue(false);
             setInvalidSetting(true);
             return;
         }
 
-        setLocalValue(selection);
         setInvalidSetting(false);
     }, [currentSetting, selection]);
 
@@ -106,11 +102,10 @@ export default function SpecPropBoolean({
                         control={
                             <Switch
                                 size="small"
-                                value={Boolean(localValue)}
-                                checked={Boolean(localValue)}
+                                value={Boolean(currentSetting)}
+                                checked={Boolean(currentSetting)}
                                 disabled={formActive}
                                 onChange={(event, checked) => {
-                                    setLocalValue(checked);
                                     updateDraftedSetting(checked);
                                 }}
                             />

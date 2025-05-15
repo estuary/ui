@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
-import useSpecPropertyUpdater from 'src/hooks/usePropertyManager';
+import useDraftUpdater from 'src/hooks/useDraftUpdater';
 import {
     readSourceCaptureFromSpec,
     updateSourceCapture,
@@ -10,30 +10,12 @@ import {
 export default function useSourceSetting<T = any>(
     settingKey: 'targetSchema' | 'deltaUpdates' | 'capture'
 ) {
-    const propertyUpdater = useSpecPropertyUpdater();
-
+    const draftUpdater = useDraftUpdater();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const draftSpec = useMemo(
-        () =>
-            draftSpecs.length > 0 && draftSpecs[0].spec ? draftSpecs[0] : null,
-        [draftSpecs]
-    );
-
-    const currentSetting = useMemo<T | undefined>(() => {
-        if (!draftSpec || !draftSpec.spec) {
-            return undefined;
-        }
-
-        const response = readSourceCaptureFromSpec(draftSpec.spec)?.[
-            settingKey
-        ] as T;
-
-        return response;
-    }, [draftSpec, settingKey]);
 
     const updateSourceSetting = useCallback(
         async (value: T | undefined) => {
-            return propertyUpdater(
+            return draftUpdater(
                 (spec) => {
                     return updateSourceCapture(spec, {
                         [settingKey]: value,
@@ -42,8 +24,18 @@ export default function useSourceSetting<T = any>(
                 { spec_type: 'materialization' }
             );
         },
-        [propertyUpdater, settingKey]
+        [draftUpdater, settingKey]
     );
+
+    const currentSetting =
+        draftSpecs.length > 0 && draftSpecs[0].spec
+            ? (readSourceCaptureFromSpec(draftSpecs[0].spec)?.[settingKey] as T)
+            : undefined;
+
+    console.log(`useSourceSetting::${settingKey}::rendering`, {
+        currentSetting,
+        draftSpecs,
+    });
 
     return {
         currentSetting,

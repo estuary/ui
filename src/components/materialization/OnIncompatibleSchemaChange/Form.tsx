@@ -26,12 +26,12 @@ export default function Form() {
         useSpecificationIncompatibleSchemaSetting();
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption | null) => {
+        async (option?: AutoCompleteOption['val']) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(option?.val)
+            updateOnIncompatibleSchemaChange(option)
                 .then(() => {
-                    setIncompatibleSchemaChange(option?.val);
+                    setIncompatibleSchemaChange(option);
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
