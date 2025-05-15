@@ -5,7 +5,7 @@ import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 export const useCollectionIndex = () => {
     const currentCollection = useBinding_currentCollection();
-    const currentCatalog = useEditorStore_currentCatalog();
+    const currentCatalog = useEditorStore_currentCatalog({ localScope: true });
 
     const collection = useMemo(() => {
         if (currentCollection) {

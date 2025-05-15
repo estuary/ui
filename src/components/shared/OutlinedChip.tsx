@@ -6,7 +6,16 @@ import { Chip, styled } from '@mui/material';
 import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
 
 export const OutlinedChip = styled(Chip, {
-    shouldForwardProp: (props) => props !== 'maxWidth',
+    // TODO (typing): Consider creating a typed, utility function for this behavior.
+    shouldForwardProp: (prop) => {
+        const restrictedKeys = [
+            'diminishedText',
+            'maxWidth',
+            'minWidth',
+        ] as PropertyKey[];
+
+        return !restrictedKeys.includes(prop);
+    },
 })<
     ChipProps & {
         diminishedText?: boolean;

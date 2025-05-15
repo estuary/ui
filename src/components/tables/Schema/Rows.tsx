@@ -12,6 +12,7 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
+import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
 
@@ -28,7 +29,7 @@ interface RowsProps {
 const rowTypeString = 'string';
 
 function Row({ row }: RowProps) {
-    // const entityType = useEntityType();
+    const entityType = useEntityType();
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -83,7 +84,9 @@ function Row({ row }: RowProps) {
             {row.name ? (
                 <FieldList
                     deletable={isCaptureWorkflow}
-                    diminishedText={Boolean(workflow)}
+                    diminishedText={Boolean(
+                        entityType === 'collection' || workflow
+                    )}
                     field={row.name}
                     pointer={row.pointer}
                 />
