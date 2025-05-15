@@ -50,19 +50,18 @@ function Row({ row }: RowProps) {
 
     return (
         <TableRow hover>
-            <TableCell>
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    style={
-                        row.exists === 'must'
-                            ? { fontWeight: 700 }
-                            : { fontStyle: 'italic' }
-                    }
-                >
-                    <Box>{row.name}</Box>
-                </Stack>
-            </TableCell>
+            {row.name ? (
+                <FieldList
+                    deletable={isCaptureWorkflow}
+                    diminishedText={Boolean(
+                        entityType === 'collection' || workflow
+                    )}
+                    field={row.name}
+                    pointer={row.pointer}
+                />
+            ) : (
+                <TableCell />
+            )}
 
             <TableCell>
                 <Box>{row.pointer}</Box>
@@ -80,19 +79,6 @@ function Row({ row }: RowProps) {
                     {row.description ? <Box>{row.description}</Box> : null}
                 </Stack>
             </TableCell>
-
-            {row.name ? (
-                <FieldList
-                    deletable={isCaptureWorkflow}
-                    diminishedText={Boolean(
-                        entityType === 'collection' || workflow
-                    )}
-                    field={row.name}
-                    pointer={row.pointer}
-                />
-            ) : (
-                <TableCell />
-            )}
         </TableRow>
     );
 }
