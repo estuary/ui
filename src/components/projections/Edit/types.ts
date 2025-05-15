@@ -24,7 +24,7 @@ export interface EditProjectionDialogProps extends BaseEditProjectionProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface ProjectionDefinitionsProps {
+export interface ProjectionListProps {
     collection: string | undefined;
     projectedFields: ProjectionMetadata[];
 }

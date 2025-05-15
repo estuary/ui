@@ -1,4 +1,4 @@
-import type { BaseComponentProps } from 'src/types';
+import type { LiveSpecsHydratorProps } from 'src/components/editor/Store/types';
 
 import { useEffect } from 'react';
 
@@ -15,16 +15,11 @@ import { CustomEvents } from 'src/services/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-interface Props extends BaseComponentProps {
-    localZustandScope: boolean;
-    catalogName: string;
-}
-
 function LiveSpecsHydrator({
     localZustandScope,
     catalogName,
     children,
-}: Props) {
+}: LiveSpecsHydratorProps) {
     const entityType = useEntityType();
 
     const { liveSpecs, isValidating, error } = useLiveSpecs_details(
@@ -40,20 +35,23 @@ function LiveSpecsHydrator({
     );
 
     useEffect(() => {
+        const targetRow = liveSpecs[0];
+
         if (hasLength(liveSpecs)) {
             logRocketEvent(CustomEvents.DRAFT_ID_SET, {
-                newValue: liveSpecs[0].last_pub_id,
+                newValue: targetRow.last_pub_id,
                 component: 'liveSpecHydrator',
             });
-            setSpecs(liveSpecs);
-            setId(liveSpecs[0].last_pub_id);
-        }
 
-        if (entityType === 'collection' && liveSpecs.length === 1) {
-            initializeProjections(
-                liveSpecs[0].spec?.projections,
-                liveSpecs[0].catalog_name
-            );
+            if (entityType === 'collection' && liveSpecs.length === 1) {
+                initializeProjections(
+                    targetRow.spec?.projections,
+                    targetRow.catalog_name
+                );
+            }
+
+            setSpecs(liveSpecs);
+            setId(targetRow.last_pub_id);
         }
     }, [entityType, initializeProjections, liveSpecs, setId, setSpecs]);
 
@@ -64,8 +62,9 @@ function LiveSpecsHydrator({
         return <Error error={error} />;
     }
 
-    // TODO (details) same as the error up above
-    // Targetting when a user does not have access to a spec or typoed the URL
+    // TODO (details) same as the error up above.
+    // Targeting when a user does not have access to a spec
+    // or there is a typo in the URL.
     if (!isValidating && !hasLength(liveSpecs)) {
         return <EntityNotFound catalogName={catalogName} />;
     }
