@@ -3,17 +3,11 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DeltaUpdates from 'src/components/editor/Bindings/DeltaUpdates';
-import TargetSchemaForm from 'src/components/targetSchema/Form';
+import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
-function SourceCaptureOptions() {
+function SourceConfiguration() {
     const intl = useIntl();
-
-    const [targetSchema, setTargetSchema] = useSourceCaptureStore((state) => [
-        state.targetSchema,
-        state.setTargetSchema,
-    ]);
 
     const {
         sourceCaptureDeltaUpdatesSupported,
@@ -39,17 +33,18 @@ function SourceCaptureOptions() {
                 {sourceCaptureDeltaUpdatesSupported ? <DeltaUpdates /> : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
-                    <TargetSchemaForm
-                        currentSetting={targetSchema}
-                        scope="spec"
-                        updateDraftedSetting={() => {
-                            console.log('updatine', { setTargetSchema });
-                        }}
-                    />
-                ) : null}
+                    <TargetSchemaUpdateWrapper />
+                ) : // <TargetSchemaForm
+                //     currentSetting={targetSchema}
+                //     scope="spec"
+                //     updateDraftedSetting={() => {
+                //         console.log('updatine', { setTargetSchema });
+                //     }}
+                // />
+                null}
             </Stack>
         </Stack>
     );
 }
 
-export default SourceCaptureOptions;
+export default SourceConfiguration;

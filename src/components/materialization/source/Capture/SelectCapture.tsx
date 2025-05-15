@@ -8,7 +8,7 @@ import { isString } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
-import AddSourceCaptureToSpecButton from 'src/components/materialization/SourceCapture/AddSourceCaptureToSpecButton';
+import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';

@@ -1,4 +1,4 @@
-import type { SourceCaptureChipOptionProps } from 'src/components/materialization/SourceCapture/types';
+import type { SourceCaptureChipOptionProps } from 'src/components/materialization/source/Capture/types';
 
 import { Box, Stack, useTheme } from '@mui/material';
 

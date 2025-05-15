@@ -2,9 +2,9 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SelectCapture from 'src/components/materialization/SourceCapture/SelectCapture';
-import SourceCaptureChip from 'src/components/materialization/SourceCapture/SourceCaptureChip';
-import SourceCaptureOptions from 'src/components/materialization/SourceCapture/SourceCaptureOptions';
+import SelectCapture from 'src/components/materialization/source/Capture/SelectCapture';
+import SourceCaptureChip from 'src/components/materialization/source/Capture/SourceCaptureChip';
+import SourceConfiguration from 'src/components/materialization/source/SourceConfiguration';
 
 function SourceCapture() {
     const intl = useIntl();
@@ -31,7 +31,7 @@ function SourceCapture() {
                 <SelectCapture />
             </Stack>
 
-            <SourceCaptureOptions />
+            <SourceConfiguration />
         </Stack>
     );
 }
