@@ -1,4 +1,4 @@
-import type { BaseAutoCompleteOption } from 'src/components/shared/specPropertyEditor/types';
+import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEditor/types';
 
 export interface AutoCompleteOption extends BaseAutoCompleteOption {
     val: any;

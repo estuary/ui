@@ -277,7 +277,7 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'specPropertyEditor.error.cta': `Remove Setting`,
+    'specPropEditor.error.cta': `Remove Setting`,
     'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,

@@ -1,4 +1,4 @@
-import type { SpecPropAutoCompleteProps } from 'src/components/shared/specPropertyEditor/types';
+import type { SpecPropAutoCompleteProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -96,7 +96,7 @@ export default function SpecPropAutoComplete({
                         onClick={() => updateDraftedSetting()}
                     >
                         {intl.formatMessage({
-                            id: 'specPropertyEditor.error.cta',
+                            id: 'specPropEditor.error.cta',
                         })}
                     </Button>
                 </AlertBox>

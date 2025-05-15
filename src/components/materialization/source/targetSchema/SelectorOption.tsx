@@ -1,5 +1,5 @@
 import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
-import type { SelectorOptionProps } from 'src/components/shared/specPropertyEditor/types';
+import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/types';
 
 import { Stack, Typography } from '@mui/material';
 

@@ -1,10 +1,10 @@
 import type {
     BaseAutoCompleteOption,
     BaseFormProps,
-} from 'src/components/shared/specPropertyEditor/types';
+} from 'src/components/shared/specPropEditor/types';
 
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
-import SpecPropAutoComplete from 'src/components/shared/specPropertyEditor/SpecPropAutoComplete';
+import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
 import useSupportedOptions from 'src/hooks/OnIncompatibleSchemaChange/useSupportedOptions';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
