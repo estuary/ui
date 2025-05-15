@@ -38,6 +38,7 @@ export enum Annotations {
     secret = 'secret', // render as a password
     secretAirbyte = 'airbyte_secret', // render as a password
     defaultResourceConfigName = 'x-collection-name', // Used to default name in resource configs
+    hiddenField = 'x-hidden-field', // The field or control will be marked as hidden using JSONForms `Rules`
     inferSchema = 'x-infer-schema', // Indicates that schema inference should be enabled in the UI
     deltaUpdates = 'x-delta-updates', // SourceCapture - Shows 'deltaUpdates' optional setting
     targetSchema = 'x-schema-name', // SourceCapture - Shows 'targetSchema' optional setting
