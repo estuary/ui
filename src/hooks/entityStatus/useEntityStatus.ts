@@ -1,3 +1,5 @@
+import type { FetcherArgs } from 'src/hooks/entityStatus/types';
+
 import { DateTime } from 'luxon';
 import useSWR from 'swr';
 
@@ -9,11 +11,10 @@ import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hook
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-type EntityStatusFetcherArgs = [string, string];
 const statusFetcher = async ({
     0: catalogName,
     1: accessToken,
-}: EntityStatusFetcherArgs) => {
+}: FetcherArgs) => {
     const response = await getEntityStatus(accessToken, catalogName);
 
     return response;

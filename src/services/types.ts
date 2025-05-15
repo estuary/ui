@@ -28,6 +28,7 @@ export enum CustomEvents {
     ENTITY_NOT_FOUND = 'Entity_Not_Found',
     ENTITY_SAVE = 'Entity_Save',
     ENTITY_STATUS = 'EntityStatus',
+    ENTITY_RELATIONSHIPS = 'EntityRelationships',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',

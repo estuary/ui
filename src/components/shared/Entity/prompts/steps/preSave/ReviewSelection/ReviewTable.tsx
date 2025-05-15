@@ -14,9 +14,9 @@ import {
 import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
-import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
 import { useEntityType } from 'src/context/EntityContext';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
@@ -59,9 +59,10 @@ function ReviewTable() {
             response.push({
                 entityType: 'collection',
                 cell: (
-                    <RelatedCollections
-                        collections={collectionsBeingBackfilled}
+                    <RelatedEntities
+                        entityType="collection"
                         newWindow
+                        entities={collectionsBeingBackfilled}
                     />
                 ),
                 count: collectionsBeingBackfilled.length,

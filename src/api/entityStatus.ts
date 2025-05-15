@@ -1,4 +1,7 @@
-import type { EntityStatusResponse } from 'src/types/controlPlane';
+import type {
+    EntityRelationshipResponse,
+    EntityStatusResponse,
+} from 'src/types/controlPlane';
 
 import { client } from 'src/services/client';
 import { getEntityStatusSettings } from 'src/utils/env-utils';
@@ -11,3 +14,13 @@ export const getEntityStatus = async (
     catalogName: string
 ): Promise<EntityStatusResponse[]> =>
     client(`${entityStatusBaseEndpoint}?name=${catalogName}`, {}, accessToken);
+
+export const getEntityRelationships = async (
+    accessToken: string,
+    catalogName: string
+): Promise<EntityRelationshipResponse[]> =>
+    client(
+        `${entityStatusBaseEndpoint}?name=${catalogName}&connected=true&short=true`,
+        {},
+        accessToken
+    );
