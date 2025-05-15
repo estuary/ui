@@ -1,6 +1,6 @@
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
-import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
+import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
 import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
 import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
