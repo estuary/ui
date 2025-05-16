@@ -4,21 +4,15 @@ import { FormattedMessage } from 'react-intl';
 
 import FullPageError from 'src/components/fullPage/Error';
 import { useHydrateDataPlanesState } from 'src/stores/Entities/hooks';
-import { useEntitiesStore } from 'src/stores/Entities/Store';
 
 export const DataPlanesHydrator = ({ children }: BaseComponentProps) => {
     // Start fetching the prefixes the user has access to
-    useHydrateDataPlanesState();
+    const { error } = useHydrateDataPlanesState();
 
-    // The rest of the stuff we need to handle hydration
-    const [hydrationErrors] = useEntitiesStore((state) => [
-        state.hydrationErrors,
-    ]);
-
-    if (hydrationErrors) {
+    if (error) {
         return (
             <FullPageError
-                error={hydrationErrors}
+                error={error}
                 message={
                     <FormattedMessage id="dataPlanesHydrator.error.failedToFetch" />
                 }

@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { stripPathing } from 'src/utils/misc-utils';
 
@@ -111,32 +112,34 @@ export const useHydrateState = () => {
 };
 
 export const useHydrateStorageMappingsState = () => {
-    const [hydrated, setStorageMappings, setHydrationErrors] = useEntitiesStore(
-        (state) => [
-            state.hydrated,
-            state.setStorageMappings,
-            state.setHydrationErrors,
-        ]
+    const [hydrated, setStorageMappings] = useEntitiesStore((state) => [
+        state.hydrated,
+        state.setStorageMappings,
+    ]);
+
+    // We do not want to get these for support role as that will time out
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
     );
 
     // We hardcode the key here as we only call once
     const storageMappingResponse = useSWR(
         `entities_hydrator:storage_mappings`,
-        () => {
-            return getAllStorageMappingStores();
-        },
+        hasSupportRole
+            ? null
+            : () => {
+                  return getAllStorageMappingStores();
+              },
         singleCallSettings
     );
 
     // Once we are done validating update all the settings
     useEffect(() => {
         if (hydrated && !storageMappingResponse.isValidating) {
-            setHydrationErrors(storageMappingResponse.data?.error);
             setStorageMappings(storageMappingResponse.data?.data as any);
         }
     }, [
         hydrated,
-        setHydrationErrors,
         setStorageMappings,
         storageMappingResponse.data?.data,
         storageMappingResponse.data?.error,
@@ -147,13 +150,10 @@ export const useHydrateStorageMappingsState = () => {
 };
 
 export const useHydrateDataPlanesState = () => {
-    const [hydrated, setDataPlanes, setHydrationErrors] = useEntitiesStore(
-        (state) => [
-            state.hydrated,
-            state.setDataPlanes,
-            state.setHydrationErrors,
-        ]
-    );
+    const [hydrated, setDataPlanes] = useEntitiesStore((state) => [
+        state.hydrated,
+        state.setDataPlanes,
+    ]);
 
     // We hardcode the key here as we only call once
     const storageMappingResponse = useSWR(
@@ -167,13 +167,11 @@ export const useHydrateDataPlanesState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (hydrated && !storageMappingResponse.isValidating) {
-            setHydrationErrors(storageMappingResponse.data?.error);
             setDataPlanes(storageMappingResponse.data?.data as any);
         }
     }, [
         hydrated,
         setDataPlanes,
-        setHydrationErrors,
         storageMappingResponse.data?.data,
         storageMappingResponse.data?.error,
         storageMappingResponse.isValidating,
