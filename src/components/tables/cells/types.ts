@@ -9,6 +9,15 @@ export interface ConstraintDetailsProps {
     constraint: TranslatedConstraint;
 }
 
+// TODO: Remove deletable, diminishedText properties.
+export interface FieldListProps {
+    field: string;
+    pointer: string | undefined;
+    deletable?: boolean;
+    diminishedText?: boolean;
+    editable?: boolean;
+}
+
 export interface FieldActionButtonProps extends ToggleButtonProps {
     bindingUUID: string;
     constraint: TranslatedConstraint;

@@ -1,4 +1,4 @@
-import type { ConstraintDetailsProps } from 'src/components/tables/cells/fieldSelection/types';
+import type { ConstraintDetailsProps } from 'src/components/tables/cells/types';
 
 import { TableCell, Typography } from '@mui/material';
 
