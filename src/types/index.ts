@@ -142,6 +142,7 @@ export interface StorageMappingStore {
     provider: string;
     bucket: string;
     prefix: string;
+    data_planes: string[];
 }
 export interface StorageMappings {
     id: string;
