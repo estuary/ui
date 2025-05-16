@@ -1,16 +1,12 @@
 import type { ConnectorWithTagQuery } from 'src/api/types';
-import type {
-    DataPlaneOption,
-    Details,
-    DetailsFormState,
-} from 'src/stores/DetailsForm/types';
+import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
 import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 
 import { useCallback } from 'react';
 
-import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { useEntityWorkflow } from 'src/context/Workflow';
+import useEvaluateDataPlaneOptions from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -20,7 +16,6 @@ import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { initialDetails } from 'src/stores/DetailsForm/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { getConnectorMetadata } from 'src/utils/connector-utils';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 const getConnectorImage = async (
@@ -81,58 +76,6 @@ const getDataPlane = (
     return defaultOption ?? null;
 };
 
-// TODO: Determine a means to fetch data-plane options that is not workflow-dependent.
-const evaluateDataPlaneOptions = async (
-    setDataPlaneOptions: DetailsFormState['setDataPlaneOptions'],
-    setHydrationError: DetailsFormState['setHydrationError'],
-    existingDataPlane?: {
-        name: string | null;
-        id: string;
-        reactorAddress: string | null;
-    }
-): Promise<DataPlaneOption[]> => {
-    const dataPlaneResponse = await getDataPlaneOptions();
-
-    if (dataPlaneResponse.error) {
-        setHydrationError(
-            dataPlaneResponse.error?.message ??
-                'An error was encountered initializing the data-plane selector in the details form. If the issue persists, please contact support.'
-        );
-    }
-
-    if (!dataPlaneResponse.data || dataPlaneResponse.data.length === 0) {
-        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
-            noOptionsFound: true,
-            fallbackExists: Boolean(existingDataPlane),
-        });
-
-        const stubOption = existingDataPlane
-            ? generateDataPlaneOption({
-                  data_plane_name: existingDataPlane.name ?? '',
-                  id: existingDataPlane.id,
-                  reactor_address: existingDataPlane.reactorAddress ?? '',
-                  cidr_blocks: null,
-                  gcp_service_account_email: null,
-                  aws_iam_user_arn: null,
-              })
-            : null;
-
-        const fallbackOptions = stubOption ? [stubOption] : [];
-
-        setDataPlaneOptions(fallbackOptions);
-
-        return fallbackOptions;
-    }
-
-    const options = dataPlaneResponse.data
-        ? dataPlaneResponse.data.map(generateDataPlaneOption)
-        : [];
-
-    setDataPlaneOptions(options);
-
-    return options;
-};
-
 export const useDetailsFormHydrator = () => {
     const dataPlaneId = useGlobalSearchParams(GlobalSearchParams.DATA_PLANE_ID);
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
@@ -140,17 +83,11 @@ export const useDetailsFormHydrator = () => {
     const workflow = useEntityWorkflow();
 
     const setActive = useDetailsFormStore((state) => state.setActive);
-    const setDataPlaneOptions = useDetailsFormStore(
-        (state) => state.setDataPlaneOptions
-    );
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setDetails_connector = useDetailsFormStore(
         (state) => state.setDetails_connector
     );
     const setHydrated = useDetailsFormStore((state) => state.setHydrated);
-    const setHydrationError = useDetailsFormStore(
-        (state) => state.setHydrationError
-    );
     const setHydrationErrorsExist = useDetailsFormStore(
         (state) => state.setHydrationErrorsExist
     );
@@ -160,6 +97,8 @@ export const useDetailsFormHydrator = () => {
     const setUnsupportedConnectorVersion = useDetailsFormStore(
         (state) => state.setUnsupportedConnectorVersion
     );
+
+    const evaluateDataPlaneOptions = useEvaluateDataPlaneOptions();
 
     const hydrateDetailsForm = useCallback(
         async (
@@ -178,10 +117,7 @@ export const useDetailsFormHydrator = () => {
                     connectorId,
                     connectorMetadata
                 );
-                const dataPlaneOptions = await evaluateDataPlaneOptions(
-                    setDataPlaneOptions,
-                    setHydrationError
-                );
+                const dataPlaneOptions = await evaluateDataPlaneOptions();
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (!connectorImage) {
@@ -237,15 +173,11 @@ export const useDetailsFormHydrator = () => {
                     connector_image_tag
                 );
 
-                const dataPlaneOptions = await evaluateDataPlaneOptions(
-                    setDataPlaneOptions,
-                    setHydrationError,
-                    {
-                        name: data_plane_name,
-                        id: data_plane_id,
-                        reactorAddress: reactor_address,
-                    }
-                );
+                const dataPlaneOptions = await evaluateDataPlaneOptions({
+                    name: data_plane_name,
+                    id: data_plane_id,
+                    reactorAddress: reactor_address,
+                });
                 const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
 
                 if (!connectorImage) {
@@ -298,13 +230,12 @@ export const useDetailsFormHydrator = () => {
         },
         [
             dataPlaneId,
+            evaluateDataPlaneOptions,
             liveSpecId,
             setActive,
-            setDataPlaneOptions,
             setDetails,
             setDetails_connector,
             setHydrated,
-            setHydrationError,
             setHydrationErrorsExist,
             setPreviousDetails,
             setUnsupportedConnectorVersion,
