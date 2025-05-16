@@ -20,6 +20,8 @@ const getInitialStateData = (): Pick<
     | 'hydrated'
     | 'hydrationErrors'
     | 'hydrationErrorsExist'
+    | 'storageMappings'
+    | 'dataPlanes'
     | 'mutate'
 > => ({
     hydrated: false,
@@ -30,6 +32,8 @@ const getInitialStateData = (): Pick<
         read: [],
         write: [],
     },
+    storageMappings: [],
+    dataPlanes: [],
     mutate: null,
 });
 
@@ -43,6 +47,16 @@ const getInitialState = (
     hydrateState: async () => {
         // Fetch everything the user can read
         return getAuthRoles('read');
+    },
+
+    setDataPlanes: (val) => {
+        set(
+            produce((state: EntitiesState) => {
+                state.dataPlanes = val;
+            }),
+            false,
+            'setDataPlanes'
+        );
     },
 
     setHydrated: (val) => {
@@ -94,6 +108,16 @@ const getInitialState = (
             }),
             false,
             'Entities capabilities populating'
+        );
+    },
+
+    setStorageMappings: (val) => {
+        set(
+            produce((state: EntitiesState) => {
+                state.storageMappings = val;
+            }),
+            false,
+            'setStorageMappings'
         );
     },
 

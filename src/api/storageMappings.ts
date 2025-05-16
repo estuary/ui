@@ -53,6 +53,19 @@ const getStorageMapping = (catalog_prefix: string) => {
         .returns<StorageMappings[]>();
 };
 
+const getAllStorageMappingStores = async () => {
+    return supabaseRetry(
+        () =>
+            supabaseClient
+                .from(TABLES.STORAGE_MAPPINGS)
+                .select('catalog_prefix,spec'),
+        'getAllStorageMappingStores'
+    ).then(
+        handleSuccess<Pick<StorageMappings, 'catalog_prefix' | 'spec'>[]>,
+        handleFailure
+    );
+};
+
 const getStorageMappingStores = async (prefixes: string[]) => {
     return supabaseRetry(
         () =>
@@ -78,6 +91,7 @@ const republishPrefix = async (prefix: string) => {
 };
 
 export {
+    getAllStorageMappingStores,
     getStorageMapping,
     getStorageMappingStores,
     getStorageMappings,

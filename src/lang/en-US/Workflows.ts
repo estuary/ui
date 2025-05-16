@@ -399,6 +399,8 @@ export const Workflows: Record<string, string> = {
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
+    'storageMappingsHydrator.error.failedToFetch': `There was an issue while checking if you have any storage mappings.`,
+    'dataPlanesHydrator.error.failedToFetch': `There was an issue while checking if you have any data planes.`,
 
     // Entity Not Found
     'entityNotFound.heading': `Sorry, that entity cannot be found.`,
