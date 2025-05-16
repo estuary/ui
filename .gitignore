@@ -31,8 +31,9 @@ flow_ui_dep_graph.svg
 # Generated credentials from google-github-actions/auth
 gha-creds-*.json
 
-# Version generated file
+# Vite build generated files
 /public/meta.json
+/public/vendor.license.txt
 
 # tmp folder for scripts 
 /scripts/tmp
