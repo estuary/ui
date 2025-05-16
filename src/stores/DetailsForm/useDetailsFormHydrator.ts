@@ -1,5 +1,5 @@
 import type { ConnectorWithTagQuery } from 'src/api/types';
-import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
+import type { Details } from 'src/stores/DetailsForm/types';
 import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 
 import { useCallback } from 'react';
@@ -7,16 +7,13 @@ import { useCallback } from 'react';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useEvaluateDataPlaneOptions from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
+import useGetDataPlane from 'src/hooks/dataPlanes/useGetDataPlane';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
-import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { initialDetails } from 'src/stores/DetailsForm/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { getConnectorMetadata } from 'src/utils/connector-utils';
-import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 const getConnectorImage = async (
     connectorId: string,
@@ -27,53 +24,6 @@ const getConnectorImage = async (
         existingImageTag ? { connectorId, existingImageTag } : undefined;
 
     return getConnectorMetadata(connectorMetadata, options);
-};
-
-const getDataPlane = (
-    dataPlaneOptions: DataPlaneOption[],
-    dataPlaneId: string | null
-): Details['data']['dataPlane'] | null => {
-    const selectedOption = dataPlaneId
-        ? dataPlaneOptions.find(({ id }) => id === dataPlaneId)
-        : undefined;
-
-    if (selectedOption) {
-        return selectedOption;
-    }
-
-    // TODO (private data plane) - we need to add support for allowing tenants to configure their
-    //  preferred data plane.
-
-    // If we are not trying to find a specific data plane and there is only one option
-    //  and it is private we are pretty safe in prefilling that one.
-    if (
-        !dataPlaneId &&
-        dataPlaneOptions.length === 1 &&
-        dataPlaneOptions[0].dataPlaneName.whole.includes(
-            DATA_PLANE_SETTINGS.private.prefix
-        )
-    ) {
-        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
-            defaultedPrivate: true,
-        });
-        return dataPlaneOptions[0];
-    }
-
-    // Try to find the default public data plane
-    const defaultOption = dataPlaneOptions.find(
-        ({ dataPlaneName }) =>
-            dataPlaneName.whole ===
-            `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
-    );
-
-    if (dataPlaneId) {
-        logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
-            targetDataPlaneId: dataPlaneId,
-            defaultDataPlaneId: defaultOption?.id,
-        });
-    }
-
-    return defaultOption ?? null;
 };
 
 export const useDetailsFormHydrator = () => {
@@ -99,6 +49,7 @@ export const useDetailsFormHydrator = () => {
     );
 
     const evaluateDataPlaneOptions = useEvaluateDataPlaneOptions();
+    const getDataPlane = useGetDataPlane();
 
     const hydrateDetailsForm = useCallback(
         async (
@@ -231,6 +182,7 @@ export const useDetailsFormHydrator = () => {
         [
             dataPlaneId,
             evaluateDataPlaneOptions,
+            getDataPlane,
             liveSpecId,
             setActive,
             setDetails,
