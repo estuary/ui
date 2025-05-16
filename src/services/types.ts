@@ -61,6 +61,7 @@ export enum CustomEvents {
     OAUTH_WINDOW_OPENING = 'Oauth_Window_Opening',
     OAUTH_WINDOW_OPENER = 'Oauth_Window_Opener',
     ONBOARDING = 'Onboarding',
+    PROJECTION = 'Projection',
     REPUBLISH_PREFIX_FAILED = 'Republish_Prefix:Failed',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SYNC_SCHEDULE = 'Sync_Schedule',

@@ -5,10 +5,8 @@ import { useCallback } from 'react';
 
 import { omit } from 'lodash';
 
-import {
-    getDraftSpecsByCatalogName,
-    modifyDraftSpec,
-} from 'src/api/draftSpecs';
+import { modifyDraftSpec } from 'src/api/draftSpecs';
+import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 
 const getExistingPartition = (spec: Schema, location: string) => {
@@ -30,26 +28,17 @@ const getExistingPartition = (spec: Schema, location: string) => {
 
 export const useUpdateDraftedProjection = () => {
     const draftId = useEditorStore_persistedDraftId();
+    const collectionData = useBindingsEditorStore_collectionData();
 
     const removeSingleProjection = useCallback(
         async (collection: string, field: string) => {
-            if (!draftId) {
-                return Promise.reject();
+            if (!draftId || !collectionData) {
+                return Promise.reject(
+                    'draft ID or stored draft spec not found'
+                );
             }
 
-            const { data, error } = await getDraftSpecsByCatalogName(
-                draftId,
-                collection,
-                'collection'
-            );
-
-            const draftSpec = data?.at(0);
-
-            if (error || !draftSpec) {
-                return Promise.reject();
-            }
-
-            const spec: Schema = draftSpec.spec;
+            const spec: Schema = collectionData.spec;
 
             if (spec?.projections) {
                 spec.projections = omit(spec.projections, field);
@@ -57,7 +46,7 @@ export const useUpdateDraftedProjection = () => {
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
-                catalog_name: draftSpec.catalog_name,
+                catalog_name: collection,
                 spec_type: 'collection',
             });
 
@@ -67,33 +56,23 @@ export const useUpdateDraftedProjection = () => {
 
             return Promise.resolve();
         },
-        [draftId]
+        [collectionData, draftId]
     );
 
-    const storeSingleProjection = useCallback(
+    const setSingleProjection = useCallback(
         async (
             collection: string,
             field: string,
             location: string,
             partition?: boolean
         ) => {
-            if (!draftId) {
-                return Promise.reject();
+            if (!draftId || !collectionData) {
+                return Promise.reject(
+                    'draft ID or stored draft spec not found'
+                );
             }
 
-            const { data, error } = await getDraftSpecsByCatalogName(
-                draftId,
-                collection,
-                'collection'
-            );
-
-            const draftSpec = data?.at(0);
-
-            if (error || !draftSpec) {
-                return Promise.reject();
-            }
-
-            const spec: Schema = draftSpec.spec;
+            const spec: Schema = collectionData.spec;
 
             if (spec?.projections) {
                 spec.projections[field] = {
@@ -107,7 +86,7 @@ export const useUpdateDraftedProjection = () => {
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
-                catalog_name: draftSpec.catalog_name,
+                catalog_name: collection,
                 spec_type: 'collection',
             });
 
@@ -117,8 +96,8 @@ export const useUpdateDraftedProjection = () => {
 
             return Promise.resolve();
         },
-        [draftId]
+        [collectionData, draftId]
     );
 
-    return { removeSingleProjection, storeSingleProjection };
+    return { removeSingleProjection, setSingleProjection };
 };

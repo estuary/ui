@@ -1,4 +1,5 @@
 import type { EditProjectionDialogProps } from 'src/components/projections/Edit/types';
+import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
 import { useState } from 'react';
 
@@ -16,6 +17,8 @@ import { useIntl } from 'react-intl';
 import FieldEditor from 'src/components/projections/Edit/FieldEditor';
 import { TITLE_ID } from 'src/components/projections/Edit/shared';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
@@ -27,10 +30,10 @@ function EditProjectionDialog({
 }: EditProjectionDialogProps) {
     const intl = useIntl();
 
-    const { storeSingleProjection } = useUpdateDraftedProjection();
+    const { setSingleProjection } = useUpdateDraftedProjection();
 
     const currentCollection = useBinding_currentCollection();
-    const setSingleProjection = useWorkflowStore(
+    const setSingleStoredProjection = useWorkflowStore(
         (state) => state.setSingleProjection
     );
 
@@ -89,21 +92,36 @@ function EditProjectionDialog({
                             pointer &&
                             currentCollection
                         ) {
-                            storeSingleProjection(
+                            const metadata: ProjectionMetadata = {
+                                field: formattedFieldInput,
+                                location: pointer,
+                            };
+
+                            setSingleProjection(
                                 currentCollection,
                                 formattedFieldInput,
                                 pointer
                             ).then(
                                 () => {
-                                    setSingleProjection(
-                                        {
-                                            field: formattedFieldInput,
-                                            location: pointer,
-                                        },
+                                    setSingleStoredProjection(
+                                        metadata,
                                         currentCollection
                                     );
+
+                                    logRocketEvent(CustomEvents.PROJECTION, {
+                                        collection: currentCollection,
+                                        metadata,
+                                        operation: 'set',
+                                    });
                                 },
-                                () => {}
+                                (error) => {
+                                    logRocketEvent(CustomEvents.PROJECTION, {
+                                        collection: currentCollection,
+                                        error,
+                                        metadata,
+                                        operation: 'set',
+                                    });
+                                }
                             );
                         }
 

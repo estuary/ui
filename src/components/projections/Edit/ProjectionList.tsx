@@ -4,6 +4,8 @@ import { Box, Stack } from '@mui/material';
 
 import { OutlinedChip } from 'src/components/shared/OutlinedChip';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const ProjectionList = ({
@@ -43,8 +45,27 @@ export const ProjectionList = ({
                                                   metadata,
                                                   collection
                                               );
+
+                                              logRocketEvent(
+                                                  CustomEvents.PROJECTION,
+                                                  {
+                                                      collection,
+                                                      metadata,
+                                                      operation: 'remove',
+                                                  }
+                                              );
                                           },
-                                          () => {}
+                                          (error) => {
+                                              logRocketEvent(
+                                                  CustomEvents.PROJECTION,
+                                                  {
+                                                      collection,
+                                                      error,
+                                                      metadata,
+                                                      operation: 'remove',
+                                                  }
+                                              );
+                                          }
                                       );
                                   }
                                 : undefined
