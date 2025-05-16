@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { CSSTextProperties } from 'src/components/tables/cells/types';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
 export interface FieldEditorProps {
@@ -10,13 +9,9 @@ export interface FieldEditorProps {
     disabled?: boolean;
 }
 
-interface BaseEditProjectionProps {
+export interface BaseEditProjectionProps {
     field: string;
     pointer: string | undefined;
-}
-
-export interface EditProjectionButtonProps extends BaseEditProjectionProps {
-    fieldTextStyles?: CSSTextProperties;
 }
 
 export interface EditProjectionDialogProps extends BaseEditProjectionProps {

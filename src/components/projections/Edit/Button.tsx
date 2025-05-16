@@ -1,4 +1,4 @@
-import type { EditProjectionButtonProps } from 'src/components/projections/Edit/types';
+import type { BaseEditProjectionProps } from 'src/components/projections/Edit/types';
 
 import { useState } from 'react';
 
@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl';
 import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
 import { useEntityType } from 'src/context/EntityContext';
 
-function EditProjectionButton({ field, pointer }: EditProjectionButtonProps) {
+function EditProjectionButton({ field, pointer }: BaseEditProjectionProps) {
     const intl = useIntl();
     const theme = useTheme();
 
