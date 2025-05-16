@@ -3,6 +3,7 @@ import type { ProjectionListProps } from 'src/components/projections/Edit/types'
 import { Box, Stack } from '@mui/material';
 
 import { OutlinedChip } from 'src/components/shared/OutlinedChip';
+import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export const ProjectionList = ({
@@ -11,7 +12,8 @@ export const ProjectionList = ({
     diminishedText,
     projectedFields,
 }: ProjectionListProps) => {
-    const removeSingleProjection = useWorkflowStore(
+    const { removeSingleProjection } = useUpdateDraftedProjection();
+    const removeSingleStoredProjection = useWorkflowStore(
         (state) => state.removeSingleProjection
     );
 
@@ -31,11 +33,20 @@ export const ProjectionList = ({
                         diminishedText={diminishedText ? index > 0 : undefined}
                         onDelete={
                             deletable
-                                ? () =>
+                                ? () => {
                                       removeSingleProjection(
-                                          metadata,
-                                          collection
-                                      )
+                                          collection,
+                                          metadata.field
+                                      ).then(
+                                          () => {
+                                              removeSingleStoredProjection(
+                                                  metadata,
+                                                  collection
+                                              );
+                                          },
+                                          () => {}
+                                      );
+                                  }
                                 : undefined
                         }
                         size="small"

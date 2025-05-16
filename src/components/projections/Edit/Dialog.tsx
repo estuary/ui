@@ -15,7 +15,7 @@ import { useIntl } from 'react-intl';
 
 import FieldEditor from 'src/components/projections/Edit/FieldEditor';
 import { TITLE_ID } from 'src/components/projections/Edit/shared';
-import { useStoreProjection } from 'src/hooks/projections/useStoreProjections';
+import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
@@ -27,7 +27,7 @@ function EditProjectionDialog({
 }: EditProjectionDialogProps) {
     const intl = useIntl();
 
-    const { storeSingleProjection } = useStoreProjection();
+    const { storeSingleProjection } = useUpdateDraftedProjection();
 
     const currentCollection = useBinding_currentCollection();
     const setSingleProjection = useWorkflowStore(
@@ -66,8 +66,6 @@ function EditProjectionDialog({
                     setInput={setFieldInput}
                     value={field}
                 />
-
-                {/* <ProjectionDefinitions field={field} pointer={pointer} /> */}
             </DialogContent>
 
             <DialogActions>
@@ -91,18 +89,21 @@ function EditProjectionDialog({
                             pointer &&
                             currentCollection
                         ) {
-                            setSingleProjection(
-                                {
-                                    field: formattedFieldInput,
-                                    location: pointer,
-                                },
-                                currentCollection
-                            );
-
                             storeSingleProjection(
                                 currentCollection,
                                 formattedFieldInput,
                                 pointer
+                            ).then(
+                                () => {
+                                    setSingleProjection(
+                                        {
+                                            field: formattedFieldInput,
+                                            location: pointer,
+                                        },
+                                        currentCollection
+                                    );
+                                },
+                                () => {}
                             );
                         }
 
