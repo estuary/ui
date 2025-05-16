@@ -5,11 +5,11 @@ import { useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 function useGetDataPlane() {
-    const [dataPlaneOptions] = useEntitiesStore((state) => [state.dataPlanes]);
+    // TODO (data planes) - don't want the options being passed in. Need to store those off
+    // const [dataPlaneOptions] = useEntitiesStore((state) => [state.dataPlanes]);
 
     return useCallback(
         (
@@ -52,13 +52,13 @@ function useGetDataPlane() {
             if (dataPlaneId) {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     targetDataPlaneId: dataPlaneId,
-                    defaultDataPlaneId: defaultOption?.id,
+                    defaultDataPlaneId: defaultOption?.id ?? 'none',
                 });
             }
 
             return defaultOption ?? null;
         },
-        [dataPlaneOptions]
+        []
     );
 }
 
