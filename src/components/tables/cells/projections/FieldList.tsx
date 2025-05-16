@@ -1,6 +1,6 @@
 import type { FieldListProps } from 'src/components/tables/cells/types';
 
-import { Box, Stack, TableCell } from '@mui/material';
+import { Box, TableCell } from '@mui/material';
 
 import EditProjectionButton from 'src/components/projections/Edit/Button';
 import { ProjectionList } from 'src/components/projections/Edit/ProjectionList';
@@ -19,27 +19,37 @@ export const FieldList = ({
 
     return (
         <TableCell>
-            <Stack spacing={1}>
-                <Box style={{ alignItems: 'center', display: 'inline-flex' }}>
-                    <EditProjectionButton field={field} pointer={pointer} />
-                </Box>
+            <Box
+                style={{
+                    alignItems: 'center',
+                    display: 'inline-flex',
+                    marginBottom: 8,
+                }}
+            >
+                <EditProjectionButton field={field} pointer={pointer} />
+            </Box>
 
-                <ProjectionList
-                    collection={collection}
-                    deletable={deletable}
-                    diminishedText={diminishedText}
-                    projectedFields={projectedFields.reverse()}
+            <ProjectionList
+                collection={collection}
+                deletable={deletable}
+                diminishedText={diminishedText}
+                projectedFields={projectedFields.reverse()}
+            />
+
+            <Box
+                style={{
+                    alignItems: 'center',
+                    display: 'inline-flex',
+                    marginTop: projectedFields.length > 0 ? 8 : undefined,
+                }}
+            >
+                <OutlinedChip
+                    diminishedText={projectedFields.length > 0}
+                    label={field}
+                    size="small"
+                    variant="outlined"
                 />
-
-                <Box style={{ alignItems: 'center', display: 'inline-flex' }}>
-                    <OutlinedChip
-                        diminishedText={projectedFields.length > 0}
-                        label={field}
-                        size="small"
-                        variant="outlined"
-                    />
-                </Box>
-            </Stack>
+            </Box>
         </TableCell>
     );
 };
