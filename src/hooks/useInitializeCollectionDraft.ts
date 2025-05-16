@@ -92,17 +92,35 @@ function useInitializeCollectionDraft() {
                 newDraftSpecResponse.data &&
                 newDraftSpecResponse.data.length > 0
             ) {
+                const targetRow = newDraftSpecResponse.data[0];
+
+                logRocketEvent(CustomEvents.PROJECTION, {
+                    belongsToDraft: true,
+                    collection: collectionName,
+                    draftId: evaluatedDraftId,
+                    operation: 'initialize',
+                    projectionsExist: Boolean(targetRow.spec?.projections),
+                });
+
                 setCollectionData({
-                    spec: newDraftSpecResponse.data[0].spec,
+                    spec: targetRow.spec,
                     belongsToDraft: true,
                 });
                 initializeProjections(
-                    newDraftSpecResponse.data[0].spec?.projections,
+                    targetRow.spec?.projections,
                     collectionName
                 );
 
                 setCollectionInitializationDone(true);
             } else {
+                logRocketEvent(CustomEvents.PROJECTION, {
+                    belongsToDraft: false,
+                    collection: collectionName,
+                    draftId: evaluatedDraftId,
+                    operation: 'initialize',
+                    projectionsExist: Boolean(liveSpec?.projections),
+                });
+
                 setCollectionData({
                     spec: liveSpec,
                     belongsToDraft: false,
@@ -143,15 +161,24 @@ function useInitializeCollectionDraft() {
                     draftSpecResponse.data &&
                     draftSpecResponse.data.length > 0
                 ) {
-                    const expectedPubId =
-                        draftSpecResponse.data[0].expect_pub_id;
+                    const targetRow = draftSpecResponse.data[0];
+
+                    logRocketEvent(CustomEvents.PROJECTION, {
+                        belongsToDraft: true,
+                        collection: collectionName,
+                        draftId: existingDraftId,
+                        operation: 'initialize',
+                        projectionsExist: Boolean(targetRow.spec?.projections),
+                    });
+
+                    const expectedPubId = targetRow.expect_pub_id;
 
                     setCollectionData({
-                        spec: draftSpecResponse.data[0].spec,
+                        spec: targetRow.spec,
                         belongsToDraft: true,
                     });
                     initializeProjections(
-                        draftSpecResponse.data[0].spec?.projections,
+                        targetRow.spec?.projections,
                         collectionName
                     );
 

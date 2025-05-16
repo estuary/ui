@@ -44,6 +44,13 @@ function LiveSpecsHydrator({
             });
 
             if (entityType === 'collection' && liveSpecs.length === 1) {
+                logRocketEvent(CustomEvents.PROJECTION, {
+                    collection: targetRow.catalog_name,
+                    liveSpecId: targetRow.id,
+                    operation: 'initialize',
+                    projectionsExist: Boolean(targetRow.spec?.projections),
+                });
+
                 initializeProjections(
                     targetRow.spec?.projections,
                     targetRow.catalog_name
