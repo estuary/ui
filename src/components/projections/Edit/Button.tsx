@@ -8,13 +8,10 @@ import { Plus } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
-import { useEntityType } from 'src/context/EntityContext';
 
 function EditProjectionButton({ field, pointer }: BaseEditProjectionProps) {
     const intl = useIntl();
     const theme = useTheme();
-
-    const entityType = useEntityType();
 
     const [open, setOpen] = useState(false);
 
@@ -23,10 +20,6 @@ function EditProjectionButton({ field, pointer }: BaseEditProjectionProps) {
 
         setOpen(true);
     };
-
-    if (entityType !== 'capture') {
-        return null;
-    }
 
     return (
         <>

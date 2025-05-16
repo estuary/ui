@@ -11,6 +11,7 @@ import { useProjectedFields } from 'src/hooks/projections/useProjectedFields';
 export const FieldList = ({
     deletable,
     diminishedText,
+    editable,
     field,
     pointer,
 }: FieldListProps) => {
@@ -19,15 +20,17 @@ export const FieldList = ({
 
     return (
         <TableCell>
-            <Box
-                style={{
-                    alignItems: 'center',
-                    display: 'inline-flex',
-                    marginBottom: 8,
-                }}
-            >
-                <EditProjectionButton field={field} pointer={pointer} />
-            </Box>
+            {editable ? (
+                <Box
+                    style={{
+                        alignItems: 'center',
+                        display: 'inline-flex',
+                        marginBottom: 8,
+                    }}
+                >
+                    <EditProjectionButton field={field} pointer={pointer} />
+                </Box>
+            ) : null}
 
             <ProjectionList
                 collection={collection}

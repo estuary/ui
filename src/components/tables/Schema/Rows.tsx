@@ -42,6 +42,7 @@ function Row({ row }: RowProps) {
                     diminishedText={Boolean(
                         entityType === 'collection' || workflow
                     )}
+                    editable={isCaptureWorkflow}
                     field={row.name}
                     pointer={row.pointer}
                 />
