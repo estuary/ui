@@ -1,5 +1,5 @@
-import type { FieldFilter } from 'src/components/schema/types';
-import type { SortDirection, TableColumns, TableState } from 'src/types';
+import type { SchemaPropertiesTableProps } from 'src/components/tables/Schema/types';
+import type { SortDirection, TableState } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -15,33 +15,11 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/Schema/Rows';
+import { columns } from 'src/components/tables/Schema/shared';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
-export const columns: TableColumns[] = [
-    {
-        field: 'name',
-        headerIntlKey: 'data.field',
-    },
-    {
-        field: 'pointer',
-        headerIntlKey: 'data.location',
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.type',
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.details',
-    },
-];
-
-interface Props {
-    filter: FieldFilter;
-}
-
-function SchemaPropertiesTable({ filter }: Props) {
+function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const intl = useIntl();
 
     const [tableState, setTableState] = useState<TableState>({
