@@ -111,19 +111,18 @@ export const useHydrateState = () => {
 };
 
 export const useHydrateStorageMappingsState = () => {
-    const [hydrated, setActive, setStorageMappings, setHydrationErrors] =
-        useEntitiesStore((state) => [
+    const [hydrated, setStorageMappings, setHydrationErrors] = useEntitiesStore(
+        (state) => [
             state.hydrated,
-            state.setActive,
             state.setStorageMappings,
             state.setHydrationErrors,
-        ]);
+        ]
+    );
 
     // We hardcode the key here as we only call once
     const storageMappingResponse = useSWR(
         `entities_hydrator:storage_mappings`,
         () => {
-            setActive(true);
             return getAllStorageMappingStores();
         },
         singleCallSettings
@@ -132,10 +131,6 @@ export const useHydrateStorageMappingsState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (hydrated && !storageMappingResponse.isValidating) {
-            console.log(
-                'storageMappingResponse.data?.data',
-                storageMappingResponse.data?.data
-            );
             setHydrationErrors(storageMappingResponse.data?.error);
             setStorageMappings(storageMappingResponse.data?.data as any);
         }
@@ -152,19 +147,18 @@ export const useHydrateStorageMappingsState = () => {
 };
 
 export const useHydrateDataPlanesState = () => {
-    const [hydrated, setActive, setDataPlanes, setHydrationErrors] =
-        useEntitiesStore((state) => [
+    const [hydrated, setDataPlanes, setHydrationErrors] = useEntitiesStore(
+        (state) => [
             state.hydrated,
-            state.setActive,
             state.setDataPlanes,
             state.setHydrationErrors,
-        ]);
+        ]
+    );
 
     // We hardcode the key here as we only call once
     const storageMappingResponse = useSWR(
         `entities_hydrator:data_planes`,
         () => {
-            setActive(true);
             return getDataPlaneOptions();
         },
         singleCallSettings
