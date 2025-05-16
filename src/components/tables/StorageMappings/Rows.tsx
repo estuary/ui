@@ -2,6 +2,7 @@ import type { StorageMappings, StorageMappingStore } from 'src/types';
 
 import { TableCell, TableRow } from '@mui/material';
 
+import ChipListCell from 'src/components/tables/cells/ChipList';
 import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 
@@ -28,6 +29,10 @@ export const tableColumns = [
     },
     {
         field: null,
+        headerIntlKey: 'entityTable.data.dataPlanes',
+    },
+    {
+        field: null,
         headerIntlKey: 'entityTable.data.provider',
     },
     {
@@ -45,9 +50,11 @@ export const tableColumns = [
 ];
 
 function DataCells({ store }: DataCellProps) {
-    const { provider, bucket, prefix } = store;
+    const { provider, bucket, prefix, data_planes } = store;
     return (
         <>
+            <ChipListCell values={data_planes} maxChips={3} stripPath={false} />
+
             <TableCell>{provider}</TableCell>
 
             <TableCell>{bucket}</TableCell>
