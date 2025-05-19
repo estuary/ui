@@ -16,10 +16,9 @@ export default function DeltaUpdatesUpdateWrapper() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setDeltaUpdates, setSaving] = useSourceCaptureStore((state) => [
-        state.setDeltaUpdates,
-        state.setSaving,
-    ]);
+    const [deltaUpdates, setDeltaUpdates, setSaving] = useSourceCaptureStore(
+        (state) => [state.deltaUpdates, state.setDeltaUpdates, state.setSaving]
+    );
 
     const { currentSetting, updateSourceSetting } =
         useSourceSetting<boolean>('deltaUpdates');
@@ -61,7 +60,7 @@ export default function DeltaUpdatesUpdateWrapper() {
 
     return (
         <DeltaUpdatesForm
-            currentSetting={currentSetting}
+            currentSetting={deltaUpdates}
             scope="spec"
             updateDraftedSetting={updateServer}
         />

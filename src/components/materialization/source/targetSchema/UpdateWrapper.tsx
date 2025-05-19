@@ -19,10 +19,9 @@ export default function TargetSchemaUpdateWrapper() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setTargetSchema, setSaving] = useSourceCaptureStore((state) => [
-        state.setTargetSchema,
-        state.setSaving,
-    ]);
+    const [targetSchema, setTargetSchema, setSaving] = useSourceCaptureStore(
+        (state) => [state.targetSchema, state.setTargetSchema, state.setSaving]
+    );
 
     const { currentSetting, updateSourceSetting } =
         useSourceSetting<TargetSchemas>('targetSchema');
@@ -64,7 +63,7 @@ export default function TargetSchemaUpdateWrapper() {
 
     return (
         <TargetSchemaForm
-            currentSetting={currentSetting}
+            currentSetting={targetSchema}
             scope="spec"
             updateDraftedSetting={updateServer}
         />
