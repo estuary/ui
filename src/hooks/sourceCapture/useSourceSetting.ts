@@ -32,11 +32,6 @@ export default function useSourceSetting<T = any>(
             ? (readSourceCaptureFromSpec(draftSpecs[0].spec)?.[settingKey] as T)
             : undefined;
 
-    console.log(`useSourceSetting::${settingKey}::rendering`, {
-        currentSetting,
-        draftSpecs,
-    });
-
     return {
         currentSetting,
         updateSourceSetting,

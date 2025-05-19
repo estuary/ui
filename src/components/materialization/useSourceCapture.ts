@@ -1,83 +1,64 @@
-import type { Schema, SourceCaptureDef } from 'src/types';
+import { useCallback } from 'react';
 
-import { useCallback, useMemo } from 'react';
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
 
-import { modifyDraftSpec } from 'src/api/draftSpecs';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_draftSpecs,
-    useEditorStore_queryResponse_mutate,
-} from 'src/components/editor/Store/hooks';
+import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import {
-    addOrRemoveSourceCapture,
-    readSourceCaptureFromSpec,
-} from 'src/utils/entity-utils';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 function useSourceCapture() {
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
+
     const setFormState = useFormStateStore_setFormState();
 
-    // Draft Editor Store
-    const draftId = useEditorStore_persistedDraftId();
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+    const [setSourceCapture] = useSourceCaptureStore((state) => [
+        state.setSourceCapture,
+    ]);
+
+    const { currentSetting, updateSourceSetting } =
+        useSourceSetting<any>('capture');
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
-    const existingSourceCapture = useMemo((): SourceCaptureDef | null => {
-        if (draftSpecs.length === 0) {
-            return null;
-        }
-
-        return readSourceCaptureFromSpec(draftSpecs[0].spec);
-    }, [draftSpecs]);
-
-    const update = useCallback(
-        async (sourceCapture: SourceCaptureDef | null) => {
-            if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
-                return Promise.reject();
-            } else {
-                setFormState({ status: FormStatus.UPDATING });
-                setSaving(true);
-
-                const spec: Schema = addOrRemoveSourceCapture(
-                    draftSpecs[0].spec,
-                    sourceCapture
-                );
-
-                const updateResponse = await modifyDraftSpec(spec, {
-                    draft_id: draftId,
-                    catalog_name: draftSpecs[0].catalog_name,
-                    spec_type: 'materialization',
-                });
-
-                if (updateResponse.error) {
-                    return Promise.reject();
-                }
-
-                return mutateDraftSpecs();
-            }
-        },
-        [draftId, draftSpecs, mutateDraftSpecs, setFormState, setSaving]
-    );
-
     const updateDraft = useCallback(
-        async (sourceCapture: SourceCaptureDef | null) => {
-            update(sourceCapture)
-                .then(
-                    () => setFormState({ status: FormStatus.UPDATED }),
-                    (error) =>
-                        setFormState({ status: FormStatus.FAILED, error })
-                )
+        async (option?: any) => {
+            setFormState({ status: FormStatus.UPDATING, error: null });
+            setSaving(true);
+
+            updateSourceSetting(option)
+                .then(() => {
+                    setSourceCapture(option);
+                    setFormState({ status: FormStatus.UPDATED });
+                })
+                .catch(() => {
+                    enqueueSnackbar(
+                        intl.formatMessage({
+                            id: 'specPropEditor.update.error',
+                        }),
+                        { ...snackbarSettings, variant: 'error' }
+                    );
+                    setSourceCapture(currentSetting);
+                    setFormState({ status: FormStatus.FAILED });
+                })
                 .finally(() => setSaving(false));
         },
-        [setFormState, setSaving, update]
+        [
+            currentSetting,
+            enqueueSnackbar,
+            intl,
+            setFormState,
+            setSaving,
+            setSourceCapture,
+            updateSourceSetting,
+        ]
     );
 
     return {
-        existingSourceCapture,
+        existingSourceCapture: currentSetting,
         updateDraft,
     };
 }
