@@ -54,7 +54,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
         async (value?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
+            return updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
                 .then(() => {
                     if (currentBindingUUID) {
                         setIncompatibleSchemaChange(

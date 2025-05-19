@@ -121,7 +121,10 @@ export default function SpecPropAutoComplete({
                             : optionValue.val)
                     );
                 }}
-                onChange={(_state, newVal) => updateDraftedSetting(newVal)}
+                onChange={(_state, newVal) => {
+                    // TODO (source capture) - reset the input on error
+                    updateDraftedSetting(newVal);
+                }}
                 onInputChange={(event, newInputValue) => {
                     // Set the input value component state only when an option is clicked
                     // to avoid clashing with the effect which also updates this state.

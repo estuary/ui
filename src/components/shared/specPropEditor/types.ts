@@ -3,7 +3,7 @@ type FormScope = 'binding' | 'spec';
 export interface BaseFormProps {
     currentSetting: any;
     scope: FormScope;
-    updateDraftedSetting: any; // TODO (source capture) typing
+    updateDraftedSetting: (selectedOption?: any) => Promise<any>;
 }
 
 export interface BaseAutoCompleteOption<T = any> {
@@ -17,7 +17,7 @@ export interface SelectorOptionProps<T> {
 }
 
 export interface SpecPropInputProps extends BaseFormProps {
-    updateDraftedSetting: (selectedOption?: any) => void; // TODO (source capture) typing
+    updateDraftedSetting: (selectedOption?: any) => Promise<any>;
     inputLabelId: string;
     setErrorExists: (errorExists: boolean, scope: FormScope) => void;
     invalidSettingsMessageId?: string;

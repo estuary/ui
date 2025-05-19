@@ -31,7 +31,7 @@ export default function TargetSchemaUpdateWrapper() {
             setFormState({ status: FormStatus.UPDATING, error: null });
             setSaving(true);
 
-            updateSourceSetting(option?.val)
+            return updateSourceSetting(option?.val)
                 .then(() => {
                     setTargetSchema(option?.val);
 

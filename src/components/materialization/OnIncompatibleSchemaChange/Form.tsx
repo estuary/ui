@@ -16,9 +16,11 @@ export default function Form() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    const setIncompatibleSchemaChange = useBindingStore(
-        (state) => state.setSpecOnIncompatibleSchemaChange
-    );
+    const [onIncompatibleSchemaChange, setIncompatibleSchemaChange] =
+        useBindingStore((state) => [
+            state.onIncompatibleSchemaChange,
+            state.setSpecOnIncompatibleSchemaChange,
+        ]);
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -59,7 +61,7 @@ export default function Form() {
 
     return (
         <IncompatibleSchemaChangeForm
-            currentSetting={currentSetting}
+            currentSetting={onIncompatibleSchemaChange}
             scope="spec"
             updateDraftedSetting={updateServer}
         />

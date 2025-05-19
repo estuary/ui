@@ -32,9 +32,9 @@ export default function IncompatibleSchemaChangeForm({
                     </li>
                 );
             }}
-            updateDraftedSetting={(selectedOption?: BaseAutoCompleteOption) => {
-                updateDraftedSetting(selectedOption?.val ?? undefined);
-            }}
+            updateDraftedSetting={(selectedOption?: BaseAutoCompleteOption) =>
+                updateDraftedSetting(selectedOption?.val ?? undefined)
+            }
             setErrorExists={(errorExists, scope) => {
                 setOnIncompatibleSchemaChangeErrorExists(errorExists, scope);
             }}
