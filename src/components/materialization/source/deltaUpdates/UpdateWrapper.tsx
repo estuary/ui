@@ -16,8 +16,9 @@ export default function DeltaUpdatesUpdateWrapper() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setDeltaUpdates] = useSourceCaptureStore((state) => [
+    const [setDeltaUpdates, setSaving] = useSourceCaptureStore((state) => [
         state.setDeltaUpdates,
+        state.setSaving,
     ]);
 
     const { currentSetting, updateSourceSetting } =
@@ -25,6 +26,7 @@ export default function DeltaUpdatesUpdateWrapper() {
 
     const updateServer = useCallback(
         async (option?: boolean) => {
+            setSaving(true);
             setFormState({ status: FormStatus.UPDATING, error: null });
 
             updateSourceSetting(option)
@@ -43,7 +45,8 @@ export default function DeltaUpdatesUpdateWrapper() {
 
                     setDeltaUpdates(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
-                });
+                })
+                .finally(() => setSaving(false));
         },
         [
             currentSetting,
@@ -51,6 +54,7 @@ export default function DeltaUpdatesUpdateWrapper() {
             intl,
             setDeltaUpdates,
             setFormState,
+            setSaving,
             updateSourceSetting,
         ]
     );

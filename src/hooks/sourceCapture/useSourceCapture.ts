@@ -20,12 +20,12 @@ function useSourceCapture() {
     ]);
 
     const { currentSetting, updateSourceSetting } =
-        useSourceSetting<any>('capture');
+        useSourceSetting<string>('capture');
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
     const updateDraft = useCallback(
-        async (option?: any) => {
+        async (option?: string) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
             setSaving(true);
 

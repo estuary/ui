@@ -19,8 +19,9 @@ export default function TargetSchemaUpdateWrapper() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setTargetSchema] = useSourceCaptureStore((state) => [
+    const [setTargetSchema, setSaving] = useSourceCaptureStore((state) => [
         state.setTargetSchema,
+        state.setSaving,
     ]);
 
     const { currentSetting, updateSourceSetting } =
@@ -29,6 +30,7 @@ export default function TargetSchemaUpdateWrapper() {
     const updateServer = useCallback(
         async (option?: AutoCompleteOption | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
+            setSaving(true);
 
             updateSourceSetting(option?.val)
                 .then(() => {
@@ -46,13 +48,15 @@ export default function TargetSchemaUpdateWrapper() {
 
                     setTargetSchema(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
-                });
+                })
+                .finally(() => setSaving(false));
         },
         [
             currentSetting,
             enqueueSnackbar,
             intl,
             setFormState,
+            setSaving,
             setTargetSchema,
             updateSourceSetting,
         ]

@@ -9,8 +9,8 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import useSourceCapture from 'src/components/materialization/useSourceCapture';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_prefillResourceConfigs,
@@ -110,7 +110,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 }
             }
 
-            await updateDraft(updatedSourceCapture);
+            await updateDraft(updatedSourceCapture.capture);
         }
 
         setUpdating(false);
