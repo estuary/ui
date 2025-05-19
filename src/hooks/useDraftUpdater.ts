@@ -3,6 +3,8 @@ import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { cloneDeep } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -39,8 +41,11 @@ function useDraftUpdater() {
                 return Promise.resolve();
             }
 
+            // TODO (zustand) cloning draftSpec for _some_ reason
+            // This is here because `useSpecificationIncompatibleSchemaSetting`
+            //  was being a pain and not  updating.
             const updateResponse = await modifyDraftSpec(
-                updateSpec(draftSpec.spec),
+                updateSpec(cloneDeep(draftSpec.spec)),
                 {
                     draft_id: draftId,
                     catalog_name: draftSpec.catalog_name,
