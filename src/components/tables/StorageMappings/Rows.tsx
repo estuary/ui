@@ -15,6 +15,7 @@ interface RowsProps {
 }
 
 interface DataCellProps {
+    planes: string[];
     store: StorageMappingStore;
 }
 
@@ -49,11 +50,15 @@ export const tableColumns = [
     },
 ];
 
-function DataCells({ store }: DataCellProps) {
-    const { provider, bucket, prefix, data_planes } = store;
+function DataCells({ planes, store }: DataCellProps) {
+    const { provider, bucket, prefix } = store;
     return (
         <>
-            <ChipListCell values={data_planes} maxChips={3} stripPath={false} />
+            <ChipListCell
+                values={planes ?? []}
+                maxChips={3}
+                stripPath={false}
+            />
 
             <TableCell>{provider}</TableCell>
 
@@ -67,6 +72,8 @@ function DataCells({ store }: DataCellProps) {
 function Row({ row }: RowProps) {
     const key = `StorageMappings-${row.id}-stores-`;
 
+    console.log('row.spec', row.spec);
+
     return (
         <>
             {row.spec.stores.map((store, index) =>
@@ -77,14 +84,20 @@ function Row({ row }: RowProps) {
                             color="success"
                             messageId="storageMappings.status.active"
                         />
-                        <DataCells store={store} />
+                        <DataCells
+                            store={store}
+                            planes={row.spec.data_planes}
+                        />
                         <TimeStamp time={row.updated_at} enableRelative />
                     </TableRow>
                 ) : (
                     <TableRow key={`${key}${index}`}>
                         <TableCell />
                         <TableCell />
-                        <DataCells store={store} />
+                        <DataCells
+                            store={store}
+                            planes={row.spec.data_planes}
+                        />
                         <TableCell />
                     </TableRow>
                 )
