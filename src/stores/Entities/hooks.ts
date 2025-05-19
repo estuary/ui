@@ -136,6 +136,7 @@ export const useHydrateStorageMappingsState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (hydrated && !storageMappingResponse.isValidating) {
+            // TODO (data planes) - need to filter these down to those that are adimable
             setStorageMappings(storageMappingResponse.data?.data as any);
         }
     }, [
