@@ -8,8 +8,8 @@ import { addOrRemoveOnIncompatibleSchemaChange } from 'src/utils/entity-utils';
 
 export default function useSpecificationIncompatibleSchemaSetting() {
     // Draft Editor Store
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const draftUpdater = useDraftUpdater();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const updateOnIncompatibleSchemaChange = useCallback(
         async (value: AutoCompleteOption['val'] | undefined) => {
