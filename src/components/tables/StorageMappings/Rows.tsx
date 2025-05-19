@@ -72,8 +72,6 @@ function DataCells({ planes, store }: DataCellProps) {
 function Row({ row }: RowProps) {
     const key = `StorageMappings-${row.id}-stores-`;
 
-    console.log('row.spec', row.spec);
-
     return (
         <>
             {row.spec.stores.map((store, index) =>
