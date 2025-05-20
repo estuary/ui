@@ -2,19 +2,11 @@ import type { SpecPropInputProps } from 'src/components/shared/specPropEditor/ty
 
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    Button,
-    FormControl,
-    FormControlLabel,
-    Stack,
-    Switch,
-    Typography,
-} from '@mui/material';
+import { FormControl, FormControlLabel, Stack, Switch } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import AlertBox from 'src/components/shared/AlertBox';
-import { stringifyJSON } from 'src/services/stringify';
+import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export default function SpecPropBoolean({
@@ -63,37 +55,11 @@ export default function SpecPropBoolean({
     return (
         <Stack spacing={1}>
             {invalidSetting ? (
-                <AlertBox
-                    severity="error"
-                    short
-                    sx={{ maxWidth: 'fit-content' }}
-                >
-                    <Typography>
-                        {intl.formatMessage(
-                            {
-                                id: invalidSettingsMessageId,
-                            },
-                            {
-                                currentSetting:
-                                    typeof currentSetting === 'string'
-                                        ? currentSetting
-                                        : stringifyJSON(currentSetting),
-                            }
-                        )}
-                    </Typography>
-
-                    <Button
-                        disabled={formActive}
-                        size="small"
-                        sx={{ maxWidth: 'fit-content' }}
-                        variant="text"
-                        onClick={() => updateDraftedSetting()}
-                    >
-                        {intl.formatMessage({
-                            id: 'specPropEditor.error.cta',
-                        })}
-                    </Button>
-                </AlertBox>
+                <SpecPropInvalidSetting
+                    currentSetting={currentSetting}
+                    invalidSettingsMessageId={invalidSettingsMessageId}
+                    updateDraftedSetting={updateDraftedSetting}
+                />
             ) : null}
 
             <Stack spacing={2} sx={{ maxWidth: 'fit-content' }}>

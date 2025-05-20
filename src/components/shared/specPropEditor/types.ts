@@ -31,3 +31,9 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
     ) => React.ReactNode;
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
 }
+
+export interface SpecPropInvalidSettingProps {
+    currentSetting: BaseFormProps['currentSetting'];
+    invalidSettingsMessageId: string;
+    updateDraftedSetting: BaseFormProps['updateDraftedSetting'];
+}

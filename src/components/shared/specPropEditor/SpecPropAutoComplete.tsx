@@ -2,18 +2,12 @@ import type { SpecPropAutoCompleteProps } from 'src/components/shared/specPropEd
 
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    Autocomplete,
-    Button,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Autocomplete, Stack, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChange/shared';
-import AlertBox from 'src/components/shared/AlertBox';
+import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
@@ -70,37 +64,11 @@ export default function SpecPropAutoComplete({
     return (
         <Stack spacing={1}>
             {invalidSetting ? (
-                <AlertBox
-                    severity="error"
-                    short
-                    sx={{ maxWidth: 'fit-content' }}
-                >
-                    <Typography>
-                        {intl.formatMessage(
-                            {
-                                id: invalidSettingsMessageId,
-                            },
-                            {
-                                currentSetting:
-                                    typeof currentSetting === 'string'
-                                        ? currentSetting
-                                        : stringifyJSON(currentSetting),
-                            }
-                        )}
-                    </Typography>
-
-                    <Button
-                        disabled={formActive}
-                        size="small"
-                        sx={{ maxWidth: 'fit-content' }}
-                        variant="text"
-                        onClick={() => updateDraftedSetting()}
-                    >
-                        {intl.formatMessage({
-                            id: 'specPropEditor.error.cta',
-                        })}
-                    </Button>
-                </AlertBox>
+                <SpecPropInvalidSetting
+                    currentSetting={currentSetting}
+                    invalidSettingsMessageId={invalidSettingsMessageId}
+                    updateDraftedSetting={updateDraftedSetting}
+                />
             ) : null}
 
             <Autocomplete
