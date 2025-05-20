@@ -72,7 +72,11 @@ export const addOrRemoveSourceCapture = (
     sourceCapture: SourceCaptureDef | null
 ) => {
     if (sourceCapture) {
-        schema.source = sourceCapture;
+        if (schema.sourceCapture) {
+            schema.sourceCapture = sourceCapture;
+        } else {
+            schema.source = sourceCapture;
+        }
     } else {
         delete schema.source;
         delete schema.sourceCapture;
