@@ -9,12 +9,9 @@ import {
 } from 'src/context/Theme';
 
 export const OutlinedChip = styled(Chip, {
-    // TODO (typing): Consider creating a typed, utility function for this behavior.
-    shouldForwardProp: (prop) => {
-        const restrictedKeys = ['diminishedText'] as PropertyKey[];
-
-        return !restrictedKeys.includes(prop);
-    },
+    // TODO (typing): Consider creating a typed, utility function for property forwarding
+    //   that is able to handle an array of properties.
+    shouldForwardProp: (props) => props !== 'diminishedText',
 })<
     ChipProps & {
         diminishedText?: boolean;
