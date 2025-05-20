@@ -1,5 +1,5 @@
 import type {
-    AutoCompleteOption,
+    AutoCompleteOptionForExistFilter,
     FieldFilter,
 } from 'src/components/schema/types';
 
@@ -18,7 +18,7 @@ interface Props {
 function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
     const intl = useIntl();
 
-    const fieldOptions: AutoCompleteOption[] = [
+    const fieldOptions: AutoCompleteOptionForExistFilter[] = [
         {
             id: 'all',
             label: intl.formatMessage({
