@@ -31,13 +31,13 @@ export default function Form() {
         async (option?: AutoCompleteOption['val']) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(option)
+            return updateOnIncompatibleSchemaChange(option)
                 .then(() => {
                     setIncompatibleSchemaChange(option);
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
-                .catch(() => {
+                .catch((error) => {
                     enqueueSnackbar(
                         intl.formatMessage({
                             id: 'specPropEditor.update.error',
@@ -47,6 +47,8 @@ export default function Form() {
 
                     setIncompatibleSchemaChange(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
+
+                    return Promise.reject(error);
                 });
         },
         [
