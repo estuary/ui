@@ -16,10 +16,16 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
 
         return useSourceCaptureStore(
             useShallow((state) => {
-                if (state.sourceCapture) {
-                    const response: SourceCaptureDef = {
-                        capture: state.sourceCapture,
-                    };
+                if (
+                    state.sourceCapture ||
+                    state.deltaUpdates ||
+                    state.targetSchema
+                ) {
+                    const response: SourceCaptureDef = {};
+
+                    if (state.sourceCapture) {
+                        response.capture = state.sourceCapture;
+                    }
 
                     if (
                         sourceCaptureDeltaUpdatesSupported &&
