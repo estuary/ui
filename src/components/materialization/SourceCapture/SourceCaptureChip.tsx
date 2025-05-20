@@ -40,6 +40,7 @@ function SourceCaptureChip() {
                     sx={{
                         alignItems: 'center',
                         pr: sourceCaptureDefinition?.capture ? 3 : undefined,
+                        py: 1,
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
@@ -47,8 +48,6 @@ function SourceCaptureChip() {
                     <SourceCaptureChipOptionalSettings />
                 </Stack>
             }
-            maxWidth="50%"
-            minWidth={sourceCaptureDefinition?.capture ? 375 : undefined}
             onDelete={
                 sourceCaptureDefinition?.capture
                     ? async () => {
@@ -57,6 +56,10 @@ function SourceCaptureChip() {
                       }
                     : undefined
             }
+            style={{
+                maxWidth: '50%',
+                minWidth: sourceCaptureDefinition?.capture ? 375 : undefined,
+            }}
             variant="outlined"
         />
     );

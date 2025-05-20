@@ -1,5 +1,4 @@
 import type { ChipProps } from '@mui/material';
-import type { CSSProperties } from 'react';
 
 import { Chip, styled } from '@mui/material';
 
@@ -12,21 +11,15 @@ import {
 export const OutlinedChip = styled(Chip, {
     // TODO (typing): Consider creating a typed, utility function for this behavior.
     shouldForwardProp: (prop) => {
-        const restrictedKeys = [
-            'diminishedText',
-            'maxWidth',
-            'minWidth',
-        ] as PropertyKey[];
+        const restrictedKeys = ['diminishedText'] as PropertyKey[];
 
         return !restrictedKeys.includes(prop);
     },
 })<
     ChipProps & {
         diminishedText?: boolean;
-        maxWidth?: CSSProperties['maxWidth'];
-        minWidth?: CSSProperties['minWidth'];
     }
->(({ color, diminishedText, maxWidth, minWidth, theme }) => {
+>(({ color, diminishedText, style, theme }) => {
     const colorKey = color ?? 'default';
 
     const background =
@@ -42,10 +35,6 @@ export const OutlinedChip = styled(Chip, {
     return {
         'border': border,
         'cursor': 'pointer',
-        'maxWidth': maxWidth,
-        // Specifying a minWidth helps prevent the SVG delete icon from
-        // overlapping the label as the chip resizes.
-        'minWidth': minWidth,
         '&:hover': {
             background,
             border:
@@ -86,5 +75,9 @@ export const OutlinedChip = styled(Chip, {
             minHeight: 21,
             minWidth: 21,
         },
+
+        // Specifying a minWidth helps prevent the SVG delete icon from
+        // overlapping the label as the chip resizes.
+        ...style,
     };
 });
