@@ -1,9 +1,10 @@
 import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 
 // Need to keep in sync with - estuary/flow/crates/models/src/source_capture.rs
+// The order that these appear in here is the order they show in the dashboard
 export const targetNamingOptions = [
-    'prefixSchema',
     'prefixNonDefaultSchema',
+    'prefixSchema',
 
     // fromSourceName renamed to withSchema
     'fromSourceName',

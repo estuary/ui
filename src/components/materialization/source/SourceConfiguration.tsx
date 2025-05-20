@@ -22,7 +22,7 @@ function SourceConfiguration() {
     }
 
     return (
-        <Stack spacing={1} sx={{ pt: 2 }}>
+        <Stack spacing={1} sx={{ pt: 2, maxWidth: '50%' }}>
             <Typography variant="formSectionHeader">
                 {intl.formatMessage({
                     id: 'workflows.sourceCapture.optionalSettings.header',
@@ -31,11 +31,39 @@ function SourceConfiguration() {
 
             <Stack spacing={2}>
                 {sourceCaptureDeltaUpdatesSupported ? (
-                    <DeltaUpdatesUpdateWrapper />
+                    <Stack>
+                        <Typography style={{ fontWeight: 500 }}>
+                            {intl.formatMessage({
+                                id: 'deltaUpdates.header',
+                            })}
+                        </Typography>
+
+                        <Typography>
+                            {intl.formatMessage({
+                                id: 'deltaUpdates.message',
+                            })}
+                        </Typography>
+
+                        <DeltaUpdatesUpdateWrapper />
+                    </Stack>
                 ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
-                    <TargetSchemaUpdateWrapper />
+                    <Stack>
+                        <Typography style={{ fontWeight: 500 }}>
+                            {intl.formatMessage({
+                                id: 'schemaMode.header',
+                            })}
+                        </Typography>
+
+                        <Typography>
+                            {intl.formatMessage({
+                                id: 'schemaMode.message',
+                            })}
+                        </Typography>
+
+                        <TargetSchemaUpdateWrapper />
+                    </Stack>
                 ) : null}
             </Stack>
         </Stack>

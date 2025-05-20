@@ -15,7 +15,7 @@ export default function DeltaUpdatesForm({
     return (
         <SpecPropBoolean
             currentSetting={currentSetting}
-            inputLabelId="schemaMode.input.label"
+            inputLabelId="deltaUpdates.input.label"
             scope={scope}
             updateDraftedSetting={updateDraftedSetting}
             setErrorExists={(errorExists) => {

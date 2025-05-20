@@ -299,13 +299,15 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
-    'deltaUpdates.input.label': `Delta Updates`,
+    'deltaUpdates.header': `Delta Updates`,
+    'deltaUpdates.message': `When adding new bindings should the new bindings be marked as delta updates.`,
+    'deltaUpdates.input.label': `Include delta updates on bindings`,
     'deltaUpdates.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // Schema Mode
-    'schemaMode.header': `Source Capture Schema Mode`,
-    'schemaMode.message': `How should the schema of the materialization binding be set.`,
-    'schemaMode.input.label': `Set new bindings schemas as`,
+    'schemaMode.header': `Target Naming`,
+    'schemaMode.message': `How to name target resources (database tables, for example) for materializing a given Collection.`,
+    'schemaMode.input.label': `Target resource naming`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
