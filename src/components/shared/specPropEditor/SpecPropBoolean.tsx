@@ -20,7 +20,7 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 export default function SpecPropBoolean({
     currentSetting,
     inputLabelId,
-    invalidSettingsMessageId,
+    invalidSettingsMessageId = 'specPropUpdater.error.message',
     scope,
     setErrorExists,
     updateDraftedSetting,
