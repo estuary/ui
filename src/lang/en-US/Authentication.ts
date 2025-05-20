@@ -95,6 +95,7 @@ export const Authentication: Record<string, string> = {
 
     'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
     'tenant.origin.radio.socialMedia.label': `Social Media`,
+    'tenant.origin.radio.ai.label': `AI Assistant`,
     'tenant.origin.radio.paidAdvertising.label': `Online Ads`,
     'tenant.origin.radio.content.label': `Blog`,
     'tenant.origin.radio.referral.label': `Word of Mouth`,
