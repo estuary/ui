@@ -8,8 +8,8 @@ export default function DeltaUpdatesForm({
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
-    const [setTargetSchemaHasError] = useSourceCaptureStore((state) => [
-        state.setTargetSchemaHasError,
+    const [setDeltaUpdatesHasError] = useSourceCaptureStore((state) => [
+        state.setDeltaUpdatesHasError,
     ]);
 
     return (
@@ -19,7 +19,7 @@ export default function DeltaUpdatesForm({
             scope={scope}
             updateDraftedSetting={updateDraftedSetting}
             setErrorExists={(errorExists) => {
-                setTargetSchemaHasError(errorExists);
+                setDeltaUpdatesHasError(errorExists);
             }}
         />
     );
