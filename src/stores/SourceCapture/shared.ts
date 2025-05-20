@@ -11,8 +11,8 @@ export const targetNamingOptions = [
     'withSchema',
 
     // leaveEmpty renamed to noSchema
-    'noSchema',
     'leaveEmpty',
+    'noSchema',
 ] as const;
 
 // Functions to handle the old aliases. Keeping them together so they are easier to stay in sync
