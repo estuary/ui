@@ -1,9 +1,11 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/types';
 
 import { Stack, Typography } from '@mui/material';
 
-function SelectorOption({ option }: SelectorOptionProps<AutoCompleteOption>) {
+function SelectorOption({
+    option,
+}: SelectorOptionProps<AutoCompleteOptionForIncompatibleSchemaChange>) {
     const { description, label } = option;
 
     return (

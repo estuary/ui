@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 
 import { getTypedAutoCompleteDefaults } from 'src/components/shared/AutoComplete/DefaultProps';
 
@@ -10,4 +10,4 @@ export const choices = [
 ] as const;
 
 export const autoCompleteDefaultProps =
-    getTypedAutoCompleteDefaults<AutoCompleteOption>();
+    getTypedAutoCompleteDefaults<AutoCompleteOptionForIncompatibleSchemaChange>();

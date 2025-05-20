@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect } from 'react';
@@ -36,7 +36,10 @@ export default function TargetSchemaForm({
             options={options}
             scope={scope}
             isOptionEqualToValue={compareOptionsIncludingAliases}
-            renderOption={(renderOptionProps, option: AutoCompleteOption) => {
+            renderOption={(
+                renderOptionProps,
+                option: AutoCompleteOptionForTargetSchema
+            ) => {
                 return (
                     <li {...renderOptionProps}>
                         <SelectorOption option={option} />

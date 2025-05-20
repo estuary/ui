@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 
 import { useMemo } from 'react';
 
@@ -11,7 +11,7 @@ import {
 
 const filteredOptions = targetNamingOptions.filter(filterAliases);
 
-function useTargetNamingOptions(): AutoCompleteOption[] {
+function useTargetNamingOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
     return useMemo(

@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 
 import { useCallback } from 'react';
 
@@ -12,7 +12,11 @@ export default function useSpecificationIncompatibleSchemaSetting() {
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const updateOnIncompatibleSchemaChange = useCallback(
-        async (value: AutoCompleteOption['val'] | undefined) => {
+        async (
+            value:
+                | AutoCompleteOptionForIncompatibleSchemaChange['val']
+                | undefined
+        ) => {
             return draftUpdater(
                 (spec) => addOrRemoveOnIncompatibleSchemaChange(spec, value),
                 { spec_type: 'materialization' }

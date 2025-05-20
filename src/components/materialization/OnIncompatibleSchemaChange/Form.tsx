@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 
 import { useCallback } from 'react';
 
@@ -28,7 +28,9 @@ export default function Form() {
         useSpecificationIncompatibleSchemaSetting();
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption['val']) => {
+        async (
+            option?: AutoCompleteOptionForIncompatibleSchemaChange['val']
+        ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
             return updateOnIncompatibleSchemaChange(option)

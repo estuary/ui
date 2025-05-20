@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 
 // Need to keep in sync with - estuary/flow/crates/models/src/source_capture.rs
 export const targetNamingOptions = [
@@ -20,8 +20,8 @@ export const filterAliases = (choice: string) => {
 };
 
 export const compareOptionsIncludingAliases = (
-    option: AutoCompleteOption,
-    optionVal: AutoCompleteOption
+    option: AutoCompleteOptionForTargetSchema,
+    optionVal: AutoCompleteOptionForTargetSchema
 ) => {
     if (optionVal.val === 'leaveEmpty') {
         return option.val === 'noSchema';

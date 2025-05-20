@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 import { useCallback } from 'react';
@@ -27,7 +27,7 @@ export default function TargetSchemaUpdateWrapper() {
         useSourceSetting<TargetSchemas>('targetSchema');
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption | null) => {
+        async (option?: AutoCompleteOptionForTargetSchema | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
             setSaving(true);
 

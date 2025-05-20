@@ -1,9 +1,11 @@
-import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/types';
 
 import { Stack, Typography } from '@mui/material';
 
-function SelectorOption({ option }: SelectorOptionProps<AutoCompleteOption>) {
+function SelectorOption({
+    option,
+}: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {
     const { description, label } = option;
 
     return (

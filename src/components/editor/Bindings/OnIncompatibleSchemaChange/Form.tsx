@@ -1,5 +1,5 @@
 import type {
-    AutoCompleteOption,
+    AutoCompleteOptionForIncompatibleSchemaChange,
     OnIncompatibleSchemaChangeProps,
 } from 'src/components/incompatibleSchemaChange/types';
 import type { BindingMetadata } from 'src/types';
@@ -51,7 +51,9 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
     }, [bindingIndex, currentBindingUUID, currentCollection]);
 
     const updateServer = useCallback(
-        async (value?: AutoCompleteOption | null) => {
+        async (
+            value?: AutoCompleteOptionForIncompatibleSchemaChange | null
+        ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
             return updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
