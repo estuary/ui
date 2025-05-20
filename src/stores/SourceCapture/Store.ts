@@ -25,13 +25,12 @@ const getInitialStateData = (): Pick<
     prefilledCapture: undefined,
     deltaUpdates: undefined,
     deltaUpdatesHasError: false,
-    targetSchema: 'prefixNonDefaultSchema',
+    targetSchema: undefined,
     targetSchemaHasError: false,
 });
 
 const getInitialState = (
     set: NamedSet<SourceCaptureState>
-    // get: StoreApi<SourceCaptureState>['getState']
 ): SourceCaptureState => ({
     ...getInitialStateData(),
 
@@ -126,8 +125,5 @@ const getInitialState = (
 });
 
 export const useSourceCaptureStore = create<SourceCaptureState>()(
-    devtools(
-        (set, _get) => getInitialState(set),
-        devtoolsOptions('source-capture')
-    )
+    devtools((set) => getInitialState(set), devtoolsOptions('source-capture'))
 );

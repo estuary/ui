@@ -12,7 +12,6 @@ import AddSourceCaptureToSpecButton from 'src/components/materialization/source/
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { useSourceCaptureStore_setSourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { readSourceCaptureFromSpec } from 'src/utils/entity-utils';
 
@@ -25,33 +24,20 @@ function SelectCapture() {
     const prefilledOnce = useRef(false);
     const defaultedOnce = useRef(false);
 
-    const setSourceCaptureDefinition =
-        useSourceCaptureStore_setSourceCaptureDefinition();
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    const [sourceCapture, prefilledCapture] = useSourceCaptureStore(
-        useShallow((state) => [state.sourceCapture, state.prefilledCapture])
-    );
+    const [sourceCapture, prefilledCapture, setSourceCapture] =
+        useSourceCaptureStore(
+            useShallow((state) => [
+                state.sourceCapture,
+                state.prefilledCapture,
+                state.setSourceCapture,
+            ])
+        );
 
     const [open, setOpen] = useState<boolean>(false);
-    const toggleDialog = (args: any) => {
-        const opening = typeof args === 'boolean' ? args : !open;
-
-        // TODO (source capture) - do we want to change this?
-
-        // On create default settings when going to set the
-        //  source capture for the first time
-        // Make sure we ONLY do this when OPENING
-        // if (!isEdit && !sourceCapture && opening) {
-        //     setSourceCaptureDefinition({
-        //         capture: '',
-        //         deltaUpdates: false,
-        //         targetSchema: 'fromSourceName',
-        //     });
-        // }
-        setOpen(opening);
-    };
-
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const toggleDialog = (args: any) =>
+        setOpen(typeof args === 'boolean' ? args : !open);
 
     const existingSourceCaptureDefinition = useMemo(
         () =>
@@ -88,24 +74,22 @@ function SelectCapture() {
             !defaultedOnce.current &&
             isString(existingSourceCaptureDefinition?.capture)
         ) {
-            setSourceCaptureDefinition(existingSourceCaptureDefinition);
+            setSourceCapture(existingSourceCaptureDefinition?.capture);
             defaultedOnce.current = true;
         } else if (!prefilledOnce.current && prefilledExists) {
             if (
                 prefilledCapture &&
                 existingSourceCaptureDefinition?.capture !== prefilledCapture
             ) {
-                setSourceCaptureDefinition({
-                    capture: prefilledCapture,
-                });
+                setSourceCapture(prefilledCapture);
                 prefilledOnce.current = true;
             }
         }
     }, [
-        existingSourceCaptureDefinition,
+        existingSourceCaptureDefinition?.capture,
         prefilledCapture,
         prefilledExists,
-        setSourceCaptureDefinition,
+        setSourceCapture,
     ]);
 
     return (

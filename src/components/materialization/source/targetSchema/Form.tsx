@@ -1,8 +1,11 @@
 import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
+import { useEffect } from 'react';
+
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
 import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
 import { compareOptionsIncludingAliases } from 'src/stores/SourceCapture/shared';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
@@ -12,11 +15,19 @@ export default function TargetSchemaForm({
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
-    const [setTargetSchemaHasError] = useSourceCaptureStore((state) => [
-        state.setTargetSchemaHasError,
-    ]);
+    const workflow = useEntityWorkflow();
+
+    const [setTargetSchemaHasError, setTargetSchema] = useSourceCaptureStore(
+        (state) => [state.setTargetSchemaHasError, state.setTargetSchema]
+    );
 
     const options = useTargetNamingOptions();
+
+    useEffect(() => {
+        if (workflow === 'materialization_create') {
+            setTargetSchema('prefixNonDefaultSchema');
+        }
+    });
 
     return (
         <SpecPropAutoComplete

@@ -128,7 +128,7 @@ function useGenerateCatalog() {
         (state) => state.onIncompatibleSchemaChange
     );
 
-    // Source Capture Store
+    // Fetch the entire definition for source capture so we have all the settings
     const sourceCaptureDefinition =
         useSourceCaptureStore_sourceCaptureDefinition();
 
