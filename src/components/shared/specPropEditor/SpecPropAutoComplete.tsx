@@ -26,6 +26,7 @@ export default function SpecPropAutoComplete({
     scope,
     setErrorExists,
     updateDraftedSetting,
+    isOptionEqualToValue,
 }: SpecPropAutoCompleteProps) {
     const intl = useIntl();
 
@@ -112,6 +113,11 @@ export default function SpecPropAutoComplete({
                     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                     if (!optionValue) {
                         return false;
+                    }
+
+                    // Allow custom function to run
+                    if (isOptionEqualToValue) {
+                        return isOptionEqualToValue(option, optionValue);
                     }
 
                     return (

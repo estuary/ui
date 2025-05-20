@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import useDraftUpdater from 'src/hooks/useDraftUpdater';
@@ -27,10 +27,21 @@ export default function useSourceSetting<T = any>(
         [draftUpdater, settingKey]
     );
 
-    const currentSetting =
-        draftSpecs.length > 0 && draftSpecs[0].spec
-            ? (readSourceCaptureFromSpec(draftSpecs[0].spec)?.[settingKey] as T)
-            : undefined;
+    const currentSpec = useMemo(
+        () =>
+            draftSpecs.length > 0 && draftSpecs[0].spec
+                ? draftSpecs[0].spec
+                : undefined,
+        [draftSpecs]
+    );
+
+    const currentSetting = useMemo(
+        () =>
+            currentSpec
+                ? (readSourceCaptureFromSpec(currentSpec)?.[settingKey] as T)
+                : undefined,
+        [currentSpec, settingKey]
+    );
 
     return {
         currentSetting,

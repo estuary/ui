@@ -60,7 +60,7 @@ export default function DeltaUpdatesUpdateWrapper() {
 
     return (
         <DeltaUpdatesForm
-            currentSetting={deltaUpdates}
+            currentSetting={currentSetting ?? deltaUpdates}
             scope="spec"
             updateDraftedSetting={updateServer}
         />

@@ -21,14 +21,7 @@ function SelectorOption({ option }: SelectorOptionProps<AutoCompleteOption>) {
                 {description}
             </Typography>
 
-            <Typography
-                component="span"
-                sx={{
-                    pl: 1.5,
-                }}
-            >
-                example goes here
-            </Typography>
+            {/*TODO (source capture) - potentially want to add examples here*/}
         </Stack>
     );
 }

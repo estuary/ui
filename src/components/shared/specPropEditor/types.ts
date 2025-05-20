@@ -29,4 +29,5 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
         props: React.HTMLAttributes<HTMLLIElement> & { key: any },
         option: any // TODO (source capture) typing
     ) => React.ReactNode;
+    isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
 }

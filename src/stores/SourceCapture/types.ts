@@ -1,4 +1,6 @@
-import type { TargetSchemas } from 'src/types';
+import type { targetNamingOptions } from 'src/stores/SourceCapture/shared';
+
+export type TargetSchemas = (typeof targetNamingOptions)[number];
 
 export interface SourceCaptureState {
     sourceCapture: string | undefined;

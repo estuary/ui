@@ -312,19 +312,19 @@ export const Workflows: Record<string, string> = {
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.options.noSchema.label': `No Schema`,
     'schemaMode.options.noSchema.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
-    'schemaMode.options.noSchema.example': `acmeCo/mySchema/myTable -> myTable | schema -> nothing`,
+    // 'schemaMode.options.noSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: blank`,
 
     'schemaMode.options.withSchema.label': `From Source Name`,
     'schemaMode.options.withSchema.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
-    'schemaMode.options.withSchema.example': `acmeCo/mySchema/myTable -> myTable | schema -> mySchema`,
+    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
-    'schemaMode.options.prefixSchema.example': `acmeCo/mySchema/myTable -> mySchema_myTable | schema -> nothing`,
+    // 'schemaMode.options.prefixSchema.example': `collection: acmeCo/mySchema/myTable -> table name: mySchema_myTable, schema: blank`,
 
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
-    'schemaMode.options.prefixNonDefaultSchema.example': `acmeCo/mySchema/myTable -> mySchema_myTable | schema -> nothing (ignores "public")`,
+    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

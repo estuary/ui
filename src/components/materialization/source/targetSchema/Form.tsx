@@ -4,6 +4,7 @@ import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
 import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
 import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
+import { compareOptionsIncludingAliases } from 'src/stores/SourceCapture/shared';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 export default function TargetSchemaForm({
@@ -23,6 +24,7 @@ export default function TargetSchemaForm({
             inputLabelId="schemaMode.input.label"
             options={options}
             scope={scope}
+            isOptionEqualToValue={compareOptionsIncludingAliases}
             renderOption={(renderOptionProps, option: AutoCompleteOption) => {
                 return (
                     <li {...renderOptionProps}>

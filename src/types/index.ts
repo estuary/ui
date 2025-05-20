@@ -3,6 +3,7 @@ import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
+import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 export type fake = 'fake';
 
@@ -474,17 +475,6 @@ export interface DekafConfig {
     config: Schema;
     variant: string;
 }
-
-// Keep in sync with estuary/flow/crates/models/src/source_capture.rs
-export type TargetSchemas =
-    | 'prefixSchema'
-    | 'prefixNonDefaultSchema'
-    // fromSourceName renamed to withSchema
-    | 'fromSourceName'
-    | 'withSchema'
-    // leaveEmpty renamed to noSchema
-    | 'noSchema'
-    | 'leaveEmpty';
 
 export interface SourceCaptureDef {
     capture?: string;

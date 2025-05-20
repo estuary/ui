@@ -1,5 +1,5 @@
 import type { AutoCompleteOption } from 'src/components/materialization/source/targetSchema/types';
-import type { TargetSchemas } from 'src/types';
+import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 import { useCallback } from 'react';
 
@@ -63,7 +63,7 @@ export default function TargetSchemaUpdateWrapper() {
 
     return (
         <TargetSchemaForm
-            currentSetting={targetSchema}
+            currentSetting={currentSetting ?? targetSchema}
             scope="spec"
             updateDraftedSetting={updateServer}
         />
