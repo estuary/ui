@@ -526,15 +526,92 @@ describe('generateTaskSpec', () => {
                 ]);
             });
 
-            test('can return the `sourceCapture` property', () => {
-                sourceCapture = {
-                    capture: 'mock/source/capture',
-                    deltaUpdates: false,
-                    targetSchema: 'leaveEmpty',
-                };
+            describe('if a sourceCaptureDefinition is provided', () => {
+                beforeEach(() => {
+                    sourceCapture = {
+                        capture: 'mock/source/capture',
+                        deltaUpdates: false,
+                        targetSchema: 'leaveEmpty',
+                    };
+                });
 
-                expect(
-                    generateTaskSpec(
+                test('will return the `sourceCapture` property if a definition is provided', () => {
+                    expect(
+                        generateTaskSpec(
+                            'materialization',
+                            connectorConfig,
+                            resourceConfigs,
+                            resourceConfigServerUpdateRequired,
+                            {
+                                [resourceConfig_one.meta.collectionName]: [
+                                    uuidOne,
+                                ],
+                                [resourceConfig_two.meta.collectionName]: [
+                                    uuidTwo,
+                                ],
+                            },
+                            existingTaskData,
+                            {
+                                fullSource,
+                                sourceCaptureDefinition: sourceCapture,
+                            }
+                        ).sourceCapture
+                    ).toStrictEqual(sourceCapture);
+                });
+
+                test('will use `source` property if already defined', () => {
+                    if (existingTaskData) {
+                        existingTaskData = {
+                            ...existingTaskData,
+                            spec: {
+                                ...existingTaskData.spec,
+                                source: {},
+                            },
+                        };
+                    }
+
+                    expect(
+                        generateTaskSpec(
+                            'materialization',
+                            connectorConfig,
+                            resourceConfigs,
+                            resourceConfigServerUpdateRequired,
+                            {
+                                [resourceConfig_one.meta.collectionName]: [
+                                    uuidOne,
+                                ],
+                                [resourceConfig_two.meta.collectionName]: [
+                                    uuidTwo,
+                                ],
+                            },
+                            existingTaskData,
+                            {
+                                fullSource,
+                                sourceCaptureDefinition: sourceCapture,
+                            }
+                        ).source
+                    ).toStrictEqual(sourceCapture);
+                });
+            });
+
+            describe('if a sourceCaptureDefinition is not provided', () => {
+                beforeEach(() => {
+                    sourceCapture = null;
+                });
+
+                test('will remove `source` and `sourceCapture` property if no definition is provided', () => {
+                    if (existingTaskData) {
+                        existingTaskData = {
+                            ...existingTaskData,
+                            spec: {
+                                ...existingTaskData.spec,
+                                source: 'foo',
+                                sourceCapture: 'foo',
+                            },
+                        };
+                    }
+
+                    const response = generateTaskSpec(
                         'materialization',
                         connectorConfig,
                         resourceConfigs,
@@ -545,8 +622,11 @@ describe('generateTaskSpec', () => {
                         },
                         existingTaskData,
                         { fullSource, sourceCaptureDefinition: sourceCapture }
-                    ).sourceCapture
-                ).toStrictEqual(sourceCapture);
+                    );
+
+                    expect(response.source).toStrictEqual(undefined);
+                    expect(response.sourceCapture).toStrictEqual(undefined);
+                });
             });
         });
     });
