@@ -224,7 +224,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, sourceCapture }
+                { fullSource, sourceCaptureDefinition: sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -271,7 +271,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, sourceCapture }
+                { fullSource, sourceCaptureDefinition: sourceCapture }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -328,7 +328,7 @@ describe('generateTaskSpec', () => {
                     [resourceConfig_three.meta.collectionName]: [uuidThree],
                 },
                 existingTaskData,
-                { fullSource, sourceCapture }
+                { fullSource, sourceCaptureDefinition: sourceCapture }
             );
             expect(response.bindings).toStrictEqual([
                 {
@@ -382,7 +382,7 @@ describe('generateTaskSpec', () => {
                         [resourceConfig_two.meta.collectionName]: [uuidTwo],
                     },
                     existingTaskData,
-                    { fullSource, sourceCapture }
+                    { fullSource, sourceCaptureDefinition: sourceCapture }
                 );
 
                 expect(response.bindings).toMatchSnapshot();
@@ -442,7 +442,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCapture }
+                        { fullSource, sourceCaptureDefinition: sourceCapture }
                     ).bindings.map(({ target }: any) => target)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -468,7 +468,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCapture }
+                        { fullSource, sourceCaptureDefinition: sourceCapture }
                     ).sourceCapture
                 ).toBeUndefined();
             });
@@ -518,7 +518,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCapture }
+                        { fullSource, sourceCaptureDefinition: sourceCapture }
                     ).bindings.map(({ source }: any) => source)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -544,7 +544,7 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCapture }
+                        { fullSource, sourceCaptureDefinition: sourceCapture }
                     ).sourceCapture
                 ).toStrictEqual(sourceCapture);
             });
