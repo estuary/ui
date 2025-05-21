@@ -1,5 +1,7 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
+import { useEffect } from 'react';
+
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';
@@ -39,6 +41,13 @@ export const useEntityRelationships = (
         state.setMaterializations,
     ]);
 
+    useEffect(() => {
+        setActive(true);
+        return () => {
+            setActive(false);
+        };
+    }, [setActive]);
+
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix
             ? [catalogName, session.access_token, swrCacheBuster]
@@ -51,7 +60,6 @@ export const useEntityRelationships = (
 
                 setHydrationError(err);
 
-                setActive(false);
                 setHydrated(true);
 
                 logRocketEvent(`${CustomEvents.ENTITY_RELATIONSHIPS}`, {
@@ -75,7 +83,6 @@ export const useEntityRelationships = (
 
                 setHydrationError(null);
 
-                setActive(false);
                 setHydrated(true);
             },
         }

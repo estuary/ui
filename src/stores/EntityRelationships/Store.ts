@@ -49,7 +49,7 @@ const getInitialState = (
                 state.materializations = newVal;
             }),
             false,
-            'setCaptures'
+            'setMaterializations'
         );
     },
 
