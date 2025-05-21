@@ -311,7 +311,9 @@ export const Workflows: Record<string, string> = {
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.example.table': `AcmeCo/mongo/prod/AcmeCo-prod/orders`,
+    'schemaMode.data.table': `Table:`,
+    'schemaMode.data.schema': `Schema:`,
+    'schemaMode.example.table': `acmeCo/mongo/prod/AcmeCo-prod/orders`,
     'schemaMode.options.prefixNonDefaultSchema.ignored': `public`,
 
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,

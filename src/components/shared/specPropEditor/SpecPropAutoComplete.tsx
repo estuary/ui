@@ -21,6 +21,7 @@ export default function SpecPropAutoComplete({
     setErrorExists,
     updateDraftedSetting,
     isOptionEqualToValue,
+    sx,
 }: SpecPropAutoCompleteProps) {
     const intl = useIntl();
 
@@ -143,6 +144,7 @@ export default function SpecPropAutoComplete({
                 sx={{
                     minWidth: 'fit-content',
                     maxWidth: '50%',
+                    ...(sx ?? {}),
                 }}
                 value={selection}
             />

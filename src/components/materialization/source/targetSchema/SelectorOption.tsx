@@ -1,17 +1,16 @@
 import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 function SelectorOption({
-    option,
+    option: { description, label, example },
 }: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {
-    const { description, label, example } = option;
-
     const intl = useIntl();
+    const theme = useTheme();
 
     return (
         <Stack component="span" spacing={1}>
@@ -29,22 +28,44 @@ function SelectorOption({
             </Typography>
 
             <Stack
+                component="span"
                 direction="row"
                 spacing={1}
                 sx={{
                     pl: 1.5,
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
                 }}
             >
                 <code>
                     {intl.formatMessage({ id: 'schemaMode.example.table' })}
                 </code>
-                <Typography>
-                    <ArrowRight />
+                <Typography component="span">
+                    <ArrowRight
+                        style={{
+                            color: theme.palette.primary.main,
+                            fontSize: 10,
+                        }}
+                    />
                 </Typography>
-                <strong>Table:</strong>
-                <code>{example.table}</code>
-                <strong>Schema:</strong>
-                <code>{example.schema}</code>
+                <Stack
+                    component="span"
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography component="span" sx={{ fontWeight: 500 }}>
+                        {intl.formatMessage({ id: 'schemaMode.data.table' })}
+                    </Typography>
+                    <code>{example.table}</code>
+                    <Typography component="span">|</Typography>
+                    <Typography component="span" sx={{ fontWeight: 500 }}>
+                        {intl.formatMessage({ id: 'schemaMode.data.schema' })}
+                    </Typography>
+                    <code>{example.schema}</code>
+                </Stack>
             </Stack>
         </Stack>
     );

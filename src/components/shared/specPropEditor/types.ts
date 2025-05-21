@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 
 type FormScope = 'binding' | 'spec';
@@ -32,6 +33,7 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
         option: any
     ) => React.ReactNode;
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
+    sx?: SxProps<Theme>;
 }
 
 export interface SpecPropInvalidSettingProps {

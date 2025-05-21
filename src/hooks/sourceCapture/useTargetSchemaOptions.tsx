@@ -3,6 +3,8 @@ import type { AutoCompleteOptionForTargetSchema } from 'src/components/materiali
 
 import { useMemo } from 'react';
 
+import { Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 import { filteredTargetNamingOptions } from 'src/stores/SourceCapture/shared';
@@ -30,11 +32,14 @@ function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
                                         </code>
                                     ),
                                     highlight: (
-                                        <strong>
+                                        <Typography
+                                            component="span"
+                                            sx={{ fontWeight: 500 }}
+                                        >
                                             {intl.formatMessage({
                                                 id: `schemaMode.options.prefixNonDefaultSchema.description.highlight`,
                                             })}
-                                        </strong>
+                                        </Typography>
                                     ),
                                 }
                             )}

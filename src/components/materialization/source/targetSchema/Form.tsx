@@ -50,6 +50,9 @@ export default function TargetSchemaForm({
             setErrorExists={(errorExists) => {
                 setTargetSchemaHasError(errorExists);
             }}
+            sx={{
+                maxWidth: 700,
+            }}
         />
     );
 }
