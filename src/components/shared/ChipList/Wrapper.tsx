@@ -8,8 +8,8 @@ import { Box, styled, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import LinkWrapper from 'src/components/shared/LinkWrapper';
-import { OutlinedChip } from 'src/components/shared/OutlinedChip';
 import { underlineTextSx } from 'src/context/Theme';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { stripPathing } from 'src/utils/misc-utils';
 
 const ListItem = styled('li')(({ theme }) => ({

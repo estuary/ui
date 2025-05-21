@@ -4,9 +4,9 @@ import { Box, TableCell } from '@mui/material';
 
 import EditProjectionButton from 'src/components/projections/Edit/Button';
 import { ProjectionList } from 'src/components/projections/Edit/ProjectionList';
-import { OutlinedChip } from 'src/components/shared/OutlinedChip';
 import { useCollectionIndex } from 'src/hooks/projections/useCollectionIndex';
 import { useProjectedFields } from 'src/hooks/projections/useProjectedFields';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 export const FieldList = ({
     deletable,

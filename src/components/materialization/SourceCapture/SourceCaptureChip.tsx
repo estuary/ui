@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl';
 
 import SourceCaptureChipOptionalSettings from 'src/components/materialization/SourceCapture/SourceCaptureChipOptionalSettings';
 import useSourceCapture from 'src/components/materialization/useSourceCapture';
-import { OutlinedChip } from 'src/components/shared/OutlinedChip';
 import { truncateTextSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function SourceCaptureChip() {
     const intl = useIntl();
