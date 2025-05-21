@@ -63,7 +63,7 @@ export const getSourceCapture = (
     return sourceCapture;
 };
 
-export const readSourceCaptureFromSpec = (schema: Schema) => {
+export const readSourceCaptureDefinitionFromSpec = (schema: Schema) => {
     return getSourceCapture(schema[getSourceCapturePropKey(schema)]);
 };
 
@@ -93,7 +93,7 @@ export const updateSourceCapture = (
     sourceCaptureSettings: Partial<SourceCaptureDef>
 ): Schema => {
     const currentKey = getSourceCapturePropKey(schema);
-    const currentVal = readSourceCaptureFromSpec(schema) ?? {};
+    const currentVal = readSourceCaptureDefinitionFromSpec(schema) ?? {};
 
     schema[currentKey] = { ...currentVal, ...sourceCaptureSettings };
 

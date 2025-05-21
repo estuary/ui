@@ -13,7 +13,7 @@ import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { readSourceCaptureFromSpec } from 'src/utils/entity-utils';
+import { readSourceCaptureDefinitionFromSpec } from 'src/utils/entity-utils';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
@@ -42,7 +42,7 @@ function SelectCapture() {
     const existingSourceCaptureDefinition = useMemo(
         () =>
             draftSpecs.length > 0
-                ? readSourceCaptureFromSpec(draftSpecs[0].spec)
+                ? readSourceCaptureDefinitionFromSpec(draftSpecs[0].spec)
                 : null,
         [draftSpecs]
     );

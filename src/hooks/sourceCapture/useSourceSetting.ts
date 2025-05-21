@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import useDraftUpdater from 'src/hooks/useDraftUpdater';
 import {
-    readSourceCaptureFromSpec,
+    readSourceCaptureDefinitionFromSpec,
     updateSourceCapture,
 } from 'src/utils/entity-utils';
 
@@ -38,7 +38,9 @@ export default function useSourceSetting<T = any>(
     const currentSetting = useMemo(
         () =>
             currentSpec
-                ? (readSourceCaptureFromSpec(currentSpec)?.[settingKey] as T)
+                ? (readSourceCaptureDefinitionFromSpec(currentSpec)?.[
+                      settingKey
+                  ] as T)
                 : undefined,
         [currentSpec, settingKey]
     );
