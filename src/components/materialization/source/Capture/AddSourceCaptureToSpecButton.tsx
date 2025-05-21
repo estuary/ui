@@ -9,8 +9,8 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import useSourceCapture from 'src/components/materialization/useSourceCapture';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_prefillResourceConfigs,
@@ -29,7 +29,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         }
     );
 
-    const { existingSourceCapture, updateDraft } = useSourceCapture();
+    const { updateDraft } = useSourceCapture();
     const evaluateTrialCollections = useTrialCollections();
 
     const setCollectionMetadata = useBindingStore(
@@ -65,14 +65,9 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             updatedSourceCaptureName &&
                 sourceCapture !== updatedSourceCaptureName
         );
-        const settingsUpdated =
-            (sourceCaptureDeltaUpdatesSupported &&
-                deltaUpdates !== existingSourceCapture?.deltaUpdates) ||
-            (sourceCaptureTargetSchemaSupported &&
-                targetSchema !== existingSourceCapture?.targetSchema);
 
         // Only update draft is something in the settings changed
-        if (nameUpdated || settingsUpdated) {
+        if (nameUpdated) {
             const updatedSourceCapture: SourceCaptureDef = {
                 capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
             };
@@ -115,7 +110,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 }
             }
 
-            await updateDraft(updatedSourceCapture);
+            await updateDraft(updatedSourceCapture.capture);
         }
 
         setUpdating(false);

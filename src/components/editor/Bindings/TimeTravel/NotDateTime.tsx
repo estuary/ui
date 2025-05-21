@@ -83,12 +83,10 @@ function NotDateTime({ collectionName, description, label, setting }: Props) {
                         updateState(newVal);
                         const validationResponse = validateDateTime(newVal);
 
-                        console.log('validationResponse', validationResponse);
                         setErrors(validationResponse[0] ?? null);
                     }}
                     onKeyDown={events.keyDown}
                     onError={(errorValue) => {
-                        console.log('error', errorValue);
                         setErrors('');
                     }}
                 />

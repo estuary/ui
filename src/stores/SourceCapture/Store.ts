@@ -15,19 +15,22 @@ const getInitialStateData = (): Pick<
     | 'saving'
     | 'prefilledCapture'
     | 'deltaUpdates'
+    | 'deltaUpdatesHasError'
     | 'targetSchema'
+    | 'targetSchemaHasError'
 > => ({
     error: null,
-    sourceCapture: null,
+    sourceCapture: undefined,
     saving: false,
-    prefilledCapture: null,
+    prefilledCapture: undefined,
     deltaUpdates: undefined,
+    deltaUpdatesHasError: false,
     targetSchema: undefined,
+    targetSchemaHasError: false,
 });
 
 const getInitialState = (
     set: NamedSet<SourceCaptureState>
-    // get: StoreApi<SourceCaptureState>['getState']
 ): SourceCaptureState => ({
     ...getInitialStateData(),
 
@@ -81,6 +84,16 @@ const getInitialState = (
         );
     },
 
+    setDeltaUpdatesHasError: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.deltaUpdatesHasError = value;
+            }),
+            false,
+            'setDeltaUpdatesHasError'
+        );
+    },
+
     setTargetSchema: (value: SourceCaptureState['error']) => {
         set(
             produce((state: SourceCaptureState) => {
@@ -88,6 +101,15 @@ const getInitialState = (
             }),
             false,
             'Source Capture Target Schema Set'
+        );
+    },
+    setTargetSchemaHasError: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.targetSchemaHasError = value;
+            }),
+            false,
+            'setTargetSchemaHasError'
         );
     },
 
@@ -103,8 +125,5 @@ const getInitialState = (
 });
 
 export const useSourceCaptureStore = create<SourceCaptureState>()(
-    devtools(
-        (set, _get) => getInitialState(set),
-        devtoolsOptions('source-capture')
-    )
+    devtools((set) => getInitialState(set), devtoolsOptions('source-capture'))
 );
