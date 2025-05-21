@@ -9,6 +9,7 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
+import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
 import { ROW_TYPE_STRING } from 'src/components/tables/Schema/shared';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
@@ -38,7 +39,6 @@ function Row({ row }: RowProps) {
         <TableRow hover>
             {row.name ? (
                 <FieldList
-                    deletable={isCaptureWorkflow}
                     diminishedText={Boolean(
                         entityType === 'collection' || workflow
                     )}
@@ -66,6 +66,12 @@ function Row({ row }: RowProps) {
                     {row.description ? <Box>{row.description}</Box> : null}
                 </Stack>
             </TableCell>
+
+            {isCaptureWorkflow && row.name ? (
+                <ProjectionActions field={row.name} pointer={row.pointer} />
+            ) : isCaptureWorkflow ? (
+                <TableCell />
+            ) : null}
         </TableRow>
     );
 }

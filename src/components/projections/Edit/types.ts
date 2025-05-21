@@ -9,9 +9,13 @@ export interface FieldEditorProps {
     disabled?: boolean;
 }
 
-export interface BaseEditProjectionProps {
+interface BaseEditProjectionProps {
     field: string;
     pointer: string | undefined;
+}
+
+export interface EditProjectionButtonProps extends BaseEditProjectionProps {
+    disabled?: boolean;
 }
 
 export interface EditProjectionDialogProps extends BaseEditProjectionProps {
@@ -22,7 +26,7 @@ export interface EditProjectionDialogProps extends BaseEditProjectionProps {
 export interface ProjectionListProps {
     collection: string | undefined;
     projectedFields: ProjectionMetadata[];
-    deletable?: boolean;
     diminishedText?: boolean;
+    editable?: boolean;
     maxChips?: number;
 }

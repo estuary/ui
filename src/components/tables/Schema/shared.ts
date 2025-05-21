@@ -1,5 +1,7 @@
 import type { TableColumns } from 'src/types';
 
+export const actionColumnIntlKey = 'data.actions';
+
 export const columns: TableColumns[] = [
     {
         field: 'name',
@@ -16,6 +18,10 @@ export const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'data.details',
+    },
+    {
+        field: null,
+        headerIntlKey: actionColumnIntlKey,
     },
 ];
 

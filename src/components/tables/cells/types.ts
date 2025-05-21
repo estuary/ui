@@ -9,11 +9,9 @@ export interface ConstraintDetailsProps {
     constraint: TranslatedConstraint;
 }
 
-// TODO: Remove deletable, diminishedText properties.
 export interface FieldListProps {
     field: string;
     pointer: string | undefined;
-    deletable?: boolean;
     diminishedText?: boolean;
     editable?: boolean;
 }
@@ -32,4 +30,9 @@ export interface FieldActionsProps {
     field: string;
     constraint: TranslatedConstraint;
     selectionType: FieldSelectionType | null;
+}
+
+export interface ProjectionActionsProps {
+    field: string;
+    pointer: string | undefined;
 }

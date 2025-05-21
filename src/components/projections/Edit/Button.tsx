@@ -1,17 +1,19 @@
-import type { BaseEditProjectionProps } from 'src/components/projections/Edit/types';
+import type { EditProjectionButtonProps } from 'src/components/projections/Edit/types';
 
 import { useState } from 'react';
 
-import { Chip, useTheme } from '@mui/material';
+import { Button } from '@mui/material';
 
-import { Plus } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
 
-function EditProjectionButton({ field, pointer }: BaseEditProjectionProps) {
+function EditProjectionButton({
+    disabled,
+    field,
+    pointer,
+}: EditProjectionButtonProps) {
     const intl = useIntl();
-    const theme = useTheme();
 
     const [open, setOpen] = useState(false);
 
@@ -23,27 +25,14 @@ function EditProjectionButton({ field, pointer }: BaseEditProjectionProps) {
 
     return (
         <>
-            <Chip
-                color="primary"
-                icon={
-                    <Plus
-                        style={{
-                            color: theme.palette.primary.main,
-                            fontSize: 14,
-                        }}
-                    />
-                }
-                label={intl.formatMessage({ id: 'cta.add' })}
+            <Button
+                disabled={disabled}
                 onClick={openDialog}
                 size="small"
-                style={{
-                    backgroundColor: 'unset',
-                    color: theme.palette.primary.main,
-                    fontWeight: 500,
-                    textTransform: 'uppercase',
-                }}
                 variant="outlined"
-            />
+            >
+                {intl.formatMessage({ id: 'cta.add' })}
+            </Button>
 
             <EditProjectionDialog
                 field={field}

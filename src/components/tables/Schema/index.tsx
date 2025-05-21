@@ -15,12 +15,20 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/Schema/Rows';
-import { columns } from 'src/components/tables/Schema/shared';
+import {
+    actionColumnIntlKey,
+    columns,
+} from 'src/components/tables/Schema/shared';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const intl = useIntl();
+
+    const workflow = useEntityWorkflow();
+    const isCaptureWorkflow =
+        workflow === 'capture_create' || workflow === 'capture_edit';
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -71,6 +79,12 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
         return inferSchemaResponse.filter((datum) => datum.exists === filter);
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
+    const columnsToShow = isCaptureWorkflow
+        ? columns
+        : columns.filter(
+              (column) => column.headerIntlKey !== actionColumnIntlKey
+          );
+
     return (
         <Box>
             <TableContainer component={Box}>
@@ -82,7 +96,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
                     })}
                 >
                     <EntityTableHeader
-                        columns={columns}
+                        columns={columnsToShow}
                         columnToSort={columnToSort}
                         sortDirection={sortDirection}
                         headerClick={handlers.sort}
@@ -90,7 +104,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
                     />
 
                     <EntityTableBody
-                        columns={columns}
+                        columns={columnsToShow}
                         noExistingDataContentIds={{
                             header: 'schemaEditor.table.empty.header',
                             message: inferSchemaResponseEmpty

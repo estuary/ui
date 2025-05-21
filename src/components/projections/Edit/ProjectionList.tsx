@@ -12,8 +12,8 @@ import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableLis
 
 export const ProjectionList = ({
     collection,
-    deletable,
     diminishedText,
+    editable,
     maxChips,
     projectedFields,
 }: ProjectionListProps) => {
@@ -43,7 +43,7 @@ export const ProjectionList = ({
                                 diminishedText ? index > 0 : undefined
                             }
                             onDelete={
-                                deletable
+                                editable
                                     ? () => {
                                           removeSingleProjection(
                                               collection,
