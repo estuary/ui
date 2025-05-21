@@ -23,7 +23,7 @@ function SelectorOption({
                 {description}
             </Typography>
 
-            {/*TODO (source capture) - potentially want to add examples here*/}
+            {/*TODO (source capture examples) - component would go here*/}
         </Stack>
     );
 }

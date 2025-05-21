@@ -313,18 +313,20 @@ export const Workflows: Record<string, string> = {
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Table name mirrors schema_name_table_name from source ignoring public or equivalent schemas.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
-    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Table name mirrors schema_name_table_name from source.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
-    // 'schemaMode.options.prefixSchema.example': `collection: acmeCo/mySchema/myTable -> table name: mySchema_myTable, schema: blank`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
     'schemaMode.options.withSchema.description': `Table name and schema names mirrored from source.  Use the 2nd-to-last component of the collection name as the schema (or equivalent) of the materialization binding.`,
-    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
 
     'schemaMode.options.noSchema.label': `Table Name`,
     'schemaMode.options.noSchema.description': `Default just the table names from the source, leaving the materialization binding's schema field empty.  Fall back to the default schema of the materialization.`,
+
+    // TODO (source capture examples) - here is the basic examples - no strong opinions on how to display
+    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
+    // 'schemaMode.options.prefixSchema.example': `collection: acmeCo/mySchema/myTable -> table name: mySchema_myTable, schema: blank`,
+    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
     // 'schemaMode.options.noSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: blank`,
 
     // Entities Create
