@@ -20,6 +20,9 @@ export const filterAliases = (choice: string) => {
     return choice !== 'leaveEmpty' && choice !== 'fromSourceName';
 };
 
+export const filteredTargetNamingOptions =
+    targetNamingOptions.filter(filterAliases);
+
 export const compareOptionsIncludingAliases = (
     option: AutoCompleteOptionForTargetSchema,
     optionVal: AutoCompleteOptionForTargetSchema

@@ -4,19 +4,14 @@ import { useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import {
-    filterAliases,
-    targetNamingOptions,
-} from 'src/stores/SourceCapture/shared';
-
-const filteredOptions = targetNamingOptions.filter(filterAliases);
+import { filteredTargetNamingOptions } from 'src/stores/SourceCapture/shared';
 
 function useTargetNamingOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
     return useMemo(
         () =>
-            filteredOptions.map((choice) => {
+            filteredTargetNamingOptions.map((choice) => {
                 return {
                     description: intl.formatMessage({
                         id: `schemaMode.options.${choice}.description`,
