@@ -31,7 +31,7 @@ function EditProjectionButton({
                 size="small"
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'cta.add' })}
+                {intl.formatMessage({ id: 'cta.rename' })}
             </Button>
 
             <EditProjectionDialog
