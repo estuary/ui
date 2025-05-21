@@ -186,7 +186,7 @@ describe('generateTaskSpec', () => {
         connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary,
         existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
-        sourceCapture: SourceCaptureDef | null,
+        sourceCaptureDefinition: SourceCaptureDef | null,
         fullSource: FullSourceDictionary | null,
         resourceConfigServerUpdateRequired: boolean;
 
@@ -205,7 +205,7 @@ describe('generateTaskSpec', () => {
         connectorConfig = generateMockConnectorConfig();
         resourceConfigs = {};
         existingTaskData = null;
-        sourceCapture = null;
+        sourceCaptureDefinition = null;
         fullSource = null;
         resourceConfigServerUpdateRequired = false;
     });
@@ -224,7 +224,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, sourceCaptureDefinition: sourceCapture }
+                { fullSource, sourceCaptureDefinition }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -271,7 +271,7 @@ describe('generateTaskSpec', () => {
                 resourceConfigServerUpdateRequired,
                 {},
                 existingTaskData,
-                { fullSource, sourceCaptureDefinition: sourceCapture }
+                { fullSource, sourceCaptureDefinition }
             );
             expect(response.bindings).toStrictEqual([]);
         });
@@ -328,7 +328,7 @@ describe('generateTaskSpec', () => {
                     [resourceConfig_three.meta.collectionName]: [uuidThree],
                 },
                 existingTaskData,
-                { fullSource, sourceCaptureDefinition: sourceCapture }
+                { fullSource, sourceCaptureDefinition }
             );
             expect(response.bindings).toStrictEqual([
                 {
@@ -382,7 +382,10 @@ describe('generateTaskSpec', () => {
                         [resourceConfig_two.meta.collectionName]: [uuidTwo],
                     },
                     existingTaskData,
-                    { fullSource, sourceCaptureDefinition: sourceCapture }
+                    {
+                        fullSource,
+                        sourceCaptureDefinition,
+                    }
                 );
 
                 expect(response.bindings).toMatchSnapshot();
@@ -442,7 +445,10 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCaptureDefinition: sourceCapture }
+                        {
+                            fullSource,
+                            sourceCaptureDefinition,
+                        }
                     ).bindings.map(({ target }: any) => target)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -451,7 +457,7 @@ describe('generateTaskSpec', () => {
             });
 
             test('cannot return the `sourceCapture` property', () => {
-                sourceCapture = {
+                sourceCaptureDefinition = {
                     capture: 'mock/source/capture',
                     deltaUpdates: false,
                     targetSchema: 'leaveEmpty',
@@ -468,7 +474,10 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCaptureDefinition: sourceCapture }
+                        {
+                            fullSource,
+                            sourceCaptureDefinition,
+                        }
                     ).sourceCapture
                 ).toBeUndefined();
             });
@@ -518,7 +527,10 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCaptureDefinition: sourceCapture }
+                        {
+                            fullSource,
+                            sourceCaptureDefinition,
+                        }
                     ).bindings.map(({ source }: any) => source)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
@@ -528,7 +540,7 @@ describe('generateTaskSpec', () => {
 
             describe('if a sourceCaptureDefinition is provided', () => {
                 beforeEach(() => {
-                    sourceCapture = {
+                    sourceCaptureDefinition = {
                         capture: 'mock/source/capture',
                         deltaUpdates: false,
                         targetSchema: 'leaveEmpty',
@@ -553,10 +565,10 @@ describe('generateTaskSpec', () => {
                             existingTaskData,
                             {
                                 fullSource,
-                                sourceCaptureDefinition: sourceCapture,
+                                sourceCaptureDefinition,
                             }
                         ).sourceCapture
-                    ).toStrictEqual(sourceCapture);
+                    ).toStrictEqual(sourceCaptureDefinition);
                 });
 
                 test('will use `source` property if already defined', () => {
@@ -587,16 +599,16 @@ describe('generateTaskSpec', () => {
                             existingTaskData,
                             {
                                 fullSource,
-                                sourceCaptureDefinition: sourceCapture,
+                                sourceCaptureDefinition,
                             }
                         ).source
-                    ).toStrictEqual(sourceCapture);
+                    ).toStrictEqual(sourceCaptureDefinition);
                 });
             });
 
             describe('if a sourceCaptureDefinition is not provided', () => {
                 beforeEach(() => {
-                    sourceCapture = null;
+                    sourceCaptureDefinition = null;
                 });
 
                 test('will remove `source` and `sourceCapture` property if no definition is provided', () => {
@@ -621,7 +633,10 @@ describe('generateTaskSpec', () => {
                             [resourceConfig_two.meta.collectionName]: [uuidTwo],
                         },
                         existingTaskData,
-                        { fullSource, sourceCaptureDefinition: sourceCapture }
+                        {
+                            fullSource,
+                            sourceCaptureDefinition,
+                        }
                     );
 
                     expect(response.source).toStrictEqual(undefined);
