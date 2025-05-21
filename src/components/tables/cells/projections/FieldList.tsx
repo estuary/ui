@@ -36,6 +36,7 @@ export const FieldList = ({
                 collection={collection}
                 deletable={deletable}
                 diminishedText={diminishedText}
+                maxChips={1}
                 projectedFields={projectedFields.reverse()}
             />
 

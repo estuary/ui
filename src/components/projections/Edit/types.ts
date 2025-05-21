@@ -24,4 +24,5 @@ export interface ProjectionListProps {
     projectedFields: ProjectionMetadata[];
     deletable?: boolean;
     diminishedText?: boolean;
+    maxChips?: number;
 }
