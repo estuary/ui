@@ -312,6 +312,7 @@ export const Workflows: Record<string, string> = {
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.example.table': `AcmeCo/mongo/prod/AcmeCo-prod/orders`,
+    'schemaMode.options.prefixNonDefaultSchema.ignored': `public`,
 
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema}). The schema itself is left unspecified.`,

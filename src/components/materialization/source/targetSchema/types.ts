@@ -2,11 +2,12 @@ import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEdito
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 export interface AutoCompleteOptionForTargetSchemaExample {
-    schema: string | null;
+    schema: string;
     table: string;
 }
 
 export interface AutoCompleteOptionForTargetSchema
     extends BaseAutoCompleteOption {
+    example: AutoCompleteOptionForTargetSchemaExample;
     val: TargetSchemas;
 }

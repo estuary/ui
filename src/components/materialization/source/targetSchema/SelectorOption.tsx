@@ -3,12 +3,15 @@ import type { SelectorOptionProps } from 'src/components/shared/specPropEditor/t
 
 import { Stack, Typography } from '@mui/material';
 
+import { ArrowRight } from 'iconoir-react';
+import { useIntl } from 'react-intl';
+
 function SelectorOption({
     option,
 }: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {
-    const { description, label } = option;
+    const { description, label, example } = option;
 
-    console.log('option', option);
+    const intl = useIntl();
 
     return (
         <Stack component="span" spacing={1}>
@@ -25,7 +28,24 @@ function SelectorOption({
                 {description}
             </Typography>
 
-            {/*TODO (source capture examples) - component would go here*/}
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                    pl: 1.5,
+                }}
+            >
+                <code>
+                    {intl.formatMessage({ id: 'schemaMode.example.table' })}
+                </code>
+                <Typography>
+                    <ArrowRight />
+                </Typography>
+                <strong>Table:</strong>
+                <code>{example.table}</code>
+                <strong>Schema:</strong>
+                <code>{example.schema}</code>
+            </Stack>
         </Stack>
     );
 }
