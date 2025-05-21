@@ -19,7 +19,7 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
@@ -95,6 +95,10 @@ function useInitializeCollectionDraft() {
                 const targetRow = newDraftSpecResponse.data[0];
 
                 logRocketEvent(CustomEvents.PROJECTION, {
+                    collection: collectionName,
+                    operation: 'initialize',
+                });
+                logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
                     belongsToDraft: true,
                     collection: collectionName,
                     draftId: evaluatedDraftId,
@@ -114,6 +118,10 @@ function useInitializeCollectionDraft() {
                 setCollectionInitializationDone(true);
             } else {
                 logRocketEvent(CustomEvents.PROJECTION, {
+                    collection: collectionName,
+                    operation: 'initialize',
+                });
+                logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
                     belongsToDraft: false,
                     collection: collectionName,
                     draftId: evaluatedDraftId,
@@ -164,12 +172,21 @@ function useInitializeCollectionDraft() {
                     const targetRow = draftSpecResponse.data[0];
 
                     logRocketEvent(CustomEvents.PROJECTION, {
-                        belongsToDraft: true,
                         collection: collectionName,
-                        draftId: existingDraftId,
                         operation: 'initialize',
-                        projectionsExist: Boolean(targetRow.spec?.projections),
                     });
+                    logRocketConsole(
+                        `${CustomEvents.PROJECTION}:init:success`,
+                        {
+                            belongsToDraft: true,
+                            collection: collectionName,
+                            draftId: existingDraftId,
+                            operation: 'initialize',
+                            projectionsExist: Boolean(
+                                targetRow.spec?.projections
+                            ),
+                        }
+                    );
 
                     const expectedPubId = targetRow.expect_pub_id;
 

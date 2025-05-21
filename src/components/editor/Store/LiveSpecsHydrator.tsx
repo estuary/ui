@@ -10,7 +10,7 @@ import Error from 'src/components/shared/Error';
 import { useEntityType } from 'src/context/EntityContext';
 import { useLiveSpecs_details } from 'src/hooks/useLiveSpecs';
 import EntityNotFound from 'src/pages/error/EntityNotFound';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
@@ -45,6 +45,10 @@ function LiveSpecsHydrator({
 
             if (entityType === 'collection' && liveSpecs.length === 1) {
                 logRocketEvent(CustomEvents.PROJECTION, {
+                    collection: targetRow.catalog_name,
+                    operation: 'initialize',
+                });
+                logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
                     collection: targetRow.catalog_name,
                     liveSpecId: targetRow.id,
                     operation: 'initialize',

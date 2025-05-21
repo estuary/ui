@@ -20,7 +20,7 @@ import FieldEditor from 'src/components/projections/Edit/FieldEditor';
 import { TITLE_ID } from 'src/components/projections/Edit/shared';
 import Error from 'src/components/shared/Error';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -136,6 +136,14 @@ function EditProjectionDialog({
                                         metadata,
                                         operation: 'set',
                                     });
+                                    logRocketConsole(
+                                        `${CustomEvents.PROJECTION}:add:success`,
+                                        {
+                                            collection: currentCollection,
+                                            metadata,
+                                            operation: 'set',
+                                        }
+                                    );
 
                                     setSaving(false);
                                     setFieldInput('');
@@ -144,10 +152,18 @@ function EditProjectionDialog({
                                 (error) => {
                                     logRocketEvent(CustomEvents.PROJECTION, {
                                         collection: currentCollection,
-                                        error,
-                                        metadata,
+                                        error: true,
                                         operation: 'set',
                                     });
+                                    logRocketConsole(
+                                        `${CustomEvents.PROJECTION}:add:failed`,
+                                        {
+                                            collection: currentCollection,
+                                            error,
+                                            metadata,
+                                            operation: 'set',
+                                        }
+                                    );
 
                                     setSaving(false);
                                     setServerError(error);

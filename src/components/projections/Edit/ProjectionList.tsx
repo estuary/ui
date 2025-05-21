@@ -3,7 +3,7 @@ import type { ProjectionListProps } from 'src/components/projections/Edit/types'
 import { Box, Stack } from '@mui/material';
 
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
@@ -59,6 +59,13 @@ export const ProjectionList = ({
                                                       CustomEvents.PROJECTION,
                                                       {
                                                           collection,
+                                                          operation: 'remove',
+                                                      }
+                                                  );
+                                                  logRocketConsole(
+                                                      `${CustomEvents.PROJECTION}:remove:success`,
+                                                      {
+                                                          collection,
                                                           metadata,
                                                           operation: 'remove',
                                                       }
@@ -67,6 +74,14 @@ export const ProjectionList = ({
                                               (error) => {
                                                   logRocketEvent(
                                                       CustomEvents.PROJECTION,
+                                                      {
+                                                          collection,
+                                                          error: true,
+                                                          operation: 'remove',
+                                                      }
+                                                  );
+                                                  logRocketConsole(
+                                                      `${CustomEvents.PROJECTION}:remove:failed`,
                                                       {
                                                           collection,
                                                           error,
