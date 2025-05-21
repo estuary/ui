@@ -32,24 +32,12 @@ function SourceConfiguration() {
             <Stack spacing={2}>
                 {sourceCaptureDeltaUpdatesSupported ? (
                     <Stack>
-                        <Typography style={{ fontWeight: 500 }}>
-                            {intl.formatMessage({
-                                id: 'deltaUpdates.header',
-                            })}
-                        </Typography>
-
                         <DeltaUpdatesUpdateWrapper />
                     </Stack>
                 ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
                     <Stack>
-                        <Typography style={{ fontWeight: 500 }}>
-                            {intl.formatMessage({
-                                id: 'schemaMode.header',
-                            })}
-                        </Typography>
-
                         <Typography>
                             {intl.formatMessage({
                                 id: 'schemaMode.message',

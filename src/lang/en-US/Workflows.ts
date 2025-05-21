@@ -299,35 +299,40 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
-    'deltaUpdates.header': `Delta Updates`,
+    // 'deltaUpdates.header': `Delta Updates`,
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    'schemaMode.header': `Target Naming`,
-    'schemaMode.message': `Default naming convention for target resources per collection (ex. tables).`,
-    'schemaMode.input.label': `Naming convention`,
+    // 'schemaMode.header': `Target Naming`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas.`,
+    'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
-    'schemaMode.options.prefixNonDefaultSchema.description': `Table name mirrors schema_name_table_name from source ignoring public or equivalent schemas.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    'schemaMode.example.table': `AcmeCo/mongo/prod/AcmeCo-prod/orders`,
+
+    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema}). The schema itself is left unspecified.`,
+    'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
-    'schemaMode.options.prefixSchema.description': `Table name mirrors schema_name_table_name from source.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
+    'schemaMode.options.prefixSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixSchema.example.schema': `default`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
-    'schemaMode.options.withSchema.description': `Table name and schema names mirrored from source.  Use the 2nd-to-last component of the collection name as the schema (or equivalent) of the materialization binding.`,
+    'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
+    'schemaMode.options.withSchema.example.table': `orders`,
+    'schemaMode.options.withSchema.example.schema': `AcmeCo-prod`,
 
-    'schemaMode.options.noSchema.label': `Table Name`,
-    'schemaMode.options.noSchema.description': `Default just the table names from the source, leaving the materialization binding's schema field empty.  Fall back to the default schema of the materialization.`,
-
-    // TODO (source capture examples) - here is the basic examples - no strong opinions on how to display
-    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
-    // 'schemaMode.options.prefixSchema.example': `collection: acmeCo/mySchema/myTable -> table name: mySchema_myTable, schema: blank`,
-    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
-    // 'schemaMode.options.noSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: blank`,
+    'schemaMode.options.noSchema.label': `Use Table Name Only`,
+    'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
+    'schemaMode.options.noSchema.example.table': `orders`,
+    'schemaMode.options.noSchema.example.schema': `default`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

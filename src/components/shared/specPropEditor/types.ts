@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 type FormScope = 'binding' | 'spec';
 
 export interface BaseFormProps {
@@ -7,7 +9,7 @@ export interface BaseFormProps {
 }
 
 export interface BaseAutoCompleteOption<T = any> {
-    description: string;
+    description: string | ReactNode;
     label: string;
     val: T;
 }

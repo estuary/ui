@@ -8,6 +8,8 @@ function SelectorOption({
 }: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {
     const { description, label } = option;
 
+    console.log('option', option);
+
     return (
         <Stack component="span" spacing={1}>
             <Typography component="span" style={{ fontWeight: 500 }}>
