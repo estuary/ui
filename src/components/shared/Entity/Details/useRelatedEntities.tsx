@@ -10,11 +10,12 @@ function useRelatedEntities() {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const [relatedCaptures, relatedMaterializations, hydrationError] =
+    const [relatedCaptures, relatedMaterializations, hydrationError, hydrated] =
         useEntityRelationshipStore((state) => [
             state.captures,
             state.materializations,
             state.hydrationError,
+            state.hydrated,
         ]);
 
     return useMemo(() => {
@@ -28,7 +29,7 @@ function useRelatedEntities() {
                 val: (
                     <RelatedEntities
                         entityType="capture"
-                        entities={relatedCaptures}
+                        entities={hydrated ? relatedCaptures : null}
                         error={Boolean(hydrationError)}
                     />
                 ),
@@ -41,7 +42,7 @@ function useRelatedEntities() {
                 val: (
                     <RelatedEntities
                         entityType="materialization"
-                        entities={relatedMaterializations}
+                        entities={hydrated ? relatedMaterializations : null}
                         error={Boolean(hydrationError)}
                     />
                 ),
@@ -51,6 +52,7 @@ function useRelatedEntities() {
         return response;
     }, [
         entityType,
+        hydrated,
         hydrationError,
         intl,
         relatedCaptures,
