@@ -14,10 +14,15 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
 
         return useSourceCaptureStore(
             useShallow((state) => {
+                const deltaUpdatesSupportedAndExists =
+                    sourceCaptureDeltaUpdatesSupported && state.deltaUpdates;
+
+                const targetSchemaSupportedAndExists =
+                    sourceCaptureTargetSchemaSupported && state.targetSchema;
                 if (
                     state.sourceCapture ||
-                    state.deltaUpdates ||
-                    state.targetSchema
+                    deltaUpdatesSupportedAndExists ||
+                    targetSchemaSupportedAndExists
                 ) {
                     const response: SourceCaptureDef = {};
 
@@ -25,17 +30,11 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
                         response.capture = state.sourceCapture;
                     }
 
-                    if (
-                        sourceCaptureDeltaUpdatesSupported &&
-                        state.deltaUpdates
-                    ) {
+                    if (deltaUpdatesSupportedAndExists) {
                         response.deltaUpdates = state.deltaUpdates;
                     }
 
-                    if (
-                        sourceCaptureTargetSchemaSupported &&
-                        state.targetSchema
-                    ) {
+                    if (targetSchemaSupportedAndExists) {
                         response.targetSchema = state.targetSchema;
                     }
 
