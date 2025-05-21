@@ -82,6 +82,21 @@ export interface EntityStatusResponse {
     disabled?: boolean;
 }
 
+export interface EntityRelationshipResponse {
+    catalog_name: string;
+    live_spec_id: string;
+    spec_type: string;
+    summary: {
+        status: string;
+        message: string;
+    };
+    last_pub_id: string;
+    last_build_id: string;
+    controller_next_run: string | null;
+    live_spec_updated_at: string;
+    controller_updated_at: string;
+}
+
 export interface Error {
     detail: string;
     catalog_name?: string;
