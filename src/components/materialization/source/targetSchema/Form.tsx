@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
 import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
 import { useEntityWorkflow } from 'src/context/Workflow';
-import useTargetNamingOptions from 'src/hooks/sourceCapture/useTargetNamingOptions';
+import useTargetSchemaOptions from 'src/hooks/sourceCapture/useTargetSchemaOptions';
 import { compareOptionsIncludingAliases } from 'src/stores/SourceCapture/shared';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
@@ -21,7 +21,7 @@ export default function TargetSchemaForm({
         (state) => [state.setTargetSchemaHasError, state.setTargetSchema]
     );
 
-    const options = useTargetNamingOptions();
+    const options = useTargetSchemaOptions();
 
     useEffect(() => {
         if (workflow === 'materialization_create') {

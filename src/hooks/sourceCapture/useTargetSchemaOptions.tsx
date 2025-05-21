@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { filteredTargetNamingOptions } from 'src/stores/SourceCapture/shared';
 
-function useTargetNamingOptions(): AutoCompleteOptionForTargetSchema[] {
+function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
     return useMemo(
@@ -53,4 +53,4 @@ function useTargetNamingOptions(): AutoCompleteOptionForTargetSchema[] {
     );
 }
 
-export default useTargetNamingOptions;
+export default useTargetSchemaOptions;
