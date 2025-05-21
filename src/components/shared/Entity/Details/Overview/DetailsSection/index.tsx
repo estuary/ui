@@ -10,7 +10,8 @@ import ConnectorName from 'src/components/connectors/ConnectorName';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
-import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
+import useRelatedEntities from 'src/components/shared/Entity/Details/useRelatedEntities';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
@@ -30,6 +31,8 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const latestConnectorStatus =
         useEntityStatusStore_singleResponse(entityName)?.connector_status
             ?.message;
+
+    const relatedEntities = useRelatedEntities();
 
     const data = useMemo(() => {
         const response = [];
@@ -148,8 +151,9 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.writes_to',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.writes_to}
+                    <RelatedEntities
+                        entityType="collection"
+                        entities={latestLiveSpec.writes_to}
                     />
                 ),
             });
@@ -161,8 +165,9 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.reads_from',
                 }),
                 val: (
-                    <RelatedCollections
-                        collections={latestLiveSpec.reads_from}
+                    <RelatedEntities
+                        entityType="collection"
+                        entities={latestLiveSpec.reads_from}
                     />
                 ),
             });
@@ -182,7 +187,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             {!hasLength(data) ? (
                 <CircularProgress />
             ) : (
-                <KeyValueList data={data} />
+                <KeyValueList data={[...data, ...relatedEntities]} />
             )}
         </CardWrapper>
     );
