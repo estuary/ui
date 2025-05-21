@@ -35,6 +35,7 @@ function SelectorOption({
                     pl: 1.5,
                     flexWrap: 'wrap',
                     alignItems: 'center',
+                    fontSize: 12,
                 }}
             >
                 <code>
@@ -44,7 +45,7 @@ function SelectorOption({
                     <ArrowRight
                         style={{
                             color: theme.palette.primary.main,
-                            fontSize: 10,
+                            fontSize: 9,
                         }}
                     />
                 </Typography>
@@ -56,12 +57,18 @@ function SelectorOption({
                         alignItems: 'center',
                     }}
                 >
-                    <Typography component="span" sx={{ fontWeight: 500 }}>
+                    <Typography
+                        component="span"
+                        sx={{ fontWeight: 500, fontSize: 12 }}
+                    >
                         {intl.formatMessage({ id: 'schemaMode.data.table' })}
                     </Typography>
                     <code>{example.table}</code>
                     <Typography component="span">|</Typography>
-                    <Typography component="span" sx={{ fontWeight: 500 }}>
+                    <Typography
+                        component="span"
+                        sx={{ fontWeight: 500, fontSize: 12 }}
+                    >
                         {intl.formatMessage({ id: 'schemaMode.data.schema' })}
                     </Typography>
                     <code>{example.schema}</code>
