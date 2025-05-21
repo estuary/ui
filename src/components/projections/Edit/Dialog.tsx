@@ -38,12 +38,13 @@ function EditProjectionDialog({
     );
 
     const [fieldInput, setFieldInput] = useState('');
+    const [fieldInputInvalid, setFieldInputInvalid] = useState(false);
 
     return (
         <Dialog open={open} maxWidth="md" aria-labelledby={TITLE_ID}>
             <DialogTitle>
                 {intl.formatMessage({
-                    id: 'fieldSelection.dialog.updateProjection.header',
+                    id: 'projection.dialog.add.header',
                 })}
             </DialogTitle>
 
@@ -51,7 +52,7 @@ function EditProjectionDialog({
                 <Typography sx={{ mb: 3 }}>
                     {intl.formatMessage(
                         {
-                            id: 'fieldSelection.dialog.updateProjection.message',
+                            id: 'projection.dialog.add.message',
                         },
                         {
                             collection: (
@@ -64,9 +65,10 @@ function EditProjectionDialog({
                 </Typography>
 
                 <FieldEditor
-                    labelMessageId="fieldSelection.dialog.updateProjection.label.fieldName"
                     input={fieldInput}
+                    inputInvalid={fieldInputInvalid}
                     setInput={setFieldInput}
+                    setInputInvalid={setFieldInputInvalid}
                     value={field}
                 />
             </DialogContent>
@@ -83,7 +85,9 @@ function EditProjectionDialog({
                 </Button>
 
                 <Button
-                    disabled={fieldInput.trim().length === 0}
+                    disabled={
+                        fieldInput.trim().length === 0 || fieldInputInvalid
+                    }
                     onClick={() => {
                         const formattedFieldInput = fieldInput.trim();
 
@@ -131,7 +135,7 @@ function EditProjectionDialog({
                     variant="outlined"
                 >
                     {intl.formatMessage({
-                        id: 'fieldSelection.dialog.updateProjection.cta.apply',
+                        id: 'cta.evolve',
                     })}
                 </Button>
             </DialogActions>

@@ -228,16 +228,8 @@ export const Workflows: Record<string, string> = {
 
     'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
-    'fieldSelection.dialog.updateProjection.header': `Alternate Name`,
-    'fieldSelection.dialog.updateProjection.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
-    'fieldSelection.dialog.updateProjection.cta.apply': `Apply`,
-    'fieldSelection.dialog.updateProjection.label.fieldName.current': `Current Name`,
-    'fieldSelection.dialog.updateProjection.label.fieldName.new': `New Name`,
-    'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
-    'fieldSelection.dialog.updateProjection.label.type': `Type:`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.update.failed': `Field selection update failed`,
-    'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.includeField': `Include`,
     'fieldSelection.table.cta.requireField': `Require`,
@@ -459,4 +451,11 @@ export const Workflows: Record<string, string> = {
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
+
+    // Projections
+    'projection.dialog.add.header': `Alternate Name`,
+    'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
+    'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
+    'projection.label.fieldName.current': `Current Name`,
+    'projection.label.fieldName.new': `New Name`,
 };

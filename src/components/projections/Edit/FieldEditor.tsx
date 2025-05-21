@@ -1,6 +1,7 @@
 import type { FieldEditorProps } from 'src/components/projections/Edit/types';
 
 import {
+    FormHelperText,
     FormLabel,
     Stack,
     TextField,
@@ -13,7 +14,14 @@ import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
-function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
+function FieldEditor({
+    disabled,
+    input,
+    inputInvalid,
+    setInput,
+    setInputInvalid,
+    value,
+}: FieldEditorProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -34,7 +42,7 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                     }}
                 >
                     {intl.formatMessage({
-                        id: 'fieldSelection.dialog.updateProjection.label.fieldName.current',
+                        id: 'projection.label.fieldName.current',
                     })}
                 </FormLabel>
 
@@ -57,24 +65,36 @@ function FieldEditor({ disabled, input, setInput, value }: FieldEditorProps) {
                 }}
             />
 
-            <TextField
-                autoFocus
-                disabled={disabled}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.dialog.updateProjection.label.fieldName.new',
-                })}
-                onChange={(event) => {
-                    setInput(event.target.value);
-                }}
-                size="small"
-                sx={{
-                    'flex': '1 1 0px',
-                    '& .MuiInputBase-root': {
-                        borderRadius: 3,
-                    },
-                }}
-                value={input}
-            />
+            <Stack style={{ flex: '1 1 0px' }}>
+                <TextField
+                    autoFocus
+                    disabled={disabled}
+                    error={inputInvalid}
+                    label={intl.formatMessage({
+                        id: 'projection.label.fieldName.new',
+                    })}
+                    onChange={(event) => {
+                        setInput(event.target.value);
+                        setInputInvalid(event.target.value.startsWith('/'));
+                    }}
+                    size="small"
+                    sx={{
+                        'flex': '1 1 0px',
+                        '& .MuiInputBase-root': {
+                            borderRadius: 3,
+                        },
+                    }}
+                    value={input}
+                />
+
+                {inputInvalid ? (
+                    <FormHelperText error={inputInvalid}>
+                        {intl.formatMessage({
+                            id: 'projection.error.input.invalidFieldName',
+                        })}
+                    </FormHelperText>
+                ) : null}
+            </Stack>
         </Stack>
     );
 }
