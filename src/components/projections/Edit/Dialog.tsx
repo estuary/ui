@@ -1,9 +1,11 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
 import type { EditProjectionDialogProps } from 'src/components/projections/Edit/types';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
 import { useState } from 'react';
 
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -16,6 +18,7 @@ import { useIntl } from 'react-intl';
 
 import FieldEditor from 'src/components/projections/Edit/FieldEditor';
 import { TITLE_ID } from 'src/components/projections/Edit/shared';
+import Error from 'src/components/shared/Error';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -40,6 +43,9 @@ function EditProjectionDialog({
     const [fieldInput, setFieldInput] = useState('');
     const [fieldInputInvalid, setFieldInputInvalid] = useState(false);
 
+    const [saving, setSaving] = useState(false);
+    const [serverError, setServerError] = useState<PostgrestError | null>(null);
+
     return (
         <Dialog open={open} maxWidth="md" aria-labelledby={TITLE_ID}>
             <DialogTitle>
@@ -49,6 +55,12 @@ function EditProjectionDialog({
             </DialogTitle>
 
             <DialogContent>
+                {serverError ? (
+                    <Box style={{ marginBottom: 16 }}>
+                        <Error condensed error={serverError} severity="error" />
+                    </Box>
+                ) : null}
+
                 <Typography sx={{ mb: 3 }}>
                     {intl.formatMessage(
                         {
@@ -65,6 +77,7 @@ function EditProjectionDialog({
                 </Typography>
 
                 <FieldEditor
+                    disabled={saving}
                     input={fieldInput}
                     inputInvalid={fieldInputInvalid}
                     setInput={setFieldInput}
@@ -77,6 +90,7 @@ function EditProjectionDialog({
                 <Button
                     onClick={() => {
                         setFieldInput('');
+                        setServerError(null);
                         setOpen(false);
                     }}
                     variant="text"
@@ -86,9 +100,14 @@ function EditProjectionDialog({
 
                 <Button
                     disabled={
-                        fieldInput.trim().length === 0 || fieldInputInvalid
+                        fieldInput.trim().length === 0 ||
+                        fieldInputInvalid ||
+                        saving
                     }
                     onClick={() => {
+                        setSaving(true);
+                        setServerError(null);
+
                         const formattedFieldInput = fieldInput.trim();
 
                         if (
@@ -117,6 +136,10 @@ function EditProjectionDialog({
                                         metadata,
                                         operation: 'set',
                                     });
+
+                                    setSaving(false);
+                                    setFieldInput('');
+                                    setOpen(false);
                                 },
                                 (error) => {
                                     logRocketEvent(CustomEvents.PROJECTION, {
@@ -125,12 +148,12 @@ function EditProjectionDialog({
                                         metadata,
                                         operation: 'set',
                                     });
+
+                                    setSaving(false);
+                                    setServerError(error);
                                 }
                             );
                         }
-
-                        setFieldInput('');
-                        setOpen(false);
                     }}
                     variant="outlined"
                 >
