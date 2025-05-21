@@ -300,33 +300,32 @@ export const Workflows: Record<string, string> = {
 
     // Delta Updates
     'deltaUpdates.header': `Delta Updates`,
-    'deltaUpdates.message': `When adding new bindings should the new bindings be marked as delta updates.`,
-    'deltaUpdates.input.label': `Include delta updates on bindings`,
-    'deltaUpdates.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
+    'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
     'schemaMode.header': `Target Naming`,
-    'schemaMode.message': `How to name target resources (database tables, for example) for materializing a given Collection.`,
-    'schemaMode.input.label': `Target resource naming`,
+    'schemaMode.message': `Default naming convention for target resources per collection (ex. tables).`,
+    'schemaMode.input.label': `Naming convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.options.noSchema.label': `No Schema`,
-    'schemaMode.options.noSchema.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
-    // 'schemaMode.options.noSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: blank`,
-
-    'schemaMode.options.withSchema.label': `From Source Name`,
-    'schemaMode.options.withSchema.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
-    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
+    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Table name mirrors schema_name_table_name from source ignoring public or equivalent schemas.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
-    'schemaMode.options.prefixSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
+    'schemaMode.options.prefixSchema.description': `Table name mirrors schema_name_table_name from source.  Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
     // 'schemaMode.options.prefixSchema.example': `collection: acmeCo/mySchema/myTable -> table name: mySchema_myTable, schema: blank`,
 
-    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non Default Schema`,
-    'schemaMode.options.prefixNonDefaultSchema.description': `Use the 2nd-to-last component of the collection name to prefix the destination resource name, leaving the schema unspecified.`,
-    // 'schemaMode.options.prefixNonDefaultSchema.example': `collection: acmeCo/public/myTable -> table name: myTable, schema: blank`,
+    'schemaMode.options.withSchema.label': `Mirror Schemas`,
+    'schemaMode.options.withSchema.description': `Table name and schema names mirrored from source.  Use the 2nd-to-last component of the collection name as the schema (or equivalent) of the materialization binding.`,
+    // 'schemaMode.options.withSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: mySchema`,
+
+    'schemaMode.options.noSchema.label': `Table Name`,
+    'schemaMode.options.noSchema.description': `Default just the table names from the source, leaving the materialization binding's schema field empty.  Fall back to the default schema of the materialization.`,
+    // 'schemaMode.options.noSchema.example': `collection: acmeCo/mySchema/myTable -> table name: myTable, schema: blank`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

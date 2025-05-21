@@ -38,12 +38,6 @@ function SourceConfiguration() {
                             })}
                         </Typography>
 
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'deltaUpdates.message',
-                            })}
-                        </Typography>
-
                         <DeltaUpdatesUpdateWrapper />
                     </Stack>
                 ) : null}
