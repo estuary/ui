@@ -90,7 +90,7 @@ export const addOrRemoveSourceCapture = (
 
 export const updateSourceCapture = (
     schema: Schema,
-    sourceCaptureSettings: Partial<SourceCaptureDef>
+    sourceCaptureSettings: SourceCaptureDef
 ): Schema => {
     const currentKey = getSourceCapturePropKey(schema);
     const currentVal = readSourceCaptureDefinitionFromSpec(schema) ?? {};

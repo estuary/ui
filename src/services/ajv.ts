@@ -133,9 +133,7 @@ export interface ResourceConfigPointers {
     ['x_delta_updates']: string | undefined;
 }
 
-export const prepareSourceCaptureForServer = (
-    arg: SourceCaptureDef | Partial<SourceCaptureDef>
-) => {
+export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
     const response = {
         ...arg,
     };
@@ -172,7 +170,7 @@ export const getResourceConfigPointers = (
 };
 
 export const generateMaterializationResourceSpec = (
-    sourceCapture: SourceCaptureDef | Partial<SourceCaptureDef>,
+    sourceCapture: SourceCaptureDef,
     resourceSpecPointers: ResourceConfigPointers,
     collectionName: string
 ) => {
