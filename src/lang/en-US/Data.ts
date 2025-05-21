@@ -15,6 +15,8 @@ export const Data: Record<string, string> = {
     'data.field': `Field`,
     'data.writes_to': `Writes To`,
     'data.reads_from': `Reads From`,
+    'data.parentCapture': `Source Capture`,
+    'data.consumers': `Materialized By`,
     'data.data': `Data`,
     'data.docs': `Docs`,
     'data.read': `{type} Read`,
