@@ -38,7 +38,14 @@ function RelatedEntities({
             <ChipList
                 disabled
                 stripPath={false}
-                values={[intl.formatMessage({ id: 'common.missing' })]}
+                values={[
+                    intl.formatMessage({
+                        id:
+                            entities === null
+                                ? 'common.loading'
+                                : 'common.missing',
+                    }),
+                ]}
                 maxChips={1}
             />
         );
