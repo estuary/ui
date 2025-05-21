@@ -1,7 +1,5 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
-import { useEffect } from 'react';
-
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';
@@ -27,26 +25,13 @@ export const useEntityRelationships = (
         catalogName?.startsWith(grant)
     );
 
-    const [
-        setActive,
-        setHydrated,
-        setHydrationError,
-        setCaptures,
-        setMaterializations,
-    ] = useEntityRelationshipStore((state) => [
-        state.setActive,
-        state.setHydrated,
-        state.setHydrationError,
-        state.setCaptures,
-        state.setMaterializations,
-    ]);
-
-    useEffect(() => {
-        setActive(true);
-        return () => {
-            setActive(false);
-        };
-    }, [setActive]);
+    const [setHydrated, setHydrationError, setCaptures, setMaterializations] =
+        useEntityRelationshipStore((state) => [
+            state.setHydrated,
+            state.setHydrationError,
+            state.setCaptures,
+            state.setMaterializations,
+        ]);
 
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix
