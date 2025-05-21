@@ -21,7 +21,6 @@ function SourceCaptureChipOption({
             style={{
                 alignItems: 'center',
                 minWidth: 'min-content',
-                // whiteSpace: 'break-spaces',
             }}
         >
             <Box component="span">
