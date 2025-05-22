@@ -18,8 +18,6 @@ function BindingsSelectorToggle({
 
     const { currentSetting, updateDraft } = useDisableUpdater(bindingUUID);
 
-    console.log('currentSetting', currentSetting);
-
     return (
         <Button
             aria-label={intl.formatMessage({
@@ -28,9 +26,7 @@ function BindingsSelectorToggle({
             disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
             variant="text"
-            onClick={() => {
-                updateDraft(bindingUUID);
-            }}
+            onClick={() => updateDraft(bindingUUID)}
         >
             <Switch
                 disabled={formActive}
