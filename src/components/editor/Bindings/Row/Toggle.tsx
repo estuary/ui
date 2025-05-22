@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
+import { useBinding_resourceConfigOfMetaBindingProperty } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BindingsSelectorToggle({
@@ -22,14 +23,20 @@ function BindingsSelectorToggle({
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     // TODO (disable) how do we want to handle an invalid setting?
-    const bindingDisabled = Boolean(
-        draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable
+    const draftedSetting =
+        draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
+
+    const storeSetting = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'disable'
     );
+
+    const currentSetting = draftedSetting ?? storeSetting;
 
     return (
         <Button
             aria-label={intl.formatMessage({
-                id: bindingDisabled ? 'common.disabled' : 'common.enabled',
+                id: currentSetting ? 'common.disabled' : 'common.enabled',
             })}
             disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
@@ -41,7 +48,7 @@ function BindingsSelectorToggle({
             <Switch
                 disabled={formActive}
                 size="small"
-                checked={!bindingDisabled}
+                checked={!currentSetting}
                 color="success"
                 id={`binding-toggle__${bindingUUID}`}
             />
