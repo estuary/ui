@@ -163,10 +163,6 @@ export const useBinding_enabledCollections_count = () =>
         )
     );
 
-export const useBinding_toggleDisable = () => {
-    return useBindingStore((state) => state.toggleDisable);
-};
-
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(
         useShallow((state) =>

@@ -22,6 +22,7 @@ import CollectionSelectorHeaderName from 'src/components/collection/Selector/Lis
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
+    COLLECTION_SELECTOR_BINDING_INDEX,
     COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_REMOVE,
@@ -110,6 +111,8 @@ function CollectionSelectorList({
                         [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
                             config.meta.disable
                         ),
+                        [COLLECTION_SELECTOR_BINDING_INDEX]:
+                            config.meta.bindingIndex,
                         [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
                         [COLLECTION_SELECTOR_NAME_COL]: collection,
                         [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
@@ -249,31 +252,34 @@ function CollectionSelectorList({
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         defaultValue={someBindingsDisabled}
-                        onClick={(event, value, scope) => {
-                            const count =
-                                bindingSelectorCells.toggle?.handler?.(
+                        onClick={async (event, value, scope) => {
+                            return bindingSelectorCells.toggle
+                                ?.handler?.(
                                     filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
                                         ];
                                     }),
                                     value
-                                );
-
-                            showPopper(
-                                event.currentTarget,
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: `${count}`,
-                                        itemType: collectionsLabel,
-                                    }
                                 )
-                            );
+                                .then((response) => {
+                                    showPopper(
+                                        event.currentTarget,
+                                        intl.formatMessage(
+                                            {
+                                                id: value
+                                                    ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                    : 'workflows.collectionSelector.notifications.toggle.enable',
+                                            },
+                                            {
+                                                count: `${response.length}`,
+                                                itemType: collectionsLabel,
+                                            }
+                                        )
+                                    );
+
+                                    return Promise.resolve(response);
+                                });
                         }}
                     />
                 ),

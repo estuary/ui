@@ -13,7 +13,6 @@ import produce from 'immer';
 import {
     difference,
     has,
-    isBoolean,
     isEmpty,
     isEqual,
     omit,
@@ -61,6 +60,7 @@ import {
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from 'src/stores/Binding/slices/TimeTravel';
+import { getStoreWithToggleDisableSettings } from 'src/stores/Binding/slices/ToggleDisable';
 import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
 import { BindingStoreNames } from 'src/stores/names';
 import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
@@ -81,6 +81,7 @@ const getInitialState = (
     ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
+    ...getStoreWithToggleDisableSettings(set),
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -1120,74 +1121,6 @@ const getInitialState = (
             false,
             'Evolved Collections List Set'
         );
-    },
-
-    toggleDisable: (targetUUIDs, value) => {
-        let updatedCount = 0;
-
-        set(
-            produce((state: BindingState) => {
-                // Updating a single item
-                // A specific list (toggle page)
-                // Nothing specified (toggle all)
-                const evaluatedUUIDs: string[] =
-                    typeof targetUUIDs === 'string'
-                        ? [targetUUIDs]
-                        : Array.isArray(targetUUIDs)
-                          ? targetUUIDs
-                          : Object.keys(state.resourceConfigs);
-
-                evaluatedUUIDs.forEach((uuid) => {
-                    const { collectionName, disable, previouslyDisabled } =
-                        state.resourceConfigs[uuid].meta;
-
-                    const currValue = isBoolean(disable) ? disable : false;
-                    const evaluatedFlag = value ?? !currValue;
-
-                    if (value !== currValue) {
-                        updatedCount = updatedCount + 1;
-                    }
-
-                    if (evaluatedFlag) {
-                        state.resourceConfigs[uuid].meta.disable =
-                            evaluatedFlag;
-
-                        const existingIndex =
-                            state.collectionsRequiringRediscovery.findIndex(
-                                (collectionRequiringRediscovery) =>
-                                    collectionRequiringRediscovery ===
-                                    collectionName
-                            );
-
-                        if (existingIndex > -1) {
-                            state.collectionsRequiringRediscovery.splice(
-                                existingIndex,
-                                1
-                            );
-
-                            state.rediscoveryRequired = hasLength(
-                                state.collectionsRequiringRediscovery
-                            );
-                        }
-                    } else {
-                        delete state.resourceConfigs[uuid].meta.disable;
-
-                        if (previouslyDisabled) {
-                            state.collectionsRequiringRediscovery.push(
-                                collectionName
-                            );
-
-                            state.rediscoveryRequired = true;
-                        }
-                    }
-                });
-            }),
-            false,
-            'Binding Disable Flag Toggled'
-        );
-
-        // Return how many we updated
-        return updatedCount;
     },
 
     updateResourceConfig: (
