@@ -102,7 +102,7 @@ export const useBinding_resourceConfigOfBindingProperty = (
 };
 
 export const useBinding_resourceConfigOfMetaBindingProperty = (
-    bindingUUID: any,
+    bindingUUID: string | undefined,
     property: keyof ResourceConfig['meta']
 ) => {
     return useBindingStore(

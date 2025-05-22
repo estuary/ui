@@ -4,10 +4,8 @@ import { Button, Switch } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
-import { useBinding_resourceConfigOfMetaBindingProperty } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BindingsSelectorToggle({
@@ -18,20 +16,9 @@ function BindingsSelectorToggle({
 
     const formActive = useFormStateStore_isActive();
 
-    const { updateDraft } = useDisableUpdater();
+    const { currentSetting, updateDraft } = useDisableUpdater(bindingUUID);
 
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-
-    // TODO (disable) how do we want to handle an invalid setting?
-    const draftedSetting =
-        draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
-
-    const storeSetting = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
-        'disable'
-    );
-
-    const currentSetting = draftedSetting ?? storeSetting;
+    console.log('currentSetting', currentSetting);
 
     return (
         <Button

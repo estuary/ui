@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import useDraftUpdater from 'src/hooks/useDraftUpdater';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -13,12 +14,24 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-function useDisableUpdater() {
+function useDisableUpdater(bindingUUID?: string) {
     const intl = useIntl();
 
     const entityType = useEntityType();
 
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+
     const { enqueueSnackbar } = useSnackbar();
+
+    const [storeSetting, bindingIndex] = useBindingStore((state) => {
+        if (!bindingUUID) {
+            return [null, null];
+        }
+
+        const config = state.resourceConfigs[bindingUUID].meta;
+
+        return [config.disable, config.bindingIndex];
+    });
 
     const [generateToggleDisableUpdates, toggleDisable] = useBindingStore(
         (state) => [state.generateToggleDisableUpdates, state.toggleDisable]
@@ -94,7 +107,12 @@ function useDisableUpdater() {
         ]
     );
 
+    const currentSetting: boolean | undefined = bindingIndex
+        ? draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable
+        : storeSetting;
+
     return {
+        currentSetting,
         updateDraft,
     };
 }
