@@ -8,10 +8,7 @@ import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
 import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-function BindingsSelectorToggle({
-    bindingIndex,
-    bindingUUID,
-}: BindingsSelectorToggleProps) {
+function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
     const intl = useIntl();
 
     const formActive = useFormStateStore_isActive();

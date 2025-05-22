@@ -22,7 +22,6 @@ import CollectionSelectorHeaderName from 'src/components/collection/Selector/Lis
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
-    COLLECTION_SELECTOR_BINDING_INDEX,
     COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_REMOVE,
@@ -111,8 +110,6 @@ function CollectionSelectorList({
                         [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
                             config.meta.disable
                         ),
-                        [COLLECTION_SELECTOR_BINDING_INDEX]:
-                            config.meta.bindingIndex,
                         [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
                         [COLLECTION_SELECTOR_NAME_COL]: collection,
                         [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:

@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
-    COLLECTION_SELECTOR_BINDING_INDEX,
     COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
@@ -161,9 +160,6 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                         <BindingsSelectorToggle
                             bindingUUID={
                                 params.row[COLLECTION_SELECTOR_UUID_COL]
-                            }
-                            bindingIndex={
-                                params.row[COLLECTION_SELECTOR_BINDING_INDEX]
                             }
                         />
                     );
