@@ -276,21 +276,20 @@ const getInitialState = (
                 return Promise.reject(specHydrationResponse.error.message);
             }
 
-            const boundCollections = Object.keys(get().bindings);
+            if (entityType === 'materialization') {
+                const boundCollections = Object.keys(get().bindings);
 
-            if (
-                entityType === 'materialization' &&
-                hasLength(boundCollections)
-            ) {
-                const trialCollections = await evaluateTrialCollections(
-                    boundCollections,
-                    getTrialOnlyPrefixes
-                );
+                if (hasLength(boundCollections)) {
+                    const trialCollections = await evaluateTrialCollections(
+                        boundCollections,
+                        getTrialOnlyPrefixes
+                    );
 
-                get().setCollectionMetadata(
-                    trialCollections,
-                    specHydrationResponse.bindingChanges.addedCollections
-                );
+                    get().setCollectionMetadata(
+                        trialCollections,
+                        specHydrationResponse.bindingChanges.addedCollections
+                    );
+                }
             }
         } else {
             get().setCaptureInterval(
