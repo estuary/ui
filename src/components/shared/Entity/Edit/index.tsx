@@ -34,7 +34,10 @@ import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import {
+    useBinding_rediscoveryRequired,
+    useBinding_serverUpdateRequired,
+} from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -82,6 +85,7 @@ function EntityEdit({
     // Binding Store
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
+    const rediscoveryRequired = useBinding_rediscoveryRequired();
 
     // Details Form Store
     const detailsHydrationError = useDetailsFormStore(
@@ -124,7 +128,8 @@ function EntityEdit({
     useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
-            resourceConfigServerUpdateRequired;
+            resourceConfigServerUpdateRequired ||
+            rediscoveryRequired;
 
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
@@ -139,6 +144,7 @@ function EntityEdit({
         endpointConfigServerUpdateRequired,
         persistedDraftId,
         resourceConfigServerUpdateRequired,
+        rediscoveryRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
