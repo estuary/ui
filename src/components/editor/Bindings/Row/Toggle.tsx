@@ -15,9 +15,6 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
 
     const { currentSetting, updateDraft } = useDisableUpdater(bindingUUID);
 
-    console.log('bindingUUID', bindingUUID);
-    console.log('currentSetting', currentSetting);
-
     return (
         <Button
             aria-label={intl.formatMessage({
