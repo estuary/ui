@@ -42,7 +42,10 @@ export default function ExpressCaptureCreate() {
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
-    const { mutate: mutateDraftSpecs } = useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs } = useDraftSpecs(
+        persistedDraftId,
+        entityType
+    );
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();

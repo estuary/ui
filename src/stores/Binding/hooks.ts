@@ -102,7 +102,7 @@ export const useBinding_resourceConfigOfBindingProperty = (
 };
 
 export const useBinding_resourceConfigOfMetaBindingProperty = (
-    bindingUUID: any,
+    bindingUUID: string | undefined,
     property: keyof ResourceConfig['meta']
 ) => {
     return useBindingStore(
@@ -162,10 +162,6 @@ export const useBinding_enabledCollections_count = () =>
             (state) => getEnabledCollectionNames(state.resourceConfigs).length
         )
     );
-
-export const useBinding_toggleDisable = () => {
-    return useBindingStore((state) => state.toggleDisable);
-};
 
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(

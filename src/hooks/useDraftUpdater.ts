@@ -2,43 +2,64 @@ import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { cloneDeep } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_draftSpecs,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
 
-type UpdaterFunction = (spec: Schema) => Schema;
-
-// TODO (draft updates)
-// This is not used today but we need a reusable pattern for this. The `sourceCapture` and `autoDiscovery` hooks are basically
-//      the same thing. We should probably expand this out so an entire hook and store (...maybe component as well) can be made reusable.
-function useDraftUpdater(updater: UpdaterFunction) {
-    // Draft Editor Store
+// TODO (draft updater) - need to get more settings using this. AutoDiscovery is a good one to switch over
+function useDraftUpdater() {
     const draftId = useEditorStore_persistedDraftId();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    return useCallback(async () => {
-        if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
-            return Promise.reject();
-        } else {
-            const spec: Schema = updater(draftSpecs[0].spec);
+    return useCallback(
+        async (
+            updateSpec: (oldSpec: Schema) => Schema,
+            updateMatchData: any
+        ) => {
+            const draftSpec =
+                draftSpecs.length > 0 && draftSpecs[0].spec
+                    ? draftSpecs[0]
+                    : null;
 
-            const updateResponse = await modifyDraftSpec(spec, {
-                draft_id: draftId,
-                catalog_name: draftSpecs[0].catalog_name,
-                spec_type: draftSpecs[0].spec_type,
-            });
+            if (!mutateDraftSpecs || !draftId || !draftSpec) {
+                logRocketEvent('PropertyUpdater', {
+                    draftIdMissing: !draftId,
+                    draftSpecMissing: !draftSpec,
+                    mutateMissing: !mutateDraftSpecs,
+                });
+
+                // If we do not have these yet do not fail - just keep going and hopefully the calling code
+                //  will save the value into a store
+                return Promise.resolve();
+            }
+
+            // TODO (zustand) cloning draftSpec for _some_ reason
+            // This is here because `useSpecificationIncompatibleSchemaSetting`
+            //  was being a pain and not  updating.
+            const updateResponse = await modifyDraftSpec(
+                updateSpec(cloneDeep(draftSpec.spec)),
+                {
+                    draft_id: draftId,
+                    catalog_name: draftSpec.catalog_name,
+                    ...updateMatchData,
+                }
+            );
 
             if (updateResponse.error) {
-                return Promise.reject();
+                return Promise.reject(updateResponse.error);
             }
 
             return mutateDraftSpecs();
-        }
-    }, [draftId, draftSpecs, mutateDraftSpecs, updater]);
+        },
+        [draftId, draftSpecs, mutateDraftSpecs]
+    );
 }
 
 export default useDraftUpdater;

@@ -7,6 +7,7 @@ import type { ResourceConfigPointers } from 'src/services/ajv';
 import type { CallSupabaseResponse } from 'src/services/supabase';
 import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
+import type { StoreWithToggleDisable } from 'src/stores/Binding/slices/ToggleDisable';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import type {
     Entity,
@@ -57,10 +58,17 @@ export interface BindingChanges {
     addedCollections: string[];
 }
 
+export type BindingDisableUpdate = {
+    uuid: string;
+    bindingIndex: number;
+    val: boolean;
+};
+
 export interface BindingState
     extends StoreWithHydration,
         StoreWithFieldSelection,
-        StoreWithTimeTravel {
+        StoreWithTimeTravel,
+        StoreWithToggleDisable {
     bindings: Bindings;
 
     // The combination of resource config store actions, `prefillResourceConfig` and `prefillBackfilledCollections`,
@@ -85,11 +93,6 @@ export interface BindingState
         workflow: EntityWorkflow | null,
         taskName: string
     ) => void;
-
-    toggleDisable: (
-        targetUUIDs: string | string[] | null,
-        value?: boolean
-    ) => Number;
 
     bindingErrorsExist: boolean;
 

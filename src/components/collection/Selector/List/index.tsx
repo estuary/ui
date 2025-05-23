@@ -249,31 +249,34 @@ function CollectionSelectorList({
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         defaultValue={someBindingsDisabled}
-                        onClick={(event, value, scope) => {
-                            const count =
-                                bindingSelectorCells.toggle?.handler?.(
+                        onClick={async (event, value, scope) => {
+                            return bindingSelectorCells.toggle
+                                ?.handler?.(
                                     filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
                                         ];
                                     }),
                                     value
-                                );
-
-                            showPopper(
-                                event.currentTarget,
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: `${count}`,
-                                        itemType: collectionsLabel,
-                                    }
                                 )
-                            );
+                                .then((response) => {
+                                    showPopper(
+                                        event.currentTarget,
+                                        intl.formatMessage(
+                                            {
+                                                id: value
+                                                    ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                    : 'workflows.collectionSelector.notifications.toggle.enable',
+                                            },
+                                            {
+                                                count: `${response.length}`,
+                                                itemType: collectionsLabel,
+                                            }
+                                        )
+                                    );
+
+                                    return Promise.resolve(response);
+                                });
                         }}
                     />
                 ),

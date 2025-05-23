@@ -52,6 +52,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
+    'workflows.collectionSelector.notifications.toggle.disable.error': `Changes Reverted. Unable to update server. Please try again.`,
 
     'workflows.collectionSelector.footer.count': `total: {totalCount}`,
     'workflows.collectionSelector.footer.count.empty': ` `,

@@ -72,7 +72,7 @@ export interface CollectionSelectorProps {
 }
 
 export interface CollectionSelectorCell {
-    handler?: (rows: any, newVal?: any) => void;
+    handler?: (rows: any, newVal?: any) => Promise<any>;
     cellRenderer: CollectionSelectorCellRenderer;
 }
 

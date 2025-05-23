@@ -37,7 +37,10 @@ const DRAFT_SPEC_COLS = [
 ].join(',');
 const defaultResponse: DraftSpecQuery[] = [];
 
-function useDraftSpecs(draftId: string | null): DraftSpecSwrMetadata {
+function useDraftSpecs(
+    draftId: string | null,
+    entity: Entity
+): DraftSpecSwrMetadata {
     const { data, error, mutate, isValidating } = useQuery(
         !draftId
             ? null
@@ -45,6 +48,7 @@ function useDraftSpecs(draftId: string | null): DraftSpecSwrMetadata {
                   .from(TABLES.DRAFT_SPECS)
                   .select(DRAFT_SPEC_COLS)
                   .eq('draft_id', draftId)
+                  .eq('spec_type', entity)
                   .returns<DraftSpecQuery[]>()
     );
 
