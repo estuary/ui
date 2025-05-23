@@ -1,10 +1,11 @@
 import type { ChipProps } from '@mui/material';
+import type { CSSProperties } from 'react';
 
 import { Chip, styled } from '@mui/material';
 
 import {
-    defaultOutline,
-    defaultOutline_hovered,
+    defaultOutlineColor,
+    defaultOutlineColor_hovered,
     diminishedTextColor,
 } from 'src/context/Theme';
 
@@ -24,10 +25,14 @@ export const OutlinedChip = styled(Chip, {
             ? theme.palette.background.default
             : theme.palette[colorKey].alpha_12;
 
+    const borderStyle: CSSProperties['borderStyle'] = diminishedText
+        ? 'dashed'
+        : 'solid';
+
     const border =
         colorKey === 'default'
-            ? defaultOutline[theme.palette.mode]
-            : `1px solid ${theme.palette[colorKey].alpha_50}`;
+            ? `1px ${borderStyle} ${defaultOutlineColor[theme.palette.mode]}`
+            : `1px ${borderStyle} ${theme.palette[colorKey].alpha_50}`;
 
     return {
         'border': border,
@@ -38,11 +43,11 @@ export const OutlinedChip = styled(Chip, {
             background,
             border:
                 colorKey === 'default'
-                    ? defaultOutline_hovered[theme.palette.mode]
+                    ? `1px ${borderStyle} ${defaultOutlineColor_hovered[theme.palette.mode]}`
                     : theme.palette.mode === 'light' &&
                         ['success', 'info'].includes(colorKey)
-                      ? `1px solid ${theme.palette[colorKey].dark}`
-                      : `1px solid ${theme.palette[colorKey].main}`,
+                      ? `1px ${borderStyle} ${theme.palette[colorKey].dark}`
+                      : `1px ${borderStyle} ${theme.palette[colorKey].main}`,
         },
         '&:hover::after': { background },
         '& .MuiChip-deleteIcon': {
