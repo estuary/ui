@@ -56,6 +56,7 @@ export interface LiveSpecsQuery_details extends LiveSpecsQuery {
             required?: string[];
         };
         key: string[];
+        projections?: Schema;
     };
     'writes_to': string[] | null;
     'created_at': string;

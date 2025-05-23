@@ -1,6 +1,7 @@
 import type { AlertColor } from '@mui/material';
 import type { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { BaseComponentProps } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
 export interface DraftSpecResponse {
@@ -75,4 +76,9 @@ export interface EditorStoreState<T> {
     setQueryResponse: (value: EditorStoreState<T>['queryResponse']) => void;
 
     resetState: (excludeEditDraftId?: boolean) => void;
+}
+
+export interface LiveSpecsHydratorProps extends BaseComponentProps {
+    localZustandScope: boolean;
+    catalogName: string;
 }

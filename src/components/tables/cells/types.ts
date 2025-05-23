@@ -4,9 +4,22 @@ import type {
     TranslatedConstraint,
 } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldExistence } from 'src/types';
 
 export interface ConstraintDetailsProps {
     constraint: TranslatedConstraint;
+}
+
+export interface FieldListProps {
+    field: string;
+    pointer: string | undefined;
+    editable?: boolean;
+}
+
+export interface FieldNameProps {
+    existence: FieldExistence;
+    field: string | undefined;
+    pointer: string | undefined;
 }
 
 export interface FieldActionButtonProps extends ToggleButtonProps {
@@ -23,4 +36,9 @@ export interface FieldActionsProps {
     field: string;
     constraint: TranslatedConstraint;
     selectionType: FieldSelectionType | null;
+}
+
+export interface ProjectionActionsProps {
+    field: string;
+    pointer: string | undefined;
 }

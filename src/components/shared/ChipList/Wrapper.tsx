@@ -3,20 +3,18 @@ import type { ChipWrapperProps } from 'src/components/shared/ChipList/types';
 
 import { useMemo } from 'react';
 
-import { Box, Chip as MuiChip, styled, Tooltip } from '@mui/material';
+import { Box, styled, Tooltip } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import LinkWrapper from 'src/components/shared/LinkWrapper';
-import { defaultOutline, underlineTextSx } from 'src/context/Theme';
+import { underlineTextSx } from 'src/context/Theme';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { stripPathing } from 'src/utils/misc-utils';
 
 const ListItem = styled('li')(({ theme }) => ({
     margin: theme.spacing(0.5),
 }));
-const chipListHoverStyling = {
-    cursor: 'pointer',
-};
 
 function ChipWrapper({
     disabled,
@@ -26,6 +24,7 @@ function ChipWrapper({
     val,
 }: ChipWrapperProps) {
     const intl = useIntl();
+
     const displayValue = stripPath
         ? intl.formatMessage(
               {
@@ -49,18 +48,11 @@ function ChipWrapper({
     // Save off the Chip so we can more easily wrap in a link if needed
     const chip = useMemo(() => {
         let chipSX: SxProps<Theme> = {
+            maxWidth: 200,
             // TODO (typing) Figure out how to use truncateTextSx here
-            'whiteSpace': 'nowrap',
-            'overflow': 'hidden',
-            'textOverflow': 'ellipsis',
-            'maxWidth': 200,
-            'border': (theme) => defaultOutline[theme.palette.mode],
-
-            '&:hover': {
-                ...chipListHoverStyling,
-                background: (hoverTheme) =>
-                    hoverTheme.palette.background.default,
-            },
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
         };
 
         if (val.link) {
@@ -72,12 +64,10 @@ function ChipWrapper({
         }
 
         return (
-            <MuiChip
+            <OutlinedChip
                 component="span"
-                label={displayValue}
-                size="small"
-                variant="outlined"
                 disabled={disabled}
+                label={displayValue}
                 onClick={
                     onClick
                         ? (event) => {
@@ -87,7 +77,9 @@ function ChipWrapper({
                           }
                         : undefined
                 }
+                size="small"
                 sx={chipSX}
+                variant="outlined"
             />
         );
     }, [disabled, displayValue, onClick, val.link]);
