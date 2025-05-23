@@ -6,6 +6,11 @@ export const columns: TableColumns[] = [
     {
         field: 'name',
         headerIntlKey: 'data.field',
+        sticky: true,
+    },
+    {
+        field: null,
+        headerIntlKey: 'data.aliases',
     },
     {
         field: 'pointer',
@@ -18,6 +23,7 @@ export const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'data.details',
+        minWidth: 300,
     },
     {
         field: null,

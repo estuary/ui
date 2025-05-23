@@ -9,14 +9,14 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
+import { FieldName } from 'src/components/tables/cells/projections/FieldName';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
 import { ROW_TYPE_STRING } from 'src/components/tables/Schema/shared';
-import { useEntityType } from 'src/context/EntityContext';
+import { doubleElevationHoverBackground } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
 
 function Row({ row }: RowProps) {
-    const entityType = useEntityType();
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -36,12 +36,22 @@ function Row({ row }: RowProps) {
     }, [row]);
 
     return (
-        <TableRow hover>
+        <TableRow
+            sx={{
+                '&:hover td': {
+                    background: (theme) =>
+                        doubleElevationHoverBackground[theme.palette.mode],
+                },
+            }}
+        >
+            <FieldName
+                existence={row.exists}
+                field={row.name}
+                pointer={row.pointer}
+            />
+
             {row.name ? (
                 <FieldList
-                    diminishedText={Boolean(
-                        entityType === 'collection' || workflow
-                    )}
                     editable={isCaptureWorkflow}
                     field={row.name}
                     pointer={row.pointer}
@@ -51,7 +61,7 @@ function Row({ row }: RowProps) {
             )}
 
             <TableCell>
-                <Box>{row.pointer}</Box>
+                <code>{row.pointer}</code>
             </TableCell>
 
             <ChipListCell

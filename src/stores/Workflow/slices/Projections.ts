@@ -5,6 +5,7 @@ import produce from 'immer';
 
 export interface ProjectionMetadata extends ProjectionDef {
     field: string;
+    systemDefined?: boolean;
 }
 
 interface FlatProjections {

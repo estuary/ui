@@ -749,7 +749,7 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
                 : tableCellBackground[theme.palette.mode],
         borderRight: (theme) =>
             `3px solid ${defaultOutlineColor[theme.palette.mode]}`,
-        zIndex: zIndexIncrement,
+        zIndex: chipDeleteIndex + zIndexIncrement,
     };
 };
 

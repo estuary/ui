@@ -27,7 +27,6 @@ export interface EditProjectionDialogProps extends BaseEditProjectionProps {
 export interface ProjectionListProps {
     collection: string | undefined;
     projectedFields: ProjectionMetadata[];
-    diminishedText?: boolean;
     editable?: boolean;
     maxChips?: number;
 }

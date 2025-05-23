@@ -90,7 +90,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
             <TableContainer component={Box}>
                 <Table
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
                         id: 'entityTable.title',
                     })}

@@ -1,6 +1,6 @@
 import type { ProjectionListProps } from 'src/components/projections/Edit/types';
 
-import { Box, Stack } from '@mui/material';
+import { Box, Stack, Tooltip } from '@mui/material';
 
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
@@ -12,7 +12,6 @@ import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableLis
 
 export const ProjectionList = ({
     collection,
-    diminishedText,
     editable,
     maxChips,
     projectedFields,
@@ -37,66 +36,84 @@ export const ProjectionList = ({
                         key={`projection-${metadata.field}-${index}`}
                         style={{ alignItems: 'center', display: 'inline-flex' }}
                     >
-                        <OutlinedChip
-                            label={metadata.field}
-                            diminishedText={
-                                diminishedText ? index > 0 : undefined
+                        <Tooltip
+                            placement="bottom-start"
+                            title={
+                                metadata?.systemDefined
+                                    ? 'The system-defined alias for this location.'
+                                    : ''
                             }
-                            onDelete={
-                                editable
-                                    ? () => {
-                                          removeSingleProjection(
-                                              collection,
-                                              metadata.field
-                                          ).then(
-                                              () => {
-                                                  removeSingleStoredProjection(
-                                                      metadata,
-                                                      collection
-                                                  );
+                        >
+                            <OutlinedChip
+                                diminishedText={Boolean(
+                                    metadata?.systemDefined && list.length > 1
+                                )}
+                                label={metadata.field}
+                                onDelete={
+                                    editable && !metadata?.systemDefined
+                                        ? () => {
+                                              removeSingleProjection(
+                                                  collection,
+                                                  metadata.field
+                                              ).then(
+                                                  () => {
+                                                      removeSingleStoredProjection(
+                                                          metadata,
+                                                          collection
+                                                      );
 
-                                                  logRocketEvent(
-                                                      CustomEvents.PROJECTION,
-                                                      {
-                                                          collection,
-                                                          operation: 'remove',
-                                                      }
-                                                  );
-                                                  logRocketConsole(
-                                                      `${CustomEvents.PROJECTION}:remove:success`,
-                                                      {
-                                                          collection,
-                                                          metadata,
-                                                          operation: 'remove',
-                                                      }
-                                                  );
-                                              },
-                                              (error) => {
-                                                  logRocketEvent(
-                                                      CustomEvents.PROJECTION,
-                                                      {
-                                                          collection,
-                                                          error: true,
-                                                          operation: 'remove',
-                                                      }
-                                                  );
-                                                  logRocketConsole(
-                                                      `${CustomEvents.PROJECTION}:remove:failed`,
-                                                      {
-                                                          collection,
-                                                          error,
-                                                          metadata,
-                                                          operation: 'remove',
-                                                      }
-                                                  );
-                                              }
-                                          );
-                                      }
-                                    : undefined
-                            }
-                            size="small"
-                            variant="outlined"
-                        />
+                                                      logRocketEvent(
+                                                          CustomEvents.PROJECTION,
+                                                          {
+                                                              collection,
+                                                              operation:
+                                                                  'remove',
+                                                          }
+                                                      );
+                                                      logRocketConsole(
+                                                          `${CustomEvents.PROJECTION}:remove:success`,
+                                                          {
+                                                              collection,
+                                                              metadata,
+                                                              operation:
+                                                                  'remove',
+                                                          }
+                                                      );
+                                                  },
+                                                  (error) => {
+                                                      logRocketEvent(
+                                                          CustomEvents.PROJECTION,
+                                                          {
+                                                              collection,
+                                                              error: true,
+                                                              operation:
+                                                                  'remove',
+                                                          }
+                                                      );
+                                                      logRocketConsole(
+                                                          `${CustomEvents.PROJECTION}:remove:failed`,
+                                                          {
+                                                              collection,
+                                                              error,
+                                                              metadata,
+                                                              operation:
+                                                                  'remove',
+                                                          }
+                                                      );
+                                                  }
+                                              );
+                                          }
+                                        : undefined
+                                }
+                                size="small"
+                                sx={
+                                    metadata?.systemDefined
+                                        ? { fontFamily: 'monospace' }
+                                        : undefined
+                                }
+                                variant="outlined"
+                            />
+                        </Tooltip>
                     </Box>
                 ))}
             </Stack>
