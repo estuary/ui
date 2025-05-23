@@ -458,4 +458,5 @@ export const Workflows: Record<string, string> = {
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
+    'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
 };

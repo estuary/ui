@@ -2,6 +2,8 @@ import type { ProjectionListProps } from 'src/components/projections/Edit/types'
 
 import { Box, Stack, Tooltip } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -16,6 +18,8 @@ export const ProjectionList = ({
     maxChips,
     projectedFields,
 }: ProjectionListProps) => {
+    const intl = useIntl();
+
     const { hiddenCount, list, listScroller, showEntireList } =
         useCollapsableList(projectedFields, maxChips);
 
@@ -40,7 +44,9 @@ export const ProjectionList = ({
                             placement="bottom-start"
                             title={
                                 metadata?.systemDefined
-                                    ? 'The system-defined alias for this location.'
+                                    ? intl.formatMessage({
+                                          id: 'projection.tooltip.systemDefinedField',
+                                      })
                                     : ''
                             }
                         >
