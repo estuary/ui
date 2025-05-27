@@ -1,7 +1,10 @@
 import type { ProjectionListProps } from 'src/components/projections/Edit/types';
 
+import { useState } from 'react';
+
 import { Box, Stack, Tooltip } from '@mui/material';
 
+import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
@@ -11,6 +14,7 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableList';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 export const ProjectionList = ({
     collection,
@@ -20,6 +24,8 @@ export const ProjectionList = ({
 }: ProjectionListProps) => {
     const intl = useIntl();
 
+    const { enqueueSnackbar } = useSnackbar();
+
     const { hiddenCount, list, listScroller, showEntireList } =
         useCollapsableList(projectedFields, maxChips);
 
@@ -27,6 +33,8 @@ export const ProjectionList = ({
     const removeSingleStoredProjection = useWorkflowStore(
         (state) => state.removeSingleProjection
     );
+
+    const [deletionQueue, setDeletionQueue] = useState<string[]>([]);
 
     if (!collection) {
         return null;
@@ -54,60 +62,92 @@ export const ProjectionList = ({
                                 diminishedText={Boolean(
                                     metadata?.systemDefined && list.length > 1
                                 )}
+                                disabled={deletionQueue.includes(
+                                    metadata.field
+                                )}
                                 label={metadata.field}
                                 onDelete={
                                     editable && !metadata?.systemDefined
                                         ? () => {
+                                              setDeletionQueue(
+                                                  deletionQueue.concat(
+                                                      metadata.field
+                                                  )
+                                              );
+
                                               removeSingleProjection(
                                                   collection,
                                                   metadata.field
-                                              ).then(
-                                                  () => {
-                                                      removeSingleStoredProjection(
-                                                          metadata,
-                                                          collection
-                                                      );
+                                              )
+                                                  .then(
+                                                      () => {
+                                                          removeSingleStoredProjection(
+                                                              metadata,
+                                                              collection
+                                                          );
 
-                                                      logRocketEvent(
-                                                          CustomEvents.PROJECTION,
-                                                          {
-                                                              collection,
-                                                              operation:
-                                                                  'remove',
-                                                          }
+                                                          logRocketEvent(
+                                                              CustomEvents.PROJECTION,
+                                                              {
+                                                                  collection,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+                                                          logRocketConsole(
+                                                              `${CustomEvents.PROJECTION}:remove:success`,
+                                                              {
+                                                                  collection,
+                                                                  metadata,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+                                                      },
+                                                      (error) => {
+                                                          logRocketEvent(
+                                                              CustomEvents.PROJECTION,
+                                                              {
+                                                                  collection,
+                                                                  error: true,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+                                                          logRocketConsole(
+                                                              `${CustomEvents.PROJECTION}:remove:failed`,
+                                                              {
+                                                                  collection,
+                                                                  error,
+                                                                  metadata,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+
+                                                          enqueueSnackbar(
+                                                              intl.formatMessage(
+                                                                  {
+                                                                      id: 'projection.error.alert.removalFailure',
+                                                                  }
+                                                              ),
+                                                              {
+                                                                  ...snackbarSettings,
+                                                                  variant:
+                                                                      'error',
+                                                              }
+                                                          );
+                                                      }
+                                                  )
+                                                  .finally(() => {
+                                                      setDeletionQueue(
+                                                          deletionQueue.filter(
+                                                              (el) =>
+                                                                  el !==
+                                                                  metadata.field
+                                                          )
                                                       );
-                                                      logRocketConsole(
-                                                          `${CustomEvents.PROJECTION}:remove:success`,
-                                                          {
-                                                              collection,
-                                                              metadata,
-                                                              operation:
-                                                                  'remove',
-                                                          }
-                                                      );
-                                                  },
-                                                  (error) => {
-                                                      logRocketEvent(
-                                                          CustomEvents.PROJECTION,
-                                                          {
-                                                              collection,
-                                                              error: true,
-                                                              operation:
-                                                                  'remove',
-                                                          }
-                                                      );
-                                                      logRocketConsole(
-                                                          `${CustomEvents.PROJECTION}:remove:failed`,
-                                                          {
-                                                              collection,
-                                                              error,
-                                                              metadata,
-                                                              operation:
-                                                                  'remove',
-                                                          }
-                                                      );
-                                                  }
-                                              );
+                                                  });
                                           }
                                         : undefined
                                 }

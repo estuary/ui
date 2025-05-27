@@ -456,6 +456,7 @@ export const Workflows: Record<string, string> = {
     'projection.dialog.add.header': `Alternate Name`,
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
+    'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
