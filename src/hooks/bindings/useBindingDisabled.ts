@@ -11,7 +11,7 @@ function useBindingDisabled(bindingUUID: string | null) {
     const index = useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
-                return null;
+                return -1;
             }
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.meta?.bindingIndex;
@@ -19,7 +19,7 @@ function useBindingDisabled(bindingUUID: string | null) {
     );
 
     const response = useMemo(() => {
-        if (!index) {
+        if (index < 0) {
             return false;
         }
 
