@@ -59,7 +59,7 @@ export interface BindingChanges {
 }
 
 export type BindingDisableUpdate = {
-    uuid: string;
+    bindingUUID: string;
     bindingIndex: number;
     val: boolean;
 };

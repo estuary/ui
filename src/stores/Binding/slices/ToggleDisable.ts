@@ -1,4 +1,7 @@
-import type { BindingState } from 'src/stores/Binding/types';
+import type {
+    BindingDisableUpdate,
+    BindingState,
+} from 'src/stores/Binding/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -6,18 +9,12 @@ import { isBoolean } from 'lodash';
 
 import { hasLength } from 'src/utils/misc-utils';
 
-export type ToggleDisableUpdate = {
-    uuid: string;
-    bindingIndex: number;
-    val: boolean;
-};
-
 export interface StoreWithToggleDisable {
     generateToggleDisableUpdates: (
         targetUUIDs: string | string[] | null,
         value?: boolean
-    ) => ToggleDisableUpdate[];
-    toggleDisable: (updates: ToggleDisableUpdate[]) => void;
+    ) => BindingDisableUpdate[];
+    toggleDisable: (updates: BindingDisableUpdate[]) => void;
 }
 
 export const getStoreWithToggleDisableSettings = (
@@ -26,7 +23,7 @@ export const getStoreWithToggleDisableSettings = (
     toggleDisable: (updates) => {
         set(
             produce((state: BindingState) => {
-                updates.forEach(({ uuid, val }) => {
+                updates.forEach(({ bindingUUID: uuid, val }) => {
                     const collectionName =
                         state.resourceConfigs[uuid].meta.collectionName;
 
@@ -71,7 +68,7 @@ export const getStoreWithToggleDisableSettings = (
     },
 
     generateToggleDisableUpdates: (targetUUIDs, value) => {
-        const updatedBindings: ToggleDisableUpdate[] = [];
+        const updatedBindings: BindingDisableUpdate[] = [];
         let updatedCount = 0;
 
         set(
@@ -96,7 +93,7 @@ export const getStoreWithToggleDisableSettings = (
                     if (value !== currValue) {
                         updatedCount = updatedCount + 1;
                         updatedBindings.push({
-                            uuid,
+                            bindingUUID: uuid,
                             bindingIndex,
                             val,
                         });
