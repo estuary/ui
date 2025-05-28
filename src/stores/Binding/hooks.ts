@@ -101,10 +101,12 @@ export const useBinding_resourceConfigOfBindingProperty = (
     );
 };
 
-export const useBinding_resourceConfigOfMetaBindingProperty = (
+export const useBinding_resourceConfigOfMetaBindingProperty = <
+    K extends keyof ResourceConfig['meta'],
+>(
     bindingUUID: string | undefined,
-    property: keyof ResourceConfig['meta']
-) => {
+    property: K
+): ResourceConfig['meta'][K] | null => {
     return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
