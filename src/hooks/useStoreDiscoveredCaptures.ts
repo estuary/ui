@@ -69,7 +69,7 @@ function useStoreDiscoveredCaptures() {
             }
 
             if (draftSpecsResponse.data && draftSpecsResponse.data.length > 0) {
-                const supabaseConfig: SupabaseConfig | null =
+                const supabaseConfig: SupabaseConfig =
                     editWorkflow && lastPubId
                         ? { catalogName: entityName, lastPubId }
                         : {
