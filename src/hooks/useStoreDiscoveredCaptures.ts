@@ -17,7 +17,10 @@ import { CustomEvents } from 'src/services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
-import { modifyDiscoveredDraftSpec } from 'src/utils/workflow-utils';
+import {
+    modifyDiscoveredDraftSpec,
+    NEW_TASK_PUBLICATION_ID,
+} from 'src/utils/workflow-utils';
 
 function useStoreDiscoveredCaptures() {
     const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
@@ -69,7 +72,10 @@ function useStoreDiscoveredCaptures() {
                 const supabaseConfig: SupabaseConfig | null =
                     editWorkflow && lastPubId
                         ? { catalogName: entityName, lastPubId }
-                        : null;
+                        : {
+                              catalogName: '',
+                              lastPubId: NEW_TASK_PUBLICATION_ID,
+                          };
 
                 // Skip this section if the setting is set AND we don't have the config stuff
                 // This check was added a long time after this function initially was written so wanted to keep the
