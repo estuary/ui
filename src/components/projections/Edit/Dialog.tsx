@@ -133,16 +133,11 @@ function EditProjectionDialog({
 
                                     logRocketEvent(CustomEvents.PROJECTION, {
                                         collection: currentCollection,
-                                        metadata,
                                         operation: 'set',
                                     });
                                     logRocketConsole(
                                         `${CustomEvents.PROJECTION}:add:success`,
-                                        {
-                                            collection: currentCollection,
-                                            metadata,
-                                            operation: 'set',
-                                        }
+                                        { metadata }
                                     );
 
                                     setSaving(false);
@@ -158,10 +153,8 @@ function EditProjectionDialog({
                                     logRocketConsole(
                                         `${CustomEvents.PROJECTION}:add:failed`,
                                         {
-                                            collection: currentCollection,
                                             error,
                                             metadata,
-                                            operation: 'set',
                                         }
                                     );
 

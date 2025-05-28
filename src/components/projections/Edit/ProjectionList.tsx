@@ -72,7 +72,7 @@ export const ProjectionList = ({
                                 label={metadata.field}
                                 onDelete={
                                     editable && !metadata?.systemDefined
-                                        ? () => {
+                                        ? async () => {
                                               setDeletionQueue(
                                                   deletionQueue.concat(
                                                       metadata.field
@@ -108,12 +108,7 @@ export const ProjectionList = ({
                                                           );
                                                           logRocketConsole(
                                                               `${CustomEvents.PROJECTION}:remove:success`,
-                                                              {
-                                                                  collection,
-                                                                  metadata,
-                                                                  operation:
-                                                                      'remove',
-                                                              }
+                                                              { metadata }
                                                           );
                                                       },
                                                       (error) => {
@@ -133,11 +128,8 @@ export const ProjectionList = ({
                                                           logRocketConsole(
                                                               `${CustomEvents.PROJECTION}:remove:failed`,
                                                               {
-                                                                  collection,
                                                                   error,
                                                                   metadata,
-                                                                  operation:
-                                                                      'remove',
                                                               }
                                                           );
 

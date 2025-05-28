@@ -100,9 +100,7 @@ function useInitializeCollectionDraft() {
                 });
                 logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
                     belongsToDraft: true,
-                    collection: collectionName,
                     draftId: evaluatedDraftId,
-                    operation: 'initialize',
                     projectionsExist: Boolean(targetRow.spec?.projections),
                 });
 
@@ -123,9 +121,7 @@ function useInitializeCollectionDraft() {
                 });
                 logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
                     belongsToDraft: false,
-                    collection: collectionName,
                     draftId: evaluatedDraftId,
-                    operation: 'initialize',
                     projectionsExist: Boolean(liveSpec?.projections),
                 });
 
@@ -179,9 +175,7 @@ function useInitializeCollectionDraft() {
                         `${CustomEvents.PROJECTION}:init:success`,
                         {
                             belongsToDraft: true,
-                            collection: collectionName,
                             draftId: existingDraftId,
-                            operation: 'initialize',
                             projectionsExist: Boolean(
                                 targetRow.spec?.projections
                             ),

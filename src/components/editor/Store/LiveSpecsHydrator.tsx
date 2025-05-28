@@ -49,9 +49,7 @@ function LiveSpecsHydrator({
                     operation: 'initialize',
                 });
                 logRocketConsole(`${CustomEvents.PROJECTION}:init:success`, {
-                    collection: targetRow.catalog_name,
                     liveSpecId: targetRow.id,
-                    operation: 'initialize',
                     projectionsExist: Boolean(targetRow.spec?.projections),
                 });
 
