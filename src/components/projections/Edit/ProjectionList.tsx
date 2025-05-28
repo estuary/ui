@@ -10,6 +10,8 @@ import { useIntl } from 'react-intl';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
@@ -33,6 +35,8 @@ export const ProjectionList = ({
     const removeSingleStoredProjection = useWorkflowStore(
         (state) => state.removeSingleProjection
     );
+
+    const setFormState = useFormStateStore_setFormState();
 
     const [deletionQueue, setDeletionQueue] = useState<string[]>([]);
 
@@ -75,6 +79,10 @@ export const ProjectionList = ({
                                                   )
                                               );
 
+                                              setFormState({
+                                                  status: FormStatus.UPDATING,
+                                              });
+
                                               removeSingleProjection(
                                                   collection,
                                                   metadata.field
@@ -85,6 +93,10 @@ export const ProjectionList = ({
                                                               metadata,
                                                               collection
                                                           );
+
+                                                          setFormState({
+                                                              status: FormStatus.UPDATED,
+                                                          });
 
                                                           logRocketEvent(
                                                               CustomEvents.PROJECTION,
@@ -105,6 +117,10 @@ export const ProjectionList = ({
                                                           );
                                                       },
                                                       (error) => {
+                                                          setFormState({
+                                                              status: FormStatus.FAILED,
+                                                          });
+
                                                           logRocketEvent(
                                                               CustomEvents.PROJECTION,
                                                               {
