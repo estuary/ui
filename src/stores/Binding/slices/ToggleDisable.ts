@@ -23,12 +23,12 @@ export const getStoreWithToggleDisableSettings = (
     toggleDisable: (updates) => {
         set(
             produce((state: BindingState) => {
-                updates.forEach(({ bindingUUID: uuid, val }) => {
+                updates.forEach(({ bindingUUID, val }) => {
                     const collectionName =
-                        state.resourceConfigs[uuid].meta.collectionName;
+                        state.resourceConfigs[bindingUUID].meta.collectionName;
 
-                    if (val === true) {
-                        state.resourceConfigs[uuid].meta.disable = val;
+                    if (val) {
+                        state.resourceConfigs[bindingUUID].meta.disable = val;
 
                         const existingIndex =
                             state.collectionsRequiringRediscovery.findIndex(
@@ -48,10 +48,11 @@ export const getStoreWithToggleDisableSettings = (
                             );
                         }
                     } else {
-                        delete state.resourceConfigs[uuid].meta.disable;
+                        delete state.resourceConfigs[bindingUUID].meta.disable;
 
                         if (
-                            state.resourceConfigs[uuid].meta.previouslyDisabled
+                            state.resourceConfigs[bindingUUID].meta
+                                .previouslyDisabled
                         ) {
                             state.collectionsRequiringRediscovery.push(
                                 collectionName
