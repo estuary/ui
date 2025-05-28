@@ -9,10 +9,12 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
-import { FieldName } from 'src/components/tables/cells/projections/FieldName';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
 import { ROW_TYPE_STRING } from 'src/components/tables/Schema/shared';
-import { doubleElevationHoverBackground } from 'src/context/Theme';
+import {
+    doubleElevationHoverBackground,
+    getStickyTableCell,
+} from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
 
@@ -44,20 +46,15 @@ function Row({ row }: RowProps) {
                 },
             }}
         >
-            <FieldName
-                existence={row.exists}
-                field={row.name}
-                pointer={row.pointer}
-            />
-
             {row.name ? (
                 <FieldList
                     editable={isCaptureWorkflow}
                     field={row.name}
                     pointer={row.pointer}
+                    sticky
                 />
             ) : (
-                <TableCell />
+                <TableCell sx={getStickyTableCell()} />
             )}
 
             <TableCell>

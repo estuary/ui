@@ -9,10 +9,6 @@ export const columns: TableColumns[] = [
         sticky: true,
     },
     {
-        field: null,
-        headerIntlKey: 'data.aliases',
-    },
-    {
         field: 'pointer',
         headerIntlKey: 'data.location',
     },
