@@ -73,7 +73,6 @@ function useStoreDiscoveredCaptures() {
                     editWorkflow && lastPubId
                         ? { catalogName: entityName, lastPubId }
                         : {
-                              catalogName: '',
                               lastPubId: NEW_TASK_PUBLICATION_ID,
                           };
 

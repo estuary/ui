@@ -328,8 +328,8 @@ export const generateTaskSpec = (
 // };
 
 export interface SupabaseConfig {
-    catalogName: string;
     lastPubId: string;
+    catalogName?: string;
 }
 
 export const modifyDiscoveredDraftSpec = async (
