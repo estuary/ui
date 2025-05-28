@@ -56,7 +56,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                     return true;
                                 }
 
-                                // Do no longer check disable here because disable directly updates the draft
+                                // No longer check disable here - disable directly updates the draft
 
                                 // Since we checked disabled up above we can not just check if the data changed
                                 return !isEqual(
