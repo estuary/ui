@@ -1,4 +1,5 @@
 import type { EChartsOption } from 'echarts';
+import type { Options } from 'pretty-bytes';
 import type { DataByHourStatType } from 'src/components/graphs/types';
 import type { CatalogStats_Details } from 'src/types';
 
@@ -52,11 +53,8 @@ const itemStyle = {
     borderRadius: [4, 4, 0, 0],
 };
 
-const defaultDataFormat = (value: any, fractionDigits: number = 0) => {
-    return prettyBytes(value, {
-        minimumFractionDigits: fractionDigits,
-        maximumFractionDigits: fractionDigits,
-    });
+const defaultDataFormat = (value: any, options: Options) => {
+    return prettyBytes(value, options);
 };
 
 // TODO (data graph) - need to rename this as it can handle multiple grains
@@ -193,7 +191,10 @@ function DataByHourGraph({ id, stats = [] }: Props) {
             if (dimension.includes('docs')) {
                 return `${readable(value, 2, false)}`;
             }
-            return `${defaultDataFormat(value, precision)}`;
+            return `${defaultDataFormat(value, {
+                minimumFractionDigits: precision,
+                maximumFractionDigits: precision,
+            })}`;
         },
         [intl]
     );
@@ -415,7 +416,10 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                         fontSize: 14,
                         formatter: (value: any) => {
                             return renderingBytes
-                                ? defaultDataFormat(value)
+                                ? defaultDataFormat(value, {
+                                      minimumFractionDigits: 0,
+                                      maximumFractionDigits: 1,
+                                  })
                                 : readable(value, 1, true);
                         },
                     },
