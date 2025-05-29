@@ -15,10 +15,7 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/Schema/Rows';
-import {
-    actionColumnIntlKey,
-    columns,
-} from 'src/components/tables/Schema/shared';
+import { actionColumn, columns } from 'src/components/tables/Schema/shared';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
@@ -81,9 +78,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
 
     const columnsToShow = isCaptureWorkflow
         ? columns
-        : columns.filter(
-              (column) => column.headerIntlKey !== actionColumnIntlKey
-          );
+        : columns.concat([actionColumn]);
 
     return (
         <Box>

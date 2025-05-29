@@ -1,6 +1,9 @@
 import type { TableColumns } from 'src/types';
 
-export const actionColumnIntlKey = 'data.actions';
+export const actionColumn: TableColumns = {
+    field: null,
+    headerIntlKey: 'data.actions',
+};
 
 export const columns: TableColumns[] = [
     {
@@ -20,10 +23,6 @@ export const columns: TableColumns[] = [
         field: null,
         headerIntlKey: 'data.details',
         minWidth: 300,
-    },
-    {
-        field: null,
-        headerIntlKey: actionColumnIntlKey,
     },
 ];
 
