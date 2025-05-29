@@ -10,6 +10,8 @@ import {
     useBindingsEditorStore_updateSchema,
 } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 function UpdateSchemaButton() {
@@ -27,6 +29,8 @@ function UpdateSchemaButton() {
     );
 
     const updateCollectionSchema = () => {
+        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, { operation: 'sync' });
+
         const promise = updateSchema(currentCollection, persistedDraftId);
 
         setSchemaPromise(promise);

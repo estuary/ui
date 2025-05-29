@@ -6,6 +6,8 @@ import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,
 } from 'src/components/editor/Bindings/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditToggle() {
@@ -14,6 +16,11 @@ function SchemaEditToggle() {
     const setEditModeEnabled = useBindingsEditorStore_setEditModeEnabled();
 
     const toggleEditMode = () => {
+        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+            operation: 'edit',
+            enabled: !editModeEnabled,
+        });
+
         setEditModeEnabled(!editModeEnabled);
     };
 
