@@ -1,9 +1,6 @@
-import type { ReactNode } from 'react';
 import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 
 import { useMemo } from 'react';
-
-import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -15,41 +12,44 @@ function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
     return useMemo(
         () =>
             filteredTargetNamingOptions.map((choice) => {
-                let description: ReactNode | string;
-                if (choice === 'prefixNonDefaultSchema') {
-                    description = (
-                        <>
-                            {intl.formatMessage(
-                                {
-                                    id: `schemaMode.options.prefixNonDefaultSchema.description`,
-                                },
-                                {
-                                    defaultSchema: (
-                                        <code>
-                                            {intl.formatMessage({
-                                                id: 'schemaMode.options.prefixNonDefaultSchema.ignored',
-                                            })}
-                                        </code>
-                                    ),
-                                    highlight: (
-                                        <Typography
-                                            component="span"
-                                            sx={{ fontWeight: 500 }}
-                                        >
-                                            {intl.formatMessage({
-                                                id: `schemaMode.options.prefixNonDefaultSchema.description.highlight`,
-                                            })}
-                                        </Typography>
-                                    ),
-                                }
-                            )}
-                        </>
-                    );
-                } else {
-                    description = intl.formatMessage({
-                        id: `schemaMode.options.${choice}.description`,
-                    });
-                }
+                const description = intl.formatMessage({
+                    id: `schemaMode.options.${choice}.description`,
+                });
+                // let description: ReactNode | string;
+                // if (choice === 'prefixNonDefaultSchema') {
+                //     description = (
+                //         <>
+                //             {intl.formatMessage(
+                //                 {
+                //                     id: `schemaMode.options.prefixNonDefaultSchema.description`,
+                //                 },
+                //                 {
+                //                     defaultSchema: (
+                //                         <code>
+                //                             {intl.formatMessage({
+                //                                 id: 'schemaMode.options.prefixNonDefaultSchema.ignored',
+                //                             })}
+                //                         </code>
+                //                     ),
+                //                     highlight: (
+                //                         <Typography
+                //                             component="span"
+                //                             sx={{ fontWeight: 500 }}
+                //                         >
+                //                             {intl.formatMessage({
+                //                                 id: `schemaMode.options.prefixNonDefaultSchema.description.highlight`,
+                //                             })}
+                //                         </Typography>
+                //                     ),
+                //                 }
+                //             )}
+                //         </>
+                //     );
+                // } else {
+                //     description = intl.formatMessage({
+                //         id: `schemaMode.options.${choice}.description`,
+                //     });
+                // }
 
                 return {
                     description,

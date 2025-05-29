@@ -328,6 +328,17 @@ export const Workflows: Record<string, string> = {
     'schemaMode.options.noSchema.example.table': `orders`,
     'schemaMode.options.noSchema.example.schema': `default`,
 
+    // Remove
+    'schemaMode.options.leaveEmpty.label': `Use Table Name Only`,
+    'schemaMode.options.leaveEmpty.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
+    'schemaMode.options.leaveEmpty.example.table': `orders`,
+    'schemaMode.options.leaveEmpty.example.schema': `default`,
+
+    'schemaMode.options.fromSourceName.label': `Mirror Schemas`,
+    'schemaMode.options.fromSourceName.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
+    'schemaMode.options.fromSourceName.example.table': `orders`,
+    'schemaMode.options.fromSourceName.example.schema': `AcmeCo-prod`,
+
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,
