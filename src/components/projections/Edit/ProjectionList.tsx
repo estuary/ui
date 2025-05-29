@@ -1,5 +1,7 @@
 import type { ProjectionListProps } from 'src/components/projections/Edit/types';
 
+import { useState } from 'react';
+
 import { Box, Stack, Tooltip } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
@@ -8,17 +10,15 @@ import { useIntl } from 'react-intl';
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setFormState,
-} from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableList';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
+// TODO: Determine a way to disable chips when the form is active in workflows.
+//   The form state store does not exist outside of workflows and thus its
+//   actions cannot be called in any collection schema table-related components.
 export const ProjectionList = ({
     collection,
     editable,
@@ -37,8 +37,7 @@ export const ProjectionList = ({
         (state) => state.removeSingleProjection
     );
 
-    const formActive = useFormStateStore_isActive();
-    const setFormState = useFormStateStore_setFormState();
+    const [deletionQueue, setDeletionQueue] = useState<string[]>([]);
 
     if (!collection) {
         return null;
@@ -66,75 +65,84 @@ export const ProjectionList = ({
                                 diminishedText={Boolean(
                                     metadata?.systemDefined && list.length > 1
                                 )}
-                                disabled={formActive}
+                                disabled={deletionQueue.includes(
+                                    metadata.field
+                                )}
                                 label={metadata.field}
                                 onDelete={
                                     editable && !metadata?.systemDefined
                                         ? async () => {
-                                              setFormState({
-                                                  status: FormStatus.UPDATING,
-                                              });
+                                              setDeletionQueue(
+                                                  deletionQueue.concat(
+                                                      metadata.field
+                                                  )
+                                              );
 
                                               removeSingleProjection(
                                                   collection,
                                                   metadata.field
-                                              ).then(
-                                                  () => {
-                                                      removeSingleStoredProjection(
-                                                          metadata,
-                                                          collection
-                                                      );
-
-                                                      setFormState({
-                                                          status: FormStatus.UPDATED,
-                                                      });
-
-                                                      logRocketEvent(
-                                                          CustomEvents.PROJECTION,
-                                                          {
-                                                              collection,
-                                                              operation:
-                                                                  'remove',
-                                                          }
-                                                      );
-                                                      logRocketConsole(
-                                                          `${CustomEvents.PROJECTION}:remove:success`,
-                                                          { metadata }
-                                                      );
-                                                  },
-                                                  (error) => {
-                                                      setFormState({
-                                                          status: FormStatus.FAILED,
-                                                      });
-
-                                                      logRocketEvent(
-                                                          CustomEvents.PROJECTION,
-                                                          {
-                                                              collection,
-                                                              error: true,
-                                                              operation:
-                                                                  'remove',
-                                                          }
-                                                      );
-                                                      logRocketConsole(
-                                                          `${CustomEvents.PROJECTION}:remove:failed`,
-                                                          {
-                                                              error,
+                                              )
+                                                  .then(
+                                                      () => {
+                                                          removeSingleStoredProjection(
                                                               metadata,
-                                                          }
-                                                      );
+                                                              collection
+                                                          );
 
-                                                      enqueueSnackbar(
-                                                          intl.formatMessage({
-                                                              id: 'projection.error.alert.removalFailure',
-                                                          }),
-                                                          {
-                                                              ...snackbarSettings,
-                                                              variant: 'error',
-                                                          }
+                                                          logRocketEvent(
+                                                              CustomEvents.PROJECTION,
+                                                              {
+                                                                  collection,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+                                                          logRocketConsole(
+                                                              `${CustomEvents.PROJECTION}:remove:success`,
+                                                              { metadata }
+                                                          );
+                                                      },
+                                                      (error) => {
+                                                          logRocketEvent(
+                                                              CustomEvents.PROJECTION,
+                                                              {
+                                                                  collection,
+                                                                  error: true,
+                                                                  operation:
+                                                                      'remove',
+                                                              }
+                                                          );
+                                                          logRocketConsole(
+                                                              `${CustomEvents.PROJECTION}:remove:failed`,
+                                                              {
+                                                                  error,
+                                                                  metadata,
+                                                              }
+                                                          );
+
+                                                          enqueueSnackbar(
+                                                              intl.formatMessage(
+                                                                  {
+                                                                      id: 'projection.error.alert.removalFailure',
+                                                                  }
+                                                              ),
+                                                              {
+                                                                  ...snackbarSettings,
+                                                                  variant:
+                                                                      'error',
+                                                              }
+                                                          );
+                                                      }
+                                                  )
+                                                  .finally(() => {
+                                                      setDeletionQueue(
+                                                          deletionQueue.filter(
+                                                              (el) =>
+                                                                  el !==
+                                                                  metadata.field
+                                                          )
                                                       );
-                                                  }
-                                              );
+                                                  });
                                           }
                                         : undefined
                                 }
