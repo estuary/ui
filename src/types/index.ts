@@ -348,14 +348,15 @@ export enum TableStatuses {
 
 export interface TableColumns {
     field: string | null;
-    collapseHeader?: boolean;
-    headerIntlKey?: string | null;
-    width?: number | string;
-    sticky?: boolean;
     align?: TableCellProps['align'];
+    collapseHeader?: boolean;
     cols?: number;
     display?: string;
     flexGrow?: boolean;
+    headerIntlKey?: string | null;
+    minWidth?: number | string;
+    sticky?: boolean;
+    width?: number | string;
 }
 
 export interface TableState {
@@ -389,10 +390,12 @@ export interface InferSchemaResponse {
     properties: InferSchemaResponseProperty[];
 }
 
+export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
+
 export interface InferSchemaResponseProperty {
     is_pattern_property: boolean;
     // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
-    exists: 'may' | 'must' | 'cannot' | 'implicit';
+    exists: FieldExistence;
     title: string;
     reduction: string;
     pointer: string;
