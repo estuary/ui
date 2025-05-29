@@ -1,4 +1,4 @@
-import { Box, Chip } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -6,6 +6,7 @@ import { truncateTextSx } from 'src/context/Theme';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function SourceCaptureChip() {
     const intl = useIntl();
@@ -26,11 +27,14 @@ function SourceCaptureChip() {
         });
 
     return (
-        <Chip
+        <OutlinedChip
             color={sourceCapture ? 'success' : 'info'}
             disabled={saving || formActive}
-            label={<Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>}
-            variant="outlined"
+            label={
+                <Box sx={{ ...truncateTextSx, minWidth: 100, p: 1 }}>
+                    {label}
+                </Box>
+            }
             onDelete={
                 sourceCapture
                     ? async () => {
@@ -38,6 +42,11 @@ function SourceCaptureChip() {
                       }
                     : undefined
             }
+            style={{
+                maxWidth: '50%',
+                minHeight: 40,
+            }}
+            variant="outlined"
         />
     );
 }

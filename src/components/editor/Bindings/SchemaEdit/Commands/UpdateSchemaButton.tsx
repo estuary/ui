@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Box, Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import {
@@ -10,9 +10,13 @@ import {
     useBindingsEditorStore_updateSchema,
 } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 function UpdateSchemaButton() {
+    const intl = useIntl();
+
     const currentCollection = useBinding_currentCollection();
 
     const updateSchema = useBindingsEditorStore_updateSchema();
@@ -27,6 +31,8 @@ function UpdateSchemaButton() {
     );
 
     const updateCollectionSchema = () => {
+        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, { operation: 'sync' });
+
         const promise = updateSchema(currentCollection, persistedDraftId);
 
         setSchemaPromise(promise);
@@ -45,7 +51,9 @@ function UpdateSchemaButton() {
                 onClick={updateCollectionSchema}
                 disabled={schemaUpdating}
             >
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.cta.syncSchema" />
+                {intl.formatMessage({
+                    id: 'workflows.collectionSelector.schemaEdit.cta.syncSchema',
+                })}
             </Button>
         </Box>
     );
