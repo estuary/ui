@@ -47,7 +47,12 @@ function EditProjectionDialog({
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
 
     return (
-        <Dialog open={open} maxWidth="md" aria-labelledby={TITLE_ID}>
+        <Dialog
+            aria-labelledby={TITLE_ID}
+            maxWidth="md"
+            open={open}
+            style={{ minWidth: 500 }}
+        >
             <DialogTitle>
                 {intl.formatMessage({
                     id: 'projection.dialog.add.header',
