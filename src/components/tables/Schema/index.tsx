@@ -77,8 +77,8 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
     const columnsToShow = isCaptureWorkflow
-        ? columns
-        : columns.concat([actionColumn]);
+        ? columns.concat([actionColumn])
+        : columns;
 
     return (
         <Box>

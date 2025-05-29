@@ -9,13 +9,21 @@ import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 
-const getExistingPartition = (spec: Schema, location: string) => {
+const getExistingPartition = (
+    spec: Schema,
+    location: string,
+    field: string
+) => {
     const existingProjection = spec?.projections
         ? Object.entries(spec.projections as Projections).find(
-              ([_projectedField, projectedMetadata]) =>
-                  typeof projectedMetadata === 'string'
-                      ? projectedMetadata === location
-                      : projectedMetadata.location === location
+              ([projectedField, projectedMetadata]) => {
+                  const locationMatched =
+                      typeof projectedMetadata === 'string'
+                          ? projectedMetadata === location
+                          : projectedMetadata.location === location;
+
+                  return locationMatched && projectedField === field;
+              }
           )
         : undefined;
 
@@ -74,15 +82,13 @@ export const useUpdateDraftedProjection = () => {
 
             const spec: Schema = collectionData.spec;
 
-            if (spec?.projections) {
-                spec.projections[field] = {
-                    location,
-                    partition:
-                        partition ?? getExistingPartition(spec, location),
-                };
-            } else {
-                spec.projections = { [field]: { location, partition } };
-            }
+            spec.projections ??= {};
+
+            spec.projections[field] = {
+                location,
+                partition:
+                    partition ?? getExistingPartition(spec, location, field),
+            };
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
