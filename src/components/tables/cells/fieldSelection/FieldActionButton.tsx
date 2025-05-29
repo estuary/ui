@@ -1,4 +1,4 @@
-import type { FieldActionButtonProps } from 'src/components/tables/cells/fieldSelection/types';
+import type { FieldActionButtonProps } from 'src/components/tables/cells/types';
 
 import { Tooltip } from '@mui/material';
 
