@@ -417,7 +417,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                         formatter: (value: any) => {
                             return renderingBytes
                                 ? defaultDataFormat(value, {
-                                      minimumFractionDigits: 1,
+                                      minimumFractionDigits: 0,
                                       maximumFractionDigits: 1,
                                   })
                                 : readable(value, 1, true);
