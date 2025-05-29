@@ -74,7 +74,7 @@ const getInitialState = (
         );
     },
 
-    setDeltaUpdates: (value: SourceCaptureState['error']) => {
+    setDeltaUpdates: (value: SourceCaptureState['deltaUpdates']) => {
         set(
             produce((state: SourceCaptureState) => {
                 state.deltaUpdates = value;
@@ -94,7 +94,7 @@ const getInitialState = (
         );
     },
 
-    setTargetSchema: (value: SourceCaptureState['error']) => {
+    setTargetSchema: (value: SourceCaptureState['targetSchema']) => {
         set(
             produce((state: SourceCaptureState) => {
                 state.targetSchema = value;

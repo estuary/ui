@@ -72,13 +72,16 @@ export const addOrRemoveSourceCapture = (
     sourceCapture: SourceCaptureDef | null
 ) => {
     if (sourceCapture) {
-        if (schema.source) {
-            schema.source = sourceCapture;
-        } else {
-            // TODO (source capture new options) - we are going to default to the old value
-            //  until the backend deploys changes and then switch to defaulting to
-            //  the new name
-            schema.sourceCapture = sourceCapture;
+        // TODO (source capture new options) - only add setting when there is a source capture
+        if (sourceCapture.capture) {
+            if (schema.source) {
+                schema.source = sourceCapture;
+            } else {
+                // TODO (source capture new options) - we are going to default to the old value
+                //  until the backend deploys changes and then switch to defaulting to
+                //  the new name
+                schema.sourceCapture = sourceCapture;
+            }
         }
     } else {
         delete schema.source;
