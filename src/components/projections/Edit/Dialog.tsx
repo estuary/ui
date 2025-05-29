@@ -116,58 +116,74 @@ function EditProjectionDialog({
                         const formattedFieldInput = fieldInput.trim();
 
                         if (
-                            formattedFieldInput.length > 0 &&
-                            pointer &&
-                            currentCollection
+                            formattedFieldInput.length === 0 ||
+                            !pointer ||
+                            !currentCollection
                         ) {
-                            const metadata: ProjectionMetadata = {
-                                field: formattedFieldInput,
-                                location: pointer,
-                            };
-
-                            setSingleProjection(
-                                currentCollection,
-                                formattedFieldInput,
-                                pointer
-                            ).then(
-                                () => {
-                                    setSingleStoredProjection(
-                                        metadata,
-                                        currentCollection
-                                    );
-
-                                    logRocketEvent(CustomEvents.PROJECTION, {
-                                        collection: currentCollection,
-                                        operation: 'set',
-                                    });
-                                    logRocketConsole(
-                                        `${CustomEvents.PROJECTION}:add:success`,
-                                        { metadata }
-                                    );
-
-                                    setSaving(false);
-                                    setFieldInput('');
-                                    setOpen(false);
-                                },
-                                (error) => {
-                                    logRocketEvent(CustomEvents.PROJECTION, {
-                                        collection: currentCollection,
-                                        error: true,
-                                        operation: 'set',
-                                    });
-                                    logRocketConsole(
-                                        `${CustomEvents.PROJECTION}:add:failed`,
-                                        {
-                                            error,
-                                            metadata,
-                                        }
-                                    );
-
-                                    setSaving(false);
-                                    setServerError(error);
+                            logRocketEvent(CustomEvents.PROJECTION, {
+                                error: true,
+                                operation: 'set',
+                            });
+                            logRocketConsole(
+                                `${CustomEvents.PROJECTION}:add:not_attempted`,
+                                {
+                                    collectionMissing: !currentCollection,
+                                    inputMissing:
+                                        formattedFieldInput.length === 0,
+                                    pointerMissing: !pointer,
                                 }
                             );
+
+                            return;
                         }
+
+                        const metadata: ProjectionMetadata = {
+                            field: formattedFieldInput,
+                            location: pointer,
+                        };
+
+                        setSingleProjection(
+                            currentCollection,
+                            formattedFieldInput,
+                            pointer
+                        ).then(
+                            () => {
+                                setSingleStoredProjection(
+                                    metadata,
+                                    currentCollection
+                                );
+
+                                logRocketEvent(CustomEvents.PROJECTION, {
+                                    collection: currentCollection,
+                                    operation: 'set',
+                                });
+                                logRocketConsole(
+                                    `${CustomEvents.PROJECTION}:add:success`,
+                                    { metadata }
+                                );
+
+                                setSaving(false);
+                                setFieldInput('');
+                                setOpen(false);
+                            },
+                            (error) => {
+                                logRocketEvent(CustomEvents.PROJECTION, {
+                                    collection: currentCollection,
+                                    error: true,
+                                    operation: 'set',
+                                });
+                                logRocketConsole(
+                                    `${CustomEvents.PROJECTION}:add:failed`,
+                                    {
+                                        error,
+                                        metadata,
+                                    }
+                                );
+
+                                setSaving(false);
+                                setServerError(error);
+                            }
+                        );
                     }}
                     variant="outlined"
                 >
