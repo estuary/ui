@@ -75,7 +75,9 @@ function FieldEditor({
                     })}
                     onChange={(event) => {
                         setInput(event.target.value);
-                        setInputInvalid(event.target.value.startsWith('/'));
+                        setInputInvalid(
+                            event.target.value.trim().startsWith('/')
+                        );
                     }}
                     size="small"
                     sx={{
