@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
     useBindingsEditorStore_editModeEnabled,
@@ -11,6 +11,8 @@ import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditToggle() {
+    const intl = useIntl();
+
     const formActive = useFormStateStore_isActive();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const setEditModeEnabled = useBindingsEditorStore_setEditModeEnabled();
@@ -26,7 +28,9 @@ function SchemaEditToggle() {
 
     return (
         <Button onClick={toggleEditMode} disabled={formActive}>
-            <FormattedMessage id={editModeEnabled ? 'cta.close' : 'cta.edit'} />
+            {intl.formatMessage({
+                id: editModeEnabled ? 'cta.close' : 'cta.edit',
+            })}
         </Button>
     );
 }
