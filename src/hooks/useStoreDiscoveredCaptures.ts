@@ -76,11 +76,11 @@ function useStoreDiscoveredCaptures() {
                               lastPubId: NEW_TASK_PUBLICATION_ID,
                           };
 
-                // Skip this section if the setting is set AND we don't have the config stuff
+                // Skip this section if in the create workflow AND skipDraftUpdate is set
                 // This check was added a long time after this function initially was written so wanted to keep the
                 //   scope as small as possible. Generally, this will happen when a use is editing their
                 //   capture and trying to fire off a refresh directly after updating the form
-                if (!supabaseConfig && !skipDraftUpdate) {
+                if (!editWorkflow && !skipDraftUpdate) {
                     const updatedDraftSpecsResponse =
                         await modifyDiscoveredDraftSpec(
                             draftSpecsResponse,
