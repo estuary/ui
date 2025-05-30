@@ -127,12 +127,13 @@ function useGenerateCatalog() {
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
-    const specIncompatibleSchemaChange = useBindingStore(
+    const specOnIncompatibleSchemaChange = useBindingStore(
         (state) => state.onIncompatibleSchemaChange
     );
 
-    // Source Capture Store
-    const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
+    // Fetch the entire definition for source capture so we have all the settings
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -241,9 +242,8 @@ function useGenerateCatalog() {
                     existingTaskData,
                     {
                         fullSource: fullSourceConfigs,
-                        sourceCapture,
-                        specOnIncompatibleSchemaChange:
-                            specIncompatibleSchemaChange,
+                        sourceCaptureDefinition,
+                        specOnIncompatibleSchemaChange,
                     }
                 );
 
@@ -367,8 +367,8 @@ function useGenerateCatalog() {
             setFormState,
             setPersistedDraftId,
             setPreviousEndpointConfig,
-            sourceCapture,
-            specIncompatibleSchemaChange,
+            sourceCaptureDefinition,
+            specOnIncompatibleSchemaChange,
             updateFormStatus,
         ]
     );

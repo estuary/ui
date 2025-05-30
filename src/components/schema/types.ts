@@ -6,7 +6,7 @@ export type OnChange =
 
 export type FieldFilter = 'all' | InferSchemaResponseProperty['exists'];
 
-export interface AutoCompleteOption {
+export interface AutoCompleteOptionForExistFilter {
     id: FieldFilter;
     label: string;
 }

@@ -1,19 +1,9 @@
 import type { choices } from 'src/components/incompatibleSchemaChange/shared';
+import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEditor/types';
 
-export interface BaseFormProps {
-    currentSetting: any;
-    scope: 'binding' | 'spec';
-    updateDraftedSetting: Function;
-}
-
-export interface AutoCompleteOption {
-    description: string;
-    label: string;
+export interface AutoCompleteOptionForIncompatibleSchemaChange
+    extends BaseAutoCompleteOption {
     val: (typeof choices)[number];
-}
-
-export interface SelectorOptionProps {
-    option: AutoCompleteOption;
 }
 
 export interface OnIncompatibleSchemaChangeProps {

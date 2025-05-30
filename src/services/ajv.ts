@@ -192,6 +192,7 @@ export const generateMaterializationResourceSpec = (
 
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
+        console.error('generateMaterializationResourceSpec failed', e);
         return null;
     }
 };

@@ -14,7 +14,7 @@ import BindingSelector from 'src/components/editor/Bindings/Selector';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import { createEditorStore } from 'src/components/editor/Store/create';
 import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
-import SourceCapture from 'src/components/materialization/SourceCapture';
+import SourceCapture from 'src/components/materialization/source/Capture';
 import Backfill from 'src/components/shared/Entity/Backfill';
 import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';

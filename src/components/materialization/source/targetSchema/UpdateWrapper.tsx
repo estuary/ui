@@ -1,41 +1,39 @@
-import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
+import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 import { useCallback } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
-import useSpecificationIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useSpecificationIncompatibleSchemaSetting';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import TargetSchemaForm from 'src/components/materialization/source/targetSchema/Form';
+import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-export default function Form() {
+export default function TargetSchemaUpdateWrapper() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    const [onIncompatibleSchemaChange, setIncompatibleSchemaChange] =
-        useBindingStore((state) => [
-            state.onIncompatibleSchemaChange,
-            state.setSpecOnIncompatibleSchemaChange,
-        ]);
-
     const setFormState = useFormStateStore_setFormState();
 
-    const { currentSetting, updateOnIncompatibleSchemaChange } =
-        useSpecificationIncompatibleSchemaSetting();
+    const [targetSchema, setTargetSchema, setSaving] = useSourceCaptureStore(
+        (state) => [state.targetSchema, state.setTargetSchema, state.setSaving]
+    );
+
+    const { currentSetting, updateSourceSetting } =
+        useSourceSetting<TargetSchemas>('targetSchema');
 
     const updateServer = useCallback(
-        async (
-            option?: AutoCompleteOptionForIncompatibleSchemaChange['val']
-        ) => {
+        async (option?: AutoCompleteOptionForTargetSchema | null) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
+            setSaving(true);
 
-            return updateOnIncompatibleSchemaChange(option)
+            return updateSourceSetting(option?.val)
                 .then(() => {
-                    setIncompatibleSchemaChange(option);
+                    setTargetSchema(option ? option.val : undefined);
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
@@ -47,25 +45,27 @@ export default function Form() {
                         { ...snackbarSettings, variant: 'error' }
                     );
 
-                    setIncompatibleSchemaChange(currentSetting);
+                    setTargetSchema(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
 
                     return Promise.reject(error);
-                });
+                })
+                .finally(() => setSaving(false));
         },
         [
             currentSetting,
             enqueueSnackbar,
             intl,
             setFormState,
-            setIncompatibleSchemaChange,
-            updateOnIncompatibleSchemaChange,
+            setSaving,
+            setTargetSchema,
+            updateSourceSetting,
         ]
     );
 
     return (
-        <IncompatibleSchemaChangeForm
-            currentSetting={currentSetting ?? onIncompatibleSchemaChange}
+        <TargetSchemaForm
+            currentSetting={currentSetting ?? targetSchema}
             scope="spec"
             updateDraftedSetting={updateServer}
         />
