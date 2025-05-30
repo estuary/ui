@@ -41,14 +41,12 @@ function SelectorOption({
                 <code>
                     {intl.formatMessage({ id: 'schemaMode.example.table' })}
                 </code>
-                <Typography component="span">
-                    <ArrowRight
-                        style={{
-                            color: theme.palette.primary.main,
-                            fontSize: 9,
-                        }}
-                    />
-                </Typography>
+                <ArrowRight
+                    style={{
+                        color: theme.palette.primary.main,
+                        fontSize: 9,
+                    }}
+                />
                 <Stack
                     component="span"
                     direction="row"
