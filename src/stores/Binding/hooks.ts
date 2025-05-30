@@ -396,7 +396,6 @@ export const useBinding_setCurrentBindingWithTimeout = (
     setCurrentBinding?: BindingState['setCurrentBinding']
 ) => {
     const hackyTimeout = useRef<number | null>(null);
-
     const currentBindingUUID = useBinding_currentBindingUUID();
 
     useUnmount(() => {
@@ -414,6 +413,8 @@ export const useBinding_setCurrentBindingWithTimeout = (
             //  If a user is typing quickly in a form and then selects a
             //  different binding VERY quickly it could cause the updates
             //  to go into the wrong form.
+            // Also, ...forms/renderers/Duration/AutoComplete.tsx will render wrong
+            //  without this. That needs fixed for sure
             setCurrentBinding(null);
 
             if (typeof id === 'string') {
