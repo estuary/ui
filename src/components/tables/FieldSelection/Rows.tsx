@@ -14,7 +14,7 @@ import FieldActions from 'src/components/tables/cells/fieldSelection/FieldAction
 import {
     constraintTypeSort,
     displayOptionalColumn,
-    optionalColumnIntlKeys,
+    optionalColumns,
 } from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
@@ -28,12 +28,12 @@ function Row({ columns, row }: RowProps) {
 
     const pointerColumnDisplayed = displayOptionalColumn(
         columns,
-        optionalColumnIntlKeys.pointer
+        optionalColumns[0].headerIntlKey
     );
 
     const detailsColumnDisplayed = displayOptionalColumn(
         columns,
-        optionalColumnIntlKeys.details
+        optionalColumns[1].headerIntlKey
     );
 
     return (

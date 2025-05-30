@@ -1,12 +1,24 @@
 import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
-import type { SortDirection, TableColumns } from 'src/types';
+import type {
+    OptionalTableColumn,
+    SortDirection,
+    TableColumns,
+} from 'src/types';
 
 import { compareInitialCharacterType } from 'src/utils/misc-utils';
 
-export const optionalColumnIntlKeys = {
-    pointer: 'data.location',
-    details: 'data.details',
-};
+export const optionalColumns: OptionalTableColumn[] = [
+    {
+        field: 'ptr',
+        headerIntlKey: 'data.location',
+        insertAfterIntlKey: 'data.field',
+    },
+    {
+        field: 'constraint.type',
+        headerIntlKey: 'data.details',
+        insertAfterIntlKey: 'data.type',
+    },
+];
 
 export const tableColumns: TableColumns[] = [
     {
@@ -15,16 +27,8 @@ export const tableColumns: TableColumns[] = [
         sticky: true,
     },
     {
-        field: 'ptr',
-        headerIntlKey: optionalColumnIntlKeys.pointer,
-    },
-    {
         field: null,
         headerIntlKey: 'data.type',
-    },
-    {
-        field: 'constraint.type',
-        headerIntlKey: optionalColumnIntlKeys.details,
     },
     {
         field: null,
@@ -87,10 +91,3 @@ export const displayOptionalColumn = (
     columns: TableColumns[],
     intlKey: string
 ) => columns.some((column) => column.headerIntlKey === intlKey);
-
-export const evaluateColumnsToShow = (columnsToHide: string[]) =>
-    tableColumns.filter((column) =>
-        column.headerIntlKey
-            ? !columnsToHide.includes(column.headerIntlKey)
-            : true
-    );

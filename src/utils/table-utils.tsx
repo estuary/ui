@@ -1,5 +1,9 @@
 import type { Pagination } from 'src/services/supabase';
-import type { TableColumns, TableIntlConfig } from 'src/types';
+import type {
+    OptionalTableColumn,
+    TableColumns,
+    TableIntlConfig,
+} from 'src/types';
 
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
@@ -100,4 +104,23 @@ export const getTableComponents = (
         tdComponent: 'div',
         trComponent: 'div',
     };
+};
+
+export const evaluateColumnsToShow = (
+    tableColumns: TableColumns[],
+    columnsToHide: OptionalTableColumn[]
+) => {
+    const evaluatedColumns = tableColumns;
+
+    columnsToHide.forEach(({ insertAfterIntlKey, ...column }) => {
+        const targetIndex = evaluatedColumns.findIndex(
+            ({ headerIntlKey }) => headerIntlKey === insertAfterIntlKey
+        );
+
+        if (targetIndex > -1) {
+            evaluatedColumns.splice(targetIndex, 0, column);
+        }
+    });
+
+    return evaluatedColumns;
 };

@@ -8,22 +8,22 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
-import TableColumnSelector from 'src/components/editor/Bindings/FieldSelection/TableColumnSelector';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
 import Rows from 'src/components/tables/FieldSelection/Rows';
 import {
-    evaluateColumnsToShow,
-    optionalColumnIntlKeys,
+    optionalColumns,
     tableColumns,
 } from 'src/components/tables/FieldSelection/shared';
+import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
+import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
     bindingUUID,
@@ -99,8 +99,6 @@ export default function FieldSelectionTable({
     const { tableSettings } = useDisplayTableColumns();
 
     const columnsToShow = useMemo(() => {
-        const optionalColumns = Object.values(optionalColumnIntlKeys);
-
         if (
             tableSettings &&
             Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
@@ -109,13 +107,13 @@ export default function FieldSelectionTable({
                 (column) =>
                     !tableSettings[
                         TablePrefixes.fieldSelection
-                    ].shownOptionalColumns.includes(column)
+                    ].shownOptionalColumns.includes(column.headerIntlKey)
             );
 
-            return evaluateColumnsToShow(hiddenColumns);
+            return evaluateColumnsToShow(tableColumns, hiddenColumns);
         }
 
-        return evaluateColumnsToShow(optionalColumns);
+        return evaluateColumnsToShow(tableColumns, optionalColumns);
     }, [tableSettings]);
 
     return (
@@ -143,8 +141,9 @@ export default function FieldSelectionTable({
                     <FieldFilter disabled={loading} />
 
                     <TableColumnSelector
-                        columns={tableColumns}
                         loading={loading}
+                        optionalColumns={optionalColumns}
+                        tablePrefix={TablePrefixes.fieldSelection}
                     />
                 </Stack>
             </Stack>

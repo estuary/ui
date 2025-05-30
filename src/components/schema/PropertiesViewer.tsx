@@ -15,6 +15,9 @@ import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
 import AlertBox from 'src/components/shared/AlertBox';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
+import { optionalColumns } from 'src/components/tables/Schema/shared';
+import TableColumnSelector from 'src/components/tables/TableColumnSelector';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 interface Props {
     disabled: boolean;
@@ -47,15 +50,26 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     <FormattedMessage id="schemaEditor.fields.label" />
                 </Typography>
 
-                {disabled ? (
-                    <Box style={{ width: 150 }}>
-                        <ExistFilter
-                            fieldFilter={fieldFilter}
-                            setFieldFilter={setFieldFilter}
-                            disabled={inferSchemaResponseEmpty}
-                        />
-                    </Box>
-                ) : null}
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    {disabled ? (
+                        <Box style={{ width: 150 }}>
+                            <ExistFilter
+                                fieldFilter={fieldFilter}
+                                setFieldFilter={setFieldFilter}
+                                disabled={inferSchemaResponseEmpty}
+                            />
+                        </Box>
+                    ) : null}
+
+                    <TableColumnSelector
+                        optionalColumns={optionalColumns}
+                        tablePrefix={TablePrefixes.schemaViewer}
+                    />
+                </Stack>
             </Stack>
 
             <Collapse
