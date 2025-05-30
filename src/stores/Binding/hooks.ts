@@ -1,10 +1,15 @@
 import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
 import type {
+    BindingState,
     CollectionMetadata,
     ResourceConfig,
 } from 'src/stores/Binding/types';
 
+import { useCallback, useRef } from 'react';
+
 import { useShallow } from 'zustand/react/shallow';
+
+import { useUnmount } from 'react-use';
 
 import {
     getCollectionNames,
@@ -386,3 +391,37 @@ export const useBinding_sourceCaptureFlags = () =>
             ),
         }))
     );
+
+export const useBinding_setCurrentBindingWithTimeout = (
+    setCurrentBinding?: BindingState['setCurrentBinding']
+) => {
+    const hackyTimeout = useRef<number | null>(null);
+
+    const currentBindingUUID = useBinding_currentBindingUUID();
+
+    useUnmount(() => {
+        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
+    });
+
+    return useCallback(
+        (id?: string) => {
+            if (id === currentBindingUUID || !setCurrentBinding) {
+                return;
+            }
+
+            // TODO (JSONForms) This is hacky but it works.
+            // It clears out the current binding before switching.
+            //  If a user is typing quickly in a form and then selects a
+            //  different binding VERY quickly it could cause the updates
+            //  to go into the wrong form.
+            setCurrentBinding(null);
+
+            if (typeof id === 'string') {
+                hackyTimeout.current = window.setTimeout(() => {
+                    setCurrentBinding(id);
+                });
+            }
+        },
+        [currentBindingUUID, setCurrentBinding]
+    );
+};

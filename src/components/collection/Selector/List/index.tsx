@@ -42,6 +42,7 @@ import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
+    useBinding_setCurrentBindingWithTimeout,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -55,6 +56,15 @@ function CollectionSelectorList({
     hideFooter,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
+    // Form State Store
+    const formStatus = useFormStateStore_status();
+
+    const selectionEnabled = Boolean(
+        setCurrentBinding && formStatus !== FormStatus.UPDATING
+    );
+    const setCurrentBindingWithTimeout =
+        useBinding_setCurrentBindingWithTimeout(setCurrentBinding);
+
     const bindingSelectorCells = useBindingSelectorCells();
     const {
         displayNotification,
@@ -83,13 +93,6 @@ function CollectionSelectorList({
     // Binding Store
     const currentBindingUUID = useBinding_currentBindingUUID();
     const resourceConfigs = useBinding_resourceConfigs();
-
-    // Form State Store
-    const formStatus = useFormStateStore_status();
-
-    const selectionEnabled = Boolean(
-        setCurrentBinding && formStatus !== FormStatus.UPDATING
-    );
 
     const mappedResourceConfigs: CollectionSelectorMappedResourceConfig[] =
         useMemo(() => {
@@ -155,14 +158,14 @@ function CollectionSelectorList({
 
     useEffect(() => {
         // Selection disabled
-        if (!selectionEnabled || !setCurrentBinding) {
+        if (!selectionEnabled || !setCurrentBindingWithTimeout) {
             return;
         }
 
         if (filterValue !== '') {
             // If we have filtered values then see if this is a first search and default
             if (previousFilterValue === '') {
-                setCurrentBinding(
+                setCurrentBindingWithTimeout(
                     filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                 );
             } else {
@@ -177,7 +180,7 @@ function CollectionSelectorList({
                 ) {
                     return;
                 } else {
-                    setCurrentBinding(
+                    setCurrentBindingWithTimeout(
                         filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                     );
                 }
@@ -187,7 +190,7 @@ function CollectionSelectorList({
         }
 
         if (previousFilterValue !== '' && Boolean(mappedResourceConfigs[0])) {
-            setCurrentBinding(
+            setCurrentBindingWithTimeout(
                 mappedResourceConfigs[0]?.[COLLECTION_SELECTOR_UUID_COL]
             );
         }
@@ -198,7 +201,7 @@ function CollectionSelectorList({
         mappedResourceConfigs,
         previousFilterValue,
         selectionEnabled,
-        setCurrentBinding,
+        setCurrentBindingWithTimeout,
     ]);
 
     const resourceConfigsEmpty = useMemo(
