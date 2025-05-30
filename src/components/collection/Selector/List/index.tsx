@@ -161,7 +161,9 @@ function CollectionSelectorList({
             // Selection disabled
             !selectionEnabled ||
             !setCurrentBinding ||
-            // Filter has not changed so we can skip
+            // Filter has not changed so we can skip. Otherwise while the bindings are filtered
+            //  if a user clicks manually on a binding then it will be selected and a split second
+            //  later this effect will run and set it back to a default value.
             (filterValue.length > 0 &&
                 previousFilterValue &&
                 previousFilterValue.length > 0 &&
