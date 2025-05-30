@@ -43,9 +43,17 @@ function CollectionSelectorHeaderToggle({
                     disabled={disabled}
                     sx={dataGridEntireCellButtonStyling}
                     variant="text"
-                    onClick={(event) => {
+                    onClick={async (event) => {
+                        // Save off the previous value so we can reset it
+                        const previousValue = enabled;
+
+                        // Set the value right away so the toggles feels fast
                         setEnabled(!enabled);
-                        onClick(event, !enabled, 'all');
+
+                        onClick(event, !enabled, 'all').catch(() => {
+                            // If there was an error switch it back
+                            setEnabled(previousValue);
+                        });
                     }}
                 >
                     <Switch
