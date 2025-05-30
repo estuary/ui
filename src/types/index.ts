@@ -3,6 +3,7 @@ import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
+import type { WithRequiredNonNullProperty } from 'src/types/utils';
 
 export type fake = 'fake';
 
@@ -484,4 +485,9 @@ export interface SourceCaptureDef {
     capture: string;
     deltaUpdates?: boolean;
     targetSchema?: TargetSchemas;
+}
+
+export interface OptionalTableColumn
+    extends WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'> {
+    insertAfterIntlKey: string;
 }

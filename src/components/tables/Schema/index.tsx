@@ -15,10 +15,17 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/Schema/Rows';
-import { actionColumn, columns } from 'src/components/tables/Schema/shared';
+import {
+    actionColumn,
+    columns,
+    optionalColumns,
+} from 'src/components/tables/Schema/shared';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useEntityWorkflow } from 'src/context/Workflow';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const intl = useIntl();
@@ -76,9 +83,30 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
         return inferSchemaResponse.filter((datum) => datum.exists === filter);
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
-    const columnsToShow = isCaptureWorkflow
-        ? columns.concat([actionColumn])
-        : columns;
+    const { tableSettings } = useDisplayTableColumns();
+
+    const columnsToShow = useMemo(() => {
+        const evaluatedColumns = isCaptureWorkflow
+            ? columns.concat([actionColumn])
+            : columns.concat(optionalColumns);
+
+        if (
+            isCaptureWorkflow &&
+            tableSettings &&
+            Object.hasOwn(tableSettings, TablePrefixes.schemaViewer)
+        ) {
+            const hiddenColumns = optionalColumns.filter(
+                (column) =>
+                    !tableSettings[
+                        TablePrefixes.schemaViewer
+                    ].shownOptionalColumns.includes(column.headerIntlKey)
+            );
+
+            return evaluateColumnsToShow(evaluatedColumns, hiddenColumns);
+        }
+
+        return evaluatedColumns;
+    }, [isCaptureWorkflow, tableSettings]);
 
     return (
         <Box>

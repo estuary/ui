@@ -1,34 +1,15 @@
 import type { SyntheticEvent } from 'react';
 import type { TableColumnSelectorProps } from 'src/components/editor/Bindings/FieldSelection/types';
-import type { TableColumns } from 'src/types';
-import type { WithRequiredNonNullProperty } from 'src/types/utils';
 
-import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
 import SelectColumnMenu from 'src/components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { hasLength } from 'src/utils/misc-utils';
 
 export default function TableColumnSelector({
-    columns,
     loading,
+    optionalColumns,
+    tablePrefix,
 }: TableColumnSelectorProps) {
     const { tableSettings, setTableSettings } = useDisplayTableColumns();
-
-    const optionalColumns = columns.filter(
-        (
-            column
-        ): column is WithRequiredNonNullProperty<
-            TableColumns,
-            'headerIntlKey'
-        > =>
-            typeof column.headerIntlKey === 'string' &&
-            hasLength(column.headerIntlKey)
-                ? Object.values(optionalColumnIntlKeys).includes(
-                      column.headerIntlKey
-                  )
-                : false
-    );
 
     const updateTableSettings = (
         event: SyntheticEvent,
@@ -42,10 +23,9 @@ export default function TableColumnSelector({
 
         const shownOptionalColumns = Object.hasOwn(
             existingSettings,
-            TablePrefixes.fieldSelection
+            tablePrefix
         )
-            ? existingSettings[TablePrefixes.fieldSelection]
-                  .shownOptionalColumns
+            ? existingSettings[tablePrefix].shownOptionalColumns
             : [];
 
         const columnShown = shownOptionalColumns.includes(column);
@@ -54,7 +34,7 @@ export default function TableColumnSelector({
             !checked && columnShown
                 ? {
                       ...existingSettings,
-                      [TablePrefixes.fieldSelection]: {
+                      [tablePrefix]: {
                           shownOptionalColumns: shownOptionalColumns.filter(
                               (value) => value !== column
                           ),
@@ -63,7 +43,7 @@ export default function TableColumnSelector({
                 : checked && !columnShown
                   ? {
                         ...existingSettings,
-                        [TablePrefixes.fieldSelection]: {
+                        [tablePrefix]: {
                             shownOptionalColumns: [
                                 ...shownOptionalColumns,
                                 column,

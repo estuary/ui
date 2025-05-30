@@ -1,9 +1,18 @@
-import type { TableColumns } from 'src/types';
+import type { OptionalTableColumn, TableColumns } from 'src/types';
 
 export const actionColumn: TableColumns = {
     field: null,
     headerIntlKey: 'data.actions',
 };
+
+export const optionalColumns: OptionalTableColumn[] = [
+    {
+        field: null,
+        headerIntlKey: 'data.details',
+        insertAfterIntlKey: 'data.type',
+        minWidth: 300,
+    },
+];
 
 export const columns: TableColumns[] = [
     {
@@ -18,11 +27,6 @@ export const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'data.type',
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.details',
-        minWidth: 300,
     },
 ];
 
