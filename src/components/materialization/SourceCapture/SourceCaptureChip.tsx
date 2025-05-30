@@ -1,13 +1,14 @@
-import { Box, Chip, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import SourceCaptureChipOptionalSettings from 'src/components/materialization/SourceCapture/SourceCaptureChipOptionalSettings';
 import useSourceCapture from 'src/components/materialization/useSourceCapture';
-import { chipOutlinedStyling, truncateTextSx } from 'src/context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function SourceCaptureChip() {
     const intl = useIntl();
@@ -29,7 +30,7 @@ function SourceCaptureChip() {
         });
 
     return (
-        <Chip
+        <OutlinedChip
             color={sourceCaptureDefinition?.capture ? 'success' : 'info'}
             disabled={saving || formActive}
             label={
@@ -39,34 +40,14 @@ function SourceCaptureChip() {
                     sx={{
                         alignItems: 'center',
                         pr: sourceCaptureDefinition?.capture ? 3 : undefined,
+                        py: 1,
                     }}
                 >
                     <Box sx={{ ...truncateTextSx, minWidth: 100 }}>{label}</Box>
+
                     <SourceCaptureChipOptionalSettings />
                 </Stack>
             }
-            sx={{
-                ...chipOutlinedStyling,
-                'height': 'auto',
-                'maxWidth': '50%',
-                'py': 1,
-                '& .MuiChip-label': {
-                    display: 'block',
-                    whiteSpace: 'normal',
-                },
-                // Just force a minwidth so the chip cannot shrink so much that the
-                //  content is invisible under the delete icon
-                'minWidth': sourceCaptureDefinition?.capture ? 375 : undefined,
-
-                // This is hacky but is needed as this chip has extra content and was
-                //  causing the SVG to resize and shrink if the chip got narrow
-                //  while the content was wide
-                '& svg': {
-                    minHeight: 21,
-                    minWidth: 21,
-                },
-            }}
-            variant="outlined"
             onDelete={
                 sourceCaptureDefinition?.capture
                     ? async () => {
@@ -75,6 +56,11 @@ function SourceCaptureChip() {
                       }
                     : undefined
             }
+            style={{
+                maxWidth: '50%',
+                minWidth: sourceCaptureDefinition?.capture ? 375 : undefined,
+            }}
+            variant="outlined"
         />
     );
 }

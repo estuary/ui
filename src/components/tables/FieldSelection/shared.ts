@@ -4,7 +4,7 @@ import type { SortDirection, TableColumns } from 'src/types';
 import { compareInitialCharacterType } from 'src/utils/misc-utils';
 
 export const optionalColumnIntlKeys = {
-    pointer: 'data.pointer',
+    pointer: 'data.location',
     details: 'data.details',
 };
 

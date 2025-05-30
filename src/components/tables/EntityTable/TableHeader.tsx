@@ -45,6 +45,13 @@ function EntityTableHeader({
                 {columns.map((column, index) => {
                     let tableCellSX = {};
 
+                    if (column.minWidth) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            minWidth: column.minWidth,
+                        };
+                    }
+
                     if (column.sticky) {
                         tableCellSX = {
                             ...getStickyTableCell(true),

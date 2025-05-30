@@ -9,6 +9,13 @@ export interface ConstraintDetailsProps {
     constraint: TranslatedConstraint;
 }
 
+export interface FieldListProps {
+    field: string;
+    pointer: string | undefined;
+    editable?: boolean;
+    sticky?: boolean;
+}
+
 export interface FieldActionButtonProps extends ToggleButtonProps {
     bindingUUID: string;
     constraint: TranslatedConstraint;
@@ -23,4 +30,9 @@ export interface FieldActionsProps {
     field: string;
     constraint: TranslatedConstraint;
     selectionType: FieldSelectionType | null;
+}
+
+export interface ProjectionActionsProps {
+    field: string;
+    pointer: string | undefined;
 }
