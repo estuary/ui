@@ -1,6 +1,6 @@
 import type { ParsedPagedFetchAllResponse } from 'src/services/supabase';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
-import type { AuthRoles } from 'src/types';
+import type { AuthRoles, StorageMappingStore } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
 export interface EntitiesState extends StoreWithHydration {
@@ -11,6 +11,13 @@ export interface EntitiesState extends StoreWithHydration {
         write: string[];
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
+
+    // TODO (data planes) - we need to decide how we'll key these selections
+    storageMappings: StorageMappingStore[];
+    setStorageMappings: (newVal: EntitiesState['storageMappings']) => void;
+
+    dataPlanes: any[];
+    setDataPlanes: (newVal: EntitiesState['dataPlanes']) => void;
 
     hydrateState: () => Promise<ParsedPagedFetchAllResponse<AuthRoles>>;
     resetState: () => void;
