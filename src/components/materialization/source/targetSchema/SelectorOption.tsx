@@ -13,7 +13,7 @@ function SelectorOption({
     const theme = useTheme();
 
     return (
-        <Stack component="span" spacing={1}>
+        <Stack component="span" spacing={1} sx={{ py: 1 }}>
             <Typography component="span" style={{ fontWeight: 500 }}>
                 {label}
             </Typography>
