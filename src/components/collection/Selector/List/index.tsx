@@ -157,8 +157,16 @@ function CollectionSelectorList({
     }, [filterValue, mappedResourceConfigs]);
 
     useEffect(() => {
-        // Selection disabled
-        if (!selectionEnabled || !setCurrentBindingWithTimeout) {
+        if (
+            // Selection disabled
+            !selectionEnabled ||
+            !setCurrentBinding ||
+            // Filter has not changed so we can skip
+            (filterValue.length > 0 &&
+                previousFilterValue &&
+                previousFilterValue.length > 0 &&
+                filterValue === previousFilterValue)
+        ) {
             return;
         }
 
