@@ -1,5 +1,5 @@
 import type { CONNECTOR_NAME } from 'src/api/shared';
-import type { EntityWithCreateWorkflow, Schema } from 'src/types';
+import type { Entity, EntityWithCreateWorkflow, Schema } from 'src/types';
 
 export interface BaseConnectorTag {
     id: string;
@@ -45,4 +45,26 @@ export interface ConnectorsQuery_DetailsForm {
     image_name: string;
     image: string;
     connector_tags: BaseConnectorTag[];
+}
+
+export interface DraftSpecData {
+    spec: any;
+    catalog_name?: string;
+    expect_pub_id?: string;
+    detail?: string;
+}
+
+export interface DraftSpecUpdateMatchData {
+    draft_id: string | null;
+    catalog_name?: string;
+    expect_pub_id?: string;
+    spec_type?: Entity | null;
+}
+
+export interface DraftSpecCreateMatchData {
+    draft_id: string | null;
+    catalog_name: string;
+    spec: any;
+    spec_type?: Entity | null;
+    expect_pub_id?: string;
 }

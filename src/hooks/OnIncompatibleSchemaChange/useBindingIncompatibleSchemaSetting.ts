@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 import type { BindingMetadata, Schema } from 'src/types';
 
 import { useCallback } from 'react';
@@ -30,7 +30,9 @@ function useBindingIncompatibleSchemaSetting() {
 
     const updateOnIncompatibleSchemaChange = useCallback(
         async (
-            value: AutoCompleteOption['val'] | undefined,
+            value:
+                | AutoCompleteOptionForIncompatibleSchemaChange['val']
+                | undefined,
             bindingMetadata: BindingMetadata[]
         ) => {
             if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {

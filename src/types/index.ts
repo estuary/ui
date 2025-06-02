@@ -3,6 +3,7 @@ import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
+import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 export type fake = 'fake';
 
@@ -478,10 +479,8 @@ export interface DekafConfig {
     variant: string;
 }
 
-export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
-
 export interface SourceCaptureDef {
-    capture: string;
+    capture?: string;
     deltaUpdates?: boolean;
     targetSchema?: TargetSchemas;
 }
