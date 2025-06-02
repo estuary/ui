@@ -547,7 +547,7 @@ describe('generateTaskSpec', () => {
                     };
                 });
 
-                test('will return the `sourceCapture` property if a definition is provided', () => {
+                test('will return the `source` property by default', () => {
                     expect(
                         generateTaskSpec(
                             'materialization',
@@ -567,17 +567,17 @@ describe('generateTaskSpec', () => {
                                 fullSource,
                                 sourceCaptureDefinition,
                             }
-                        ).sourceCapture
+                        ).source
                     ).toStrictEqual(sourceCaptureDefinition);
                 });
 
-                test('will use `source` property if already defined', () => {
+                test('will use `sourceCapture` property if already defined', () => {
                     if (existingTaskData) {
                         existingTaskData = {
                             ...existingTaskData,
                             spec: {
                                 ...existingTaskData.spec,
-                                source: {},
+                                sourceCapture: {},
                             },
                         };
                     }
@@ -601,7 +601,7 @@ describe('generateTaskSpec', () => {
                                 fullSource,
                                 sourceCaptureDefinition,
                             }
-                        ).source
+                        ).sourceCapture
                     ).toStrictEqual(sourceCaptureDefinition);
                 });
             });
