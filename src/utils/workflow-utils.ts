@@ -35,6 +35,7 @@ export const MAX_BINDINGS = 300;
 export const DEFAULT_DEBOUNCE_WAIT = 500;
 export const QUICK_DEBOUNCE_WAIT = DEFAULT_DEBOUNCE_WAIT / 2;
 export const NEAR_INSTANT_DEBOUNCE_WAIT = QUICK_DEBOUNCE_WAIT / 2;
+export const NEW_TASK_PUBLICATION_ID = '00:00:00:00:00:00:00:00';
 
 export const getBackfillCounter = (binding: any): number => {
     return Object.hasOwn(binding, 'backfill') ? binding.backfill : 0;
@@ -327,8 +328,8 @@ export const generateTaskSpec = (
 // };
 
 export interface SupabaseConfig {
-    catalogName: string;
     lastPubId: string;
+    catalogName?: string;
 }
 
 export const modifyDiscoveredDraftSpec = async (

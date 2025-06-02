@@ -51,7 +51,10 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { isDekafConnector } from 'src/utils/connector-utils';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
-import { generateTaskSpec } from 'src/utils/workflow-utils';
+import {
+    generateTaskSpec,
+    NEW_TASK_PUBLICATION_ID,
+} from 'src/utils/workflow-utils';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -263,7 +266,8 @@ function useGenerateCatalog() {
                               evaluatedDraftId,
                               processedEntityName,
                               draftSpec,
-                              ENTITY_TYPE
+                              ENTITY_TYPE,
+                              NEW_TASK_PUBLICATION_ID
                           );
 
                 if (draftSpecsResponse.error) {
