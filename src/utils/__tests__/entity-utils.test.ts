@@ -53,9 +53,7 @@ describe('readSourceCaptureDefinitionFromSpec', () => {
                 sourceCaptureDef = {
                     ...sourceCaptureDef,
                     deltaUpdates: true,
-                    // TODO (source capture new options)
-                    // targetSchema: 'prefixNonDefaultSchema',
-                    targetSchema: 'leaveEmpty',
+                    targetSchema: 'prefixNonDefaultSchema',
                 };
             });
 
