@@ -547,7 +547,7 @@ describe('generateTaskSpec', () => {
                     };
                 });
 
-                test('will return the `source` property if a definition is provided', () => {
+                test('will return the `source` property by default', () => {
                     expect(
                         generateTaskSpec(
                             'materialization',
