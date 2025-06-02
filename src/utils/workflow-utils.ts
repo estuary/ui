@@ -173,7 +173,7 @@ export const generateTaskSpec = (
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     options: {
         fullSource: FullSourceDictionary | null;
-        sourceCapture: SourceCaptureDef | null;
+        sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
     }
 ) => {
@@ -290,7 +290,7 @@ export const generateTaskSpec = (
 
     // Try adding at the end because these settings could be added/changed at any time
     if (entityType === 'materialization') {
-        addOrRemoveSourceCapture(draftSpec, options.sourceCapture);
+        addOrRemoveSourceCapture(draftSpec, options.sourceCaptureDefinition);
         addOrRemoveOnIncompatibleSchemaChange(
             draftSpec,
             options.specOnIncompatibleSchemaChange
@@ -370,7 +370,7 @@ export const modifyExistingCaptureDraftSpec = async (
         existingTaskData,
         {
             fullSource: null,
-            sourceCapture: null,
+            sourceCaptureDefinition: null,
         }
     );
 

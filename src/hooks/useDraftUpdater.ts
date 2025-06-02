@@ -1,3 +1,4 @@
+import type { DraftSpecUpdateMatchData } from 'src/api/types';
 import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
@@ -21,7 +22,7 @@ function useDraftUpdater() {
     return useCallback(
         async (
             updateSpec: (oldSpec: Schema) => Schema,
-            updateMatchData: any
+            updateMatchData: Partial<DraftSpecUpdateMatchData>
         ) => {
             const draftSpec =
                 draftSpecs.length > 0 && draftSpecs[0].spec

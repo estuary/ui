@@ -127,15 +127,6 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
-    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
-    'workflows.sourceCapture.optionalSettings.message': `Newly added collections will use these defaults`,
-
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
-
-    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
-    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
-
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
 
@@ -270,16 +261,16 @@ export const Workflows: Record<string, string> = {
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
 
+    'specPropEditor.update.error': `Changes to draft not saved.`,
+    'specPropEditor.error.cta': `Remove Setting`,
+
     // Incompatible Schema Change
     'incompatibleSchemaChange.header': `Incompatible Schema Change`,
     'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.message.specificationSetting': `The action to take when a schema change is rejected due to incompatibility. If blank, all bindings will backfill and be re-materialized.`,
-    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'incompatibleSchemaChange.error.cta': `Remove Setting`,
-    'incompatibleSchemaChange.error.title': `Invalid setting`,
     'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
@@ -294,22 +285,60 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
+    // Source Settings
+    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
+
     // Delta Updates
-    'deltaUpdates.header': `Delta Updates`,
-    'deltaUpdates.message': `Mark new bindings as delta updates`,
+    // 'deltaUpdates.header': `Delta Updates`,
+    'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
+    'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    'schemaMode.header': `Source Capture Schema Mode`,
-    'schemaMode.message': `How should the schema of the materialization binding be set.`,
-    'schemaMode.input.label': `Set new bindings schemas as`,
+    // 'schemaMode.header': `Target Naming`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas.`,
+    'schemaMode.input.label': `Target Resource Naming Convention`,
 
-    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
-    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
-    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+    // These keys are dynamically build in - useSupportedOptions
+    'schemaMode.data.table': `Table:`,
+    'schemaMode.data.schema': `Schema:`,
+    'schemaMode.example.table': `AcmeCo/AcmeCo-prod/orders`,
+    'schemaMode.options.prefixNonDefaultSchema.ignored': `public`,
 
-    'schemaMode.options.fromSourceName.label': `From Source Name`,
-    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
+    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema}). The schema itself is left unspecified.`,
+    'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
+
+    'schemaMode.options.prefixSchema.label': `Prefix Schema`,
+    'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
+    'schemaMode.options.prefixSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixSchema.example.schema': `default`,
+
+    'schemaMode.options.withSchema.label': `Mirror Schemas`,
+    'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
+    'schemaMode.options.withSchema.example.table': `orders`,
+    'schemaMode.options.withSchema.example.schema': `AcmeCo-prod`,
+
+    'schemaMode.options.noSchema.label': `Use Table Name Only`,
+    'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
+    'schemaMode.options.noSchema.example.table': `orders`,
+    'schemaMode.options.noSchema.example.schema': `default`,
+
+    // Remove
+    'schemaMode.options.leaveEmpty.label': `Use Table Name Only`,
+    'schemaMode.options.leaveEmpty.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
+    'schemaMode.options.leaveEmpty.example.table': `orders`,
+    'schemaMode.options.leaveEmpty.example.schema': `default`,
+
+    'schemaMode.options.fromSourceName.label': `Mirror Schemas`,
+    'schemaMode.options.fromSourceName.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
+    'schemaMode.options.fromSourceName.example.table': `orders`,
+    'schemaMode.options.fromSourceName.example.schema': `AcmeCo-prod`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,

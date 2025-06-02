@@ -51,7 +51,6 @@ const getInitialStateData = <T>(): Pick<
 
 const getInitialState = <T>(
     set: NamedSet<EditorStoreState<T>>
-    // get: StoreApi<EditorStoreState<T>>['getState']
 ): EditorStoreState<T> => {
     return {
         ...getInitialStateData<T>(),
