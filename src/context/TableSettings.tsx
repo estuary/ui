@@ -29,7 +29,11 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
     const [tableSettings, setTableSettings] =
         useLocalStorage<TableSettingsDictionary>(
             LocalStorageKeys.TABLE_SETTINGS,
-            {}
+            {
+                [TablePrefixes.schemaViewer]: {
+                    shownOptionalColumns: [],
+                },
+            }
         );
 
     useMount(() => {
