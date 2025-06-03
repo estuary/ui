@@ -1,4 +1,4 @@
-import type { TablePrefix } from 'src/stores/Tables/hooks';
+import type { SelectColumnMenuProps } from 'src/components/tables/types';
 
 import {
     Box,
@@ -17,18 +17,12 @@ import IconMenu from 'src/components/menus/IconMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { disabledButtonText_primary } from 'src/context/Theme';
 
-interface Props {
-    columns: string[];
-    onChange: (
-        event: React.SyntheticEvent<Element, Event>,
-        checked: boolean,
-        column: string
-    ) => void;
-    tablePrefix: TablePrefix;
-    disabled?: boolean;
-}
-
-function SelectColumnMenu({ columns, disabled, onChange, tablePrefix }: Props) {
+function SelectColumnMenu({
+    columns,
+    disabled,
+    onChange,
+    tablePrefix,
+}: SelectColumnMenuProps) {
     const intl = useIntl();
     const theme = useTheme();
 
