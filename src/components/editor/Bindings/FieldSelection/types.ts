@@ -1,4 +1,3 @@
-import type { TablePrefix } from 'src/stores/Tables/hooks';
 import type { Schema } from 'src/types';
 
 export interface Projection {
@@ -71,10 +70,4 @@ export interface CompositeProjection extends Projection {
     constraint: TranslatedConstraint | null;
     selectionType: FieldSelectionType | null;
     selectionMetadata?: Schema;
-}
-
-export interface TableColumnSelectorProps {
-    optionalColumns: string[];
-    tablePrefix: TablePrefix;
-    loading?: boolean;
 }

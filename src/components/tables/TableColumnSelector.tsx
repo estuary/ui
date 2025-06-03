@@ -1,5 +1,5 @@
 import type { SyntheticEvent } from 'react';
-import type { TableColumnSelectorProps } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { TableColumnSelectorProps } from 'src/components/tables/types';
 
 import SelectColumnMenu from 'src/components/tables/SelectColumnMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
