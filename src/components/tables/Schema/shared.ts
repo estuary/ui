@@ -5,7 +5,7 @@ export const actionColumn: TableColumns = {
     headerIntlKey: 'data.actions',
 };
 
-export const optionalColumnIntlKeys: { [key: string]: string } = {
+export const optionalColumnIntlKeys = {
     details: 'data.details',
 };
 
