@@ -1,4 +1,6 @@
+import type { TableSettingsState } from 'src/context/TableSettings';
 import type { Pagination } from 'src/services/supabase';
+import type { TablePrefix } from 'src/stores/Tables/hooks';
 import type { TableColumns, TableIntlConfig } from 'src/types';
 
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
@@ -103,12 +105,31 @@ export const getTableComponents = (
 };
 
 export const evaluateColumnsToShow = (
+    optionalColumns: string[],
     tableColumns: TableColumns[],
-    columnsToHide: string[]
-) =>
-    tableColumns.filter(({ headerIntlKey }) =>
-        headerIntlKey ? !columnsToHide.includes(headerIntlKey) : false
-    );
+    tablePrefix: TablePrefix,
+    tableSettings: TableSettingsState['tableSettings'],
+    skipSettingsCheck?: boolean
+) => {
+    if (
+        !skipSettingsCheck &&
+        tableSettings &&
+        Object.hasOwn(tableSettings, tablePrefix)
+    ) {
+        const hiddenColumns = optionalColumns.filter(
+            (headerIntlKey) =>
+                !tableSettings[tablePrefix].shownOptionalColumns.includes(
+                    headerIntlKey
+                )
+        );
+
+        return tableColumns.filter(({ headerIntlKey }) =>
+            headerIntlKey ? !hiddenColumns.includes(headerIntlKey) : false
+        );
+    }
+
+    return tableColumns;
+};
 
 export const isColumnVisible = (columns: TableColumns[], intlKey: string) =>
     columns.some((column) => column.headerIntlKey === intlKey);

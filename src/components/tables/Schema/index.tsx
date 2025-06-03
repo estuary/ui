@@ -90,22 +90,13 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
             ? columns.concat([actionColumn])
             : columns;
 
-        if (
-            isCaptureWorkflow &&
-            tableSettings &&
-            Object.hasOwn(tableSettings, TablePrefixes.schemaViewer)
-        ) {
-            const hiddenColumns = optionalColumns.filter(
-                (headerIntlKey) =>
-                    !tableSettings[
-                        TablePrefixes.schemaViewer
-                    ].shownOptionalColumns.includes(headerIntlKey)
-            );
-
-            return evaluateColumnsToShow(evaluatedColumns, hiddenColumns);
-        }
-
-        return evaluatedColumns;
+        return evaluateColumnsToShow(
+            optionalColumns,
+            evaluatedColumns,
+            TablePrefixes.schemaViewer,
+            tableSettings,
+            !isCaptureWorkflow
+        );
     }, [isCaptureWorkflow, tableSettings]);
 
     return (

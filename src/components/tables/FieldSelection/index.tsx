@@ -98,23 +98,16 @@ export default function FieldSelectionTable({
 
     const { tableSettings } = useDisplayTableColumns();
 
-    const columnsToShow = useMemo(() => {
-        if (
-            tableSettings &&
-            Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
-        ) {
-            const hiddenColumns = optionalColumns.filter(
-                (headerIntlKey) =>
-                    !tableSettings[
-                        TablePrefixes.fieldSelection
-                    ].shownOptionalColumns.includes(headerIntlKey)
-            );
-
-            return evaluateColumnsToShow(tableColumns, hiddenColumns);
-        }
-
-        return tableColumns;
-    }, [tableSettings]);
+    const columnsToShow = useMemo(
+        () =>
+            evaluateColumnsToShow(
+                optionalColumns,
+                tableColumns,
+                TablePrefixes.fieldSelection,
+                tableSettings
+            ),
+        [tableSettings]
+    );
 
     return (
         <>

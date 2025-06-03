@@ -15,7 +15,7 @@ interface TableSettingsDictionary {
     [key: string]: TableSettings;
 }
 
-interface TableSettingsState {
+export interface TableSettingsState {
     tableSettings: TableSettingsDictionary | undefined;
     setTableSettings: Dispatch<
         SetStateAction<TableSettingsDictionary | undefined>
