@@ -1,4 +1,9 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type {
+    DraftSpecCreateMatchData,
+    DraftSpecData,
+    DraftSpecUpdateMatchData,
+} from 'src/api/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { Entity } from 'src/types';
 
@@ -17,28 +22,6 @@ import {
 } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
-interface CreateMatchData {
-    draft_id: string | null;
-    catalog_name: string;
-    spec: any;
-    spec_type?: Entity | null;
-    expect_pub_id?: string;
-}
-
-interface UpdateMatchData {
-    draft_id: string | null;
-    catalog_name?: string;
-    expect_pub_id?: string;
-    spec_type?: Entity | null;
-}
-
-interface DraftSpecData {
-    spec: any;
-    catalog_name?: string;
-    expect_pub_id?: string;
-    detail?: string;
-}
-
 export const createDraftSpec = (
     draftId: string | null,
     catalogName: string,
@@ -47,7 +30,7 @@ export const createDraftSpec = (
     lastPubId?: string | null,
     noResponse?: boolean
 ) => {
-    let matchData: CreateMatchData = {
+    let matchData: DraftSpecCreateMatchData = {
         draft_id: draftId,
         catalog_name: catalogName,
         spec_type: specType ?? undefined,
@@ -63,7 +46,7 @@ export const createDraftSpec = (
 
 export const modifyDraftSpec = (
     draftSpec: any,
-    matchData: UpdateMatchData,
+    matchData: DraftSpecUpdateMatchData,
     catalogName?: string | null,
     lastPubId?: string | null,
     detail?: string

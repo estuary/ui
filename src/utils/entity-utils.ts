@@ -37,6 +37,16 @@ export const generateDisabledSpec = (
     }
 };
 
+export const getSourceCapturePropKey = (draftSpec: any) => {
+    // If we got the old key on the spec then return that
+    if (draftSpec?.sourceCapture) {
+        return 'sourceCapture';
+    }
+
+    // Otherwise use the new key
+    return 'source';
+};
+
 export const getSourceCapture = (
     sourceCapture: SourceCaptureDef | string | null | undefined
 ): SourceCaptureDef | null => {
@@ -53,17 +63,39 @@ export const getSourceCapture = (
     return sourceCapture;
 };
 
+export const readSourceCaptureDefinitionFromSpec = (schema: Schema) => {
+    return getSourceCapture(schema[getSourceCapturePropKey(schema)]);
+};
+
 export const addOrRemoveSourceCapture = (
-    draftSpec: any,
+    schema: Schema,
     sourceCapture: SourceCaptureDef | null
 ) => {
     if (sourceCapture) {
-        draftSpec.sourceCapture = sourceCapture;
+        // Use the old option of that is what is there
+        if (schema.sourceCapture) {
+            schema.sourceCapture = sourceCapture;
+        } else {
+            schema.source = sourceCapture;
+        }
     } else {
-        delete draftSpec.sourceCapture;
+        delete schema.source;
+        delete schema.sourceCapture;
     }
 
-    return draftSpec;
+    return schema;
+};
+
+export const updateSourceCapture = (
+    schema: Schema,
+    sourceCaptureSettings: SourceCaptureDef
+): Schema => {
+    const currentKey = getSourceCapturePropKey(schema);
+    const currentVal = readSourceCaptureDefinitionFromSpec(schema) ?? {};
+
+    schema[currentKey] = { ...currentVal, ...sourceCaptureSettings };
+
+    return schema;
 };
 
 export const addOrRemoveOnIncompatibleSchemaChange = (
