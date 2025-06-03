@@ -1,6 +1,6 @@
 import type { BindingsSelectorToggleProps } from 'src/components/editor/Bindings/Row/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button, Switch, Tooltip } from '@mui/material';
 
@@ -21,60 +21,57 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
 
     const { currentSetting, updateDraft } = useDisableUpdater(bindingUUID);
 
-    const selection = useMemo(() => {
-        if (
-            bindingUUID &&
-            (!currentSetting || typeof currentSetting !== 'boolean')
-        ) {
-            return null;
-        }
-
-        return currentSetting;
-    }, [bindingUUID, currentSetting]);
-
     useEffect(() => {
-        // No setting at all so we're good
-        if (!currentSetting) {
+        // If we are in the "toggle all" button skip checking
+        if (!bindingUUID) {
             setInvalidSetting(false);
             return;
         }
 
-        // We have a setting but could not find a matching option
-        //  Set a flag to show an error and empty out the input
-        if (selection === null) {
+        // Check if there is nothing in the store OR in the draft
+        if (currentSetting === null || currentSetting === undefined) {
+            setInvalidSetting(false);
+            return;
+        }
+
+        // Make sure we have the type we want
+        if (typeof currentSetting !== 'boolean') {
             setInvalidSetting(true);
             return;
         }
 
+        // Just adding this as a fallthrough to be safe
         setInvalidSetting(false);
-    }, [currentSetting, selection]);
+    }, [bindingUUID, currentSetting]);
 
     const labeledById = `${TOGGLE_RESET_TOOLTIP_ID}_bindingUUID`;
 
     if (invalidSetting) {
         return (
             <Tooltip
+                arrow
                 id={labeledById}
                 placement="right"
                 title={
                     <SpecPropInvalidSetting
                         currentSetting={currentSetting}
                         invalidSettingsMessageId="specPropUpdater.error.message.toggle"
-                        updateDraftedSetting={() => {
-                            return Promise.resolve();
-                        }}
+                        updateDraftedSetting={() =>
+                            updateDraft(bindingUUID, false, true)
+                        }
                     />
                 }
             >
                 <Button
                     aria-labelledby={labeledById}
                     color="error"
+                    disabled={formActive}
                     sx={dataGridEntireCellButtonStyling}
-                    onClick={() => updateDraft(bindingUUID, false)}
                     variant="text"
                 >
-                    {intl.formatMessage({ id: 'cta.reset' })}
-                    {/*Invalid*/}
+                    {intl.formatMessage({
+                        id: 'common.invalid',
+                    })}
                 </Button>
             </Tooltip>
         );
@@ -83,7 +80,7 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
     return (
         <Button
             aria-label={intl.formatMessage({
-                id: selection ? 'common.disabled' : 'common.enabled',
+                id: currentSetting ? 'common.disabled' : 'common.enabled',
             })}
             disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
@@ -93,7 +90,7 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
             <Switch
                 disabled={formActive}
                 size="small"
-                checked={!selection}
+                checked={!currentSetting}
                 color="success"
                 id={`binding-toggle__${bindingUUID}`}
             />

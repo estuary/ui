@@ -47,7 +47,12 @@ function useDisableUpdater(bindingUUID?: string) {
                     bindingIndexes.forEach(({ bindingIndex, val }) => {
                         if (val === true) {
                             spec.bindings[bindingIndex].disable = val;
-                        } else if (spec.bindings[bindingIndex].disable) {
+                        } else if (
+                            Object.hasOwn(
+                                spec.bindings[bindingIndex],
+                                'disable'
+                            )
+                        ) {
                             delete spec.bindings[bindingIndex].disable;
                         }
                     });
@@ -62,14 +67,19 @@ function useDisableUpdater(bindingUUID?: string) {
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
 
     const updateDraft = useCallback(
-        async (targetUUIDs: string | string[] | null, value?: boolean) => {
+        async (
+            targetUUIDs: string | string[] | null,
+            value?: boolean,
+            forceUpdate?: boolean
+        ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
             setSaving(true);
 
             // Get a list of all the bindings that will need to be updated
             const toggleDisableUpdates = generateToggleDisableUpdates(
                 targetUUIDs,
-                value
+                value,
+                forceUpdate
             );
 
             // Make the actual update
@@ -107,12 +117,12 @@ function useDisableUpdater(bindingUUID?: string) {
         ]
     );
 
-    let currentSetting: boolean | null | undefined;
+    let currentSetting: boolean | null | undefined = null;
 
     if (bindingIndex !== null) {
         currentSetting =
             draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
-    } else if (!currentSetting) {
+    } else {
         currentSetting = storeSetting;
     }
 

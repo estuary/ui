@@ -12,7 +12,8 @@ import { hasLength } from 'src/utils/misc-utils';
 export interface StoreWithToggleDisable {
     generateToggleDisableUpdates: (
         targetUUIDs: string | string[] | null,
-        value?: boolean
+        value?: boolean,
+        forceUpdate?: boolean
     ) => BindingDisableUpdate[];
     toggleDisable: (updates: BindingDisableUpdate[]) => void;
 }
@@ -27,7 +28,7 @@ export const getStoreWithToggleDisableSettings = (
                     const collectionName =
                         state.resourceConfigs[bindingUUID].meta.collectionName;
 
-                    if (val) {
+                    if (val === true) {
                         state.resourceConfigs[bindingUUID].meta.disable = val;
 
                         const existingIndex =
@@ -48,7 +49,12 @@ export const getStoreWithToggleDisableSettings = (
                             );
                         }
                     } else {
-                        delete state.resourceConfigs[bindingUUID].meta.disable;
+                        // We need to check because sometimes the user could manually put the
+                        //  `disable` setting in the editor and skip using the toggle
+                        if (state.resourceConfigs[bindingUUID].meta.disable) {
+                            delete state.resourceConfigs[bindingUUID].meta
+                                .disable;
+                        }
 
                         if (
                             state.resourceConfigs[bindingUUID].meta
@@ -68,7 +74,7 @@ export const getStoreWithToggleDisableSettings = (
         );
     },
 
-    generateToggleDisableUpdates: (targetUUIDs, value) => {
+    generateToggleDisableUpdates: (targetUUIDs, value, forceUpdate = false) => {
         const updatedBindings: BindingDisableUpdate[] = [];
         let updatedCount = 0;
 
@@ -91,7 +97,7 @@ export const getStoreWithToggleDisableSettings = (
                     const currValue = isBoolean(disable) ? disable : false;
                     const val = value ?? !currValue;
 
-                    if (value !== currValue) {
+                    if (forceUpdate || value !== currValue) {
                         updatedCount = updatedCount + 1;
                         updatedBindings.push({
                             bindingUUID: uuid,
