@@ -1,5 +1,5 @@
 import type { TablePrefix } from 'src/stores/Tables/hooks';
-import type { OptionalTableColumn, Schema } from 'src/types';
+import type { Schema } from 'src/types';
 
 export interface Projection {
     field: string;
@@ -74,7 +74,7 @@ export interface CompositeProjection extends Projection {
 }
 
 export interface TableColumnSelectorProps {
-    optionalColumns: OptionalTableColumn[];
+    optionalColumns: string[];
     tablePrefix: TablePrefix;
     loading?: boolean;
 }

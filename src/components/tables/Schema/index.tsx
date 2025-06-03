@@ -88,7 +88,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const columnsToShow = useMemo(() => {
         const evaluatedColumns = isCaptureWorkflow
             ? columns.concat([actionColumn])
-            : columns.concat(optionalColumns);
+            : columns;
 
         if (
             isCaptureWorkflow &&
@@ -96,10 +96,10 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
             Object.hasOwn(tableSettings, TablePrefixes.schemaViewer)
         ) {
             const hiddenColumns = optionalColumns.filter(
-                (column) =>
+                (headerIntlKey) =>
                     !tableSettings[
                         TablePrefixes.schemaViewer
-                    ].shownOptionalColumns.includes(column.headerIntlKey)
+                    ].shownOptionalColumns.includes(headerIntlKey)
             );
 
             return evaluateColumnsToShow(evaluatedColumns, hiddenColumns);
@@ -140,6 +140,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
                         rows={
                             hasLength(data) ? (
                                 <Rows
+                                    columns={columnsToShow}
                                     data={data}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}

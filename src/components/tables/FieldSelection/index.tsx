@@ -104,16 +104,16 @@ export default function FieldSelectionTable({
             Object.hasOwn(tableSettings, TablePrefixes.fieldSelection)
         ) {
             const hiddenColumns = optionalColumns.filter(
-                (column) =>
+                (headerIntlKey) =>
                     !tableSettings[
                         TablePrefixes.fieldSelection
-                    ].shownOptionalColumns.includes(column.headerIntlKey)
+                    ].shownOptionalColumns.includes(headerIntlKey)
             );
 
             return evaluateColumnsToShow(tableColumns, hiddenColumns);
         }
 
-        return evaluateColumnsToShow(tableColumns, optionalColumns);
+        return tableColumns;
     }, [tableSettings]);
 
     return (

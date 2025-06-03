@@ -60,6 +60,7 @@ export default function TableColumnSelector({
             columns={optionalColumns}
             onChange={updateTableSettings}
             disabled={loading}
+            tablePrefix={tablePrefix}
         />
     );
 }
