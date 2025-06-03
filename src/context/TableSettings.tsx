@@ -3,8 +3,9 @@ import type { BaseComponentProps } from 'src/types';
 
 import { createContext, useContext } from 'react';
 
-import { useLocalStorage } from 'react-use';
+import { useLocalStorage, useMount } from 'react-use';
 
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 interface TableSettings {
@@ -30,6 +31,17 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             LocalStorageKeys.TABLE_SETTINGS,
             {}
         );
+
+    useMount(() => {
+        if (!tableSettings?.[TablePrefixes.schemaViewer]) {
+            setTableSettings({
+                ...tableSettings,
+                [TablePrefixes.schemaViewer]: {
+                    shownOptionalColumns: [],
+                },
+            });
+        }
+    });
 
     return (
         <TableSettingsContext.Provider
