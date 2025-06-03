@@ -3,8 +3,6 @@ import type { Projections } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
-import { omit } from 'lodash';
-
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
@@ -49,7 +47,7 @@ export const useUpdateDraftedProjection = () => {
             const spec: Schema = collectionData.spec;
 
             if (spec?.projections) {
-                spec.projections = omit(spec.projections, field);
+                delete spec.projections[field];
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
