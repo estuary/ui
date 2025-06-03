@@ -49,9 +49,12 @@ export const getStoreWithToggleDisableSettings = (
                             );
                         }
                     } else {
-                        // We need to check because sometimes the user could manually put the
-                        //  `disable` setting in the editor and skip using the toggle
-                        if (state.resourceConfigs[bindingUUID].meta.disable) {
+                        if (
+                            Object.hasOwn(
+                                state.resourceConfigs[bindingUUID].meta,
+                                'disable'
+                            )
+                        ) {
                             delete state.resourceConfigs[bindingUUID].meta
                                 .disable;
                         }
