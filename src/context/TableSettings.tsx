@@ -30,6 +30,9 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
         useLocalStorage<TableSettingsDictionary>(
             LocalStorageKeys.TABLE_SETTINGS,
             {
+                [TablePrefixes.fieldSelection]: {
+                    shownOptionalColumns: [],
+                },
                 [TablePrefixes.schemaViewer]: {
                     shownOptionalColumns: [],
                 },
@@ -37,6 +40,15 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
         );
 
     useMount(() => {
+        if (!tableSettings?.[TablePrefixes.fieldSelection]) {
+            setTableSettings({
+                ...tableSettings,
+                [TablePrefixes.fieldSelection]: {
+                    shownOptionalColumns: [],
+                },
+            });
+        }
+
         if (!tableSettings?.[TablePrefixes.schemaViewer]) {
             setTableSettings({
                 ...tableSettings,
