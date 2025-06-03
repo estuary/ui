@@ -32,17 +32,19 @@ function SpecPropInvalidSetting({
                 )}
             </Typography>
 
-            <Button
-                disabled={formActive}
-                size="small"
-                sx={{ maxWidth: 'fit-content' }}
-                variant="text"
-                onClick={() => updateDraftedSetting()}
-            >
-                {intl.formatMessage({
-                    id: 'specPropEditor.error.cta',
-                })}
-            </Button>
+            {updateDraftedSetting ? (
+                <Button
+                    disabled={formActive}
+                    size="small"
+                    sx={{ maxWidth: 'fit-content' }}
+                    variant="text"
+                    onClick={() => updateDraftedSetting()}
+                >
+                    {intl.formatMessage({
+                        id: 'specPropEditor.error.cta',
+                    })}
+                </Button>
+            ) : null}
         </AlertBox>
     );
 }

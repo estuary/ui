@@ -301,6 +301,7 @@ export const Workflows: Record<string, string> = {
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Reset to the default value.`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

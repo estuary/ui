@@ -109,12 +109,10 @@ function useDisableUpdater(bindingUUID?: string) {
 
     let currentSetting: boolean | null | undefined;
 
-    if (bindingIndex) {
+    if (bindingIndex !== null) {
         currentSetting =
             draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
-    }
-
-    if (!currentSetting) {
+    } else if (!currentSetting) {
         currentSetting = storeSetting;
     }
 

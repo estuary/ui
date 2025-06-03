@@ -39,5 +39,5 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
 export interface SpecPropInvalidSettingProps {
     currentSetting: BaseFormProps['currentSetting'];
     invalidSettingsMessageId: string;
-    updateDraftedSetting: BaseFormProps['updateDraftedSetting'];
+    updateDraftedSetting?: BaseFormProps['updateDraftedSetting'];
 }

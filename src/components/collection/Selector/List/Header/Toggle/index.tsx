@@ -37,7 +37,7 @@ function CollectionSelectorHeaderToggle({
                 ...dataGridEntireCellButtonStyling,
             }}
         >
-            <Tooltip title={tooltipTitle}>
+            <Tooltip title={tooltipTitle} placement="top">
                 <Button
                     aria-label={tooltipTitle}
                     disabled={disabled}
