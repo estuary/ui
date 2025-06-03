@@ -26,12 +26,12 @@ import { isColumnVisible } from 'src/utils/table-utils';
 function Row({ columns, row }: RowProps) {
     const currentBindingUUID = useBinding_currentBindingUUID();
 
-    const pointerColumnDisplayed = isColumnVisible(
+    const pointerColumnVisible = isColumnVisible(
         columns,
         optionalColumnIntlKeys.pointer
     );
 
-    const detailsColumnDisplayed = isColumnVisible(
+    const detailsColumnVisible = isColumnVisible(
         columns,
         optionalColumnIntlKeys.details
     );
@@ -49,7 +49,7 @@ function Row({ columns, row }: RowProps) {
                 <Typography>{row.field}</Typography>
             </TableCell>
 
-            {pointerColumnDisplayed ? (
+            {pointerColumnVisible ? (
                 <TableCell>
                     <Typography>{row.ptr}</Typography>
                 </TableCell>
@@ -61,7 +61,7 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            {detailsColumnDisplayed ? (
+            {detailsColumnVisible ? (
                 row.constraint ? (
                     <ConstraintDetails constraint={row.constraint} />
                 ) : (

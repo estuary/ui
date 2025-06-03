@@ -41,7 +41,7 @@ function Row({ columns, row }: RowProps) {
         return row.types;
     }, [row]);
 
-    const detailsColumnDisplayed =
+    const detailsColumnVisible =
         !isCaptureWorkflow ||
         isColumnVisible(columns, optionalColumnIntlKeys.details);
 
@@ -75,7 +75,7 @@ function Row({ columns, row }: RowProps) {
                 maxChips={2}
             />
 
-            {detailsColumnDisplayed ? (
+            {detailsColumnVisible ? (
                 <TableCell>
                     <Stack component="span" spacing={1}>
                         {row.title ? <Box>{row.title}</Box> : null}
