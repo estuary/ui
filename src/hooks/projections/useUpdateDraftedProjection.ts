@@ -1,36 +1,11 @@
 import type { Schema } from 'src/types';
-import type { Projections } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
-
-const getExistingPartition = (
-    spec: Schema,
-    location: string,
-    field: string
-) => {
-    const existingProjection = spec?.projections
-        ? Object.entries(spec.projections as Projections).find(
-              ([projectedField, projectedMetadata]) => {
-                  const locationMatched =
-                      typeof projectedMetadata === 'string'
-                          ? projectedMetadata === location
-                          : projectedMetadata.location === location;
-
-                  return locationMatched && projectedField === field;
-              }
-          )
-        : undefined;
-
-    if (!existingProjection || typeof existingProjection[1] === 'string') {
-        return undefined;
-    }
-
-    return existingProjection[1].partition;
-};
+import { getExistingPartition } from 'src/utils/entity-utils';
 
 export const useUpdateDraftedProjection = () => {
     const draftId = useEditorStore_persistedDraftId();
