@@ -1,4 +1,5 @@
 import type { Schema, SourceCaptureDef } from 'src/types';
+import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
 
@@ -109,4 +110,29 @@ export const addOrRemoveOnIncompatibleSchemaChange = (
     }
 
     return schema;
+};
+
+export const getExistingPartition = (
+    spec: Schema,
+    location: string,
+    field: string
+) => {
+    const existingProjection = spec?.projections
+        ? Object.entries(spec.projections as Projections).find(
+              ([projectedField, projectedMetadata]) => {
+                  const locationMatched =
+                      typeof projectedMetadata === 'string'
+                          ? projectedMetadata === location
+                          : projectedMetadata.location === location;
+
+                  return locationMatched && projectedField === field;
+              }
+          )
+        : undefined;
+
+    if (!existingProjection || typeof existingProjection[1] === 'string') {
+        return undefined;
+    }
+
+    return existingProjection[1].partition;
 };
