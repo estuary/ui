@@ -290,13 +290,11 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
-    // 'deltaUpdates.header': `Delta Updates`,
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    // 'schemaMode.header': `Target Naming`,
-    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas.`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, table name will not be prefixed and schema field will be empty.`,
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
