@@ -3,6 +3,7 @@ import type { Schema } from 'src/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce, omit } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -113,6 +114,9 @@ export default function useCaptureInterval() {
             setServerUpdateRequired(true);
         }, DEFAULT_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debounceSeverUpdate.current?.cancel();
+    });
 
     const updateStoredInterval = (input: string) => {
         const trimmedInput = input.trim();

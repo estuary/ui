@@ -13,7 +13,7 @@ import { Box, Popper, TableContainer } from '@mui/material';
 import { findAll } from 'highlight-words-core';
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 
 import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
 import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
@@ -124,6 +124,9 @@ function CollectionSelectorList({
             setFilterValue(val);
         }, QUICK_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedFilter.current?.cancel();
+    });
 
     const filteredRows = useMemo(() => {
         if (filterValue === '') {
