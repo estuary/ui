@@ -3,6 +3,7 @@ import type { Schema } from 'src/types';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { debounce } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -42,6 +43,9 @@ function useAutoDiscovery() {
             setSettingsSaving(true);
         }, DEFAULT_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedUpdate.current?.cancel();
+    });
 
     useEffect(() => {
         if (settingsActive) {

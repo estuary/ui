@@ -106,10 +106,12 @@ export const useBinding_resourceConfigOfBindingProperty = (
     );
 };
 
-export const useBinding_resourceConfigOfMetaBindingProperty = (
-    bindingUUID: any,
-    property: keyof ResourceConfig['meta']
-) => {
+export const useBinding_resourceConfigOfMetaBindingProperty = <
+    K extends keyof ResourceConfig['meta'],
+>(
+    bindingUUID: string | undefined,
+    property: K
+): ResourceConfig['meta'][K] | null => {
     return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
@@ -167,10 +169,6 @@ export const useBinding_enabledCollections_count = () =>
             (state) => getEnabledCollectionNames(state.resourceConfigs).length
         )
     );
-
-export const useBinding_toggleDisable = () => {
-    return useBindingStore((state) => state.toggleDisable);
-};
 
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(

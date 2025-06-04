@@ -4,6 +4,7 @@ import type { Entity } from 'src/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce, get, has, isEqual, set } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -150,6 +151,9 @@ function useDraftSpecEditor(
             setCurrentCatalogSyncing(false);
         }, DEFAULT_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedUpdate.current?.cancel();
+    });
 
     useEffect(() => {
         if (

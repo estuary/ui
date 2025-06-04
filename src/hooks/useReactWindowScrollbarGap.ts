@@ -4,7 +4,7 @@ import type { FixedSizeList, VariableSizeList } from 'react-window';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce } from 'lodash';
-import { useScrollbarWidth } from 'react-use';
+import { useScrollbarWidth, useUnmount } from 'react-use';
 
 import { useReactWindowReadyToScroll } from 'src/hooks/useReactWindowReadyToScroll';
 import { NEAR_INSTANT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
@@ -36,6 +36,9 @@ export const useReactWindowScrollbarGap = <
             ignoreResize ? 0 : NEAR_INSTANT_DEBOUNCE_WAIT
         )
     );
+    useUnmount(() => {
+        debouncedSetter.current?.cancel();
+    });
 
     const checkScrollbarVisibility = useCallback(() => {
         if (

@@ -18,7 +18,7 @@ import {
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useUnmount } from 'react-use';
 
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
@@ -228,6 +228,9 @@ function EntityTable({
             setPage(0);
         },
     };
+    useUnmount(() => {
+        handlers.filterTable.cancel();
+    });
 
     const dataRows = useMemo(
         () =>

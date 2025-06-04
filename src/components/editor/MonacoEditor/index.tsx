@@ -14,6 +14,7 @@ import {
 
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import { debounce } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import Invalid from 'src/components/editor/Status/Invalid';
 import ServerDiff from 'src/components/editor/Status/ServerDiff';
@@ -250,6 +251,9 @@ function MonacoEditor({
         updateValue,
         catalogName,
     ]);
+    useUnmount(() => {
+        debouncedChange.cancel();
+    });
 
     useEffect(() => {
         if (typeof defaultValue === 'string') setLocalCopy(defaultValue);

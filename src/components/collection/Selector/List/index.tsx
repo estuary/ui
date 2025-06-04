@@ -13,7 +13,7 @@ import { Box, Popper, TableContainer } from '@mui/material';
 import { findAll } from 'highlight-words-core';
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 
 import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
 import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
@@ -127,6 +127,9 @@ function CollectionSelectorList({
             setFilterValue(val);
         }, QUICK_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedFilter.current?.cancel();
+    });
 
     const filteredRows = useMemo(() => {
         if (filterValue === '') {
@@ -261,31 +264,34 @@ function CollectionSelectorList({
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         defaultValue={someBindingsDisabled}
-                        onClick={(event, value, scope) => {
-                            const count =
-                                bindingSelectorCells.toggle?.handler?.(
+                        onClick={async (event, value, scope) => {
+                            return bindingSelectorCells.toggle
+                                ?.handler?.(
                                     filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
                                         ];
                                     }),
                                     value
-                                );
-
-                            showPopper(
-                                event.currentTarget,
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: `${count}`,
-                                        itemType: collectionsLabel,
-                                    }
                                 )
-                            );
+                                .then((response) => {
+                                    showPopper(
+                                        event.currentTarget,
+                                        intl.formatMessage(
+                                            {
+                                                id: value
+                                                    ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                    : 'workflows.collectionSelector.notifications.toggle.enable',
+                                            },
+                                            {
+                                                count: `${response.length}`,
+                                                itemType: collectionsLabel,
+                                            }
+                                        )
+                                    );
+
+                                    return Promise.resolve(response);
+                                });
                         }}
                     />
                 ),

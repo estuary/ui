@@ -4,6 +4,7 @@ import { TextField } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import {
     useBinding_searchQuery,
@@ -30,6 +31,10 @@ export default function FieldFilter({ disabled }: Props) {
         },
         750
     );
+
+    useUnmount(() => {
+        filterTable.cancel();
+    });
 
     return (
         <TextField
