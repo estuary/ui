@@ -55,12 +55,12 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     <FormattedMessage id="schemaEditor.fields.label" />
                 </Typography>
 
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
-                >
-                    {disabled ? (
+                {disabled ? (
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: 'center' }}
+                    >
                         <Box style={{ width: 150 }}>
                             <ExistFilter
                                 fieldFilter={fieldFilter}
@@ -68,15 +68,15 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                                 disabled={inferSchemaResponseEmpty}
                             />
                         </Box>
-                    ) : null}
 
-                    {isCaptureWorkflow ? (
-                        <TableColumnSelector
-                            optionalColumns={optionalColumns}
-                            tablePrefix={TablePrefixes.schemaViewer}
-                        />
-                    ) : null}
-                </Stack>
+                        {isCaptureWorkflow ? (
+                            <TableColumnSelector
+                                optionalColumns={optionalColumns}
+                                tablePrefix={TablePrefixes.schemaViewer}
+                            />
+                        ) : null}
+                    </Stack>
+                ) : null}
             </Stack>
 
             <Collapse
