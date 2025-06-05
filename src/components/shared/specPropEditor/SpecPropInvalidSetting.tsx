@@ -5,6 +5,7 @@ import { Button, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import { logRocketEvent } from 'src/services/shared';
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
@@ -16,6 +17,11 @@ function SpecPropInvalidSetting({
     const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
+    const safeCurrentSetting =
+        typeof currentSetting === 'string'
+            ? currentSetting
+            : stringifyJSON(currentSetting);
+
     return (
         <AlertBox severity="error" short sx={{ maxWidth: 'fit-content' }}>
             <Typography>
@@ -24,10 +30,7 @@ function SpecPropInvalidSetting({
                         id: invalidSettingsMessageId,
                     },
                     {
-                        currentSetting:
-                            typeof currentSetting === 'string'
-                                ? currentSetting
-                                : stringifyJSON(currentSetting),
+                        currentSetting: safeCurrentSetting,
                     }
                 )}
             </Typography>
@@ -37,7 +40,14 @@ function SpecPropInvalidSetting({
                 size="small"
                 sx={{ maxWidth: 'fit-content' }}
                 variant="text"
-                onClick={() => updateDraftedSetting()}
+                onClick={() => {
+                    logRocketEvent('ResetInvalidSetting', {
+                        messageId: invalidSettingsMessageId,
+                        currentSetting: safeCurrentSetting,
+                    });
+
+                    return updateDraftedSetting();
+                }}
             >
                 {intl.formatMessage({
                     id: 'specPropEditor.error.cta',

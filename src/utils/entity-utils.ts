@@ -94,6 +94,18 @@ export const updateSourceCapture = (
     const currentKey = getSourceCapturePropKey(schema);
     const currentVal = readSourceCaptureDefinitionFromSpec(schema) ?? {};
 
+    // See if the old targetNaming property is being used. Since we are updating sourceCapture we can
+    //  go ahead and convert to the new setting
+    if (Object.hasOwn(currentVal, 'targetSchema')) {
+        // If there is not targetNaming do ahead and populate the previous setting into the new prop name
+        if (!Object.hasOwn(sourceCaptureSettings, 'targetNaming')) {
+            sourceCaptureSettings.targetNaming = currentVal.targetSchema;
+        }
+
+        // Clean up the old targetSchema so we don't have duplicate keys
+        delete currentVal.targetSchema;
+    }
+
     schema[currentKey] = { ...currentVal, ...sourceCaptureSettings };
 
     return schema;

@@ -5,6 +5,12 @@ export const actionColumn: TableColumns = {
     headerIntlKey: 'data.actions',
 };
 
+export const optionalColumnIntlKeys = {
+    details: 'data.details',
+};
+
+export const optionalColumns = Object.values(optionalColumnIntlKeys);
+
 export const columns: TableColumns[] = [
     {
         field: 'name',
@@ -21,7 +27,7 @@ export const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'data.details',
+        headerIntlKey: optionalColumnIntlKeys.details,
         minWidth: 300,
     },
 ];
