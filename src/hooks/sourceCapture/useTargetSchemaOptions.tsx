@@ -61,6 +61,14 @@ function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
                             id: `schemaMode.options.${choice}.example.table`,
                         }),
                     },
+                    publicExample: {
+                        schema: intl.formatMessage({
+                            id: `schemaMode.options.${choice}.example.public.schema`,
+                        }),
+                        table: intl.formatMessage({
+                            id: `schemaMode.options.${choice}.example.public.table`,
+                        }),
+                    },
                     label: intl.formatMessage({
                         id: `schemaMode.options.${choice}.label`,
                     }),

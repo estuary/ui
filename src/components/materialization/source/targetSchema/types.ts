@@ -9,5 +9,11 @@ export interface AutoCompleteOptionForTargetSchemaExample {
 export interface AutoCompleteOptionForTargetSchema
     extends BaseAutoCompleteOption {
     example: AutoCompleteOptionForTargetSchemaExample;
+    publicExample: AutoCompleteOptionForTargetSchemaExample;
     val: TargetSchemas;
+}
+
+export interface OptionExampleProps {
+    example: AutoCompleteOptionForTargetSchemaExample;
+    baseTableMessageId: string;
 }

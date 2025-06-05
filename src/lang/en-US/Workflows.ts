@@ -302,29 +302,40 @@ export const Workflows: Record<string, string> = {
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,
     'schemaMode.data.schema': `Schema:`,
-    'schemaMode.example.table': `AcmeCo/AcmeCo-prod/orders`,
+    'schemaMode.example.table': `acmeco/anvils/orders`,
+
+    'schemaMode.example.public.table': `acmeco/public/orders`,
+
     'schemaMode.options.prefixNonDefaultSchema.ignored': `public`,
 
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema}). The schema itself is left unspecified.`,
     'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
-    'schemaMode.options.prefixNonDefaultSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `anvils_orders`,
     'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.schema': `default`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
-    'schemaMode.options.prefixSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixSchema.example.table': `anvil_orders`,
     'schemaMode.options.prefixSchema.example.schema': `default`,
+    'schemaMode.options.prefixSchema.example.public.table': `public_orders`,
+    'schemaMode.options.prefixSchema.example.public.schema': `default`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
     'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
     'schemaMode.options.withSchema.example.table': `orders`,
-    'schemaMode.options.withSchema.example.schema': `AcmeCo-prod`,
+    'schemaMode.options.withSchema.example.schema': `anvils`,
+    'schemaMode.options.withSchema.example.public.table': `orders`,
+    'schemaMode.options.withSchema.example.public.schema': `public`,
 
     'schemaMode.options.noSchema.label': `Use Table Name Only`,
     'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
     'schemaMode.options.noSchema.example.table': `orders`,
     'schemaMode.options.noSchema.example.schema': `default`,
+    'schemaMode.options.noSchema.example.public.table': `orders`,
+    'schemaMode.options.noSchema.example.public.schema': `default`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
