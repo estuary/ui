@@ -7,6 +7,8 @@ import { useIntl } from 'react-intl';
 
 import { TARGET_SCHEMA_HIGHLIGHT_CLASS } from 'src/components/materialization/source/targetSchema/shared';
 
+const labelStyling = { fontWeight: 500, fontSize: 12 };
+
 function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
     const intl = useIntl();
     const theme = useTheme();
@@ -49,18 +51,12 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                     alignItems: 'center',
                 }}
             >
-                <Typography
-                    component="span"
-                    sx={{ fontWeight: 500, fontSize: 12 }}
-                >
+                <Typography component="span" sx={labelStyling}>
                     {intl.formatMessage({ id: 'schemaMode.data.table' })}
                 </Typography>
                 <code>{example.table}</code>
                 <Typography component="span">|</Typography>
-                <Typography
-                    component="span"
-                    sx={{ fontWeight: 500, fontSize: 12 }}
-                >
+                <Typography component="span" sx={labelStyling}>
                     {intl.formatMessage({ id: 'schemaMode.data.schema' })}
                 </Typography>
                 <code>{example.schema}</code>
