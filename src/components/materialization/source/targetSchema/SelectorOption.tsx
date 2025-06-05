@@ -9,7 +9,7 @@ function SelectorOption({
     option: { description, label, example, publicExample },
 }: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {
     return (
-        <Stack component="span" spacing={0.5} sx={{ pb: 1 }}>
+        <Stack component="span" spacing={1} sx={{ pb: 1 }}>
             <Typography component="span" style={{ fontWeight: 500 }}>
                 {label}
             </Typography>
@@ -25,12 +25,14 @@ function SelectorOption({
 
             <OptionExample
                 example={example}
-                baseTableMessageId="schemaMode.example.table"
+                baseTableMessageID="schemaMode.example.base"
             />
-            <OptionExample
-                example={publicExample}
-                baseTableMessageId="schemaMode.example.public.table"
-            />
+            {publicExample ? (
+                <OptionExample
+                    example={publicExample}
+                    baseTableMessageID="schemaMode.example.base"
+                />
+            ) : null}
         </Stack>
     );
 }

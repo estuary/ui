@@ -5,7 +5,9 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-function OptionExample({ example, baseTableMessageId }: OptionExampleProps) {
+import { TARGET_SCHEMA_HIGHLIGHT_CLASS } from 'src/components/materialization/source/targetSchema/shared';
+
+function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -19,9 +21,20 @@ function OptionExample({ example, baseTableMessageId }: OptionExampleProps) {
                 flexWrap: 'wrap',
                 alignItems: 'center',
                 fontSize: 12,
+                [`& .${TARGET_SCHEMA_HIGHLIGHT_CLASS}`]: {
+                    fontWeight: 700,
+                    fontSize: 12.5,
+                },
             }}
         >
-            <code>{intl.formatMessage({ id: baseTableMessageId })}</code>
+            <code>
+                {intl.formatMessage(
+                    { id: baseTableMessageID },
+                    {
+                        tablePrefix: example.tablePrefix,
+                    }
+                )}
+            </code>
             <ArrowRight
                 style={{
                     color: theme.palette.primary.main,
