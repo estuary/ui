@@ -24,7 +24,7 @@ export default function TargetSchemaUpdateWrapper() {
     );
 
     const { currentSetting, updateSourceSetting } =
-        useSourceSetting<TargetSchemas>('targetSchema');
+        useSourceSetting<TargetSchemas>('targetNaming');
 
     const updateServer = useCallback(
         async (option?: AutoCompleteOptionForTargetSchema | null) => {

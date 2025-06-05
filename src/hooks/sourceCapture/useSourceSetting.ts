@@ -8,7 +8,7 @@ import {
 } from 'src/utils/entity-utils';
 
 export default function useSourceSetting<T = any>(
-    settingKey: 'targetSchema' | 'deltaUpdates' | 'capture'
+    settingKey: 'targetNaming' | 'deltaUpdates' | 'capture'
 ) {
     const draftUpdater = useDraftUpdater();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -35,15 +35,24 @@ export default function useSourceSetting<T = any>(
         [draftSpecs]
     );
 
-    const currentSetting = useMemo(
-        () =>
-            currentSpec
-                ? (readSourceCaptureDefinitionFromSpec(currentSpec)?.[
-                      settingKey
-                  ] as T)
-                : undefined,
-        [currentSpec, settingKey]
-    );
+    const currentSetting = useMemo(() => {
+        if (currentSpec) {
+            const currentSourceCapture =
+                readSourceCaptureDefinitionFromSpec(currentSpec);
+
+            if (settingKey === 'targetNaming') {
+                const oldProperty = currentSourceCapture?.['targetSchema'];
+                const newProperty = currentSourceCapture?.[settingKey];
+
+                // Try using the oldProperty first so we can maintain the setting the user used
+                return (oldProperty ?? newProperty) as T;
+            }
+
+            return currentSourceCapture?.[settingKey] as T;
+        }
+
+        return undefined;
+    }, [currentSpec, settingKey]);
 
     return {
         currentSetting,
