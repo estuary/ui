@@ -39,7 +39,7 @@ export default function SpecPropAutoComplete({
         return (
             options.find((option) =>
                 isOptionEqualToValue
-                    ? isOptionEqualToValue(option.val, currentSetting)
+                    ? isOptionEqualToValue(option, { val: currentSetting })
                     : option.val === currentSetting
             ) ?? null
         );
