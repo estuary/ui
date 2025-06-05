@@ -73,7 +73,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         }
 
         if (sourceCaptureTargetSchemaSupported) {
-            sourceCaptureSettings.targetSchema = targetSchema;
+            sourceCaptureSettings.targetNaming = targetSchema;
         }
 
         const collections = value.map(({ name }) => name);

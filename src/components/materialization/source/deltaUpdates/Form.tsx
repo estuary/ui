@@ -1,6 +1,9 @@
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
+import { useEffect, useRef } from 'react';
+
 import SpecPropBoolean from 'src/components/shared/specPropEditor/SpecPropBoolean';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 export default function DeltaUpdatesForm({
@@ -8,9 +11,22 @@ export default function DeltaUpdatesForm({
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
-    const [setDeltaUpdatesHasError] = useSourceCaptureStore((state) => [
-        state.setDeltaUpdatesHasError,
-    ]);
+    const workflow = useEntityWorkflow();
+
+    const [setDeltaUpdatesHasError, setDeltaUpdates] = useSourceCaptureStore(
+        (state) => [state.setDeltaUpdatesHasError, state.setDeltaUpdates]
+    );
+
+    // If we are editing make sure we store the current value into the store "on load"
+    const defaultValue = useRef(workflow === 'materialization_edit');
+    useEffect(() => {
+        if (defaultValue.current) {
+            if (currentSetting) {
+                setDeltaUpdates(currentSetting);
+                defaultValue.current = false;
+            }
+        }
+    }, [currentSetting, setDeltaUpdates]);
 
     return (
         <SpecPropBoolean

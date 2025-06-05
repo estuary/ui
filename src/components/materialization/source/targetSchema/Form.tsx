@@ -1,6 +1,8 @@
 import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
+import { useEffect, useRef } from 'react';
+
 import { useMount } from 'react-use';
 
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
@@ -28,6 +30,17 @@ export default function TargetSchemaForm({
             setTargetSchema('prefixNonDefaultSchema');
         }
     });
+
+    // If we are editing make sure we store the current value into the store "on load"
+    const defaultValue = useRef(workflow === 'materialization_edit');
+    useEffect(() => {
+        if (defaultValue.current) {
+            if (currentSetting) {
+                setTargetSchema(currentSetting);
+                defaultValue.current = false;
+            }
+        }
+    }, [currentSetting, setTargetSchema]);
 
     return (
         <SpecPropAutoComplete
