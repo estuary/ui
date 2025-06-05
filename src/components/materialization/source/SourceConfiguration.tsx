@@ -31,9 +31,7 @@ function SourceConfiguration() {
 
             <Stack spacing={3}>
                 {sourceCaptureDeltaUpdatesSupported ? (
-                    <Stack>
-                        <DeltaUpdatesUpdateWrapper />
-                    </Stack>
+                    <DeltaUpdatesUpdateWrapper />
                 ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
