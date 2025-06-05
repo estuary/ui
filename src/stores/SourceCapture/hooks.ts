@@ -1,7 +1,5 @@
 import type { SourceCaptureDef } from 'src/types';
 
-import { useCallback } from 'react';
-
 import { useShallow } from 'zustand/react/shallow';
 
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
@@ -16,23 +14,28 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
 
         return useSourceCaptureStore(
             useShallow((state) => {
-                if (state.sourceCapture) {
-                    const response: SourceCaptureDef = {
-                        capture: state.sourceCapture,
-                    };
+                const deltaUpdatesSupportedAndExists =
+                    sourceCaptureDeltaUpdatesSupported && state.deltaUpdates;
 
-                    if (
-                        sourceCaptureDeltaUpdatesSupported &&
-                        state.deltaUpdates
-                    ) {
+                const targetSchemaSupportedAndExists =
+                    sourceCaptureTargetSchemaSupported && state.targetSchema;
+                if (
+                    state.sourceCapture ||
+                    deltaUpdatesSupportedAndExists ||
+                    targetSchemaSupportedAndExists
+                ) {
+                    const response: SourceCaptureDef = {};
+
+                    if (state.sourceCapture) {
+                        response.capture = state.sourceCapture;
+                    }
+
+                    if (deltaUpdatesSupportedAndExists) {
                         response.deltaUpdates = state.deltaUpdates;
                     }
 
-                    if (
-                        sourceCaptureTargetSchemaSupported &&
-                        state.targetSchema
-                    ) {
-                        response.targetSchema = state.targetSchema;
+                    if (targetSchemaSupportedAndExists) {
+                        response.targetNaming = state.targetSchema;
                     }
 
                     return response;
@@ -42,33 +45,3 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
             })
         );
     };
-
-export const useSourceCaptureStore_setSourceCaptureDefinition = () => {
-    const [setSourceCapture, setDeltaUpdates, setTargetSchema] =
-        useSourceCaptureStore((state) => [
-            state.setSourceCapture,
-            state.setDeltaUpdates,
-            state.setTargetSchema,
-        ]);
-
-    return useCallback(
-        (newVal: SourceCaptureDef | null) => {
-            if (!newVal) {
-                setSourceCapture(null);
-                setDeltaUpdates(undefined);
-                setTargetSchema(undefined);
-                return;
-            }
-
-            // Mainly here to handle defaulting this different on
-            //  edit and create
-            if (newVal.capture.length > 0) {
-                setSourceCapture(newVal.capture);
-            }
-
-            setDeltaUpdates(newVal.deltaUpdates);
-            setTargetSchema(newVal.targetSchema);
-        },
-        [setDeltaUpdates, setSourceCapture, setTargetSchema]
-    );
-};

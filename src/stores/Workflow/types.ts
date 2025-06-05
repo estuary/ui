@@ -1,5 +1,6 @@
 import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { StoreWithProjections } from 'src/stores/Workflow/slices/Projections';
 
 interface CatalogName {
     root: string;
@@ -8,7 +9,9 @@ interface CatalogName {
     whole: string;
 }
 
-export interface WorkflowState extends StoreWithHydration {
+export interface WorkflowState
+    extends StoreWithHydration,
+        StoreWithProjections {
     catalogName: CatalogName;
     connectorMetadata: ConnectorWithTagQuery[];
     customerId: string;

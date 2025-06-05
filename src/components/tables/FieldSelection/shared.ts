@@ -4,9 +4,11 @@ import type { SortDirection, TableColumns } from 'src/types';
 import { compareInitialCharacterType } from 'src/utils/misc-utils';
 
 export const optionalColumnIntlKeys = {
-    pointer: 'data.pointer',
+    pointer: 'data.location',
     details: 'data.details',
 };
+
+export const optionalColumns = Object.values(optionalColumnIntlKeys);
 
 export const tableColumns: TableColumns[] = [
     {
@@ -14,10 +16,7 @@ export const tableColumns: TableColumns[] = [
         headerIntlKey: 'data.field',
         sticky: true,
     },
-    {
-        field: 'ptr',
-        headerIntlKey: optionalColumnIntlKeys.pointer,
-    },
+    { field: 'ptr', headerIntlKey: optionalColumnIntlKeys.pointer },
     {
         field: null,
         headerIntlKey: 'data.type',
@@ -82,15 +81,3 @@ export const constraintTypeSort = (
 
     return compareConstraintTypes(a, b, ascendingSort);
 };
-
-export const displayOptionalColumn = (
-    columns: TableColumns[],
-    intlKey: string
-) => columns.some((column) => column.headerIntlKey === intlKey);
-
-export const evaluateColumnsToShow = (columnsToHide: string[]) =>
-    tableColumns.filter((column) =>
-        column.headerIntlKey
-            ? !columnsToHide.includes(column.headerIntlKey)
-            : true
-    );

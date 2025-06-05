@@ -1,5 +1,5 @@
 import type {
-    AutoCompleteOption,
+    AutoCompleteOptionForIncompatibleSchemaChange,
     OnIncompatibleSchemaChangeProps,
 } from 'src/components/incompatibleSchemaChange/types';
 import type { BindingMetadata } from 'src/types';
@@ -51,10 +51,12 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
     }, [bindingIndex, currentBindingUUID, currentCollection]);
 
     const updateServer = useCallback(
-        async (value?: AutoCompleteOption | null) => {
+        async (
+            value?: AutoCompleteOptionForIncompatibleSchemaChange | null
+        ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
+            return updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
                 .then(() => {
                     if (currentBindingUUID) {
                         setIncompatibleSchemaChange(
@@ -71,7 +73,7 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
                             id:
                                 err === 'no binding'
                                     ? 'updateBinding.error.noBinding'
-                                    : 'incompatibleSchemaChange.update.error',
+                                    : 'specPropEditor.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );

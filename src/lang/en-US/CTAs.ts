@@ -60,4 +60,5 @@ export const CTAs: Record<string, string> = {
     'cta.resetDataFlow.retry': `Retry`,
     'cta.modify': `modify`,
     'cta.exit': `Exit`,
+    'cta.rename': `Rename`,
 };
