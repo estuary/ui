@@ -144,11 +144,15 @@ export interface StorageMappingStore {
     bucket: string;
     prefix: string;
 }
+export interface StorageMappingSpec {
+    stores: StorageMappingStore[];
+    data_planes: string[];
+}
 export interface StorageMappings {
     id: string;
     // detail: string;
     catalog_prefix: string;
-    spec: { stores: StorageMappingStore[] };
+    spec: StorageMappingSpec;
     // created_at: string;
     updated_at: string;
 }
