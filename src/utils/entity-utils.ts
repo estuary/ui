@@ -1,4 +1,5 @@
 import type { Schema, SourceCaptureDef } from 'src/types';
+import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
 
@@ -93,6 +94,18 @@ export const updateSourceCapture = (
     const currentKey = getSourceCapturePropKey(schema);
     const currentVal = readSourceCaptureDefinitionFromSpec(schema) ?? {};
 
+    // See if the old targetNaming property is being used. Since we are updating sourceCapture we can
+    //  go ahead and convert to the new setting
+    if (Object.hasOwn(currentVal, 'targetSchema')) {
+        // If there is not targetNaming do ahead and populate the previous setting into the new prop name
+        if (!Object.hasOwn(sourceCaptureSettings, 'targetNaming')) {
+            sourceCaptureSettings.targetNaming = currentVal.targetSchema;
+        }
+
+        // Clean up the old targetSchema so we don't have duplicate keys
+        delete currentVal.targetSchema;
+    }
+
     schema[currentKey] = { ...currentVal, ...sourceCaptureSettings };
 
     return schema;
@@ -109,4 +122,29 @@ export const addOrRemoveOnIncompatibleSchemaChange = (
     }
 
     return schema;
+};
+
+export const getExistingPartition = (
+    spec: Schema,
+    location: string,
+    field: string
+) => {
+    const existingProjection = spec?.projections
+        ? Object.entries(spec.projections as Projections).find(
+              ([projectedField, projectedMetadata]) => {
+                  const locationMatched =
+                      typeof projectedMetadata === 'string'
+                          ? projectedMetadata === location
+                          : projectedMetadata.location === location;
+
+                  return locationMatched && projectedField === field;
+              }
+          )
+        : undefined;
+
+    if (!existingProjection || typeof existingProjection[1] === 'string') {
+        return undefined;
+    }
+
+    return existingProjection[1].partition;
 };

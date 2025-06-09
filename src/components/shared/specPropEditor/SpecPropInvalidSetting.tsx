@@ -42,7 +42,7 @@ function SpecPropInvalidSetting({
                     sx={{ maxWidth: 'fit-content' }}
                     variant="text"
                     onClick={() => {
-                        logRocketEvent('ResetInvalidProp', {
+                        logRocketEvent('ResetInvalidSetting', {
                             currentSetting: safeCurrentSetting,
                             messageID: invalidSettingsMessageId,
                         });

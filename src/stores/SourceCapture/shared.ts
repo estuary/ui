@@ -32,7 +32,7 @@ export const compareOptionsIncludingAliases = (
     }
 
     if (optionVal.val === 'fromSourceName') {
-        return option.val === 'noSchema';
+        return option.val === 'withSchema';
     }
 
     return option.val === optionVal.val;

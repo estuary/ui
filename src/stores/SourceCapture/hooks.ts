@@ -35,7 +35,7 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
                     }
 
                     if (targetSchemaSupportedAndExists) {
-                        response.targetSchema = state.targetSchema;
+                        response.targetNaming = state.targetSchema;
                     }
 
                     return response;

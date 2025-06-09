@@ -1,6 +1,6 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 
-export type KnownEvents = 'ResetInvalidProp' | 'SourceCapture';
+export type KnownEvents = 'SourceCapture' | 'ResetInvalidSetting';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type
