@@ -1,4 +1,5 @@
 import type { EntitiesState } from 'src/stores/Entities/types';
+import type { StorageMappingDictionary } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -21,7 +22,6 @@ const getInitialStateData = (): Pick<
     | 'hydrationErrors'
     | 'hydrationErrorsExist'
     | 'storageMappings'
-    | 'dataPlanes'
     | 'mutate'
 > => ({
     hydrated: false,
@@ -32,8 +32,7 @@ const getInitialStateData = (): Pick<
         read: [],
         write: [],
     },
-    storageMappings: [],
-    dataPlanes: [],
+    storageMappings: {},
     mutate: null,
 });
 
@@ -47,16 +46,6 @@ const getInitialState = (
     hydrateState: async () => {
         // Fetch everything the user can read
         return getAuthRoles('read');
-    },
-
-    setDataPlanes: (val) => {
-        set(
-            produce((state: EntitiesState) => {
-                state.dataPlanes = val;
-            }),
-            false,
-            'setDataPlanes'
-        );
     },
 
     setHydrated: (val) => {
@@ -101,9 +90,16 @@ const getInitialState = (
                     if (!authRole) {
                         return;
                     }
-                    state.capabilities[authRole.capability].push(
-                        authRole.role_prefix
-                    );
+
+                    if (
+                        !state.capabilities[authRole.capability].includes(
+                            authRole.role_prefix
+                        )
+                    ) {
+                        state.capabilities[authRole.capability].push(
+                            authRole.role_prefix
+                        );
+                    }
                 });
             }),
             false,
@@ -111,10 +107,16 @@ const getInitialState = (
         );
     },
 
-    setStorageMappings: (val) => {
+    setStorageMappings: (values) => {
         set(
             produce((state: EntitiesState) => {
-                state.storageMappings = val;
+                const evaluatedMappings: StorageMappingDictionary = {};
+
+                values.forEach(({ catalog_prefix, spec }) => {
+                    evaluatedMappings[catalog_prefix] = spec;
+                });
+
+                state.storageMappings = evaluatedMappings;
             }),
             false,
             'setStorageMappings'

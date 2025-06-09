@@ -7,18 +7,30 @@ import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 
 function useEvaluateDataPlaneOptions() {
-    const [dataPlanes] = useEntitiesStore((state) => [state.dataPlanes]);
+    const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
-    const [setDataPlaneOptions] = useDetailsFormStore((state) => [
-        state.setDataPlaneOptions,
-    ]);
+    const setDataPlaneOptions = useDetailsFormStore(
+        (state) => state.setDataPlaneOptions
+    );
 
     return useCallback(
-        (existingDataPlane?: {
-            name: string | null;
-            id: string;
-            reactorAddress: string | null;
-        }) => {
+        (
+            prefix?: string,
+            existingDataPlane?: {
+                name: string | null;
+                id: string;
+                reactorAddress: string | null;
+            }
+        ) => {
+            const dataPlaneNames =
+                prefix && storageMappings?.[prefix]
+                    ? storageMappings[prefix].data_planes
+                    : [];
+
+            console.log(dataPlaneNames);
+
+            const dataPlanes: any[] = [];
+
             if (!dataPlanes || dataPlanes.length === 0) {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     noOptionsFound: true,
@@ -52,7 +64,7 @@ function useEvaluateDataPlaneOptions() {
 
             return options;
         },
-        [dataPlanes, setDataPlaneOptions]
+        [storageMappings, setDataPlaneOptions]
     );
 }
 

@@ -1,11 +1,11 @@
-import type { StorageMappings, StorageMappingStore } from 'src/types';
+import type { StorageMappingsQuery, StorageMappingStore } from 'src/types';
 
 export interface RowProps {
-    row: StorageMappings;
+    row: StorageMappingsQuery;
 }
 
 export interface RowsProps {
-    data: StorageMappings[];
+    data: StorageMappingsQuery[];
 }
 
 export interface DataPlaneCellsProps {

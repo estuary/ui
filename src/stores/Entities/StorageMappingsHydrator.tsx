@@ -3,11 +3,11 @@ import type { BaseComponentProps } from 'src/types';
 import { FormattedMessage } from 'react-intl';
 
 import FullPageError from 'src/components/fullPage/Error';
-import { useHydrateStorageMappingsState } from 'src/stores/Entities/hooks';
+import { useStorageMappingsHydrator } from 'src/stores/Entities/hooks';
 
 export const StorageMappingsHydrator = ({ children }: BaseComponentProps) => {
     // Start fetching the prefixes the user has access to
-    const { error } = useHydrateStorageMappingsState();
+    const { error } = useStorageMappingsHydrator();
 
     if (error) {
         return (

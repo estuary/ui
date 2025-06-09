@@ -4,7 +4,6 @@ import { useShallow } from 'zustand/react/shallow';
 
 import useSWR from 'swr';
 
-import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -111,7 +110,7 @@ export const useHydrateState = () => {
     return response;
 };
 
-export const useHydrateStorageMappingsState = () => {
+export const useStorageMappingsHydrator = () => {
     const [hydrated, setStorageMappings] = useEntitiesStore((state) => [
         state.hydrated,
         state.setStorageMappings,
@@ -136,43 +135,12 @@ export const useHydrateStorageMappingsState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (hydrated && !storageMappingResponse.isValidating) {
-            // TODO (data planes) - need to filter these down to those that are adimable
+            // TODO (data planes) - need to filter these down to those that are admin-able
             setStorageMappings(storageMappingResponse.data?.data as any);
         }
     }, [
         hydrated,
         setStorageMappings,
-        storageMappingResponse.data?.data,
-        storageMappingResponse.data?.error,
-        storageMappingResponse.isValidating,
-    ]);
-
-    return storageMappingResponse;
-};
-
-export const useHydrateDataPlanesState = () => {
-    const [hydrated, setDataPlanes] = useEntitiesStore((state) => [
-        state.hydrated,
-        state.setDataPlanes,
-    ]);
-
-    // We hardcode the key here as we only call once
-    const storageMappingResponse = useSWR(
-        `entities_hydrator:data_planes`,
-        () => {
-            return getDataPlaneOptions();
-        },
-        singleCallSettings
-    );
-
-    // Once we are done validating update all the settings
-    useEffect(() => {
-        if (hydrated && !storageMappingResponse.isValidating) {
-            setDataPlanes(storageMappingResponse.data?.data as any);
-        }
-    }, [
-        hydrated,
-        setDataPlanes,
         storageMappingResponse.data?.data,
         storageMappingResponse.data?.error,
         storageMappingResponse.isValidating,

@@ -139,9 +139,13 @@ export interface GrantDirective_AccessLinks {
     ['spec->>grantedPrefix']: undefined;
 }
 
-interface StorageMappingSpec {
+interface StorageMapping {
     stores: StorageMappingStore[];
     data_planes: string[];
+}
+
+export interface StorageMappingDictionary {
+    [prefix: string]: StorageMapping;
 }
 
 export interface StorageMappingStore {
@@ -150,11 +154,11 @@ export interface StorageMappingStore {
     prefix: string;
 }
 
-export interface StorageMappings {
+export interface StorageMappingsQuery {
     id: string;
     // detail: string;
     catalog_prefix: string;
-    spec: StorageMappingSpec;
+    spec: StorageMapping;
     // created_at: string;
     updated_at: string;
 }
