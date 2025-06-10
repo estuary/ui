@@ -29,16 +29,14 @@ function SourceConfiguration() {
                 })}
             </Typography>
 
-            <Stack spacing={2}>
+            <Stack spacing={3}>
                 {sourceCaptureDeltaUpdatesSupported ? (
-                    <Stack>
-                        <DeltaUpdatesUpdateWrapper />
-                    </Stack>
+                    <DeltaUpdatesUpdateWrapper />
                 ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
                     <Stack>
-                        <Typography>
+                        <Typography sx={{ mb: 2 }}>
                             {intl.formatMessage({
                                 id: 'schemaMode.message',
                             })}
