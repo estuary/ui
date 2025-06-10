@@ -1,12 +1,13 @@
 import { useCallback } from 'react';
 
+import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 
-function useEvaluateDataPlaneOptions() {
+export const useEvaluateDataPlaneOptions = () => {
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const setDataPlaneOptions = useDetailsFormStore(
@@ -14,7 +15,7 @@ function useEvaluateDataPlaneOptions() {
     );
 
     return useCallback(
-        (
+        async (
             prefix?: string,
             existingDataPlane?: {
                 name: string | null;
@@ -25,13 +26,14 @@ function useEvaluateDataPlaneOptions() {
             const dataPlaneNames =
                 prefix && storageMappings?.[prefix]
                     ? storageMappings[prefix].data_planes
-                    : [];
+                    : Object.values(storageMappings).length === 1
+                      ? Object.values(storageMappings)[0].data_planes
+                      : [];
 
-            console.log(dataPlaneNames);
+            const { data: dataPlanes, error } =
+                await getDataPlaneOptions(dataPlaneNames);
 
-            const dataPlanes: any[] = [];
-
-            if (!dataPlanes || dataPlanes.length === 0) {
+            if (!dataPlanes || dataPlanes.length === 0 || error) {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     noOptionsFound: true,
                     fallbackExists: Boolean(existingDataPlane),
@@ -66,6 +68,4 @@ function useEvaluateDataPlaneOptions() {
         },
         [storageMappings, setDataPlaneOptions]
     );
-}
-
-export default useEvaluateDataPlaneOptions;
+};

@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { useEntityWorkflow } from 'src/context/Workflow';
-import useEvaluateDataPlaneOptions from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
+import { useEvaluateDataPlaneOptions } from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
 import useGetDataPlane from 'src/hooks/dataPlanes/useGetDataPlane';
 import useGlobalSearchParams, {
     GlobalSearchParams,
