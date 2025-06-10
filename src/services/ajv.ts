@@ -144,8 +144,8 @@ export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
         response.deltaUpdates = false;
     }
 
-    if (!response.targetSchema) {
-        response.targetSchema = 'leaveEmpty';
+    if (!response.targetNaming) {
+        response.targetNaming = 'noSchema';
     }
 
     return response;

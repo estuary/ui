@@ -4,7 +4,6 @@ import { useRef } from 'react';
 
 import { Box, TableBody, TableCell, TableRow } from '@mui/material';
 
-import { useUnmount } from 'react-use';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 
@@ -13,7 +12,10 @@ import {
     DEFAULT_ROW_HEIGHT,
 } from 'src/components/collection/Selector/List/shared';
 import { TABLE_BODY_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
-import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_setCurrentBindingWithTimeout,
+} from 'src/stores/Binding/hooks';
 
 function CollectionSelectorBody({
     columns,
@@ -26,34 +28,16 @@ function CollectionSelectorBody({
     scrollingElementCallback,
     checkScrollbarVisibility,
 }: CollectionSelectorBodyProps) {
-    const hackyTimeout = useRef<number | null>(null);
+    const setCurrentBindingWithTimeout =
+        useBinding_setCurrentBindingWithTimeout(setCurrentBinding);
     const scrollingElementRef = useRef<FixedSizeList | undefined>(undefined);
     const virtualRows = useRef<any | null>(null);
 
     const currentBindingUUID = useBinding_currentBindingUUID();
 
-    useUnmount(() => {
-        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
-    });
-
     const handleCellClick = (id?: string) => {
-        if (
-            selectionEnabled &&
-            setCurrentBinding &&
-            id !== currentBindingUUID
-        ) {
-            // TODO (JSONForms) This is hacky but it works.
-            // It clears out the current binding before switching.
-            //  If a user is typing quickly in a form and then selects a
-            //  different binding VERY quickly it could cause the updates
-            //  to go into the wrong form.
-            setCurrentBinding(null);
-
-            if (typeof id === 'string') {
-                hackyTimeout.current = window.setTimeout(() => {
-                    setCurrentBinding(id);
-                });
-            }
+        if (selectionEnabled && setCurrentBinding) {
+            setCurrentBindingWithTimeout(id);
         }
     };
 

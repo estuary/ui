@@ -10,15 +10,19 @@ import { orderBy } from 'lodash';
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
-import { ROW_TYPE_STRING } from 'src/components/tables/Schema/shared';
+import {
+    optionalColumnIntlKeys,
+    ROW_TYPE_STRING,
+} from 'src/components/tables/Schema/shared';
 import {
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
+import { isColumnVisible } from 'src/utils/table-utils';
 
-function Row({ row }: RowProps) {
+function Row({ columns, row }: RowProps) {
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -36,6 +40,10 @@ function Row({ row }: RowProps) {
 
         return row.types;
     }, [row]);
+
+    const detailsColumnVisible =
+        !isCaptureWorkflow ||
+        isColumnVisible(columns, optionalColumnIntlKeys.details);
 
     return (
         <TableRow
@@ -67,12 +75,14 @@ function Row({ row }: RowProps) {
                 maxChips={2}
             />
 
-            <TableCell>
-                <Stack component="span" spacing={1}>
-                    {row.title ? <Box>{row.title}</Box> : null}
-                    {row.description ? <Box>{row.description}</Box> : null}
-                </Stack>
-            </TableCell>
+            {detailsColumnVisible ? (
+                <TableCell>
+                    <Stack component="span" spacing={1}>
+                        {row.title ? <Box>{row.title}</Box> : null}
+                        {row.description ? <Box>{row.description}</Box> : null}
+                    </Stack>
+                </TableCell>
+            ) : null}
 
             {isCaptureWorkflow && row.name ? (
                 <ProjectionActions field={row.name} pointer={row.pointer} />
@@ -83,7 +93,7 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ data, sortDirection, columnToSort }: RowsProps) {
+function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
     if (!data) {
         return null;
     }
@@ -117,6 +127,7 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
                             index: number
                         ) => (
                             <Row
+                                columns={columns}
                                 row={record}
                                 key={`schema-table-rows-${index}`}
                             />
@@ -131,7 +142,11 @@ function Rows({ data, sortDirection, columnToSort }: RowsProps) {
         <>
             {orderBy(data, [columnToSort], [sortDirection]).map(
                 (record, index) => (
-                    <Row row={record} key={`schema-table-rows-${index}`} />
+                    <Row
+                        columns={columns}
+                        row={record}
+                        key={`schema-table-rows-${index}`}
+                    />
                 )
             )}
         </>

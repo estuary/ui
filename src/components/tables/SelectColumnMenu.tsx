@@ -1,5 +1,4 @@
-import type { TableColumns } from 'src/types';
-import type { WithRequiredNonNullProperty } from 'src/types/utils';
+import type { SelectColumnMenuProps } from 'src/components/tables/types';
 
 import {
     Box,
@@ -17,19 +16,13 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import IconMenu from 'src/components/menus/IconMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { disabledButtonText_primary } from 'src/context/Theme';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
 
-interface Props {
-    columns: WithRequiredNonNullProperty<TableColumns, 'headerIntlKey'>[];
-    onChange: (
-        event: React.SyntheticEvent<Element, Event>,
-        checked: boolean,
-        column: string
-    ) => void;
-    disabled?: boolean;
-}
-
-function SelectColumnMenu({ columns, onChange, disabled }: Props) {
+function SelectColumnMenu({
+    columns,
+    disabled,
+    onChange,
+    tablePrefix,
+}: SelectColumnMenuProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -65,7 +58,7 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
             </Typography>
 
             <Stack sx={{ px: 2 }}>
-                {columns.map(({ headerIntlKey }, index) => (
+                {columns.map((headerIntlKey, index) => (
                     <FormControl key={`column-option-${index}`} sx={{ mx: 0 }}>
                         <FormControlLabel
                             control={
@@ -75,10 +68,10 @@ function SelectColumnMenu({ columns, onChange, disabled }: Props) {
                                         tableSettings &&
                                         Object.hasOwn(
                                             tableSettings,
-                                            TablePrefixes.fieldSelection
+                                            tablePrefix
                                         )
                                             ? tableSettings[
-                                                  TablePrefixes.fieldSelection
+                                                  tablePrefix
                                               ].shownOptionalColumns.includes(
                                                   headerIntlKey
                                               )

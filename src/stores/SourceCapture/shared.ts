@@ -3,8 +3,8 @@ import type { AutoCompleteOptionForTargetSchema } from 'src/components/materiali
 // Need to keep in sync with - estuary/flow/crates/models/src/source_capture.rs
 // The order that these appear in here is the order they show in the dashboard
 export const targetNamingOptions = [
-    'prefixNonDefaultSchema',
     'prefixSchema',
+    'prefixNonDefaultSchema',
 
     // fromSourceName renamed to withSchema
     'fromSourceName',
@@ -32,7 +32,7 @@ export const compareOptionsIncludingAliases = (
     }
 
     if (optionVal.val === 'fromSourceName') {
-        return option.val === 'noSchema';
+        return option.val === 'withSchema';
     }
 
     return option.val === optionVal.val;

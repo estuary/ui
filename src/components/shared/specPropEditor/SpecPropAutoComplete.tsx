@@ -35,8 +35,15 @@ export default function SpecPropAutoComplete({
             return null;
         }
 
-        return options.find((option) => option.val === currentSetting) ?? null;
-    }, [currentSetting, options]);
+        // Use the custom matcher if it was provided - otherwise just do a simple compare
+        return (
+            options.find((option) =>
+                isOptionEqualToValue
+                    ? isOptionEqualToValue(option, { val: currentSetting })
+                    : option.val === currentSetting
+            ) ?? null
+        );
+    }, [currentSetting, isOptionEqualToValue, options]);
 
     useEffect(() => {
         // No setting at all so we're good

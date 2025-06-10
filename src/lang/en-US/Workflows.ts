@@ -290,13 +290,11 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
-    // 'deltaUpdates.header': `Delta Updates`,
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    // 'schemaMode.header': `Target Naming`,
-    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas.`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, only the table name will be set to the last part of the collection name.`,
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
@@ -304,24 +302,30 @@ export const Workflows: Record<string, string> = {
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,
     'schemaMode.data.schema': `Schema:`,
-    'schemaMode.example.table': `AcmeCo/AcmeCo-prod/orders`,
-    'schemaMode.options.prefixNonDefaultSchema.ignored': `public`,
+    'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
+    'schemaMode.example.tablePrefix': `anvils`,
+    'schemaMode.example.public.tablePrefix': `public`,
+
+    'schemaMode.options.prefixNonDefaultSchema.ignored1': `public`,
+    'schemaMode.options.prefixNonDefaultSchema.ignored2': `dbo`,
 
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
-    'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema}). The schema itself is left unspecified.`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema} or {defaultSchema2}). The schema itself is left unspecified.`,
     'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
-    'schemaMode.options.prefixNonDefaultSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `orders`,
     'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
-    'schemaMode.options.prefixSchema.example.table': `acmeco_orders`,
+    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}orders`,
     'schemaMode.options.prefixSchema.example.schema': `default`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
     'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
     'schemaMode.options.withSchema.example.table': `orders`,
-    'schemaMode.options.withSchema.example.schema': `AcmeCo-prod`,
+    'schemaMode.options.withSchema.example.schema': `{tablePrefix}`,
 
     'schemaMode.options.noSchema.label': `Use Table Name Only`,
     'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,

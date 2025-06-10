@@ -11,3 +11,6 @@ export const choices = [
 
 export const autoCompleteDefaultProps =
     getTypedAutoCompleteDefaults<AutoCompleteOptionForIncompatibleSchemaChange>();
+
+export const TARGET_SCHEMA_HIGHLIGHT_CLASS =
+    'est-highlight-example-table-prefix';
