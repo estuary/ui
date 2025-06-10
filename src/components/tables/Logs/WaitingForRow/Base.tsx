@@ -10,7 +10,7 @@ import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { useIntersection } from 'react-use';
+import { useIntersection, useUnmount } from 'react-use';
 
 import SpinnerIcon from 'src/components/logs/SpinnerIcon';
 import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
@@ -67,6 +67,9 @@ function WaitingForRowBase({
     const debouncedFetch = useCallback(debounce(fetchMore, interval), [
         fetchMore,
     ]);
+    useUnmount(() => {
+        debouncedFetch.cancel();
+    });
 
     // If at anytime the row is not visible cancel any ongoing loading
     useEffect(() => {
