@@ -1,6 +1,6 @@
 import type { CustomEvents } from 'src/services/types';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { useIntl } from 'react-intl';
 
@@ -20,19 +20,16 @@ import {
     useEditorStore_setPubId,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
     useBinding_collections,
     useBinding_fullSourceErrorsExist,
 } from 'src/stores/Binding/hooks';
-import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
-    useFormStateStore_setShowSavePrompt,
     useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -63,11 +60,6 @@ function useSave(
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
-    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
-    const [backfillDataflow] = useBindingStore((state) => [
-        state.collectionResetEnabled,
-    ]);
-
     // Draft Editor Store
     const setPubId = useEditorStore_setPubId();
 
@@ -91,15 +83,9 @@ function useSave(
     );
 
     const entityType = useEntityType();
-    const isEdit = useEntityWorkflow_Editing();
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
-
-    const showPreSavePrompt = useMemo(
-        () => Boolean(isEdit && !dryRun && backfillDataflow),
-        [backfillDataflow, dryRun, isEdit]
-    );
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -222,11 +208,6 @@ function useSave(
                 return;
             }
 
-            if (!showPreSavePrompt) {
-                // All the validation is done and we can start saving
-                updateFormStatus(status, hideLogs);
-            }
-
             // If there are bound collections then we need to potentially handle clean up
             if (collections.length > 0) {
                 const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
@@ -283,12 +264,6 @@ function useSave(
                 }
             }
 
-            if (showPreSavePrompt) {
-                setIncompatibleCollections([]);
-                setShowSavePrompt(true);
-                return;
-            }
-
             const response = await createPublication(
                 draftId,
                 dryRun ?? false,
@@ -326,10 +301,6 @@ function useSave(
             setDiscoveredDraftId,
             setFormState,
             setIncompatibleCollections,
-            setShowSavePrompt,
-            showPreSavePrompt,
-            status,
-            updateFormStatus,
             waitForPublishToFinish,
         ]
     );

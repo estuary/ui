@@ -93,12 +93,7 @@ const getInitialStateData = (
     messagePrefix: MessagePrefixes
 ): Pick<
     EntityFormState,
-    | 'formState'
-    | 'isIdle'
-    | 'isActive'
-    | 'messagePrefix'
-    | 'liveSpec'
-    | 'showSavePrompt'
+    'formState' | 'isIdle' | 'isActive' | 'messagePrefix' | 'liveSpec'
 > => ({
     formState: initialFormState,
 
@@ -106,8 +101,6 @@ const getInitialStateData = (
     isActive: false,
 
     liveSpec: null,
-
-    showSavePrompt: false,
 
     messagePrefix,
 });
@@ -212,16 +205,6 @@ const getInitialState = (
             }),
             false,
             'Live Spec Updated'
-        );
-    },
-
-    setShowSavePrompt: (newVal) => {
-        set(
-            produce((state: EntityFormState) => {
-                state.showSavePrompt = newVal;
-            }),
-            false,
-            'setShowSavePrompt'
         );
     },
 
