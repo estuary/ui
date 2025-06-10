@@ -1,4 +1,4 @@
-import type { FieldActionsProps } from 'src/components/tables/cells/fieldSelection/types';
+import type { FieldActionsProps } from 'src/components/tables/cells/types';
 
 import { useMemo } from 'react';
 

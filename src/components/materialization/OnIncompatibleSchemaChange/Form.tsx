@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 
 import { useCallback } from 'react';
 
@@ -16,9 +16,11 @@ export default function Form() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
-    const setIncompatibleSchemaChange = useBindingStore(
-        (state) => state.setSpecOnIncompatibleSchemaChange
-    );
+    const [onIncompatibleSchemaChange, setIncompatibleSchemaChange] =
+        useBindingStore((state) => [
+            state.onIncompatibleSchemaChange,
+            state.setSpecOnIncompatibleSchemaChange,
+        ]);
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -26,25 +28,29 @@ export default function Form() {
         useSpecificationIncompatibleSchemaSetting();
 
     const updateServer = useCallback(
-        async (option?: AutoCompleteOption | null) => {
+        async (
+            option?: AutoCompleteOptionForIncompatibleSchemaChange['val']
+        ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateOnIncompatibleSchemaChange(option?.val)
+            return updateOnIncompatibleSchemaChange(option)
                 .then(() => {
-                    setIncompatibleSchemaChange(option?.val);
+                    setIncompatibleSchemaChange(option);
 
                     setFormState({ status: FormStatus.UPDATED });
                 })
-                .catch(() => {
+                .catch((error) => {
                     enqueueSnackbar(
                         intl.formatMessage({
-                            id: 'incompatibleSchemaChange.update.error',
+                            id: 'specPropEditor.update.error',
                         }),
                         { ...snackbarSettings, variant: 'error' }
                     );
 
                     setIncompatibleSchemaChange(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
+
+                    return Promise.reject(error);
                 });
         },
         [
@@ -59,7 +65,7 @@ export default function Form() {
 
     return (
         <IncompatibleSchemaChangeForm
-            currentSetting={currentSetting}
+            currentSetting={currentSetting ?? onIncompatibleSchemaChange}
             scope="spec"
             updateDraftedSetting={updateServer}
         />

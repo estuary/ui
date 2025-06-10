@@ -3,6 +3,7 @@ import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
+import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 export type fake = 'fake';
 
@@ -348,14 +349,15 @@ export enum TableStatuses {
 
 export interface TableColumns {
     field: string | null;
-    collapseHeader?: boolean;
-    headerIntlKey?: string | null;
-    width?: number | string;
-    sticky?: boolean;
     align?: TableCellProps['align'];
+    collapseHeader?: boolean;
     cols?: number;
     display?: string;
     flexGrow?: boolean;
+    headerIntlKey?: string | null;
+    minWidth?: number | string;
+    sticky?: boolean;
+    width?: number | string;
 }
 
 export interface TableState {
@@ -389,10 +391,12 @@ export interface InferSchemaResponse {
     properties: InferSchemaResponseProperty[];
 }
 
+export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
+
 export interface InferSchemaResponseProperty {
     is_pattern_property: boolean;
     // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
-    exists: 'may' | 'must' | 'cannot' | 'implicit';
+    exists: FieldExistence;
     title: string;
     reduction: string;
     pointer: string;
@@ -475,10 +479,9 @@ export interface DekafConfig {
     variant: string;
 }
 
-export type TargetSchemas = 'fromSourceName' | 'leaveEmpty';
-
 export interface SourceCaptureDef {
-    capture: string;
+    capture?: string;
     deltaUpdates?: boolean;
-    targetSchema?: TargetSchemas;
+    targetSchema?: TargetSchemas; // targetSchema was renamed to targetNaming
+    targetNaming?: TargetSchemas;
 }

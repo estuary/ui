@@ -144,8 +144,8 @@ export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
         response.deltaUpdates = false;
     }
 
-    if (!response.targetSchema) {
-        response.targetSchema = 'leaveEmpty';
+    if (!response.targetNaming) {
+        response.targetNaming = 'noSchema';
     }
 
     return response;
@@ -192,6 +192,7 @@ export const generateMaterializationResourceSpec = (
 
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
+        console.error('generateMaterializationResourceSpec failed', e);
         return null;
     }
 };

@@ -10,9 +10,10 @@ import useConstant from 'use-constant';
 
 import { Box, Popper, TableContainer } from '@mui/material';
 
+import { findAll } from 'highlight-words-core';
 import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { usePrevious } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 
 import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
 import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
@@ -21,6 +22,7 @@ import CollectionSelectorHeaderName from 'src/components/collection/Selector/Lis
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_REMOVE,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
@@ -40,6 +42,7 @@ import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
+    useBinding_setCurrentBindingWithTimeout,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -53,6 +56,15 @@ function CollectionSelectorList({
     hideFooter,
     setCurrentBinding,
 }: CollectionSelectorListProps) {
+    // Form State Store
+    const formStatus = useFormStateStore_status();
+
+    const selectionEnabled = Boolean(
+        setCurrentBinding && formStatus !== FormStatus.UPDATING
+    );
+    const setCurrentBindingWithTimeout =
+        useBinding_setCurrentBindingWithTimeout(setCurrentBinding);
+
     const bindingSelectorCells = useBindingSelectorCells();
     const {
         displayNotification,
@@ -82,13 +94,6 @@ function CollectionSelectorList({
     const currentBindingUUID = useBinding_currentBindingUUID();
     const resourceConfigs = useBinding_resourceConfigs();
 
-    // Form State Store
-    const formStatus = useFormStateStore_status();
-
-    const selectionEnabled = Boolean(
-        setCurrentBinding && formStatus !== FormStatus.UPDATING
-    );
-
     const mappedResourceConfigs: CollectionSelectorMappedResourceConfig[] =
         useMemo(() => {
             // If we have no bindings we can just return an empty array
@@ -104,6 +109,7 @@ function CollectionSelectorList({
                     const collection = config.meta.collectionName;
 
                     return {
+                        [COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS]: [],
                         [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
                             config.meta.disable
                         ),
@@ -121,27 +127,57 @@ function CollectionSelectorList({
             setFilterValue(val);
         }, QUICK_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedFilter.current?.cancel();
+    });
 
     const filteredRows = useMemo(() => {
         if (filterValue === '') {
             return mappedResourceConfigs;
         }
 
-        return mappedResourceConfigs.filter((row) =>
-            row[COLLECTION_SELECTOR_NAME_COL].includes(filterValue)
-        );
+        // If you want to match on multiple words you can. However, this search is as
+        //  inclusive as possible. So if a name only matches a _single_ searchWord it will
+        //  be returned. searchWords = filterValue.split(',').map((val) => val.trim());
+        const searchWords = [filterValue];
+
+        return mappedResourceConfigs
+            .map((row) => {
+                row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS] = findAll({
+                    autoEscape: true,
+                    caseSensitive: false,
+                    searchWords,
+                    textToHighlight: row[COLLECTION_SELECTOR_NAME_COL],
+                });
+
+                return row;
+            })
+            .filter((row) => {
+                return row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS].some(
+                    (chunk) => chunk.highlight
+                );
+            });
     }, [filterValue, mappedResourceConfigs]);
 
     useEffect(() => {
-        // Selection disabled
-        if (!selectionEnabled || !setCurrentBinding) {
+        if (
+            // Selection disabled
+            !selectionEnabled ||
+            // Filter has not changed so we can skip. Otherwise while the bindings are filtered
+            //  if a user clicks manually on a binding then it will be selected and a split second
+            //  later this effect will run and set it back to a default value.
+            (filterValue.length > 0 &&
+                previousFilterValue &&
+                previousFilterValue.length > 0 &&
+                filterValue === previousFilterValue)
+        ) {
             return;
         }
 
         if (filterValue !== '') {
             // If we have filtered values then see if this is a first search and default
             if (previousFilterValue === '') {
-                setCurrentBinding(
+                setCurrentBindingWithTimeout(
                     filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                 );
             } else {
@@ -156,7 +192,7 @@ function CollectionSelectorList({
                 ) {
                     return;
                 } else {
-                    setCurrentBinding(
+                    setCurrentBindingWithTimeout(
                         filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
                     );
                 }
@@ -166,7 +202,7 @@ function CollectionSelectorList({
         }
 
         if (previousFilterValue !== '' && Boolean(mappedResourceConfigs[0])) {
-            setCurrentBinding(
+            setCurrentBindingWithTimeout(
                 mappedResourceConfigs[0]?.[COLLECTION_SELECTOR_UUID_COL]
             );
         }
@@ -177,7 +213,7 @@ function CollectionSelectorList({
         mappedResourceConfigs,
         previousFilterValue,
         selectionEnabled,
-        setCurrentBinding,
+        setCurrentBindingWithTimeout,
     ]);
 
     const resourceConfigsEmpty = useMemo(
@@ -228,31 +264,34 @@ function CollectionSelectorList({
                         disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         defaultValue={someBindingsDisabled}
-                        onClick={(event, value, scope) => {
-                            const count =
-                                bindingSelectorCells.toggle?.handler?.(
+                        onClick={async (event, value, scope) => {
+                            return bindingSelectorCells.toggle
+                                ?.handler?.(
                                     filteredRows.map((datum) => {
                                         return datum[
                                             COLLECTION_SELECTOR_UUID_COL
                                         ];
                                     }),
                                     value
-                                );
-
-                            showPopper(
-                                event.currentTarget,
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: `${count}`,
-                                        itemType: collectionsLabel,
-                                    }
                                 )
-                            );
+                                .then((response) => {
+                                    showPopper(
+                                        event.currentTarget,
+                                        intl.formatMessage(
+                                            {
+                                                id: value
+                                                    ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                    : 'workflows.collectionSelector.notifications.toggle.enable',
+                                            },
+                                            {
+                                                count: `${response.length}`,
+                                                itemType: collectionsLabel,
+                                            }
+                                        )
+                                    );
+
+                                    return Promise.resolve(response);
+                                });
                         }}
                     />
                 ),

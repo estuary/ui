@@ -52,6 +52,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
+    'workflows.collectionSelector.notifications.toggle.disable.error': `Changes reverted. Unable to update server. Please try again.`,
 
     'workflows.collectionSelector.footer.count': `total: {totalCount}`,
     'workflows.collectionSelector.footer.count.empty': ` `,
@@ -126,15 +127,6 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
-
-    'workflows.sourceCapture.optionalSettings.header': `Source Capture Binding Settings`,
-    'workflows.sourceCapture.optionalSettings.message': `Newly added collections will use these defaults`,
-
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Default delta updates`,
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.chip': `Delta Updates`,
-
-    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Default schema from source name`,
-    'workflows.sourceCapture.optionalSettings.targetSchema.chip': `Schema Names`,
 
     'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
     'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
@@ -218,6 +210,7 @@ export const Workflows: Record<string, string> = {
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
+    'workflows.dataPlane.label.noOptionsFound': `No options found`,
 
     'workflows.alert.endpointConfigEmpty': `This endpoint requires configuration of the external system only.`,
 
@@ -230,19 +223,10 @@ export const Workflows: Record<string, string> = {
 
     'fieldSelection.cta.selectAlgorithm': `Mode`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
-    'fieldSelection.dialog.updateProjection.header': `Update Projection`,
-    'fieldSelection.dialog.updateProjection.header.new': `Add Projection`,
-    'fieldSelection.dialog.updateProjection.message': `Update projection for collection, {collection}, to change how the field appears when materialized.`,
-    'fieldSelection.dialog.updateProjection.cta.apply': `Apply`,
-    'fieldSelection.dialog.updateProjection.label.fieldName': `Field Name:`,
-    'fieldSelection.dialog.updateProjection.label.pointer': `JSON Pointer:`,
-    'fieldSelection.dialog.updateProjection.label.type': `Type:`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.update.failed': `Field selection update failed`,
-    'fieldSelection.table.cta.addProjection': `Add Projection`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.includeField': `Include`,
-    'fieldSelection.table.cta.renameField': `Rename`,
     'fieldSelection.table.cta.requireField': `Require`,
     'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,
@@ -280,16 +264,16 @@ export const Workflows: Record<string, string> = {
     'notBefore.input.label': `Not Before`,
     'notBefore.input.description': `only include data from after this time (UTC)`,
 
+    'specPropEditor.update.error': `Changes to draft not saved.`,
+    'specPropEditor.error.cta': `Remove Setting`,
+
     // Incompatible Schema Change
     'incompatibleSchemaChange.header': `Incompatible Schema Change`,
     'incompatibleSchemaChange.message': `The action to take when a schema change is rejected due to incompatibility. If blank, the binding will backfill and be re-materialized.`,
     'incompatibleSchemaChange.message.specificationSetting': `The action to take when a schema change is rejected due to incompatibility. If blank, all bindings will backfill and be re-materialized.`,
-    'incompatibleSchemaChange.update.error': `Changes to draft not saved.`,
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'incompatibleSchemaChange.error.cta': `Remove Setting`,
-    'incompatibleSchemaChange.error.title': `Invalid setting`,
     'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
 
     'incompatibleSchemaChange.options.abort.label': `Abort`,
@@ -304,22 +288,54 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.label': `Disable Task`,
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
+    // Source Settings
+    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
+    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
+
     // Delta Updates
-    'deltaUpdates.header': `Delta Updates`,
-    'deltaUpdates.message': `Mark new bindings as delta updates`,
+    'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
+    'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    'schemaMode.header': `Source Capture Schema Mode`,
-    'schemaMode.message': `How should the schema of the materialization binding be set.`,
-    'schemaMode.input.label': `Set new bindings schemas as`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, only the table name will be set to the last part of the collection name.`,
+    'schemaMode.input.label': `Target Resource Naming Convention`,
 
-    'schemaMode.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
-    'schemaMode.options.leaveEmpty.label': `Leave Empty`,
-    'schemaMode.options.leaveEmpty.description': `Leave the materialization binding's schema field empty, therefore falling back to the default schema of the materialization.`,
+    // These keys are dynamically build in - useSupportedOptions
+    'schemaMode.data.table': `Table:`,
+    'schemaMode.data.schema': `Schema:`,
+    'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
+    'schemaMode.example.tablePrefix': `anvils`,
+    'schemaMode.example.public.tablePrefix': `public`,
 
-    'schemaMode.options.fromSourceName.label': `From Source Name`,
-    'schemaMode.options.fromSourceName.description': `Use the 2nd-to-last component of the collection name as the schema of the materialization binding.`,
+    'schemaMode.options.prefixNonDefaultSchema.ignored1': `public`,
+    'schemaMode.options.prefixNonDefaultSchema.ignored2': `dbo`,
+
+    'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
+    'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema} or {defaultSchema2}). The schema itself is left unspecified.`,
+    'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
+
+    'schemaMode.options.prefixSchema.label': `Prefix Schema`,
+    'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
+    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixSchema.example.schema': `default`,
+
+    'schemaMode.options.withSchema.label': `Mirror Schemas`,
+    'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
+    'schemaMode.options.withSchema.example.table': `orders`,
+    'schemaMode.options.withSchema.example.schema': `{tablePrefix}`,
+
+    'schemaMode.options.noSchema.label': `Use Table Name Only`,
+    'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
+    'schemaMode.options.noSchema.example.table': `orders`,
+    'schemaMode.options.noSchema.example.schema': `default`,
 
     // Entities Create
     'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
@@ -466,4 +482,13 @@ export const Workflows: Record<string, string> = {
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,
+
+    // Projections
+    'projection.dialog.add.header': `Alternate Name`,
+    'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
+    'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
+    'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
+    'projection.label.fieldName.current': `Current Name`,
+    'projection.label.fieldName.new': `New Name`,
+    'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
 };

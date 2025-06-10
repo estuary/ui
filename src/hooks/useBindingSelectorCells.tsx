@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_UUID_COL,
@@ -15,11 +16,11 @@ import BindingsSelectorToggle from 'src/components/editor/Bindings/Row/Toggle';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
+import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
 import {
     useBinding_collections,
     useBinding_discoveredCollections,
     useBinding_removeBindings,
-    useBinding_toggleDisable,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -35,17 +36,17 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
     const task = useDetailsFormStore((state) => state.details.data.entityName);
     const draftId = useEditorStore_persistedDraftId();
 
+    const { updateDraft } = useDisableUpdater();
     const collections = useBinding_collections();
     const discoveredCollections = useBinding_discoveredCollections();
     const removeBindings = useBinding_removeBindings();
-    const toggleCollections = useBinding_toggleDisable();
     const resetCollectionMetadata = useBindingStore(
         (state) => state.resetCollectionMetadata
     );
 
     const handlers = useMemo(
         () => ({
-            removeBindings: (rows: any[]) => {
+            removeBindings: async (rows: any[]) => {
                 removeBindings(rows, workflow, task);
 
                 if (workflow === 'materialization_edit') {
@@ -61,15 +62,15 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                         : [];
 
                 if (draftId && publishedCollections.length > 0) {
-                    void deleteDraftSpecsByCatalogName(
+                    await deleteDraftSpecsByCatalogName(
                         draftId,
                         'collection',
                         publishedCollections
                     );
                 }
             },
-            toggleCollections: (rows: any[] | null, value: boolean) =>
-                toggleCollections(rows, value),
+            toggleCollections: async (rows: any[] | null, value: boolean) =>
+                updateDraft(rows, value),
         }),
         [
             collections,
@@ -78,7 +79,7 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
             removeBindings,
             resetCollectionMetadata,
             task,
-            toggleCollections,
+            updateDraft,
             workflow,
         ]
     );
@@ -99,10 +100,17 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
                           ? [params.row[COLLECTION_SELECTOR_STRIPPED_PATH_NAME]]
                           : [params.row[COLLECTION_SELECTOR_NAME_COL]];
 
+                    // This is kinda gross - but it is better than constantly resetting this value
+                    //    after the filter value is removed.
+                    const highlightChunks = filteringActive
+                        ? params.row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS]
+                        : [];
+
                     return (
                         <BindingsSelectorName
                             collection={collectionParts}
                             filterValue={filterValue}
+                            highlightChunks={highlightChunks}
                             buttonProps={{
                                 startIcon: isCollection ? undefined : (
                                     <BindingsSelectorErrorIndicator
@@ -148,10 +156,13 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
             cellRenderers.toggle = {
                 handler: handlers.toggleCollections,
                 cellRenderer: (params) => {
-                    const bindingUUID =
-                        params.row[COLLECTION_SELECTOR_UUID_COL];
-
-                    return <BindingsSelectorToggle bindingUUID={bindingUUID} />;
+                    return (
+                        <BindingsSelectorToggle
+                            bindingUUID={
+                                params.row[COLLECTION_SELECTOR_UUID_COL]
+                            }
+                        />
+                    );
                 },
             };
         }

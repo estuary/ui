@@ -30,12 +30,14 @@ import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import {
+    useBinding_rediscoveryRequired,
+    useBinding_serverUpdateRequired,
+} from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -80,15 +82,10 @@ function EntityEdit({
 
     const { resetState } = useEntityWorkflowHelpers();
 
-    const {
-        connectorTags,
-        error: connectorTagsError,
-        isValidating,
-    } = useConnectorWithTagDetail(entityType);
-
     // Binding Store
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
+    const rediscoveryRequired = useBinding_rediscoveryRequired();
 
     // Details Form Store
     const detailsHydrationError = useDetailsFormStore(
@@ -131,7 +128,8 @@ function EntityEdit({
     useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
-            resourceConfigServerUpdateRequired;
+            resourceConfigServerUpdateRequired ||
+            rediscoveryRequired;
 
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
@@ -146,6 +144,7 @@ function EntityEdit({
         endpointConfigServerUpdateRequired,
         persistedDraftId,
         resourceConfigServerUpdateRequired,
+        rediscoveryRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
@@ -164,15 +163,13 @@ function EntityEdit({
                 <ValidationErrorSummary />
             </Box>
 
-            {connectorTagsError || detailsHydrationError ? (
+            {detailsHydrationError ? (
                 <Error
                     condensed
-                    error={
-                        connectorTagsError ?? {
-                            ...BASE_ERROR,
-                            message: detailsHydrationError,
-                        }
-                    }
+                    error={{
+                        ...BASE_ERROR,
+                        message: detailsHydrationError,
+                    }}
                 />
             ) : !persistedDraftId || !storeHydrationComplete ? null : (
                 <DraftSpecEditorHydrator
@@ -207,33 +204,19 @@ function EntityEdit({
                             </AlertBox>
                         ) : null}
 
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <AlertBox severity="warning" short>
-                                {intl.formatMessage({
-                                    id: `${messagePrefix}.missingConnectors`,
-                                })}
-                            </AlertBox>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    readOnly={readOnly.detailsForm}
-                                    entityType={entityType}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                        <ErrorBoundryWrapper>
+                            <DetailsForm
+                                readOnly={readOnly.detailsForm}
+                                entityType={entityType}
+                            />
+                        </ErrorBoundryWrapper>
 
-                        {imageTag.connectorId ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    readOnly={readOnly.endpointConfigForm}
-                                    hideBorder={
-                                        !hasLength(imageTag.connectorId)
-                                    }
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                        <ErrorBoundryWrapper>
+                            <EndpointConfig
+                                readOnly={readOnly.endpointConfigForm}
+                                hideBorder={!hasLength(imageTag.connectorId)}
+                            />
+                        </ErrorBoundryWrapper>
 
                         {hasLength(imageTag.connectorId) ? (
                             <ErrorBoundryWrapper>

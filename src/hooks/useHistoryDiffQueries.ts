@@ -2,6 +2,8 @@ import type { UseHistoryDiffFindResponse } from 'src/hooks/searchParams/types';
 
 import { useMemo } from 'react';
 
+import { useUnmount } from 'react-use';
+
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useHistoryDiff } from 'src/hooks/searchParams/useHistoryDiff';
 import {
@@ -23,6 +25,13 @@ export function useHistoryDiffQueries() {
     const pubHistory = usePublicationSpecsExt_History(
         diffQueryParams.catalogName
     );
+
+    useUnmount(() => {
+        setQuery({
+            [GlobalSearchParams.DIFF_VIEW_MODIFIED]: null,
+            [GlobalSearchParams.DIFF_VIEW_ORIGINAL]: null,
+        });
+    });
 
     return useMemo<UseHistoryDiffFindResponse>(
         () => ({

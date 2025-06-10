@@ -79,7 +79,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
             if (discoverResponse.error) {
                 logRocketEvent(CustomEvents.DRAFT_ID_SET, {
-                    newValue: null,
+                    newValue: 'defaulting-to-null',
                     component: 'useDiscoverStartDiscovery',
                 });
 

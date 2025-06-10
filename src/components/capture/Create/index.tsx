@@ -20,14 +20,13 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import WorkflowHydrator from 'src/stores/Workflow/Hydrator';
 import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
+const entityType = 'capture';
 function CaptureCreate() {
     usePageTitle({
         header: authenticatedRoutes.captures.create.new.title,
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
-
-    const entityType = 'capture';
 
     const hasConnectors = useValidConnectorsExist(entityType);
 
@@ -51,8 +50,10 @@ function CaptureCreate() {
 
     // TODO (cache helper) - we should switch this over to use the mutate hook if we can
     //  might also need to find a new way to get all the task names
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
+        persistedDraftId,
+        entityType
+    );
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();
@@ -80,7 +81,7 @@ function CaptureCreate() {
                 <EntityCreate
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
+                    Toolbar={
                         <EntityToolbar
                             waitTimes={{
                                 generate: MAX_DISCOVER_TIME,

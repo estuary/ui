@@ -1,5 +1,5 @@
 import type { User } from '@supabase/supabase-js';
-import type { CustomEvents } from 'src/services/types';
+import type { CustomEvents, KnownEvents } from 'src/services/types';
 import type { UserDetails } from 'src/types';
 
 import { isEmpty } from 'lodash';
@@ -56,7 +56,7 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 };
 
 export const logRocketEvent = (
-    event: CustomEvents | string,
+    event: CustomEvents | KnownEvents | string,
     eventProperties?: any
 ) => {
     // Just want to be very very safe
