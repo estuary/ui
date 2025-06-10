@@ -60,6 +60,10 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.footer.enabledCount.all': `all enabled`,
     'workflows.collectionSelector.footer.enabledCount.empty': `all disabled`,
 
+    'workflows.collectionSelector.footer.backfilled': `backfilled: {calculatedCount}`,
+    'workflows.collectionSelector.footer.backfilled.all': `all backfilled`,
+    'workflows.collectionSelector.footer.backfilled.empty': ` `,
+
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,

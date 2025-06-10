@@ -113,7 +113,8 @@ function BindingsMultiEditor({
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
-                <Backfill />
+                {/*Materializations show this in the advanced options*/}
+                {entityType === 'capture' ? <Backfill /> : null}
 
                 <AdvancedOptions />
             </Stack>
