@@ -1083,23 +1083,13 @@ const getInitialState = (
     },
 
     // TODO (organization): Correct the location of store actions that are out-of-order.
-    setBackfillDataFlow: (value) => {
+    setCollectionResetEnabled: (value) => {
         set(
             produce((state: BindingState) => {
-                state.backfillDataFlow = value;
+                state.collectionResetEnabled = value;
             }),
             false,
             'Backfill Dataflow Flag Changed'
-        );
-    },
-
-    setBackfillDataFlowTarget: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillDataFlowTarget = value;
-            }),
-            false,
-            'Backfill data flow target changed'
         );
     },
 

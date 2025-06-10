@@ -26,7 +26,9 @@ function CatalogEditor({ messageId }: Props) {
     const formActive = useFormStateStore_isActive();
 
     const intl = useIntl();
-    const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
+    const collectionResetEnabled = useBindingStore(
+        (state) => state.collectionResetEnabled
+    );
     const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
@@ -45,7 +47,7 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {backfillDataFlow && backfillCount ? (
+                    {collectionResetEnabled && backfillCount ? (
                         <AlertBox
                             sx={{
                                 maxWidth: 'fit-content',
@@ -53,11 +55,11 @@ function CatalogEditor({ messageId }: Props) {
                             short
                             severity="warning"
                             title={intl.formatMessage({
-                                id: 'resetDataFlow.editor.warning.title',
+                                id: 'collectionReset.editor.warning.title',
                             })}
                         >
                             {intl.formatMessage({
-                                id: 'resetDataFlow.editor.warning.message',
+                                id: 'collectionReset.editor.warning.message',
                             })}
                         </AlertBox>
                     ) : null}
@@ -66,7 +68,7 @@ function CatalogEditor({ messageId }: Props) {
                         <DraftSpecEditor
                             disabled={Boolean(
                                 formActive ||
-                                    (backfillDataFlow && backfillCount)
+                                    (collectionResetEnabled && backfillCount)
                             )}
                             monitorCurrentCatalog
                         />

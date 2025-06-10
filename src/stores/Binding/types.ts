@@ -118,12 +118,9 @@ export interface BindingState
 
     backfillAllBindings: boolean;
 
-    backfillDataFlow: boolean;
-    setBackfillDataFlow: (val: BindingState['backfillDataFlow']) => void;
-
-    backfillDataFlowTarget: string | null;
-    setBackfillDataFlowTarget: (
-        val: BindingState['backfillDataFlowTarget']
+    collectionResetEnabled: boolean;
+    setCollectionResetEnabled: (
+        val: BindingState['collectionResetEnabled']
     ) => void;
 
     // Resource Schema

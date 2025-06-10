@@ -46,8 +46,8 @@ function BackfillButton({
     const workflow = useEntityWorkflow();
     const evaluateTrialCollections = useTrialCollections();
 
-    const [evolvedCollections, setBackfillDataFlow] = useBindingStore(
-        (state) => [state.evolvedCollections, state.setBackfillDataFlow]
+    const [evolvedCollections, setCollectionResetEnabled] = useBindingStore(
+        (state) => [state.evolvedCollections, state.setCollectionResetEnabled]
     );
 
     // Binding Store
@@ -186,7 +186,7 @@ function BackfillButton({
                         }
 
                         if (workflow === 'capture_edit') {
-                            setBackfillDataFlow(increment === 'true');
+                            setCollectionResetEnabled(increment === 'true');
                         }
 
                         setFormState({ status: FormStatus.UPDATED });
@@ -210,7 +210,7 @@ function BackfillButton({
             draftSpec,
             evaluateServerDifferences,
             evaluateTrialCollections,
-            setBackfillDataFlow,
+            setCollectionResetEnabled,
             setBackfilledBindings,
             setCollectionMetadata,
             setFormState,

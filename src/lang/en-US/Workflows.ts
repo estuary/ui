@@ -8,8 +8,6 @@ const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 
 const changesRejected = 'rejected due to incompatible collection updates';
 
-const skipDataFlowReset = `Skip data flow reset`;
-
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -146,70 +144,14 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
-    //  PreSave prompts
-    'preSavePrompt.dialog.title': `Save and Publish`,
-    'preSavePrompt.reviewSelection.title': `Review changes`,
-    'preSavePrompt.publish.title': `Save and publish`,
-    'preSavePrompt.logs.spinner.stopped': `done`,
-    'preSavePrompt.logs.spinner.running': `loading...`,
-
-    'preSavePrompt.draftErrors.title': `Draft Errors`,
-    'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
-
-    // Reset Data Flow
-    'resetDataFlow.dialog.title': `Data Flow Reset`,
-
-    'resetDataFlow.selectMaterialization.title': `Select materialization for data flow reset`,
-
-    'resetDataFlow.reviewSelection.title': `Review changes`,
-
-    'resetDataFlow.disableCapture.title': `Disable capture`,
-
-    'resetDataFlow.waitForShardToIdle.title': `Wait for capture to fully stop`,
-    'resetDataFlow.waitForShardToIdle.success': `Stopped at {timeStopped} (UTC)`,
-
-    'resetDataFlow.updateMaterialization.title': `Update materialization`,
-    'resetDataFlow.updateMaterialization.skipped': `Skipped - no matching bindings`,
-
-    'resetDataFlow.enableCapture.title': `Enable capture`,
-
-    'resetDataFlow.publish.title': `Publish data flow reset`,
-
-    'resetDataFlow.errors.publishFailed': `Publishing failed.`,
-    'resetDataFlow.errors.missingDraftId': `Cannot find draft to update.`,
-    'resetDataFlow.errors.missingSession': `Cannot find user session.`,
-    'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
-    'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
-
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
-    'resetDataFlow.materializations.empty.header': `No related materializations`,
-    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found. Pick one manually or skip this step.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
-    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
-    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
-    'resetDataFlow.materializations.empty.skip': `${skipDataFlowReset}`,
-    'resetDataFlow.materializations.noOverlap.title': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
-    'resetDataFlow.materializations.noOverlap.message': `Please select another ${CommonMessages['terms.destination.lowercase']} to continue resetting the data flow or click "${skipDataFlowReset}"`,
-
-    'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
-    'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
-    'resetDataFlow.reviewSelection.warning.message.docLink': `support@estuary.dev`,
-    'resetDataFlow.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
-    'resetDataFlow.reviewSelection.header': `Change Summary`,
-
-    'resetDataFlow.reviewSelection.instructions': `The following data flow will be reset:`,
-    'preSavePrompt.reviewSelection.instructions': `The following entities will be impacted by this change:`,
-
-    'resetDataFlow.selectMaterialization.selected.none': `no materialization selected`,
-
-    'resetDataFlow.editor.warning.title': `Editing disabled`,
-    'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
+    // Collection Reset
+    'collectionReset.editor.warning.title': `Editing disabled`,
+    'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     // TODO (collection seletor) - need to update content
     'workflows.collectionSelector.dataFlowBackfill.header': `Backfill and reset ${CommonMessages['terms.dataFlow']}.`,
     'workflows.collectionSelector.dataFlowBackfill.message': `Data will be backfilled from your source, inferred schemas will be reset and all destination tables and derivations will be dropped and recreated.`,
-    'workflows.collectionSelector.dataFlowBackfill.input': `Don’t reset related entities.`,
+    'workflows.collectionSelector.dataFlowBackfill.input': `Skip related entities: re-capture data from my source without dropping or recreating any destinations.`,
     'workflows.collectionSelector.dataFlowBackfill.input.description': `Only re-capture all data from my source into the same collections and downstream tables.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,

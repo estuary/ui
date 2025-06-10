@@ -5,7 +5,6 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
-    FormHelperText,
     Typography,
 } from '@mui/material';
 
@@ -13,10 +12,20 @@ import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
     const intl = useIntl();
     const backfillCount = useBinding_backfilledBindings_count();
+
+    const [collectionResetEnabled, setCollectionResetEnabled] = useBindingStore(
+        (state) => [
+            state.collectionResetEnabled,
+            state.setCollectionResetEnabled,
+        ]
+    );
+
+    console.log('collectionResetEnabled', collectionResetEnabled);
 
     if (backfillCount < 1) {
         return null;
@@ -39,16 +48,23 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
 
                 <FormControl>
                     <FormControlLabel
-                        control={<Checkbox value="true" checked={false} />}
+                        control={
+                            <Checkbox
+                                value={!Boolean(collectionResetEnabled)}
+                                onChange={(_event, checked) =>
+                                    setCollectionResetEnabled(!checked)
+                                }
+                            />
+                        }
                         label={`${intl.formatMessage({
                             id: 'workflows.collectionSelector.dataFlowBackfill.input',
                         })}`}
                     />
-                    <FormHelperText>
+                    {/*                    <FormHelperText>
                         {`${intl.formatMessage({
                             id: 'workflows.collectionSelector.dataFlowBackfill.input.description',
                         })}`}
-                    </FormHelperText>
+                    </FormHelperText>*/}
                 </FormControl>
             </AlertBox>
         </Box>

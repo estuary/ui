@@ -65,7 +65,7 @@ function useSave(
 
     const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
     const [backfillDataflow] = useBindingStore((state) => [
-        state.backfillDataFlow,
+        state.collectionResetEnabled,
     ]);
 
     // Draft Editor Store
