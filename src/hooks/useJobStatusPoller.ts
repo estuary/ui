@@ -44,7 +44,9 @@ export function useQueryPoller<T = any>(
                 logRocketConsole(`Poller : ${key} : start `, { pollerTimeout });
 
                 return (
-                    isPostgrestFetcher(query) ? query.throwOnError() : query()
+                    isPostgrestFetcher<T>(query)
+                        ? query.throwOnError()
+                        : query()
                 ).then(
                     (payload: any) => {
                         logRocketConsole(`Poller : ${key} : response `);
