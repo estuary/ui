@@ -25,8 +25,6 @@ import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEnti
 import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
-import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
-import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -176,65 +174,61 @@ function EntityEdit({
                     entityType={entityType}
                     entityName={entityName}
                 >
-                    <PromptsHydrator>
-                        <Collapse in={formSubmitError !== null}>
-                            {formSubmitError ? (
-                                <EntityError
-                                    title={formSubmitError.title}
-                                    error={formSubmitError.error}
-                                    logToken={logToken}
-                                    draftId={persistedDraftId}
-                                />
-                            ) : null}
-                        </Collapse>
-
-                        <IncompatibleCollections />
-
-                        {draftInitializationError ? (
-                            <AlertBox
-                                short={false}
-                                severity={draftInitializationError.severity}
-                                sx={{
-                                    mb: 2,
-                                }}
-                            >
-                                {intl.formatMessage({
-                                    id: draftInitializationError.messageId,
-                                })}
-                            </AlertBox>
-                        ) : null}
-
-                        <ErrorBoundryWrapper>
-                            <DetailsForm
-                                readOnly={readOnly.detailsForm}
-                                entityType={entityType}
+                    <Collapse in={formSubmitError !== null}>
+                        {formSubmitError ? (
+                            <EntityError
+                                title={formSubmitError.title}
+                                error={formSubmitError.error}
+                                logToken={logToken}
+                                draftId={persistedDraftId}
                             />
-                        </ErrorBoundryWrapper>
-
-                        <ErrorBoundryWrapper>
-                            <EndpointConfig
-                                readOnly={readOnly.endpointConfigForm}
-                                hideBorder={!hasLength(imageTag.connectorId)}
-                            />
-                        </ErrorBoundryWrapper>
-
-                        {hasLength(imageTag.connectorId) ? (
-                            <ErrorBoundryWrapper>
-                                <CollectionConfig
-                                    draftSpecs={taskDraftSpec}
-                                    readOnly={readOnly.resourceConfigForm}
-                                    hideBorder={!draftId}
-                                    RediscoverButton={RediscoverButton}
-                                />
-                            </ErrorBoundryWrapper>
                         ) : null}
+                    </Collapse>
 
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
+                    <IncompatibleCollections />
+
+                    {draftInitializationError ? (
+                        <AlertBox
+                            short={false}
+                            severity={draftInitializationError.severity}
+                            sx={{
+                                mb: 2,
+                            }}
+                        >
+                            {intl.formatMessage({
+                                id: draftInitializationError.messageId,
+                            })}
+                        </AlertBox>
+                    ) : null}
+
+                    <ErrorBoundryWrapper>
+                        <DetailsForm
+                            readOnly={readOnly.detailsForm}
+                            entityType={entityType}
                         />
+                    </ErrorBoundryWrapper>
 
-                        <PreSavePrompt />
-                    </PromptsHydrator>
+                    <ErrorBoundryWrapper>
+                        <EndpointConfig
+                            readOnly={readOnly.endpointConfigForm}
+                            hideBorder={!hasLength(imageTag.connectorId)}
+                        />
+                    </ErrorBoundryWrapper>
+
+                    {hasLength(imageTag.connectorId) ? (
+                        <ErrorBoundryWrapper>
+                            <CollectionConfig
+                                draftSpecs={taskDraftSpec}
+                                readOnly={readOnly.resourceConfigForm}
+                                hideBorder={!draftId}
+                                RediscoverButton={RediscoverButton}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    <CatalogEditor
+                        messageId={`${messagePrefix}.finalReview.instructions`}
+                    />
                 </DraftSpecEditorHydrator>
             )}
         </>
