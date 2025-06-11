@@ -91,6 +91,52 @@ export const massCreateDraftSpecs = async (
     }
 };
 
+export const massUpdateDraftSpecs = async (
+    draftId: string,
+    specType: Entity,
+    specs: any[]
+) => {
+    if (specs.length > 0) {
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
+        let index = 0;
+
+        // TODO (retry) promise generator
+        const insertPromiseGenerator = (idx: number) => {
+            const currentSlice = specs.slice(idx, idx + CHUNK_SIZE);
+            return supabaseClient.from(TABLES.DRAFT_SPECS).upsert(
+                currentSlice.map((spec) => ({
+                    ...spec,
+                    draft_id: draftId,
+                    spec_type: specType,
+                    detail: 'dashboard collection reset',
+                })),
+                { onConflict: 'draft_id, catalog_name' }
+            );
+        };
+
+        while (index < specs.length) {
+            const prom = insertPromiseGenerator(index);
+
+            promises.push(limiter(() => prom));
+
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
+    }
+};
+
 export const modifyDraftSpec = (
     draftSpec: any,
     matchData: DraftSpecUpdateMatchData,
@@ -145,6 +191,7 @@ interface DraftSpecsExtQuery_BySpecTypeReduced {
     draft_id: string;
     catalog_name: string;
     spec_type: string;
+    spec: any;
 }
 
 export const getDraftSpecsBySpecTypeReduced = async (
@@ -157,7 +204,7 @@ export const getDraftSpecsBySpecTypeReduced = async (
         (start) =>
             supabaseClient
                 .from(TABLES.DRAFT_SPECS_EXT)
-                .select(`draft_id,catalog_name,spec_type`)
+                .select(`draft_id,catalog_name,spec_type,spec`)
                 .eq('draft_id', draftId)
                 .eq('spec_type', specType)
                 .range(start, start + DEFAULT_PAGING_SIZE - 1)
