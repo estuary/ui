@@ -64,6 +64,7 @@ export const massCreateDraftSpecs = async (
                     ...spec,
                     draft_id: draftId,
                     spec_type: specType,
+                    detail: 'dashboard collection reset',
                 }))
             );
         };

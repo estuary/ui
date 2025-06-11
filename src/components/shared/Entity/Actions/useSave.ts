@@ -331,17 +331,16 @@ function useSave(
                         });
                     }
 
-                    // Go through each live spec and update it with reset
-                    const updatedSpecs = collectionLiveSpecs.data.map(
-                        (liveSpec) => {
-                            // Remove the last pub id as it will mess up the insert
-                            const { last_pub_id, ...theRestOfLiveSpec } =
-                                liveSpec;
+                    // const collectionsToUpdate = [...draftSpecResponse.data, ...collectionLiveSpecs]
 
+                    // Go through each live spec and update it with reset
+                    const updatedLiveSpecs = collectionLiveSpecs.data.map(
+                        (liveSpec) => {
                             return {
-                                ...theRestOfLiveSpec,
+                                catalog_name: liveSpec.catalog_name,
+                                expect_pub_id: liveSpec.last_pub_id,
                                 spec: {
-                                    ...theRestOfLiveSpec.spec,
+                                    ...liveSpec.spec,
                                     reset: true,
                                 },
                             };
@@ -352,7 +351,7 @@ function useSave(
                     const draftSpecResponse = await massCreateDraftSpecs(
                         draftId,
                         'collection',
-                        updatedSpecs
+                        updatedLiveSpecs
                     );
 
                     if (draftSpecResponse.error) {
