@@ -25,21 +25,13 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
         ]
     );
 
-    console.log('collectionResetEnabled', collectionResetEnabled);
-
     if (backfillCount < 1) {
         return null;
     }
 
     return (
         <Box sx={{ maxWidth: 'fit-content', mt: 3 }}>
-            <AlertBox
-                severity="info"
-                short
-                // title={intl.formatMessage({
-                //     id: 'workflows.collectionSelector.dataFlowBackfill.header',
-                // })}
-            >
+            <AlertBox severity="info" short>
                 <Typography component="div">
                     {intl.formatMessage({
                         id: 'workflows.collectionSelector.dataFlowBackfill.message',
@@ -60,11 +52,6 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
                             id: 'workflows.collectionSelector.dataFlowBackfill.input',
                         })}`}
                     />
-                    {/*                    <FormHelperText>
-                        {`${intl.formatMessage({
-                            id: 'workflows.collectionSelector.dataFlowBackfill.input.description',
-                        })}`}
-                    </FormHelperText>*/}
                 </FormControl>
             </AlertBox>
         </Box>
