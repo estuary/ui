@@ -22,7 +22,7 @@ function SourceConfiguration() {
     }
 
     return (
-        <Stack spacing={1} sx={{ pt: 2, maxWidth: '50%' }}>
+        <Stack spacing={1} sx={{ pb: 2, maxWidth: '50%' }}>
             <Typography variant="formSectionHeader">
                 {intl.formatMessage({
                     id: 'workflows.sourceCapture.optionalSettings.header',

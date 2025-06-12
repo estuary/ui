@@ -100,12 +100,6 @@ function BindingsMultiEditor({
 
     return (
         <LocalZustandProvider createStore={localStore}>
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.instructions`}
-                />
-            </Typography>
-
             <Stack spacing={5} sx={{ mb: 5 }}>
                 {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
@@ -117,6 +111,12 @@ function BindingsMultiEditor({
 
                 <AdvancedOptions />
             </Stack>
+
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.instructions`}
+                />
+            </Typography>
 
             <ListAndDetails
                 list={
