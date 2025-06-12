@@ -411,10 +411,16 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
-                state.backfillAllBindings =
-                    state.backfilledBindings.length > 0 &&
-                    state.backfilledBindings.length ===
+                if (state.backfilledBindings.length > 0) {
+                    // if they have anything marked for backfill make sure the setting is forced on
+                    state.collectionResetEnabled = true;
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length ===
                         Object.keys(state.resourceConfigs).length;
+                } else {
+                    state.backfillAllBindings = false;
+                }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
