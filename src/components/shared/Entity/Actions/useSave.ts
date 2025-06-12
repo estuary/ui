@@ -350,7 +350,7 @@ function useSave(
 
                         if (draftSpec.spec.reset !== true) {
                             collectionsToUpdate.push({
-                                catalog_Name: draftSpec.catalog_name,
+                                catalog_name: draftSpec.catalog_name,
                                 spec: {
                                     ...draftSpec.spec,
                                     reset: true,
