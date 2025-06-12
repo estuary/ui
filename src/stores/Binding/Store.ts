@@ -412,8 +412,10 @@ const getInitialState = (
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
                 if (state.backfilledBindings.length > 0) {
-                    // if they have anything marked for backfill make sure the setting is forced on
-                    state.collectionResetEnabled = true;
+                    if (entityType === 'capture') {
+                        // if they have anything marked for backfill make sure the setting is forced on
+                        state.collectionResetEnabled = true;
+                    }
 
                     state.backfillAllBindings =
                         state.backfilledBindings.length ===

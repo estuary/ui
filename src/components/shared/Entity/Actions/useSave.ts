@@ -267,9 +267,11 @@ function useSave(
                 }
             }
 
-            // Now we need to mark all the collections for reset
+            // This IF is a little overly safe - collectionResetEnabled is only set for captures but
+            //  just wanted to be safe in case something wonky happens on the store
             if (
                 collectionResetEnabled &&
+                entityType === 'capture' &&
                 collectionsBeingBackfilled.length > 0
             ) {
                 let collectionsMissingFromDraft: string[] = [];
