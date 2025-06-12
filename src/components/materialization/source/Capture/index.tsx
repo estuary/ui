@@ -10,6 +10,8 @@ function SourceCapture() {
     const intl = useIntl();
     return (
         <Stack spacing={1}>
+            <SourceConfiguration />
+
             <Typography variant="formSectionHeader">
                 {intl.formatMessage({ id: 'workflows.sourceCapture.header' })}
             </Typography>
@@ -30,8 +32,6 @@ function SourceCapture() {
                 <SourceCaptureChip />
                 <SelectCapture />
             </Stack>
-
-            <SourceConfiguration />
         </Stack>
     );
 }
