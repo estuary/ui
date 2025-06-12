@@ -38,10 +38,11 @@ function BackfillDataFlowOption({ disabled }: BackfillDataflowOptionProps) {
                     })}
                 </Typography>
 
-                <FormControl>
+                <FormControl sx={{ m: 1.2 }}>
                     <FormControlLabel
                         control={
                             <Checkbox
+                                id="collectionSelector-dataFlowBackfill"
                                 value={!Boolean(collectionResetEnabled)}
                                 onChange={(_event, checked) =>
                                     setCollectionResetEnabled(!checked)

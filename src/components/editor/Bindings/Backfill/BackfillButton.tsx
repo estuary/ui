@@ -226,7 +226,7 @@ function BackfillButton({
     }
 
     return (
-        <Box>
+        <Box style={{ maxWidth: 850 }}>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography component="div">{description}</Typography>
 
