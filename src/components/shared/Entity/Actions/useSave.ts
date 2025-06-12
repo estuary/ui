@@ -192,6 +192,203 @@ function useSave(
         ]
     );
 
+    const handleCollections = useCallback(
+        async (draftId: string) => {
+            let collectionsBeingRemovedFromDraft: string[] = [];
+            // Look for every collection on the draft.
+            const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
+                draftId,
+                'collection'
+            );
+            if (draftSpecResponse.error) {
+                onFailure({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: draftSpecResponse.error,
+                    },
+                });
+
+                return false;
+            }
+
+            // We need to track what is already on the draft so we do not overwrite
+            //  any changes the user made while we mark reset=true
+            let collectionsOnDraft: string[] | null = null;
+            if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
+                // Now that we are making a call we can delete the
+                //  draftId used for showing discovery errors
+                setDiscoveredDraftId(null);
+
+                // Get a list of all the collections on the draft spec.
+                //  During create - this will often be all collections
+                //  During edit - this will often only be the ones the user edited
+                collectionsOnDraft = draftSpecResponse.data.map(
+                    (datum) => datum.catalog_name
+                );
+
+                // For a test we do not want to remove from draft - otherwise we would need
+                //  to add them back in after the test.
+                const disabledCollections: string[] =
+                    dryRun || entityType !== 'capture'
+                        ? []
+                        : draftSpecs[0].spec.bindings
+                              .filter((binding: any) => binding.disable)
+                              .map((binding: any) =>
+                                  getCollectionName(binding)
+                              );
+
+                // Get all the collections that might still be in the UI state but are not
+                //    needed as they are not on the draft
+                const unboundCollections = collectionsOnDraft.filter(
+                    (collection) => !collections.includes(collection)
+                );
+
+                collectionsBeingRemovedFromDraft = [
+                    ...unboundCollections,
+                    ...disabledCollections,
+                ];
+
+                // Clean up the unbound and disabled collections so that they cannot cause issues
+                //  with the save/publish
+                const deleteDraftSpecsResponse =
+                    await deleteDraftSpecsByCatalogName(
+                        draftId,
+                        'collection',
+                        collectionsBeingRemovedFromDraft
+                    );
+                if (deleteDraftSpecsResponse.error) {
+                    onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: deleteDraftSpecsResponse.error,
+                        },
+                    });
+                    return false;
+                }
+            }
+
+            // Now we need to mark all the collections for reset
+            if (
+                collectionResetEnabled &&
+                collectionsBeingBackfilled.length > 0
+            ) {
+                let collectionsMissingFromDraft: string[] = [];
+
+                if (collectionsOnDraft && collectionsOnDraft.length > 0) {
+                    // Go through and see if the collections are already on the draft
+                    collectionsBeingBackfilled.forEach((value, index) => {
+                        if (
+                            !collectionsBeingRemovedFromDraft.includes(value) &&
+                            !collectionsOnDraft?.includes(value)
+                        ) {
+                            collectionsMissingFromDraft.push(value);
+                        }
+                    });
+                } else {
+                    // No collections are on the draft yet so we have to add them all
+                    collectionsMissingFromDraft = collectionsBeingBackfilled;
+                }
+
+                if (collectionsMissingFromDraft.length > 0) {
+                    // Fetch the live spec of all collections that aren't on the draft
+                    const collectionLiveSpecs =
+                        await getLiveSpecsByCatalogNames(
+                            'collection',
+                            collectionsMissingFromDraft
+                        );
+                    if (collectionLiveSpecs.error) {
+                        onFailure({
+                            error: {
+                                title: 'captureEdit.generate.failedErrorTitle',
+                                error: collectionLiveSpecs.error,
+                            },
+                        });
+
+                        return false;
+                    }
+
+                    const collectionsToInsert = collectionLiveSpecs.data.map(
+                        (liveSpec) => {
+                            return {
+                                catalog_name: liveSpec.catalog_name,
+                                expect_pub_id: liveSpec.last_pub_id,
+                                spec: {
+                                    ...liveSpec.spec,
+                                    reset: true,
+                                },
+                            };
+                        }
+                    );
+                    // Add missing collections to the draft with the reset property set
+                    const massCreateResponse = await massCreateDraftSpecs(
+                        draftId,
+                        'collection',
+                        collectionsToInsert
+                    );
+                    if (massCreateResponse.error) {
+                        onFailure({
+                            error: {
+                                title: 'captureEdit.generate.failedErrorTitle',
+                                error: massCreateResponse.error,
+                            },
+                        });
+                        return false;
+                    }
+                }
+
+                // Update collections on the draft with the reset property set
+                const collectionsToUpdate: any[] = [];
+                if (draftSpecResponse.data) {
+                    draftSpecResponse.data.forEach((draftSpec) => {
+                        if (
+                            collectionsBeingRemovedFromDraft.includes(
+                                draftSpec.catalog_name
+                            )
+                        ) {
+                            return;
+                        }
+
+                        if (draftSpec.spec.reset !== true) {
+                            collectionsToUpdate.push({
+                                catalog_Name: draftSpec.catalog_name,
+                                spec: {
+                                    ...draftSpec.spec,
+                                    reset: true,
+                                },
+                            });
+                        }
+                    });
+                }
+                const massUpdateResponse = await massUpdateDraftSpecs(
+                    draftId,
+                    'collection',
+                    collectionsToUpdate
+                );
+                if (massUpdateResponse.error) {
+                    onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: massUpdateResponse.error,
+                        },
+                    });
+                    return false;
+                }
+            }
+
+            return true;
+        },
+        [
+            collectionResetEnabled,
+            collections,
+            collectionsBeingBackfilled,
+            draftSpecs,
+            dryRun,
+            entityType,
+            onFailure,
+            setDiscoveredDraftId,
+        ]
+    );
+
     return useCallback(
         async (draftId: string | null, hideLogs?: boolean) => {
             // FullSource updates the draft directly and does not require a new generation so
@@ -218,185 +415,14 @@ function useSave(
                 return;
             }
 
-            // If there are bound collections then we need to potentially handle clean up
             if (collections.length > 0) {
-                let collectionsBeingRemovedFromDraft: string[] = [];
-                // Look for every collection on the draft.
-                const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
-                    draftId,
-                    'collection'
-                );
-                if (draftSpecResponse.error) {
-                    return onFailure({
-                        error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
-                            error: draftSpecResponse.error,
-                        },
-                    });
-                }
+                // If there are bound collections then we need to potentially handle clean up
+                const response = await handleCollections(draftId);
 
-                // We need to track what is already on the draft so we do not overwrite
-                //  any changes the user made while we mark reset=true
-                let collectionsOnDraft: string[] | null = null;
-                if (
-                    draftSpecResponse.data &&
-                    draftSpecResponse.data.length > 0
-                ) {
-                    // Now that we are making a call we can delete the
-                    //  draftId used for showing discovery errors
-                    setDiscoveredDraftId(null);
-
-                    // Get a list of all the collections on the draft spec.
-                    //  During create - this will often be all collections
-                    //  During edit - this will often only be the ones the user edited
-                    collectionsOnDraft = draftSpecResponse.data.map(
-                        (datum) => datum.catalog_name
-                    );
-
-                    // For a test we do not want to remove from draft - otherwise we would need
-                    //  to add them back in after the test.
-                    const disabledCollections: string[] =
-                        dryRun || entityType !== 'capture'
-                            ? []
-                            : draftSpecs[0].spec.bindings
-                                  .filter((binding: any) => binding.disable)
-                                  .map((binding: any) =>
-                                      getCollectionName(binding)
-                                  );
-
-                    // Get all the collections that might still be in the UI state but are not
-                    //    needed as they are not on the draft
-                    const unboundCollections = collectionsOnDraft.filter(
-                        (collection) => !collections.includes(collection)
-                    );
-
-                    collectionsBeingRemovedFromDraft = [
-                        ...unboundCollections,
-                        ...disabledCollections,
-                    ];
-
-                    // Clean up the unbound and disabled collections so that they cannot cause issues
-                    //  with the save/publish
-                    const deleteDraftSpecsResponse =
-                        await deleteDraftSpecsByCatalogName(
-                            draftId,
-                            'collection',
-                            collectionsBeingRemovedFromDraft
-                        );
-                    if (deleteDraftSpecsResponse.error) {
-                        return onFailure({
-                            error: {
-                                title: 'captureEdit.generate.failedErrorTitle',
-                                error: deleteDraftSpecsResponse.error,
-                            },
-                        });
-                    }
-                }
-
-                // Now we need to mark all the collections for reset
-                if (
-                    collectionResetEnabled &&
-                    collectionsBeingBackfilled.length > 0
-                ) {
-                    let collectionsMissingFromDraft: string[] = [];
-
-                    if (collectionsOnDraft && collectionsOnDraft.length > 0) {
-                        // Go through and see if the collections are already on the draft
-                        collectionsBeingBackfilled.forEach((value, index) => {
-                            if (
-                                !collectionsBeingRemovedFromDraft.includes(
-                                    value
-                                ) &&
-                                !collectionsOnDraft?.includes(value)
-                            ) {
-                                collectionsMissingFromDraft.push(value);
-                            }
-                        });
-                    } else {
-                        // No collections are on the draft yet so we have to add them all
-                        collectionsMissingFromDraft =
-                            collectionsBeingBackfilled;
-                    }
-
-                    if (collectionsMissingFromDraft.length > 0) {
-                        // Fetch the live spec of all collections that aren't on the draft
-                        const collectionLiveSpecs =
-                            await getLiveSpecsByCatalogNames(
-                                'collection',
-                                collectionsMissingFromDraft
-                            );
-                        if (collectionLiveSpecs.error) {
-                            return onFailure({
-                                error: {
-                                    title: 'captureEdit.generate.failedErrorTitle',
-                                    error: collectionLiveSpecs.error,
-                                },
-                            });
-                        }
-
-                        const collectionsToInsert =
-                            collectionLiveSpecs.data.map((liveSpec) => {
-                                return {
-                                    catalog_name: liveSpec.catalog_name,
-                                    expect_pub_id: liveSpec.last_pub_id,
-                                    spec: {
-                                        ...liveSpec.spec,
-                                        reset: true,
-                                    },
-                                };
-                            });
-                        // Add missing collections to the draft with the reset property set
-                        const massCreateResponse = await massCreateDraftSpecs(
-                            draftId,
-                            'collection',
-                            collectionsToInsert
-                        );
-                        if (massCreateResponse.error) {
-                            return onFailure({
-                                error: {
-                                    title: 'captureEdit.generate.failedErrorTitle',
-                                    error: massCreateResponse.error,
-                                },
-                            });
-                        }
-                    }
-
-                    // Update collections on the draft with the reset property set
-                    const collectionsToUpdate: any[] = [];
-                    if (draftSpecResponse.data) {
-                        draftSpecResponse.data.forEach((draftSpec) => {
-                            if (
-                                collectionsBeingRemovedFromDraft.includes(
-                                    draftSpec.catalog_name
-                                )
-                            ) {
-                                return;
-                            }
-
-                            if (draftSpec.spec.reset !== true) {
-                                collectionsToUpdate.push({
-                                    catalog_name: draftSpec.catalog_name,
-                                    spec: {
-                                        ...draftSpec.spec,
-                                        reset: true,
-                                    },
-                                });
-                            }
-                        });
-                    }
-                    const massUpdateResponse = await massUpdateDraftSpecs(
-                        draftId,
-                        'collection',
-                        collectionsToUpdate
-                    );
-                    if (massUpdateResponse.error) {
-                        return onFailure({
-                            error: {
-                                title: 'captureEdit.generate.failedErrorTitle',
-                                error: massUpdateResponse.error,
-                            },
-                        });
-                    }
+                // If we got false back something went wrong but the call already handled
+                //  showing the error
+                if (!response) {
+                    return;
                 }
             }
 
@@ -425,18 +451,14 @@ function useSave(
             });
         },
         [
-            collectionsBeingBackfilled,
-            collectionResetEnabled,
-            collections,
+            collections.length,
             dataPlaneName?.whole,
-            draftSpecs,
             dryRun,
-            entityType,
             fullSourceErrorsExist,
+            handleCollections,
             intl,
             messagePrefix,
             onFailure,
-            setDiscoveredDraftId,
             setFormState,
             setIncompatibleCollections,
             waitForPublishToFinish,
