@@ -223,14 +223,14 @@ export const configCanBeEmpty = (schema: any) => {
 export const isReactElement = (value: ReactNode): value is ReactElement =>
     isObject(value) && 'props' in value;
 
-export const isPostgrestFetcher = (
+export const isPostgrestFetcher = <T = any>(
     value:
-        | PostgrestFilterBuilder<any, any, any, any, any>
-        | PostgrestTransformBuilder<any, any, any, any, any>
+        | PostgrestFilterBuilder<any, any, T, any, any>
+        | PostgrestTransformBuilder<any, any, T, any, any>
         | Function
 ): value is
-    | PostgrestFilterBuilder<any, any, any, any, any>
-    | PostgrestTransformBuilder<any, any, any, any, any> =>
+    | PostgrestFilterBuilder<any, any, T, any, any>
+    | PostgrestTransformBuilder<any, any, T, any, any> =>
     isObject(value) && 'throwOnError' in value;
 
 export const isGrant_UserExt = (

@@ -27,7 +27,7 @@ const getConnectors = (
     protocol: string | null
 ) => {
     // TODO (V2 typing) - need a way to handle single vs multiple responses
-    return requiredConnectorColumnsExist<ConnectorWithTagQuery>(
+    return requiredConnectorColumnsExist<ConnectorWithTagQuery[]>(
         defaultTableFilter<ConnectorWithTagQuery>(
             supabaseClient
                 .from(TABLES.CONNECTORS)
@@ -48,7 +48,7 @@ const getConnectors = (
             { column: 'connector_tags.protocol', value: protocol }
         ),
         'connector_tags'
-    ).returns<ConnectorWithTagQuery[]>();
+    );
 };
 
 // Hydration-specific queries

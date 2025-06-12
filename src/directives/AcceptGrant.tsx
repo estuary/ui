@@ -1,8 +1,5 @@
-import type {
-    PostgrestError,
-    PostgrestSingleResponse,
-} from '@supabase/postgrest-js';
-import type { AppliedDirective, JoinedAppliedDirective } from 'src/types';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { AppliedDirective } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
 import { useState } from 'react';
@@ -21,9 +18,8 @@ import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 
 interface Props {
     directive: AppliedDirective<any> | null | undefined;
-    mutate: KeyedMutator<
-        PostgrestSingleResponse<JoinedAppliedDirective[]>
-    > | null;
+    // TODO (typing) - should be JoinedAppliedDirective
+    mutate: KeyedMutator<any> | null;
     grantedPrefix: string;
     grantedCapability: string;
 }
