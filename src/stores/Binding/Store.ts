@@ -28,8 +28,8 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
     getCollectionNames,
-    getInitialMiscData,
     getInitialStoreData,
+    getInitialStoreDataAndKeepBindings,
     hydrateConnectorTagDependentState,
     hydrateSpecificationDependentState,
     initializeAndGenerateUUID,
@@ -43,12 +43,8 @@ import {
     whatChanged,
 } from 'src/stores/Binding/shared';
 import { getStoreWithBackfillSettings } from 'src/stores/Binding/slices/Backfill';
+import { getStoreWithFieldSelectionSettings } from 'src/stores/Binding/slices/FieldSelection';
 import {
-    getInitialFieldSelectionData,
-    getStoreWithFieldSelectionSettings,
-} from 'src/stores/Binding/slices/FieldSelection';
-import {
-    getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from 'src/stores/Binding/slices/TimeTravel';
@@ -827,11 +823,7 @@ const getInitialState = (
             //  not need this split in logic
 
             const initState = keepCollections
-                ? {
-                      ...getInitialFieldSelectionData(),
-                      ...getInitialMiscData(),
-                      ...getInitialTimeTravelData(),
-                  }
+                ? getInitialStoreDataAndKeepBindings()
                 : getInitialStoreData();
 
             set(

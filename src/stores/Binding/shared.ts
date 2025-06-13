@@ -16,6 +16,7 @@ import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
+import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
 import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
@@ -408,9 +409,17 @@ export const getInitialMiscData = (): Pick<
 });
 
 export const getInitialStoreData = () => ({
+    ...getInitialHydrationData(),
     ...getInitialBindingData(),
     ...getInitialFieldSelectionData(),
-    ...getInitialHydrationData(),
     ...getInitialMiscData(),
     ...getInitialTimeTravelData(),
+    ...getInitialBackfillData(),
+});
+
+export const getInitialStoreDataAndKeepBindings = () => ({
+    ...getInitialFieldSelectionData(),
+    ...getInitialMiscData(),
+    ...getInitialTimeTravelData(),
+    ...getInitialBackfillData(),
 });
