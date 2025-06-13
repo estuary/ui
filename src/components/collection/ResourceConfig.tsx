@@ -93,11 +93,14 @@ function ResourceConfig({
                 )}
             </Box>
 
-            <Backfill
-                bindingIndex={draftedBindingIndex}
-                collection={collectionName}
-                collectionEnabled={!collectionDisabled}
-            />
+            {/*Materializations show this in the AdvancedOptions*/}
+            {entityType === 'capture' ? (
+                <Backfill
+                    bindingIndex={draftedBindingIndex}
+                    collection={collectionName}
+                    collectionEnabled={!collectionDisabled}
+                />
+            ) : null}
 
             {entityType === 'materialization' && !collectionDisabled ? (
                 <FieldSelectionViewer
@@ -111,6 +114,7 @@ function ResourceConfig({
                 bindingIndex={draftedBindingIndex}
                 bindingUUID={bindingUUID}
                 collectionName={collectionName}
+                collectionEnabled={!collectionDisabled}
             />
         </>
     );

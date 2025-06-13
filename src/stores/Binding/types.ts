@@ -1,10 +1,9 @@
 import type { DurationObjectUnits } from 'luxon';
-import type { EvolvedCollections } from 'src/api/evolutions';
 import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
-import type { BooleanString } from 'src/components/shared/buttons/types';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
 import type { CallSupabaseResponse } from 'src/services/supabase';
+import type { StoreWithBackfill } from 'src/stores/Binding/slices/Backfill';
 import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
 import type { StoreWithToggleDisable } from 'src/stores/Binding/slices/ToggleDisable';
@@ -66,6 +65,7 @@ export type BindingDisableUpdate = {
 
 export interface BindingState
     extends StoreWithHydration,
+        StoreWithBackfill,
         StoreWithFieldSelection,
         StoreWithTimeTravel,
         StoreWithToggleDisable {
@@ -110,29 +110,9 @@ export interface BindingState
     rediscoveryRequired: boolean;
     resetRediscoverySettings: () => void;
 
-    backfilledBindings: string[];
-    setBackfilledBindings: (
-        increment: BooleanString,
-        targetBindingUUID?: string
-    ) => void;
-
-    backfillAllBindings: boolean;
-
-    backfillDataFlow: boolean;
-    setBackfillDataFlow: (val: BindingState['backfillDataFlow']) => void;
-
-    backfillDataFlowTarget: string | null;
-    setBackfillDataFlowTarget: (
-        val: BindingState['backfillDataFlowTarget']
-    ) => void;
-
     // Resource Schema
     resourceSchema: Schema;
     setResourceSchema: (val: BindingState['resourceSchema']) => Promise<void>;
-
-    // Control if backfill is allowed in the UI for a connector
-    backfillSupported: boolean;
-    setBackfillSupported: (val: BindingState['backfillSupported']) => void;
 
     collectionMetadata: CollectionMetadataDictionary;
     setCollectionMetadata: (
@@ -213,9 +193,6 @@ export interface BindingState
 
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
-
-    evolvedCollections: EvolvedCollections[];
-    setEvolvedCollections: (value: BindingState['evolvedCollections']) => void;
 
     // Misc.
     hydrateState: (
