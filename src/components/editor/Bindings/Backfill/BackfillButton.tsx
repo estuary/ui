@@ -226,43 +226,49 @@ function BackfillButton({
     }
 
     return (
-        <Box style={{ maxWidth: 850 }}>
+        <Box style={{ maxWidth: 700 }}>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography component="div">{description}</Typography>
 
                 {!backfillSupported ? <BackfillNotSupportedAlert /> : null}
             </Stack>
 
-            <Stack direction="row" spacing={2}>
-                <BooleanToggleButton
-                    size="small"
-                    selected={Boolean(selected || reversioned)}
-                    disabled={disabled || reversioned}
-                    onClick={(event, checked: string) => {
-                        event.preventDefault();
-                        event.stopPropagation();
+            <Stack spacing={4}>
+                <Stack direction="row" spacing={2}>
+                    <BooleanToggleButton
+                        size="small"
+                        selected={Boolean(selected || reversioned)}
+                        disabled={disabled || reversioned}
+                        onClick={(event, checked: string) => {
+                            event.preventDefault();
+                            event.stopPropagation();
 
-                        handleClick(checked === 'true' ? 'false' : 'true');
-                    }}
-                >
-                    {intl.formatMessage({
-                        id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
-                    })}
-                </BooleanToggleButton>
+                            handleClick(checked === 'true' ? 'false' : 'true');
+                        }}
+                    >
+                        {intl.formatMessage({
+                            id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
+                        })}
+                    </BooleanToggleButton>
 
-                {backfillSupported && bindingIndex === -1 ? (
-                    <>
-                        <BackfillCount disabled={disabled} />
-                        <EvolvedCount />
-                    </>
+                    {backfillSupported && bindingIndex === -1 ? (
+                        <>
+                            <BackfillCount disabled={disabled} />
+                            <EvolvedCount />
+                        </>
+                    ) : null}
+
+                    {reversioned && bindingIndex !== -1 ? (
+                        <EvolvedAlert />
+                    ) : null}
+                </Stack>
+
+                {bindingIndex === -1 && workflow === 'capture_edit' ? (
+                    <Box style={{ maxWidth: 450 }}>
+                        <BackfillModeSelector />
+                    </Box>
                 ) : null}
-
-                {reversioned && bindingIndex !== -1 ? <EvolvedAlert /> : null}
             </Stack>
-
-            {bindingIndex === -1 && workflow === 'capture_edit' ? (
-                <BackfillModeSelector />
-            ) : null}
         </Box>
     );
 }

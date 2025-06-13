@@ -856,7 +856,15 @@ const getInitialState = (
         }
     },
 
-    setBackfillMode: () => {},
+    setBackfillMode: (newVal) => {
+        set(
+            produce((state: BindingState) => {
+                state.backfillMode = newVal;
+            }),
+            false,
+            'Binding State Reset'
+        );
+    },
 
     setBackfilledBindings: (increment, targetBindingUUID) => {
         set(
