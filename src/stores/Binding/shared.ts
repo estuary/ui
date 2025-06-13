@@ -371,16 +371,11 @@ export const getInitialBindingData = (): Pick<
 
 export const getInitialMiscData = (): Pick<
     BindingState,
-    | 'backfilledBindings'
-    | 'backfillAllBindings'
-    | 'backfillMode'
-    | 'backfillSupported'
     | 'captureInterval'
     | 'collectionMetadata'
     | 'collectionsRequiringRediscovery'
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
-    | 'evolvedCollections'
     | 'onIncompatibleSchemaChange'
     | 'onIncompatibleSchemaChangeErrorExists'
     | 'rediscoveryRequired'
@@ -392,16 +387,11 @@ export const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
     | 'resourceConfigPointers'
 > => ({
-    backfillAllBindings: false,
-    backfillMode: null,
-    backfillSupported: true,
-    backfilledBindings: [],
     captureInterval: null,
     collectionMetadata: {},
     collectionsRequiringRediscovery: [],
     defaultCaptureInterval: null,
     discoveredCollections: [],
-    evolvedCollections: [],
     onIncompatibleSchemaChange: undefined,
     onIncompatibleSchemaChangeErrorExists: {
         binding: false,

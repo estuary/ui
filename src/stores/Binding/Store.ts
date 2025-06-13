@@ -10,16 +10,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import {
-    difference,
-    has,
-    isEmpty,
-    isEqual,
-    omit,
-    omitBy,
-    pick,
-    union,
-} from 'lodash';
+import { difference, has, isEmpty, isEqual, omit, omitBy, pick } from 'lodash';
 
 import {
     getLiveSpecsById_writesTo,
@@ -51,6 +42,7 @@ import {
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
+import { getStoreWithBackfillSettings } from 'src/stores/Binding/slices/Backfill';
 import {
     getInitialFieldSelectionData,
     getStoreWithFieldSelectionSettings,
@@ -82,6 +74,7 @@ const getInitialState = (
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
     ...getStoreWithToggleDisableSettings(set),
+    ...getStoreWithBackfillSettings(set),
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -856,52 +849,6 @@ const getInitialState = (
         }
     },
 
-    setBackfillMode: (newVal) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillMode = newVal;
-            }),
-            false,
-            'Binding State Reset'
-        );
-    },
-
-    setBackfilledBindings: (increment, targetBindingUUID) => {
-        set(
-            produce((state: BindingState) => {
-                const existingBindingUUIDs = Object.keys(state.resourceConfigs);
-
-                const bindingUUIDs = targetBindingUUID
-                    ? [targetBindingUUID]
-                    : existingBindingUUIDs;
-
-                state.backfilledBindings =
-                    increment === 'true'
-                        ? union(state.backfilledBindings, bindingUUIDs)
-                        : state.backfilledBindings.filter(
-                              (uuid) => !bindingUUIDs.includes(uuid)
-                          );
-
-                state.backfillAllBindings =
-                    hasLength(existingBindingUUIDs) &&
-                    existingBindingUUIDs.length ===
-                        state.backfilledBindings.length;
-
-                if (state.backfilledBindings.length === 0) {
-                    // If we have nothing to backfill then we can reset the setting
-                    state.backfillMode = null;
-                } else if (
-                    increment === 'true' &&
-                    state.backfillMode === null
-                ) {
-                    state.backfillMode = 'reset';
-                }
-            }),
-            false,
-            'Backfilled Collections Set'
-        );
-    },
-
     setBindingOnIncompatibleSchemaChange: (value, bindingUUID) => {
         set(
             produce((state: BindingState) => {
@@ -1107,26 +1054,6 @@ const getInitialState = (
             }),
             false,
             'Specification Incompatible Schema Change Set'
-        );
-    },
-
-    setBackfillSupported: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillSupported = value;
-            }),
-            false,
-            'Backfill supported changed'
-        );
-    },
-
-    setEvolvedCollections: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.evolvedCollections = value;
-            }),
-            false,
-            'Evolved Collections List Set'
         );
     },
 

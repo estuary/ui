@@ -1,5 +1,5 @@
 import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEditor/types';
-import type { BackfillMode } from 'src/stores/Binding/types';
+import type { BackfillMode } from 'src/stores/Binding/slices/Backfill';
 
 import { useIntl } from 'react-intl';
 
