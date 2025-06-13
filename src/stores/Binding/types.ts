@@ -120,13 +120,8 @@ export interface BindingState
 
     backfillAllBindings: boolean;
 
-    backfillMode: BackfillMode;
+    backfillMode: BackfillMode | null;
     setBackfillMode: (val: BindingState['backfillMode']) => void;
-
-    collectionResetEnabled: boolean;
-    setCollectionResetEnabled: (
-        val: BindingState['collectionResetEnabled']
-    ) => void;
 
     // Resource Schema
     resourceSchema: Schema;

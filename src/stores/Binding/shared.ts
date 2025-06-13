@@ -374,7 +374,6 @@ export const getInitialMiscData = (): Pick<
     | 'backfilledBindings'
     | 'backfillAllBindings'
     | 'backfillMode'
-    | 'collectionResetEnabled'
     | 'backfillSupported'
     | 'captureInterval'
     | 'collectionMetadata'
@@ -394,8 +393,7 @@ export const getInitialMiscData = (): Pick<
     | 'resourceConfigPointers'
 > => ({
     backfillAllBindings: false,
-    backfillMode: 'reset',
-    collectionResetEnabled: false,
+    backfillMode: null,
     backfillSupported: true,
     backfilledBindings: [],
     captureInterval: null,

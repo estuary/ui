@@ -26,12 +26,14 @@ function CatalogEditor({ messageId }: Props) {
     const formActive = useFormStateStore_isActive();
 
     const intl = useIntl();
-    const collectionResetEnabled = useBindingStore(
-        (state) => state.collectionResetEnabled
-    );
+    const backfillMode = useBindingStore((state) => state.backfillMode);
     const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
+        const disableEditor = Boolean(
+            backfillMode === 'reset' && backfillCount
+        );
+
         return (
             <WrapperWithHeader
                 header={
@@ -47,7 +49,7 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {collectionResetEnabled && backfillCount ? (
+                    {disableEditor ? (
                         <AlertBox
                             sx={{
                                 maxWidth: 'fit-content',
@@ -66,10 +68,7 @@ function CatalogEditor({ messageId }: Props) {
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
-                            disabled={Boolean(
-                                formActive ||
-                                    (collectionResetEnabled && backfillCount)
-                            )}
+                            disabled={Boolean(formActive || disableEditor)}
                             monitorCurrentCatalog
                         />
                     </Paper>

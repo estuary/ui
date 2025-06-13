@@ -77,9 +77,7 @@ function useSave(
     );
 
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
-    const [collectionResetEnabled] = useBindingStore((state) => [
-        state.collectionResetEnabled,
-    ]);
+    const [backfillMode] = useBindingStore((state) => [state.backfillMode]);
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
@@ -267,10 +265,8 @@ function useSave(
                 }
             }
 
-            // This IF is a little overly safe - collectionResetEnabled is only set for captures but
-            //  just wanted to be safe in case something wonky happens on the store
             if (
-                collectionResetEnabled &&
+                backfillMode === 'reset' &&
                 entityType === 'capture' &&
                 collectionsBeingBackfilled.length > 0
             ) {
@@ -380,7 +376,7 @@ function useSave(
             return true;
         },
         [
-            collectionResetEnabled,
+            backfillMode,
             collections,
             collectionsBeingBackfilled,
             draftSpecs,

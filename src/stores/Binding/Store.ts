@@ -414,7 +414,7 @@ const getInitialState = (
                 if (state.backfilledBindings.length > 0) {
                     if (entityType === 'capture') {
                         // if they have anything marked for backfill make sure the setting is forced on
-                        state.collectionResetEnabled = true;
+                        state.backfillMode = 'reset';
                     }
 
                     state.backfillAllBindings =
@@ -886,6 +886,12 @@ const getInitialState = (
                     hasLength(existingBindingUUIDs) &&
                     existingBindingUUIDs.length ===
                         state.backfilledBindings.length;
+
+                if (state.backfillMode === null) {
+                    if (increment === 'true') {
+                        state.backfillMode ??= 'reset';
+                    }
+                }
             }),
             false,
             'Backfilled Collections Set'
@@ -1097,17 +1103,6 @@ const getInitialState = (
             }),
             false,
             'Specification Incompatible Schema Change Set'
-        );
-    },
-
-    // TODO (organization): Correct the location of store actions that are out-of-order.
-    setCollectionResetEnabled: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.collectionResetEnabled = value;
-            }),
-            false,
-            'Backfill Dataflow Flag Changed'
         );
     },
 
