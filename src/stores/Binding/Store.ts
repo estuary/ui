@@ -887,10 +887,14 @@ const getInitialState = (
                     existingBindingUUIDs.length ===
                         state.backfilledBindings.length;
 
-                if (state.backfillMode === null) {
-                    if (increment === 'true') {
-                        state.backfillMode ??= 'reset';
-                    }
+                if (state.backfilledBindings.length === 0) {
+                    // If we have nothing to backfill then we can reset the setting
+                    state.backfillMode = null;
+                } else if (
+                    increment === 'true' &&
+                    state.backfillMode === null
+                ) {
+                    state.backfillMode = 'reset';
                 }
             }),
             false,
