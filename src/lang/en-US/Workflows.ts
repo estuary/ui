@@ -149,8 +149,11 @@ export const Workflows: Record<string, string> = {
     'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
     // TODO (collection seletor) - need to update content
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
-    'workflows.collectionSelector.dataFlowBackfill.input': `Skip related entities: re-capture data from source without recreating destination tables or derivations. This append all data to your collection to be merged or appended to destinations based on your settings.`,
+    'workflows.dataFlowBackfill.label': `Backfill Mode`,
+    'workflows.dataFlowBackfill.options.reset.label': `Dataflow Reset`,
+    'workflows.dataFlowBackfill.options.reset.description': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
+    'workflows.dataFlowBackfill.options.incremental.label': `Incremental backfill (advanced)`,
+    'workflows.dataFlowBackfill.options.incremental.description': `Re-extract all source data and Insert or Append into your existing destination tables without dropping and recreating them.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
