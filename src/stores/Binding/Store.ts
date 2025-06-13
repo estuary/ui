@@ -856,6 +856,8 @@ const getInitialState = (
         }
     },
 
+    setBackfillMode: () => {},
+
     setBackfilledBindings: (increment, targetBindingUUID) => {
         set(
             produce((state: BindingState) => {

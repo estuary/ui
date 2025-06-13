@@ -9,10 +9,10 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import BackfillCount from 'src/components/editor/Bindings/Backfill/BackfillCount';
-import BackfillDataFlowOption from 'src/components/editor/Bindings/Backfill/BackfillDataFlowOption';
 import BackfillNotSupportedAlert from 'src/components/editor/Bindings/Backfill/BackfillNotSupportedAlert';
 import EvolvedAlert from 'src/components/editor/Bindings/Backfill/EvolvedAlert';
 import EvolvedCount from 'src/components/editor/Bindings/Backfill/EvolvedCount';
+import BackfillModeSelector from 'src/components/editor/Bindings/Backfill/ModeSelector';
 import useUpdateBackfillCounter from 'src/components/editor/Bindings/Backfill/useUpdateBackfillCounter';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
@@ -261,7 +261,7 @@ function BackfillButton({
             </Stack>
 
             {bindingIndex === -1 && workflow === 'capture_edit' ? (
-                <BackfillDataFlowOption />
+                <BackfillModeSelector />
             ) : null}
         </Box>
     );

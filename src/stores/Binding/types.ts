@@ -17,6 +17,8 @@ import type {
     SourceCaptureDef,
 } from 'src/types';
 
+export type BackfillMode = 'reset' | 'incremental';
+
 export interface CollectionMetadata {
     added?: boolean;
     previouslyBound?: boolean;
@@ -117,6 +119,9 @@ export interface BindingState
     ) => void;
 
     backfillAllBindings: boolean;
+
+    backfillMode: BackfillMode;
+    setBackfillMode: (val: BindingState['backfillMode']) => void;
 
     collectionResetEnabled: boolean;
     setCollectionResetEnabled: (
