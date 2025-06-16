@@ -35,7 +35,6 @@ import {
 import { getConnectorMetadata } from 'src/utils/connector-utils';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
-import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { NAME_RE } from 'src/validation';
 
@@ -150,12 +149,17 @@ export const getInitialState = (
                 }
 
                 // Update the details
-                state.details = val;
+                const { dataPlane } = state.details.data;
+
+                state.details = {
+                    data: { ...val.data, dataPlane },
+                    errors: val.errors,
+                };
 
                 // Remove data plane-related state entirely when the data plane id is unset.
-                if (!hasLength(val.data.dataPlane?.id)) {
-                    state.details.data.dataPlane = undefined;
-                }
+                // if (!hasLength(val.data.dataPlane?.id)) {
+                //     state.details.data.dataPlane = undefined;
+                // }
 
                 // Run validation on the name. This is done inside the input but
                 //  having the input set custom errors causes issues as we basically

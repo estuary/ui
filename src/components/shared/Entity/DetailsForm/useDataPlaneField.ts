@@ -15,7 +15,6 @@ import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
 } from 'src/utils/dataPlane-utils';
-import { hasLength } from 'src/utils/misc-utils';
 
 interface OneOfElement {
     const: DataPlaneOption;
@@ -75,27 +74,54 @@ export default function useDataPlaneField(
         };
     }, [intl, options]);
 
-    const evaluateDataPlane = useCallback(
-        (details: Details, selectedDataPlaneId: string | undefined) => {
-            if (selectedDataPlaneId !== storedDataPlaneId) {
-                const selectedOption = options.find(
-                    (option) => option.id === (selectedDataPlaneId ?? '')
+    const getDataPlaneOption = useCallback(
+        (dataPlaneId: string | undefined) => {
+            let selectedOption = options.find(
+                (option) => option.id === (dataPlaneId ?? '')
+            );
+
+            if (typeof selectedOption === 'undefined') {
+                const privateDataPlaneOption = options.find((option) =>
+                    option.dataPlaneName.whole.startsWith('ops/dp/private/')
                 );
 
-                setDetails_dataPlane(selectedOption);
+                selectedOption = privateDataPlaneOption ?? options[0];
+            }
 
-                const evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
-                    ? selectedDataPlaneId
-                    : null;
+            return selectedOption;
+        },
+        [options]
+    );
 
-                if (evaluatedDataPlaneId !== dataPlaneIdInURL) {
+    const evaluateDataPlane = useCallback(
+        (details: Details, selectedDataPlaneOption: DataPlaneOption) => {
+            // let evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
+            //     ? selectedDataPlaneId
+            //     : null;
+
+            // let selectedOption = options.find(
+            //     (option) => option.id === (selectedDataPlaneId ?? '')
+            // );
+
+            // if (typeof selectedOption === 'undefined') {
+            //     const privateDataPlaneOption = options.find((option) =>
+            //         option.dataPlaneName.whole.startsWith('ops/dp/private/')
+            //     );
+
+            //     selectedOption = privateDataPlaneOption ?? options[0];
+            // }
+
+            if (selectedDataPlaneOption.id !== storedDataPlaneId) {
+                setDetails_dataPlane(selectedDataPlaneOption);
+
+                if (selectedDataPlaneOption.id !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
                     // TODO (data-plane): Set search param of interest instead of using navigate function.
                     navigateToCreate(entityType, {
                         id: details.data.connectorImage.connectorId,
                         advanceToForm: true,
-                        dataPlaneId: selectedDataPlaneId ?? null,
+                        dataPlaneId: selectedDataPlaneOption.id ?? null,
                     });
                 }
             }
@@ -104,7 +130,6 @@ export default function useDataPlaneField(
             dataPlaneIdInURL,
             entityType,
             navigateToCreate,
-            options,
             setDetails_dataPlane,
             setEntityNameChanged,
             storedDataPlaneId,
@@ -120,6 +145,7 @@ export default function useDataPlaneField(
             scope: `#/properties/${DATA_PLANE_SCOPE}`,
             type: 'Control',
         },
+        getDataPlaneOption,
         evaluateDataPlane,
     };
 }

@@ -11,11 +11,16 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { stripPathing } from 'src/utils/misc-utils';
 
 export default function useFormFields(entityType: EntityWithCreateWorkflow) {
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
+    const previousName = useDetailsFormStore(
+        (state) => state.previousDetails.data.entityName
+    );
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
@@ -24,11 +29,17 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
         (state) => state.setDraftedEntityName
     );
 
+    const setCatalogName = useWorkflowStore((state) => state.setCatalogName);
+
     const { connectorSchema, connectorUISchema, evaluateConnector } =
         useConnectorField(entityType);
 
-    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
-        useDataPlaneField(entityType);
+    const {
+        dataPlaneSchema,
+        dataPlaneUISchema,
+        getDataPlaneOption,
+        evaluateDataPlane,
+    } = useDataPlaneField(entityType);
 
     const schema = useMemo(
         () => ({
@@ -68,12 +79,24 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
     }, [connectorUISchema, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
-        const selectedDataPlaneId = details.data.dataPlane?.id;
+        const tenant = stripPathing(details.data.entityName, true);
+        let selectedDataPlaneId = details.data.dataPlane?.id;
 
-        evaluateDataPlane(details, selectedDataPlaneId);
-        evaluateConnector(details, selectedDataPlaneId);
+        if (!previousName.startsWith(tenant)) {
+            selectedDataPlaneId = undefined;
+        }
+
+        const dataPlaneOption = getDataPlaneOption(selectedDataPlaneId);
+
+        evaluateDataPlane(details, dataPlaneOption);
+        evaluateConnector(details, dataPlaneOption.id ?? undefined);
 
         setDetails(details);
+
+        setCatalogName({
+            root: details.data.entityName.substring(tenant.length),
+            tenant,
+        });
 
         // For edit we can set the Drafted Entity Name because the store sets the name
         //  and then set the entityNameChanged flag to false. Then we can reference

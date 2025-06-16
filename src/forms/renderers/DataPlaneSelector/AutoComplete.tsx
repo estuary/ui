@@ -39,6 +39,7 @@ import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { useDataPlaneOptions } from 'src/components/shared/Entity/DetailsForm/useDataPlaneOptions';
 import { defaultOutline_hovered } from 'src/context/Theme';
 import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
 import Option from 'src/forms/renderers/DataPlaneSelector/Option';
@@ -78,6 +79,7 @@ export const DataPlaneAutoComplete = ({
     filterOptions,
 }: EnumCellProps & WithClassname & WithOptionLabel) => {
     const intl = useIntl();
+    const scopedOptions = useDataPlaneOptions();
 
     const [inputValue, setInputValue] = React.useState('');
     const currentOption = useMemo(
@@ -172,6 +174,10 @@ export const DataPlaneAutoComplete = ({
                 );
             }}
             renderOption={(renderOptionProps, option) => {
+                if (!scopedOptions.includes(option.value)) {
+                    return null;
+                }
+
                 return (
                     <Option
                         renderOptionProps={renderOptionProps}
