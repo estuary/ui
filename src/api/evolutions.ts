@@ -1,5 +1,6 @@
 import { DEFAULT_FILTER } from 'src/services/shared';
 import { insertSupabase, TABLES } from 'src/services/supabase';
+import { suggestedName } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 export type RequiresRecreation =
@@ -36,13 +37,17 @@ export function toEvolutionRequest(
     ic: IncompatibleCollections
 ): EvolutionRequest {
     const req: EvolutionRequest = { current_name: ic.collection };
+
     if (hasLength(ic.requires_recreation)) {
         req.reset = true;
     } else if (ic.affected_materializations) {
         // since we're _not_ re-creating the collection, restrict the evolution to only apply to
         // the materializations that were affected.
         req.materializations = ic.affected_materializations.map((m) => m.name);
+    } else {
+        req.new_name = suggestedName(ic.collection);
     }
+
     return req;
 }
 

@@ -187,7 +187,7 @@ export const getDraftSpecsBySpecType = async (
     ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
-interface DraftSpecsExtQuery_BySpecTypeReduced {
+export interface DraftSpecsExtQuery_BySpecTypeReduced {
     draft_id: string;
     catalog_name: string;
     spec_type: string;

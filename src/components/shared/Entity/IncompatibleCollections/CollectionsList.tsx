@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import Description from 'src/components/shared/Entity/IncompatibleCollections/Description';
 import KeyValueList from 'src/components/shared/KeyValueList';
+import { suggestedName } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
@@ -17,11 +18,9 @@ function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
         ? incompatibleCollection.requires_recreation[0]
         : null;
 
-    // TODO (collection reset) - we'll no longer have a "newName" but still need to show user
-    // what collections are getting reset
     const newName =
-        recreateCause !== null && recreateCause !== 'authoritativeSourceSchema'
-            ? 'TODO____previously_the_v2_name_shown_here'
+        recreateCause === null
+            ? suggestedName(incompatibleCollection.collection)
             : null;
 
     const helpMessage =

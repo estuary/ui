@@ -351,7 +351,7 @@ export const Workflows: Record<string, string> = {
     } will be updated to increment the backfill counters and re-materialize the collection`,
     'entityEvolution.action.recreateBindings.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
-    'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
+    'entityEvolution.action.recreateCollection.description': `Collection will be reset to a new generation because {reason}.`,
     'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
     The capture will be updated to write into the new collection, and will backfill the collection from source system.
     Any materializations will also be updated to materialize the new collection instead of the old one.
@@ -361,6 +361,8 @@ export const Workflows: Record<string, string> = {
         'the collection key cannot be modified',
     'entityEvolution.action.recreateCollection.reason.partitionChange':
         'the collection partitions cannot be modified',
+    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
+        'a live spec with this same name has already been created and was subsequently deleted',
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
