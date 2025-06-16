@@ -11,6 +11,7 @@ import { Grid, Toolbar } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import SearchField from 'src/components/shared/toolbar/SearchField';
@@ -66,6 +67,9 @@ function ConnectorToolbar({
             750
         ),
     };
+    useUnmount(() => {
+        handlers.filterTiles.cancel();
+    });
 
     return (
         <Toolbar

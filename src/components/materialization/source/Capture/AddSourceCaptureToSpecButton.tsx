@@ -78,7 +78,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 updatedSourceCapture.deltaUpdates = deltaUpdates;
             }
             if (sourceCaptureTargetSchemaSupported) {
-                updatedSourceCapture.targetSchema = targetSchema;
+                updatedSourceCapture.targetNaming = targetSchema;
             }
 
             // Check the name since the optional settings may
