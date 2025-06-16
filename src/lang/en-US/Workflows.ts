@@ -361,10 +361,6 @@ export const Workflows: Record<string, string> = {
         'the collection key cannot be modified',
     'entityEvolution.action.recreateCollection.reason.partitionChange':
         'the collection partitions cannot be modified',
-    'entityEvolution.action.recreateCollection.reason.prevDeletedSpec':
-        'a live spec with this same name has already been created and was subsequently deleted',
-    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
-        'a live spec with this same name has already been created and was subsequently deleted',
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,

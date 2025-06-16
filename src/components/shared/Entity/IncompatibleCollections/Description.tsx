@@ -12,16 +12,18 @@ function Description({
     // TODO (collection reset) - we need to replace this and inform the user here what will happen
     //  but without the new name stuff
     if (newName !== null) {
-        const reason = intl.formatMessage({
-            id: `entityEvolution.action.recreateCollection.reason.${recreateCause}`,
-        });
         return (
             <>
                 {intl.formatMessage(
                     {
                         id: 'entityEvolution.action.recreateCollection.description',
                     },
-                    { newName, reason }
+                    {
+                        newName,
+                        reason: intl.formatMessage({
+                            id: `entityEvolution.action.recreateCollection.reason.${recreateCause}`,
+                        }),
+                    }
                 )}
             </>
         );
