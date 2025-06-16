@@ -193,10 +193,16 @@ function useSave(
     const handleCollections = useCallback(
         async (draftId: string) => {
             let collectionsBeingRemovedFromDraft: string[] = [];
+            const collectionResetEnabled =
+                backfillMode === 'reset' &&
+                entityType === 'capture' &&
+                collectionsBeingBackfilled.length > 0;
+
             // Look for every collection on the draft.
             const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
                 draftId,
-                'collection'
+                'collection',
+                collectionResetEnabled
             );
             if (draftSpecResponse.error) {
                 onFailure({
@@ -265,11 +271,7 @@ function useSave(
                 }
             }
 
-            if (
-                backfillMode === 'reset' &&
-                entityType === 'capture' &&
-                collectionsBeingBackfilled.length > 0
-            ) {
+            if (collectionResetEnabled) {
                 let collectionsMissingFromDraft: string[] = [];
 
                 if (collectionsOnDraft && collectionsOnDraft.length > 0) {

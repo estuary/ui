@@ -191,12 +191,13 @@ interface DraftSpecsExtQuery_BySpecTypeReduced {
     draft_id: string;
     catalog_name: string;
     spec_type: string;
-    spec: any;
+    spec?: any;
 }
 
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
-    specType: Entity
+    specType: Entity,
+    fetchSpec?: boolean
 ) => {
     const responses = await pagedFetchAll<DraftSpecsExtQuery_BySpecTypeReduced>(
         DEFAULT_PAGING_SIZE,
@@ -204,7 +205,9 @@ export const getDraftSpecsBySpecTypeReduced = async (
         (start) =>
             supabaseClient
                 .from(TABLES.DRAFT_SPECS_EXT)
-                .select(`draft_id,catalog_name,spec_type,spec`)
+                .select(
+                    `draft_id,catalog_name,spec_type${fetchSpec ? ',spec' : ''}`
+                )
                 .eq('draft_id', draftId)
                 .eq('spec_type', specType)
                 .range(start, start + DEFAULT_PAGING_SIZE - 1)
