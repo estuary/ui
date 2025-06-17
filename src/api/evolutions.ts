@@ -1,19 +1,11 @@
+import type {
+    RequiresRecreation,
+    ValidHelpMessageId,
+} from 'src/components/shared/Entity/IncompatibleCollections/types';
+
 import { DEFAULT_FILTER } from 'src/services/shared';
 import { insertSupabase, TABLES } from 'src/services/supabase';
-import { suggestedName } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
-
-export type RequiresRecreation =
-    // The collection key in the draft differs from that of the live spec.
-    | 'keyChange'
-    // One or more collection partition fields in the draft differs from that of the live spec.
-    | 'partitionChange'
-    // A live spec with the same name has already been created and was subsequently deleted.
-    | 'prevDeletedSpec'
-    // This variant is deprecated and removed from the latest version of the agent. It's retained here
-    // only to temporarily ensure compatibility between the agent and the UI, and can be removed once
-    // the agent changes make it into production.
-    | 'authoritativeSourceSchema';
 
 export interface AffectedMaterialization {
     name: string;
@@ -44,12 +36,31 @@ export function toEvolutionRequest(
         // since we're _not_ re-creating the collection, restrict the evolution to only apply to
         // the materializations that were affected.
         req.materializations = ic.affected_materializations.map((m) => m.name);
-    } else {
-        req.new_name = suggestedName(ic.collection);
     }
+
+    // if somehow there is no requires_recreations AND affected_materializations then we just pass
+    // a request of {"current_name": "a/b"}, and the evolutions handler will figure out which materializations to update
 
     return req;
 }
+
+export const getEvolutionMessageId = (
+    evolutionRequest: EvolutionRequest
+): ValidHelpMessageId => {
+    if (evolutionRequest.reset) {
+        return 'resetCollection';
+    }
+
+    if (evolutionRequest.materializations) {
+        if (evolutionRequest.materializations?.length > 1) {
+            return 'recreateBindings';
+        }
+
+        return 'recreateSingleBinding';
+    }
+
+    return 'fallThrough';
+};
 
 // Evolution success will return this object in job_status['evolved_collections']
 export interface EvolvedCollections {

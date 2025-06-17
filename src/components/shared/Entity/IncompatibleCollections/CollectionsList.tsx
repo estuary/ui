@@ -5,26 +5,25 @@ import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { HelpCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import { getEvolutionMessageId, toEvolutionRequest } from 'src/api/evolutions';
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import Description from 'src/components/shared/Entity/IncompatibleCollections/Description';
 import KeyValueList from 'src/components/shared/KeyValueList';
-import { suggestedName } from 'src/utils/entity-utils';
-import { hasLength } from 'src/utils/misc-utils';
 
 function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
     const intl = useIntl();
 
-    const recreateCause = hasLength(incompatibleCollection.requires_recreation)
-        ? incompatibleCollection.requires_recreation[0]
-        : null;
+    // Generate a request so we know what will change on this collection
+    const evolutionRequest = toEvolutionRequest(incompatibleCollection);
 
-    const newName =
-        recreateCause === null
-            ? suggestedName(incompatibleCollection.collection)
+    // We need different messaging for when there is a new name vs just resetting
+    const helpMessageId = getEvolutionMessageId(evolutionRequest);
+
+    // Fetch the cause so we can tell the user why this is happening
+    const recreateCause =
+        incompatibleCollection.requires_recreation?.length > 0
+            ? incompatibleCollection.requires_recreation[0]
             : null;
-
-    const helpMessage =
-        newName !== null ? 'recreateCollection' : 'recreateBindings';
 
     return (
         <Box
@@ -38,16 +37,14 @@ function CollectionAction({ incompatibleCollection }: CollectionActionProps) {
         >
             <Typography color="text.primary">
                 <Description
-                    affectedMaterializations={
-                        incompatibleCollection.affected_materializations
-                    }
-                    newName={newName}
+                    evolutionRequest={evolutionRequest}
+                    helpMessageId={helpMessageId}
                     recreateCause={recreateCause}
                 />
             </Typography>
             <Tooltip
                 title={intl.formatMessage({
-                    id: `entityEvolution.action.${helpMessage}.help`,
+                    id: `entityEvolution.action.${helpMessageId}.help`,
                 })}
             >
                 <IconButton>

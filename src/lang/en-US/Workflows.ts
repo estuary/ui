@@ -344,24 +344,24 @@ export const Workflows: Record<string, string> = {
     'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
 
     // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
     'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
         one {Materialization}
         other {Materializations}
     } will be updated to increment the backfill counters and re-materialize the collection`,
-    'entityEvolution.action.recreateBindings.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
+    'entityEvolution.action.recreateSingleBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
+    'entityEvolution.action.resetCollection.description': `Collection will be reset to a new generation because {reason}.`,
+    'entityEvolution.action.fallThrough.description': `The server will decide which materializations need to be updated.`,
 
-    'entityEvolution.action.recreateCollection.description': `Collection will be reset to a new generation because {reason}.`,
-    'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
-    The capture will be updated to write into the new collection, and will backfill the collection from source system.
-    Any materializations will also be updated to materialize the new collection instead of the old one.
-    The result will be a new resource (database table, for example) with an incremented version suffix (like "_v2")`,
+    'entityEvolution.action.recreateBindings.help': `The materializations will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
+    'entityEvolution.action.recreateSingleBinding.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
+    'entityEvolution.action.resetCollection.help': `This is like if you deleted the collection and then re-created it with the same name. This will cause the collection to be backfilled from the source system.`,
+    'entityEvolution.action.fallThrough.help': `The materializations will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
-    'entityEvolution.action.recreateCollection.reason.keyChange':
+    'entityEvolution.action.reason.keyChange':
         'the collection key cannot be modified',
-    'entityEvolution.action.recreateCollection.reason.partitionChange':
+    'entityEvolution.action.reason.partitionChange':
         'the collection partitions cannot be modified',
-    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
+    'entityEvolution.action.reason.authoritativeSourceSchema':
         'a live spec with this same name has already been created and was subsequently deleted',
 
     // Entities Hydrator
