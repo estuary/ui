@@ -52,6 +52,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
+    'workflows.collectionSelector.notifications.toggle.disable.error': `Changes reverted. Unable to update server. Please try again.`,
 
     'workflows.collectionSelector.footer.count': `total: {totalCount}`,
     'workflows.collectionSelector.footer.count.empty': ` `,
@@ -298,6 +299,7 @@ export const Workflows: Record<string, string> = {
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
+    'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

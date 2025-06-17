@@ -35,24 +35,25 @@ function SpecPropInvalidSetting({
                 )}
             </Typography>
 
-            <Button
-                disabled={formActive}
-                size="small"
-                sx={{ maxWidth: 'fit-content' }}
-                variant="text"
-                onClick={() => {
-                    logRocketEvent('ResetInvalidSetting', {
-                        messageId: invalidSettingsMessageId,
-                        currentSetting: safeCurrentSetting,
-                    });
-
-                    return updateDraftedSetting();
-                }}
-            >
-                {intl.formatMessage({
-                    id: 'specPropEditor.error.cta',
-                })}
-            </Button>
+            {updateDraftedSetting ? (
+                <Button
+                    disabled={formActive}
+                    size="small"
+                    sx={{ maxWidth: 'fit-content' }}
+                    variant="text"
+                    onClick={() => {
+                        logRocketEvent('ResetInvalidSetting', {
+                            currentSetting: safeCurrentSetting,
+                            messageID: invalidSettingsMessageId,
+                        });
+                        return updateDraftedSetting();
+                    }}
+                >
+                    {intl.formatMessage({
+                        id: 'specPropEditor.error.cta',
+                    })}
+                </Button>
+            ) : null}
         </AlertBox>
     );
 }
