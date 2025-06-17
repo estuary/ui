@@ -2,6 +2,11 @@ import type { HydratorProps } from 'src/stores/EntityRelationships/types';
 
 import { useEntityRelationships } from 'src/hooks/entityStatus/useEntityRelationships';
 
+// TODO (entity status) - eventually we probably want to combine this
+//  with EntityStatusHydrator so there is one call being made to the status
+//  endpoint. However, we did not do this right away as we may want the
+//  status to auto refresh and having it also fetch all the relationships
+//  does not make as much sense.
 export default function EntityRelationshipsHydrator({
     catalogName,
     children,
