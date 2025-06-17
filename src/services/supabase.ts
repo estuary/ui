@@ -43,11 +43,12 @@ export const tokenHasIssues = (errorMessage?: string) => {
     );
 };
 
-export const BASE_ERROR = {
+export const BASE_ERROR: PostgrestError = {
     code: '',
     details: '',
     hint: '',
     message: '',
+    name: '',
 };
 
 export enum TABLES {
@@ -148,13 +149,13 @@ export type Protocol<Data> = { column: keyof Data; value: string | null };
 
 // TODO (V2 typing) - query should take in filter builder better
 export const defaultTableFilter = <Response>(
-    query: any,
+    query: PostgrestFilterBuilder<any, any, any, any, any>,
     searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Response>[],
     pagination?: Pagination,
     protocol?: Protocol<Response>
-): PostgrestFilterBuilder<any, any, Response> => {
+): PostgrestFilterBuilder<any, any, Response, any, any> => {
     let queryBuilder = query as PostgrestFilterBuilder<any, any, Response>;
 
     if (searchQuery) {

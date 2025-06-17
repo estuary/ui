@@ -102,9 +102,9 @@ export const getEndpointConfig = (
 
 // TODO (V2 typing) - query should take in filter builder better
 export const requiredConnectorColumnsExist = <Response>(
-    query: any,
+    query: PostgrestFilterBuilder<any, any, any, any, any>,
     columnPrefix?: string
-): PostgrestFilterBuilder<any, any, Response> => {
+): PostgrestFilterBuilder<any, any, Response, any, any> => {
     return query
         .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
         .not(
