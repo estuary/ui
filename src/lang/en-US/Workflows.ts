@@ -348,7 +348,7 @@ export const Workflows: Record<string, string> = {
         one {Materialization}
         other {Materializations}
     } will be updated to increment the backfill counters and re-materialize the collection`,
-    'entityEvolution.action.recreateSingleBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
+    'entityEvolution.action.recreateSingleBinding.description': `The materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
     'entityEvolution.action.resetCollection.description': `Collection will be reset to a new generation because {reason}.`,
     'entityEvolution.action.fallThrough.description': `The server will decide which materializations need to be updated.`,
 
