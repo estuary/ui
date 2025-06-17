@@ -26,6 +26,13 @@ export interface EntitySetting {
         details: string;
         viewAll: string;
     };
+    details: {
+        relatedEntitiesContentIds: {
+            writtenBy: string | undefined;
+            collections: string | undefined;
+            readBy: string | undefined;
+        };
+    };
     selector: {
         noExistingDataContentIds: TableIntlConfig;
         filterIntlKey: string;

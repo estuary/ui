@@ -4,27 +4,43 @@ import { useIntl } from 'react-intl';
 
 import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
 import { useEntityType } from 'src/context/EntityContext';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { useEntityRelationshipStore } from 'src/stores/EntityRelationships/Store';
 
 function useRelatedEntities() {
     const intl = useIntl();
     const entityType = useEntityType();
 
-    const [relatedCaptures, relatedMaterializations, hydrationError, hydrated] =
-        useEntityRelationshipStore((state) => [
-            state.captures,
-            state.materializations,
-            state.hydrationError,
-            state.hydrated,
-        ]);
+    const [
+        relatedCaptures,
+        relatedMaterializations,
+        relatedCollections,
+        hydrationError,
+        hydrated,
+    ] = useEntityRelationshipStore((state) => [
+        state.captures,
+        state.materializations,
+        state.collections,
+        state.hydrationError,
+        state.hydrated,
+    ]);
 
     return useMemo(() => {
         const response = [];
 
-        if (entityType === 'collection') {
+        console.log('hydrated', hydrated);
+        console.log('relatedCaptures', relatedCaptures);
+        console.log('relatedMaterializations', relatedMaterializations);
+        console.log('relatedCollections', relatedCollections);
+
+        if (
+            ENTITY_SETTINGS[entityType].details.relatedEntitiesContentIds
+                .writtenBy
+        ) {
             response.push({
                 title: intl.formatMessage({
-                    id: 'data.parentCapture',
+                    id: ENTITY_SETTINGS[entityType].details
+                        .relatedEntitiesContentIds.writtenBy,
                 }),
                 val: (
                     <RelatedEntities
@@ -34,11 +50,33 @@ function useRelatedEntities() {
                     />
                 ),
             });
+        }
 
+        if (
+            ENTITY_SETTINGS[entityType].details.relatedEntitiesContentIds
+                .collections
+        ) {
             response.push({
                 title: intl.formatMessage({
-                    id: 'data.consumers',
+                    id: ENTITY_SETTINGS[entityType].details
+                        .relatedEntitiesContentIds.collections,
                 }),
+                val: (
+                    <RelatedEntities
+                        entityType="collection"
+                        entities={hydrated ? relatedCollections : null}
+                        error={Boolean(hydrationError)}
+                    />
+                ),
+            });
+        }
+
+        if (
+            ENTITY_SETTINGS[entityType].details.relatedEntitiesContentIds.readBy
+        ) {
+            response.push({
+                title: ENTITY_SETTINGS[entityType].details
+                    .relatedEntitiesContentIds.readBy,
                 val: (
                     <RelatedEntities
                         entityType="materialization"
@@ -56,6 +94,7 @@ function useRelatedEntities() {
         hydrationError,
         intl,
         relatedCaptures,
+        relatedCollections,
         relatedMaterializations,
     ]);
 }

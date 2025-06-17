@@ -10,7 +10,6 @@ import ConnectorName from 'src/components/connectors/ConnectorName';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
-import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
 import useRelatedEntities from 'src/components/shared/Entity/Details/useRelatedEntities';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import KeyValueList from 'src/components/shared/KeyValueList';
@@ -33,6 +32,8 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             ?.message;
 
     const relatedEntities = useRelatedEntities();
+
+    console.log('relatedEntities', relatedEntities);
 
     const data = useMemo(() => {
         const response = [];
@@ -144,34 +145,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             }),
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
-
-        if (hasLength(latestLiveSpec.writes_to)) {
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.writes_to',
-                }),
-                val: (
-                    <RelatedEntities
-                        entityType="collection"
-                        entities={latestLiveSpec.writes_to}
-                    />
-                ),
-            });
-        }
-
-        if (hasLength(latestLiveSpec.reads_from)) {
-            response.push({
-                title: intl.formatMessage({
-                    id: 'data.reads_from',
-                }),
-                val: (
-                    <RelatedEntities
-                        entityType="collection"
-                        entities={latestLiveSpec.reads_from}
-                    />
-                ),
-            });
-        }
 
         return response;
     }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);

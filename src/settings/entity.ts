@@ -24,6 +24,13 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,
         },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: 'data.writes_to',
+                readBy: undefined,
+                writtenBy: undefined,
+            },
+        },
         selector: {
             disableMultiSelect: true,
             filterIntlKey: 'capturesTable.filterLabel',
@@ -56,6 +63,13 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             details: authenticatedRoutes.collections.details.overview.fullPath,
             viewAll: authenticatedRoutes.collections.fullPath,
         },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: undefined,
+                readBy: 'data.consumer',
+                writtenBy: 'data.consumers',
+            },
+        },
         selector: {
             filterIntlKey: 'collectionsTable.filterLabel',
             headerIntlKey: null,
@@ -87,6 +101,13 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             details:
                 authenticatedRoutes.materializations.details.overview.fullPath,
             viewAll: authenticatedRoutes.materializations.fullPath,
+        },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: 'data.reads_from',
+                readBy: undefined,
+                writtenBy: undefined,
+            },
         },
         selector: {
             disableMultiSelect: true,

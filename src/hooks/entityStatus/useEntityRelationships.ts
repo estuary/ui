@@ -25,13 +25,19 @@ export const useEntityRelationships = (
         catalogName?.startsWith(grant)
     );
 
-    const [setHydrated, setHydrationError, setCaptures, setMaterializations] =
-        useEntityRelationshipStore((state) => [
-            state.setHydrated,
-            state.setHydrationError,
-            state.setCaptures,
-            state.setMaterializations,
-        ]);
+    const [
+        setHydrated,
+        setHydrationError,
+        setCaptures,
+        setMaterializations,
+        setCollections,
+    ] = useEntityRelationshipStore((state) => [
+        state.setHydrated,
+        state.setHydrationError,
+        state.setCaptures,
+        state.setMaterializations,
+        state.setCollections,
+    ]);
 
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix
@@ -42,6 +48,7 @@ export const useEntityRelationships = (
             onError: (err) => {
                 setCaptures(null);
                 setMaterializations(null);
+                setCollections(null);
 
                 setHydrationError(err);
 
@@ -52,19 +59,23 @@ export const useEntityRelationships = (
                 });
             },
             onSuccess: (responses) => {
-                const captures: any[] = [];
-                const materializations: any[] = [];
+                const captures: string[] = [];
+                const collections: string[] = [];
+                const materializations: string[] = [];
 
                 responses.forEach((datum) => {
                     if (datum.spec_type === 'capture') {
                         captures.push(datum.catalog_name);
                     } else if (datum.spec_type === 'materialization') {
                         materializations.push(datum.catalog_name);
+                    } else if (datum.spec_type === 'collection') {
+                        collections.push(datum.catalog_name);
                     }
                 });
 
                 setCaptures(captures);
                 setMaterializations(materializations);
+                setCollections(collections);
 
                 setHydrationError(null);
 
