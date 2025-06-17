@@ -1,7 +1,19 @@
-import type {
-    EvolutionRequest,
-    IncompatibleCollections,
-} from 'src/api/evolutions';
+import type { EvolutionRequest } from 'src/api/evolutions';
+
+export interface AffectedMaterialization {
+    name: string;
+    fields: {
+        field: string;
+        reason: string;
+    }[];
+}
+
+// Evolution starts by the publish returning this object in job_status['incompatible_collections']
+export interface IncompatibleCollections {
+    collection: string;
+    requires_recreation: RequiresRecreation[];
+    affected_materializations?: AffectedMaterialization[];
+}
 
 export type RequiresRecreation =
     // The collection key in the draft differs from that of the live spec.

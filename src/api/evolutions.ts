@@ -1,26 +1,11 @@
 import type {
-    RequiresRecreation,
+    IncompatibleCollections,
     ValidHelpMessageId,
 } from 'src/components/shared/Entity/IncompatibleCollections/types';
 
 import { DEFAULT_FILTER } from 'src/services/shared';
 import { insertSupabase, TABLES } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
-
-export interface AffectedMaterialization {
-    name: string;
-    fields: {
-        field: string;
-        reason: string;
-    }[];
-}
-
-// Evolution starts by the publish returning this object in job_status['incompatible_collections']
-export interface IncompatibleCollections {
-    collection: string;
-    requires_recreation: RequiresRecreation[];
-    affected_materializations?: AffectedMaterialization[];
-}
 
 // Creates an EvolutionRequest from an IncompatibleCollection. This will automatically choose whether to
 // re-create the collection, based on the values of `requires_recreation`. If a new collection is to be
@@ -39,7 +24,8 @@ export function toEvolutionRequest(
     }
 
     // if somehow there is no requires_recreations AND affected_materializations then we just pass
-    // a request of {"current_name": "a/b"}, and the evolutions handler will figure out which materializations to update
+    // a request of {"current_name": "a/b"}, and the evolutions handler will figure out which
+    // materializations to update (as of Q2 2025)
 
     return req;
 }
