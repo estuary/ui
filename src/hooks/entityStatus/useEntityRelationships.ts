@@ -1,5 +1,7 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
+import { useEffect } from 'react';
+
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';
@@ -26,18 +28,29 @@ export const useEntityRelationships = (
     );
 
     const [
+        setActive,
         setHydrated,
         setHydrationError,
         setCaptures,
         setMaterializations,
         setCollections,
     ] = useEntityRelationshipStore((state) => [
+        state.setActive,
         state.setHydrated,
         state.setHydrationError,
         state.setCaptures,
         state.setMaterializations,
         state.setCollections,
     ]);
+
+    // We do not really use the 'active' flag but the base hydration
+    //  code does so just keeping it updated here
+    useEffect(() => {
+        setActive(true);
+        return () => {
+            setActive(false);
+        };
+    });
 
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix

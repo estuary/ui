@@ -33,8 +33,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
     const relatedEntities = useRelatedEntities();
 
-    console.log('relatedEntities', relatedEntities);
-
     const data = useMemo(() => {
         const response = [];
 

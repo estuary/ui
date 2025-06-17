@@ -66,8 +66,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         details: {
             relatedEntitiesContentIds: {
                 collections: undefined,
-                readBy: 'data.consumer',
-                writtenBy: 'data.consumers',
+                readBy: 'data.readBy',
+                writtenBy: 'data.writtenBy',
             },
         },
         selector: {

@@ -28,11 +28,6 @@ function useRelatedEntities() {
     return useMemo(() => {
         const response = [];
 
-        console.log('hydrated', hydrated);
-        console.log('relatedCaptures', relatedCaptures);
-        console.log('relatedMaterializations', relatedMaterializations);
-        console.log('relatedCollections', relatedCollections);
-
         if (
             ENTITY_SETTINGS[entityType].details.relatedEntitiesContentIds
                 .writtenBy
@@ -75,8 +70,10 @@ function useRelatedEntities() {
             ENTITY_SETTINGS[entityType].details.relatedEntitiesContentIds.readBy
         ) {
             response.push({
-                title: ENTITY_SETTINGS[entityType].details
-                    .relatedEntitiesContentIds.readBy,
+                title: intl.formatMessage({
+                    id: ENTITY_SETTINGS[entityType].details
+                        .relatedEntitiesContentIds.readBy,
+                }),
                 val: (
                     <RelatedEntities
                         entityType="materialization"
