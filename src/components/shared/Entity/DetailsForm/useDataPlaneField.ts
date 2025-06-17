@@ -11,6 +11,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
 import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
@@ -42,6 +43,8 @@ export default function useDataPlaneField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
+
+    const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
@@ -75,53 +78,50 @@ export default function useDataPlaneField(
     }, [intl, options]);
 
     const getDataPlaneOption = useCallback(
-        (dataPlaneId: string | undefined) => {
+        (dataPlaneId: string | undefined, prefix: string | undefined) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
             );
 
-            if (typeof selectedOption === 'undefined') {
-                const privateDataPlaneOption = options.find((option) =>
-                    option.dataPlaneName.whole.startsWith('ops/dp/private/')
-                );
-
-                selectedOption = privateDataPlaneOption ?? options[0];
+            if (typeof selectedOption !== 'undefined') {
+                return selectedOption;
             }
 
-            return selectedOption;
+            if (
+                prefix &&
+                storageMappings?.[prefix] &&
+                storageMappings[prefix].data_planes.length > 0
+            ) {
+                const targetDataPlaneName =
+                    storageMappings[prefix].data_planes[0];
+
+                return options.find(
+                    (option) =>
+                        option.dataPlaneName.whole === targetDataPlaneName
+                );
+            }
+
+            return undefined;
         },
-        [options]
+        [options, storageMappings]
     );
 
     const evaluateDataPlane = useCallback(
-        (details: Details, selectedDataPlaneOption: DataPlaneOption) => {
-            // let evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
-            //     ? selectedDataPlaneId
-            //     : null;
-
-            // let selectedOption = options.find(
-            //     (option) => option.id === (selectedDataPlaneId ?? '')
-            // );
-
-            // if (typeof selectedOption === 'undefined') {
-            //     const privateDataPlaneOption = options.find((option) =>
-            //         option.dataPlaneName.whole.startsWith('ops/dp/private/')
-            //     );
-
-            //     selectedOption = privateDataPlaneOption ?? options[0];
-            // }
-
-            if (selectedDataPlaneOption.id !== storedDataPlaneId) {
+        (
+            details: Details,
+            selectedDataPlaneOption: DataPlaneOption | undefined
+        ) => {
+            if (selectedDataPlaneOption?.id !== storedDataPlaneId) {
                 setDetails_dataPlane(selectedDataPlaneOption);
 
-                if (selectedDataPlaneOption.id !== dataPlaneIdInURL) {
+                if (selectedDataPlaneOption?.id !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
                     // TODO (data-plane): Set search param of interest instead of using navigate function.
                     navigateToCreate(entityType, {
                         id: details.data.connectorImage.connectorId,
                         advanceToForm: true,
-                        dataPlaneId: selectedDataPlaneOption.id ?? null,
+                        dataPlaneId: selectedDataPlaneOption?.id ?? null,
                     });
                 }
             }

@@ -59,7 +59,9 @@ export const useEvaluateDataPlaneOptions = () => {
             }
 
             const options = dataPlanes
-                ? dataPlanes.map(generateDataPlaneOption)
+                ? dataPlanes.map((dataPlane) =>
+                      generateDataPlaneOption(dataPlane, dataPlaneNames[0])
+                  )
                 : [];
 
             setDataPlaneOptions(options);

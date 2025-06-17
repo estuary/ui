@@ -24,8 +24,18 @@ function useGetDataPlane() {
                 return selectedOption;
             }
 
-            // TODO (private data plane) - we need to add support for allowing tenants to configure their
-            //  preferred data plane.
+            // Use the default data-plane specified by the storage mapping.
+            const defaultDataPlaneOption = dataPlaneOptions.find(
+                (option) => option.isDefault
+            );
+
+            if (
+                !dataPlaneId &&
+                dataPlaneOptions.length > 0 &&
+                defaultDataPlaneOption
+            ) {
+                return defaultDataPlaneOption;
+            }
 
             // If we are not trying to find a specific data plane and there is only one option
             //  and it is private we are pretty safe in prefilling that one.
@@ -39,6 +49,7 @@ function useGetDataPlane() {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     defaultedPrivate: true,
                 });
+
                 return dataPlaneOptions[0];
             }
 

@@ -260,21 +260,22 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     return formattedName.trim();
 };
 
-export const generateDataPlaneOption = ({
-    data_plane_name,
-    id,
-    reactor_address,
-    cidr_blocks,
-}: BaseDataPlaneQuery): DataPlaneOption => {
+export const generateDataPlaneOption = (
+    { data_plane_name, id, reactor_address, cidr_blocks }: BaseDataPlaneQuery,
+    defaultDataPlaneName?: string
+): DataPlaneOption => {
     const scope = getDataPlaneScope(data_plane_name);
 
     const dataPlaneName = parseDataPlaneName(data_plane_name, scope);
 
     return {
+        cidrBlocks: cidr_blocks,
         dataPlaneName,
         id,
+        isDefault: defaultDataPlaneName
+            ? data_plane_name === defaultDataPlaneName
+            : undefined,
         reactorAddress: reactor_address,
-        cidrBlocks: cidr_blocks,
         scope,
     };
 };
