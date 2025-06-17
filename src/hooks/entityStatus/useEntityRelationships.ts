@@ -1,7 +1,6 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
-import { useEffect } from 'react';
-
+import { useMount } from 'react-use';
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';
@@ -45,11 +44,8 @@ export const useEntityRelationships = (
 
     // We do not really use the 'active' flag but the base hydration
     //  code does so just keeping it updated here
-    useEffect(() => {
+    useMount(() => {
         setActive(true);
-        return () => {
-            setActive(false);
-        };
     });
 
     return useSWR(
