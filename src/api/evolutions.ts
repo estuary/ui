@@ -37,14 +37,6 @@ export const getEvolutionMessageId = (
         return 'resetCollection';
     }
 
-    if (evolutionRequest.materializations) {
-        if (evolutionRequest.materializations?.length > 1) {
-            return 'recreateBindings';
-        }
-
-        return 'recreateSingleBinding';
-    }
-
     return 'fallThrough';
 };
 

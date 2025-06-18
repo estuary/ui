@@ -340,29 +340,19 @@ export const Workflows: Record<string, string> = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
     'entityEvolution.error.title': `Changes ${changesRejected}`,
-    'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
-    'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
+    'entityEvolution.error.message': `Click '${CTAs['cta.evolve']}' below to accept changes which will automatically re-version and backfill your collections.`,
+    'entityEvolution.error.note': `Note: This may result in additional costs as collections are backfilled.`,
 
-    // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
-        one {Materialization}
-        other {Materializations}
-    } will be updated to increment the backfill counters and re-materialize the collection`,
-    'entityEvolution.action.recreateSingleBinding.description': `The materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
-    'entityEvolution.action.resetCollection.description': `Collection will be reset to a new generation because {reason}.`,
-    'entityEvolution.action.fallThrough.description': `The server will decide which materializations need to be updated.`,
-
-    'entityEvolution.action.recreateBindings.help': `The materializations will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
-    'entityEvolution.action.recreateSingleBinding.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
-    'entityEvolution.action.resetCollection.help': `This is like if you deleted the collection and then re-created it with the same name. This will cause the collection to be backfilled from the source system.`,
+    'entityEvolution.action.resetCollection.help': `This will delete your current collection and re-create it with the same name, performing a full backfill from the source system.`,
     'entityEvolution.action.fallThrough.help': `The materializations will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
-    'entityEvolution.action.reason.keyChange':
-        'the collection key cannot be modified',
+    'entityEvolution.action.reason.keyChange': 'Collection key modified',
     'entityEvolution.action.reason.partitionChange':
-        'the collection partitions cannot be modified',
+        'Collection partition modified',
     'entityEvolution.action.reason.authoritativeSourceSchema':
-        'a live spec with this same name has already been created and was subsequently deleted',
+        'Collection with same name has already been created and deleted',
+    'entityEvolution.action.reason.fallThrough':
+        'Incompatible with Materialization',
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,

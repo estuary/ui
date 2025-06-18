@@ -54,9 +54,7 @@ function IncompatibleCollections() {
                         </Typography>
                     </Box>
 
-                    <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
-                        <CollectionsList />
-                    </Box>
+                    <CollectionsList />
                     <Actions />
                 </Stack>
             </AlertBox>

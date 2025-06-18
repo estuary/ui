@@ -1,5 +1,3 @@
-import type { EvolutionRequest } from 'src/api/evolutions';
-
 export interface AffectedMaterialization {
     name: string;
     fields: {
@@ -26,21 +24,11 @@ export type RequiresRecreation =
     | 'authoritativeSourceSchema';
 
 export type ValidHelpMessageId =
-    // Somehow we did not get either a reason or a materialization list back so the server will need to figure it out
+    // Handles every update that is not resetting the collection
     | 'fallThrough'
-    // No reason and multiple materializations
-    | 'recreateBindings'
-    // No reason but a single materialization in the list
-    | 'recreateSingleBinding'
     // A reason was returned
     | 'resetCollection';
 
 export interface CollectionActionProps {
     incompatibleCollection: IncompatibleCollections;
-}
-
-export interface DescriptionProps {
-    recreateCause: RequiresRecreation | null;
-    evolutionRequest: EvolutionRequest;
-    helpMessageId: ValidHelpMessageId;
 }
