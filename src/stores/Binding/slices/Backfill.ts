@@ -15,8 +15,6 @@ export interface StoreWithBackfill {
     backfillSupported: boolean;
     setBackfillSupported: (val: StoreWithBackfill['backfillSupported']) => void;
 
-    // TODO (collection reset) - pretty sure this will no longer be needed as the backend will
-    //  update the `backfill` property themselves.
     evolvedCollections: EvolvedCollections[];
     setEvolvedCollections: (value: EvolvedCollections[]) => void;
 

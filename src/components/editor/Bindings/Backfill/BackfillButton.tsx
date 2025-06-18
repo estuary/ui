@@ -86,7 +86,6 @@ function BackfillButton({
             return false;
         }
 
-        // TODO (collection reset) - pretty sure the backend handles updating the `backfill` prop
         return evolvedCollections.some(
             (evolvedCollection) =>
                 evolvedCollection.new_name === currentCollection
