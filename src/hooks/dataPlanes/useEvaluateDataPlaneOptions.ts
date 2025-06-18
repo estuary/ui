@@ -5,7 +5,10 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import {
+    generateDataPlaneOption,
+    getDataPlaneNames,
+} from 'src/utils/dataPlane-utils';
 
 export const useEvaluateDataPlaneOptions = () => {
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
@@ -16,19 +19,17 @@ export const useEvaluateDataPlaneOptions = () => {
 
     return useCallback(
         async (
-            prefix?: string,
+            catalogName?: string,
             existingDataPlane?: {
                 name: string | null;
                 id: string;
                 reactorAddress: string | null;
             }
         ) => {
-            const dataPlaneNames =
-                prefix && storageMappings?.[prefix]
-                    ? storageMappings[prefix].data_planes
-                    : Object.values(storageMappings).length === 1
-                      ? Object.values(storageMappings)[0].data_planes
-                      : [];
+            const dataPlaneNames = getDataPlaneNames(
+                storageMappings,
+                catalogName
+            );
 
             const { data: dataPlanes, error } =
                 await getDataPlaneOptions(dataPlaneNames);

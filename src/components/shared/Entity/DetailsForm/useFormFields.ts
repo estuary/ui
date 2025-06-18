@@ -86,7 +86,10 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
             selectedDataPlaneId = undefined;
         }
 
-        const dataPlaneOption = getDataPlaneOption(selectedDataPlaneId, tenant);
+        const dataPlaneOption = getDataPlaneOption(
+            selectedDataPlaneId,
+            details.data.entityName
+        );
 
         // The field-specific functions below, `evaluateDataPlane` and `evaluateConnector`,
         // set details form state that can be overridden by `setDetails`. Consequently,

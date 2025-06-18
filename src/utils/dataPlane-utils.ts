@@ -11,6 +11,7 @@ import type {
     DataPlaneOption,
 } from 'src/stores/DetailsForm/types';
 import type { Endpoint } from 'src/stores/ShardDetail/types';
+import type { StorageMappingDictionary } from 'src/types';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
@@ -278,6 +279,29 @@ export const generateDataPlaneOption = (
         reactorAddress: reactor_address,
         scope,
     };
+};
+
+export const getDataPlaneNames = (
+    storageMappings: StorageMappingDictionary,
+    catalogName: string | undefined
+): string[] => {
+    let matchedPrefix: string | undefined;
+
+    const prefixOptions = Object.keys(storageMappings).filter((catalogPrefix) =>
+        catalogName?.startsWith(catalogPrefix)
+    );
+
+    if (prefixOptions.length > 1) {
+        matchedPrefix = prefixOptions.reduce((a, b) =>
+            a.length > b.length ? a : b
+        );
+    } else if (prefixOptions.length === 1) {
+        matchedPrefix = prefixOptions[0];
+    }
+
+    return matchedPrefix && storageMappings?.[matchedPrefix]
+        ? storageMappings[matchedPrefix].data_planes
+        : [];
 };
 
 // We increment the read window by this many bytes every time we get back

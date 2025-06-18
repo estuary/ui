@@ -2,24 +2,27 @@ import { useMemo } from 'react';
 
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
-import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { getDataPlaneNames } from 'src/utils/dataPlane-utils';
 
 export const useDataPlaneOptions = () => {
+    const catalogName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
-    const selectedTenant = useWorkflowStore(
-        (state) => state.catalogName.tenant
-    );
 
     return useMemo(() => {
-        if (selectedTenant && storageMappings?.[selectedTenant]) {
+        if (catalogName) {
+            const dataPlaneNames = getDataPlaneNames(
+                storageMappings,
+                catalogName
+            );
+
             return options.filter(({ dataPlaneName }) =>
-                storageMappings[selectedTenant].data_planes.includes(
-                    dataPlaneName.whole
-                )
+                dataPlaneNames.includes(dataPlaneName.whole)
             );
         }
 
         return options;
-    }, [options, selectedTenant, storageMappings]);
+    }, [catalogName, options, storageMappings]);
 };

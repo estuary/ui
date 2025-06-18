@@ -15,6 +15,7 @@ import { useEntitiesStore } from 'src/stores/Entities/Store';
 import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
+    getDataPlaneNames,
 } from 'src/utils/dataPlane-utils';
 
 interface OneOfElement {
@@ -78,7 +79,7 @@ export default function useDataPlaneField(
     }, [intl, options]);
 
     const getDataPlaneOption = useCallback(
-        (dataPlaneId: string | undefined, prefix: string | undefined) => {
+        (dataPlaneId: string | undefined, catalogName: string | undefined) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
             );
@@ -87,18 +88,18 @@ export default function useDataPlaneField(
                 return selectedOption;
             }
 
-            if (
-                prefix &&
-                storageMappings?.[prefix] &&
-                storageMappings[prefix].data_planes.length > 0
-            ) {
-                const targetDataPlaneName =
-                    storageMappings[prefix].data_planes[0];
-
-                return options.find(
-                    (option) =>
-                        option.dataPlaneName.whole === targetDataPlaneName
+            if (catalogName) {
+                const dataPlaneNames = getDataPlaneNames(
+                    storageMappings,
+                    catalogName
                 );
+
+                return dataPlaneNames.length > 0
+                    ? options.find(
+                          (option) =>
+                              option.dataPlaneName.whole === dataPlaneNames[0]
+                      )
+                    : undefined;
             }
 
             return undefined;

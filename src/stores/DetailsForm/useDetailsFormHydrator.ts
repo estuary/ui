@@ -14,7 +14,6 @@ import useGlobalSearchParams, {
 import { initialDetails } from 'src/stores/DetailsForm/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { getConnectorMetadata } from 'src/utils/connector-utils';
-import { stripPathing } from 'src/utils/misc-utils';
 
 const getConnectorImage = async (
     connectorId: string,
@@ -69,7 +68,9 @@ export const useDetailsFormHydrator = () => {
                     connectorId,
                     connectorMetadata
                 );
-                const dataPlaneOptions = await evaluateDataPlaneOptions();
+                const dataPlaneOptions =
+                    await evaluateDataPlaneOptions(baseEntityName);
+
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
                 if (!connectorImage) {
@@ -126,7 +127,7 @@ export const useDetailsFormHydrator = () => {
                 );
 
                 const dataPlaneOptions = await evaluateDataPlaneOptions(
-                    stripPathing(catalog_name, true),
+                    catalog_name,
                     {
                         name: data_plane_name,
                         id: data_plane_id,
