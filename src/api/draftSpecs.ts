@@ -64,7 +64,7 @@ export const massCreateDraftSpecs = async (
                     ...spec,
                     draft_id: draftId,
                     spec_type: specType,
-                    detail: 'dashboard collection reset',
+                    detail: 'Dashboard : collection reset : create',
                 }))
             );
         };
@@ -109,7 +109,7 @@ export const massUpdateDraftSpecs = async (
                     ...spec,
                     draft_id: draftId,
                     spec_type: specType,
-                    detail: 'dashboard collection reset',
+                    detail: 'Dashboard : collection reset : update',
                 })),
                 { onConflict: 'draft_id, catalog_name' }
             );
