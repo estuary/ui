@@ -246,6 +246,7 @@ function useSave(
                     return false;
                 }
 
+                // Add missing collections to the draft with the reset property set
                 const collectionsToInsert = collectionLiveSpecs.data.map(
                     (liveSpec) => {
                         return {
@@ -258,7 +259,6 @@ function useSave(
                         };
                     }
                 );
-                // Add missing collections to the draft with the reset property set
                 const massCreateResponse = await massCreateDraftSpecs(
                     draftId,
                     'collection',
@@ -276,6 +276,8 @@ function useSave(
             }
 
             // Update collections on the draft with the reset property set
+            //  Make sure to merge in `reset` with the current spec as they
+            //  may have edited other things as well.
             const collectionsToUpdate: any[] = [];
             if (collectionsOnDraft) {
                 collectionsOnDraft.forEach((draftSpec) => {
@@ -323,16 +325,17 @@ function useSave(
             let collectionsBeingRemovedFromDraft: string[] = [];
 
             // Look for every collection on the draft.
-            const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
-                draftId,
-                'collection',
-                collectionResetEnabled
-            );
-            if (draftSpecResponse.error) {
+            const collectionsOnDraftSpecResponse =
+                await getDraftSpecsBySpecTypeReduced(
+                    draftId,
+                    'collection',
+                    collectionResetEnabled
+                );
+            if (collectionsOnDraftSpecResponse.error) {
                 onFailure({
                     error: {
                         title: 'captureEdit.generate.failedErrorTitle',
-                        error: draftSpecResponse.error,
+                        error: collectionsOnDraftSpecResponse.error,
                     },
                 });
 
@@ -342,7 +345,10 @@ function useSave(
             // We need to track what is already on the draft so we do not overwrite
             //  any changes the user made while we mark reset=true
             let collectionNamesOnDraft: string[] | null = null;
-            if (draftSpecResponse.data && draftSpecResponse.data.length > 0) {
+            if (
+                collectionsOnDraftSpecResponse.data &&
+                collectionsOnDraftSpecResponse.data.length > 0
+            ) {
                 // Now that we are making a call we can delete the
                 //  draftId used for showing discovery errors
                 setDiscoveredDraftId(null);
@@ -350,9 +356,10 @@ function useSave(
                 // Get a list of all the collections on the draft spec.
                 //  During create - this will often be all collections
                 //  During edit - this will often only be the ones the user edited
-                collectionNamesOnDraft = draftSpecResponse.data.map(
-                    (datum) => datum.catalog_name
-                );
+                collectionNamesOnDraft =
+                    collectionsOnDraftSpecResponse.data.map(
+                        (datum) => datum.catalog_name
+                    );
 
                 // For a test we do not want to remove from draft - otherwise we would need
                 //  to add them back in after the test.
@@ -370,7 +377,6 @@ function useSave(
                 const unboundCollections = collectionNamesOnDraft.filter(
                     (collection) => !collections.includes(collection)
                 );
-
                 collectionsBeingRemovedFromDraft = [
                     ...unboundCollections,
                     ...disabledCollections,
@@ -397,7 +403,7 @@ function useSave(
 
             const handleCollectionResetResponse = await handleCollectionReset(
                 draftId,
-                draftSpecResponse.data,
+                collectionsOnDraftSpecResponse.data,
                 collectionNamesOnDraft,
                 collectionsBeingRemovedFromDraft
             );
@@ -447,7 +453,7 @@ function useSave(
                 const response = await handleCollections(draftId);
 
                 // If we got false back something went wrong but the call already handled
-                //  showing the error
+                //  showing the error so we are good to just return and not publish
                 if (!response) {
                     return;
                 }
