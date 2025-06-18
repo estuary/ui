@@ -36,6 +36,7 @@ import React, { useMemo } from 'react';
 
 import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 
+import { isArray } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
@@ -109,25 +110,29 @@ export const DataPlaneAutoComplete = ({
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
-            renderGroup={({ group, children }) => (
-                <li key={group}>
-                    <Typography
-                        color="primary"
-                        sx={{
-                            backgroundColor: (theme) =>
-                                theme.palette.background.paper,
-                            fontWeight: 500,
-                            pl: 1,
-                            py: 1,
-                            textTransform: 'capitalize',
-                        }}
-                    >
-                        {intl.formatMessage({ id: `common.${group}` })}
-                    </Typography>
+            renderGroup={({ group, children }) =>
+                children === null ||
+                (isArray(children) &&
+                    children.every((node) => node === null)) ? null : (
+                    <li key={group}>
+                        <Typography
+                            color="primary"
+                            sx={{
+                                backgroundColor: (theme) =>
+                                    theme.palette.background.paper,
+                                fontWeight: 500,
+                                pl: 1,
+                                py: 1,
+                                textTransform: 'capitalize',
+                            }}
+                        >
+                            {intl.formatMessage({ id: `common.${group}` })}
+                        </Typography>
 
-                    <MenuList style={{ padding: 0 }}>{children}</MenuList>
-                </li>
-            )}
+                        <MenuList style={{ padding: 0 }}>{children}</MenuList>
+                    </li>
+                )
+            }
             renderInput={(textFieldProps) => {
                 return (
                     <AutoCompleteInputWithStartAdornment
