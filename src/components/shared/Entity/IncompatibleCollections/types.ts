@@ -1,3 +1,5 @@
+import type { EvolutionRequest } from 'src/api/evolutions';
+
 export interface AffectedMaterialization {
     name: string;
     fields: {
@@ -31,4 +33,16 @@ export type ValidHelpMessageId =
 
 export interface CollectionActionProps {
     incompatibleCollection: IncompatibleCollections;
+}
+
+export interface IncompatibleCollectionsGrouping {
+    evolutionRequest: EvolutionRequest;
+    helpMessageId: ValidHelpMessageId;
+}
+
+export interface ProcessedIncompatibleCollections {
+    keyChange: IncompatibleCollectionsGrouping[];
+    partitionChange: IncompatibleCollectionsGrouping[];
+    authoritativeSourceSchema: IncompatibleCollectionsGrouping[];
+    fallThrough: IncompatibleCollectionsGrouping[];
 }

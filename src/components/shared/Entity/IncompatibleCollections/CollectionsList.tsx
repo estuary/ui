@@ -1,3 +1,8 @@
+import type {
+    IncompatibleCollectionsGrouping,
+    ProcessedIncompatibleCollections,
+} from 'src/components/shared/Entity/IncompatibleCollections/types';
+
 import { useMemo } from 'react';
 
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
@@ -17,7 +22,12 @@ function CollectionsList() {
         useBindingsEditorStore_incompatibleCollections();
 
     const processedIncompatibleCollections = useMemo(() => {
-        let response: { [k: string]: any[] } = {};
+        const response: ProcessedIncompatibleCollections = {
+            keyChange: [],
+            partitionChange: [],
+            authoritativeSourceSchema: [],
+            fallThrough: [],
+        };
 
         incompatibleCollections.forEach((incompatibleCollection) => {
             // Generate a request so we know what will change on this collection
@@ -32,9 +42,7 @@ function CollectionsList() {
                     ? incompatibleCollection.requires_recreation[0]
                     : null;
 
-            const responseKey = recreateCause ?? 'fallThrough';
-            response[responseKey] ??= [];
-            response[responseKey].push({
+            response[recreateCause ?? 'fallThrough'].push({
                 evolutionRequest,
                 helpMessageId,
             });
@@ -44,7 +52,7 @@ function CollectionsList() {
     }, [incompatibleCollections]);
 
     const newItems = Object.entries(processedIncompatibleCollections).map(
-        ([key, settings]) => {
+        ([key, settings]: [string, IncompatibleCollectionsGrouping[]]) => {
             return {
                 val: (
                     <Box
