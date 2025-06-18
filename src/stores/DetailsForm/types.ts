@@ -19,6 +19,7 @@ export interface DataPlaneOption {
     reactorAddress: string;
     scope: DataPlaneScopes;
     cidrBlocks?: string[] | null;
+    isDefault?: boolean;
 }
 
 export interface ConnectorMetadata {

@@ -316,8 +316,8 @@ export const getInitialState = (
                 dataPlaneResponse.data &&
                 dataPlaneResponse.data.length > 0
             ) {
-                dataPlaneOptions = dataPlaneResponse.data.map(
-                    generateDataPlaneOption
+                dataPlaneOptions = dataPlaneResponse.data.map((dataPlane) =>
+                    generateDataPlaneOption(dataPlane)
                 );
 
                 get().setDataPlaneOptions(dataPlaneOptions);
