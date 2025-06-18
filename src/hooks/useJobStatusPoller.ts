@@ -49,7 +49,6 @@ export function useQueryPoller<T = any>(
                         : query()
                 ).then(
                     (payload: any) => {
-                        logRocketConsole(`Poller : ${key} : response `);
                         timeoutCleanUp(pollerTimeout);
 
                         if (payload.error) {
@@ -76,8 +75,6 @@ export function useQueryPoller<T = any>(
                         }
                     },
                     (error: any) => {
-                        logRocketConsole(`Poller : ${key} : error `, error);
-
                         if (
                             attempts === 0 &&
                             typeof error?.message === 'string' &&
@@ -106,8 +103,6 @@ export function useQueryPoller<T = any>(
                     }
                 );
             };
-
-            logRocketConsole(`Poller : ${key} : init `);
 
             setPollerTimeout(
                 window.setTimeout(

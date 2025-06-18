@@ -10,16 +10,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import {
-    difference,
-    has,
-    isEmpty,
-    isEqual,
-    omit,
-    omitBy,
-    pick,
-    union,
-} from 'lodash';
+import { difference, has, isEmpty, isEqual, omit, omitBy, pick } from 'lodash';
 
 import {
     getLiveSpecsById_writesTo,
@@ -37,8 +28,8 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
     getCollectionNames,
-    getInitialMiscData,
     getInitialStoreData,
+    getInitialStoreDataAndKeepBindings,
     hydrateConnectorTagDependentState,
     hydrateSpecificationDependentState,
     initializeAndGenerateUUID,
@@ -51,12 +42,9 @@ import {
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
+import { getStoreWithBackfillSettings } from 'src/stores/Binding/slices/Backfill';
+import { getStoreWithFieldSelectionSettings } from 'src/stores/Binding/slices/FieldSelection';
 import {
-    getInitialFieldSelectionData,
-    getStoreWithFieldSelectionSettings,
-} from 'src/stores/Binding/slices/FieldSelection';
-import {
-    getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from 'src/stores/Binding/slices/TimeTravel';
@@ -82,6 +70,7 @@ const getInitialState = (
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
     ...getStoreWithToggleDisableSettings(set),
+    ...getStoreWithBackfillSettings(set),
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -411,10 +400,18 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
-                state.backfillAllBindings =
-                    state.backfilledBindings.length > 0 &&
-                    state.backfilledBindings.length ===
+                if (state.backfilledBindings.length > 0) {
+                    if (entityType === 'capture') {
+                        // if they have anything marked for backfill make sure the setting is forced on
+                        state.backfillMode = 'reset';
+                    }
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length ===
                         Object.keys(state.resourceConfigs).length;
+                } else {
+                    state.backfillAllBindings = false;
+                }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
@@ -826,11 +823,7 @@ const getInitialState = (
             //  not need this split in logic
 
             const initState = keepCollections
-                ? {
-                      ...getInitialFieldSelectionData(),
-                      ...getInitialMiscData(),
-                      ...getInitialTimeTravelData(),
-                  }
+                ? getInitialStoreDataAndKeepBindings()
                 : getInitialStoreData();
 
             set(
@@ -846,32 +839,6 @@ const getInitialState = (
                 'Binding State Reset'
             );
         }
-    },
-
-    setBackfilledBindings: (increment, targetBindingUUID) => {
-        set(
-            produce((state: BindingState) => {
-                const existingBindingUUIDs = Object.keys(state.resourceConfigs);
-
-                const bindingUUIDs = targetBindingUUID
-                    ? [targetBindingUUID]
-                    : existingBindingUUIDs;
-
-                state.backfilledBindings =
-                    increment === 'true'
-                        ? union(state.backfilledBindings, bindingUUIDs)
-                        : state.backfilledBindings.filter(
-                              (uuid) => !bindingUUIDs.includes(uuid)
-                          );
-
-                state.backfillAllBindings =
-                    hasLength(existingBindingUUIDs) &&
-                    existingBindingUUIDs.length ===
-                        state.backfilledBindings.length;
-            }),
-            false,
-            'Backfilled Collections Set'
-        );
     },
 
     setBindingOnIncompatibleSchemaChange: (value, bindingUUID) => {
@@ -1079,47 +1046,6 @@ const getInitialState = (
             }),
             false,
             'Specification Incompatible Schema Change Set'
-        );
-    },
-
-    // TODO (organization): Correct the location of store actions that are out-of-order.
-    setBackfillDataFlow: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillDataFlow = value;
-            }),
-            false,
-            'Backfill Dataflow Flag Changed'
-        );
-    },
-
-    setBackfillDataFlowTarget: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillDataFlowTarget = value;
-            }),
-            false,
-            'Backfill data flow target changed'
-        );
-    },
-
-    setBackfillSupported: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillSupported = value;
-            }),
-            false,
-            'Backfill supported changed'
-        );
-    },
-
-    setEvolvedCollections: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.evolvedCollections = value;
-            }),
-            false,
-            'Evolved Collections List Set'
         );
     },
 
