@@ -34,6 +34,9 @@ export default function useDataPlaneField(
 
     const navigateToCreate = useEntityCreateNavigate();
 
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
@@ -77,6 +80,20 @@ export default function useDataPlaneField(
             },
         };
     }, [intl, options]);
+
+    const dataPlaneUISchema = useMemo(
+        () => ({
+            label: intl.formatMessage({
+                id: 'workflows.dataPlane.label',
+            }),
+            scope: `#/properties/${DATA_PLANE_SCOPE}`,
+            type: 'Control',
+            options: {
+                readOnly: entityName.length === 0,
+            },
+        }),
+        [entityName, intl]
+    );
 
     const getDataPlaneOption = useCallback(
         (dataPlaneId: string | undefined, catalogName: string | undefined) => {
@@ -139,13 +156,7 @@ export default function useDataPlaneField(
 
     return {
         dataPlaneSchema,
-        dataPlaneUISchema: {
-            label: intl.formatMessage({
-                id: 'workflows.dataPlane.label',
-            }),
-            scope: `#/properties/${DATA_PLANE_SCOPE}`,
-            type: 'Control',
-        },
+        dataPlaneUISchema,
         getDataPlaneOption,
         evaluateDataPlane,
     };
