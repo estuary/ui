@@ -112,7 +112,7 @@ const getInitialState = (
             produce((state: EntitiesState) => {
                 const evaluatedMappings: StorageMappingDictionary = {};
 
-                values.forEach(({ catalog_prefix, spec }) => {
+                values?.forEach(({ catalog_prefix, spec }) => {
                     evaluatedMappings[catalog_prefix] = spec;
                 });
 

@@ -19,7 +19,10 @@ export interface EntitiesState extends StoreWithHydration {
     // TODO (data planes) - we need to decide how we'll key these selections
     storageMappings: StorageMappingDictionary;
     setStorageMappings: (
-        values: Pick<StorageMappingsQuery, 'catalog_prefix' | 'spec'>[]
+        values:
+            | Pick<StorageMappingsQuery, 'catalog_prefix' | 'spec'>[]
+            | null
+            | undefined
     ) => void;
 
     hydrateState: () => Promise<ParsedPagedFetchAllResponse<AuthRoles>>;
