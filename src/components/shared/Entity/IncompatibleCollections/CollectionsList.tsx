@@ -51,8 +51,9 @@ function CollectionsList() {
         return response;
     }, [incompatibleCollections]);
 
-    const newItems = Object.entries(processedIncompatibleCollections).map(
-        ([key, settings]: [string, IncompatibleCollectionsGrouping[]]) => {
+    const newItems = Object.entries(processedIncompatibleCollections)
+        .filter(([_key, settings]) => settings && settings.length > 0)
+        .map(([key, settings]: [string, IncompatibleCollectionsGrouping[]]) => {
             return {
                 val: (
                     <Box
@@ -100,8 +101,7 @@ function CollectionsList() {
                     </Box>
                 ),
             };
-        }
-    );
+        });
 
     return <KeyValueList data={newItems} disableTypography />;
 }
