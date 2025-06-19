@@ -49,6 +49,9 @@ function useDisableUpdater(bindingUUID?: string) {
                 (spec) => {
                     let missingIndex = false;
 
+                    // TODO (draft updater) - this is one of the few things that can directly
+                    //  update a binding that isn't the current binding. We should look into
+                    //  getting some of this validation shared with `ui/src/utils/workflow-utils.ts > getBindingIndex`
                     bindingIndexes.forEach(({ bindingIndex, val }) => {
                         if (
                             missingIndex ||
