@@ -90,7 +90,6 @@ function DisableCapture() {
                     spec_type: 'capture',
                 },
                 undefined,
-                undefined,
                 `${CustomEvents.DATA_FLOW_RESET} : disable capture : ${initUUID}`
             );
 
