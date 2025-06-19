@@ -8,6 +8,7 @@ import { Lock, QuestionMark } from 'iconoir-react';
 import { semiTransparentBackground_oneLayerElevated } from 'src/context/Theme';
 import awsLogoWhite from 'src/images/data-plane-providers/aws_logo-white.png';
 import awsLogo from 'src/images/data-plane-providers/aws.png';
+import azLogo from 'src/images/data-plane-providers/az.png';
 import gcpLogo from 'src/images/data-plane-providers/google_cloud.png';
 
 const DEFAULT_AVATAR_SIZE = 20;
@@ -22,6 +23,10 @@ const getProviderIconPath = (
 
     if (provider === 'gcp') {
         return gcpLogo;
+    }
+
+    if (provider === 'azure' || provider === 'az') {
+        return azLogo;
     }
 
     return null;
