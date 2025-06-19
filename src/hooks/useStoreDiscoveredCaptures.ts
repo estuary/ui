@@ -26,7 +26,8 @@ function useStoreDiscoveredCaptures() {
     const [lastPubId] = useGlobalSearchParams([GlobalSearchParams.LAST_PUB_ID]);
 
     const workflow = useEntityWorkflow();
-    const editWorkflow = workflow === 'capture_edit';
+    const editWorkflow =
+        workflow === 'capture_edit' || workflow === 'materialization_edit';
 
     // Binding Store
     const evaluateDiscoveredCollections =
