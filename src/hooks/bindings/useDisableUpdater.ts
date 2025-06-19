@@ -44,7 +44,14 @@ function useDisableUpdater(bindingUUID?: string) {
         async (bindingIndexes: BindingDisableUpdate[]) => {
             return draftUpdater(
                 (spec) => {
+                    let missingIndex = false;
+
                     bindingIndexes.forEach(({ bindingIndex, val }) => {
+                        if (missingIndex || !spec.bindings[bindingIndex]) {
+                            missingIndex = true;
+                            return;
+                        }
+
                         if (val === true) {
                             spec.bindings[bindingIndex].disable = val;
                         } else if (
@@ -56,6 +63,11 @@ function useDisableUpdater(bindingUUID?: string) {
                             delete spec.bindings[bindingIndex].disable;
                         }
                     });
+
+                    if (missingIndex) {
+                        return undefined;
+                    }
+
                     return spec;
                 },
                 { spec_type: entityType }
@@ -120,8 +132,18 @@ function useDisableUpdater(bindingUUID?: string) {
     let currentSetting: boolean | null | undefined = null;
 
     if (bindingIndex !== null) {
-        currentSetting =
-            draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
+        if (
+            draftSpecs?.[0]?.spec?.bindings &&
+            draftSpecs?.[0]?.spec?.bindings.length > 0 &&
+            draftSpecs[0].spec.bindings[bindingIndex]
+        ) {
+            currentSetting = draftSpecs[0].spec.bindings[bindingIndex].disable;
+        } else {
+            // Usually means the user has entered edit, adding some bindings, and has flipped
+            //  the disable/enable toggle on the new bindings but did NOT click the next button
+            //  yet.
+            currentSetting = storeSetting;
+        }
     } else {
         currentSetting = storeSetting;
     }
