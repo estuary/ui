@@ -153,8 +153,7 @@ const getInitialState = (
                 }
 
                 if (
-                    (formState.status === FormStatus.SAVED ||
-                        formState.status === FormStatus.LOCKED) &&
+                    formState.status === FormStatus.LOCKED &&
                     hasLength(newState.status)
                 ) {
                     // IF LOCKED
@@ -162,6 +161,9 @@ const getInitialState = (
                     //  AFTER we have locked it and that should not happen ever. It does not matter
                     //  what state it wants to go do - after being 'locked' it cannot go back.
 
+                    // TODO (prevent) Should add a check for (formState.status === FormStatus.SAVED || formState.status === FormStatus.LOCKED)
+                    //  This was considered once and believe it is right. This is because the field selection build can easily overwrite the
+                    //  form status after a save/publish has happened and cause the test/save buttons to show again
                     // IF SAVED
                     // This sometimes happens in materializations when entering edit and quickly
                     //  updating a binding to disabled and then saving. The 'See Details' button
