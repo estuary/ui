@@ -314,7 +314,7 @@ function useGenerateCatalog() {
 
                 logRocketEvent(CustomEvents.DRAFT_ID_SET, {
                     newValue: evaluatedDraftId,
-                    component: 'useDiscoverStartDiscovery',
+                    component: 'useGenerateCatalog',
                 });
 
                 setDraftId(evaluatedDraftId);
