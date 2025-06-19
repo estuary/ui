@@ -13,6 +13,7 @@ import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useDisableUpdater(bindingUUID?: string) {
     const intl = useIntl();
@@ -23,15 +24,17 @@ function useDisableUpdater(bindingUUID?: string) {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const [storeSetting, bindingIndex] = useBindingStore((state) => {
-        if (!bindingUUID) {
-            return [null, null];
+    const [storeSetting, bindingIndex, collectionName] = useBindingStore(
+        (state) => {
+            if (!bindingUUID) {
+                return [null, null, null];
+            }
+
+            const config = state.resourceConfigs[bindingUUID].meta;
+
+            return [config.disable, config.bindingIndex, config.collectionName];
         }
-
-        const config = state.resourceConfigs[bindingUUID].meta;
-
-        return [config.disable, config.bindingIndex];
-    });
+    );
 
     const [generateToggleDisableUpdates, toggleDisable] = useBindingStore(
         (state) => [state.generateToggleDisableUpdates, state.toggleDisable]
@@ -47,7 +50,14 @@ function useDisableUpdater(bindingUUID?: string) {
                     let missingIndex = false;
 
                     bindingIndexes.forEach(({ bindingIndex, val }) => {
-                        if (missingIndex || !spec.bindings[bindingIndex]) {
+                        if (
+                            missingIndex ||
+                            // Make sure there is a binding there at least
+                            !spec.bindings[bindingIndex] ||
+                            // Try to be safe and make sure we have the right name
+                            getCollectionName(spec.bindings[bindingIndex]) ===
+                                collectionName
+                        ) {
                             missingIndex = true;
                             return;
                         }
@@ -73,7 +83,7 @@ function useDisableUpdater(bindingUUID?: string) {
                 { spec_type: entityType }
             );
         },
-        [draftUpdater, entityType]
+        [collectionName, draftUpdater, entityType]
     );
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
