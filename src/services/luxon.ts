@@ -37,8 +37,14 @@ export const LUXON_GRAIN_SETTINGS: {
         timeUnit: 'hour',
         labelKey: 'detailsPanel.recentUsage.filter.label.hours',
         getTimeZone: (val) => val.toFormat(timeZoneFormat),
-        longFormat: (val) => val.toLocaleString(DateTime.DATETIME_SHORT),
-        shortFormat: (val) => val.toLocaleString(DateTime.TIME_SIMPLE),
+        longFormat: (val) =>
+            val
+                .setLocale(navigator.language ?? 'en-US')
+                .toLocaleString(DateTime.DATETIME_FULL),
+        shortFormat: (val) =>
+            val
+                .setLocale(navigator.language ?? 'en-US')
+                .toLocaleString(DateTime.TIME_SIMPLE),
     },
     [DataGrains.monthly]: {
         ...DAILY_GRAIN_SETTINGS,
