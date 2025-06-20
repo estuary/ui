@@ -6,19 +6,18 @@ import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,
 } from 'src/components/editor/Bindings/Store/hooks';
-import { useEntityType } from 'src/context/EntityContext';
+import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { useSchemaEvolution_autoDiscover } from 'src/stores/SchemaEvolution/hooks';
 
 function SchemaEditToggle() {
     const intl = useIntl();
-    const entityType = useEntityType();
-    const autoDiscover = useSchemaEvolution_autoDiscover();
     const formActive = useFormStateStore_isActive();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const setEditModeEnabled = useBindingsEditorStore_setEditModeEnabled();
+
+    const disableSchemaEditing = useDisableSchemaEditing();
 
     const toggleEditMode = () => {
         logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
@@ -32,7 +31,7 @@ function SchemaEditToggle() {
     return (
         <Button
             onClick={toggleEditMode}
-            disabled={formActive || (autoDiscover && entityType === 'capture')}
+            disabled={formActive || disableSchemaEditing}
         >
             {intl.formatMessage({
                 id: editModeEnabled ? 'cta.close' : 'cta.edit',
