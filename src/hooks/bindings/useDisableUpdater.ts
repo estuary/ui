@@ -58,7 +58,7 @@ function useDisableUpdater(bindingUUID?: string) {
                             // Make sure there is a binding there at least
                             !spec.bindings[bindingIndex] ||
                             // Try to be safe and make sure we have the right name
-                            getCollectionName(spec.bindings[bindingIndex]) ===
+                            getCollectionName(spec.bindings[bindingIndex]) !==
                                 collectionName
                         ) {
                             missingIndex = true;

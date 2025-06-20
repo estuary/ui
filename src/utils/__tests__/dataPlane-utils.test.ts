@@ -37,6 +37,26 @@ describe('formatDataPlaneName', () => {
                 whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
             })
         ).toBe('aws: eu-west-1 c2');
+
+        expect(
+            formatDataPlaneName({
+                cluster: 'c1',
+                prefix: 'melk/',
+                provider: 'az',
+                region: 'australiaeast',
+                whole: 'ops/dp/private/melk/az-australiaeast-c1',
+            })
+        ).toBe('az: australiaeast c1');
+
+        expect(
+            formatDataPlaneName({
+                cluster: 'c1',
+                prefix: 'melk/',
+                provider: 'azure',
+                region: 'centralus',
+                whole: 'ops/dp/private/melk/azure-centralus-c1',
+            })
+        ).toBe('azure: centralus c1');
     });
 
     test('returns unformatted name when data plane name does not include a provider', () => {
@@ -191,6 +211,32 @@ describe('parseDataPlaneName', () => {
             provider: 'gcp',
             region: 'us-central1',
             whole: 'ops/dp/public/gcp-us-central1-c1',
+        });
+
+        expect(
+            parseDataPlaneName(
+                'ops/dp/private/melk/az-australiaeast-c1',
+                'private'
+            )
+        ).toStrictEqual({
+            cluster: 'c1',
+            prefix: 'melk/',
+            provider: 'az',
+            region: 'australiaeast',
+            whole: 'ops/dp/private/melk/az-australiaeast-c1',
+        });
+
+        expect(
+            parseDataPlaneName(
+                'ops/dp/private/melk/azure-centralus-c1',
+                'private'
+            )
+        ).toStrictEqual({
+            cluster: 'c1',
+            prefix: 'melk/',
+            provider: 'azure',
+            region: 'centralus',
+            whole: 'ops/dp/private/melk/azure-centralus-c1',
         });
 
         expect(

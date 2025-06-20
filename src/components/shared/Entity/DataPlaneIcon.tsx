@@ -8,6 +8,7 @@ import { Lock, QuestionMark } from 'iconoir-react';
 import { semiTransparentBackground_oneLayerElevated } from 'src/context/Theme';
 import awsLogoWhite from 'src/images/data-plane-providers/aws_logo-white.png';
 import awsLogo from 'src/images/data-plane-providers/aws.png';
+import azurePlaceholder from 'src/images/data-plane-providers/azure_placeholder.png';
 import gcpLogo from 'src/images/data-plane-providers/google_cloud.png';
 
 const DEFAULT_AVATAR_SIZE = 20;
@@ -22,6 +23,14 @@ const getProviderIconPath = (
 
     if (provider === 'gcp') {
         return gcpLogo;
+    }
+
+    // TODO (azure logo) - https://github.com/estuary/ui/pull/1497
+    //  One day we may be able to work with MS and get an agreement
+    //  worked out to show the proper Azure logo. Until then we will
+    //  use a placeholder.
+    if (provider === 'azure' || provider === 'az') {
+        return azurePlaceholder;
     }
 
     return null;
