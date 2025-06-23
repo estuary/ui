@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 
 import useConnectorField from 'src/components/shared/Entity/DetailsForm/useConnectorField';
 import useDataPlaneField from 'src/components/shared/Entity/DetailsForm/useDataPlaneField';
+import { useEvaluateStorageMapping } from 'src/components/shared/Entity/DetailsForm/useEvaluateStorageMapping';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
@@ -18,9 +19,6 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
-    const previousName = useDetailsFormStore(
-        (state) => state.previousDetails.data.entityName
-    );
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
@@ -31,15 +29,13 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const setCatalogName = useWorkflowStore((state) => state.setCatalogName);
 
+    const { evaluateStorageMapping } = useEvaluateStorageMapping();
+
     const { connectorSchema, connectorUISchema, evaluateConnector } =
         useConnectorField(entityType);
 
-    const {
-        dataPlaneSchema,
-        dataPlaneUISchema,
-        getDataPlaneOption,
-        evaluateDataPlane,
-    } = useDataPlaneField(entityType);
+    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
+        useDataPlaneField(entityType);
 
     const schema = useMemo(
         () => ({
@@ -80,15 +76,9 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const updateDetails = (details: Details) => {
         const tenant = stripPathing(details.data.entityName, true);
-        let selectedDataPlaneId = details.data.dataPlane?.id;
-
-        if (!previousName.startsWith(tenant)) {
-            selectedDataPlaneId = undefined;
-        }
-
-        const dataPlaneOption = getDataPlaneOption(
-            selectedDataPlaneId,
-            details.data.entityName
+        const dataPlaneOption = evaluateStorageMapping(
+            details.data.entityName,
+            details.data.dataPlane
         );
 
         // The field-specific functions below, `evaluateDataPlane` and `evaluateConnector`,

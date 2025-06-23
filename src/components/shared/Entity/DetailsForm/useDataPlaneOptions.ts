@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
-import { getDataPlaneNames } from 'src/utils/dataPlane-utils';
+import { getDataPlaneInfo } from 'src/utils/dataPlane-utils';
 
 export const useDataPlaneOptions = () => {
     const catalogName = useDetailsFormStore(
@@ -13,7 +13,7 @@ export const useDataPlaneOptions = () => {
 
     return useMemo(() => {
         if (catalogName) {
-            const dataPlaneNames = getDataPlaneNames(
+            const { dataPlaneNames } = getDataPlaneInfo(
                 storageMappings,
                 catalogName
             );

@@ -5,9 +5,10 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import {
     generateDataPlaneOption,
-    getDataPlaneNames,
+    getDataPlaneInfo,
 } from 'src/utils/dataPlane-utils';
 
 export const useEvaluateDataPlaneOptions = () => {
@@ -15,6 +16,10 @@ export const useEvaluateDataPlaneOptions = () => {
 
     const setDataPlaneOptions = useDetailsFormStore(
         (state) => state.setDataPlaneOptions
+    );
+
+    const setStorageMappingPrefix = useWorkflowStore(
+        (state) => state.setStorageMappingPrefix
     );
 
     return useCallback(
@@ -26,7 +31,7 @@ export const useEvaluateDataPlaneOptions = () => {
                 reactorAddress: string | null;
             }
         ) => {
-            const dataPlaneNames = getDataPlaneNames(
+            const { dataPlaneNames, storageMappingPrefix } = getDataPlaneInfo(
                 storageMappings,
                 catalogName
             );
@@ -66,9 +71,10 @@ export const useEvaluateDataPlaneOptions = () => {
                 : [];
 
             setDataPlaneOptions(options);
+            setStorageMappingPrefix(storageMappingPrefix ?? '');
 
             return options;
         },
-        [storageMappings, setDataPlaneOptions]
+        [storageMappings, setDataPlaneOptions, setStorageMappingPrefix]
     );
 };

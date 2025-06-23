@@ -281,10 +281,10 @@ export const generateDataPlaneOption = (
     };
 };
 
-export const getDataPlaneNames = (
+export const getDataPlaneInfo = (
     storageMappings: StorageMappingDictionary,
     catalogName: string | undefined
-): string[] => {
+): { dataPlaneNames: string[]; storageMappingPrefix: string | undefined } => {
     let matchedPrefix: string | undefined;
 
     const prefixOptions = Object.keys(storageMappings).filter((catalogPrefix) =>
@@ -299,9 +299,12 @@ export const getDataPlaneNames = (
         matchedPrefix = prefixOptions[0];
     }
 
-    return matchedPrefix && storageMappings?.[matchedPrefix]
-        ? storageMappings[matchedPrefix].data_planes
-        : [];
+    const dataPlaneNames =
+        matchedPrefix && storageMappings?.[matchedPrefix]
+            ? storageMappings[matchedPrefix].data_planes
+            : [];
+
+    return { dataPlaneNames, storageMappingPrefix: matchedPrefix };
 };
 
 // We increment the read window by this many bytes every time we get back

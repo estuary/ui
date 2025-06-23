@@ -11,11 +11,9 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useEntitiesStore } from 'src/stores/Entities/Store';
 import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
-    getDataPlaneNames,
 } from 'src/utils/dataPlane-utils';
 
 interface OneOfElement {
@@ -47,8 +45,6 @@ export default function useDataPlaneField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
-
-    const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
@@ -95,35 +91,6 @@ export default function useDataPlaneField(
         [entityName, intl]
     );
 
-    const getDataPlaneOption = useCallback(
-        (dataPlaneId: string | undefined, catalogName: string | undefined) => {
-            let selectedOption = options.find(
-                (option) => option.id === (dataPlaneId ?? '')
-            );
-
-            if (typeof selectedOption !== 'undefined') {
-                return selectedOption;
-            }
-
-            if (catalogName) {
-                const dataPlaneNames = getDataPlaneNames(
-                    storageMappings,
-                    catalogName
-                );
-
-                return dataPlaneNames.length > 0
-                    ? options.find(
-                          (option) =>
-                              option.dataPlaneName.whole === dataPlaneNames[0]
-                      )
-                    : undefined;
-            }
-
-            return undefined;
-        },
-        [options, storageMappings]
-    );
-
     const evaluateDataPlane = useCallback(
         (
             details: Details,
@@ -157,7 +124,6 @@ export default function useDataPlaneField(
     return {
         dataPlaneSchema,
         dataPlaneUISchema,
-        getDataPlaneOption,
         evaluateDataPlane,
     };
 }
