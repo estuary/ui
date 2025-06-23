@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -19,18 +21,29 @@ function SchemaEditToggle() {
 
     const disableSchemaEditing = useDisableSchemaEditing();
 
-    const toggleEditMode = () => {
-        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
-            operation: 'edit',
-            enabled: !editModeEnabled,
-        });
+    const toggleEditMode = useCallback(
+        (forced?: boolean) => {
+            logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                operation: 'edit',
+                enabled: !editModeEnabled,
+            });
 
-        setEditModeEnabled(!editModeEnabled);
-    };
+            setEditModeEnabled(forced ?? !editModeEnabled);
+        },
+        [editModeEnabled, setEditModeEnabled]
+    );
+
+    useEffect(() => {
+        if (disableSchemaEditing) {
+            toggleEditMode(false);
+        }
+    }, [disableSchemaEditing, toggleEditMode]);
 
     return (
         <Button
-            onClick={toggleEditMode}
+            onClick={() => {
+                toggleEditMode();
+            }}
             disabled={formActive || disableSchemaEditing}
         >
             {intl.formatMessage({
