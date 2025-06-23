@@ -53,10 +53,6 @@ export const useEvaluateStorageMapping = () => {
             catalogName: string,
             selectedDataPlane: DataPlaneOption | undefined
         ): DataPlaneOption | undefined => {
-            if (catalogName.length === 0) {
-                return undefined;
-            }
-
             // Get the storage mapping with the closest catalog prefix match.
             const { dataPlaneNames, storageMappingPrefix } = getDataPlaneInfo(
                 storageMappings,
@@ -65,7 +61,10 @@ export const useEvaluateStorageMapping = () => {
 
             let targetDataPlaneId: string | undefined = selectedDataPlane?.id;
 
-            if (storageMappingPrefix !== currentStorageMappingPrefix) {
+            if (
+                catalogName.length > 0 &&
+                storageMappingPrefix !== currentStorageMappingPrefix
+            ) {
                 setStorageMappingPrefix(storageMappingPrefix ?? '');
 
                 // Do not change the selected data-plane if the matched storage mapping
