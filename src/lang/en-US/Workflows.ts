@@ -127,8 +127,8 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
-    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
-    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
+    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']} or Storage Mapping`,
+    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix with a storage mapping to create a {entityType}. Please contact an administrator to request access.`,
 
     'workflows.guards.edit.title': `Missing edit ${CommonMessages['terms.permissions']}`,
     'workflows.guards.edit.message': `You do not have edit capabilities for this {entityType}. Please contact an administrator to request access.`,

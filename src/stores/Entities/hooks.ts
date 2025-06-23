@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { stripPathing } from 'src/utils/misc-utils';
 
@@ -58,6 +59,25 @@ export const useEntitiesStore_tenantsWithAdmin = () => {
                 )
             ),
         ])
+    );
+};
+
+export const useEntitiesStore_objectRoles_admin = () => {
+    const workflow = useEntityWorkflow();
+
+    return useEntitiesStore(
+        useShallow((state) => {
+            if (!workflow) {
+                return state.capabilities.admin;
+            }
+
+            return Object.keys(state.storageMappings).filter(
+                (storageMappingPrefix) =>
+                    state.capabilities.admin.some((adminPrefix) =>
+                        storageMappingPrefix.startsWith(adminPrefix)
+                    )
+            );
+        })
     );
 };
 

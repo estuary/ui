@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { useEntitiesStore_objectRoles_admin } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';
 
@@ -33,7 +33,7 @@ function useValidatePrefix({
     const intl = useIntl();
 
     // Store stuff
-    const objectRoles = useEntitiesStore_capabilities_adminable();
+    const objectRoles = useEntitiesStore_objectRoles_admin();
     const singleOption = objectRoles.length === 1;
 
     // Fetch for the default value
