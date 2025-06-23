@@ -27,7 +27,7 @@ export default function TargetSchemaForm({
 
     useMount(() => {
         if (workflow === 'materialization_create') {
-            setTargetSchema('prefixNonDefaultSchema');
+            setTargetSchema('withSchema');
         }
     });
 
