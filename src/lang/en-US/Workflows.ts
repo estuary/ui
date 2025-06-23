@@ -489,4 +489,9 @@ export const Workflows: Record<string, string> = {
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
+
+    'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
+    'schemaManagement.options.manual.label': `Manually manage schemas`,
+    'schemaManagement.options.auto.description': `Estuary infers the schema based on the data. With automatically handle changes.`,
+    'schemaManagement.options.auto.label': `Let Estuary control schemas`,
 };
