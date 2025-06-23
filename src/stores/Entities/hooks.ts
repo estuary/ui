@@ -48,9 +48,13 @@ export const useEntitiesStore_atLeastOneAdminTenant = () => {
 export const useEntitiesStore_capabilities_adminable = (
     restrictByStorageMappings?: boolean
 ) => {
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
     return useEntitiesStore(
         useShallow((state) => {
-            if (!restrictByStorageMappings) {
+            if (!restrictByStorageMappings || hasSupportRole) {
                 return state.capabilities.admin;
             }
 

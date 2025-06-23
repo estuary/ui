@@ -2,6 +2,7 @@ import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
 
 import { useCallback } from 'react';
 
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -12,15 +13,26 @@ export const useEvaluateStorageMapping = () => {
 
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
     const setStorageMappingPrefix = useWorkflowStore(
         (state) => state.setStorageMappingPrefix
     );
     const currentStorageMappingPrefix = useWorkflowStore(
         (state) => state.storageMappingPrefix
     );
+    const previousNameEmpty = useWorkflowStore(
+        (state) => state.catalogName.whole.length === 0
+    );
 
     const getDataPlaneOption = useCallback(
-        (dataPlaneId: string | undefined, catalogName: string | undefined) => {
+        (
+            dataPlaneId: string | undefined,
+            catalogName: string | undefined,
+            dataPlaneNames: string[]
+        ) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
             );
@@ -29,12 +41,7 @@ export const useEvaluateStorageMapping = () => {
                 return selectedOption;
             }
 
-            if (catalogName) {
-                const { dataPlaneNames } = getDataPlaneInfo(
-                    storageMappings,
-                    catalogName
-                );
-
+            if (!hasSupportRole && catalogName) {
                 return dataPlaneNames.length > 0
                     ? options.find(
                           (option) =>
@@ -45,7 +52,7 @@ export const useEvaluateStorageMapping = () => {
 
             return undefined;
         },
-        [options, storageMappings]
+        [hasSupportRole, options]
     );
 
     const evaluateStorageMapping = useCallback(
@@ -62,27 +69,36 @@ export const useEvaluateStorageMapping = () => {
             let targetDataPlaneId: string | undefined = selectedDataPlane?.id;
 
             if (
+                !hasSupportRole &&
                 catalogName.length > 0 &&
                 storageMappingPrefix !== currentStorageMappingPrefix
             ) {
                 setStorageMappingPrefix(storageMappingPrefix ?? '');
 
                 // Do not change the selected data-plane if the matched storage mapping
-                // has access to it.
+                // has access to it. The only exception to this rule is when the data-plane
+                // selector is defaulted during hydration in create workflows.
                 targetDataPlaneId =
                     selectedDataPlane &&
                     dataPlaneNames.includes(
                         selectedDataPlane.dataPlaneName.whole
-                    )
+                    ) &&
+                    !previousNameEmpty
                         ? selectedDataPlane.id
                         : undefined;
             }
 
-            return getDataPlaneOption(targetDataPlaneId, catalogName);
+            return getDataPlaneOption(
+                targetDataPlaneId,
+                catalogName,
+                dataPlaneNames
+            );
         },
         [
             currentStorageMappingPrefix,
             getDataPlaneOption,
+            hasSupportRole,
+            previousNameEmpty,
             setStorageMappingPrefix,
             storageMappings,
         ]

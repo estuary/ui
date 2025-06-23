@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { getDataPlaneInfo } from 'src/utils/dataPlane-utils';
@@ -11,8 +12,12 @@ export const useDataPlaneOptions = () => {
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
     return useMemo(() => {
-        if (catalogName) {
+        if (!hasSupportRole && catalogName) {
             const { dataPlaneNames } = getDataPlaneInfo(
                 storageMappings,
                 catalogName
@@ -24,5 +29,5 @@ export const useDataPlaneOptions = () => {
         }
 
         return options;
-    }, [catalogName, options, storageMappings]);
+    }, [catalogName, hasSupportRole, options, storageMappings]);
 };

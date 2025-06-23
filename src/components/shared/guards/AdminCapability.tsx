@@ -11,10 +11,9 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
 
     const entityType = useEntityTypeTranslatedForWorkflows();
 
-    const adminStorageMappingPrefixes =
-        useEntitiesStore_capabilities_adminable(true);
+    const objectRoles = useEntitiesStore_capabilities_adminable(true);
 
-    if (adminStorageMappingPrefixes.length === 0) {
+    if (objectRoles.length === 0) {
         return (
             <AlertBox
                 severity="error"
