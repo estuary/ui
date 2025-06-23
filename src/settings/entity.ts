@@ -50,6 +50,12 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.sources',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle.capture',
+            bindingsEmptyMessageIntlKey:
+                'entityCreate.bindingsConfig.noRows.capture',
+        },
     },
     collection: {
         Icon: DatabaseScript,
@@ -87,6 +93,11 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.collections',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle',
+            bindingsEmptyMessageIntlKey: 'entityCreate.bindingsConfig.noRows',
+        },
     },
     materialization: {
         Icon: CloudDownload,
@@ -128,5 +139,10 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.destinations',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle',
+            bindingsEmptyMessageIntlKey: 'entityCreate.bindingsConfig.noRows',
+        },
     },
 };

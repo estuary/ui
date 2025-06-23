@@ -366,6 +366,8 @@ export const Workflows: Record<string, string> = {
     'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
     'entityCreate.bindingsConfig.noRows': `Start by clicking the 'add' button above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
+    'entityCreate.bindingsConfig.noRowsTitle.capture': `Nothing found`,
+    'entityCreate.bindingsConfig.noRows.capture': `No bindings were discovered, please check your credentials`,
     'entityCreate.bindingsConfig.noResults': `No results found.`,
     'entityCreate.bindingsConfig.list.search': `Filter {itemType}`,
     'entityCreate.bindingsConfig.list.removeAll': `Remove {itemType} in the list below`,
