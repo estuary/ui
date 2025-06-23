@@ -40,6 +40,10 @@ export interface EntitySetting {
         disableMultiSelect?: boolean;
         optionalColumns?: OptionalColumn;
     };
+    workFlows: {
+        bindingsEmptyTitleIntlKey: string;
+        bindingsEmptyMessageIntlKey: string;
+    };
     table: TableSettings;
     termId: string;
 }
