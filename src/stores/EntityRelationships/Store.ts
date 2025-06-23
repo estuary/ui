@@ -4,8 +4,6 @@ import type { NamedSet } from 'zustand/middleware';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import produce from 'immer';
-
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
@@ -16,9 +14,10 @@ const STORE_KEY = 'entity-relationships';
 
 const getInitialData = (): Pick<
     EntityRelationshipsState,
-    'captures' | 'materializations'
+    'captures' | 'materializations' | 'collections'
 > => ({
     captures: null,
+    collections: null,
     materializations: null,
 });
 
@@ -33,21 +32,31 @@ const getInitialState = (
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
 
-    setCaptures: (newVal) => {
+    setCaptures: (captures) => {
         set(
-            produce((state: EntityRelationshipsState) => {
-                state.captures = newVal;
-            }),
+            {
+                captures,
+            },
             false,
             'setCaptures'
         );
     },
 
-    setMaterializations: (newVal) => {
+    setCollections: (collections) => {
         set(
-            produce((state: EntityRelationshipsState) => {
-                state.materializations = newVal;
-            }),
+            {
+                collections,
+            },
+            false,
+            'setCollections'
+        );
+    },
+
+    setMaterializations: (materializations) => {
+        set(
+            {
+                materializations,
+            },
             false,
             'setMaterializations'
         );

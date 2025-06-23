@@ -141,7 +141,6 @@ export const modifyDraftSpec = (
     draftSpec: any,
     matchData: DraftSpecUpdateMatchData,
     catalogName?: string | null,
-    lastPubId?: string | null,
     detail?: string
 ) => {
     let data: DraftSpecData = { spec: draftSpec };
@@ -152,10 +151,6 @@ export const modifyDraftSpec = (
     // for a v1 Hubspot connector vs. '/source-hubspot' for a v2 Hubspot connector).
     if (catalogName) {
         data = { ...data, catalog_name: catalogName };
-    }
-
-    if (lastPubId) {
-        data = { ...data, expect_pub_id: lastPubId };
     }
 
     if (detail) {

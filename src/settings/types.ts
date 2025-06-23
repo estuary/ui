@@ -26,12 +26,23 @@ export interface EntitySetting {
         details: string;
         viewAll: string;
     };
+    details: {
+        relatedEntitiesContentIds: {
+            writtenBy: string | undefined;
+            collections: string | undefined;
+            readBy: string | undefined;
+        };
+    };
     selector: {
         noExistingDataContentIds: TableIntlConfig;
         filterIntlKey: string;
         headerIntlKey: string | null;
         disableMultiSelect?: boolean;
         optionalColumns?: OptionalColumn;
+    };
+    workFlows: {
+        bindingsEmptyTitleIntlKey: string;
+        bindingsEmptyMessageIntlKey: string;
     };
     table: TableSettings;
     termId: string;

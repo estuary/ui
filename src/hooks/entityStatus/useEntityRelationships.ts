@@ -1,5 +1,6 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
+import { useMount } from 'react-use';
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';
@@ -25,13 +26,27 @@ export const useEntityRelationships = (
         catalogName?.startsWith(grant)
     );
 
-    const [setHydrated, setHydrationError, setCaptures, setMaterializations] =
-        useEntityRelationshipStore((state) => [
-            state.setHydrated,
-            state.setHydrationError,
-            state.setCaptures,
-            state.setMaterializations,
-        ]);
+    const [
+        setActive,
+        setHydrated,
+        setHydrationError,
+        setCaptures,
+        setMaterializations,
+        setCollections,
+    ] = useEntityRelationshipStore((state) => [
+        state.setActive,
+        state.setHydrated,
+        state.setHydrationError,
+        state.setCaptures,
+        state.setMaterializations,
+        state.setCollections,
+    ]);
+
+    // We do not really use the 'active' flag but the base hydration
+    //  code does so just keeping it updated here
+    useMount(() => {
+        setActive(true);
+    });
 
     return useSWR(
         catalogName && session?.access_token && authorizedPrefix
@@ -42,6 +57,7 @@ export const useEntityRelationships = (
             onError: (err) => {
                 setCaptures(null);
                 setMaterializations(null);
+                setCollections(null);
 
                 setHydrationError(err);
 
@@ -52,19 +68,23 @@ export const useEntityRelationships = (
                 });
             },
             onSuccess: (responses) => {
-                const captures: any[] = [];
-                const materializations: any[] = [];
+                const captures: string[] = [];
+                const collections: string[] = [];
+                const materializations: string[] = [];
 
                 responses.forEach((datum) => {
                     if (datum.spec_type === 'capture') {
                         captures.push(datum.catalog_name);
                     } else if (datum.spec_type === 'materialization') {
                         materializations.push(datum.catalog_name);
+                    } else if (datum.spec_type === 'collection') {
+                        collections.push(datum.catalog_name);
                     }
                 });
 
                 setCaptures(captures);
                 setMaterializations(materializations);
+                setCollections(collections);
 
                 setHydrationError(null);
 

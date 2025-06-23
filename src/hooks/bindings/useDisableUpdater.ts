@@ -13,6 +13,7 @@ import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useDisableUpdater(bindingUUID?: string) {
     const intl = useIntl();
@@ -23,15 +24,17 @@ function useDisableUpdater(bindingUUID?: string) {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const [storeSetting, bindingIndex] = useBindingStore((state) => {
-        if (!bindingUUID) {
-            return [null, null];
+    const [storeSetting, bindingIndex, collectionName] = useBindingStore(
+        (state) => {
+            if (!bindingUUID) {
+                return [null, null, null];
+            }
+
+            const config = state.resourceConfigs[bindingUUID].meta;
+
+            return [config.disable, config.bindingIndex, config.collectionName];
         }
-
-        const config = state.resourceConfigs[bindingUUID].meta;
-
-        return [config.disable, config.bindingIndex];
-    });
+    );
 
     const [generateToggleDisableUpdates, toggleDisable] = useBindingStore(
         (state) => [state.generateToggleDisableUpdates, state.toggleDisable]
@@ -44,7 +47,24 @@ function useDisableUpdater(bindingUUID?: string) {
         async (bindingIndexes: BindingDisableUpdate[]) => {
             return draftUpdater(
                 (spec) => {
+                    let missingIndex = false;
+
+                    // TODO (draft updater) - this is one of the few things that can directly
+                    //  update a binding that isn't the current binding. We should look into
+                    //  getting some of this validation shared with `ui/src/utils/workflow-utils.ts > getBindingIndex`
                     bindingIndexes.forEach(({ bindingIndex, val }) => {
+                        if (
+                            missingIndex ||
+                            // Make sure there is a binding there at least
+                            !spec.bindings[bindingIndex] ||
+                            // Try to be safe and make sure we have the right name
+                            getCollectionName(spec.bindings[bindingIndex]) !==
+                                collectionName
+                        ) {
+                            missingIndex = true;
+                            return;
+                        }
+
                         if (val === true) {
                             spec.bindings[bindingIndex].disable = val;
                         } else if (
@@ -56,12 +76,17 @@ function useDisableUpdater(bindingUUID?: string) {
                             delete spec.bindings[bindingIndex].disable;
                         }
                     });
+
+                    if (missingIndex) {
+                        return undefined;
+                    }
+
                     return spec;
                 },
                 { spec_type: entityType }
             );
         },
-        [draftUpdater, entityType]
+        [collectionName, draftUpdater, entityType]
     );
 
     const setSaving = useSourceCaptureStore((state) => state.setSaving);
@@ -120,8 +145,18 @@ function useDisableUpdater(bindingUUID?: string) {
     let currentSetting: boolean | null | undefined = null;
 
     if (bindingIndex !== null) {
-        currentSetting =
-            draftSpecs?.[0]?.spec?.bindings?.[bindingIndex]?.disable;
+        if (
+            draftSpecs?.[0]?.spec?.bindings &&
+            draftSpecs?.[0]?.spec?.bindings.length > 0 &&
+            draftSpecs[0].spec.bindings[bindingIndex]
+        ) {
+            currentSetting = draftSpecs[0].spec.bindings[bindingIndex].disable;
+        } else {
+            // Usually means the user has entered edit, adding some bindings, and has flipped
+            //  the disable/enable toggle on the new bindings but did NOT click the next button
+            //  yet.
+            currentSetting = storeSetting;
+        }
     } else {
         currentSetting = storeSetting;
     }

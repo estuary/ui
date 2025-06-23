@@ -98,7 +98,6 @@ function useDraftSpecEditor(
                         spec_type: specType,
                     },
                     undefined,
-                    undefined,
                     'Manually Edited'
                 );
 
