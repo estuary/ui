@@ -10,6 +10,9 @@ export interface EntityRelationshipsState extends StoreWithHydration {
         newVal: EntityRelationshipsState['materializations']
     ) => void;
 
+    collections: string[] | null;
+    setCollections: (newVal: EntityRelationshipsState['collections']) => void;
+
     resetState: () => void;
 }
 
