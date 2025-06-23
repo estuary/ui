@@ -4,14 +4,15 @@ import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'src/context/EntityContext';
-import { useEntitiesStore_objectRoles_admin } from 'src/stores/Entities/hooks';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 
 function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
     const intl = useIntl();
 
     const entityType = useEntityTypeTranslatedForWorkflows();
 
-    const adminStorageMappingPrefixes = useEntitiesStore_objectRoles_admin();
+    const adminStorageMappingPrefixes =
+        useEntitiesStore_capabilities_adminable(true);
 
     if (adminStorageMappingPrefixes.length === 0) {
         return (
