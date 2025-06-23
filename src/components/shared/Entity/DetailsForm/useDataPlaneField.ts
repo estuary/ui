@@ -11,6 +11,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
@@ -45,6 +46,8 @@ export default function useDataPlaneField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
+
+    const objectRoles = useEntitiesStore_capabilities_adminable(true);
 
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
@@ -85,10 +88,10 @@ export default function useDataPlaneField(
             scope: `#/properties/${DATA_PLANE_SCOPE}`,
             type: 'Control',
             options: {
-                readOnly: entityName.length === 0,
+                readOnly: objectRoles.length > 1 && entityName.length === 0,
             },
         }),
-        [entityName, intl]
+        [entityName.length, intl, objectRoles.length]
     );
 
     const evaluateDataPlane = useCallback(
