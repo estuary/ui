@@ -31,7 +31,7 @@ const getStorageMappings = (
             updated_at
         `
             )
-            .eq('catalog_prefix', catalogPrefix),
+            .like('catalog_prefix', `${catalogPrefix}*`),
         [],
         searchQuery,
         sorting,
