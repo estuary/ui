@@ -81,7 +81,7 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
             details.data.dataPlane
         );
 
-        // The field-specific functions below, `evaluateDataPlane` and `evaluateConnector`,
+        // The field-specific functions below, `setDataPlane` and `setConnector`,
         // set details form state that can be overridden by `setDetails`. Consequently,
         // `setDetails` should always be called first.
         setDetails(details);
