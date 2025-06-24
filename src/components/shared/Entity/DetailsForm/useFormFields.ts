@@ -31,10 +31,10 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const { evaluateStorageMapping } = useEvaluateStorageMapping();
 
-    const { connectorSchema, connectorUISchema, evaluateConnector } =
+    const { connectorSchema, connectorUISchema, setConnector } =
         useConnectorField(entityType);
 
-    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
+    const { dataPlaneSchema, dataPlaneUISchema, setDataPlane } =
         useDataPlaneField(entityType);
 
     const schema = useMemo(
@@ -86,8 +86,8 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
         // `setDetails` should always be called first.
         setDetails(details);
 
-        evaluateDataPlane(details, dataPlaneOption);
-        evaluateConnector(details, dataPlaneOption?.id);
+        setDataPlane(details, dataPlaneOption);
+        setConnector(details, dataPlaneOption?.id);
 
         setCatalogName({
             root: details.data.entityName.substring(tenant.length),

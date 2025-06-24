@@ -94,7 +94,7 @@ export default function useDataPlaneField(
         [entityName.length, intl, objectRoles.length]
     );
 
-    const evaluateDataPlane = useCallback(
+    const setDataPlane = useCallback(
         (
             details: Details,
             selectedDataPlaneOption: DataPlaneOption | undefined
@@ -127,6 +127,6 @@ export default function useDataPlaneField(
     return {
         dataPlaneSchema,
         dataPlaneUISchema,
-        evaluateDataPlane,
+        setDataPlane,
     };
 }
