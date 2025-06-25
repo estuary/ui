@@ -152,7 +152,10 @@ function useDisableUpdater(bindingUUID?: string) {
                 draftSpecs?.[0]?.spec?.bindings.length > 0 &&
                 draftSpecs[0].spec.bindings[bindingIndex]
             ) {
-                return draftSpecs[0].spec.bindings[bindingIndex].disable;
+                return (
+                    draftSpecs[0].spec.bindings[bindingIndex].disable ??
+                    storeSetting
+                );
             } else {
                 // Usually means the user has entered edit, adding some bindings, and has flipped
                 //  the disable/enable toggle on the new bindings but did NOT click the next button
