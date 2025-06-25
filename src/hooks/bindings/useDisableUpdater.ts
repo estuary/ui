@@ -1,6 +1,6 @@
 import type { BindingDisableUpdate } from 'src/stores/Binding/types';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
@@ -57,9 +57,12 @@ function useDisableUpdater(bindingUUID?: string) {
                             missingIndex ||
                             // Make sure there is a binding there at least
                             !spec.bindings[bindingIndex] ||
-                            // Try to be safe and make sure we have the right name
-                            getCollectionName(spec.bindings[bindingIndex]) !==
-                                collectionName
+                            // Try to be safe and make sure we have the right name when we are updating
+                            //  a specific binding
+                            (collectionName &&
+                                getCollectionName(
+                                    spec.bindings[bindingIndex]
+                                ) !== collectionName)
                         ) {
                             missingIndex = true;
                             return;
@@ -142,24 +145,26 @@ function useDisableUpdater(bindingUUID?: string) {
         ]
     );
 
-    let currentSetting: boolean | null | undefined = null;
-
-    if (bindingIndex !== null) {
-        if (
-            draftSpecs?.[0]?.spec?.bindings &&
-            draftSpecs?.[0]?.spec?.bindings.length > 0 &&
-            draftSpecs[0].spec.bindings[bindingIndex]
-        ) {
-            currentSetting = draftSpecs[0].spec.bindings[bindingIndex].disable;
+    const currentSetting: boolean | null | undefined = useMemo(() => {
+        if (bindingIndex !== null) {
+            if (
+                draftSpecs?.[0]?.spec?.bindings &&
+                draftSpecs?.[0]?.spec?.bindings.length > 0 &&
+                draftSpecs[0].spec.bindings[bindingIndex]
+            ) {
+                return draftSpecs[0].spec.bindings[bindingIndex].disable;
+            } else {
+                // Usually means the user has entered edit, adding some bindings, and has flipped
+                //  the disable/enable toggle on the new bindings but did NOT click the next button
+                //  yet.
+                return storeSetting;
+            }
         } else {
-            // Usually means the user has entered edit, adding some bindings, and has flipped
-            //  the disable/enable toggle on the new bindings but did NOT click the next button
-            //  yet.
-            currentSetting = storeSetting;
+            return storeSetting;
         }
-    } else {
-        currentSetting = storeSetting;
-    }
+
+        return null;
+    }, [bindingIndex, draftSpecs, storeSetting]);
 
     return {
         currentSetting,
