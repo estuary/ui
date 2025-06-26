@@ -4,7 +4,9 @@ import { useShallow } from 'zustand/react/shallow';
 
 import useSWR from 'swr';
 
+import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { stripPathing } from 'src/utils/misc-utils';
 
@@ -43,8 +45,27 @@ export const useEntitiesStore_atLeastOneAdminTenant = () => {
     );
 };
 
-export const useEntitiesStore_capabilities_adminable = () => {
-    return useEntitiesStore(useShallow((state) => state.capabilities.admin));
+export const useEntitiesStore_capabilities_adminable = (
+    restrictByStorageMappings?: boolean
+) => {
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
+    return useEntitiesStore(
+        useShallow((state) => {
+            if (!restrictByStorageMappings || hasSupportRole) {
+                return state.capabilities.admin;
+            }
+
+            return Object.keys(state.storageMappings).filter(
+                (storageMappingPrefix) =>
+                    state.capabilities.admin.some((adminPrefix) =>
+                        storageMappingPrefix.startsWith(adminPrefix)
+                    )
+            );
+        })
+    );
 };
 
 export const useEntitiesStore_tenantsWithAdmin = () => {
@@ -106,4 +127,43 @@ export const useHydrateState = () => {
     ]);
 
     return response;
+};
+
+export const useStorageMappingsHydrator = () => {
+    const [hydrated, setStorageMappings] = useEntitiesStore((state) => [
+        state.hydrated,
+        state.setStorageMappings,
+    ]);
+
+    // We do not want to get these for support role as that will time out
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
+    // We hardcode the key here as we only call once
+    const storageMappingResponse = useSWR(
+        `entities_hydrator:storage_mappings`,
+        hasSupportRole
+            ? null
+            : () => {
+                  return getAllStorageMappingStores();
+              },
+        singleCallSettings
+    );
+
+    // Once we are done validating update all the settings
+    useEffect(() => {
+        if (hydrated && !storageMappingResponse.isValidating) {
+            // TODO (data planes) - need to filter these down to those that are admin-able
+            setStorageMappings(storageMappingResponse.data?.data as any);
+        }
+    }, [
+        hydrated,
+        setStorageMappings,
+        storageMappingResponse.data?.data,
+        storageMappingResponse.data?.error,
+        storageMappingResponse.isValidating,
+    ]);
+
+    return storageMappingResponse;
 };

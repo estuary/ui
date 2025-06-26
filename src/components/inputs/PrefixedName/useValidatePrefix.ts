@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import { useIntl } from 'react-intl';
 
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';
@@ -32,8 +33,12 @@ function useValidatePrefix({
 }: Options) {
     const intl = useIntl();
 
+    const workflow = useEntityWorkflow();
+
     // Store stuff
-    const objectRoles = useEntitiesStore_capabilities_adminable();
+    const objectRoles = useEntitiesStore_capabilities_adminable(
+        Boolean(workflow)
+    );
     const singleOption = objectRoles.length === 1;
 
     // Fetch for the default value

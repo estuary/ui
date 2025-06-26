@@ -61,7 +61,7 @@ export const splitPathAndName = (stringVal: string): string[] => {
     if (!stringVal) return [];
 
     const lastSlash = stringVal.lastIndexOf('/') + 1;
-    return [stringVal.substr(0, lastSlash), stringVal.substr(lastSlash)];
+    return [stringVal.substring(0, lastSlash), stringVal.substring(lastSlash)];
 };
 
 export const hasLength = (val: string | any[] | null | undefined): boolean => {

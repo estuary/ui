@@ -122,7 +122,7 @@ export default function useConnectorField(
         },
     };
 
-    const evaluateConnector = useCallback(
+    const setConnector = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
             const selectedConnectorId = details.data.connectorImage.connectorId;
 
@@ -154,5 +154,5 @@ export default function useConnectorField(
         ]
     );
 
-    return { connectorSchema, connectorUISchema, evaluateConnector };
+    return { connectorSchema, connectorUISchema, setConnector };
 }

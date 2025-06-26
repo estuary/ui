@@ -19,6 +19,7 @@ export interface DataPlaneOption {
     reactorAddress: string;
     scope: DataPlaneScopes;
     cidrBlocks?: string[] | null;
+    isDefault?: boolean;
 }
 
 export interface ConnectorMetadata {
@@ -91,7 +92,10 @@ export interface DetailsFormState
     previousDetails: Details;
     setPreviousDetails: (value: DetailsFormState['previousDetails']) => void;
 
-    hydrateState: (workflow: EntityWorkflow | null) => Promise<void>;
+    hydrateState: (
+        workflow: EntityWorkflow | null,
+        dataPlaneOptions: DataPlaneOption[]
+    ) => Promise<void>;
 
     resetState: () => void;
 }

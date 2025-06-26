@@ -16,8 +16,8 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const hydrated = useDetailsFormStore((state) => state.hydrated);
     const setHydrated = useDetailsFormStore((state) => state.setHydrated);
     const setActive = useDetailsFormStore((state) => state.setActive);
-    const setHydrationErrorsExist = useDetailsFormStore(
-        (state) => state.setHydrationErrorsExist
+    const [setHydrationErrorsExist, dataPlaneOptions] = useDetailsFormStore(
+        (state) => [state.setHydrationErrorsExist, state.dataPlaneOptions]
     );
 
     const hydrateState = useDetailsFormStore((state) => state.hydrateState);
@@ -28,7 +28,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setActive(true);
-            hydrateState(workflow).then(
+            hydrateState(workflow, dataPlaneOptions).then(
                 () => {
                     setHydrated(true);
                 },

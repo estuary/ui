@@ -21,4 +21,8 @@ export interface WorkflowState
     setConnectorMetadata: (value: WorkflowState['connectorMetadata']) => void;
     setCustomerId: (value: WorkflowState['customerId']) => void;
     setRedirectUrl: (value: WorkflowState['redirectUrl']) => void;
+    setStorageMappingPrefix: (
+        value: WorkflowState['storageMappingPrefix']
+    ) => void;
+    storageMappingPrefix: string;
 }
