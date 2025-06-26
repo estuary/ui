@@ -42,6 +42,7 @@ export interface BindingsEditorState {
     setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
 
     // Infer Schema used to set the key of a collection
+    hasReadAndWriteSchema: boolean | null;
     inferSchemaResponse: InferSchemaPropertyForRender[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string | null;

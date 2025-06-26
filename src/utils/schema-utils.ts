@@ -15,6 +15,10 @@ const hasReadSchema = (spec: any) => {
     return spec.hasOwnProperty('readSchema');
 };
 
+const hasReadAndWriteSchema = (spec: any) => {
+    return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
+};
+
 const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
 
@@ -104,6 +108,7 @@ const moveUpdatedSchemaToReadSchema = (
 export {
     getProperSchemaScope,
     filterInferSchemaResponse,
+    hasReadAndWriteSchema,
     hasReadSchema,
     hasWriteSchema,
     moveUpdatedSchemaToReadSchema,
