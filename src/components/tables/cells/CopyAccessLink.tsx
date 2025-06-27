@@ -13,7 +13,6 @@ interface Props {
 
 const baseURL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
 
-// TODO (optimization): Create a composable copy button component.
 function CopyAccessLink({ token }: Props) {
     const intl = useIntl();
 

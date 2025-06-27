@@ -7,6 +7,11 @@ import { Button, IconButton, useTheme } from '@mui/material';
 
 import { getButtonIcon } from 'src/context/Theme';
 
+// TODO (maybe) this might make less sense as a component
+//  and way more as a headless hook. So if you have to add more
+//  support for customizing the button make sure it isn't better
+//  to not share the button stuff and put the main fuctionality
+//  into a hook.
 function CopyToClipboardButton({
     children,
     writeValue,
