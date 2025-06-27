@@ -1,6 +1,6 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 
-import { Box, Stack, TableCell, TableRow, useTheme } from '@mui/material';
+import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
@@ -29,22 +29,28 @@ function Row({ row }: RowProps) {
         <TableRow hover sx={getEntityTableRowSx(theme)}>
             <TableCell>
                 {Boolean(dataPlaneOption.dataPlaneName) ? (
-                    <Box sx={{ minWidth: 'fit-content', whiteSpace: 'nowrap' }}>
-                        <Stack direction="row">
-                            <DataPlane
-                                dataPlaneName={dataPlaneOption.dataPlaneName}
-                                formattedSuffix={formatDataPlaneName(
-                                    dataPlaneOption.dataPlaneName
-                                )}
-                                hidePrefix
-                                logoSize={30}
-                                scope={dataPlaneOption.scope}
-                            />
-                            <CopyToClipboardButton
-                                writeValue={dataPlaneOption.dataPlaneName.whole}
-                            />
-                        </Stack>
-                    </Box>
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{
+                            justifyContent: 'space-between',
+                            minWidth: 'fit-content',
+                            whiteSpace: 'nowrap',
+                        }}
+                    >
+                        <DataPlane
+                            dataPlaneName={dataPlaneOption.dataPlaneName}
+                            formattedSuffix={formatDataPlaneName(
+                                dataPlaneOption.dataPlaneName
+                            )}
+                            hidePrefix
+                            logoSize={30}
+                            scope={dataPlaneOption.scope}
+                        />
+                        <CopyToClipboardButton
+                            writeValue={dataPlaneOption.dataPlaneName.whole}
+                        />
+                    </Stack>
                 ) : null}
             </TableCell>
             <TableCell>
