@@ -21,3 +21,7 @@ export interface ButtonWithPopperProps extends BaseComponentProps {
     popper: ReactNode;
     popperProps?: Partial<PopperProps>;
 }
+
+export interface CopyToClipboardButtonProps extends BaseComponentProps {
+    writeValue: string;
+}
