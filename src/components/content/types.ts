@@ -1,7 +1,7 @@
 import type { SxProps } from '@mui/material';
 
 export interface SingleLineCodeProps {
-    value: string;
+    value: any;
     sx?: SxProps;
     subsequentCommandExists?: boolean;
 }
