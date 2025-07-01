@@ -11,11 +11,11 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import {
     DATA_PLANE_OPTION_TEMPLATE,
     formatDataPlaneName,
 } from 'src/utils/dataPlane-utils';
-import { hasLength } from 'src/utils/misc-utils';
 
 interface OneOfElement {
     const: DataPlaneOption;
@@ -33,6 +33,9 @@ export default function useDataPlaneField(
 
     const navigateToCreate = useEntityCreateNavigate();
 
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
@@ -43,6 +46,8 @@ export default function useDataPlaneField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
+
+    const objectRoles = useEntitiesStore_capabilities_adminable(true);
 
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
@@ -75,27 +80,36 @@ export default function useDataPlaneField(
         };
     }, [intl, options]);
 
-    const evaluateDataPlane = useCallback(
-        (details: Details, selectedDataPlaneId: string | undefined) => {
-            if (selectedDataPlaneId !== storedDataPlaneId) {
-                const selectedOption = options.find(
-                    (option) => option.id === (selectedDataPlaneId ?? '')
-                );
+    const dataPlaneUISchema = useMemo(
+        () => ({
+            label: intl.formatMessage({
+                id: 'workflows.dataPlane.label',
+            }),
+            scope: `#/properties/${DATA_PLANE_SCOPE}`,
+            type: 'Control',
+            options: {
+                readOnly: objectRoles.length > 1 && entityName.length === 0,
+            },
+        }),
+        [entityName.length, intl, objectRoles.length]
+    );
 
-                setDetails_dataPlane(selectedOption);
+    const setDataPlane = useCallback(
+        (
+            details: Details,
+            selectedDataPlaneOption: DataPlaneOption | undefined
+        ) => {
+            if (selectedDataPlaneOption?.id !== storedDataPlaneId) {
+                setDetails_dataPlane(selectedDataPlaneOption);
 
-                const evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
-                    ? selectedDataPlaneId
-                    : null;
-
-                if (evaluatedDataPlaneId !== dataPlaneIdInURL) {
+                if (selectedDataPlaneOption?.id !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
                     // TODO (data-plane): Set search param of interest instead of using navigate function.
                     navigateToCreate(entityType, {
                         id: details.data.connectorImage.connectorId,
                         advanceToForm: true,
-                        dataPlaneId: selectedDataPlaneId ?? null,
+                        dataPlaneId: selectedDataPlaneOption?.id ?? null,
                     });
                 }
             }
@@ -104,7 +118,6 @@ export default function useDataPlaneField(
             dataPlaneIdInURL,
             entityType,
             navigateToCreate,
-            options,
             setDetails_dataPlane,
             setEntityNameChanged,
             storedDataPlaneId,
@@ -113,13 +126,7 @@ export default function useDataPlaneField(
 
     return {
         dataPlaneSchema,
-        dataPlaneUISchema: {
-            label: intl.formatMessage({
-                id: 'workflows.dataPlane.label',
-            }),
-            scope: `#/properties/${DATA_PLANE_SCOPE}`,
-            type: 'Control',
-        },
-        evaluateDataPlane,
+        dataPlaneUISchema,
+        setDataPlane,
     };
 }
