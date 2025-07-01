@@ -16,6 +16,7 @@ export type DataPlaneScopes = 'public' | 'private';
 export interface DataPlaneOption {
     dataPlaneName: DataPlaneName;
     id: string;
+    isDefault: boolean;
     reactorAddress: string;
     scope: DataPlaneScopes;
     cidrBlocks?: string[] | null;
@@ -91,7 +92,10 @@ export interface DetailsFormState
     previousDetails: Details;
     setPreviousDetails: (value: DetailsFormState['previousDetails']) => void;
 
-    hydrateState: (workflow: EntityWorkflow | null) => Promise<void>;
+    hydrateState: (
+        workflow: EntityWorkflow | null,
+        dataPlaneOptions: DataPlaneOption[]
+    ) => Promise<void>;
 
     resetState: () => void;
 }

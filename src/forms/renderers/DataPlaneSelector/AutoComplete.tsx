@@ -36,9 +36,11 @@ import React, { useMemo } from 'react';
 
 import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
 
+import { isArray } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { useDataPlaneOptions } from 'src/components/shared/Entity/DetailsForm/useDataPlaneOptions';
 import { defaultOutline_hovered } from 'src/context/Theme';
 import AutoCompleteInputWithStartAdornment from 'src/forms/renderers/AutoCompleteInputWithStartAdornment';
 import Option from 'src/forms/renderers/DataPlaneSelector/Option';
@@ -78,6 +80,7 @@ export const DataPlaneAutoComplete = ({
     filterOptions,
 }: EnumCellProps & WithClassname & WithOptionLabel) => {
     const intl = useIntl();
+    const scopedOptions = useDataPlaneOptions();
 
     const [inputValue, setInputValue] = React.useState('');
     const currentOption = useMemo(
@@ -107,25 +110,29 @@ export const DataPlaneAutoComplete = ({
             onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
-            renderGroup={({ group, children }) => (
-                <li key={group}>
-                    <Typography
-                        color="primary"
-                        sx={{
-                            backgroundColor: (theme) =>
-                                theme.palette.background.paper,
-                            fontWeight: 500,
-                            pl: 1,
-                            py: 1,
-                            textTransform: 'capitalize',
-                        }}
-                    >
-                        {intl.formatMessage({ id: `common.${group}` })}
-                    </Typography>
+            renderGroup={({ group, children }) =>
+                children === null ||
+                (isArray(children) &&
+                    children.some((node) => node !== null)) ? (
+                    <li key={group}>
+                        <Typography
+                            color="primary"
+                            sx={{
+                                backgroundColor: (theme) =>
+                                    theme.palette.background.paper,
+                                fontWeight: 500,
+                                pl: 1,
+                                py: 1,
+                                textTransform: 'capitalize',
+                            }}
+                        >
+                            {intl.formatMessage({ id: `common.${group}` })}
+                        </Typography>
 
-                    <MenuList style={{ padding: 0 }}>{children}</MenuList>
-                </li>
-            )}
+                        <MenuList style={{ padding: 0 }}>{children}</MenuList>
+                    </li>
+                ) : null
+            }
             renderInput={(textFieldProps) => {
                 return (
                     <AutoCompleteInputWithStartAdornment
@@ -172,6 +179,10 @@ export const DataPlaneAutoComplete = ({
                 );
             }}
             renderOption={(renderOptionProps, option) => {
+                if (!scopedOptions.includes(option.value)) {
+                    return null;
+                }
+
                 return (
                     <Option
                         renderOptionProps={renderOptionProps}
@@ -192,7 +203,15 @@ export const DataPlaneAutoComplete = ({
             sx={{
                 mt: 2,
             }}
-            options={options ?? []}
+            options={(options ?? []).sort((a, b) => {
+                if (a.value.scope === b.value.scope) {
+                    return a.value.dataPlaneName.whole.localeCompare(
+                        b.value.dataPlaneName.whole
+                    );
+                }
+
+                return a.value.scope === 'private' ? 1 : -1;
+            })}
             value={currentOption}
         />
     );

@@ -24,6 +24,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.provider': `Provider`,
     'entityTable.data.bucket': `Bucket`,
     'entityTable.data.prefix': `Prefix`,
+    'entityTable.data.dataPlanes': `Data Planes`,
     'entityTable.data.storagePrefix': `Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,

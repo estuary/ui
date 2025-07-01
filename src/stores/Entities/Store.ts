@@ -1,4 +1,5 @@
 import type { EntitiesState } from 'src/stores/Entities/types';
+import type { StorageMappingDictionary } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -20,6 +21,7 @@ const getInitialStateData = (): Pick<
     | 'hydrated'
     | 'hydrationErrors'
     | 'hydrationErrorsExist'
+    | 'storageMappings'
     | 'mutate'
 > => ({
     hydrated: false,
@@ -30,6 +32,7 @@ const getInitialStateData = (): Pick<
         read: [],
         write: [],
     },
+    storageMappings: {},
     mutate: null,
 });
 
@@ -87,13 +90,36 @@ const getInitialState = (
                     if (!authRole) {
                         return;
                     }
-                    state.capabilities[authRole.capability].push(
-                        authRole.role_prefix
-                    );
+
+                    if (
+                        !state.capabilities[authRole.capability].includes(
+                            authRole.role_prefix
+                        )
+                    ) {
+                        state.capabilities[authRole.capability].push(
+                            authRole.role_prefix
+                        );
+                    }
                 });
             }),
             false,
             'Entities capabilities populating'
+        );
+    },
+
+    setStorageMappings: (values) => {
+        set(
+            produce((state: EntitiesState) => {
+                const evaluatedMappings: StorageMappingDictionary = {};
+
+                values?.forEach(({ catalog_prefix, spec }) => {
+                    evaluatedMappings[catalog_prefix] = spec;
+                });
+
+                state.storageMappings = evaluatedMappings;
+            }),
+            false,
+            'setStorageMappings'
         );
     },
 
