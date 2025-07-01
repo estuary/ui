@@ -203,7 +203,15 @@ export const DataPlaneAutoComplete = ({
             sx={{
                 mt: 2,
             }}
-            options={options ?? []}
+            options={(options ?? []).sort((a, b) => {
+                if (a.value.scope === b.value.scope) {
+                    return a.value.dataPlaneName.whole.localeCompare(
+                        b.value.dataPlaneName.whole
+                    );
+                }
+
+                return a.value.scope === 'private' ? 1 : -1;
+            })}
             value={currentOption}
         />
     );
