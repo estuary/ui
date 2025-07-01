@@ -16,7 +16,6 @@ export interface EntitiesState extends StoreWithHydration {
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 
-    // TODO (data planes) - we need to decide how we'll key these selections
     storageMappings: StorageMappingDictionary;
     setStorageMappings: (
         values:
