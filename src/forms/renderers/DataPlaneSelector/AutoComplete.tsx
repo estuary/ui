@@ -113,7 +113,7 @@ export const DataPlaneAutoComplete = ({
             renderGroup={({ group, children }) =>
                 children === null ||
                 (isArray(children) &&
-                    children.every((node) => node === null)) ? null : (
+                    children.some((node) => node !== null)) ? (
                     <li key={group}>
                         <Typography
                             color="primary"
@@ -131,7 +131,7 @@ export const DataPlaneAutoComplete = ({
 
                         <MenuList style={{ padding: 0 }}>{children}</MenuList>
                     </li>
-                )
+                ) : null
             }
             renderInput={(textFieldProps) => {
                 return (
