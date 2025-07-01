@@ -144,8 +144,10 @@ export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
         response.deltaUpdates = false;
     }
 
+    // This matches the default provided by flow on the backend
+    //  flow/crates/models/src/source_capture.rs
     if (!response.targetNaming) {
-        response.targetNaming = 'noSchema';
+        response.targetNaming = 'prefixNonDefaultSchema';
     }
 
     return response;
