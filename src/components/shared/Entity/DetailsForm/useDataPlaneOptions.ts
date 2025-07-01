@@ -23,9 +23,19 @@ export const useDataPlaneOptions = () => {
                 catalogName
             );
 
-            return options.filter(({ dataPlaneName }) =>
-                dataPlaneNames.includes(dataPlaneName.whole)
-            );
+            return options
+                .filter(({ dataPlaneName }) =>
+                    dataPlaneNames.includes(dataPlaneName.whole)
+                )
+                .sort((a, b) => {
+                    if (a.scope === b.scope) {
+                        return a.dataPlaneName.whole.localeCompare(
+                            b.dataPlaneName.whole
+                        );
+                    }
+
+                    return a.scope === 'private' ? 1 : -1;
+                });
         }
 
         return options;
