@@ -31,7 +31,8 @@ export const useEvaluateStorageMapping = () => {
         (
             dataPlaneId: string | undefined,
             catalogName: string | undefined,
-            dataPlaneNames: string[]
+            dataPlaneNames: string[],
+            supportUser: boolean
         ) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
@@ -41,7 +42,7 @@ export const useEvaluateStorageMapping = () => {
                 return selectedOption;
             }
 
-            if (!hasSupportRole && catalogName) {
+            if (!supportUser && catalogName) {
                 return dataPlaneNames.length > 0
                     ? options.find(
                           (option) =>
@@ -52,7 +53,7 @@ export const useEvaluateStorageMapping = () => {
 
             return undefined;
         },
-        [hasSupportRole, options]
+        [options]
     );
 
     const evaluateStorageMapping = useCallback(
@@ -91,7 +92,8 @@ export const useEvaluateStorageMapping = () => {
             return getDataPlaneOption(
                 targetDataPlaneId,
                 catalogName,
-                dataPlaneNames
+                dataPlaneNames,
+                hasSupportRole
             );
         },
         [
