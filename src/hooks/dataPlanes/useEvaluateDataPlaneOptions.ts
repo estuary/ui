@@ -46,15 +46,18 @@ export const useEvaluateDataPlaneOptions = () => {
                 });
 
                 const stubOption = existingDataPlane
-                    ? generateDataPlaneOption({
-                          data_plane_name: existingDataPlane.name ?? '',
-                          id: existingDataPlane.id,
-                          reactor_address:
-                              existingDataPlane.reactorAddress ?? '',
-                          cidr_blocks: null,
-                          gcp_service_account_email: null,
-                          aws_iam_user_arn: null,
-                      })
+                    ? generateDataPlaneOption(
+                          {
+                              data_plane_name: existingDataPlane.name ?? '',
+                              id: existingDataPlane.id,
+                              reactor_address:
+                                  existingDataPlane.reactorAddress ?? '',
+                              cidr_blocks: null,
+                              gcp_service_account_email: null,
+                              aws_iam_user_arn: null,
+                          },
+                          existingDataPlane.name ?? ''
+                      )
                     : null;
 
                 const fallbackOptions = stubOption ? [stubOption] : [];

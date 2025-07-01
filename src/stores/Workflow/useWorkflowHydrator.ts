@@ -14,7 +14,10 @@ import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHyd
 import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import {
+    generateDataPlaneOption,
+    getDataPlaneInfo,
+} from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
@@ -85,6 +88,12 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
                 connectorMetadata[0].connector_tags
             );
 
+            const { dataPlaneNames } = getDataPlaneInfo(
+                storageMappings,
+                baseEntityName
+            );
+            const defaultDataPlaneName = dataPlaneNames.at(0);
+
             // GO fetch all the data plane options the user can see
             const dataPlaneResponse = await getDataPlaneOptions();
 
@@ -96,7 +105,7 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
             ) {
                 // If we got a response then go ahead and map those options
                 dataPlaneOptions = dataPlaneResponse.data.map((dataPlane) =>
-                    generateDataPlaneOption(dataPlane)
+                    generateDataPlaneOption(dataPlane, defaultDataPlaneName)
                 );
             } else {
                 setHydrationError_details(
@@ -117,14 +126,17 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
                     ) {
                         // We are missing a data plane so generate a fake one
                         dataPlaneOptions.push(
-                            generateDataPlaneOption({
-                                data_plane_name: dataPlaneName,
-                                id: dataPlaneName,
-                                reactor_address: '',
-                                cidr_blocks: null,
-                                gcp_service_account_email: null,
-                                aws_iam_user_arn: null,
-                            })
+                            generateDataPlaneOption(
+                                {
+                                    data_plane_name: dataPlaneName,
+                                    id: dataPlaneName,
+                                    reactor_address: '',
+                                    cidr_blocks: null,
+                                    gcp_service_account_email: null,
+                                    aws_iam_user_arn: null,
+                                },
+                                dataPlaneName
+                            )
                         );
                     }
                 });

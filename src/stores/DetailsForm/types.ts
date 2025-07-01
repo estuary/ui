@@ -16,10 +16,10 @@ export type DataPlaneScopes = 'public' | 'private';
 export interface DataPlaneOption {
     dataPlaneName: DataPlaneName;
     id: string;
+    isDefault: boolean;
     reactorAddress: string;
     scope: DataPlaneScopes;
     cidrBlocks?: string[] | null;
-    isDefault?: boolean;
 }
 
 export interface ConnectorMetadata {

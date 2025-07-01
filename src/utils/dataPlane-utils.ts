@@ -51,6 +51,7 @@ export const DATA_PLANE_OPTION_TEMPLATE: DataPlaneOption = {
         whole: 'template',
     },
     id: '',
+    isDefault: false,
     reactorAddress: '',
     scope: 'public',
 };
@@ -261,6 +262,10 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     return formattedName.trim();
 };
 
+// TODO (data-planes): Determine whether this function should always be called
+//   from a hook. Given the matched storage mapping must be matched to figure
+//   out what the default data-plane name is, it makes more sense to call this
+//   util from a hook that can reference storage mapping state directly.
 export const generateDataPlaneOption = (
     { data_plane_name, id, reactor_address, cidr_blocks }: BaseDataPlaneQuery,
     defaultDataPlaneName?: string
@@ -275,7 +280,7 @@ export const generateDataPlaneOption = (
         id,
         isDefault: defaultDataPlaneName
             ? data_plane_name === defaultDataPlaneName
-            : undefined,
+            : false,
         reactorAddress: reactor_address,
         scope,
     };
