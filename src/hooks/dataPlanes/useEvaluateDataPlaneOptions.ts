@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -12,6 +13,8 @@ import {
 } from 'src/utils/dataPlane-utils';
 
 export const useEvaluateDataPlaneOptions = () => {
+    const isEdit = useEntityWorkflow_Editing();
+
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const setDataPlaneOptions = useDetailsFormStore(
@@ -56,7 +59,7 @@ export const useEvaluateDataPlaneOptions = () => {
                               gcp_service_account_email: null,
                               aws_iam_user_arn: null,
                           },
-                          existingDataPlane.name ?? ''
+                          isEdit ? undefined : (existingDataPlane.name ?? '')
                       )
                     : null;
 
@@ -69,7 +72,10 @@ export const useEvaluateDataPlaneOptions = () => {
 
             const options = dataPlanes
                 ? dataPlanes.map((dataPlane) =>
-                      generateDataPlaneOption(dataPlane, dataPlaneNames[0])
+                      generateDataPlaneOption(
+                          dataPlane,
+                          isEdit ? undefined : dataPlaneNames[0]
+                      )
                   )
                 : [];
 
@@ -78,6 +84,6 @@ export const useEvaluateDataPlaneOptions = () => {
 
             return options;
         },
-        [storageMappings, setDataPlaneOptions, setStorageMappingPrefix]
+        [storageMappings, setDataPlaneOptions, setStorageMappingPrefix, isEdit]
     );
 };
