@@ -117,6 +117,10 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
             // Now step through all the storage mappings so we can hack in data planes the user might be missing
             Object.values(storageMappings).forEach((storageMapping) => {
+                if (!storageMapping.data_planes) {
+                    return;
+                }
+
                 storageMapping.data_planes.forEach((dataPlaneName) => {
                     if (
                         dataPlaneOptions.findIndex(
