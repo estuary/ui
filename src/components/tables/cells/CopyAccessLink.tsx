@@ -25,7 +25,7 @@ function CopyAccessLink({ token }: Props) {
             <Tooltip title={accessLink}>
                 <CopyToClipboardButton writeValue={accessLink}>
                     {intl.formatMessage({
-                        id: 'accessGrants.table.accessLinks.label.url',
+                        id: 'cta.inviteLink',
                     })}
                 </CopyToClipboardButton>
             </Tooltip>
