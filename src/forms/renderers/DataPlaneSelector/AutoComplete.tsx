@@ -210,7 +210,7 @@ export const DataPlaneAutoComplete = ({
                     );
                 }
 
-                return a.value.scope === 'private' ? 1 : -1;
+                return a.value.scope === 'public' ? 1 : -1;
             })}
             value={currentOption}
         />
