@@ -3,12 +3,14 @@ import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
 import { useCallback } from 'react';
 
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getDataPlaneInfo } from 'src/utils/dataPlane-utils';
 
 export const useEvaluateStorageMapping = () => {
+    const isEdit = useEntityWorkflow_Editing();
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
 
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
@@ -76,17 +78,25 @@ export const useEvaluateStorageMapping = () => {
             ) {
                 setStorageMappingPrefix(storageMappingPrefix ?? '');
 
-                // Do not change the selected data-plane if the matched storage mapping
-                // has access to it. The only exception to this rule is when the data-plane
-                // selector is defaulted during hydration in create workflows.
-                targetDataPlaneId =
-                    selectedDataPlane &&
-                    dataPlaneNames.includes(
-                        selectedDataPlane.dataPlaneName.whole
-                    ) &&
-                    !previousNameEmpty
+                if (isEdit) {
+                    // If we're editing we never want to use anything except the selected data plane as
+                    //  that should be coming from the live_specs_ext view
+                    targetDataPlaneId = selectedDataPlane?.id
                         ? selectedDataPlane.id
                         : undefined;
+                } else {
+                    // Do not change the selected data-plane if the matched storage mapping
+                    // has access to it. The only exception to this rule is when the data-plane
+                    // selector is defaulted during hydration in create workflows.
+                    targetDataPlaneId =
+                        selectedDataPlane &&
+                        dataPlaneNames.includes(
+                            selectedDataPlane.dataPlaneName.whole
+                        ) &&
+                        !previousNameEmpty
+                            ? selectedDataPlane.id
+                            : undefined;
+                }
             }
 
             return getDataPlaneOption(
@@ -100,6 +110,7 @@ export const useEvaluateStorageMapping = () => {
             currentStorageMappingPrefix,
             getDataPlaneOption,
             hasSupportRole,
+            isEdit,
             previousNameEmpty,
             setStorageMappingPrefix,
             storageMappings,
