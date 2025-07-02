@@ -2,14 +2,12 @@ import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useCallback, useMemo } from 'react';
+import { StringParam, useQueryParams } from 'use-query-params';
 
 import { useIntl } from 'react-intl';
 
-import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import {
@@ -25,13 +23,12 @@ interface OneOfElement {
 export default function useDataPlaneField(
     entityType: EntityWithCreateWorkflow
 ) {
-    const dataPlaneIdInURL = useGlobalSearchParams(
-        GlobalSearchParams.DATA_PLANE_ID
-    );
+    const [query, setQuery] = useQueryParams({
+        [GlobalSearchParams.DATA_PLANE_ID]: StringParam,
+    });
+    const dataPlaneIdInURL = query[GlobalSearchParams.DATA_PLANE_ID];
 
     const intl = useIntl();
-
-    const navigateToCreate = useEntityCreateNavigate();
 
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
@@ -105,21 +102,18 @@ export default function useDataPlaneField(
                 if (selectedDataPlaneOption?.id !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
-                    // TODO (data-plane): Set search param of interest instead of using navigate function.
-                    navigateToCreate(entityType, {
-                        id: details.data.connectorImage.connectorId,
-                        advanceToForm: true,
-                        dataPlaneId: selectedDataPlaneOption?.id ?? null,
+                    setQuery({
+                        [GlobalSearchParams.DATA_PLANE_ID]:
+                            selectedDataPlaneOption?.id ?? null,
                     });
                 }
             }
         },
         [
             dataPlaneIdInURL,
-            entityType,
-            navigateToCreate,
             setDetails_dataPlane,
             setEntityNameChanged,
+            setQuery,
             storedDataPlaneId,
         ]
     );
