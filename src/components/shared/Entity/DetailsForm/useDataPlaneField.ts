@@ -64,7 +64,9 @@ export default function useDataPlaneField(
             });
 
             // TODO (data-planes) - this should not really be needed but a solution to triage the prod issues
-            //  some users are seeing. Need an actual solution.
+            //  some users are seeing. Need an actual solution. We potentially do not even really want to make a proper
+            //  list of options during edit and rather just use the value from the live_spec_ext view as the ONLY option
+            //  since during edit the user should not be changing the data plane if one is already provided.
             // If we're in edit AND we have a stored data plane then it more than likely came from
             //  the live_specs_ext view and we should make sure that it is an option
             if (
