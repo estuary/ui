@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
+import { uniq } from 'lodash';
+
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -13,13 +14,14 @@ import {
 } from 'src/utils/dataPlane-utils';
 
 export const useEvaluateDataPlaneOptions = () => {
-    const isEdit = useEntityWorkflow_Editing();
-
-    const storageMappings = useEntitiesStore((state) => state.storageMappings);
-
     const setDataPlaneOptions = useDetailsFormStore(
         (state) => state.setDataPlaneOptions
     );
+    const setExistingDataPlaneOption = useDetailsFormStore(
+        (state) => state.setExistingDataPlaneOption
+    );
+
+    const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const setStorageMappingPrefix = useWorkflowStore(
         (state) => state.setStorageMappingPrefix
@@ -34,15 +36,78 @@ export const useEvaluateDataPlaneOptions = () => {
                 reactorAddress: string | null;
             }
         ) => {
-            const { dataPlaneNames, storageMappingPrefix } = getDataPlaneInfo(
-                storageMappings,
-                catalogName
+            // Get required data-plane information from the matched storage mapping.
+            const dataPlaneNames = Object.values(storageMappings).flatMap(
+                ({ data_planes }) => data_planes
             );
 
-            const { data: dataPlanes, error } =
-                await getDataPlaneOptions(dataPlaneNames);
+            const {
+                dataPlaneNames: matchedDataPlaneNames,
+                storageMappingPrefix,
+            } = getDataPlaneInfo(storageMappings, catalogName);
 
-            if (!dataPlanes || dataPlanes.length === 0 || error) {
+            // Add the existing data-plane name to the array of data-plane names of the
+            // matched storage mapping in the event it is not there. This data-plane should
+            // be treated as the default in edit workflows so it must be the first element
+            // in the array of data-plane names.
+            let evaluatedDataPlaneNames =
+                existingDataPlane?.name &&
+                !dataPlaneNames.includes(existingDataPlane.name)
+                    ? [existingDataPlane.name].concat(dataPlaneNames)
+                    : dataPlaneNames;
+
+            const { data: dataPlanes, error } = await getDataPlaneOptions();
+
+            // If the array of data-planes does not contain an element with the same name
+            // as the existing data-plane, stub the BaseDataPlaneQuery response corresponding
+            // to the existing data-plane so it can appear as a data-plane option. This is
+            // particularly important for edit workflows.
+            if (dataPlanes) {
+                const queriedDataPlaneNames = dataPlanes
+                    ?.map(({ data_plane_name }) => data_plane_name)
+                    .filter((name) => !evaluatedDataPlaneNames.includes(name));
+
+                evaluatedDataPlaneNames = [
+                    ...evaluatedDataPlaneNames,
+                    ...queriedDataPlaneNames,
+                ];
+            }
+
+            let evaluatedDataPlaneOptions = uniq(evaluatedDataPlaneNames).map(
+                (dataPlaneName) => {
+                    const existingDataPlane = dataPlanes
+                        ? dataPlanes.find(
+                              (dataPlane) =>
+                                  dataPlane.data_plane_name === dataPlaneName
+                          )
+                        : undefined;
+
+                    const defaultDataPlaneName =
+                        existingDataPlane?.data_plane_name
+                            ? existingDataPlane.data_plane_name
+                            : matchedDataPlaneNames.length > 0
+                              ? matchedDataPlaneNames[0]
+                              : dataPlaneNames.at(0);
+
+                    return generateDataPlaneOption(
+                        existingDataPlane ?? {
+                            data_plane_name: dataPlaneName,
+                            id: dataPlaneName,
+                            reactor_address: '',
+                            cidr_blocks: null,
+                            gcp_service_account_email: null,
+                            aws_iam_user_arn: null,
+                        },
+                        defaultDataPlaneName
+                    );
+                }
+            );
+
+            if (
+                !evaluatedDataPlaneOptions ||
+                evaluatedDataPlaneOptions.length === 0 ||
+                error
+            ) {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     noOptionsFound: true,
                     fallbackExists: Boolean(existingDataPlane),
@@ -59,7 +124,7 @@ export const useEvaluateDataPlaneOptions = () => {
                               gcp_service_account_email: null,
                               aws_iam_user_arn: null,
                           },
-                          isEdit ? undefined : (existingDataPlane.name ?? '')
+                          existingDataPlane.name ?? ''
                       )
                     : null;
 
@@ -70,20 +135,22 @@ export const useEvaluateDataPlaneOptions = () => {
                 return fallbackOptions;
             }
 
-            const options = dataPlanes
-                ? dataPlanes.map((dataPlane) =>
-                      generateDataPlaneOption(
-                          dataPlane,
-                          isEdit ? undefined : dataPlaneNames[0]
-                      )
-                  )
-                : [];
-
-            setDataPlaneOptions(options);
+            setDataPlaneOptions(evaluatedDataPlaneOptions);
+            setExistingDataPlaneOption(
+                evaluatedDataPlaneOptions.find(
+                    (option) =>
+                        option.dataPlaneName.whole === existingDataPlane?.name
+                )
+            );
             setStorageMappingPrefix(storageMappingPrefix ?? '');
 
-            return options;
+            return evaluatedDataPlaneOptions;
         },
-        [storageMappings, setDataPlaneOptions, setStorageMappingPrefix, isEdit]
+        [
+            setDataPlaneOptions,
+            setExistingDataPlaneOption,
+            setStorageMappingPrefix,
+            storageMappings,
+        ]
     );
 };
