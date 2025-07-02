@@ -54,7 +54,38 @@ export const useEvaluateDataPlaneOptions = () => {
                 evaluatedDataPlaneNames
             );
 
-            if (!dataPlanes || dataPlanes.length === 0 || error) {
+            // If the array of data-planes does not contain an element with the same name
+            // as the existing data-plane, stub the BaseDataPlaneQuery response corresponding
+            // to the existing data-plane so it can appear as a data-plane option. This is
+            // particularly important for edit workflows.
+            let evaluatedDataPlaneOptions = dataPlaneNames.map(
+                (dataPlaneName) => {
+                    const existingDataPlane = dataPlanes
+                        ? dataPlanes.find(
+                              (dataPlane) =>
+                                  dataPlane.data_plane_name === dataPlaneName
+                          )
+                        : undefined;
+
+                    return generateDataPlaneOption(
+                        existingDataPlane ?? {
+                            data_plane_name: dataPlaneName,
+                            id: dataPlaneName,
+                            reactor_address: '',
+                            cidr_blocks: null,
+                            gcp_service_account_email: null,
+                            aws_iam_user_arn: null,
+                        },
+                        dataPlaneNames.at(0)
+                    );
+                }
+            );
+
+            if (
+                !evaluatedDataPlaneOptions ||
+                evaluatedDataPlaneOptions.length === 0 ||
+                error
+            ) {
                 logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
                     noOptionsFound: true,
                     fallbackExists: Boolean(existingDataPlane),
@@ -82,54 +113,16 @@ export const useEvaluateDataPlaneOptions = () => {
                 return fallbackOptions;
             }
 
-            // If the array of data-planes does not contain an element with the same name
-            // as the existing data-plane, stub the BaseDataPlaneQuery response corresponding
-            // to the existing data-plane so it can appear as a data-plane option. This is
-            // particularly important for edit workflows.
-            let evaluatedDataPlanes = dataPlanes;
-            const existingDataPlaneFetched = Boolean(
-                existingDataPlane?.name &&
-                    dataPlanes.some(
-                        ({ data_plane_name }) =>
-                            data_plane_name === existingDataPlane.name
-                    )
-            );
-
-            if (existingDataPlane && !existingDataPlaneFetched) {
-                logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
-                    noOptionsFound: false,
-                    fallbackExists: Boolean(existingDataPlane),
-                });
-
-                evaluatedDataPlanes = evaluatedDataPlanes.concat({
-                    data_plane_name: existingDataPlane.name ?? '',
-                    id: existingDataPlane.id,
-                    reactor_address: existingDataPlane.reactorAddress ?? '',
-                    cidr_blocks: null,
-                    gcp_service_account_email: null,
-                    aws_iam_user_arn: null,
-                });
-            }
-
-            const options = evaluatedDataPlanes
-                ? evaluatedDataPlanes.map((dataPlane) =>
-                      generateDataPlaneOption(
-                          dataPlane,
-                          evaluatedDataPlaneNames[0]
-                      )
-                  )
-                : [];
-
-            setDataPlaneOptions(options);
+            setDataPlaneOptions(evaluatedDataPlaneOptions);
             setExistingDataPlaneOption(
-                options.find(
+                evaluatedDataPlaneOptions.find(
                     (option) =>
                         option.dataPlaneName.whole === existingDataPlane?.name
                 )
             );
             setStorageMappingPrefix(storageMappingPrefix ?? '');
 
-            return options;
+            return evaluatedDataPlaneOptions;
         },
         [
             setDataPlaneOptions,
