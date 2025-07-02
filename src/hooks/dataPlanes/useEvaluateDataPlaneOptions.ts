@@ -86,7 +86,7 @@ export const useEvaluateDataPlaneOptions = () => {
             // as the existing data-plane, stub the BaseDataPlaneQuery response corresponding
             // to the existing data-plane so it can appear as a data-plane option. This is
             // particularly important for edit workflows.
-            const evaluatedDataPlanes = dataPlanes;
+            let evaluatedDataPlanes = dataPlanes;
             const existingDataPlaneFetched = Boolean(
                 existingDataPlane?.name &&
                     dataPlanes.some(
@@ -101,7 +101,7 @@ export const useEvaluateDataPlaneOptions = () => {
                     fallbackExists: Boolean(existingDataPlane),
                 });
 
-                evaluatedDataPlanes.concat({
+                evaluatedDataPlanes = evaluatedDataPlanes.concat({
                     data_plane_name: existingDataPlane.name ?? '',
                     id: existingDataPlane.id,
                     reactor_address: existingDataPlane.reactorAddress ?? '',
