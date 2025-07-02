@@ -15,6 +15,9 @@ export const useEvaluateDataPlaneOptions = () => {
     const setDataPlaneOptions = useDetailsFormStore(
         (state) => state.setDataPlaneOptions
     );
+    const setExistingDataPlaneOption = useDetailsFormStore(
+        (state) => state.setExistingDataPlaneOption
+    );
 
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
@@ -116,10 +119,22 @@ export const useEvaluateDataPlaneOptions = () => {
                 : [];
 
             setDataPlaneOptions(options);
+            setExistingDataPlaneOption(
+                storageMappingPrefix,
+                options.find(
+                    (option) =>
+                        option.dataPlaneName.whole === existingDataPlane?.name
+                )
+            );
             setStorageMappingPrefix(storageMappingPrefix ?? '');
 
             return options;
         },
-        [storageMappings, setDataPlaneOptions, setStorageMappingPrefix]
+        [
+            setDataPlaneOptions,
+            setExistingDataPlaneOption,
+            setStorageMappingPrefix,
+            storageMappings,
+        ]
     );
 };
