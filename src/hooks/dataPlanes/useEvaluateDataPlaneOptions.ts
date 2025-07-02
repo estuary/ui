@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { uniq } from 'lodash';
+
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -71,7 +73,7 @@ export const useEvaluateDataPlaneOptions = () => {
                 ];
             }
 
-            let evaluatedDataPlaneOptions = evaluatedDataPlaneNames.map(
+            let evaluatedDataPlaneOptions = uniq(evaluatedDataPlaneNames).map(
                 (dataPlaneName) => {
                     const existingDataPlane = dataPlanes
                         ? dataPlanes.find(
