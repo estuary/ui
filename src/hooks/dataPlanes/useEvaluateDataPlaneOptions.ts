@@ -3,8 +3,10 @@ import { useCallback } from 'react';
 import { uniq } from 'lodash';
 
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -12,6 +14,7 @@ import {
     generateDataPlaneOption,
     getDataPlaneInfo,
 } from 'src/utils/dataPlane-utils';
+import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 export const useEvaluateDataPlaneOptions = () => {
     const setDataPlaneOptions = useDetailsFormStore(
@@ -22,6 +25,10 @@ export const useEvaluateDataPlaneOptions = () => {
     );
 
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
+
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
 
     const setStorageMappingPrefix = useWorkflowStore(
         (state) => state.setStorageMappingPrefix
@@ -87,7 +94,9 @@ export const useEvaluateDataPlaneOptions = () => {
                             ? existingDataPlane.data_plane_name
                             : matchedDataPlaneNames.length > 0
                               ? matchedDataPlaneNames[0]
-                              : dataPlaneNames.at(0);
+                              : hasSupportRole
+                                ? `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
+                                : dataPlaneNames.at(0);
 
                     return generateDataPlaneOption(
                         existingDataPlane ?? {
@@ -147,6 +156,7 @@ export const useEvaluateDataPlaneOptions = () => {
             return evaluatedDataPlaneOptions;
         },
         [
+            hasSupportRole,
             setDataPlaneOptions,
             setExistingDataPlaneOption,
             setStorageMappingPrefix,
