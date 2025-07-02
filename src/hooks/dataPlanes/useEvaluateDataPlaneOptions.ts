@@ -92,10 +92,10 @@ export const useEvaluateDataPlaneOptions = () => {
                     const defaultDataPlaneName =
                         existingDataPlane?.data_plane_name
                             ? existingDataPlane.data_plane_name
-                            : matchedDataPlaneNames.length > 0
-                              ? matchedDataPlaneNames[0]
-                              : hasSupportRole
-                                ? `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
+                            : hasSupportRole
+                              ? `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
+                              : matchedDataPlaneNames.length > 0
+                                ? matchedDataPlaneNames[0]
                                 : dataPlaneNames.at(0);
 
                     return generateDataPlaneOption(
