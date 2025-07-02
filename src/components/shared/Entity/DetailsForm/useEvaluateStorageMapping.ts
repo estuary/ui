@@ -35,7 +35,8 @@ export const useEvaluateStorageMapping = () => {
             dataPlaneId: string | undefined,
             catalogName: string | undefined,
             dataPlaneNames: string[],
-            supportUser: boolean
+            supportUser: boolean,
+            existingOption: DataPlaneOption | undefined
         ) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
@@ -51,10 +52,10 @@ export const useEvaluateStorageMapping = () => {
                           (option) =>
                               option.dataPlaneName.whole === dataPlaneNames[0]
                       )
-                    : undefined;
+                    : existingOption;
             }
 
-            return undefined;
+            return existingOption;
         },
         [options]
     );
@@ -75,16 +76,13 @@ export const useEvaluateStorageMapping = () => {
             // be treated as the default in edit workflows so it must be the first element
             // in the array of data-plane names.
             const evaluatedDataPlaneNames =
-                storageMappingPrefix &&
-                existingDataPlaneOption?.[storageMappingPrefix] &&
+                existingDataPlaneOption &&
                 !dataPlaneNames.includes(
-                    existingDataPlaneOption[storageMappingPrefix].dataPlaneName
-                        .whole
+                    existingDataPlaneOption.dataPlaneName.whole
                 )
-                    ? [
-                          existingDataPlaneOption[storageMappingPrefix]
-                              .dataPlaneName.whole,
-                      ].concat(dataPlaneNames)
+                    ? [existingDataPlaneOption.dataPlaneName.whole].concat(
+                          dataPlaneNames
+                      )
                     : dataPlaneNames;
 
             let targetDataPlaneId: string | undefined = selectedDataPlane?.id;
@@ -113,7 +111,8 @@ export const useEvaluateStorageMapping = () => {
                 targetDataPlaneId,
                 catalogName,
                 evaluatedDataPlaneNames,
-                hasSupportRole
+                hasSupportRole,
+                existingDataPlaneOption
             );
         },
         [

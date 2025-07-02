@@ -120,7 +120,7 @@ const getInitialStateData = (): Pick<
     connectors: [],
 
     dataPlaneOptions: [],
-    existingDataPlaneOption: {},
+    existingDataPlaneOption: undefined,
 
     details: initialDetails,
     errorsExist: true,
@@ -286,12 +286,10 @@ export const getInitialState = (
         );
     },
 
-    setExistingDataPlaneOption: (prefix, value) => {
+    setExistingDataPlaneOption: (value) => {
         set(
             produce((state: DetailsFormState) => {
-                if (prefix && value) {
-                    state.existingDataPlaneOption[prefix] = value;
-                }
+                state.existingDataPlaneOption = value;
             }),
             false,
             'Existing Data Plane Option Set'

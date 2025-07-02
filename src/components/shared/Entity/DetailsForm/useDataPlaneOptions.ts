@@ -21,7 +21,7 @@ export const useDataPlaneOptions = () => {
 
     return useMemo(() => {
         if (!hasSupportRole && catalogName) {
-            const { dataPlaneNames, storageMappingPrefix } = getDataPlaneInfo(
+            const { dataPlaneNames } = getDataPlaneInfo(
                 storageMappings,
                 catalogName
             );
@@ -31,16 +31,13 @@ export const useDataPlaneOptions = () => {
             // be treated as the default in edit workflows so it must be the first element
             // in the array of data-plane names.
             const evaluatedDataPlaneNames =
-                storageMappingPrefix &&
-                existingDataPlaneOption?.[storageMappingPrefix] &&
+                existingDataPlaneOption &&
                 !dataPlaneNames.includes(
-                    existingDataPlaneOption[storageMappingPrefix].dataPlaneName
-                        .whole
+                    existingDataPlaneOption.dataPlaneName.whole
                 )
-                    ? [
-                          existingDataPlaneOption[storageMappingPrefix]
-                              .dataPlaneName.whole,
-                      ].concat(dataPlaneNames)
+                    ? [existingDataPlaneOption.dataPlaneName.whole].concat(
+                          dataPlaneNames
+                      )
                     : dataPlaneNames;
 
             return options.filter(({ dataPlaneName }) =>

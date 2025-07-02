@@ -122,7 +122,6 @@ export const useEvaluateDataPlaneOptions = () => {
 
             setDataPlaneOptions(options);
             setExistingDataPlaneOption(
-                storageMappingPrefix,
                 options.find(
                     (option) =>
                         option.dataPlaneName.whole === existingDataPlane?.name
