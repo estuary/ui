@@ -2,6 +2,7 @@ import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
 
 import { useCallback } from 'react';
 
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
@@ -10,6 +11,10 @@ import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 function useGetDataPlane() {
     // TODO (data planes) - don't want the options being passed in. Need to store those off
     // const [dataPlaneOptions] = useEntitiesStore((state) => [state.dataPlanes]);
+
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
 
     return useCallback(
         (
@@ -25,8 +30,11 @@ function useGetDataPlane() {
             }
 
             // Use the default data-plane specified by the storage mapping.
-            const defaultDataPlaneOption = dataPlaneOptions.find(
-                (option) => option.isDefault
+            const defaultDataPlaneOption = dataPlaneOptions.find((option) =>
+                hasSupportRole
+                    ? option.dataPlaneName.whole ===
+                      `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
+                    : option.isDefault
             );
 
             if (
@@ -69,7 +77,7 @@ function useGetDataPlane() {
 
             return defaultOption ?? null;
         },
-        []
+        [hasSupportRole]
     );
 }
 
