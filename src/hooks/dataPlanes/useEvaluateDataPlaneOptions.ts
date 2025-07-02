@@ -44,9 +44,11 @@ export const useEvaluateDataPlaneOptions = () => {
             // matched storage mapping in the event it is not there. This data-plane should
             // be treated as the default in edit workflows so it must be the first element
             // in the array of data-plane names.
-            const evaluatedDataPlaneNames = existingDataPlane?.name
-                ? [existingDataPlane.name].concat(dataPlaneNames)
-                : dataPlaneNames;
+            const evaluatedDataPlaneNames =
+                existingDataPlane?.name &&
+                !dataPlaneNames.includes(existingDataPlane.name)
+                    ? [existingDataPlane.name].concat(dataPlaneNames)
+                    : dataPlaneNames;
 
             const { data: dataPlanes, error } = await getDataPlaneOptions(
                 evaluatedDataPlaneNames

@@ -32,7 +32,11 @@ export const useDataPlaneOptions = () => {
             // in the array of data-plane names.
             const evaluatedDataPlaneNames =
                 storageMappingPrefix &&
-                existingDataPlaneOption?.[storageMappingPrefix]
+                existingDataPlaneOption?.[storageMappingPrefix] &&
+                !dataPlaneNames.includes(
+                    existingDataPlaneOption[storageMappingPrefix].dataPlaneName
+                        .whole
+                )
                     ? [
                           existingDataPlaneOption[storageMappingPrefix]
                               .dataPlaneName.whole,
