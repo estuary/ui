@@ -35,10 +35,14 @@ export const useEvaluateDataPlaneOptions = () => {
             }
         ) => {
             // Get required data-plane information from the matched storage mapping.
-            const { dataPlaneNames, storageMappingPrefix } = getDataPlaneInfo(
-                storageMappings,
-                catalogName
+            const dataPlaneNames = Object.values(storageMappings).flatMap(
+                ({ data_planes }) => data_planes
             );
+
+            const {
+                dataPlaneNames: matchedDataPlaneNames,
+                storageMappingPrefix,
+            } = getDataPlaneInfo(storageMappings, catalogName);
 
             // Add the existing data-plane name to the array of data-plane names of the
             // matched storage mapping in the event it is not there. This data-plane should
@@ -76,6 +80,13 @@ export const useEvaluateDataPlaneOptions = () => {
                           )
                         : undefined;
 
+                    const defaultDataPlaneName =
+                        existingDataPlane?.data_plane_name
+                            ? existingDataPlane.data_plane_name
+                            : matchedDataPlaneNames.length > 0
+                              ? matchedDataPlaneNames[0]
+                              : dataPlaneNames.at(0);
+
                     return generateDataPlaneOption(
                         existingDataPlane ?? {
                             data_plane_name: dataPlaneName,
@@ -85,7 +96,7 @@ export const useEvaluateDataPlaneOptions = () => {
                             gcp_service_account_email: null,
                             aws_iam_user_arn: null,
                         },
-                        dataPlaneNames.at(0)
+                        defaultDataPlaneName
                     );
                 }
             );
