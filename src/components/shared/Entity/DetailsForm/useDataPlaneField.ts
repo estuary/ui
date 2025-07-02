@@ -6,8 +6,11 @@ import { StringParam, useQueryParams } from 'use-query-params';
 
 import { useIntl } from 'react-intl';
 
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import {
@@ -29,11 +32,15 @@ export default function useDataPlaneField(
     const dataPlaneIdInURL = query[GlobalSearchParams.DATA_PLANE_ID];
 
     const intl = useIntl();
+    const isEdit = useEntityWorkflow_Editing();
 
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
     );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
+    const storedDataPlane = useDetailsFormStore(
+        (state) => state.details.data.dataPlane
+    );
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
     );
@@ -55,6 +62,29 @@ export default function useDataPlaneField(
 
                 dataPlanesOneOf.push({ const: option, title });
             });
+
+            // TODO (data-planes) - this should not really be needed but a solution to triage the prod issues
+            //  some users are seeing. Need an actual solution.
+            // If we're in edit AND we have a stored data plane then it more than likely came from
+            //  the live_specs_ext view and we should make sure that it is an option
+            if (
+                isEdit &&
+                storedDataPlane &&
+                dataPlanesOneOf.findIndex(
+                    (datum) =>
+                        datum.const.dataPlaneName.whole ===
+                        storedDataPlane.dataPlaneName.whole
+                ) === -1
+            ) {
+                logRocketEvent(CustomEvents.DATA_PLANE_SELECTOR, {
+                    forcingStoredDataPlane: true,
+                });
+                const title = formatDataPlaneName(
+                    storedDataPlane.dataPlaneName
+                );
+
+                dataPlanesOneOf.push({ const: storedDataPlane, title });
+            }
         } else {
             // The details form store hydrator does not fail loudly when no data-plane options are found
             // and the create workflow does not have a fallback data-plane option to use in that scenario.
@@ -75,7 +105,7 @@ export default function useDataPlaneField(
                 type: 'object',
             },
         };
-    }, [intl, options]);
+    }, [intl, isEdit, options, storedDataPlane]);
 
     const dataPlaneUISchema = useMemo(
         () => ({
