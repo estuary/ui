@@ -10,9 +10,6 @@ export const useDataPlaneOptions = () => {
         (state) => state.details.data.entityName
     );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
-    const existingDataPlaneOption = useDetailsFormStore(
-        (state) => state.existingDataPlaneOption
-    );
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
     const hasSupportRole = useUserInfoSummaryStore(
@@ -26,31 +23,11 @@ export const useDataPlaneOptions = () => {
                 catalogName
             );
 
-            // Add the existing data-plane name to the array of data-plane names of the
-            // matched storage mapping in the event it is not there. This data-plane should
-            // be treated as the default in edit workflows so it must be the first element
-            // in the array of data-plane names.
-            const evaluatedDataPlaneNames =
-                existingDataPlaneOption &&
-                !dataPlaneNames.includes(
-                    existingDataPlaneOption.dataPlaneName.whole
-                )
-                    ? [existingDataPlaneOption.dataPlaneName.whole].concat(
-                          dataPlaneNames
-                      )
-                    : dataPlaneNames;
-
             return options.filter(({ dataPlaneName }) =>
-                evaluatedDataPlaneNames.includes(dataPlaneName.whole)
+                dataPlaneNames.includes(dataPlaneName.whole)
             );
         }
 
         return options;
-    }, [
-        catalogName,
-        existingDataPlaneOption,
-        hasSupportRole,
-        options,
-        storageMappings,
-    ]);
+    }, [catalogName, hasSupportRole, options, storageMappings]);
 };
