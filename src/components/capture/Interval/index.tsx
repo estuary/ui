@@ -1,7 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { CaptureIntervalProps } from 'src/components/capture/Interval/types';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     Autocomplete,
@@ -24,6 +24,8 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { hasLength } from 'src/utils/misc-utils';
+import { CAPTURE_INTERVAL_RE } from 'src/validation';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
     const intl = useIntl();
@@ -47,13 +49,13 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
 
     const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
 
-    // const errorsExist = useMemo(
-    //     () =>
-    //         Boolean(
-    //             input && hasLength(input) && !CAPTURE_INTERVAL_RE.test(input)
-    //         ),
-    //     [input]
-    // );
+    const errorsExist = useMemo(
+        () =>
+            Boolean(
+                input && hasLength(input) && !CAPTURE_INTERVAL_RE.test(input)
+            ),
+        [input]
+    );
 
     if (typeof input !== 'string' || isEmpty(defaultInterval)) {
         return null;
@@ -114,7 +116,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                             ...InputProps,
                             sx: { borderRadius: 3 },
                         }}
-                        // error={errorsExist}
+                        error={errorsExist}
                         label={label}
                         size="small"
                     />
@@ -135,13 +137,13 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 )}
             </FormHelperText>
 
-            {/* {errorsExist ? (
+            {errorsExist ? (
                 <FormHelperText error={errorsExist} style={{ marginLeft: 0 }}>
                     {intl.formatMessage({
                         id: 'captureInterval.error.intervalFormat',
                     })}
                 </FormHelperText>
-            ) : null} */}
+            ) : null}
         </Stack>
     );
 }
