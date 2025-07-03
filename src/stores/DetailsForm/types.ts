@@ -67,6 +67,8 @@ export interface DetailsFormState
 
     dataPlaneOptions: DataPlaneOption[];
     setDataPlaneOptions: (value: DetailsFormState['dataPlaneOptions']) => void;
+    existingDataPlaneOption: DataPlaneOption | undefined;
+    setExistingDataPlaneOption: (value: DataPlaneOption | undefined) => void;
 
     errorsExist: boolean;
 

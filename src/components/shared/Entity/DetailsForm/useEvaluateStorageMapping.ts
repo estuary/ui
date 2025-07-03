@@ -10,6 +10,9 @@ import { getDataPlaneInfo } from 'src/utils/dataPlane-utils';
 
 export const useEvaluateStorageMapping = () => {
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
+    const existingDataPlaneOption = useDetailsFormStore(
+        (state) => state.existingDataPlaneOption
+    );
 
     const storageMappings = useEntitiesStore((state) => state.storageMappings);
 
@@ -32,7 +35,8 @@ export const useEvaluateStorageMapping = () => {
             dataPlaneId: string | undefined,
             catalogName: string | undefined,
             dataPlaneNames: string[],
-            supportUser: boolean
+            supportUser: boolean,
+            existingOption: DataPlaneOption | undefined
         ) => {
             let selectedOption = options.find(
                 (option) => option.id === (dataPlaneId ?? '')
@@ -48,10 +52,10 @@ export const useEvaluateStorageMapping = () => {
                           (option) =>
                               option.dataPlaneName.whole === dataPlaneNames[0]
                       )
-                    : undefined;
+                    : existingOption;
             }
 
-            return undefined;
+            return existingOption;
         },
         [options]
     );
@@ -67,6 +71,20 @@ export const useEvaluateStorageMapping = () => {
                 catalogName
             );
 
+            // Add the existing data-plane name to the array of data-plane names of the
+            // matched storage mapping in the event it is not there. This data-plane should
+            // be treated as the default in edit workflows so it must be the first element
+            // in the array of data-plane names.
+            const evaluatedDataPlaneNames =
+                existingDataPlaneOption &&
+                !dataPlaneNames.includes(
+                    existingDataPlaneOption.dataPlaneName.whole
+                )
+                    ? [existingDataPlaneOption.dataPlaneName.whole].concat(
+                          dataPlaneNames
+                      )
+                    : dataPlaneNames;
+
             let targetDataPlaneId: string | undefined = selectedDataPlane?.id;
 
             if (
@@ -81,7 +99,7 @@ export const useEvaluateStorageMapping = () => {
                 // selector is defaulted during hydration in create workflows.
                 targetDataPlaneId =
                     selectedDataPlane &&
-                    dataPlaneNames.includes(
+                    evaluatedDataPlaneNames.includes(
                         selectedDataPlane.dataPlaneName.whole
                     ) &&
                     !previousNameEmpty
@@ -92,12 +110,14 @@ export const useEvaluateStorageMapping = () => {
             return getDataPlaneOption(
                 targetDataPlaneId,
                 catalogName,
-                dataPlaneNames,
-                hasSupportRole
+                evaluatedDataPlaneNames,
+                hasSupportRole,
+                existingDataPlaneOption
             );
         },
         [
             currentStorageMappingPrefix,
+            existingDataPlaneOption,
             getDataPlaneOption,
             hasSupportRole,
             previousNameEmpty,

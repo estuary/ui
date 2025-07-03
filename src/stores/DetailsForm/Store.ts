@@ -111,6 +111,7 @@ const getInitialStateData = (): Pick<
     | 'dataPlaneOptions'
     | 'details'
     | 'errorsExist'
+    | 'existingDataPlaneOption'
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
@@ -119,6 +120,7 @@ const getInitialStateData = (): Pick<
     connectors: [],
 
     dataPlaneOptions: [],
+    existingDataPlaneOption: undefined,
 
     details: initialDetails,
     errorsExist: true,
@@ -281,6 +283,16 @@ export const getInitialState = (
             }),
             false,
             'Entity Name Change Flag Set'
+        );
+    },
+
+    setExistingDataPlaneOption: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.existingDataPlaneOption = value;
+            }),
+            false,
+            'Existing Data Plane Option Set'
         );
     },
 
