@@ -10,6 +10,9 @@ const changesRejected = 'rejected due to incompatible collection updates';
 
 const skipDataFlowReset = `Skip data flow reset`;
 
+const autoDiscoverHeader = `Schema Evolution`;
+const optIntoDiscovery = `Automatically keep schemas up to date`;
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -116,8 +119,8 @@ export const Workflows: Record<string, string> = {
                 no data output from this materialization. To add collections,
                 use the Output Collections section.`,
 
-    'workflows.autoDiscovery.header': `Schema Evolution`,
-    'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
+    'workflows.autoDiscovery.header': `${autoDiscoverHeader}`,
+    'workflows.autoDiscovery.label.optIntoDiscovery': `${optIntoDiscovery}`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Changing primary keys re-versions collections`,
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
@@ -451,6 +454,8 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
     'schemaEditor.table.filter.option.may': `May exist`,
+    'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
+
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
@@ -488,4 +493,9 @@ export const Workflows: Record<string, string> = {
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
+
+    'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
+    'schemaManagement.options.manual.label': `Manually manage schemas`,
+    'schemaManagement.options.auto.description': `Estuary infers the schema based on the data. With automatically handle changes.`,
+    'schemaManagement.options.auto.label': `Let Estuary control schemas`,
 };
