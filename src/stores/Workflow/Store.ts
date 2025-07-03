@@ -20,18 +20,35 @@ const STORE_KEY = 'workflow';
 
 const getInitialStateData = (): Pick<
     WorkflowState,
-    'catalogName' | 'connectorMetadata' | 'customerId' | 'redirectUrl'
+    | 'catalogName'
+    | 'connectorMetadata'
+    | 'customerId'
+    | 'redirectUrl'
+    | 'storageMappingPrefix'
 > => ({
     catalogName: { root: '', suffix: '', tenant: '', whole: '' },
     connectorMetadata: [],
     customerId: '',
     redirectUrl: '',
+    storageMappingPrefix: '',
 });
 
 const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithProjectionSettings(set),
+
+    resetState: () => {
+        set(
+            {
+                ...getInitialStateData(),
+                ...getInitialHydrationData(),
+                ...getInitialProjectionData(),
+            },
+            false,
+            'Workflow state reset'
+        );
+    },
 
     setCatalogName: (segments) => {
         set(
@@ -74,15 +91,13 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
         );
     },
 
-    resetState: () => {
+    setStorageMappingPrefix: (value) => {
         set(
-            {
-                ...getInitialStateData(),
-                ...getInitialHydrationData(),
-                ...getInitialProjectionData(),
-            },
+            produce((state: WorkflowState) => {
+                state.storageMappingPrefix = value;
+            }),
             false,
-            'Workflow state reset'
+            'storage mapping prefix set'
         );
     },
 });
