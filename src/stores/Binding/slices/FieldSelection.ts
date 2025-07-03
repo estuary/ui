@@ -25,8 +25,8 @@ interface BindingFieldSelections {
 }
 
 export interface StoreWithFieldSelection {
-    recommendFields: { [uuid: string]: boolean };
-    setRecommendFields: (bindingUUID: string, value: boolean) => void;
+    recommendFields: { [uuid: string]: boolean | number };
+    setRecommendFields: (bindingUUID: string, value: boolean | number) => void;
 
     selections: BindingFieldSelections;
     initializeSelections: (

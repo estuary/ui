@@ -55,7 +55,7 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                     color="success"
                     constraint={constraint}
                     disabled={
-                        !recommendFields[bindingUUID] ||
+                        !Boolean(recommendFields[bindingUUID]) ||
                         constraint.type === ConstraintTypes.FIELD_OPTIONAL
                     }
                     field={field}
