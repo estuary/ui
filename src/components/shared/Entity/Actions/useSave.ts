@@ -1,4 +1,4 @@
-import type { DraftSpecsExtQuery_BySpecTypeReduced } from 'src/api/draftSpecs';
+import type { DraftSpecsExtQuery_BySpecTypeReduced } from 'src/api/types';
 import type { CustomEvents } from 'src/services/types';
 
 import { useCallback, useMemo } from 'react';

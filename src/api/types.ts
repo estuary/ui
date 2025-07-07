@@ -76,3 +76,10 @@ export interface EvolvedCollections {
     updated_captures: string[];
     updated_materializations: string[];
 }
+
+export interface DraftSpecsExtQuery_BySpecTypeReduced {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+    spec?: any;
+}

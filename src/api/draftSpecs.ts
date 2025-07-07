@@ -2,6 +2,7 @@ import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type {
     DraftSpecCreateMatchData,
     DraftSpecData,
+    DraftSpecsExtQuery_BySpecTypeReduced,
     DraftSpecUpdateMatchData,
 } from 'src/api/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
@@ -181,13 +182,6 @@ export const getDraftSpecsBySpecType = async (
         'getDraftSpecsBySpecType'
     ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
-
-export interface DraftSpecsExtQuery_BySpecTypeReduced {
-    draft_id: string;
-    catalog_name: string;
-    spec_type: string;
-    spec?: any;
-}
 
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
