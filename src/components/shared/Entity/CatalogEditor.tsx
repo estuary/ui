@@ -30,7 +30,7 @@ function CatalogEditor({ messageId }: Props) {
     const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
-        const disableEditor = Boolean(
+        const editorDisabled = Boolean(
             backfillMode === 'reset' && backfillCount
         );
 
@@ -49,7 +49,7 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {disableEditor ? (
+                    {editorDisabled ? (
                         <AlertBox
                             sx={{
                                 maxWidth: 'fit-content',
@@ -68,7 +68,7 @@ function CatalogEditor({ messageId }: Props) {
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
-                            disabled={Boolean(formActive || disableEditor)}
+                            disabled={Boolean(formActive || editorDisabled)}
                             monitorCurrentCatalog
                         />
                     </Paper>
