@@ -135,6 +135,7 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
+    | 'hasReadAndWriteSchema'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -150,6 +151,7 @@ const getInitialMiscData = (): Pick<
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
+    hasReadAndWriteSchema: null,
 });
 
 const getInitialStateData = () => ({
@@ -321,6 +323,15 @@ const getInitialState = (
         const schemasToTest = usingReadSchema
             ? [spec.readSchema]
             : [spec.schema];
+
+        // TODO (schema editing management) - we'll need to know about this
+        // set(
+        //     produce((state: BindingsEditorState) => {
+        //         state.hasReadAndWriteSchema = usingReadAndWriteSchema;
+        //     }),
+        //     false,
+        //     'Setting hasReadAndWriteSchema flag'
+        // );
 
         // If no schema then just return because hopefully it means
         //  we are still just waiting for the schema to load in

@@ -8,6 +8,9 @@ const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 
 const changesRejected = 'rejected due to incompatible collection updates';
 
+const autoDiscoverHeader = `Schema Evolution`;
+const optIntoDiscovery = `Automatically keep schemas up to date`;
+
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
@@ -118,8 +121,8 @@ export const Workflows: Record<string, string> = {
                 no data output from this materialization. To add collections,
                 use the Output Collections section.`,
 
-    'workflows.autoDiscovery.header': `Schema Evolution`,
-    'workflows.autoDiscovery.label.optIntoDiscovery': `Automatically keep schemas up to date`,
+    'workflows.autoDiscovery.header': `${autoDiscoverHeader}`,
+    'workflows.autoDiscovery.label.optIntoDiscovery': `${optIntoDiscovery}`,
     'workflows.autoDiscovery.label.addNewBindings': `Automatically add new collections`,
     'workflows.autoDiscovery.label.evolveIncompatibleCollection': `Changing primary keys re-versions collections`,
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
@@ -129,8 +132,8 @@ export const Workflows: Record<string, string> = {
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 
-    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']}`,
-    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix to create a {entityType}. Please contact an administrator to request access.`,
+    'workflows.guards.admin.title': `Missing required ${CommonMessages['terms.permissions']} or Storage Mapping`,
+    'workflows.guards.admin.message': `You must have the admin capability to at least one prefix with a storage mapping to create a {entityType}. Please contact an administrator to request access.`,
 
     'workflows.guards.edit.title': `Missing edit ${CommonMessages['terms.permissions']}`,
     'workflows.guards.edit.message': `You do not have edit capabilities for this {entityType}. Please contact an administrator to request access.`,
@@ -147,7 +150,6 @@ export const Workflows: Record<string, string> = {
     'collectionReset.editor.warning.title': `Editing disabled`,
     'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
-    // TODO (collection seletor) - need to update content
     'workflows.dataFlowBackfill.label': `Backfill Mode`,
     'workflows.dataFlowBackfill.options.reset.label': `Dataflow Reset`,
     'workflows.dataFlowBackfill.options.reset.description': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
@@ -244,7 +246,7 @@ export const Workflows: Record<string, string> = {
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, only the table name will be set to the last part of the collection name.`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the second-to-last part of the collection name.`,
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
@@ -353,6 +355,8 @@ export const Workflows: Record<string, string> = {
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
+    'storageMappingsHydrator.error.failedToFetch': `There was an issue while checking if you have any storage mappings.`,
+    'dataPlanesHydrator.error.failedToFetch': `There was an issue while checking if you have any data planes.`,
 
     // Entity Not Found
     'entityNotFound.heading': `Sorry, that entity cannot be found.`,
@@ -386,6 +390,8 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
     'schemaEditor.table.filter.option.may': `May exist`,
+    'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
+
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
@@ -423,4 +429,9 @@ export const Workflows: Record<string, string> = {
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
+
+    'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
+    'schemaManagement.options.manual.label': `Manually manage schemas`,
+    'schemaManagement.options.auto.description': `Estuary infers the schema based on the data. With automatically handle changes.`,
+    'schemaManagement.options.auto.label': `Let Estuary control schemas`,
 };

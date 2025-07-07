@@ -10,7 +10,7 @@ export const NUMERIC_RE = RegExp(`^[0-9]+$`);
 export const POSTGRES_INTERVAL_RE = new RegExp(`^[0-9]{2}:[0-9]{2}:[0-9]{2}$`);
 export const DURATION_RE = new RegExp(/^[0-9]+(h|m|s){1}$/);
 export const CAPTURE_INTERVAL_RE = new RegExp(
-    /^([0-9]+h)? ?([0-9]+m)? ?([0-9]+s)?$/
+    /^([0-9]+day(s\b|\b))? ?([0-9]+h)? ?([0-9]+m)? ?([0-9]+s)?$/
 );
 export const ISO_8601_DURATION_RE = new RegExp(
     /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/

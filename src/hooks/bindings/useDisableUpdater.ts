@@ -1,11 +1,14 @@
 import type { BindingDisableUpdate } from 'src/stores/Binding/types';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import {
+    useEditorStore_id,
+    useEditorStore_queryResponse_draftSpecs,
+} from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import useDraftUpdater from 'src/hooks/useDraftUpdater';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -20,6 +23,7 @@ function useDisableUpdater(bindingUUID?: string) {
 
     const entityType = useEntityType();
 
+    const draftId = useEditorStore_id();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     const { enqueueSnackbar } = useSnackbar();
@@ -57,9 +61,12 @@ function useDisableUpdater(bindingUUID?: string) {
                             missingIndex ||
                             // Make sure there is a binding there at least
                             !spec.bindings[bindingIndex] ||
-                            // Try to be safe and make sure we have the right name
-                            getCollectionName(spec.bindings[bindingIndex]) !==
-                                collectionName
+                            // Try to be safe and make sure we have the right name when we are updating
+                            //  a specific binding
+                            (collectionName &&
+                                getCollectionName(
+                                    spec.bindings[bindingIndex]
+                                ) !== collectionName)
                         ) {
                             missingIndex = true;
                             return;
@@ -142,24 +149,31 @@ function useDisableUpdater(bindingUUID?: string) {
         ]
     );
 
-    let currentSetting: boolean | null | undefined = null;
-
-    if (bindingIndex !== null) {
-        if (
-            draftSpecs?.[0]?.spec?.bindings &&
-            draftSpecs?.[0]?.spec?.bindings.length > 0 &&
-            draftSpecs[0].spec.bindings[bindingIndex]
-        ) {
-            currentSetting = draftSpecs[0].spec.bindings[bindingIndex].disable;
+    const currentSetting: boolean | null | undefined = useMemo(() => {
+        if (bindingIndex !== null) {
+            // If there is a draft id then we are not going to run another generation
+            //  so only use the setting from the draft
+            if (draftId) {
+                if (
+                    draftSpecs?.[0]?.spec?.bindings &&
+                    draftSpecs?.[0]?.spec?.bindings.length > 0 &&
+                    draftSpecs[0].spec.bindings[bindingIndex]
+                ) {
+                    return draftSpecs[0].spec.bindings[bindingIndex].disable;
+                }
+            } else {
+                // No draft ID means we will be using the store settings on the next call to
+                //  generate the spec. This is common for create and _sometimes_ edit. Like when the user
+                //  starts editing, adding some bindings, and has flipped the disable/enable toggle on the
+                //  new bindings but did NOT click the next button yet.
+                return storeSetting;
+            }
         } else {
-            // Usually means the user has entered edit, adding some bindings, and has flipped
-            //  the disable/enable toggle on the new bindings but did NOT click the next button
-            //  yet.
-            currentSetting = storeSetting;
+            return storeSetting;
         }
-    } else {
-        currentSetting = storeSetting;
-    }
+
+        return null;
+    }, [bindingIndex, draftId, draftSpecs, storeSetting]);
 
     return {
         currentSetting,

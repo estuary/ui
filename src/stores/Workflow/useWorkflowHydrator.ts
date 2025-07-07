@@ -8,6 +8,7 @@ import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
 import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -16,6 +17,14 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
     const { hydrateDetailsForm } = useDetailsFormHydrator();
     const { hydrateEndpointConfig } = useEndpointConfigHydrator();
+
+    const baseCatalogPrefix = useEntitiesStore((state) => {
+        const storageMappingPrefixes = Object.keys(state.storageMappings);
+
+        return storageMappingPrefixes.length === 1
+            ? storageMappingPrefixes[0]
+            : undefined;
+    });
 
     const catalogName = useWorkflowStore((state) => state.catalogName.whole);
     const setConnectorMetadata = useWorkflowStore(
@@ -48,7 +57,9 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
         setConnectorMetadata(connectorMetadata);
 
-        const baseEntityName = expressWorkflow ? catalogName : undefined;
+        const baseEntityName = expressWorkflow
+            ? catalogName
+            : baseCatalogPrefix;
 
         try {
             const { connectorTagId } = await hydrateDetailsForm(
@@ -67,6 +78,7 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
         return Promise.resolve();
     }, [
+        baseCatalogPrefix,
         catalogName,
         connectorId,
         expressWorkflow,
