@@ -40,14 +40,6 @@ export const getEvolutionMessageId = (
     return 'fallThrough';
 };
 
-// Evolution success will return this object in job_status['evolved_collections']
-export interface EvolvedCollections {
-    new_name: string;
-    old_name: string;
-    updated_captures: string[];
-    updated_materializations: string[];
-}
-
 // Represents the shape fo the inputs to the evolutions table.
 export interface EvolutionRequest {
     // The current (live) collection name. This is always required.

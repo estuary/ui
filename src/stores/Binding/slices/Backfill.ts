@@ -1,4 +1,4 @@
-import type { EvolvedCollections } from 'src/api/evolutions';
+import type { EvolvedCollections } from 'src/api/types';
 import type { BooleanString } from 'src/components/shared/buttons/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { NamedSet } from 'zustand/middleware';
