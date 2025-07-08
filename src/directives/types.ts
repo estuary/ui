@@ -14,6 +14,11 @@ export interface Directives {
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
+export type JobStatusQueryData = Pick<
+    AppliedDirective<UserClaims>,
+    'logs_token' | 'directive_id' | 'id'
+>;
+
 export interface ActionsProps {
     primaryMessageId: string;
     saving: boolean;
