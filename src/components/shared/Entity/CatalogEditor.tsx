@@ -26,10 +26,14 @@ function CatalogEditor({ messageId }: Props) {
     const formActive = useFormStateStore_isActive();
 
     const intl = useIntl();
-    const backfillDataFlow = useBindingStore((state) => state.backfillDataFlow);
+    const backfillMode = useBindingStore((state) => state.backfillMode);
     const backfillCount = useBinding_backfilledBindings_count();
 
     if (draftId && formStatus !== FormStatus.INIT) {
+        const editorDisabled = Boolean(
+            backfillMode === 'reset' && backfillCount
+        );
+
         return (
             <WrapperWithHeader
                 header={
@@ -45,7 +49,7 @@ function CatalogEditor({ messageId }: Props) {
                         <FormattedMessage id={messageId} />
                     </Typography>
 
-                    {backfillDataFlow && backfillCount ? (
+                    {editorDisabled ? (
                         <AlertBox
                             sx={{
                                 maxWidth: 'fit-content',
@@ -53,21 +57,18 @@ function CatalogEditor({ messageId }: Props) {
                             short
                             severity="warning"
                             title={intl.formatMessage({
-                                id: 'resetDataFlow.editor.warning.title',
+                                id: 'collectionReset.editor.warning.title',
                             })}
                         >
                             {intl.formatMessage({
-                                id: 'resetDataFlow.editor.warning.message',
+                                id: 'collectionReset.editor.warning.message',
                             })}
                         </AlertBox>
                     ) : null}
 
                     <Paper variant="outlined" sx={{ p: 1 }}>
                         <DraftSpecEditor
-                            disabled={Boolean(
-                                formActive ||
-                                    (backfillDataFlow && backfillCount)
-                            )}
+                            disabled={Boolean(formActive || editorDisabled)}
                             monitorCurrentCatalog
                         />
                     </Paper>

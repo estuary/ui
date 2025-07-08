@@ -1,3 +1,4 @@
+import type { DraftSpecsExtQuery_BySpecTypeReduced } from 'src/api/types';
 import type { CustomEvents } from 'src/services/types';
 
 import { useCallback, useMemo } from 'react';
@@ -7,7 +8,10 @@ import { useIntl } from 'react-intl';
 import {
     deleteDraftSpecsByCatalogName,
     getDraftSpecsBySpecTypeReduced,
+    massCreateDraftSpecs,
+    massUpdateDraftSpecs,
 } from 'src/api/draftSpecs';
+import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
 import {
     createPublication,
     getPublicationByIdQuery,
@@ -20,11 +24,11 @@ import {
     useEditorStore_setPubId,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
     useBinding_collections,
+    useBinding_collectionsBeingBackfilled,
     useBinding_fullSourceErrorsExist,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -32,7 +36,6 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useFormStateStore_messagePrefix,
     useFormStateStore_setFormState,
-    useFormStateStore_setShowSavePrompt,
     useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -63,11 +66,6 @@ function useSave(
 
     const status = dryRun ? FormStatus.TESTING : FormStatus.SAVING;
 
-    const setShowSavePrompt = useFormStateStore_setShowSavePrompt();
-    const [backfillDataflow] = useBindingStore((state) => [
-        state.backfillDataFlow,
-    ]);
-
     // Draft Editor Store
     const setPubId = useEditorStore_setPubId();
 
@@ -78,6 +76,9 @@ function useSave(
     const dataPlaneName = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.dataPlaneName
     );
+
+    const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
+    const [backfillMode] = useBindingStore((state) => [state.backfillMode]);
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();
@@ -91,15 +92,9 @@ function useSave(
     );
 
     const entityType = useEntityType();
-    const isEdit = useEntityWorkflow_Editing();
 
     const collections = useBinding_collections();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
-
-    const showPreSavePrompt = useMemo(
-        () => Boolean(isEdit && !dryRun && backfillDataflow),
-        [backfillDataflow, dryRun, isEdit]
-    );
 
     const waitForPublishToFinish = useCallback(
         (publicationId: string, hideNotification?: boolean) => {
@@ -196,6 +191,237 @@ function useSave(
         ]
     );
 
+    const collectionResetEnabled = useMemo(
+        () =>
+            Boolean(
+                backfillMode === 'reset' &&
+                    entityType === 'capture' &&
+                    collectionsBeingBackfilled.length > 0
+            ),
+        [backfillMode, collectionsBeingBackfilled.length, entityType]
+    );
+
+    const handleCollectionReset = useCallback(
+        async (
+            draftId: string,
+            collectionsOnDraft: DraftSpecsExtQuery_BySpecTypeReduced[] | null,
+            collectionNamesOnDraft: string[] | null,
+            collectionsBeingRemovedFromDraft: any
+        ) => {
+            if (!collectionResetEnabled) {
+                return true;
+            }
+
+            let collectionsMissingFromDraft: string[] = [];
+
+            if (collectionNamesOnDraft && collectionNamesOnDraft.length > 0) {
+                // Go through and see if the collections are already on the draft
+                collectionsBeingBackfilled.forEach((value, index) => {
+                    if (
+                        !collectionsBeingRemovedFromDraft.includes(value) &&
+                        !collectionNamesOnDraft?.includes(value)
+                    ) {
+                        collectionsMissingFromDraft.push(value);
+                    }
+                });
+            } else {
+                // No collections are on the draft yet so we have to add them all
+                collectionsMissingFromDraft = collectionsBeingBackfilled;
+            }
+
+            if (collectionsMissingFromDraft.length > 0) {
+                // Fetch the live spec of all collections that aren't on the draft
+                const collectionLiveSpecs = await getLiveSpecsByCatalogNames(
+                    'collection',
+                    collectionsMissingFromDraft
+                );
+                if (collectionLiveSpecs.error) {
+                    onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: collectionLiveSpecs.error,
+                        },
+                    });
+
+                    return false;
+                }
+
+                // Add missing collections to the draft with the reset property set
+                const collectionsToInsert = collectionLiveSpecs.data.map(
+                    (liveSpec) => {
+                        return {
+                            catalog_name: liveSpec.catalog_name,
+                            expect_pub_id: liveSpec.last_pub_id,
+                            spec: {
+                                ...liveSpec.spec,
+                                reset: true,
+                            },
+                        };
+                    }
+                );
+                const massCreateResponse = await massCreateDraftSpecs(
+                    draftId,
+                    'collection',
+                    collectionsToInsert
+                );
+                if (massCreateResponse.error) {
+                    onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: massCreateResponse.error,
+                        },
+                    });
+                    return false;
+                }
+            }
+
+            // Update collections on the draft with the reset property set
+            //  Make sure to merge in `reset` with the current spec as they
+            //  may have edited other things as well.
+            const collectionsToUpdate: any[] = [];
+            if (collectionsOnDraft) {
+                collectionsOnDraft.forEach((draftSpec) => {
+                    if (
+                        collectionsBeingRemovedFromDraft.includes(
+                            draftSpec.catalog_name
+                        )
+                    ) {
+                        return;
+                    }
+
+                    if (draftSpec.spec.reset !== true) {
+                        collectionsToUpdate.push({
+                            catalog_name: draftSpec.catalog_name,
+                            spec: {
+                                ...draftSpec.spec,
+                                reset: true,
+                            },
+                        });
+                    }
+                });
+            }
+            const massUpdateResponse = await massUpdateDraftSpecs(
+                draftId,
+                'collection',
+                collectionsToUpdate
+            );
+            if (massUpdateResponse.error) {
+                onFailure({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: massUpdateResponse.error,
+                    },
+                });
+                return false;
+            }
+
+            return true;
+        },
+        [collectionResetEnabled, collectionsBeingBackfilled, onFailure]
+    );
+
+    const handleCollections = useCallback(
+        async (draftId: string) => {
+            let collectionsBeingRemovedFromDraft: string[] = [];
+
+            // Look for every collection on the draft.
+            const collectionsOnDraftSpecResponse =
+                await getDraftSpecsBySpecTypeReduced(
+                    draftId,
+                    'collection',
+                    collectionResetEnabled
+                );
+            if (collectionsOnDraftSpecResponse.error) {
+                onFailure({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: collectionsOnDraftSpecResponse.error,
+                    },
+                });
+
+                return false;
+            }
+
+            // We need to track what is already on the draft so we do not overwrite
+            //  any changes the user made while we mark reset=true
+            let collectionNamesOnDraft: string[] | null = null;
+            if (
+                collectionsOnDraftSpecResponse.data &&
+                collectionsOnDraftSpecResponse.data.length > 0
+            ) {
+                // Now that we are making a call we can delete the
+                //  draftId used for showing discovery errors
+                setDiscoveredDraftId(null);
+
+                // Get a list of all the collections on the draft spec.
+                //  During create - this will often be all collections
+                //  During edit - this will often only be the ones the user edited
+                collectionNamesOnDraft =
+                    collectionsOnDraftSpecResponse.data.map(
+                        (datum) => datum.catalog_name
+                    );
+
+                // For a test we do not want to remove from draft - otherwise we would need
+                //  to add them back in after the test.
+                const disabledCollections: string[] =
+                    dryRun || entityType !== 'capture'
+                        ? []
+                        : draftSpecs[0].spec.bindings
+                              .filter((binding: any) => binding.disable)
+                              .map((binding: any) =>
+                                  getCollectionName(binding)
+                              );
+
+                // Get all the collections that might still be in the UI state but are not
+                //    needed as they are not on the draft
+                const unboundCollections = collectionNamesOnDraft.filter(
+                    (collection) => !collections.includes(collection)
+                );
+                collectionsBeingRemovedFromDraft = [
+                    ...unboundCollections,
+                    ...disabledCollections,
+                ];
+
+                // Clean up the unbound and disabled collections so that they cannot cause issues
+                //  with the save/publish
+                const deleteDraftSpecsResponse =
+                    await deleteDraftSpecsByCatalogName(
+                        draftId,
+                        'collection',
+                        collectionsBeingRemovedFromDraft
+                    );
+                if (deleteDraftSpecsResponse.error) {
+                    onFailure({
+                        error: {
+                            title: 'captureEdit.generate.failedErrorTitle',
+                            error: deleteDraftSpecsResponse.error,
+                        },
+                    });
+                    return false;
+                }
+            }
+
+            const handleCollectionResetResponse = await handleCollectionReset(
+                draftId,
+                collectionsOnDraftSpecResponse.data,
+                collectionNamesOnDraft,
+                collectionsBeingRemovedFromDraft
+            );
+
+            return handleCollectionResetResponse;
+        },
+        [
+            collectionResetEnabled,
+            collections,
+            draftSpecs,
+            dryRun,
+            entityType,
+            handleCollectionReset,
+            onFailure,
+            setDiscoveredDraftId,
+        ]
+    );
+
     return useCallback(
         async (draftId: string | null, hideLogs?: boolean) => {
             // FullSource updates the draft directly and does not require a new generation so
@@ -222,71 +448,15 @@ function useSave(
                 return;
             }
 
-            if (!showPreSavePrompt) {
-                // All the validation is done and we can start saving
-                updateFormStatus(status, hideLogs);
-            }
-
-            // If there are bound collections then we need to potentially handle clean up
             if (collections.length > 0) {
-                const draftSpecResponse = await getDraftSpecsBySpecTypeReduced(
-                    draftId,
-                    'collection'
-                );
+                // If there are bound collections then we need to potentially handle clean up
+                const response = await handleCollections(draftId);
 
-                if (draftSpecResponse.error) {
-                    return onFailure({
-                        error: {
-                            title: 'captureEdit.generate.failedErrorTitle',
-                            error: draftSpecResponse.error,
-                        },
-                    });
-                } else if (
-                    draftSpecResponse.data &&
-                    draftSpecResponse.data.length > 0
-                ) {
-                    // Now that we are making a call we can delete the
-                    //  draftId used for showing discovery errors
-                    setDiscoveredDraftId(null);
-
-                    const unboundCollections = draftSpecResponse.data
-                        .map((query) => query.catalog_name)
-                        .filter(
-                            (collection) => !collections.includes(collection)
-                        );
-
-                    // For a test we do not want to remove from draft - otherwise we would need
-                    //  to add them back in after the test.
-                    const disabledCollections: string[] =
-                        dryRun || entityType !== 'capture'
-                            ? []
-                            : draftSpecs[0].spec.bindings
-                                  .filter((binding: any) => binding.disable)
-                                  .map((binding: any) =>
-                                      getCollectionName(binding)
-                                  );
-
-                    const deleteDraftSpecsResponse =
-                        await deleteDraftSpecsByCatalogName(
-                            draftId,
-                            'collection',
-                            [...unboundCollections, ...disabledCollections]
-                        );
-                    if (deleteDraftSpecsResponse.error) {
-                        return onFailure({
-                            error: {
-                                title: 'captureEdit.generate.failedErrorTitle',
-                                error: deleteDraftSpecsResponse.error,
-                            },
-                        });
-                    }
+                // If we got false back something went wrong but the call already handled
+                //  showing the error so we are good to just return and not publish
+                if (!response) {
+                    return;
                 }
-            }
-
-            if (showPreSavePrompt) {
-                setIncompatibleCollections([]);
-                setShowSavePrompt(true);
-                return;
             }
 
             const response = await createPublication(
@@ -314,22 +484,16 @@ function useSave(
             });
         },
         [
-            collections,
+            collections.length,
             dataPlaneName?.whole,
-            draftSpecs,
             dryRun,
-            entityType,
             fullSourceErrorsExist,
+            handleCollections,
             intl,
             messagePrefix,
             onFailure,
-            setDiscoveredDraftId,
             setFormState,
             setIncompatibleCollections,
-            setShowSavePrompt,
-            showPreSavePrompt,
-            status,
-            updateFormStatus,
             waitForPublishToFinish,
         ]
     );
