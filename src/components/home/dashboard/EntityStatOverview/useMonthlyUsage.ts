@@ -13,7 +13,7 @@ import { hasLength, RESPONSE_DATA_LIMIT } from 'src/utils/misc-utils';
 // to access the properties specific to one of the interfaces.
 const isDefaultStatistic = (
     datum: CatalogStats_Dashboard | DefaultStatsWithDocument
-): datum is DefaultStatsWithDocument => 'bytes_read_by_me' in datum;
+): datum is DefaultStatsWithDocument => 'bytes_written_by_me' in datum;
 
 export default function useMonthlyUsage() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -33,21 +33,9 @@ export default function useMonthlyUsage() {
         let dataRead = 0;
 
         if (!error && data) {
-            data.filter(
-                ({ task_stats }) =>
-                    task_stats &&
-                    (Object.hasOwn(task_stats, 'capture') ||
-                        Object.hasOwn(task_stats, 'materialize'))
-            ).forEach((datum) => {
-                if (isDefaultStatistic(datum)) {
-                    dataWritten += datum.bytes_written_by_me;
-                    dataRead += datum.bytes_read_by_me;
-
-                    return;
-                }
-
-                dataWritten += datum.bytes_written ?? 0;
-                dataRead += datum.bytes_read ?? 0;
+            data.filter(isDefaultStatistic).forEach((datum) => {
+                dataWritten += datum.bytes_written_by_me;
+                dataRead += datum.bytes_read_by_me;
             });
         }
 
