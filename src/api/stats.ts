@@ -1,5 +1,4 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
-import type { Duration } from 'date-fns';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     CatalogStats,
@@ -290,40 +289,13 @@ export interface DefaultStatsWithDocument extends DefaultStats {
     task_stats: object | null;
 }
 
-const getStatsForDashboard = (
-    tenant: string,
-    grain: Grains,
-    // endDate: DateTime,
-    duration?: Duration
-    // entityType?: Entity
-) => {
-    const endDate = DateTime.utc().startOf('month');
-
-    const past = duration ? endDate.minus(duration) : endDate;
-
-    // let query: string;
-    // switch (entityType) {
-    //     case 'capture':
-    //         query = CAPTURE_QUERY;
-    //         break;
-    //     case 'materialization':
-    //         query = MATERIALIZATION_QUERY;
-    //         break;
-    //     case 'collection':
-    //         query = COLLECTION_QUERY;
-    //         break;
-    //     default:
-    //         query = DEFAULT_QUERY;
-    // }
-
+const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
         .select(`${DEFAULT_QUERY},${TASK_STATS}`)
-        .like('catalog_name', `${tenant}%`)
-        .eq('grain', grain)
-        .or('bytes_written_by_me.gt.0,bytes_read_by_me.gt.0')
-        .gte('ts', past)
-        .lte('ts', endDate)
+        .eq('catalog_name', `${tenant}`)
+        .eq('grain', 'monthly')
+        .eq('ts', DateTime.utc().startOf('month'))
         .order('ts', { ascending: true })
         .returns<(CatalogStats_Dashboard | DefaultStatsWithDocument)[]>();
 };

@@ -21,7 +21,7 @@ export default function useMonthlyUsage() {
     const query = useMemo(
         () =>
             hasLength(selectedTenant)
-                ? getStatsForDashboard(selectedTenant, 'monthly')
+                ? getStatsForDashboard(selectedTenant)
                 : null,
         [selectedTenant]
     );
