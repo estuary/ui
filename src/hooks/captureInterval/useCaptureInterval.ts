@@ -2,7 +2,7 @@ import type { Schema } from 'src/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { debounce, omit } from 'lodash';
+import { cloneDeep, debounce, omit } from 'lodash';
 import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -21,6 +21,9 @@ import { formatCaptureInterval } from 'src/utils/time-utils';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
 
+// TODO (capture interval) - this feature does not support two way data binding
+//  with the editor. Needs to be added when we convert this over to the new
+//  draftUpdater approach.
 export default function useCaptureInterval() {
     // Binding Store
     const captureInterval = useBindingStore((state) => state.captureInterval);
@@ -59,7 +62,7 @@ export default function useCaptureInterval() {
                 return Promise.resolve();
             }
 
-            let spec: Schema = draftSpec.spec;
+            let spec: Schema = cloneDeep(draftSpec.spec);
             const originalInterval = draftSpec.spec?.interval;
 
             if (!hasLength(interval)) {
