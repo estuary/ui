@@ -12,7 +12,6 @@ import {
     useEditorStore_pubId,
     useEditorStore_resetState,
 } from 'src/components/editor/Store/hooks';
-import { usePreSavePromptStore } from 'src/components/shared/Entity/prompts/store/usePreSavePromptStore';
 import { useEntityType } from 'src/context/EntityContext';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
@@ -76,16 +75,10 @@ function useEntityWorkflowHelpers() {
     // Transformation Create Store
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
-    // PreSave Prompt Store
-    const resetPreSavePrompt = usePreSavePromptStore(
-        (state) => state.resetState
-    );
-
     // Workflow Store
     const resetWorkflowStore = useWorkflowStore((state) => state.resetState);
 
     const resetState = useCallback(() => {
-        resetPreSavePrompt();
         resetFormState();
         resetEndpointConfigState();
         resetDetailsFormState();
@@ -103,7 +96,6 @@ function useEntityWorkflowHelpers() {
         resetEditorStore,
         resetEndpointConfigState,
         resetFormState,
-        resetPreSavePrompt,
         resetSchemaEvolutionState,
         resetSourceCapture,
         resetTransformationCreateState,

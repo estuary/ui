@@ -8,8 +8,6 @@ const trialDuration = import.meta.env.VITE_TRIAL_DURATION;
 
 const changesRejected = 'rejected due to incompatible collection updates';
 
-const skipDataFlowReset = `Skip data flow reset`;
-
 const autoDiscoverHeader = `Schema Evolution`;
 const optIntoDiscovery = `Automatically keep schemas up to date`;
 
@@ -62,6 +60,10 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.footer.enabledCount': `enabled: {disabledBindingsCount}`,
     'workflows.collectionSelector.footer.enabledCount.all': `all enabled`,
     'workflows.collectionSelector.footer.enabledCount.empty': `all disabled`,
+
+    'workflows.collectionSelector.footer.backfilled': `backfilled: {calculatedCount}`,
+    'workflows.collectionSelector.footer.backfilled.all': `all backfilled`,
+    'workflows.collectionSelector.footer.backfilled.empty': ` `,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
@@ -144,69 +146,15 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
-    //  PreSave prompts
-    'preSavePrompt.dialog.title': `Save and Publish`,
-    'preSavePrompt.reviewSelection.title': `Review changes`,
-    'preSavePrompt.publish.title': `Save and publish`,
-    'preSavePrompt.logs.spinner.stopped': `done`,
-    'preSavePrompt.logs.spinner.running': `loading...`,
+    // Collection Reset
+    'collectionReset.editor.warning.title': `Editing disabled`,
+    'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
 
-    'preSavePrompt.draftErrors.title': `Draft Errors`,
-    'preSavePrompt.draftErrors.message': `There is an issue with the drafted version of your entity. Please contact support immediately.`,
-
-    // Reset Data Flow
-    'resetDataFlow.dialog.title': `Data Flow Reset`,
-
-    'resetDataFlow.selectMaterialization.title': `Select materialization for data flow reset`,
-
-    'resetDataFlow.reviewSelection.title': `Review changes`,
-
-    'resetDataFlow.disableCapture.title': `Disable capture`,
-
-    'resetDataFlow.waitForShardToIdle.title': `Wait for capture to fully stop`,
-    'resetDataFlow.waitForShardToIdle.success': `Stopped at {timeStopped} (UTC)`,
-
-    'resetDataFlow.updateMaterialization.title': `Update materialization`,
-    'resetDataFlow.updateMaterialization.skipped': `Skipped - no matching bindings`,
-
-    'resetDataFlow.enableCapture.title': `Enable capture`,
-
-    'resetDataFlow.publish.title': `Publish data flow reset`,
-
-    'resetDataFlow.errors.publishFailed': `Publishing failed.`,
-    'resetDataFlow.errors.missingDraftId': `Cannot find draft to update.`,
-    'resetDataFlow.errors.missingSession': `Cannot find user session.`,
-    'resetDataFlow.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reach out to support for assistance.`,
-    'resetDataFlow.disableCapture.errors.incompatibleCollections': `Publishing ${changesRejected}. Please reversion the collections, mark backfills and try again.`,
-
-    'resetDataFlow.materializations.header': `Below are ${CommonMessages['terms.destinations.lowercase']} that are linked to this capture.`,
-    'resetDataFlow.materializations.empty.header': `No related materializations`,
-    'resetDataFlow.materializations.empty.message': `No materializations with a source capture found. Pick one manually or skip this step.`,
-    'resetDataFlow.materializations.empty.warning': `Skipping this step will only backfill your capture and won’t reset your dataflow.`,
-    'resetDataFlow.materializations.selector.label': `${CommonMessages['terms.destination']} to backfill`,
-    'resetDataFlow.materializations.selector.helper': `Select one (1) ${CommonMessages['terms.destination']}`,
-    'resetDataFlow.materializations.chip.empty': `no ${CommonMessages['terms.materialization']} selected`,
-    'resetDataFlow.materializations.empty.skip': `${skipDataFlowReset}`,
-    'resetDataFlow.materializations.noOverlap.title': `${CommonMessages['terms.destination']} does not read any of the backfilled bindings.`,
-    'resetDataFlow.materializations.noOverlap.message': `Please select another ${CommonMessages['terms.destination.lowercase']} to continue resetting the data flow or click "${skipDataFlowReset}"`,
-
-    'resetDataFlow.reviewSelection.warning.title': `Once this process starts, you must stay on the page`,
-    'resetDataFlow.reviewSelection.warning.message': `Do not navigate away or reload. If you have any issues, please contact {docLink}`,
-    'resetDataFlow.reviewSelection.warning.message.docLink': `support@estuary.dev`,
-    'resetDataFlow.reviewSelection.warning.message.docPath': `${CommonMessages['support.email']}`,
-    'resetDataFlow.reviewSelection.header': `Change Summary`,
-
-    'resetDataFlow.reviewSelection.instructions': `The following data flow will be reset:`,
-    'preSavePrompt.reviewSelection.instructions': `The following entities will be impacted by this change:`,
-
-    'resetDataFlow.selectMaterialization.selected.none': `no materialization selected`,
-
-    'resetDataFlow.editor.warning.title': `Editing disabled`,
-    'resetDataFlow.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow']} you cannot manually edit your spec.`,
-
-    'workflows.collectionSelector.dataFlowBackfill.header': `Choose to backfill just your capture or the entire ${CommonMessages['terms.dataFlow']}.`,
-    'workflows.collectionSelector.dataFlowBackfill.option': `Backfill Data Flow`,
-    'workflows.collectionSelector.dataFlowBackfill.message': `Backfill capture and reset corresponding tables in a linked materialization.`,
+    'workflows.dataFlowBackfill.label': `Backfill Mode`,
+    'workflows.dataFlowBackfill.options.reset.label': `Dataflow Reset`,
+    'workflows.dataFlowBackfill.options.reset.description': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
+    'workflows.dataFlowBackfill.options.incremental.label': `Incremental backfill (advanced)`,
+    'workflows.dataFlowBackfill.options.incremental.description': `Re-extract all source data and Insert or Append into your existing destination tables without dropping and recreating them.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
     'workflows.dataPlane.label': `Data Plane`,
@@ -391,31 +339,19 @@ export const Workflows: Record<string, string> = {
     'entityEvolution.failure.errorTitle': `Update Failed`,
     'entityEvolution.serverUnreachable': `${CommonMessages['common.failedFetch']} while trying to update collections`,
     'entityEvolution.error.title': `Changes ${changesRejected}`,
-    'entityEvolution.error.message': `The proposed collection changes would break downstream tasks. You can click '${CTAs['cta.evolve']}' below to automatically update your draft with the following recommended actions.`,
-    'entityEvolution.error.note': `Note: This may result in additional cost as new versions are backfilled.`,
+    'entityEvolution.error.message': `Click '${CTAs['cta.evolve']}' below to accept changes which will automatically re-version and backfill your collections.`,
+    'entityEvolution.error.note': `Note: This may result in additional costs as collections are backfilled.`,
 
-    // Single quotes are special and must be doubled: https://formatjs.io/docs/core-concepts/icu-syntax#quoting--escaping
-    'entityEvolution.action.recreateOneBinding.description': `the materialization ''{materializationName}'' will be updated to increment the backfill counter and re-materialize the collection`,
-    'entityEvolution.action.recreateBindings.description': `{materializationCount} {materializationCount, plural,
-        one {Materialization}
-        other {Materializations}
-    } will be updated to increment the backfill counters and re-materialize the collection`,
-    'entityEvolution.action.recreateBindings.help': `The materialization will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
+    'entityEvolution.action.resetCollection.help': `This will delete your current collection and re-create it with the same name, performing a full backfill from the source system.`,
+    'entityEvolution.action.fallThrough.help': `The materializations will be updated to increment the ''backfill'' property of the affected binding, which causes it to re-create destination resources (such as tables) and re-materialize the source collection from the beginning. Other bindings in the materialization will not be affected. The source collection will retain all current data.`,
 
-    'entityEvolution.action.recreateCollection.description': `Collection will be re-created as ''{newName}'' because {reason}`,
-    'entityEvolution.action.recreateCollection.help': `This will create a new collection with the name shown.
-    The capture will be updated to write into the new collection, and will backfill the collection from source system.
-    Any materializations will also be updated to materialize the new collection instead of the old one.
-    The result will be a new resource (database table, for example) with an incremented version suffix (like "_v2")`,
-
-    'entityEvolution.action.recreateCollection.reason.keyChange':
-        'the collection key cannot be modified',
-    'entityEvolution.action.recreateCollection.reason.partitionChange':
-        'the collection partitions cannot be modified',
-    'entityEvolution.action.recreateCollection.reason.prevDeletedSpec':
-        'a live spec with this same name has already been created and was subsequently deleted',
-    'entityEvolution.action.recreateCollection.reason.authoritativeSourceSchema':
-        'a live spec with this same name has already been created and was subsequently deleted',
+    'entityEvolution.action.reason.keyChange': 'Collection key modified',
+    'entityEvolution.action.reason.partitionChange':
+        'Collection partition modified',
+    'entityEvolution.action.reason.authoritativeSourceSchema':
+        'Collection with same name has already been created and deleted',
+    'entityEvolution.action.reason.fallThrough':
+        'Incompatible with Materialization',
 
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,

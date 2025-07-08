@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl';
 
 import { DEFAULT_ROW_HEIGHT } from 'src/components/collection/Selector/List/shared';
 import { defaultOutlineColor } from 'src/context/Theme';
+import { useBackfillCountMessage } from 'src/hooks/bindings/useBackfillCountMessage';
 import { useBinding_enabledBindings_count } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorFooter({
@@ -22,6 +23,8 @@ function CollectionSelectorFooter({
     const intl = useIntl();
 
     const enabledBindingsCount = useBinding_enabledBindings_count();
+
+    const { calculatedCount } = useBackfillCountMessage();
 
     // TODO (FireFox Height Hack) - hardcoded height to make life easier
     return (
@@ -62,6 +65,20 @@ function CollectionSelectorFooter({
                                     {
                                         disabledBindingsCount:
                                             enabledBindingsCount,
+                                    }
+                                )}
+                            </Box>
+                            <Box>
+                                {intl.formatMessage(
+                                    {
+                                        id: Boolean(calculatedCount)
+                                            ? calculatedCount === totalCount
+                                                ? 'workflows.collectionSelector.footer.backfilled.all'
+                                                : 'workflows.collectionSelector.footer.backfilled'
+                                            : 'workflows.collectionSelector.footer.backfilled.empty',
+                                    },
+                                    {
+                                        calculatedCount,
                                     }
                                 )}
                             </Box>

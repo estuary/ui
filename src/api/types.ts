@@ -68,3 +68,18 @@ export interface DraftSpecCreateMatchData {
     spec_type?: Entity | null;
     expect_pub_id?: string;
 }
+
+// Evolution success will return this object in job_status['evolved_collections']
+export interface EvolvedCollections {
+    new_name: string;
+    old_name: string;
+    updated_captures: string[];
+    updated_materializations: string[];
+}
+
+export interface DraftSpecsExtQuery_BySpecTypeReduced {
+    draft_id: string;
+    catalog_name: string;
+    spec_type: string;
+    spec?: any;
+}
