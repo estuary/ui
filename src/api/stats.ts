@@ -27,11 +27,7 @@ import {
     defaultQueryDateFormat,
     LUXON_GRAIN_SETTINGS,
 } from 'src/services/luxon';
-import {
-    escapeReservedCharacters,
-    TABLES,
-    TASK_STATS,
-} from 'src/services/supabase';
+import { escapeReservedCharacters, TABLES } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 export type StatsFilter =
@@ -292,7 +288,7 @@ export interface DefaultStatsWithDocument extends DefaultStats {
 const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
-        .select(`${DEFAULT_QUERY},${TASK_STATS}`)
+        .select(`${DEFAULT_QUERY}`)
         .eq('catalog_name', `${tenant}`)
         .eq('grain', 'monthly')
         .eq('ts', DateTime.utc().startOf('month'))
