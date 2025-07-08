@@ -2,6 +2,7 @@ import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type {
     DraftSpecCreateMatchData,
     DraftSpecData,
+    DraftSpecsExtQuery_BySpecTypeReduced,
     DraftSpecUpdateMatchData,
 } from 'src/api/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
@@ -11,10 +12,13 @@ import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
+    DEFAULT_PAGING_SIZE,
     deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
+    pagedFetchAll,
+    parsePagedFetchAllResponse,
     RPCS,
     supabaseRetry,
     TABLES,
@@ -42,6 +46,96 @@ export const createDraftSpec = (
     }
 
     return insertSupabase(TABLES.DRAFT_SPECS, matchData, noResponse);
+};
+
+export const massCreateDraftSpecs = async (
+    draftId: string,
+    specType: Entity,
+    specs: any[]
+) => {
+    if (specs.length > 0) {
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
+        let index = 0;
+
+        // TODO (retry) promise generator
+        const insertPromiseGenerator = (idx: number) => {
+            return supabaseClient.from(TABLES.DRAFT_SPECS).insert(
+                specs.slice(idx, idx + CHUNK_SIZE).map((spec) => ({
+                    ...spec,
+                    draft_id: draftId,
+                    spec_type: specType,
+                    detail: 'Dashboard : collection reset : create',
+                }))
+            );
+        };
+
+        while (index < specs.length) {
+            const prom = insertPromiseGenerator(index);
+
+            promises.push(limiter(() => prom));
+
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
+    }
+};
+
+export const massUpdateDraftSpecs = async (
+    draftId: string,
+    specType: Entity,
+    specs: any[]
+) => {
+    if (specs.length > 0) {
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
+        let index = 0;
+
+        // TODO (retry) promise generator
+        const insertPromiseGenerator = (idx: number) => {
+            const currentSlice = specs.slice(idx, idx + CHUNK_SIZE);
+            return supabaseClient.from(TABLES.DRAFT_SPECS).upsert(
+                currentSlice.map((spec) => ({
+                    ...spec,
+                    draft_id: draftId,
+                    spec_type: specType,
+                    detail: 'Dashboard : collection reset : update',
+                })),
+                { onConflict: 'draft_id, catalog_name' }
+            );
+        };
+
+        while (index < specs.length) {
+            const prom = insertPromiseGenerator(index);
+
+            promises.push(limiter(() => prom));
+
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
+    }
 };
 
 export const modifyDraftSpec = (
@@ -89,30 +183,28 @@ export const getDraftSpecsBySpecType = async (
     ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
-interface DraftSpecsExtQuery_BySpecTypeReduced {
-    draft_id: string;
-    catalog_name: string;
-    spec_type: string;
-}
-
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
-    specType: Entity
+    specType: Entity,
+    fetchSpec?: boolean
 ) => {
-    const data = await supabaseRetry(
-        () =>
+    const responses = await pagedFetchAll<DraftSpecsExtQuery_BySpecTypeReduced>(
+        DEFAULT_PAGING_SIZE,
+        'getDraftSpecsBySpecTypeReduced',
+        (start) =>
             supabaseClient
                 .from(TABLES.DRAFT_SPECS_EXT)
-                .select(`draft_id,catalog_name,spec_type`)
+                .select(
+                    `draft_id,catalog_name,spec_type${fetchSpec ? ',spec' : ''}`
+                )
                 .eq('draft_id', draftId)
-                .eq('spec_type', specType),
-        'getDraftSpecsBySpecTypeReduced'
-    ).then(
-        handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
-        handleFailure
+                .eq('spec_type', specType)
+                .range(start, start + DEFAULT_PAGING_SIZE - 1)
     );
 
-    return data;
+    return parsePagedFetchAllResponse<DraftSpecsExtQuery_BySpecTypeReduced>(
+        responses
+    );
 };
 
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will

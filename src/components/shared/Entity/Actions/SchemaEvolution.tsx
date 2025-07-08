@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { createEvolution, toEvolutionRequest } from 'src/api/evolutions';
 import {
@@ -42,6 +42,8 @@ interface Props {
 }
 
 function SchemaEvolution({ onFailure }: Props) {
+    const intl = useIntl();
+
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -149,6 +151,7 @@ function SchemaEvolution({ onFailure }: Props) {
                         toEvolutionRequest(incompatibleCollection)
                     )
                 );
+
                 if (response.error) {
                     onFailure({
                         error: {
@@ -181,13 +184,16 @@ function SchemaEvolution({ onFailure }: Props) {
     if (!editingEntity) {
         return null;
     }
+
     return (
         <Button
             onClick={save}
             disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            <FormattedMessage id="cta.evolve" />
+            {intl.formatMessage({
+                id: 'cta.evolve',
+            })}
         </Button>
     );
 }

@@ -1,6 +1,6 @@
 import type { AlertColor } from '@mui/material';
-import type { IncompatibleCollections } from 'src/api/evolutions';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
+import type { IncompatibleCollections } from 'src/components/shared/Entity/IncompatibleCollections/types';
 import type { InferSchemaPropertyForRender } from 'src/types';
 
 export interface BindingsEditorState {
@@ -42,6 +42,7 @@ export interface BindingsEditorState {
     setEditModeEnabled: (value: BindingsEditorState['editModeEnabled']) => void;
 
     // Infer Schema used to set the key of a collection
+    hasReadAndWriteSchema: boolean | null;
     inferSchemaResponse: InferSchemaPropertyForRender[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string | null;

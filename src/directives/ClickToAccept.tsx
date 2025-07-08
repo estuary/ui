@@ -1,5 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { DirectiveProps } from 'src/directives/types';
+import type { DirectiveProps, JobStatusQueryData } from 'src/directives/types';
 
 import { useState } from 'react';
 
@@ -43,14 +43,30 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     const intl = useIntl();
     const { jobStatusPoller } = useJobStatusPoller();
 
+    const outdated = status === 'outdated';
+    const waiting = status === 'waiting';
+
     const [acknowledgedDocuments, setAcknowledgedDocuments] =
-        useState<boolean>(false);
+        useState<boolean>(waiting);
     const [saving, setSaving] = useState(false);
 
     const [showErrors, setShowErrors] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
-    const outdated = status === 'outdated';
+    const pollForDirective = (data: JobStatusQueryData) => {
+        jobStatusPoller(
+            jobStatusQuery(data),
+            async () => {
+                trackEvent(`${directiveName}:Complete`, directive);
+                void mutate();
+            },
+            async (payload: any) => {
+                trackEvent(`${directiveName}:Error`, directive);
+                setSaving(false);
+                setServerError(payload.job_status.error);
+            }
+        );
+    };
 
     const handlers = {
         update: (_event: React.SyntheticEvent, checked: boolean) => {
@@ -78,24 +94,26 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 }
 
                 const data = clickToAcceptResponse.data[0];
-                jobStatusPoller(
-                    jobStatusQuery(data),
-                    async () => {
-                        trackEvent(`${directiveName}:Complete`, directive);
-                        void mutate();
-                    },
-                    async (payload: any) => {
-                        trackEvent(`${directiveName}:Error`, directive);
-                        setSaving(false);
-                        setServerError(payload.job_status.error);
-                    }
-                );
+                pollForDirective(data);
             }
         },
     };
 
     useMount(() => {
         trackEvent(`${directiveName}:Viewed`);
+
+        // The user may have reloaded while they are waiting on the directive
+        //  to go through. If so - we can just keep them on the loading view
+        if (directive && waiting) {
+            trackEvent(`${directiveName}:AutoPolling`);
+            setShowErrors(false);
+            setSaving(true);
+            pollForDirective({
+                logs_token: directive.logs_token,
+                directive_id: directive.directive_id,
+                id: directive.id,
+            });
+        }
     });
 
     return (
@@ -178,7 +196,12 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 <FormControl error={showErrors} sx={{ mb: 3, mx: 0 }}>
                     <FormControlLabel
                         control={
-                            <Checkbox value={acknowledgedDocuments} required />
+                            <Checkbox
+                                disabled={waiting}
+                                value={acknowledgedDocuments}
+                                checked={acknowledgedDocuments}
+                                required
+                            />
                         }
                         onChange={handlers.update}
                         name="accept"

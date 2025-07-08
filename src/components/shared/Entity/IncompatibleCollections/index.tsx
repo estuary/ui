@@ -1,6 +1,6 @@
 import { Box, Collapse, Divider, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useBindingsEditorStore_incompatibleCollections } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -9,6 +9,8 @@ import CollectionsList from 'src/components/shared/Entity/IncompatibleCollection
 import { hasLength } from 'src/utils/misc-utils';
 
 function IncompatibleCollections() {
+    const intl = useIntl();
+
     const incompatibleCollections =
         useBindingsEditorStore_incompatibleCollections();
     const hasIncompatibleCollections = hasLength(incompatibleCollections);
@@ -29,7 +31,9 @@ function IncompatibleCollections() {
                         component="span"
                         sx={{ fontSize: 18, fontWeight: 500 }}
                     >
-                        <FormattedMessage id="entityEvolution.error.title" />
+                        {intl.formatMessage({
+                            id: 'entityEvolution.error.title',
+                        })}
                     </Typography>
                 }
             >
@@ -38,17 +42,19 @@ function IncompatibleCollections() {
 
                     <Box>
                         <Typography>
-                            <FormattedMessage id="entityEvolution.error.message" />
+                            {intl.formatMessage({
+                                id: 'entityEvolution.error.message',
+                            })}
                         </Typography>
 
                         <Typography variant="subtitle2">
-                            <FormattedMessage id="entityEvolution.error.note" />
+                            {intl.formatMessage({
+                                id: 'entityEvolution.error.note',
+                            })}
                         </Typography>
                     </Box>
 
-                    <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
-                        <CollectionsList />
-                    </Box>
+                    <CollectionsList />
                     <Actions />
                 </Stack>
             </AlertBox>
