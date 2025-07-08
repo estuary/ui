@@ -71,6 +71,8 @@ const DEFAULT_COLS = [
 ];
 const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
 
+const DASHBOARD_QUERY = `${BASE_QUERY},bytes_written_by_me,bytes_read_by_me`;
+
 // Queries just for details panel
 const CAPTURE_QUERY = `
     ${BASE_QUERY},
@@ -281,19 +283,15 @@ const getStatsForDetails = (
         .returns<CatalogStats_Details[]>();
 };
 
-export interface DefaultStatsWithDocument extends DefaultStats {
-    task_stats: object | null;
-}
-
 const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
-        .select(`${DEFAULT_QUERY}`)
+        .select(`${DASHBOARD_QUERY}`)
         .eq('catalog_name', `${tenant}`)
         .eq('grain', 'monthly')
         .eq('ts', DateTime.utc().startOf('month'))
         .order('ts', { ascending: true })
-        .returns<(CatalogStats_Dashboard | DefaultStatsWithDocument)[]>();
+        .returns<CatalogStats_Dashboard[]>();
 };
 
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
