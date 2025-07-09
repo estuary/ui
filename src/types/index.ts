@@ -233,11 +233,8 @@ export interface CatalogStats_Details extends BaseCatalogStats {
 }
 
 export interface CatalogStats_Dashboard extends BaseCatalogStats {
-    bytes_read?: number;
-    bytes_written?: number;
-    docs_read?: number;
-    docs_written?: number;
-    task_stats: object | null;
+    bytes_written_by_me?: number;
+    bytes_read_by_me?: number;
 }
 
 export interface Directive {
