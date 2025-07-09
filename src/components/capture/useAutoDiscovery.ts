@@ -2,7 +2,7 @@ import type { Schema } from 'src/types';
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -62,7 +62,7 @@ function useAutoDiscovery() {
         if (!mutateDraftSpecs || !draftId || draftSpecs.length === 0) {
             return Promise.reject();
         } else {
-            const spec: Schema = draftSpecs[0].spec;
+            const spec: Schema = cloneDeep(draftSpecs[0].spec);
 
             spec.autoDiscover = autoDiscover
                 ? {
