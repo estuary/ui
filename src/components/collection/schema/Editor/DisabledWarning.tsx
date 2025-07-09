@@ -21,7 +21,7 @@ function DisabledWarning() {
             short
             severity="warning"
             title={intl.formatMessage({
-                id: 'resetDataFlow.editor.warning.title',
+                id: 'schemaEditor.editing.disabled.title',
             })}
         >
             {intl.formatMessage({
