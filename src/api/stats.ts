@@ -1,5 +1,4 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
-import type { Duration } from 'date-fns';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     CatalogStats,
@@ -28,11 +27,7 @@ import {
     defaultQueryDateFormat,
     LUXON_GRAIN_SETTINGS,
 } from 'src/services/luxon';
-import {
-    escapeReservedCharacters,
-    TABLES,
-    TASK_STATS,
-} from 'src/services/supabase';
+import { escapeReservedCharacters, TABLES } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 export type StatsFilter =
@@ -75,6 +70,8 @@ const DEFAULT_COLS = [
     'docs_read_from_me',
 ];
 const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
+
+const DASHBOARD_QUERY = `${BASE_QUERY},bytes_written_by_me,bytes_read_by_me`;
 
 // Queries just for details panel
 const CAPTURE_QUERY = `
@@ -286,46 +283,15 @@ const getStatsForDetails = (
         .returns<CatalogStats_Details[]>();
 };
 
-export interface DefaultStatsWithDocument extends DefaultStats {
-    task_stats: object | null;
-}
-
-const getStatsForDashboard = (
-    tenant: string,
-    grain: Grains,
-    // endDate: DateTime,
-    duration?: Duration
-    // entityType?: Entity
-) => {
-    const endDate = DateTime.utc().startOf('month');
-
-    const past = duration ? endDate.minus(duration) : endDate;
-
-    // let query: string;
-    // switch (entityType) {
-    //     case 'capture':
-    //         query = CAPTURE_QUERY;
-    //         break;
-    //     case 'materialization':
-    //         query = MATERIALIZATION_QUERY;
-    //         break;
-    //     case 'collection':
-    //         query = COLLECTION_QUERY;
-    //         break;
-    //     default:
-    //         query = DEFAULT_QUERY;
-    // }
-
+const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
-        .select(`${DEFAULT_QUERY},${TASK_STATS}`)
-        .like('catalog_name', `${tenant}%`)
-        .eq('grain', grain)
-        .or('bytes_written_by_me.gt.0,bytes_read_by_me.gt.0')
-        .gte('ts', past)
-        .lte('ts', endDate)
+        .select(`${DASHBOARD_QUERY}`)
+        .eq('catalog_name', `${tenant}`)
+        .eq('grain', 'monthly')
+        .eq('ts', DateTime.utc().startOf('month'))
         .order('ts', { ascending: true })
-        .returns<(CatalogStats_Dashboard | DefaultStatsWithDocument)[]>();
+        .returns<CatalogStats_Dashboard[]>();
 };
 
 // TODO (billing): Enable pagination when a database table containing historic billing data is available.
