@@ -1,5 +1,10 @@
-import type { ValidationResponse_Binding } from 'src/components/editor/Bindings/FieldSelection/types';
-import type { ProjectionDef } from 'src/types/schemaModels';
+import type {
+    Projection,
+    ValidationResponse_Binding,
+} from 'src/components/editor/Bindings/FieldSelection/types';
+
+// evaluate_field selection WASM routine documentation can be found here:
+// https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
 
 enum RejectReason {
     USER_EXCLUDES = 'UserExcludes',
@@ -27,43 +32,43 @@ enum SelectReason {
 }
 
 interface FieldOutcome {
-    field: string; // Field name
-    select?: SelectOutput; // Structured selection reason (if selected)
-    reject?: RejectOutput; // Structured rejection reason (if rejected)
-    isUnsatisfiable?: boolean; // True when conflict has ConnectorUnsatisfiable reject reason
+    field: string;
+    isUnsatisfiable?: boolean;
+    reject?: RejectOutput;
+    select?: SelectOutput;
 }
 
 interface FieldSelection {
-    keys: string[]; // Fields used as primary key
-    values: string[]; // Fields materialized as values
-    document: string; // Field storing full document (if any)
-    fieldConfigJsonMap: Record<string, string>; // Per-field connector configuration
+    document: string;
+    fieldConfig: Record<string, string>;
+    keys: string[];
+    values: string[];
 }
 
 export interface FieldSelectionInput {
-    collectionKey: string[]; // Collection key JSON pointers (e.g., ["/id", "/timestamp"])
-    collectionProjections: ProjectionDef[]; // Available fields from the collection
-    model: MaterializationBinding; // User's desired configuration
+    collectionKey: string[];
+    collectionProjections: Projection[];
+    model: MaterializationBinding;
     validated: ValidationResponse_Binding;
-    liveSpec?: MaterializationBinding; // Existing materialization (if updating)
+    liveSpec?: MaterializationBinding;
 }
 
 export interface FieldSelectionResult {
-    outcomes: FieldOutcome[]; // Per-field selection details
-    selection: FieldSelection; // Final materialization configuration
     hasConflicts: boolean;
+    outcomes: FieldOutcome[];
+    selection: FieldSelection;
 }
 
-interface MaterializationBinding {
+export interface MaterializationBinding {
     [key: string]: any;
 }
 
 interface RejectOutput {
-    reason: RejectReason; // Structured rejection reason
-    detail: string; // Human-readable description
+    detail: string;
+    reason: RejectReason;
 }
 
 interface SelectOutput {
-    reason: SelectReason; // Structured selection reason
-    detail: string; // Human-readable description
+    detail: string;
+    reason: SelectReason;
 }

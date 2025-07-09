@@ -1,11 +1,17 @@
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type {
+    CompositeProjection,
+    FieldSelectionType,
+} from 'src/components/editor/Bindings/FieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
+import type { FieldSelectionResult } from 'src/types/wasm';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-export type SelectionAlgorithm = 'excludeAll' | 'recommended';
+import { getAlgorithmicFieldSelection } from 'src/utils/workflow-utils';
+
+export type SelectionAlgorithm = 'depthOne' | 'excludeAll' | 'recommended';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
@@ -42,6 +48,12 @@ export interface StoreWithFieldSelection {
     setMultiSelection: (
         bindingUUID: string,
         updatedFields: FieldSelectionDictionary
+    ) => void;
+    setAlgorithmicSelection: (
+        selectedAlgorithm: SelectionAlgorithm,
+        bindingUUID: string,
+        value: FieldSelectionResult | undefined,
+        projections: CompositeProjection[]
     ) => void;
 
     selectionSaving: boolean;
@@ -90,6 +102,43 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Selections Initialized'
+        );
+    },
+
+    setAlgorithmicSelection: (
+        selectedAlgorithm,
+        bindingUUID,
+        value,
+        projections
+    ) => {
+        if (!value) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                const selectedFields = [
+                    value.selection.document,
+                    ...value.selection.keys,
+                    ...value.selection.values,
+                ];
+
+                state.selections[bindingUUID] = getAlgorithmicFieldSelection(
+                    state.selections[bindingUUID],
+                    projections,
+                    selectedFields
+                );
+
+                if (selectedAlgorithm === 'depthOne') {
+                    state.recommendFields[bindingUUID] = 1;
+                }
+
+                if (!state.selectionSaving) {
+                    state.selectionSaving = true;
+                }
+            }),
+            false,
+            'Algorithmic Selections Set'
         );
     },
 

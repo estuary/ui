@@ -1,8 +1,12 @@
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type {
+    CompositeProjection,
+    FieldSelectionType,
+} from 'src/components/editor/Bindings/FieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
+import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 import type {
     FullSource,
     FullSourceDictionary,
@@ -410,3 +414,40 @@ export const isExcludeOnlyField = (
 export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
     typeof value === 'string' &&
     (value === 'default' || value === 'exclude' || value === 'require');
+
+export const getAlgorithmicFieldSelection = (
+    existingFieldSelection: FieldSelectionDictionary,
+    projections: CompositeProjection[],
+    selectedFields: string[]
+): FieldSelectionDictionary => {
+    const updatedFields: FieldSelectionDictionary = {};
+
+    Object.keys(existingFieldSelection).forEach((field) => {
+        const selectedProjection = projections.find(
+            (projection) => projection.field === field
+        );
+
+        let selectionType: FieldSelectionType | null = null;
+
+        if (selectedProjection?.constraint) {
+            const { constraint } = selectedProjection;
+            const selected = selectedFields.includes(field);
+
+            selectionType =
+                selected && isRequireOnlyField(constraint.type)
+                    ? 'require'
+                    : !selected && isExcludeOnlyField(constraint.type)
+                      ? 'exclude'
+                      : selected && isRecommendedField(constraint.type)
+                        ? 'default'
+                        : null;
+        }
+
+        updatedFields[field] = {
+            ...existingFieldSelection[field],
+            mode: selectionType,
+        };
+    });
+
+    return updatedFields;
+};
