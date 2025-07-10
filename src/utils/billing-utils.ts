@@ -1,5 +1,5 @@
 import type { Invoice } from 'src/api/billing';
-import type { CatalogStats_Billing, Entity, Schema } from 'src/types';
+import type { Schema } from 'src/types';
 
 import { format, parseISO } from 'date-fns';
 import prettyBytes from 'pretty-bytes';
@@ -16,16 +16,6 @@ export enum FREE_GB_BY_TIER {
     PERSONAL = 10,
     ENTERPRISE = 10,
 }
-
-export const evaluateSpecType = (query: CatalogStats_Billing): Entity => {
-    if (Object.hasOwn(query.flow_document.taskStats, 'capture')) {
-        return 'capture';
-    } else if (Object.hasOwn(query.flow_document.taskStats, 'materialize')) {
-        return 'materialization';
-    } else {
-        return 'collection';
-    }
-};
 
 export const stripTimeFromDate = (date: string) => {
     const [truncatedDateStr] = date.split('T', 1);
