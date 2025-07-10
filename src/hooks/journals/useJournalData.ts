@@ -10,6 +10,7 @@ import useSWR from 'swr';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { loadDocuments } from 'src/hooks/journals/shared';
+import { logRocketEvent } from 'src/services/shared';
 import useJournalStore from 'src/stores/JournalData/Store';
 import {
     getJournals,
@@ -197,6 +198,12 @@ const useJournalData = (
                     if (fetchCancelHack.current) {
                         setLoading(false);
                     }
+                }
+
+                if (!fetchCancelHack.current) {
+                    logRocketEvent('JournalData', {
+                        skippingFetch: true,
+                    });
                 }
             }
         },
