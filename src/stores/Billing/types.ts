@@ -1,6 +1,6 @@
 import type { Invoice } from 'src/api/billing';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
-import type { CatalogStats_Billing, Entity } from 'src/types';
+import type { Entity } from 'src/types';
 import type { InvoiceId } from 'src/utils/billing-utils';
 
 export interface DataVolumeByTask {
@@ -19,7 +19,6 @@ export interface BillingState extends StoreWithHydration {
     setSelectedInvoice: (value: InvoiceId) => void;
 
     dataByTaskGraphDetails: DataVolumeByTask[];
-    setDataByTaskGraphDetails: (value: CatalogStats_Billing[]) => void;
 
     invoicesInitialized: boolean;
     setInvoicesInitialized: (value: boolean) => void;
