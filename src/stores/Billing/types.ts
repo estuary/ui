@@ -18,8 +18,6 @@ export interface BillingState extends StoreWithHydration {
     selectedInvoiceId: InvoiceId | null;
     setSelectedInvoice: (value: InvoiceId) => void;
 
-    dataByTaskGraphDetails: DataVolumeByTask[];
-
     invoicesInitialized: boolean;
     setInvoicesInitialized: (value: boolean) => void;
 

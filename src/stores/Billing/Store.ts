@@ -19,7 +19,6 @@ const getInitialStateData = (): Pick<
     BillingState,
     | 'invoices'
     | 'invoicesInitialized'
-    | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
     | 'selectedInvoiceId'
 > => {
@@ -27,7 +26,6 @@ const getInitialStateData = (): Pick<
         selectedInvoiceId: null,
         invoices: [],
         invoicesInitialized: false,
-        dataByTaskGraphDetails: [],
         paymentMethodExists: null,
     };
 };
