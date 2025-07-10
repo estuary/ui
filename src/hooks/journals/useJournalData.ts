@@ -141,6 +141,7 @@ const useJournalData = (
     settings?: UseJournalDataSettings,
     opsJournalTarget?: boolean
 ) => {
+    const fetchCancelHack = useRef(true);
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
@@ -175,6 +176,7 @@ const useJournalData = (
             ) {
                 try {
                     setLoading(true);
+
                     const docs = await loadDocuments({
                         journalName,
                         client: journalClient,
@@ -182,12 +184,19 @@ const useJournalData = (
                         maxBytes: settings?.maxBytes ?? MAX_DOCUMENT_SIZE,
                         offsets,
                     });
-                    setData(docs);
+
+                    if (fetchCancelHack.current) {
+                        setData(docs);
+                    }
                 } catch (e: unknown) {
-                    failures.current += 1;
-                    setError(e);
+                    if (fetchCancelHack.current) {
+                        failures.current += 1;
+                        setError(e);
+                    }
                 } finally {
-                    setLoading(false);
+                    if (fetchCancelHack.current) {
+                        setLoading(false);
+                    }
                 }
             }
         },
@@ -209,6 +218,14 @@ const useJournalData = (
             }
         })();
     }, [journalClient, journalName, refreshData]);
+
+    // Manage if we should be running the fetch
+    useEffect(() => {
+        fetchCancelHack.current = true;
+        return () => {
+            fetchCancelHack.current = false;
+        };
+    }, []);
 
     return useMemo(
         () => ({
