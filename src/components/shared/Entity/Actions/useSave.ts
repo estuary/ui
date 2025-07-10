@@ -290,7 +290,8 @@ function useSave(
                         return;
                     }
 
-                    // If it is not being backfill we do not need to update
+                    // If it is not being backfill we do not need to update. This is important for when
+                    //  a user has run a re-discover and they have a bunch of collections on their draft
                     if (
                         !collectionsBeingBackfilled.includes(
                             draftSpec.catalog_name
