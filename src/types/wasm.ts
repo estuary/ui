@@ -61,6 +61,7 @@ export interface FieldSelectionResult {
 
 export interface MaterializationBinding {
     [key: string]: any;
+    resourcePath: string[];
 }
 
 interface RejectOutput {
