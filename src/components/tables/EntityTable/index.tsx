@@ -241,7 +241,7 @@ function EntityTable({
     );
 
     return (
-        <Box data-public>
+        <Box>
             {hideHeaderAndFooter ||
             (!showToolbar && hideFilter && !ExportComponent) ? null : (
                 <Box sx={{ mx: 2 }}>
