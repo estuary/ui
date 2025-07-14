@@ -75,7 +75,6 @@ function ConnectorToolbar({
         <Toolbar
             disableGutters
             sx={{ flexDirection: belowMd ? 'column' : 'row' }}
-            data-public
         >
             <Grid
                 container
