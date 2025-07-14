@@ -85,7 +85,7 @@ function AcceptDemoInvitation({
                     trackEvent(`${directiveName}:Error`, directive);
 
                     setLoading(false);
-                    setServerError(payload.job_status.error);
+                    setServerError(payload?.job_status?.error);
                 }
             );
         }

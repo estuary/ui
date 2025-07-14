@@ -107,7 +107,7 @@ function SaveButton() {
                     }
 
                     setSaving(false);
-                    setServerError(payload.job_status.error);
+                    setServerError(payload?.job_status?.error);
                 }
             );
         }

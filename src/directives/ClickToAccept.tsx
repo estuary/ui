@@ -63,7 +63,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
             async (payload: any) => {
                 trackEvent(`${directiveName}:Error`, directive);
                 setSaving(false);
-                setServerError(payload.job_status.error);
+                setServerError(payload?.job_status?.error);
             }
         );
     };
