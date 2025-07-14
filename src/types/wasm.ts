@@ -31,7 +31,7 @@ enum SelectReason {
     DESIRED_DEPTH = 'DesiredDepth',
 }
 
-interface FieldOutcome {
+export interface FieldOutcome {
     field: string;
     isUnsatisfiable?: boolean;
     reject?: RejectOutput;
@@ -42,9 +42,11 @@ interface FieldSelection {
     document: string;
     fieldConfig: Record<string, string>;
     keys: string[];
-    values: string[];
+    values?: string[];
 }
 
+// The corresponding built spec binding is intended to be passed to the liveSpec property.
+// Do NOT use the corresponding live spec binding.
 export interface FieldSelectionInput {
     collectionKey: string[];
     collectionProjections: Projection[];

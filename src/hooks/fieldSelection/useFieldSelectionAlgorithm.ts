@@ -1,5 +1,10 @@
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
-import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
+import type { Schema } from 'src/types';
+import type {
+    FieldSelectionInput,
+    FieldSelectionResult,
+    MaterializationBinding,
+} from 'src/types/wasm';
 
 import { useCallback } from 'react';
 
@@ -10,8 +15,11 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useFormStateStore_liveSpec } from 'src/stores/FormState/hooks';
 import { getRelatedBindings } from 'src/utils/workflow-utils';
+
+export interface AlgorithmConfig {
+    depth?: number;
+}
 
 // evaluate_field selection WASM routine documentation can be found here:
 // https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
@@ -35,19 +43,50 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
 export default function useFieldSelectionAlgorithm() {
     const isEdit = useEntityWorkflow_Editing();
 
+    const currentBindingUUID = useBindingStore(
+        (state) => state.currentBinding?.uuid
+    );
     const currentCollection = useBindingStore(
         (state) => state.currentBinding?.collection
     );
+    const selections = useBindingStore((state) => state.selections);
     const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    const liveSpec = useFormStateStore_liveSpec();
+    const getDraftedFieldSelections = useCallback(
+        (
+            draftedBinding: MaterializationBinding,
+            selectionAlgorithm: SelectionAlgorithm,
+            config?: AlgorithmConfig
+        ) => {
+            if (!currentBindingUUID) {
+                return undefined;
+            }
+
+            let fieldStanza: Schema = draftedBinding?.fields ?? {};
+            const fieldSelection = selections[currentBindingUUID];
+
+            if (selectionAlgorithm === 'depthOne' && config?.depth) {
+                fieldStanza = { recommended: config.depth };
+            } else if (selectionAlgorithm === 'excludeAll') {
+                fieldStanza = {
+                    recommended: fieldStanza.recommended,
+                    exclude: Object.keys(fieldSelection),
+                };
+            } else if (selectionAlgorithm === 'recommended') {
+                fieldStanza = { recommended: true };
+            }
+
+            return fieldStanza;
+        },
+        [currentBindingUUID, selections]
+    );
 
     const applyFieldSelectionAlgorithm = useCallback(
         async (
             selectionAlgorithm: SelectionAlgorithm,
-            metadata?: { depth?: number }
+            config?: AlgorithmConfig
         ) => {
             if (
                 draftSpecs.length === 0 ||
@@ -60,19 +99,14 @@ export default function useFieldSelectionAlgorithm() {
                 );
             }
 
-            const {
-                builtBinding,
-                draftedBinding,
-                liveBinding,
-                validationBinding,
-            } = getRelatedBindings(
-                draftSpecs[0].built_spec,
-                draftSpecs[0].spec,
-                stagedBindingIndex,
-                currentCollection,
-                draftSpecs[0].validated,
-                isEdit ? liveSpec : undefined
-            );
+            const { builtBinding, draftedBinding, validationBinding } =
+                getRelatedBindings(
+                    draftSpecs[0].built_spec,
+                    draftSpecs[0].spec,
+                    stagedBindingIndex,
+                    currentCollection,
+                    draftSpecs[0].validated
+                );
 
             if (!builtBinding || !draftedBinding || !validationBinding) {
                 return Promise.reject(
@@ -80,11 +114,17 @@ export default function useFieldSelectionAlgorithm() {
                 );
             }
 
-            // TODO: Create function that takes a selection algorithm as input
-            //   and returns the modified binding.
-            if (selectionAlgorithm === 'depthOne' && metadata?.depth) {
-                draftedBinding.fields.recommended = metadata.depth;
+            const updatedSelections = getDraftedFieldSelections(
+                draftedBinding,
+                selectionAlgorithm,
+                config
+            );
+
+            if (!updatedSelections) {
+                return Promise.reject('updated field selections undefined');
             }
+
+            draftedBinding.fields = updatedSelections;
 
             let result: FieldSelectionResult | undefined;
 
@@ -92,7 +132,7 @@ export default function useFieldSelectionAlgorithm() {
                 result = await evaluateFieldSelection({
                     collectionKey: builtBinding.collection.key,
                     collectionProjections: builtBinding.collection.projections,
-                    liveSpec: liveBinding,
+                    liveSpec: isEdit ? builtBinding : undefined,
                     model: draftedBinding,
                     validated: validationBinding,
                 });
@@ -102,7 +142,13 @@ export default function useFieldSelectionAlgorithm() {
 
             return result;
         },
-        [currentCollection, draftSpecs, isEdit, liveSpec, stagedBindingIndex]
+        [
+            currentCollection,
+            draftSpecs,
+            getDraftedFieldSelections,
+            isEdit,
+            stagedBindingIndex,
+        ]
     );
 
     return { applyFieldSelectionAlgorithm };

@@ -1,15 +1,9 @@
-import type {
-    CompositeProjection,
-    FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
-import type { FieldSelectionResult } from 'src/types/wasm';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
-
-import { getAlgorithmicFieldSelection } from 'src/utils/workflow-utils';
 
 export type SelectionAlgorithm = 'depthOne' | 'excludeAll' | 'recommended';
 
@@ -52,8 +46,7 @@ export interface StoreWithFieldSelection {
     setAlgorithmicSelection: (
         selectedAlgorithm: SelectionAlgorithm,
         bindingUUID: string,
-        value: FieldSelectionResult | undefined,
-        projections: CompositeProjection[]
+        value: FieldSelectionDictionary | undefined
     ) => void;
 
     selectionSaving: boolean;
@@ -105,29 +98,14 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setAlgorithmicSelection: (
-        selectedAlgorithm,
-        bindingUUID,
-        value,
-        projections
-    ) => {
+    setAlgorithmicSelection: (selectedAlgorithm, bindingUUID, value) => {
         if (!value) {
             return;
         }
 
         set(
             produce((state: BindingState) => {
-                const selectedFields = [
-                    value.selection.document,
-                    ...value.selection.keys,
-                    ...value.selection.values,
-                ];
-
-                state.selections[bindingUUID] = getAlgorithmicFieldSelection(
-                    state.selections[bindingUUID],
-                    projections,
-                    selectedFields
-                );
+                state.selections[bindingUUID] = value;
 
                 if (selectedAlgorithm === 'depthOne') {
                     state.recommendFields[bindingUUID] = 1;

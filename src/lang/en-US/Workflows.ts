@@ -201,6 +201,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.excludeAll.description': `Exclude non-essential fields`,
     'fieldSelection.massActionMenu.depthOne.label': `Depth One`,
     'fieldSelection.massActionMenu.depthOne.description': `Select object fields with one-degree of nesting`,
+    'fieldSelection.reviewDialog.header': `Review Field Selections`,
+    'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,

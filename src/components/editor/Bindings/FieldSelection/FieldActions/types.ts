@@ -1,5 +1,8 @@
 import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
-import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
+import type {
+    FieldSelectionDictionary,
+    SelectionAlgorithm,
+} from 'src/stores/Binding/slices/FieldSelection';
 
 export interface BaseProps {
     bindingUUID: string;
@@ -11,6 +14,8 @@ export interface MenuActionProps extends BaseProps {
     closeMenu: () => void;
 }
 
-export interface SaveButtonProps extends MenuActionProps {
+export interface SaveButtonProps extends BaseProps {
+    close: () => void;
+    fieldSelection: FieldSelectionDictionary;
     selectedAlgorithm: SelectionAlgorithm | null;
 }

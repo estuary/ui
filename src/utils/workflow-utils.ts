@@ -437,10 +437,10 @@ export const getAlgorithmicFieldSelection = (
             const selected = selectedFields.includes(field);
 
             selectionType =
-                selected && isRequireOnlyField(constraint.type)
-                    ? 'require'
-                    : !selected && isExcludeOnlyField(constraint.type)
-                      ? 'exclude'
+                !selected && !isRequireOnlyField(constraint.type)
+                    ? 'exclude'
+                    : selected && isRequireOnlyField(constraint.type)
+                      ? 'require'
                       : selected && isRecommendedField(constraint.type)
                         ? 'default'
                         : null;
