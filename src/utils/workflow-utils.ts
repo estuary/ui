@@ -421,7 +421,8 @@ export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
 export const getAlgorithmicFieldSelection = (
     existingFieldSelection: FieldSelectionDictionary,
     projections: CompositeProjection[],
-    selectedFields: string[]
+    selectedFields: string[],
+    recommendedFlag: boolean | number
 ): FieldSelectionDictionary => {
     const updatedFields: FieldSelectionDictionary = {};
 
@@ -436,14 +437,23 @@ export const getAlgorithmicFieldSelection = (
             const { constraint } = selectedProjection;
             const selected = selectedFields.includes(field);
 
-            selectionType =
-                !selected && !isRequireOnlyField(constraint.type)
-                    ? 'exclude'
-                    : selected && isRequireOnlyField(constraint.type)
-                      ? 'require'
-                      : selected && isRecommendedField(constraint.type)
-                        ? 'default'
-                        : null;
+            if (recommendedFlag === false) {
+                selectionType =
+                    selected && isRequireOnlyField(constraint.type)
+                        ? 'require'
+                        : !selected
+                          ? 'exclude'
+                          : null;
+            } else {
+                selectionType =
+                    !selected &&
+                    (!isRequireOnlyField(constraint.type) ||
+                        isExcludeOnlyField(constraint.type))
+                        ? 'exclude'
+                        : selected && isRecommendedField(constraint.type)
+                          ? 'default'
+                          : null;
+            }
         }
 
         updatedFields[field] = {

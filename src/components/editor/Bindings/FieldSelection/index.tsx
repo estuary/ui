@@ -182,10 +182,12 @@ function FieldSelectionViewer({
                         const selections: ExpandedFieldSelection[] =
                             compositeProjections.map(
                                 ({
+                                    constraint,
                                     field,
                                     selectionMetadata,
                                     selectionType,
                                 }) => ({
+                                    constraintType: constraint?.type,
                                     field,
                                     meta: selectionMetadata,
                                     mode: selectionType,

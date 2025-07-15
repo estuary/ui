@@ -70,6 +70,7 @@ export default function useOnFieldActionClick(
                 bindingUUID,
                 field,
                 selectionType,
+                constraintType,
                 selection?.meta
             );
         },

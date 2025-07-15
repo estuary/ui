@@ -1,4 +1,7 @@
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type {
+    ConstraintTypes,
+    FieldSelectionType,
+} from 'src/components/editor/Bindings/FieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
@@ -9,6 +12,7 @@ export type SelectionAlgorithm = 'depthOne' | 'excludeAll' | 'recommended';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
+    constraintType?: ConstraintTypes;
     meta?: Schema;
 }
 
@@ -37,6 +41,7 @@ export interface StoreWithFieldSelection {
         bindingUUID: string,
         field: string,
         mode: FieldSelection['mode'],
+        constraintType: ConstraintTypes | undefined,
         meta?: FieldSelection['meta']
     ) => void;
     setMultiSelection: (
@@ -86,10 +91,10 @@ export const getStoreWithFieldSelectionSettings = (
     initializeSelections: (bindingUUID, selections) => {
         set(
             produce((state: BindingState) => {
-                selections.forEach(({ field, mode, meta }) => {
+                selections.forEach(({ constraintType, field, mode, meta }) => {
                     state.selections[bindingUUID] = {
                         ...state.selections[bindingUUID],
-                        [field]: { mode, meta },
+                        [field]: { constraintType, mode, meta },
                     };
                 });
             }),
@@ -179,7 +184,7 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSingleSelection: (bindingUUID, field, mode, meta) => {
+    setSingleSelection: (bindingUUID, field, mode, constraintType, meta) => {
         set(
             produce((state: BindingState) => {
                 const previousSelectionMode =
@@ -187,7 +192,7 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     ...state.selections[bindingUUID],
-                    [field]: { mode, meta },
+                    [field]: { constraintType, mode, meta },
                 };
 
                 if (!state.selectionSaving && previousSelectionMode !== mode) {

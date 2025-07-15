@@ -126,10 +126,10 @@ export default function useFieldSelectionAlgorithm() {
 
             draftedBinding.fields = updatedSelections;
 
-            let result: FieldSelectionResult | undefined;
+            let response: FieldSelectionResult | undefined;
 
             try {
-                result = await evaluateFieldSelection({
+                response = await evaluateFieldSelection({
                     collectionKey: builtBinding.collection.key,
                     collectionProjections: builtBinding.collection.projections,
                     liveSpec: isEdit ? builtBinding : undefined,
@@ -140,7 +140,7 @@ export default function useFieldSelectionAlgorithm() {
                 logRocketEvent('evaluate_field_selection:failed', error);
             }
 
-            return result;
+            return { fieldStanza: updatedSelections, response };
         },
         [
             currentCollection,
