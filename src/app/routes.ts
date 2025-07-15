@@ -36,6 +36,11 @@ const admin = {
             fullPath: '/admin/billing/paymentMethod/new',
         },
     },
+    legal: {
+        title: 'routeTitle.admin.legal',
+        path: 'legal',
+        fullPath: '/admin/legal',
+    },
     settings: {
         title: 'routeTitle.admin.settings',
         path: 'settings',

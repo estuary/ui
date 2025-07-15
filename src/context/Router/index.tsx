@@ -14,6 +14,7 @@ import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
+import AdminLegal from 'src/components/admin/Legal';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
@@ -634,6 +635,14 @@ const router = createBrowserRouter(
                             element={
                                 <Suspense fallback={null}>
                                     <AdminApi />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={authenticatedRoutes.admin.legal.path}
+                            element={
+                                <Suspense fallback={null}>
+                                    <AdminLegal />
                                 </Suspense>
                             }
                         />

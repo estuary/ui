@@ -42,6 +42,10 @@ function AdminTabs() {
                 label: 'admin.tabs.api',
                 path: authenticatedRoutes.admin.api.fullPath,
             },
+            {
+                label: 'admin.tabs.legal',
+                path: authenticatedRoutes.admin.legal.fullPath,
+            },
         ]);
     }, [hasAnyAccess]);
 
