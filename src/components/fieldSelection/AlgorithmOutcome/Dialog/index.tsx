@@ -16,6 +16,7 @@ import {
     Typography,
 } from '@mui/material';
 
+import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import SaveButton from 'src/components/editor/Bindings/FieldSelection/FieldActions/SaveButton';
@@ -52,7 +53,12 @@ const AlgorithmOutcomeDialog = ({
     );
 
     useEffect(() => {
-        if (open && projections && selectedAlgorithm) {
+        if (
+            open &&
+            isEmpty(fieldSelection) &&
+            projections &&
+            selectedAlgorithm
+        ) {
             const config: AlgorithmConfig | undefined =
                 selectedAlgorithm === 'depthOne' ? { depth: 1 } : undefined;
 
@@ -94,6 +100,7 @@ const AlgorithmOutcomeDialog = ({
     }, [
         applyFieldSelectionAlgorithm,
         existingFieldSelection,
+        fieldSelection,
         open,
         projections,
         selectedAlgorithm,

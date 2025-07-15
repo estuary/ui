@@ -1,9 +1,6 @@
 import type { AlgorithmOutcomeContentProps } from 'src/components/fieldSelection/AlgorithmOutcome/types';
 
-import { Typography } from '@mui/material';
-
-import FieldOutcome from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcome';
-import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
+import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,
@@ -27,79 +24,38 @@ const AlgorithmOutcomeContent = ({
 
     return (
         <>
-            {requiredFields.length > 0 ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography>
-                            Required: {requiredFields.length}
-                        </Typography>
-                    }
-                    readOnly
-                >
-                    <FieldOutcome
-                        fields={requiredFields}
-                        keyPrefix="req"
-                        outcomes={outcomes}
-                    />
-                </WrapperWithHeader>
-            ) : null}
+            <FieldOutcomes
+                fields={requiredFields}
+                headerMessageId="fieldSelection.reviewDialog.label.require"
+                keyPrefix="req"
+                outcomes={outcomes}
+            />
 
-            {selectedFields.length > 0 ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography>
-                            Selected: {selectedFields.length}
-                        </Typography>
-                    }
-                    hideBorder={Boolean(
-                        excludedFields.length === 0 &&
-                            unselectedFields.length === 0
-                    )}
-                    readOnly
-                >
-                    <FieldOutcome
-                        fields={selectedFields}
-                        keyPrefix="sel"
-                        outcomes={outcomes}
-                    />
-                </WrapperWithHeader>
-            ) : null}
+            <FieldOutcomes
+                fields={selectedFields}
+                headerMessageId="fieldSelection.reviewDialog.label.select"
+                hideBorder={Boolean(
+                    excludedFields.length === 0 && unselectedFields.length === 0
+                )}
+                keyPrefix="sel"
+                outcomes={outcomes}
+            />
 
-            {excludedFields.length > 0 ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography>
-                            Excluded: {excludedFields.length}
-                        </Typography>
-                    }
-                    hideBorder={unselectedFields.length === 0}
-                    readOnly
-                >
-                    <FieldOutcome
-                        fields={excludedFields}
-                        keyPrefix="exc"
-                        outcomes={outcomes}
-                    />
-                </WrapperWithHeader>
-            ) : null}
+            <FieldOutcomes
+                fields={excludedFields}
+                headerMessageId="fieldSelection.reviewDialog.label.exclude"
+                hideBorder={unselectedFields.length === 0}
+                keyPrefix="exc"
+                outcomes={outcomes}
+            />
 
-            {unselectedFields.length > 0 ? (
-                <WrapperWithHeader
-                    header={
-                        <Typography>
-                            Unselected: {unselectedFields.length}
-                        </Typography>
-                    }
-                    hideBorder
-                    readOnly
-                >
-                    <FieldOutcome
-                        fields={unselectedFields}
-                        keyPrefix="unsel"
-                        outcomes={outcomes}
-                    />
-                </WrapperWithHeader>
-            ) : null}
+            <FieldOutcomes
+                fields={unselectedFields}
+                headerMessageId="fieldSelection.reviewDialog.label.unselected"
+                hideBorder
+                keyPrefix="unsel"
+                outcomes={outcomes}
+            />
         </>
     );
 };

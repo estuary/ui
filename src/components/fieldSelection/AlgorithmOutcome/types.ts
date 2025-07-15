@@ -18,10 +18,12 @@ export interface AlgorithmOutcomeDialogProps extends BaseProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface FieldOutcomeProps {
+export interface FieldOutcomesProps {
     fields: string[];
+    headerMessageId: string;
     keyPrefix: string;
     outcomes: FieldOutcome[];
+    hideBorder?: boolean;
 }
 
 export interface GenerateButtonProps extends BaseProps {

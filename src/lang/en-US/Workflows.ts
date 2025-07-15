@@ -203,6 +203,10 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.depthOne.description': `Select object fields with one-degree of nesting`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
+    'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,
+    'fieldSelection.reviewDialog.label.require': `Require: {count}`,
+    'fieldSelection.reviewDialog.label.select': `Select: {count}`,
+    'fieldSelection.reviewDialog.label.unselected': `Unselected: {count}`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
