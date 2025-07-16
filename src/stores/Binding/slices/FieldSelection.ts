@@ -114,6 +114,8 @@ export const getStoreWithFieldSelectionSettings = (
 
                 if (selectedAlgorithm === 'depthOne') {
                     state.recommendFields[bindingUUID] = 1;
+                } else if (selectedAlgorithm === 'recommended') {
+                    state.recommendFields[bindingUUID] = true;
                 }
 
                 if (!state.selectionSaving) {

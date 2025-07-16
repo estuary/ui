@@ -77,7 +77,7 @@ export default function useFieldSelectionAlgorithm() {
                 fieldStanza = { recommended: config.depth };
             } else if (selectionAlgorithm === 'excludeAll') {
                 fieldStanza = {
-                    recommended: fieldStanza?.recommended,
+                    recommended: fieldStanza?.recommended ?? true,
                     exclude: Object.keys(fieldSelection).filter((field) => {
                         const selectedProjection = projections.find(
                             (projection) => projection.field === field
