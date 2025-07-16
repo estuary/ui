@@ -4,16 +4,14 @@ import { useState } from 'react';
 
 import { Box, Grid } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
+import SupportBenefits from 'src/app/guards/ConsentGuard/SupportBenefits';
+import SupportDetails from 'src/app/guards/ConsentGuard/SupportDetails';
 import FullPageError from 'src/components/fullPage/Error';
-import CardWrapper from 'src/components/shared/CardWrapper';
-import KeyValueList from 'src/components/shared/KeyValueList';
 
 function ConsentGuard({ children }: BaseComponentProps) {
-    const intl = useIntl();
-
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
 
@@ -56,53 +54,9 @@ function ConsentGuard({ children }: BaseComponentProps) {
                         }}
                     >
                         <Grid item xs={6}>
-                            <CardWrapper message="What’s included?">
-                                <KeyValueList
-                                    data={[
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.benefits.list1',
-                                            }),
-                                        },
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.benefits.list2',
-                                            }),
-                                        },
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.benefits.list3',
-                                            }),
-                                        },
-                                    ]}
-                                />
-                            </CardWrapper>
+                            <SupportBenefits />
 
-                            <CardWrapper message="How it works:">
-                                <KeyValueList
-                                    data={[
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.details.list1',
-                                            }),
-                                        },
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.details.list2',
-                                            }),
-                                        },
-                                        {
-                                            title: intl.formatMessage({
-                                                id: 'supportConsent.details.list3',
-                                            }),
-                                        },
-                                        {
-                                            title: `For details, see our Privacy Policy and Support
-                                Terms`,
-                                        },
-                                    ]}
-                                />
-                            </CardWrapper>
+                            <SupportDetails />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             form go here
