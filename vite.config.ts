@@ -2,11 +2,12 @@ import ChildProcess from 'child_process';
 import { readFileSync } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
+import type { Plugin } from 'vite';
 
 import react from '@vitejs/plugin-react';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
 import license from 'rollup-plugin-license';
-import { type Plugin } from 'vite';
+import { loadEnv } from 'vite';
 import checker from 'vite-plugin-checker';
 import circleDependency from 'vite-plugin-circular-dependency';
 import { compression } from 'vite-plugin-compression2';
@@ -93,90 +94,98 @@ const writeVersionToFile: () => Plugin = () => ({
 });
 
 // https://vitejs.dev/config/
-export default defineConfig({
-    build: {
-        assetsDir: 'static',
-        outDir: './build',
-        target: browserslistToEsbuild(),
-        rollupOptions: {
-            plugins: [
-                license({
-                    sourcemap: true,
-                    thirdParty: {
-                        output: {
-                            // Output file into public directory which is included in the build output.
-                            file: './public/vendor.license.txt',
+
+export default defineConfig(({ mode }) => {
+    // Load env file based on `mode` in the current working directory.
+    // Set the third parameter to '' to load all env regardless of the
+    // `VITE_` prefix.
+    const env = loadEnv(mode, process.cwd(), '');
+
+    return {
+        build: {
+            assetsDir: 'static',
+            outDir: './build',
+            target: browserslistToEsbuild(),
+            rollupOptions: {
+                plugins: [
+                    license({
+                        sourcemap: true,
+                        thirdParty: {
+                            output: {
+                                // Output file into public directory which is included in the build output.
+                                file: `./public/${env.VITE_LICENSE_FILE_NAME}`,
+                            },
                         },
-                    },
-                }),
+                    }),
+                ],
+            },
+        },
+
+        optimizeDeps: {
+            include: ['@estuary/flow-web'],
+            // exclude: ['@estuary/flow-web'],
+        },
+
+        preview: { port: 3000, strictPort: true },
+        server: { port: 3000, strictPort: true },
+        test: {
+            clearMocks: true,
+            environment: 'jsdom',
+            globals: true,
+            setupFiles: ['./src/setupTests.ts'],
+            testTimeout: 10000, // more time for auto retries
+            restoreMocks: true,
+            deps: {
+                inline: ['@estuary/flow-web'],
+            },
+            exclude: [
+                '**/playwright-tests/**',
+
+                // Below are defaults
+                '**/node_modules/**',
+                '**/dist/**',
+                '**/cypress/**',
+                '**/.{idea,git,cache,output,temp}/**',
+                '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
             ],
         },
-    },
 
-    optimizeDeps: {
-        include: ['@estuary/flow-web'],
-        // exclude: ['@estuary/flow-web'],
-    },
+        // https://github.com/vitejs/awesome-vite#plugins
+        plugins: [
+            viteTsconfigPaths(),
 
-    preview: { port: 3000, strictPort: true },
-    server: { port: 3000, strictPort: true },
-    test: {
-        clearMocks: true,
-        environment: 'jsdom',
-        globals: true,
-        setupFiles: ['./src/setupTests.ts'],
-        testTimeout: 10000, // more time for auto retries
-        restoreMocks: true,
-        deps: {
-            inline: ['@estuary/flow-web'],
-        },
-        exclude: [
-            '**/playwright-tests/**',
+            // Code injection
+            nodePolyfills({
+                include: ['buffer', 'path', 'process', 'stream'],
+            }),
 
-            // Below are defaults
-            '**/node_modules/**',
-            '**/dist/**',
-            '**/cypress/**',
-            '**/.{idea,git,cache,output,temp}/**',
-            '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+            // Deps
+            react({
+                jsxImportSource: '@emotion/react',
+            }),
+            wasm(),
+
+            // Build/Deploy stuff
+            writeVersionToFile(),
+            viteImageOptimizer({}),
+            sri(), // make sure this is before compression
+            compression({
+                algorithm: 'gzip',
+                exclude: /\.(br|gz)$/i,
+                include: /\.(js|mjs|json|css|html|wasm)$/i,
+                deleteOriginalAssets: false,
+            }),
+
+            // Quality Control
+            checker({
+                eslint: {
+                    lintCommand: 'lint',
+                },
+                typescript: {
+                    tsconfigPath: './tsconfig.json',
+                },
+            }),
+            circleDependency({}),
         ],
-    },
-
-    // https://github.com/vitejs/awesome-vite#plugins
-    plugins: [
-        viteTsconfigPaths(),
-
-        // Code injection
-        nodePolyfills({
-            include: ['buffer', 'path', 'process', 'stream'],
-        }),
-
-        // Deps
-        react({
-            jsxImportSource: '@emotion/react',
-        }),
-        wasm(),
-
-        // Build/Deploy stuff
-        writeVersionToFile(),
-        viteImageOptimizer({}),
-        sri(), // make sure this is before compression
-        compression({
-            algorithm: 'gzip',
-            exclude: /\.(br|gz)$/i,
-            include: /\.(js|mjs|json|css|html|wasm)$/i,
-            deleteOriginalAssets: false,
-        }),
-
-        // Quality Control
-        checker({
-            eslint: {
-                lintCommand: 'lint',
-            },
-            typescript: {
-                tsconfigPath: './tsconfig.json',
-            },
-        }),
-        circleDependency({}),
-    ],
+    };
 });

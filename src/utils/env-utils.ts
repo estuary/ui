@@ -1,3 +1,5 @@
+import { getWithExpiry, LocalStorageKeys } from 'src/utils/localStorage-utils';
+
 declare global {
     interface Window {
         Estuary: {
@@ -64,21 +66,25 @@ export const getLoginSettings = () => {
 export const getUrls = () => {
     const privacyPolicy = import.meta.env.VITE_URLS_PRIVACY_POLICY;
     const termsOfService = import.meta.env.VITE_URLS_TERMS_OF_SERVICE;
+    const license = import.meta.env.VITE_URLS_LICENSE;
 
-    if (privacyPolicy && termsOfService) {
+    if (license && privacyPolicy && termsOfService) {
         return {
+            license,
             privacyPolicy,
             termsOfService,
         };
     } else {
         throw new Error(
-            'Missing Privacy or TOS environmental settings: [VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
+            'Missing legal doc settings: [VITE_URLS_LICENSE, VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
         );
     }
 };
 
+// IOptions from .../node_modules/logrocket/dist/types.d.ts
 type Settings = {
     appID: string | null;
+    trackUserIP: boolean;
     serverURL: string | null;
     idUser: {
         enabled: boolean;
@@ -92,11 +98,13 @@ type Settings = {
         text: boolean;
     };
 };
-export const getLogRocketSettings = (): Settings | null => {
+
+const getLogRocketDefaultSettings = (): Settings | null => {
     if (import.meta.env.VITE_LOGROCKET_ENABLED === ENABLED) {
         return {
             appID: import.meta.env.VITE_LOGROCKET_APP_ID ?? null,
             serverURL: import.meta.env.VITE_LOGROCKET_SERVER_URL ?? null,
+            trackUserIP: import.meta.env.VITE_LOGROCKET_TRACK_IP === ENABLED,
             idUser: {
                 enabled: import.meta.env.VITE_LOGROCKET_ID_USER === ENABLED,
                 includeName:
@@ -117,6 +125,25 @@ export const getLogRocketSettings = (): Settings | null => {
                     ENABLED,
                 text: import.meta.env.VITE_LOGROCKET_SANITIZE_TEXT === ENABLED,
             },
+        };
+    }
+
+    return null;
+};
+
+export const getLogRocketSettings = (): Settings | null => {
+    const defaults = getLogRocketDefaultSettings();
+
+    const foo = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
+
+    console.log('foo', foo);
+
+    if (defaults) {
+        // Maybe fetch the cookie values here?
+        //  Need to figure that out
+
+        return {
+            ...defaults,
         };
     }
 
