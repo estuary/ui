@@ -45,9 +45,19 @@ const FieldOutcomes = ({
                             key={`${keyPrefix}-${field}`}
                             spacing={1}
                         >
-                            <OutlinedChip label={field} variant="outlined" />
+                            <OutlinedChip
+                                color={
+                                    fieldOutcome?.select && fieldOutcome?.reject
+                                        ? 'warning'
+                                        : undefined
+                                }
+                                label={field}
+                                variant="outlined"
+                            />
 
-                            {fieldOutcome?.select || fieldOutcome?.reject ? (
+                            {fieldOutcome?.select && fieldOutcome?.reject ? (
+                                <Typography>There is a conflict.</Typography>
+                            ) : fieldOutcome?.select || fieldOutcome?.reject ? (
                                 <Typography>
                                     {fieldOutcome.select?.detail ??
                                         fieldOutcome.reject?.detail}

@@ -62,7 +62,11 @@ const AlgorithmOutcomeDialog = ({
             const config: AlgorithmConfig | undefined =
                 selectedAlgorithm === 'depthOne' ? { depth: 1 } : undefined;
 
-            applyFieldSelectionAlgorithm(selectedAlgorithm, config).then(
+            applyFieldSelectionAlgorithm(
+                selectedAlgorithm,
+                projections,
+                config
+            ).then(
                 ({ fieldStanza, response }) => {
                     if (!response) {
                         return;
@@ -142,6 +146,8 @@ const AlgorithmOutcomeDialog = ({
             <DialogActions>
                 <Button
                     onClick={() => {
+                        setFieldOutcomes([]);
+                        setFieldSelection({});
                         setServerError(null);
                         setOpen(false);
                     }}

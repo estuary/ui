@@ -1,3 +1,4 @@
+import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
 import type {
@@ -15,7 +16,11 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { getRelatedBindings } from 'src/utils/workflow-utils';
+import {
+    getRelatedBindings,
+    isExcludeOnlyField,
+    isRequireOnlyField,
+} from 'src/utils/workflow-utils';
 
 export interface AlgorithmConfig {
     depth?: number;
@@ -58,6 +63,7 @@ export default function useFieldSelectionAlgorithm() {
         (
             draftedBinding: MaterializationBinding,
             selectionAlgorithm: SelectionAlgorithm,
+            projections: CompositeProjection[],
             config?: AlgorithmConfig
         ) => {
             if (!currentBindingUUID) {
@@ -71,8 +77,24 @@ export default function useFieldSelectionAlgorithm() {
                 fieldStanza = { recommended: config.depth };
             } else if (selectionAlgorithm === 'excludeAll') {
                 fieldStanza = {
-                    recommended: fieldStanza.recommended,
-                    exclude: Object.keys(fieldSelection),
+                    recommended: fieldStanza?.recommended,
+                    exclude: Object.keys(fieldSelection).filter((field) => {
+                        const selectedProjection = projections.find(
+                            (projection) => projection.field === field
+                        );
+
+                        if (!selectedProjection?.constraint) {
+                            return false;
+                        }
+
+                        const { constraint } = selectedProjection;
+
+                        if (fieldStanza?.recommended === false) {
+                            return isExcludeOnlyField(constraint.type);
+                        }
+
+                        return !isRequireOnlyField(constraint.type);
+                    }),
                 };
             } else if (selectionAlgorithm === 'recommended') {
                 fieldStanza = { recommended: true };
@@ -86,6 +108,7 @@ export default function useFieldSelectionAlgorithm() {
     const applyFieldSelectionAlgorithm = useCallback(
         async (
             selectionAlgorithm: SelectionAlgorithm,
+            projections: CompositeProjection[],
             config?: AlgorithmConfig
         ) => {
             if (
@@ -117,6 +140,7 @@ export default function useFieldSelectionAlgorithm() {
             const updatedSelections = getDraftedFieldSelections(
                 draftedBinding,
                 selectionAlgorithm,
+                projections,
                 config
             );
 

@@ -441,12 +441,14 @@ export const getAlgorithmicFieldSelection = (
                 selectionType =
                     selected && isRequireOnlyField(constraint.type)
                         ? 'require'
-                        : !selected
+                        : !selected &&
+                            constraint.type !== ConstraintTypes.FIELD_OPTIONAL
                           ? 'exclude'
                           : null;
             } else {
                 selectionType =
                     !selected &&
+                    constraint.type !== ConstraintTypes.FIELD_OPTIONAL &&
                     (!isRequireOnlyField(constraint.type) ||
                         isExcludeOnlyField(constraint.type))
                         ? 'exclude'
