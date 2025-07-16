@@ -1,4 +1,4 @@
-import type { GenerateButtonProps } from 'src/components/fieldSelection/AlgorithmOutcome/types';
+import type { GenerateButtonProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 

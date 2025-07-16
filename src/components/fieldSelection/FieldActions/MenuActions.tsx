@@ -1,4 +1,4 @@
-import type { MenuActionProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Box, Button, Stack } from '@mui/material';
 

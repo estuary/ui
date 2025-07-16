@@ -1,4 +1,4 @@
-import type { SaveButtonProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+import type { SaveButtonProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 

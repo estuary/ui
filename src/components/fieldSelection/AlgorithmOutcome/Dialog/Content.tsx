@@ -1,4 +1,4 @@
-import type { AlgorithmOutcomeContentProps } from 'src/components/fieldSelection/AlgorithmOutcome/types';
+import type { AlgorithmOutcomeContentProps } from 'src/components/fieldSelection/types';
 
 import { useMemo } from 'react';
 

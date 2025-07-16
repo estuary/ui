@@ -1,5 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { AlgorithmOutcomeDialogProps } from 'src/components/fieldSelection/AlgorithmOutcome/types';
+import type { AlgorithmOutcomeDialogProps } from 'src/components/fieldSelection/types';
 import type { AlgorithmConfig } from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 import type { FieldOutcome } from 'src/types/wasm';
@@ -19,8 +19,8 @@ import {
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
-import SaveButton from 'src/components/editor/Bindings/FieldSelection/FieldActions/SaveButton';
 import AlgorithmOutcomeContent from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/Content';
+import SaveButton from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/SaveButton';
 import Error from 'src/components/shared/Error';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { BASE_ERROR } from 'src/services/supabase';

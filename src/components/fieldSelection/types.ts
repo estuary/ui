@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { BaseProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
 import type {
     FieldSelectionDictionary,
     SelectionAlgorithm,
@@ -18,6 +18,12 @@ export interface AlgorithmOutcomeDialogProps extends BaseProps {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+export interface BaseProps {
+    bindingUUID: string;
+    loading: boolean;
+    projections: CompositeProjection[] | null | undefined;
+}
+
 export interface FieldOutcomesProps {
     fields: string[];
     headerMessageId: string;
@@ -28,5 +34,15 @@ export interface FieldOutcomesProps {
 
 export interface GenerateButtonProps extends BaseProps {
     closeMenu: () => void;
+    selectedAlgorithm: SelectionAlgorithm | null;
+}
+
+export interface MenuActionProps extends BaseProps {
+    closeMenu: () => void;
+}
+
+export interface SaveButtonProps extends BaseProps {
+    close: () => void;
+    fieldSelection: FieldSelectionDictionary;
     selectedAlgorithm: SelectionAlgorithm | null;
 }

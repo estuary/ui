@@ -1,4 +1,4 @@
-import type { FieldOutcomesProps } from 'src/components/fieldSelection/AlgorithmOutcome/types';
+import type { FieldOutcomesProps } from 'src/components/fieldSelection/types';
 
 import { Stack, Typography } from '@mui/material';
 
