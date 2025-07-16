@@ -5,7 +5,7 @@ import type {
     CompositeProjection,
     FieldSelectionType,
     ValidationResponse_Binding,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
@@ -29,7 +29,7 @@ import type { MaterializationBinding } from 'src/types/wasm';
 import { isBoolean, isEmpty, isEqual } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,

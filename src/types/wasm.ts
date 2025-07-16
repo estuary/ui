@@ -1,7 +1,7 @@
 import type {
     Projection,
     ValidationResponse_Binding,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 
 // evaluate_field selection WASM routine documentation can be found here:
 // https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
@@ -38,6 +38,10 @@ export interface FieldOutcome {
     select?: SelectOutput;
 }
 
+// TODO (typing): Determine whether the FieldSelection interface related to the WASM function
+//   differs from that of the built binding. Presently, there is a type conflict between the
+//   two which is highlighted by the semi-duplicate interface defined in
+//   src/components/fieldSelection/types.ts.
 interface FieldSelection {
     document: string;
     fieldConfig: Record<string, string>;

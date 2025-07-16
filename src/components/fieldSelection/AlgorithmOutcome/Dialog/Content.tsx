@@ -2,8 +2,8 @@ import type { AlgorithmOutcomeContentProps } from 'src/components/fieldSelection
 
 import { useMemo } from 'react';
 
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
+import { ConstraintTypes } from 'src/components/fieldSelection/types';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,

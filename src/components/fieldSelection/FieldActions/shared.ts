@@ -1,7 +1,7 @@
 import type {
     CompositeProjection,
     FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 
 import {

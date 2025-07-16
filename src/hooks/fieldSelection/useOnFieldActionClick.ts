@@ -1,7 +1,7 @@
 import type {
     ConstraintTypes,
     FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useCallback } from 'react';

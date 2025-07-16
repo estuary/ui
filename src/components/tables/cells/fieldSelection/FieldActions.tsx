@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { TableCell } from '@mui/material';
 
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
+import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import FieldActionButton from 'src/components/tables/cells/fieldSelection/FieldActionButton';
 import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';

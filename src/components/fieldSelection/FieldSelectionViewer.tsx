@@ -4,7 +4,7 @@ import type {
     FieldSelectionType,
     Projection,
     TranslatedConstraint,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
 
@@ -15,10 +15,10 @@ import { Box, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
-import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import RefreshButton from 'src/components/fieldSelection/RefreshButton';
+import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
+import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import {

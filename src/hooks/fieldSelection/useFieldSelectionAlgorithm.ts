@@ -1,4 +1,4 @@
-import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { CompositeProjection } from 'src/components/fieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
 import type {

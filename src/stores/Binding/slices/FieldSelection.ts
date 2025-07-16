@@ -1,7 +1,7 @@
 import type {
     ConstraintTypes,
     FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
