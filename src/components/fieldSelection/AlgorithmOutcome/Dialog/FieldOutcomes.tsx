@@ -55,9 +55,7 @@ const FieldOutcomes = ({
                                 variant="outlined"
                             />
 
-                            {fieldOutcome?.select && fieldOutcome?.reject ? (
-                                <Typography>There is a conflict.</Typography>
-                            ) : fieldOutcome?.select || fieldOutcome?.reject ? (
+                            {fieldOutcome?.select || fieldOutcome?.reject ? (
                                 <Typography>
                                     {fieldOutcome.select?.detail ??
                                         fieldOutcome.reject?.detail}
