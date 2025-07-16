@@ -18,9 +18,9 @@ import MessageWithLink from 'src/components/content/MessageWithLink';
 import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
 import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
-import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
+import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
