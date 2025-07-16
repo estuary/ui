@@ -27,7 +27,6 @@
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
         "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
-        "beta_logRocketIntegrity": "node --env-file .env ./scripts/logRocketIntegirty",
         "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh"

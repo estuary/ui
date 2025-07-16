@@ -281,6 +281,7 @@ function useSave(
             const collectionsToUpdate: any[] = [];
             if (collectionsOnDraft) {
                 collectionsOnDraft.forEach((draftSpec) => {
+                    // If we are removing it we do not need to update
                     if (
                         collectionsBeingRemovedFromDraft.includes(
                             draftSpec.catalog_name
@@ -289,6 +290,17 @@ function useSave(
                         return;
                     }
 
+                    // If it is not being backfill we do not need to update. This is important for when
+                    //  a user has run a re-discover and they have a bunch of collections on their draft
+                    if (
+                        !collectionsBeingBackfilled.includes(
+                            draftSpec.catalog_name
+                        )
+                    ) {
+                        return;
+                    }
+
+                    // If the spec is not already marked for reset go ahead and do it now
                     if (draftSpec.spec.reset !== true) {
                         collectionsToUpdate.push({
                             catalog_name: draftSpec.catalog_name,
