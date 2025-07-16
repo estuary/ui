@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -9,7 +10,7 @@ import {
 
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
-import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
 import KeyValueList from 'src/components/shared/KeyValueList';
 
 const popupId = 'recordingConsentModal';
@@ -22,7 +23,7 @@ function RecordingConsentModal() {
 
     return (
         <>
-            <Button onClick={open}>Update</Button>
+            <Button onClick={open}>Modify</Button>
             <Dialog id={popupId} open={isOpen} fullWidth maxWidth="md">
                 <DialogTitle>Recording Consent Settings</DialogTitle>
 
@@ -33,7 +34,7 @@ function RecordingConsentModal() {
                         screen sharing through secure session replay.
                     </Typography>
 
-                    <AlertBox title="What’s included?" severity="info" short>
+                    <CardWrapper message="What’s included?">
                         <KeyValueList
                             data={[
                                 {
@@ -51,9 +52,9 @@ function RecordingConsentModal() {
                                 },
                             ]}
                         />
-                    </AlertBox>
+                    </CardWrapper>
 
-                    <AlertBox title="How it works:" severity="info" short>
+                    <CardWrapper message="How it works:">
                         <KeyValueList
                             data={[
                                 {
@@ -74,12 +75,18 @@ function RecordingConsentModal() {
                                 },
                             ]}
                         />
-                    </AlertBox>
+                    </CardWrapper>
 
-                    <Typography>
-                        You stay in control—support recording is always optional
-                        and easily managed in your dashboard.
-                    </Typography>
+                    <CardWrapper
+                        message="You stay in control—support recording is always optional
+                        and easily managed in your dashboard."
+                    >
+                        <Box>
+                            0 - Allow Estuary Support to have access to my
+                            tenant
+                        </Box>
+                        <Box>1 - Allow my session to be recorded</Box>
+                    </CardWrapper>
                 </DialogContent>
 
                 <DialogActions>

@@ -126,6 +126,16 @@ export const Authentication: Record<string, string> = {
     'tenant.usedSso.instructions': `To do so, ask an ${CommonMessages.company} admin at your company to go to the URL below and create an invite link which they can share with you.`,
     'tenant.usedSso.instructions.fullPath': `${window.location.origin}${authenticatedRoutes.admin.accessGrants.fullPath}`,
 
+    // Support Consent
+    'supportConsent.benefits.list1': `Priority support with Estuary’s technical team`,
+    'supportConsent.benefits.list2': `Session replay: with your consent, our support team can securely view dashboard activity to resolve issues faster—no sensitive info is shared, and your privacy is protected`,
+    'supportConsent.benefits.list3': `Full control: turn this off at any time in your dashboard settings`,
+
+    'supportConsent.details.list1': `Session recording only starts after you accept below`,
+    'supportConsent.details.list2': `All recordings are used only for support and deleted after 30 days`,
+    'supportConsent.details.list3': `You may opt out or request deletion of any recording at any time`,
+    'supportConsent.details.list4': ``,
+
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,

@@ -35,7 +35,6 @@ function AdminLegal() {
                     </Typography>
 
                     <Stack direction="row" spacing={2}>
-                        <RecordingConsentModal />
                         <OutlinedChip
                             // color={sourceCapture ? 'success' : 'info'}
                             color="success"
@@ -59,6 +58,7 @@ function AdminLegal() {
                             }}
                             variant="outlined"
                         />
+                        <RecordingConsentModal />
                     </Stack>
                 </Grid>
             </Grid>
@@ -66,16 +66,16 @@ function AdminLegal() {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={9}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Legal Information
+                        Links
                     </Typography>
 
-                    <Typography>
-                        Below are links to some of our primary legal documents.
-                    </Typography>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Stack maxWidth="fit-content">
+                    <Stack
+                        spacing={1}
+                        sx={{
+                            alignItems: 'start',
+                            maxWidth: 'fit-content',
+                        }}
+                    >
                         <ExternalLink link={urls.termsOfService}>
                             {intl.formatMessage({ id: 'legal.docs.terms' })}
                         </ExternalLink>

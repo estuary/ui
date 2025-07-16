@@ -8,6 +8,7 @@ import setupLogRocketReact from 'logrocket-react';
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
 import { getLogRocketSettings } from 'src/utils/env-utils';
+import { getWithExpiry, LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -18,6 +19,9 @@ interface IUserTraits {
 interface Settings {
     release: any;
     dom: any;
+    shouldCaptureIP?: any;
+    shouldSendData?: any;
+    browser?: any;
     network?: any;
     serverURL?: any;
 }
@@ -30,9 +34,7 @@ export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
 // for endspoints where we want nothing ever logged
-const maskEverythingURLs = ['config-encryption.estuary.dev'];
-const shouldMaskEverything = (url?: string) =>
-    maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+const shouldMaskEverything = (url?: string) => true;
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
@@ -43,7 +45,7 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
 // for endpoints where we do not want to mess with the request at all
 //  These should stay in sync with what is added to the CSP policy (public/nginx.conf)
 const ignoreRegEx =
-    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest)/;
+    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest|lr-ingest|ingest-lr|lrkt-in|lgrckt-in)/;
 const shouldIgnore = (url?: string) => ignoreRegEx.test(url ?? '');
 
 // The headers we never want to have logged
@@ -115,6 +117,20 @@ const parseBody = (body: any): ParsedBody => {
     return formattedContent;
 };
 
+const maskUrl = (url?: string) => {
+    if (!url) {
+        return url;
+    }
+
+    const split = url.split('?');
+
+    if (split.length > 0) {
+        return `${split[0]}?${MASKED}`;
+    }
+
+    return url;
+};
+
 // Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
     // Sometimes we just want to pass along the content exactly as is
@@ -162,6 +178,11 @@ const maskContent = (requestResponse: any) => {
         );
     }
 
+    // Mask the URL so we don't leak catalog names
+    if (requestResponse?.url) {
+        requestResponse.url = maskUrl(requestResponse.url);
+    }
+
     return requestResponse;
 };
 
@@ -171,6 +192,9 @@ export const initLogRocket = () => {
     if (logRocketSettings?.appID) {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
+            browser: {
+                urlSanitizer: maskUrl,
+            },
             dom: {
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
@@ -188,17 +212,23 @@ export const initLogRocket = () => {
         ) {
             settings.network = {};
             if (logRocketSettings.sanitize.response) {
-                settings.network.responseSanitizer = (response: any) => {
-                    return maskContent(response);
-                };
+                settings.network.responseSanitizer = maskContent;
             }
 
             if (logRocketSettings.sanitize.request) {
-                settings.network.requestSanitizer = (request: any) => {
-                    return maskContent(request);
-                };
+                settings.network.requestSanitizer = maskContent;
             }
         }
+
+        settings.shouldCaptureIP = logRocketSettings.trackUserIP;
+
+        settings.shouldSendData = () => {
+            const foo = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
+
+            console.log('shouldSendData', foo);
+
+            return true;
+        };
 
         LogRocket.init(logRocketSettings.appID, settings);
         setupLogRocketReact(LogRocket);
