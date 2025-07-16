@@ -71,11 +71,9 @@ const AlgorithmOutcomeDialog = ({
                     if (!response) {
                         return;
                     }
-                    const selectedFields = [
-                        response.selection.document,
-                        ...response.selection.keys,
-                        ...(response.selection?.values ?? []),
-                    ];
+                    const selectedFields = response.outcomes
+                        .filter((outcome) => Boolean(outcome?.select))
+                        .map(({ field }) => field);
 
                     const updatedSelections = getAlgorithmicFieldSelection(
                         existingFieldSelection,
