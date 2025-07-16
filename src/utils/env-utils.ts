@@ -66,17 +66,15 @@ export const getLoginSettings = () => {
 export const getUrls = () => {
     const privacyPolicy = import.meta.env.VITE_URLS_PRIVACY_POLICY;
     const termsOfService = import.meta.env.VITE_URLS_TERMS_OF_SERVICE;
-    const license = import.meta.env.VITE_URLS_LICENSE;
 
-    if (license && privacyPolicy && termsOfService) {
+    if (privacyPolicy && termsOfService) {
         return {
-            license,
             privacyPolicy,
             termsOfService,
         };
     } else {
         throw new Error(
-            'Missing legal doc settings: [VITE_URLS_LICENSE, VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
+            'Missing legal doc settings: [VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
         );
     }
 };

@@ -68,7 +68,6 @@ export const Authentication: Record<string, string> = {
     'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before you continue.`,
     'legal.docs.terms': `Terms of Service`,
     'legal.docs.privacy': `Privacy Policy`,
-    'legal.docs.license': `Licenses`,
     'legal.docs.accept': 'I accept the {privacy} and {terms}',
     'legal.docs.errorTitle': 'Please accept',
     'legal.docs.errorMessage':

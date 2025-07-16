@@ -7,6 +7,7 @@ import { Box, Grid } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
+import EnhancedSupport from 'src/app/guards/ConsentGuard/EnhancedSupport';
 import SupportBenefits from 'src/app/guards/ConsentGuard/SupportBenefits';
 import SupportDetails from 'src/app/guards/ConsentGuard/SupportDetails';
 import FullPageError from 'src/components/fullPage/Error';
@@ -59,7 +60,7 @@ function ConsentGuard({ children }: BaseComponentProps) {
                             <SupportDetails />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            form go here
+                            <EnhancedSupport />
                         </Grid>
                     </Grid>
                 </Box>
