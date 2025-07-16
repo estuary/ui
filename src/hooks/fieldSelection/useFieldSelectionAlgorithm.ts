@@ -73,7 +73,7 @@ export default function useFieldSelectionAlgorithm() {
             let fieldStanza: Schema = draftedBinding?.fields ?? {};
             const fieldSelection = selections[currentBindingUUID];
 
-            if (selectionAlgorithm === 'depthOne' && config?.depth) {
+            if (selectionAlgorithm.startsWith('depth') && config?.depth) {
                 fieldStanza = { recommended: config.depth };
             } else if (selectionAlgorithm === 'excludeAll') {
                 fieldStanza = {

@@ -60,7 +60,11 @@ const AlgorithmOutcomeDialog = ({
             selectedAlgorithm
         ) {
             const config: AlgorithmConfig | undefined =
-                selectedAlgorithm === 'depthOne' ? { depth: 1 } : undefined;
+                selectedAlgorithm === 'depthOne'
+                    ? { depth: 1 }
+                    : selectedAlgorithm === 'depthTwo'
+                      ? { depth: 2 }
+                      : undefined;
 
             applyFieldSelectionAlgorithm(
                 selectedAlgorithm,
