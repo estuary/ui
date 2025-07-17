@@ -1,3 +1,7 @@
+import type { DurationLike } from 'luxon';
+
+import { DateTime } from 'luxon';
+
 export enum LocalStorageKeys {
     COLOR_MODE = 'estuary.color-mode',
     DATAPLANE_CHOICE = 'estuary.dataplane-choice',
@@ -14,7 +18,8 @@ export enum LocalStorageKeys {
 
 export const setWithExpiry = <T = unknown>(
     key: LocalStorageKeys,
-    value: any | T
+    value: any | T,
+    expirationSetting?: DurationLike
 ) => {
     if (value === null) {
         localStorage.removeItem(key);
@@ -23,7 +28,9 @@ export const setWithExpiry = <T = unknown>(
             key,
             JSON.stringify({
                 value,
-                expiry: new Date().getTime() + 5000,
+                expiry: expirationSetting
+                    ? DateTime.utc().plus(expirationSetting).toMillis()
+                    : null,
             })
         );
     }
@@ -39,7 +46,8 @@ export const getWithExpiry = <T = unknown>(key: LocalStorageKeys): null | T => {
     }
 
     // We have waited long enough to allow trying again so clearing out the key
-    if (new Date().getTime() > item.expiry) {
+    if (!item.expiry || DateTime.utc().toMillis() > item.expiry) {
+        console.log('cleaning up', item);
         setWithExpiry(key, null);
         return null;
     }

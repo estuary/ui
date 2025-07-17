@@ -15,6 +15,7 @@ import IconMenu from 'src/components/menus/IconMenu';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { LocalStorageKeys, setWithExpiry } from 'src/utils/localStorage-utils';
 
 interface Props {
     iconColor: string;
@@ -86,6 +87,16 @@ const UserMenu = ({ iconColor }: Props) => {
                     </ListItemIcon>
 
                     <FormattedMessage id="cta.logout" />
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => {
+                        setWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS, true, {
+                            seconds: 15,
+                        });
+                    }}
+                >
+                    Enable LogRocket
                 </MenuItem>
             </IconMenu>
         );

@@ -227,7 +227,7 @@ export const initLogRocket = () => {
 
             console.log('shouldSendData', foo);
 
-            return true;
+            return foo === true;
         };
 
         LogRocket.init(logRocketSettings.appID, settings);
