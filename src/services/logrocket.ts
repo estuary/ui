@@ -223,11 +223,10 @@ export const initLogRocket = () => {
         settings.shouldCaptureIP = logRocketSettings.trackUserIP;
 
         settings.shouldSendData = () => {
-            const foo = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
-
-            console.log('shouldSendData', foo);
-
-            return foo === true;
+            const isEnabled =
+                getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS) === true;
+            console.log('shouldSendData = ', isEnabled);
+            return isEnabled;
         };
 
         LogRocket.init(logRocketSettings.appID, settings);
@@ -236,7 +235,13 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    if (logRocketSettings?.idUser.enabled && logRocketSettings.appID) {
+    const enhancedSupport = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
+
+    if (
+        logRocketSettings?.idUser.enabled &&
+        logRocketSettings.appID &&
+        enhancedSupport
+    ) {
         const traits = {} as IUserTraits;
         const userDetails = getUserDetails(user);
 

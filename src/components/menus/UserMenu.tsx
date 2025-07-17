@@ -15,7 +15,7 @@ import IconMenu from 'src/components/menus/IconMenu';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { LocalStorageKeys, setWithExpiry } from 'src/utils/localStorage-utils';
+import useEnhancedSupport from 'src/hooks/_compliance/useEnhancedSupport';
 
 interface Props {
     iconColor: string;
@@ -30,6 +30,8 @@ const nonInteractiveMenuStyling: SxProps = {
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
+
+    const { toggleEnhancedSupport } = useEnhancedSupport();
 
     const handlers = {
         logout: async () => {
@@ -91,9 +93,7 @@ const UserMenu = ({ iconColor }: Props) => {
 
                 <MenuItem
                     onClick={() => {
-                        setWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS, true, {
-                            seconds: 15,
-                        });
+                        toggleEnhancedSupport(true);
                     }}
                 >
                     Enable LogRocket
