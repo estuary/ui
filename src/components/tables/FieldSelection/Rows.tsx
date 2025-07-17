@@ -1,4 +1,4 @@
-import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { CompositeProjection } from 'src/components/fieldSelection/types';
 import type {
     RowProps,
     RowsProps,

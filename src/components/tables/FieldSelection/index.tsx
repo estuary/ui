@@ -7,7 +7,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
+import FieldActions from 'src/components/fieldSelection/FieldActions';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';

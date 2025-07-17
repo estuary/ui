@@ -1,12 +1,10 @@
 import type {
-    BuiltSpec_Binding,
     CompositeProjection,
     ConstraintDictionary,
     FieldSelectionType,
     Projection,
     TranslatedConstraint,
-    ValidationResponse_Binding,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
 
@@ -14,16 +12,15 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { isEqual } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import RefreshButton from 'src/components/editor/Bindings/FieldSelection/RefreshButton';
-import RefreshStatus from 'src/components/editor/Bindings/FieldSelection/RefreshStatus';
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
-import useFieldSelection from 'src/components/editor/Bindings/FieldSelection/useFieldSelection';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import RefreshButton from 'src/components/fieldSelection/RefreshButton';
+import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
+import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
+import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
@@ -37,7 +34,10 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { getBindingIndex, isRecommendedField } from 'src/utils/workflow-utils';
+import {
+    getRelatedBindings,
+    isRecommendedField,
+} from 'src/utils/workflow-utils';
 
 interface Props {
     bindingUUID: string;
@@ -138,57 +138,34 @@ function FieldSelectionViewer({
             draftSpecs[0].validated
         ) {
             if (!formActive) {
-                // Select the binding from the built spec that corresponds to the current collection
-                //  to extract the projection information.
-                // Defaulting to empty array. This is to handle when a user has disabled a collection
-                //  which causes the binding to not be included in the built_spec
-                const builtSpecBindings: BuiltSpec_Binding[] =
-                    draftSpecs[0].built_spec.bindings ?? [];
-
-                const selectedBuiltSpecBinding: BuiltSpec_Binding | undefined =
-                    builtSpecBindings.find(
-                        (binding) => binding.collection.name === collectionName
+                const { builtBinding, draftedBinding, validationBinding } =
+                    getRelatedBindings(
+                        draftSpecs[0].built_spec,
+                        draftSpecs[0].spec,
+                        stagedBindingIndex,
+                        collectionName,
+                        draftSpecs[0].validated
                     );
 
-                if (selectedBuiltSpecBinding) {
+                if (builtBinding) {
                     const evaluatedProjections =
-                        selectedBuiltSpecBinding.collection.projections;
-
-                    // The validation phase of a publication produces a document which correlates each binding projection
-                    // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
-                    // from the validation document that corresponds to the current collection to extract the constraint types.
-                    const validationBindings: ValidationResponse_Binding[] =
-                        draftSpecs[0].validated.bindings;
+                        builtBinding.collection.projections;
 
                     const evaluatedConstraints:
                         | ConstraintDictionary
-                        | undefined = validationBindings.find((binding) =>
-                        isEqual(
-                            binding.resourcePath,
-                            selectedBuiltSpecBinding.resourcePath
-                        )
-                    )?.constraints;
+                        | undefined = validationBinding?.constraints;
 
-                    const bindingIndex: number = getBindingIndex(
-                        draftSpecs[0].spec.bindings,
-                        collectionName,
-                        stagedBindingIndex
-                    );
-                    const selectedBinding: Schema | undefined =
-                        bindingIndex > -1
-                            ? draftSpecs[0].spec.bindings[bindingIndex]
-                            : undefined;
                     let evaluatedFieldMetadata: FieldMetadata | undefined;
 
                     if (
-                        selectedBinding &&
-                        Object.hasOwn(selectedBinding, 'fields')
+                        draftedBinding &&
+                        Object.hasOwn(draftedBinding, 'fields')
                     ) {
-                        evaluatedFieldMetadata = selectedBinding.fields;
+                        evaluatedFieldMetadata = draftedBinding.fields;
 
                         setRecommendFields(
                             bindingUUID,
-                            selectedBinding.fields.recommended
+                            draftedBinding.fields.recommended
                         );
                     } else {
                         setRecommendFields(bindingUUID, true);
@@ -205,10 +182,12 @@ function FieldSelectionViewer({
                         const selections: ExpandedFieldSelection[] =
                             compositeProjections.map(
                                 ({
+                                    constraint,
                                     field,
                                     selectionMetadata,
                                     selectionType,
                                 }) => ({
+                                    constraintType: constraint?.type,
                                     field,
                                     meta: selectionMetadata,
                                     mode: selectionType,

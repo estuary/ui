@@ -1,14 +1,22 @@
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
+import type {
+    ConstraintTypes,
+    FieldSelectionType,
+} from 'src/components/fieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-export type SelectionAlgorithm = 'excludeAll' | 'recommended';
+export type SelectionAlgorithm =
+    | 'depthOne'
+    | 'depthTwo'
+    | 'excludeAll'
+    | 'recommended';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
+    constraintType?: ConstraintTypes;
     meta?: Schema;
 }
 
@@ -25,8 +33,8 @@ interface BindingFieldSelections {
 }
 
 export interface StoreWithFieldSelection {
-    recommendFields: { [uuid: string]: boolean };
-    setRecommendFields: (bindingUUID: string, value: boolean) => void;
+    recommendFields: { [uuid: string]: boolean | number };
+    setRecommendFields: (bindingUUID: string, value: boolean | number) => void;
 
     selections: BindingFieldSelections;
     initializeSelections: (
@@ -37,11 +45,17 @@ export interface StoreWithFieldSelection {
         bindingUUID: string,
         field: string,
         mode: FieldSelection['mode'],
+        constraintType: ConstraintTypes | undefined,
         meta?: FieldSelection['meta']
     ) => void;
     setMultiSelection: (
         bindingUUID: string,
         updatedFields: FieldSelectionDictionary
+    ) => void;
+    setAlgorithmicSelection: (
+        selectedAlgorithm: SelectionAlgorithm,
+        bindingUUID: string,
+        value: FieldSelectionDictionary | undefined
     ) => void;
 
     selectionSaving: boolean;
@@ -81,15 +95,48 @@ export const getStoreWithFieldSelectionSettings = (
     initializeSelections: (bindingUUID, selections) => {
         set(
             produce((state: BindingState) => {
-                selections.forEach(({ field, mode, meta }) => {
+                selections.forEach(({ constraintType, field, mode, meta }) => {
                     state.selections[bindingUUID] = {
                         ...state.selections[bindingUUID],
-                        [field]: { mode, meta },
+                        [field]: { constraintType, mode, meta },
                     };
                 });
             }),
             false,
             'Selections Initialized'
+        );
+    },
+
+    setAlgorithmicSelection: (selectedAlgorithm, bindingUUID, value) => {
+        if (!value) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                state.selections[bindingUUID] = value;
+
+                switch (selectedAlgorithm) {
+                    case 'depthOne': {
+                        state.recommendFields[bindingUUID] = 1;
+                        break;
+                    }
+                    case 'depthTwo': {
+                        state.recommendFields[bindingUUID] = 2;
+                        break;
+                    }
+                    case 'recommended': {
+                        state.recommendFields[bindingUUID] = true;
+                        break;
+                    }
+                }
+
+                if (!state.selectionSaving) {
+                    state.selectionSaving = true;
+                }
+            }),
+            false,
+            'Algorithmic Selections Set'
         );
     },
 
@@ -152,7 +199,7 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSingleSelection: (bindingUUID, field, mode, meta) => {
+    setSingleSelection: (bindingUUID, field, mode, constraintType, meta) => {
         set(
             produce((state: BindingState) => {
                 const previousSelectionMode =
@@ -160,7 +207,7 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     ...state.selections[bindingUUID],
-                    [field]: { mode, meta },
+                    [field]: { constraintType, mode, meta },
                 };
 
                 if (!state.selectionSaving && previousSelectionMode !== mode) {

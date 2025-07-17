@@ -1,7 +1,7 @@
 import type {
     ConstraintTypes,
     FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useCallback } from 'react';
@@ -38,8 +38,8 @@ export default function useOnFieldActionClick(
     field: string
 ) {
     // Bindings Editor Store
-    const recommended = useBindingStore(
-        (state) => state.recommendFields[bindingUUID]
+    const recommended = useBindingStore((state) =>
+        Boolean(state.recommendFields[bindingUUID])
     );
     const setSingleSelection = useBinding_setSingleSelection();
 
@@ -70,6 +70,7 @@ export default function useOnFieldActionClick(
                 bindingUUID,
                 field,
                 selectionType,
+                constraintType,
                 selection?.meta
             );
         },

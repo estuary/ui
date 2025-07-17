@@ -1,7 +1,7 @@
 import type {
     CompositeProjection,
     FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+} from 'src/components/fieldSelection/types';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 
 import {
@@ -11,7 +11,7 @@ import {
 
 export const evaluateUpdatedFields = (
     projections: CompositeProjection[],
-    recommendedFlag: boolean,
+    recommendedFlag: boolean | number,
     selectedValue: FieldSelectionType | null
 ) => {
     const updatedFields: FieldSelectionDictionary = {};
@@ -27,7 +27,7 @@ export const evaluateUpdatedFields = (
 
         let selectionType = required ? 'require' : selectedValue;
 
-        if (recommendedFlag) {
+        if (Boolean(recommendedFlag)) {
             selectionType =
                 (selectedValue === 'exclude' && required) ||
                 (selectedValue === null && recommended)
