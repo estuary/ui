@@ -9,7 +9,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
     'routeTitle.admin.settings': `Settings`,
-    'routeTitle.admin.legal': `Legal`,
+    'routeTitle.admin.support': `Support`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
     'routeTitle.captureEdit': `Edit Capture`,

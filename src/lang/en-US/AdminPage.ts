@@ -139,7 +139,7 @@ export const AdminPage: Record<string, string> = {
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
-    'admin.tabs.legal': `Legal`,
+    'admin.tabs.support': `support`,
 
     // Storage Mappings
     'storageMappings.header': `Cloud Storage`,

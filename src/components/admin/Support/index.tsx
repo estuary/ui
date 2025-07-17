@@ -12,11 +12,12 @@ import {
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
+import AlertBox from 'src/components/shared/AlertBox';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 function AdminLegal() {
     usePageTitle({
-        header: authenticatedRoutes.admin.legal.title,
+        header: authenticatedRoutes.admin.support.title,
     });
 
     return (
@@ -33,6 +34,12 @@ function AdminLegal() {
                         Estuary’s technical team. This enables them to see your
                         data.
                     </Typography>
+
+                    <AlertBox
+                        title="We need to show more legal verbiage here if we directly allow them to enable"
+                        short
+                        severity="info"
+                    />
 
                     <Stack>
                         <FormControl>
@@ -59,6 +66,12 @@ function AdminLegal() {
                         dashboard activity to resolve issues faster—no sensitive
                         info is shared, and your privacy is protected.
                     </Typography>
+
+                    <AlertBox
+                        title="We need to show more legal verbiage here if we directly allow them to enable"
+                        short
+                        severity="info"
+                    />
 
                     <Stack>
                         <FormControl>
