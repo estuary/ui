@@ -31,7 +31,7 @@ const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
 
-    const { toggleEnhancedSupport } = useEnhancedSupport();
+    const { setEnhancedSupport: toggleEnhancedSupport } = useEnhancedSupport();
 
     const handlers = {
         logout: async () => {

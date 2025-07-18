@@ -199,6 +199,7 @@ export const initLogRocket = () => {
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
+                isEnabled: false,
             },
         };
 

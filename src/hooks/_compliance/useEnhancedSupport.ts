@@ -13,7 +13,7 @@ function useEnhancedSupport() {
         }
     }, [user]);
 
-    const toggleEnhancedSupport = useCallback(
+    const setEnhancedSupport = useCallback(
         (newVal: boolean) => {
             setWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS, newVal, {
                 seconds: 15,
@@ -28,7 +28,7 @@ function useEnhancedSupport() {
 
     return {
         idUser,
-        toggleEnhancedSupport,
+        setEnhancedSupport,
     };
 }
 
