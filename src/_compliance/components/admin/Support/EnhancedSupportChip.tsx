@@ -1,6 +1,6 @@
 import { Box, Stack } from '@mui/material';
 
-import RecordingConsentModal from 'src/components/admin/Support/RecordingConsentModal';
+import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
 import { truncateTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 

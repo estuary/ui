@@ -13,6 +13,7 @@ function SupportBenefits() {
             })}
         >
             <KeyValueList
+                disableTypography
                 data={[
                     {
                         title: intl.formatMessage({

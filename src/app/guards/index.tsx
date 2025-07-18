@@ -12,11 +12,11 @@ function AppGuards({ children }: BaseComponentProps) {
     return (
         <UserGuard>
             <LegalGuard>
-                {/*<ConsentGuard>*/}
+                {/*<EnhancedSupportGuard>*/}
                 <GrantGuard>
                     <TenantGuard>{children}</TenantGuard>
                 </GrantGuard>
-                {/*</ConsentGuard>*/}
+                {/*</EnhancedSupportGuard>*/}
             </LegalGuard>
         </UserGuard>
     );

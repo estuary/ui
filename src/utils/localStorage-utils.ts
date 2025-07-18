@@ -16,6 +16,12 @@ export enum LocalStorageKeys {
     // ENABLE_DATA_FLOW_RESET = 'estuary.enable-data-flow-reset', // Went Live
 }
 
+export enum PersistedStoresKeys {
+    DETAILS_USAGE = 'estuary.details-usage-store',
+    ENHANCED_SUPPORT = 'estuary.enhanced-support-store',
+    TENANTS = 'estuary.tenants-store',
+}
+
 export const setWithExpiry = <T = unknown>(
     key: LocalStorageKeys,
     value: any | T,

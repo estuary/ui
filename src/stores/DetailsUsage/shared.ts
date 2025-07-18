@@ -2,11 +2,12 @@ import type { DetailsUsageState } from 'src/stores/DetailsUsage/types';
 import type { PersistOptions } from 'zustand/middleware';
 
 import { DataGrains } from 'src/components/graphs/types';
+import { PersistedStoresKeys } from 'src/utils/localStorage-utils';
 
 // Previous persist states for testing migrations
 // v0 - {"state":{"range":48,"statType":"docs","foo":"sup"},"version":0}
 export const persistOptions: PersistOptions<DetailsUsageState> = {
-    name: 'estuary.details-usage-store',
+    name: PersistedStoresKeys.DETAILS_USAGE,
     version: 1,
     migrate: (persistedState: any, persistedVersion) => {
         if (persistedVersion === 0 && persistedState) {

@@ -6,13 +6,13 @@ import { Box, Grid } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import EnhancedSupport from 'src/_compliance/guards/EnhancedSupport/EnhancedSupport';
+import SupportBenefits from 'src/_compliance/guards/EnhancedSupport/SupportBenefits';
+import SupportDetails from 'src/_compliance/guards/EnhancedSupport/SupportDetails';
 import FullPageWrapper from 'src/app/FullPageWrapper';
-import EnhancedSupport from 'src/app/guards/ConsentGuard/EnhancedSupport';
-import SupportBenefits from 'src/app/guards/ConsentGuard/SupportBenefits';
-import SupportDetails from 'src/app/guards/ConsentGuard/SupportDetails';
 import FullPageError from 'src/components/fullPage/Error';
 
-function ConsentGuard({ children }: BaseComponentProps) {
+function EnhancedSupportGuard({ children }: BaseComponentProps) {
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
 
@@ -73,4 +73,4 @@ function ConsentGuard({ children }: BaseComponentProps) {
     }
 }
 
-export default ConsentGuard;
+export default EnhancedSupportGuard;

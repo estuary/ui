@@ -1,10 +1,10 @@
 import { Divider, Grid, Typography } from '@mui/material';
 
-import SupportBenefits from 'src/app/guards/ConsentGuard/SupportBenefits';
-import SupportDetails from 'src/app/guards/ConsentGuard/SupportDetails';
+import DeleteRecordings from 'src/_compliance/components/admin/Support/DeleteRecordings';
+import EnhancedSupportChip from 'src/_compliance/components/admin/Support/EnhancedSupportChip';
+import SupportBenefits from 'src/_compliance/guards/EnhancedSupport/SupportBenefits';
+import SupportDetails from 'src/_compliance/guards/EnhancedSupport/SupportDetails';
 import { authenticatedRoutes } from 'src/app/routes';
-import DeleteRecordings from 'src/components/admin/Support/DeleteRecordings';
-import EnhancedSupportChip from 'src/components/admin/Support/EnhancedSupportChip';
 import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
 

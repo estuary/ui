@@ -13,6 +13,7 @@ function SupportDetails() {
             })}
         >
             <KeyValueList
+                disableTypography
                 data={[
                     {
                         title: intl.formatMessage({

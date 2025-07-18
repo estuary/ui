@@ -9,13 +9,13 @@ import {
     Routes,
 } from 'react-router-dom';
 
+import AdminSupport from 'src/_compliance/components/admin/Support';
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
-import AdminSupport from 'src/components/admin/Support';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
