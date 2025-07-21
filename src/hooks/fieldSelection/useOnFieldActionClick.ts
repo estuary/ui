@@ -36,8 +36,10 @@ export default function useOnFieldActionClick(
     field: string
 ) {
     // Bindings Editor Store
-    const recommended = useBindingStore((state) =>
-        Boolean(state.recommendFields[bindingUUID])
+    const recommended = useBindingStore(
+        (state) =>
+            state.recommendFields[bindingUUID] !== false &&
+            state.recommendFields[bindingUUID] !== 0
     );
     const setSingleSelection = useBinding_setSingleSelection();
 

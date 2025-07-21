@@ -513,11 +513,9 @@ export const getFieldSelection = (
             updatedSelections[outcome.field] = {
                 mode: isExcludeOnlyField(outcome)
                     ? 'exclude'
-                    : isRequireOnlyField(outcome)
-                      ? 'require'
-                      : isRecommendedField(outcome)
-                        ? 'default'
-                        : null,
+                    : isRecommendedField(outcome)
+                      ? 'default'
+                      : null,
                 outcome,
             };
         });

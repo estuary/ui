@@ -23,7 +23,7 @@ export const evaluateUpdatedFields = (
 
         let selectionType = required ? 'require' : selectedValue;
 
-        if (Boolean(recommendedFlag)) {
+        if (recommendedFlag !== false && recommendedFlag !== 0) {
             selectionType =
                 (selectedValue === 'exclude' && required) ||
                 (selectedValue === null && recommended)
