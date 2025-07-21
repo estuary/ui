@@ -1,8 +1,6 @@
-import type {
-    ConstraintTypes,
-    FieldSelectionType,
-} from 'src/components/fieldSelection/types';
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldOutcome } from 'src/types/wasm';
 
 import { useCallback } from 'react';
 
@@ -47,7 +45,7 @@ export default function useOnFieldActionClick(
         (
             value: any,
             selection: FieldSelection | null,
-            constraintType: ConstraintTypes
+            outcome: FieldOutcome
         ) => {
             if (!isFieldSelectionType(value)) {
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
@@ -60,7 +58,7 @@ export default function useOnFieldActionClick(
             const singleValue = selection?.mode !== value ? value : null;
 
             const selectionType = evaluateSelectionType(
-                recommended && isRecommendedField(constraintType),
+                recommended && isRecommendedField(outcome),
                 value,
                 selection?.mode ?? null,
                 singleValue
@@ -70,7 +68,7 @@ export default function useOnFieldActionClick(
                 bindingUUID,
                 field,
                 selectionType,
-                constraintType,
+                outcome,
                 selection?.meta
             );
         },

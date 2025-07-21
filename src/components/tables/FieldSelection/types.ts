@@ -1,19 +1,19 @@
-import type { CompositeProjection } from 'src/components/fieldSelection/types';
+import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { SortDirection, TableColumns } from 'src/types';
 
 export interface RowProps {
     columns: TableColumns[];
-    row: CompositeProjection;
+    row: ExpandedFieldSelection;
 }
 
 export interface RowsProps {
     columnToSort: string;
     columns: TableColumns[];
-    data: CompositeProjection[];
+    data: ExpandedFieldSelection[];
     sortDirection: SortDirection;
 }
 
 export interface FieldSelectionTableProps {
     bindingUUID: string;
-    projections: CompositeProjection[] | null | undefined;
+    selections: ExpandedFieldSelection[] | null | undefined;
 }

@@ -1,12 +1,14 @@
 import type {
+    BuiltSpec_Binding,
     Projection,
     ValidationResponse_Binding,
 } from 'src/components/fieldSelection/types';
+import type { MaterializationBinding } from 'src/types/schemaModels';
 
 // evaluate_field selection WASM routine documentation can be found here:
 // https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
 
-enum RejectReason {
+export enum RejectReason {
     USER_EXCLUDES = 'UserExcludes',
     CONNECTOR_FORBIDS = 'ConnectorForbids',
     CONNECTOR_UNSATISFIABLE = 'ConnectorUnsatisfiable',
@@ -18,7 +20,7 @@ enum RejectReason {
     NOT_SELECTED = 'NotSelected',
 }
 
-enum SelectReason {
+export enum SelectReason {
     GROUP_BY_KEY = 'GroupByKey',
     CURRENT_DOCUMENT = 'CurrentDocument',
     USER_REQUIRES = 'UserRequires',
@@ -56,18 +58,13 @@ export interface FieldSelectionInput {
     collectionProjections: Projection[];
     model: MaterializationBinding;
     validated: ValidationResponse_Binding;
-    liveSpec?: MaterializationBinding;
+    liveSpec?: BuiltSpec_Binding;
 }
 
 export interface FieldSelectionResult {
     hasConflicts: boolean;
     outcomes: FieldOutcome[];
     selection: FieldSelection;
-}
-
-export interface MaterializationBinding {
-    [key: string]: any;
-    resourcePath: string[];
 }
 
 interface RejectOutput {

@@ -2,8 +2,8 @@ import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
 import type {
     BuiltSpec_Binding,
-    CompositeProjection,
     FieldSelectionType,
+    Projection,
     ValidationResponse_Binding,
 } from 'src/components/fieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
@@ -24,12 +24,17 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
-import type { MaterializationBinding } from 'src/types/wasm';
+import type {
+    MaterializationBinding,
+    MaterializationFields,
+    MaterializationFields_Legacy,
+} from 'src/types/schemaModels';
+import type { FieldOutcome } from 'src/types/wasm';
 
 import { isBoolean, isEmpty, isEqual } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
-import { ConstraintTypes } from 'src/components/fieldSelection/types';
+import { RejectReason, SelectReason } from 'src/types/wasm';
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
@@ -388,29 +393,38 @@ export const modifyExistingCaptureDraftSpec = async (
 };
 
 // Common materialization field selection checks
-export const isRequireOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
+export const isRequireOnlyField = (outcome: FieldOutcome): boolean => {
+    if (outcome?.reject || !outcome?.select) {
+        return false;
+    }
+
+    return [
+        SelectReason.GROUP_BY_KEY,
+        SelectReason.CURRENT_DOCUMENT,
+        SelectReason.CONNECTOR_REQUIRES,
+        SelectReason.PARTITION_KEY,
+        SelectReason.CONNECTOR_REQUIRES_LOCATION,
+    ].includes(outcome.select.reason);
+};
+
+export const isRecommendedField = (outcome: FieldOutcome): boolean => {
+    return Boolean(!outcome?.reject && outcome?.select);
+};
+
+export const isExcludeOnlyField = (outcome: FieldOutcome): boolean => {
+    if (outcome?.select || !outcome?.reject) {
+        return false;
+    }
+
     return (
-        constraintType === ConstraintTypes.FIELD_REQUIRED ||
-        constraintType === ConstraintTypes.LOCATION_REQUIRED
+        outcome.reject.reason === RejectReason.CONNECTOR_FORBIDS ||
+        outcome.reject.reason === RejectReason.CONNECTOR_UNSATISFIABLE
     );
 };
 
-export const isRecommendedField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    const required = isRequireOnlyField(constraintType);
-
-    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
-};
-
-export const isExcludeOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    return (
-        constraintType === ConstraintTypes.FIELD_FORBIDDEN ||
-        constraintType === ConstraintTypes.UNSATISFIABLE
+export const isUnselectedField = (outcome: FieldOutcome): boolean => {
+    return Boolean(
+        !outcome?.select && outcome?.reject && !isExcludeOnlyField(outcome)
     );
 };
 
@@ -418,44 +432,121 @@ export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
     typeof value === 'string' &&
     (value === 'default' || value === 'exclude' || value === 'require');
 
+const isMaterializationFields = (
+    value: MaterializationFields | MaterializationFields_Legacy
+): value is MaterializationFields => 'require' in value;
+
+export const getFieldSelection = (
+    outcomes: FieldOutcome[],
+    fieldsStanza?: MaterializationFields | MaterializationFields_Legacy,
+    projections?: Projection[]
+): FieldSelectionDictionary => {
+    const updatedSelections: FieldSelectionDictionary = {};
+
+    if (fieldsStanza) {
+        outcomes.forEach((outcome) => {
+            const pointer = projections?.find(
+                ({ field }) => field === outcome.field
+            );
+
+            if (
+                fieldsStanza?.exclude &&
+                fieldsStanza.exclude.includes(outcome.field)
+            ) {
+                updatedSelections[outcome.field] = {
+                    mode: 'exclude',
+                    outcome,
+                    pointer,
+                };
+
+                return;
+            }
+
+            if (
+                isMaterializationFields(fieldsStanza) &&
+                fieldsStanza?.require
+            ) {
+                const meta = Object.entries(fieldsStanza.require).find(
+                    ([field, _config]) => field === outcome.field
+                )?.[1];
+
+                if (meta !== undefined) {
+                    updatedSelections[outcome.field] = {
+                        meta,
+                        mode: 'require',
+                        outcome,
+                        pointer,
+                    };
+
+                    return;
+                }
+            }
+
+            if (
+                !isMaterializationFields(fieldsStanza) &&
+                fieldsStanza?.include
+            ) {
+                const meta = Object.entries(fieldsStanza.include).find(
+                    ([field, _config]) => field === outcome.field
+                )?.[1];
+
+                if (meta !== undefined) {
+                    updatedSelections[outcome.field] = {
+                        meta,
+                        mode: 'require',
+                        outcome,
+                        pointer,
+                    };
+
+                    return;
+                }
+            }
+
+            updatedSelections[outcome.field] = {
+                mode: isRecommendedField(outcome) ? 'default' : null,
+                outcome,
+                pointer,
+            };
+        });
+    } else {
+        outcomes.forEach((outcome) => {
+            updatedSelections[outcome.field] = {
+                mode: isExcludeOnlyField(outcome)
+                    ? 'exclude'
+                    : isRequireOnlyField(outcome)
+                      ? 'require'
+                      : isRecommendedField(outcome)
+                        ? 'default'
+                        : null,
+                outcome,
+            };
+        });
+    }
+
+    return updatedSelections;
+};
+
 export const getAlgorithmicFieldSelection = (
     existingFieldSelection: FieldSelectionDictionary,
-    projections: CompositeProjection[],
-    selectedFields: string[],
     recommendedFlag: boolean | number
 ): FieldSelectionDictionary => {
     const updatedFields: FieldSelectionDictionary = {};
 
-    Object.keys(existingFieldSelection).forEach((field) => {
-        const selectedProjection = projections.find(
-            (projection) => projection.field === field
-        );
-
+    Object.entries(existingFieldSelection).forEach(([field, { outcome }]) => {
         let selectionType: FieldSelectionType | null = null;
 
-        if (selectedProjection?.constraint) {
-            const { constraint } = selectedProjection;
-            const selected = selectedFields.includes(field);
-
-            if (recommendedFlag === false) {
-                selectionType =
-                    selected && isRequireOnlyField(constraint.type)
-                        ? 'require'
-                        : !selected &&
-                            constraint.type !== ConstraintTypes.FIELD_OPTIONAL
-                          ? 'exclude'
-                          : null;
-            } else {
-                selectionType =
-                    !selected &&
-                    constraint.type !== ConstraintTypes.FIELD_OPTIONAL &&
-                    (!isRequireOnlyField(constraint.type) ||
-                        isExcludeOnlyField(constraint.type))
-                        ? 'exclude'
-                        : selected && isRecommendedField(constraint.type)
-                          ? 'default'
-                          : null;
-            }
+        if (recommendedFlag === false || recommendedFlag === 0) {
+            selectionType = isRequireOnlyField(outcome)
+                ? 'require'
+                : isExcludeOnlyField(outcome)
+                  ? 'exclude'
+                  : null;
+        } else {
+            selectionType = isExcludeOnlyField(outcome)
+                ? 'exclude'
+                : isRecommendedField(outcome)
+                  ? 'default'
+                  : null;
         }
 
         updatedFields[field] = {

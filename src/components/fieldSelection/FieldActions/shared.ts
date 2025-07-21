@@ -1,8 +1,8 @@
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type {
-    CompositeProjection,
-    FieldSelectionType,
-} from 'src/components/fieldSelection/types';
-import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
+    ExpandedFieldSelection,
+    FieldSelectionDictionary,
+} from 'src/stores/Binding/slices/FieldSelection';
 
 import {
     isRecommendedField,
@@ -10,20 +10,16 @@ import {
 } from 'src/utils/workflow-utils';
 
 export const evaluateUpdatedFields = (
-    projections: CompositeProjection[],
+    projections: ExpandedFieldSelection[],
     recommendedFlag: boolean | number,
     selectedValue: FieldSelectionType | null
 ) => {
     const updatedFields: FieldSelectionDictionary = {};
 
-    projections.forEach(({ field, constraint, selectionMetadata }) => {
-        const required = constraint
-            ? isRequireOnlyField(constraint.type)
-            : false;
+    projections.forEach(({ field, outcome, meta }) => {
+        const required = isRequireOnlyField(outcome);
 
-        const recommended = constraint
-            ? isRecommendedField(constraint.type)
-            : false;
+        const recommended = isRecommendedField(outcome);
 
         let selectionType = required ? 'require' : selectedValue;
 
@@ -35,7 +31,7 @@ export const evaluateUpdatedFields = (
                     : selectedValue;
         }
 
-        updatedFields[field] = { meta: selectionMetadata, mode: selectionType };
+        updatedFields[field] = { meta, mode: selectionType, outcome };
     });
 
     return updatedFields;

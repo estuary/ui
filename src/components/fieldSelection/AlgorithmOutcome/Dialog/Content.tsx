@@ -1,52 +1,40 @@
 import type { AlgorithmOutcomeContentProps } from 'src/components/fieldSelection/types';
+import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useMemo } from 'react';
 
 import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
-import { ConstraintTypes } from 'src/components/fieldSelection/types';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,
-    outcomes,
 }: AlgorithmOutcomeContentProps) => {
     const [excludedFields, requiredFields, selectedFields, unselectedFields] =
         useMemo(() => {
-            const excluded: string[] = [];
-            const required: string[] = [];
-            const selected: string[] = [];
-            const unselected: string[] = [];
+            const excluded: ExpandedFieldSelection[] = [];
+            const required: ExpandedFieldSelection[] = [];
+            const selected: ExpandedFieldSelection[] = [];
+            const unselected: ExpandedFieldSelection[] = [];
 
             Object.entries(fieldSelection).forEach(([field, selection]) => {
-                if (
-                    (selection.mode === 'default' || selection.mode === null) &&
-                    selection?.constraintType !==
-                        ConstraintTypes.FIELD_OPTIONAL &&
-                    selection?.constraintType !== ConstraintTypes.UNSATISFIABLE
-                ) {
-                    selected.push(field);
+                if (selection.mode === 'default' || selection.mode === null) {
+                    selected.push({ ...selection, field });
 
                     return;
                 }
 
-                if (
-                    selection.mode === 'require' &&
-                    selection?.constraintType !== ConstraintTypes.UNSATISFIABLE
-                ) {
-                    required.push(field);
+                if (selection.mode === 'require') {
+                    required.push({ ...selection, field });
 
                     return;
                 }
 
-                if (
-                    selection.mode === 'exclude' &&
-                    selection?.constraintType !== ConstraintTypes.UNSATISFIABLE
-                ) {
-                    excluded.push(field);
+                if (selection.mode === 'exclude') {
+                    excluded.push({ ...selection, field });
 
                     return;
                 }
 
-                unselected.push(field);
+                unselected.push({ ...selection, field });
             });
 
             return [excluded, required, selected, unselected];
@@ -58,7 +46,6 @@ const AlgorithmOutcomeContent = ({
                 fields={requiredFields}
                 headerMessageId="fieldSelection.reviewDialog.label.require"
                 keyPrefix="req"
-                outcomes={outcomes}
             />
 
             <FieldOutcomes
@@ -68,7 +55,6 @@ const AlgorithmOutcomeContent = ({
                     excludedFields.length === 0 && unselectedFields.length === 0
                 )}
                 keyPrefix="sel"
-                outcomes={outcomes}
             />
 
             <FieldOutcomes
@@ -76,7 +62,6 @@ const AlgorithmOutcomeContent = ({
                 headerMessageId="fieldSelection.reviewDialog.label.exclude"
                 hideBorder={unselectedFields.length === 0}
                 keyPrefix="exc"
-                outcomes={outcomes}
             />
 
             <FieldOutcomes
@@ -84,7 +69,6 @@ const AlgorithmOutcomeContent = ({
                 headerMessageId="fieldSelection.reviewDialog.label.unselected"
                 hideBorder
                 keyPrefix="unsel"
-                outcomes={outcomes}
             />
         </>
     );

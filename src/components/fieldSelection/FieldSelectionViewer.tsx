@@ -1,12 +1,4 @@
-import type {
-    CompositeProjection,
-    ConstraintDictionary,
-    FieldSelectionType,
-    Projection,
-    TranslatedConstraint,
-} from 'src/components/fieldSelection/types';
 import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
-import type { Schema } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -18,9 +10,9 @@ import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import RefreshButton from 'src/components/fieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
-import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
+import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import {
     useBinding_currentBindingIndex,
     useBinding_initializeSelections,
@@ -34,72 +26,13 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import {
-    getRelatedBindings,
-    isRecommendedField,
-} from 'src/utils/workflow-utils';
+import { getFieldSelection } from 'src/utils/workflow-utils';
 
 interface Props {
     bindingUUID: string;
     collectionName: string;
     refreshRequired: boolean;
 }
-
-interface FieldMetadata {
-    recommended: boolean;
-    exclude?: string[];
-    include?: { [field: string]: any };
-    require?: { [field: string]: any };
-}
-
-const mapConstraintsToProjections = (
-    projections: Projection[],
-    constraints: ConstraintDictionary,
-    fieldMetadata?: FieldMetadata
-): CompositeProjection[] =>
-    projections.map(({ field, inference, ptr }) => {
-        const constraint: TranslatedConstraint | null = Object.hasOwn(
-            constraints,
-            field
-        )
-            ? {
-                  type: ConstraintTypes[constraints[field].type],
-                  reason: constraints[field].reason,
-              }
-            : null;
-
-        let selectionType: FieldSelectionType | null =
-            constraint && isRecommendedField(constraint.type)
-                ? 'default'
-                : null;
-
-        let selectionMetadata: Schema | undefined;
-
-        if (fieldMetadata) {
-            const { exclude, include, recommended, require } = fieldMetadata;
-
-            if (include?.[field]) {
-                selectionType = 'require';
-                selectionMetadata = include[field];
-            } else if (require?.[field]) {
-                selectionType = 'require';
-                selectionMetadata = require[field];
-            } else if (exclude?.includes(field)) {
-                selectionType = 'exclude';
-            } else if (typeof recommended === 'boolean' && !recommended) {
-                selectionType = null;
-            }
-        }
-
-        return {
-            field,
-            inference,
-            ptr,
-            constraint,
-            selectionMetadata,
-            selectionType,
-        };
-    });
 
 function FieldSelectionViewer({
     bindingUUID,
@@ -108,10 +41,11 @@ function FieldSelectionViewer({
 }: Props) {
     const [saveInProgress, setSaveInProgress] = useState(false);
     const [data, setData] = useState<
-        CompositeProjection[] | null | undefined
+        ExpandedFieldSelection[] | null | undefined
     >();
 
     const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
+    const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
     // Bindings Store
     const setRecommendFields = useBinding_setRecommendFields();
@@ -137,74 +71,35 @@ function FieldSelectionViewer({
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
-            if (!formActive) {
-                const { builtBinding, draftedBinding, validationBinding } =
-                    getRelatedBindings(
-                        draftSpecs[0].built_spec,
-                        draftSpecs[0].spec,
-                        stagedBindingIndex,
-                        collectionName,
-                        draftSpecs[0].validated
+            if (formActive) {
+                setData(null);
+
+                return;
+            }
+
+            validateFieldSelection().then(
+                ({ builtBinding, fieldStanza, response }) => {
+                    if (!response) {
+                        return;
+                    }
+
+                    const updatedSelections = getFieldSelection(
+                        response.outcomes,
+                        fieldStanza,
+                        builtBinding.collection.projections
                     );
 
-                if (builtBinding) {
-                    const evaluatedProjections =
-                        builtBinding.collection.projections;
-
-                    const evaluatedConstraints:
-                        | ConstraintDictionary
-                        | undefined = validationBinding?.constraints;
-
-                    let evaluatedFieldMetadata: FieldMetadata | undefined;
-
-                    if (
-                        draftedBinding &&
-                        Object.hasOwn(draftedBinding, 'fields')
-                    ) {
-                        evaluatedFieldMetadata = draftedBinding.fields;
-
-                        setRecommendFields(
-                            bindingUUID,
-                            draftedBinding.fields.recommended
-                        );
-                    } else {
-                        setRecommendFields(bindingUUID, true);
-                    }
-
-                    if (evaluatedConstraints) {
-                        const compositeProjections =
-                            mapConstraintsToProjections(
-                                evaluatedProjections,
-                                evaluatedConstraints,
-                                evaluatedFieldMetadata
-                            );
-
-                        const selections: ExpandedFieldSelection[] =
-                            compositeProjections.map(
-                                ({
-                                    constraint,
-                                    field,
-                                    selectionMetadata,
-                                    selectionType,
-                                }) => ({
-                                    constraintType: constraint?.type,
-                                    field,
-                                    meta: selectionMetadata,
-                                    mode: selectionType,
-                                })
-                            );
-
-                        initializeSelections(bindingUUID, selections);
-                        setData(compositeProjections);
-                    } else {
-                        setData(null);
-                    }
-                } else {
+                    initializeSelections(bindingUUID, updatedSelections);
+                    setData(
+                        Object.entries(updatedSelections).map(
+                            ([field, selection]) => ({ ...selection, field })
+                        )
+                    );
+                },
+                () => {
                     setData(null);
                 }
-            }
-        } else {
-            setData(null);
+            );
         }
     }, [
         bindingUUID,
@@ -214,6 +109,7 @@ function FieldSelectionViewer({
         initializeSelections,
         setRecommendFields,
         stagedBindingIndex,
+        validateFieldSelection,
     ]);
 
     const draftSpec = useMemo(
@@ -286,7 +182,7 @@ function FieldSelectionViewer({
                 </Stack>
             </Stack>
 
-            <FieldSelectionTable bindingUUID={bindingUUID} projections={data} />
+            <FieldSelectionTable bindingUUID={bindingUUID} selections={data} />
         </Box>
     );
 }

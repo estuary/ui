@@ -2,7 +2,6 @@ import type { PostgrestError } from '@supabase/postgrest-js';
 import type { AlgorithmOutcomeDialogProps } from 'src/components/fieldSelection/types';
 import type { AlgorithmConfig } from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
-import type { FieldOutcome } from 'src/types/wasm';
 
 import { useEffect, useState } from 'react';
 
@@ -38,13 +37,13 @@ const AlgorithmOutcomeDialog = ({
 }: AlgorithmOutcomeDialogProps) => {
     const intl = useIntl();
 
-    const { applyFieldSelectionAlgorithm } = useFieldSelectionAlgorithm();
+    const { validateFieldSelection: applyFieldSelectionAlgorithm } =
+        useFieldSelectionAlgorithm();
 
     const existingFieldSelection = useBindingStore(
         (state) => state.selections?.[bindingUUID] ?? {}
     );
 
-    const [fieldOutcomes, setFieldOutcomes] = useState<FieldOutcome[]>([]);
     const [fieldSelection, setFieldSelection] =
         useState<FieldSelectionDictionary>({});
 
@@ -53,41 +52,26 @@ const AlgorithmOutcomeDialog = ({
     );
 
     useEffect(() => {
-        if (
-            open &&
-            isEmpty(fieldSelection) &&
-            projections &&
-            selectedAlgorithm
-        ) {
+        if (open && isEmpty(fieldSelection) && selectedAlgorithm) {
             const config: AlgorithmConfig | undefined =
                 selectedAlgorithm === 'depthOne'
                     ? { depth: 1 }
                     : selectedAlgorithm === 'depthTwo'
                       ? { depth: 2 }
-                      : undefined;
+                      : { depth: 1 };
 
-            applyFieldSelectionAlgorithm(
-                selectedAlgorithm,
-                projections,
-                config
-            ).then(
+            applyFieldSelectionAlgorithm(config).then(
                 ({ fieldStanza, response }) => {
                     if (!response) {
                         return;
                     }
-                    const selectedFields = response.outcomes
-                        .filter((outcome) => Boolean(outcome?.select))
-                        .map(({ field }) => field);
 
                     const updatedSelections = getAlgorithmicFieldSelection(
                         existingFieldSelection,
-                        projections,
-                        selectedFields,
-                        fieldStanza?.recommended
+                        fieldStanza?.recommended ?? true
                     );
 
                     setFieldSelection(updatedSelections);
-                    setFieldOutcomes(response.outcomes);
                 },
                 (errors: string | string[]) => {
                     if (typeof errors === 'string') {
@@ -109,7 +93,6 @@ const AlgorithmOutcomeDialog = ({
         existingFieldSelection,
         fieldSelection,
         open,
-        projections,
         selectedAlgorithm,
     ]);
 
@@ -139,16 +122,12 @@ const AlgorithmOutcomeDialog = ({
                     })}
                 </Typography>
 
-                <AlgorithmOutcomeContent
-                    fieldSelection={fieldSelection}
-                    outcomes={fieldOutcomes}
-                />
+                <AlgorithmOutcomeContent fieldSelection={fieldSelection} />
             </DialogContent>
 
             <DialogActions>
                 <Button
                     onClick={() => {
-                        setFieldOutcomes([]);
                         setFieldSelection({});
                         setServerError(null);
                         setOpen(false);

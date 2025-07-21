@@ -1,9 +1,10 @@
 import type {
-    ConstraintTypes,
     FieldSelectionType,
+    Projection,
 } from 'src/components/fieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
+import type { FieldOutcome } from 'src/types/wasm';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -16,8 +17,9 @@ export type SelectionAlgorithm =
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
-    constraintType?: ConstraintTypes;
+    outcome: FieldOutcome;
     meta?: Schema;
+    pointer?: Projection;
 }
 
 export interface ExpandedFieldSelection extends FieldSelection {
@@ -39,13 +41,13 @@ export interface StoreWithFieldSelection {
     selections: BindingFieldSelections;
     initializeSelections: (
         bindingUUID: string,
-        selections: ExpandedFieldSelection[]
+        selections: FieldSelectionDictionary
     ) => void;
     setSingleSelection: (
         bindingUUID: string,
         field: string,
         mode: FieldSelection['mode'],
-        constraintType: ConstraintTypes | undefined,
+        outcome: FieldOutcome,
         meta?: FieldSelection['meta']
     ) => void;
     setMultiSelection: (
@@ -95,12 +97,7 @@ export const getStoreWithFieldSelectionSettings = (
     initializeSelections: (bindingUUID, selections) => {
         set(
             produce((state: BindingState) => {
-                selections.forEach(({ constraintType, field, mode, meta }) => {
-                    state.selections[bindingUUID] = {
-                        ...state.selections[bindingUUID],
-                        [field]: { constraintType, mode, meta },
-                    };
-                });
+                state.selections[bindingUUID] = selections;
             }),
             false,
             'Selections Initialized'
@@ -199,7 +196,7 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSingleSelection: (bindingUUID, field, mode, constraintType, meta) => {
+    setSingleSelection: (bindingUUID, field, mode, outcome, meta) => {
         set(
             produce((state: BindingState) => {
                 const previousSelectionMode =
@@ -207,7 +204,12 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     ...state.selections[bindingUUID],
-                    [field]: { constraintType, mode, meta },
+                    [field]: {
+                        ...state.selections[bindingUUID]?.[field],
+                        mode,
+                        meta,
+                        outcome,
+                    },
                 };
 
                 if (!state.selectionSaving && previousSelectionMode !== mode) {

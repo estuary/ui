@@ -27,7 +27,7 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
     bindingUUID,
-    projections,
+    selections,
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
@@ -54,16 +54,16 @@ export default function FieldSelectionTable({
 
     const searchQuery = useBinding_searchQuery();
 
-    const processedProjections = useMemo(
+    const processedSelections = useMemo(
         () =>
             searchQuery
-                ? projections?.filter(
-                      ({ field, ptr }) =>
+                ? selections?.filter(
+                      ({ field, pointer }) =>
                           field.includes(searchQuery) ||
-                          ptr?.includes(searchQuery)
+                          pointer?.ptr?.includes(searchQuery)
                   )
-                : projections,
-        [projections, searchQuery]
+                : selections,
+        [selections, searchQuery]
     );
 
     useEffect(() => {
@@ -80,7 +80,7 @@ export default function FieldSelectionTable({
             formStatus === FormStatus.TESTING_BACKGROUND
         ) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedProjections && processedProjections.length > 0) {
+        } else if (processedSelections && processedSelections.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -91,7 +91,7 @@ export default function FieldSelectionTable({
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, processedProjections, searchQuery]);
+    }, [formStatus, processedSelections, searchQuery]);
 
     const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
@@ -123,7 +123,7 @@ export default function FieldSelectionTable({
                 <FieldActions
                     bindingUUID={bindingUUID}
                     loading={loading}
-                    projections={processedProjections}
+                    projections={processedSelections}
                 />
 
                 <Stack
@@ -172,12 +172,12 @@ export default function FieldSelectionTable({
                             rows={
                                 !failed &&
                                 !loading &&
-                                processedProjections &&
-                                processedProjections.length > 0 &&
+                                processedSelections &&
+                                processedSelections.length > 0 &&
                                 formStatus !== FormStatus.TESTING ? (
                                     <Rows
                                         columns={columnsToShow}
-                                        data={processedProjections}
+                                        data={processedSelections}
                                         sortDirection={sortDirection}
                                         columnToSort={columnToSort}
                                     />

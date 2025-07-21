@@ -4,6 +4,7 @@ import type {
     TranslatedConstraint,
 } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldOutcome } from 'src/types/wasm';
 
 export interface ChipStatusProps {
     messageId: string;
@@ -23,9 +24,9 @@ export interface FieldListProps {
 
 export interface FieldActionButtonProps extends ToggleButtonProps {
     bindingUUID: string;
-    constraint: TranslatedConstraint;
     field: string;
     labelId: string;
+    outcome: FieldOutcome;
     selection: FieldSelection | null;
     tooltipProps?: Omit<TooltipProps, 'children' | 'title'>;
 }
@@ -33,7 +34,7 @@ export interface FieldActionButtonProps extends ToggleButtonProps {
 export interface FieldActionsProps {
     bindingUUID: string;
     field: string;
-    constraint: TranslatedConstraint;
+    outcome: FieldOutcome;
     selectionType: FieldSelectionType | null;
 }
 

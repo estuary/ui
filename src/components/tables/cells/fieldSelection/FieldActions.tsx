@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { TableCell } from '@mui/material';
 
-import { ConstraintTypes } from 'src/components/fieldSelection/types';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import FieldActionButton from 'src/components/tables/cells/fieldSelection/FieldActionButton';
 import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
@@ -13,12 +12,13 @@ import {
     useBinding_selections,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { RejectReason } from 'src/types/wasm';
 import {
     isExcludeOnlyField,
     isRequireOnlyField,
 } from 'src/utils/workflow-utils';
 
-function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
+function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
     // Bindings Editor Store
     const recommendFields = useBinding_recommendFields();
     const selections = useBinding_selections();
@@ -34,10 +34,10 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
         [bindingUUID, field, selections]
     );
 
-    const requireOnly = isRequireOnlyField(constraint.type);
-    const excludeOnly = isExcludeOnlyField(constraint.type);
+    const requireOnly = isRequireOnlyField(outcome);
+    const excludeOnly = isExcludeOnlyField(outcome);
 
-    if (constraint.type === ConstraintTypes.UNSATISFIABLE) {
+    if (outcome?.reject?.reason === RejectReason.CONNECTOR_UNSATISFIABLE) {
         return null;
     }
 
@@ -53,13 +53,14 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                 <FieldActionButton
                     bindingUUID={bindingUUID}
                     color="success"
-                    constraint={constraint}
                     disabled={
-                        !Boolean(recommendFields[bindingUUID]) ||
-                        constraint.type === ConstraintTypes.FIELD_OPTIONAL
+                        recommendFields[bindingUUID] === false ||
+                        recommendFields[bindingUUID] === 0 ||
+                        outcome?.reject?.reason === RejectReason.NOT_SELECTED
                     }
                     field={field}
                     labelId="fieldSelection.table.cta.selectField"
+                    outcome={outcome}
                     selection={selection}
                     tooltipProps={{ placement: 'bottom-start' }}
                     value="default"
@@ -68,10 +69,10 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                 <FieldActionButton
                     bindingUUID={bindingUUID}
                     color="warning"
-                    constraint={constraint}
                     disabled={excludeOnly || (requireOnly && !recommendFields)}
                     field={field}
                     labelId="fieldSelection.table.cta.requireField"
+                    outcome={outcome}
                     selection={selection}
                     value="require"
                 />
@@ -79,10 +80,10 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                 <FieldActionButton
                     bindingUUID={bindingUUID}
                     color="error"
-                    constraint={constraint}
                     disabled={requireOnly || (excludeOnly && !recommendFields)}
                     field={field}
                     labelId="fieldSelection.table.cta.excludeField"
+                    outcome={outcome}
                     selection={selection}
                     tooltipProps={{ placement: 'bottom-end' }}
                     value="exclude"

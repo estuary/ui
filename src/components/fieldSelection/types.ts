@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type {
+    ExpandedFieldSelection,
     FieldSelectionDictionary,
     SelectionAlgorithm,
 } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
-import type { FieldOutcome } from 'src/types/wasm';
 
 // The constraint types are ordered by severity, with one being the most severe and six the least.
 export enum ConstraintTypes {
@@ -21,7 +21,6 @@ export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
 export interface AlgorithmOutcomeContentProps {
     fieldSelection: FieldSelectionDictionary;
-    outcomes: FieldOutcome[];
 }
 
 export interface AlgorithmOutcomeDialogProps extends BaseProps {
@@ -34,7 +33,7 @@ export interface AlgorithmOutcomeDialogProps extends BaseProps {
 export interface BaseProps {
     bindingUUID: string;
     loading: boolean;
-    projections: CompositeProjection[] | null | undefined;
+    projections: ExpandedFieldSelection[] | null | undefined;
 }
 
 export interface BuiltSpec_Binding {
@@ -72,10 +71,9 @@ export interface ConstraintDictionary {
 }
 
 export interface FieldOutcomesProps {
-    fields: string[];
+    fields: ExpandedFieldSelection[];
     headerMessageId: string;
     keyPrefix: string;
-    outcomes: FieldOutcome[];
     hideBorder?: boolean;
 }
 

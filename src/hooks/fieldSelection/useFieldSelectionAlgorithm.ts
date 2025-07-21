@@ -1,11 +1,9 @@
-import type { CompositeProjection } from 'src/components/fieldSelection/types';
-import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
-import type { Schema } from 'src/types';
 import type {
-    FieldSelectionInput,
-    FieldSelectionResult,
     MaterializationBinding,
-} from 'src/types/wasm';
+    MaterializationFields,
+    MaterializationFields_Legacy,
+} from 'src/types/schemaModels';
+import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
 
 import { useCallback } from 'react';
 
@@ -16,14 +14,11 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import {
-    getRelatedBindings,
-    isExcludeOnlyField,
-    isRequireOnlyField,
-} from 'src/utils/workflow-utils';
+import { getRelatedBindings } from 'src/utils/workflow-utils';
 
 export interface AlgorithmConfig {
     depth?: number;
+    reset?: boolean;
 }
 
 // evaluate_field selection WASM routine documentation can be found here:
@@ -45,72 +40,36 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
     return response;
 };
 
+const getDraftedFieldSelections = (
+    draftedBinding: MaterializationBinding,
+    config: AlgorithmConfig
+) => {
+    let fieldStanza:
+        | MaterializationFields
+        | MaterializationFields_Legacy
+        | undefined = draftedBinding?.fields;
+
+    if (config?.depth) {
+        fieldStanza = config?.reset
+            ? { recommended: config.depth }
+            : { ...fieldStanza, recommended: config.depth };
+    }
+
+    return fieldStanza;
+};
+
 export default function useFieldSelectionAlgorithm() {
     const isEdit = useEntityWorkflow_Editing();
 
-    const currentBindingUUID = useBindingStore(
-        (state) => state.currentBinding?.uuid
-    );
     const currentCollection = useBindingStore(
         (state) => state.currentBinding?.collection
     );
-    const selections = useBindingStore((state) => state.selections);
     const stagedBindingIndex = useBinding_currentBindingIndex();
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    const getDraftedFieldSelections = useCallback(
-        (
-            draftedBinding: MaterializationBinding,
-            selectionAlgorithm: SelectionAlgorithm,
-            projections: CompositeProjection[],
-            config?: AlgorithmConfig
-        ) => {
-            if (!currentBindingUUID) {
-                return undefined;
-            }
-
-            let fieldStanza: Schema = draftedBinding?.fields ?? {};
-            const fieldSelection = selections[currentBindingUUID];
-
-            if (selectionAlgorithm.startsWith('depth') && config?.depth) {
-                fieldStanza = { recommended: config.depth };
-            } else if (selectionAlgorithm === 'excludeAll') {
-                fieldStanza = {
-                    recommended: fieldStanza?.recommended ?? true,
-                    exclude: Object.keys(fieldSelection).filter((field) => {
-                        const selectedProjection = projections.find(
-                            (projection) => projection.field === field
-                        );
-
-                        if (!selectedProjection?.constraint) {
-                            return false;
-                        }
-
-                        const { constraint } = selectedProjection;
-
-                        if (fieldStanza?.recommended === false) {
-                            return isExcludeOnlyField(constraint.type);
-                        }
-
-                        return !isRequireOnlyField(constraint.type);
-                    }),
-                };
-            } else if (selectionAlgorithm === 'recommended') {
-                fieldStanza = { recommended: true };
-            }
-
-            return fieldStanza;
-        },
-        [currentBindingUUID, selections]
-    );
-
-    const applyFieldSelectionAlgorithm = useCallback(
-        async (
-            selectionAlgorithm: SelectionAlgorithm,
-            projections: CompositeProjection[],
-            config?: AlgorithmConfig
-        ) => {
+    const validateFieldSelection = useCallback(
+        async (config?: AlgorithmConfig) => {
             if (
                 draftSpecs.length === 0 ||
                 !draftSpecs[0].built_spec ||
@@ -137,18 +96,20 @@ export default function useFieldSelectionAlgorithm() {
                 );
             }
 
-            const updatedSelections = getDraftedFieldSelections(
-                draftedBinding,
-                selectionAlgorithm,
-                projections,
-                config
-            );
+            let fieldStanza:
+                | MaterializationFields
+                | MaterializationFields_Legacy
+                | undefined = draftedBinding?.fields;
 
-            if (!updatedSelections) {
-                return Promise.reject('updated field selections undefined');
+            if (config) {
+                fieldStanza = getDraftedFieldSelections(draftedBinding, config);
+
+                if (!fieldStanza) {
+                    return Promise.reject('updated field selections undefined');
+                }
+
+                draftedBinding.fields = fieldStanza;
             }
-
-            draftedBinding.fields = updatedSelections;
 
             let response: FieldSelectionResult | undefined;
 
@@ -164,16 +125,10 @@ export default function useFieldSelectionAlgorithm() {
                 logRocketEvent('evaluate_field_selection:failed', error);
             }
 
-            return { fieldStanza: updatedSelections, response };
+            return { builtBinding, fieldStanza, response };
         },
-        [
-            currentCollection,
-            draftSpecs,
-            getDraftedFieldSelections,
-            isEdit,
-            stagedBindingIndex,
-        ]
+        [currentCollection, draftSpecs, isEdit, stagedBindingIndex]
     );
 
-    return { applyFieldSelectionAlgorithm };
+    return { validateFieldSelection };
 }

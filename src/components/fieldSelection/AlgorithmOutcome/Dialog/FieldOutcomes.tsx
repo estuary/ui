@@ -12,7 +12,6 @@ const FieldOutcomes = ({
     headerMessageId,
     hideBorder,
     keyPrefix,
-    outcomes,
 }: FieldOutcomesProps) => {
     const intl = useIntl();
 
@@ -34,11 +33,7 @@ const FieldOutcomes = ({
             readOnly
         >
             <Stack spacing={1} style={{ marginLeft: 8 }}>
-                {fields.map((field) => {
-                    const fieldOutcome = outcomes.find(
-                        (outcome) => outcome.field === field
-                    );
-
+                {fields.map(({ field, outcome }) => {
                     return (
                         <Stack
                             direction="row"
@@ -47,7 +42,7 @@ const FieldOutcomes = ({
                         >
                             <OutlinedChip
                                 color={
-                                    fieldOutcome?.select && fieldOutcome?.reject
+                                    outcome?.select && outcome?.reject
                                         ? 'warning'
                                         : undefined
                                 }
@@ -55,10 +50,10 @@ const FieldOutcomes = ({
                                 variant="outlined"
                             />
 
-                            {fieldOutcome?.select || fieldOutcome?.reject ? (
+                            {outcome?.select || outcome?.reject ? (
                                 <Typography>
-                                    {fieldOutcome.select?.detail ??
-                                        fieldOutcome.reject?.detail}
+                                    {outcome.select?.detail ??
+                                        outcome.reject?.detail}
                                 </Typography>
                             ) : null}
                         </Stack>
