@@ -27,16 +27,6 @@ export default function MenuOptions() {
         >
             <RadioMenuItem
                 description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.recommended.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.recommended.label',
-                })}
-                value="recommended"
-            />
-
-            <RadioMenuItem
-                description={intl.formatMessage({
                     id: 'fieldSelection.massActionMenu.depthOne.description',
                 })}
                 label={intl.formatMessage({
@@ -53,16 +43,6 @@ export default function MenuOptions() {
                     id: 'fieldSelection.massActionMenu.depthTwo.label',
                 })}
                 value="depthTwo"
-            />
-
-            <RadioMenuItem
-                description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.excludeAll.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.excludeAll.label',
-                })}
-                value="excludeAll"
             />
         </RadioGroup>
     );

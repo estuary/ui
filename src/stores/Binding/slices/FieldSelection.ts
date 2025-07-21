@@ -9,11 +9,7 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-export type SelectionAlgorithm =
-    | 'depthOne'
-    | 'depthTwo'
-    | 'excludeAll'
-    | 'recommended';
+export type SelectionAlgorithm = 'depthOne' | 'depthTwo';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
@@ -120,10 +116,6 @@ export const getStoreWithFieldSelectionSettings = (
                     }
                     case 'depthTwo': {
                         state.recommendFields[bindingUUID] = 2;
-                        break;
-                    }
-                    case 'recommended': {
-                        state.recommendFields[bindingUUID] = true;
                         break;
                     }
                 }
