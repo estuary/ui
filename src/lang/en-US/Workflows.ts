@@ -195,6 +195,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.translated.unsatisfiable': `field is unsatisfiable`,
     'fieldSelection.table.label.filter': `Filter fields`,
     'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
+    'fieldSelection.massActionMenu.depthZero.label': `Depth Zero`,
+    'fieldSelection.massActionMenu.depthZero.description': `Select top-level fields`,
     'fieldSelection.massActionMenu.depthOne.label': `Depth One`,
     'fieldSelection.massActionMenu.depthOne.description': `Select object fields with one degree of nesting`,
     'fieldSelection.massActionMenu.depthTwo.label': `Depth Two`,

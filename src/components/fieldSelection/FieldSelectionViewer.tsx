@@ -64,7 +64,7 @@ function FieldSelectionViewer({
     const setFormState = useFormStateStore_setFormState();
 
     useEffect(() => {
-        if (formActive) {
+        if (formActive || selectionSaving || saveInProgress) {
             return;
         }
 
@@ -107,6 +107,8 @@ function FieldSelectionViewer({
         draftSpecs,
         formActive,
         initializeSelections,
+        saveInProgress,
+        selectionSaving,
         setRecommendFields,
         stagedBindingIndex,
         validateFieldSelection,

@@ -47,7 +47,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
 
                 const recommended = Object.hasOwn(recommendFields, bindingUUID)
                     ? recommendFields[bindingUUID]
-                    : true;
+                    : 1;
 
                 spec.bindings[bindingIndex].fields = {
                     recommended,

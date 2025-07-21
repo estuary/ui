@@ -49,7 +49,7 @@ const getDraftedFieldSelections = (
         | MaterializationFields_Legacy
         | undefined = draftedBinding?.fields;
 
-    if (config?.depth) {
+    if (typeof config?.depth === 'number') {
         fieldStanza = config?.reset
             ? { recommended: config.depth }
             : { ...fieldStanza, recommended: config.depth };

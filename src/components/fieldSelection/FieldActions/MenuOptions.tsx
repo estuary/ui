@@ -27,6 +27,16 @@ export default function MenuOptions() {
         >
             <RadioMenuItem
                 description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthZero.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthZero.label',
+                })}
+                value="depthZero"
+            />
+
+            <RadioMenuItem
+                description={intl.formatMessage({
                     id: 'fieldSelection.massActionMenu.depthOne.description',
                 })}
                 label={intl.formatMessage({

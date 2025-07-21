@@ -53,8 +53,8 @@ const AlgorithmOutcomeDialog = ({
     useEffect(() => {
         if (open && isEmpty(fieldSelection) && selectedAlgorithm) {
             const config: AlgorithmConfig | undefined =
-                selectedAlgorithm === 'depthOne'
-                    ? { depth: 1 }
+                selectedAlgorithm === 'depthZero'
+                    ? { depth: 0 }
                     : selectedAlgorithm === 'depthTwo'
                       ? { depth: 2 }
                       : { depth: 1 };
