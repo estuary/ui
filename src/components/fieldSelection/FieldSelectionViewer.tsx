@@ -64,19 +64,15 @@ function FieldSelectionViewer({
     const setFormState = useFormStateStore_setFormState();
 
     useEffect(() => {
-        const hasDraftSpec = draftSpecs.length > 0;
+        if (formActive) {
+            return;
+        }
 
         if (
-            hasDraftSpec &&
+            draftSpecs.length > 0 &&
             draftSpecs[0].built_spec &&
             draftSpecs[0].validated
         ) {
-            if (formActive) {
-                setData(null);
-
-                return;
-            }
-
             validateFieldSelection().then(
                 ({ builtBinding, fieldStanza, response }) => {
                     if (!response) {
