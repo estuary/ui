@@ -10,6 +10,7 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
+import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
 import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
@@ -61,16 +62,7 @@ function Row({ columns, row }: RowProps) {
             )}
 
             {detailsColumnVisible ? (
-                row.outcome?.select?.detail || row.outcome?.reject?.detail ? (
-                    <TableCell>
-                        <Typography>
-                            {row.outcome?.select?.detail ??
-                                row.outcome?.reject?.detail}
-                        </Typography>
-                    </TableCell>
-                ) : (
-                    <TableCell />
-                )
+                <FieldOutcome outcome={row.outcome} selectionType={row.mode} />
             ) : null}
 
             {currentBindingUUID ? (

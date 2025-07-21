@@ -38,6 +38,11 @@ export interface FieldActionsProps {
     selectionType: FieldSelectionType | null;
 }
 
+export interface FieldOutcomeProps {
+    outcome: FieldOutcome;
+    selectionType: FieldSelectionType | null;
+}
+
 export interface ProjectionActionsProps {
     field: string;
     pointer: string | undefined;

@@ -531,11 +531,12 @@ export const getFieldSelection = (
 
 export const getAlgorithmicFieldSelection = (
     existingFieldSelection: FieldSelectionDictionary,
+    outcomes: FieldOutcome[],
     recommendedFlag: boolean | number
 ): FieldSelectionDictionary => {
     const updatedFields: FieldSelectionDictionary = {};
 
-    Object.entries(existingFieldSelection).forEach(([field, { outcome }]) => {
+    outcomes.forEach((outcome) => {
         let selectionType: FieldSelectionType | null = null;
 
         if (recommendedFlag === false || recommendedFlag === 0) {
@@ -552,9 +553,11 @@ export const getAlgorithmicFieldSelection = (
                   : null;
         }
 
-        updatedFields[field] = {
-            ...existingFieldSelection[field],
+        updatedFields[outcome.field] = {
+            meta: existingFieldSelection?.[outcome.field].meta,
             mode: selectionType,
+            outcome,
+            projection: existingFieldSelection?.[outcome.field].projection,
         };
     });
 

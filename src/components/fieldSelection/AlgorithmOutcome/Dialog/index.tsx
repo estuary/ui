@@ -37,8 +37,7 @@ const AlgorithmOutcomeDialog = ({
 }: AlgorithmOutcomeDialogProps) => {
     const intl = useIntl();
 
-    const { validateFieldSelection: applyFieldSelectionAlgorithm } =
-        useFieldSelectionAlgorithm();
+    const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
     const existingFieldSelection = useBindingStore(
         (state) => state.selections?.[bindingUUID] ?? {}
@@ -60,7 +59,7 @@ const AlgorithmOutcomeDialog = ({
                       ? { depth: 2 }
                       : { depth: 1 };
 
-            applyFieldSelectionAlgorithm(config).then(
+            validateFieldSelection(config).then(
                 ({ fieldStanza, response }) => {
                     if (!response) {
                         return;
@@ -68,6 +67,7 @@ const AlgorithmOutcomeDialog = ({
 
                     const updatedSelections = getAlgorithmicFieldSelection(
                         existingFieldSelection,
+                        response.outcomes,
                         fieldStanza?.recommended ?? true
                     );
 
@@ -89,11 +89,11 @@ const AlgorithmOutcomeDialog = ({
             );
         }
     }, [
-        applyFieldSelectionAlgorithm,
         existingFieldSelection,
         fieldSelection,
         open,
         selectedAlgorithm,
+        validateFieldSelection,
     ]);
 
     return (

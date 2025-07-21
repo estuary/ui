@@ -4,6 +4,7 @@ import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSele
 import { useMemo } from 'react';
 
 import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
+import { isUnselectedField } from 'src/utils/workflow-utils';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,
@@ -16,7 +17,11 @@ const AlgorithmOutcomeContent = ({
             const unselected: ExpandedFieldSelection[] = [];
 
             Object.entries(fieldSelection).forEach(([field, selection]) => {
-                if (selection.mode === 'default' || selection.mode === null) {
+                if (
+                    selection.mode === 'default' ||
+                    (selection.mode === null &&
+                        !isUnselectedField(selection.outcome))
+                ) {
                     selected.push({ ...selection, field });
 
                     return;
