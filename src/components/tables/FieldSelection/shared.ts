@@ -5,7 +5,7 @@ import { compareInitialCharacterType } from 'src/utils/misc-utils';
 
 export const optionalColumnIntlKeys = {
     pointer: 'data.location',
-    details: 'data.details',
+    outcome: 'data.outcome',
 };
 
 export const optionalColumns = Object.values(optionalColumnIntlKeys);
@@ -22,8 +22,8 @@ export const tableColumns: TableColumns[] = [
         headerIntlKey: 'data.type',
     },
     {
-        field: 'constraint.type',
-        headerIntlKey: optionalColumnIntlKeys.details,
+        field: null,
+        headerIntlKey: optionalColumnIntlKeys.outcome,
     },
     {
         field: null,

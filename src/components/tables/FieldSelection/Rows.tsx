@@ -28,9 +28,9 @@ function Row({ columns, row }: RowProps) {
         optionalColumnIntlKeys.pointer
     );
 
-    const detailsColumnVisible = isColumnVisible(
+    const outcomeColumnVisible = isColumnVisible(
         columns,
-        optionalColumnIntlKeys.details
+        optionalColumnIntlKeys.outcome
     );
 
     return (
@@ -61,7 +61,7 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            {detailsColumnVisible ? (
+            {outcomeColumnVisible ? (
                 <FieldOutcome outcome={row.outcome} selectionType={row.mode} />
             ) : null}
 
