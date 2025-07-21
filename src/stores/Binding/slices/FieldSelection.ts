@@ -19,7 +19,7 @@ export interface FieldSelection {
     mode: FieldSelectionType | null;
     outcome: FieldOutcome;
     meta?: Schema;
-    pointer?: Projection;
+    projection?: Projection;
 }
 
 export interface ExpandedFieldSelection extends FieldSelection {

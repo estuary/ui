@@ -11,7 +11,7 @@ export default function MenuActions({
     bindingUUID,
     closeMenu,
     loading,
-    projections,
+    selections,
 }: MenuActionProps) {
     const intl = useIntl();
 
@@ -40,7 +40,7 @@ export default function MenuActions({
                 bindingUUID={bindingUUID}
                 closeMenu={closeMenu}
                 loading={loading}
-                projections={projections}
+                selections={selections}
                 selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>

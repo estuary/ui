@@ -14,7 +14,7 @@ const GenerateButton = ({
     bindingUUID,
     closeMenu,
     loading,
-    projections,
+    selections,
     selectedAlgorithm,
 }: GenerateButtonProps) => {
     const intl = useIntl();
@@ -29,7 +29,7 @@ const GenerateButton = ({
                 disabled={
                     loading ||
                     formActive ||
-                    !hasLength(projections) ||
+                    !hasLength(selections) ||
                     !selectedAlgorithm
                 }
                 onClick={() => setOpen(true)}
@@ -44,7 +44,7 @@ const GenerateButton = ({
                 closeMenu={closeMenu}
                 loading={loading}
                 open={open}
-                projections={projections}
+                selections={selections}
                 selectedAlgorithm={selectedAlgorithm}
                 setOpen={setOpen}
             />

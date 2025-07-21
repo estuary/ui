@@ -33,7 +33,7 @@ export interface AlgorithmOutcomeDialogProps extends BaseProps {
 export interface BaseProps {
     bindingUUID: string;
     loading: boolean;
-    projections: ExpandedFieldSelection[] | null | undefined;
+    selections: ExpandedFieldSelection[] | null | undefined;
 }
 
 export interface BuiltSpec_Binding {
@@ -71,8 +71,8 @@ export interface ConstraintDictionary {
 }
 
 export interface FieldOutcomesProps {
-    fields: ExpandedFieldSelection[];
     headerMessageId: string;
+    selections: ExpandedFieldSelection[];
     keyPrefix: string;
     hideBorder?: boolean;
 }

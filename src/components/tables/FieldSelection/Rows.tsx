@@ -47,13 +47,13 @@ function Row({ columns, row }: RowProps) {
 
             {pointerColumnVisible ? (
                 <TableCell>
-                    <Typography>{row?.pointer?.ptr}</Typography>
+                    <Typography>{row?.projection?.ptr}</Typography>
                 </TableCell>
             ) : null}
 
-            {row?.pointer?.inference?.types ? (
+            {row?.projection?.inference?.types ? (
                 <ChipListCell
-                    values={row?.pointer?.inference?.types}
+                    values={row?.projection?.inference?.types}
                     stripPath={false}
                 />
             ) : (

@@ -445,7 +445,7 @@ export const getFieldSelection = (
 
     if (fieldsStanza) {
         outcomes.forEach((outcome) => {
-            const pointer = projections?.find(
+            const projection = projections?.find(
                 ({ field }) => field === outcome.field
             );
 
@@ -456,7 +456,7 @@ export const getFieldSelection = (
                 updatedSelections[outcome.field] = {
                     mode: 'exclude',
                     outcome,
-                    pointer,
+                    projection,
                 };
 
                 return;
@@ -475,7 +475,7 @@ export const getFieldSelection = (
                         meta,
                         mode: 'require',
                         outcome,
-                        pointer,
+                        projection,
                     };
 
                     return;
@@ -495,7 +495,7 @@ export const getFieldSelection = (
                         meta,
                         mode: 'require',
                         outcome,
-                        pointer,
+                        projection,
                     };
 
                     return;
@@ -505,11 +505,15 @@ export const getFieldSelection = (
             updatedSelections[outcome.field] = {
                 mode: isRecommendedField(outcome) ? 'default' : null,
                 outcome,
-                pointer,
+                projection,
             };
         });
     } else {
         outcomes.forEach((outcome) => {
+            const projection = projections?.find(
+                ({ field }) => field === outcome.field
+            );
+
             updatedSelections[outcome.field] = {
                 mode: isExcludeOnlyField(outcome)
                     ? 'exclude'
@@ -517,6 +521,7 @@ export const getFieldSelection = (
                       ? 'default'
                       : null,
                 outcome,
+                projection,
             };
         });
     }

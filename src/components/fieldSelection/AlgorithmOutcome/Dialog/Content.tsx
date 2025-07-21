@@ -43,13 +43,13 @@ const AlgorithmOutcomeContent = ({
     return (
         <>
             <FieldOutcomes
-                fields={requiredFields}
+                selections={requiredFields}
                 headerMessageId="fieldSelection.reviewDialog.label.require"
                 keyPrefix="req"
             />
 
             <FieldOutcomes
-                fields={selectedFields}
+                selections={selectedFields}
                 headerMessageId="fieldSelection.reviewDialog.label.select"
                 hideBorder={Boolean(
                     excludedFields.length === 0 && unselectedFields.length === 0
@@ -58,14 +58,14 @@ const AlgorithmOutcomeContent = ({
             />
 
             <FieldOutcomes
-                fields={excludedFields}
+                selections={excludedFields}
                 headerMessageId="fieldSelection.reviewDialog.label.exclude"
                 hideBorder={unselectedFields.length === 0}
                 keyPrefix="exc"
             />
 
             <FieldOutcomes
-                fields={unselectedFields}
+                selections={unselectedFields}
                 headerMessageId="fieldSelection.reviewDialog.label.unselected"
                 hideBorder
                 keyPrefix="unsel"

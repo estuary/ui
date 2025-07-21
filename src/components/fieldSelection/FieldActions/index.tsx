@@ -13,7 +13,7 @@ import MenuOptions from 'src/components/fieldSelection/FieldActions/MenuOptions'
 export default function FieldActions({
     bindingUUID,
     loading,
-    projections,
+    selections,
 }: BaseProps) {
     const intl = useIntl();
 
@@ -57,7 +57,7 @@ export default function FieldActions({
                     bindingUUID={bindingUUID}
                     closeMenu={closeMenu}
                     loading={loading}
-                    projections={projections}
+                    selections={selections}
                 />
             </Menu>
         </>

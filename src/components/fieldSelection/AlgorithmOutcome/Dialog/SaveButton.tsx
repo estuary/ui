@@ -13,7 +13,7 @@ export default function SaveButton({
     close,
     fieldSelection,
     loading,
-    projections,
+    selections,
     selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();
@@ -29,11 +29,11 @@ export default function SaveButton({
             disabled={
                 loading ||
                 formActive ||
-                !hasLength(projections) ||
+                !hasLength(selections) ||
                 !selectedAlgorithm
             }
             onClick={() => {
-                if (projections && selectedAlgorithm) {
+                if (selections && selectedAlgorithm) {
                     setAlgorithmicSelection(
                         selectedAlgorithm,
                         bindingUUID,

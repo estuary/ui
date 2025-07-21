@@ -8,14 +8,14 @@ import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 const FieldOutcomes = ({
-    fields,
     headerMessageId,
     hideBorder,
     keyPrefix,
+    selections,
 }: FieldOutcomesProps) => {
     const intl = useIntl();
 
-    if (fields.length === 0) {
+    if (selections.length === 0) {
         return null;
     }
 
@@ -25,7 +25,7 @@ const FieldOutcomes = ({
                 <Typography style={{ fontWeight: 500 }}>
                     {intl.formatMessage(
                         { id: headerMessageId },
-                        { count: fields.length }
+                        { count: selections.length }
                     )}
                 </Typography>
             }
@@ -33,7 +33,7 @@ const FieldOutcomes = ({
             readOnly
         >
             <Stack spacing={1} style={{ marginLeft: 8 }}>
-                {fields.map(({ field, outcome }) => {
+                {selections.map(({ field, outcome }) => {
                     return (
                         <Stack
                             direction="row"

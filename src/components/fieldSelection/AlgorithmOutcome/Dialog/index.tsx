@@ -31,7 +31,7 @@ const AlgorithmOutcomeDialog = ({
     closeMenu,
     loading,
     open,
-    projections,
+    selections: projections,
     selectedAlgorithm,
     setOpen,
 }: AlgorithmOutcomeDialogProps) => {
@@ -142,7 +142,7 @@ const AlgorithmOutcomeDialog = ({
                     close={closeMenu}
                     fieldSelection={fieldSelection}
                     loading={loading}
-                    projections={projections}
+                    selections={projections}
                     selectedAlgorithm={selectedAlgorithm}
                 />
             </DialogActions>

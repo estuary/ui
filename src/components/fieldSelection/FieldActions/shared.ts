@@ -10,13 +10,13 @@ import {
 } from 'src/utils/workflow-utils';
 
 export const evaluateUpdatedFields = (
-    projections: ExpandedFieldSelection[],
+    selections: ExpandedFieldSelection[],
     recommendedFlag: boolean | number,
     selectedValue: FieldSelectionType | null
 ) => {
     const updatedFields: FieldSelectionDictionary = {};
 
-    projections.forEach(({ field, outcome, meta }) => {
+    selections.forEach(({ field, outcome, meta }) => {
         const required = isRequireOnlyField(outcome);
 
         const recommended = isRecommendedField(outcome);

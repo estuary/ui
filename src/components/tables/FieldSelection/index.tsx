@@ -58,9 +58,9 @@ export default function FieldSelectionTable({
         () =>
             searchQuery
                 ? selections?.filter(
-                      ({ field, pointer }) =>
+                      ({ field, projection }) =>
                           field.includes(searchQuery) ||
-                          pointer?.ptr?.includes(searchQuery)
+                          projection?.ptr?.includes(searchQuery)
                   )
                 : selections,
         [selections, searchQuery]
@@ -123,7 +123,7 @@ export default function FieldSelectionTable({
                 <FieldActions
                     bindingUUID={bindingUUID}
                     loading={loading}
-                    projections={processedSelections}
+                    selections={processedSelections}
                 />
 
                 <Stack
