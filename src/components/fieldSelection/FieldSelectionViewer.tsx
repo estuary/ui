@@ -85,6 +85,10 @@ function FieldSelectionViewer({
                         builtBinding.collection.projections
                     );
 
+                    setRecommendFields(
+                        bindingUUID,
+                        fieldStanza?.recommended ?? 1
+                    );
                     initializeSelections(bindingUUID, updatedSelections);
                     setData(
                         Object.entries(updatedSelections).map(

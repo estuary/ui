@@ -502,8 +502,17 @@ export const getFieldSelection = (
                 }
             }
 
+            const recommended =
+                fieldsStanza.recommended !== false &&
+                fieldsStanza.recommended !== 0;
+
             updatedSelections[outcome.field] = {
-                mode: isRecommendedField(outcome) ? 'default' : null,
+                mode:
+                    !recommended && isRequireOnlyField(outcome)
+                        ? 'require'
+                        : recommended && isRecommendedField(outcome)
+                          ? 'default'
+                          : null,
                 outcome,
                 projection,
             };
