@@ -15,6 +15,7 @@ import { CustomEvents } from 'src/services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
+export const MARKETING_DEMO_TENANT = 'Artificial-Industries/';
 
 export const RESPONSE_DATA_LIMIT = 1000;
 
