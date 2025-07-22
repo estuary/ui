@@ -173,16 +173,16 @@ export const getAlgorithmicFieldSelection = (
         let selectionType: FieldSelectionType | null = null;
 
         if (canRecommendFields(recommendedFlag)) {
-            selectionType = isRequireOnlyField(outcome)
-                ? 'require'
-                : isExcludeOnlyField(outcome)
-                  ? 'exclude'
-                  : null;
-        } else {
             selectionType = isExcludeOnlyField(outcome)
                 ? 'exclude'
                 : isRecommendedField(outcome)
                   ? 'default'
+                  : null;
+        } else {
+            selectionType = isRequireOnlyField(outcome)
+                ? 'require'
+                : isExcludeOnlyField(outcome)
+                  ? 'exclude'
                   : null;
         }
 
