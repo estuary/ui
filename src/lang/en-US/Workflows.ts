@@ -225,6 +225,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.conflict.description': `A conflict was found in the outcome of field, {field}.`,
     'fieldSelection.conflict.select.header': `A reason to select this field is:`,
     'fieldSelection.conflict.reject.header': `A reason to reject this field is:`,
+    'fieldSelection.conflict.button.tooltip': `Click to review conflict.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
