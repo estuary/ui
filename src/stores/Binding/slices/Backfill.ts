@@ -22,6 +22,7 @@ export interface StoreWithBackfill {
     backfilledBindings: string[];
     backfillAllBindings: boolean;
     setBackfilledBindings: (
+        defaultBackfillValue: BackfillMode,
         increment: BooleanString,
         targetBindingUUID?: string
     ) => void;
@@ -81,7 +82,11 @@ export const getStoreWithBackfillSettings = (
         );
     },
 
-    setBackfilledBindings: (increment, targetBindingUUID) => {
+    setBackfilledBindings: (
+        defaultBackfillMode,
+        increment,
+        targetBindingUUID
+    ) => {
         set(
             produce((state: BindingState) => {
                 const existingBindingUUIDs = Object.keys(state.resourceConfigs);
@@ -109,7 +114,7 @@ export const getStoreWithBackfillSettings = (
                     increment === 'true' &&
                     state.backfillMode === null
                 ) {
-                    state.backfillMode = 'reset';
+                    state.backfillMode = defaultBackfillMode;
                 }
             }),
             false,
