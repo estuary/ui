@@ -4,7 +4,7 @@ import type {
     TranslatedConstraint,
 } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
-import type { FieldOutcome } from 'src/types/wasm';
+import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
 export interface ChipStatusProps {
     messageId: string;
@@ -31,6 +31,10 @@ export interface FieldActionsProps {
     selectionType: FieldSelectionType | null;
 }
 
+export interface FieldConflictOverviewProps {
+    outcome: FieldOutcome;
+}
+
 export interface FieldListProps {
     field: string;
     pointer: string | undefined;
@@ -46,6 +50,12 @@ export interface FieldNameProps {
 export interface FieldOutcomeProps {
     outcome: FieldOutcome;
     selectionType: FieldSelectionType | null;
+}
+
+export interface FieldOutputProps {
+    output: SelectOutput | RejectOutput;
+    indicateConflict?: boolean;
+    outcome?: FieldOutcome;
 }
 
 export interface ProjectionActionsProps {

@@ -221,6 +221,10 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.reviewDialog.label.require': `Require: {count}`,
     'fieldSelection.reviewDialog.label.select': `Select: {count}`,
     'fieldSelection.reviewDialog.label.unselected': `Unselected: {count}`,
+    'fieldSelection.conflict.header': `Conflict Detected`,
+    'fieldSelection.conflict.description': `A conflict was found in the outcome of field, {field}.`,
+    'fieldSelection.conflict.select.header': `A reason to select this field is:`,
+    'fieldSelection.conflict.reject.header': `A reason to reject this field is:`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,

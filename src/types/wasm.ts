@@ -67,12 +67,12 @@ export interface FieldSelectionResult {
     selection: FieldSelection;
 }
 
-interface RejectOutput {
+export interface RejectOutput {
     detail: string;
     reason: RejectReason;
 }
 
-interface SelectOutput {
+export interface SelectOutput {
     detail: string;
     reason: SelectReason;
 }

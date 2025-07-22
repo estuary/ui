@@ -1,36 +1,64 @@
-import type { FieldNameProps } from 'src/components/tables/cells/types';
+import type { FieldConflictOverviewProps } from 'src/components/tables/cells/types';
 
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
-import { WarningTriangle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
-import { hasFieldConflict } from 'src/utils/fieldSelection-utils';
+import FieldOutput from 'src/components/tables/cells/fieldSelection/FieldOutput';
 
-const FieldConflictOverview = ({ field, outcome }: FieldNameProps) => {
-    const theme = useTheme();
+const FieldConflictOverview = ({ outcome }: FieldConflictOverviewProps) => {
+    const intl = useIntl();
 
     return (
-        <Stack spacing={1}>
-            <Typography>{field}</Typography>
+        <Stack spacing={2}>
+            {/* <Box>
+                <Typography style={{ marginBottom: 4 }} variant="h6">
+                    {intl.formatMessage({
+                        id: 'fieldSelection.conflict.header',
+                    })}
+                </Typography>
 
-            <Typography>{`A conflict was found for field ${field}.`}</Typography>
+                <Typography>
+                    {intl.formatMessage(
+                        {
+                            id: 'fieldSelection.conflict.description',
+                        },
+                        {
+                            field: (
+                                <span style={{ fontWeight: 500 }}>{field}</span>
+                            ),
+                        }
+                    )}
+                </Typography>
+            </Box> */}
 
-            <Stack direction="row" style={{ alignItems: 'center' }}>
-                <Typography>{field}</Typography>
+            {outcome?.select ? (
+                <Box>
+                    <Typography style={{ marginBottom: 4 }}>
+                        {intl.formatMessage({
+                            id: 'fieldSelection.conflict.select.header',
+                        })}
+                    </Typography>
 
-                {hasFieldConflict(outcome) ? (
-                    <WarningTriangle
-                        style={{
-                            color:
-                                theme.palette.mode === 'light'
-                                    ? theme.palette.warning.dark
-                                    : theme.palette.warning.main,
-                            fontSize: 12,
-                            marginLeft: 6,
-                        }}
-                    />
-                ) : null}
-            </Stack>
+                    <Box style={{ paddingLeft: 16 }}>
+                        <FieldOutput output={outcome.select} />
+                    </Box>
+                </Box>
+            ) : null}
+
+            {outcome?.reject ? (
+                <Box>
+                    <Typography style={{ marginBottom: 4 }}>
+                        {intl.formatMessage({
+                            id: 'fieldSelection.conflict.reject.header',
+                        })}
+                    </Typography>
+
+                    <Box style={{ paddingLeft: 16 }}>
+                        <FieldOutput output={outcome.reject} />
+                    </Box>
+                </Box>
+            ) : null}
         </Stack>
     );
 };
