@@ -18,7 +18,6 @@ export const canRecommendFields = (
     recommendedFlag: BaseMaterializationFields['recommended'] | undefined
 ): boolean => recommendedFlag !== false;
 
-// Common materialization field selection checks
 export const isRequireOnlyField = (outcome: FieldOutcome): boolean => {
     if (outcome?.reject || !outcome?.select) {
         return false;
