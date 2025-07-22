@@ -9,6 +9,8 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
+
 export type SelectionAlgorithm = 'depthZero' | 'depthOne' | 'depthTwo';
 
 export interface FieldSelection {
@@ -119,7 +121,8 @@ export const getStoreWithFieldSelectionSettings = (
                         break;
                     }
                     default: {
-                        state.recommendFields[bindingUUID] = 1;
+                        state.recommendFields[bindingUUID] =
+                            DEFAULT_RECOMMENDED_FLAG;
                     }
                 }
 

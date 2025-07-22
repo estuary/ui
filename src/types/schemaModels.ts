@@ -1,6 +1,12 @@
 import type { FullSource } from 'src/stores/Binding/slices/TimeTravel';
 import type { Schema } from 'src/types';
 
+export interface BaseMaterializationFields {
+    recommended: boolean | number;
+    exclude?: string[];
+    groupBy?: string[];
+}
+
 export interface MaterializationBinding {
     resource: any;
     source: string | FullSource;
@@ -11,17 +17,12 @@ export interface MaterializationBinding {
     priority?: number;
 }
 
-export interface MaterializationFields {
-    recommended: boolean | number;
-    exclude?: string[];
-    groupBy?: string[];
+export interface MaterializationFields extends BaseMaterializationFields {
     require?: Schema;
 }
 
-export interface MaterializationFields_Legacy {
-    recommended: boolean | number;
-    exclude?: string[];
-    groupBy?: string[];
+export interface MaterializationFields_Legacy
+    extends BaseMaterializationFields {
     include?: Schema;
 }
 

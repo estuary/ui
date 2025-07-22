@@ -26,6 +26,7 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { getFieldSelection } from 'src/utils/workflow-utils';
 
 interface Props {
@@ -87,7 +88,7 @@ function FieldSelectionViewer({
 
                     setRecommendFields(
                         bindingUUID,
-                        fieldStanza?.recommended ?? 1
+                        fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
                     );
                     initializeSelections(bindingUUID, updatedSelections);
                     setData(

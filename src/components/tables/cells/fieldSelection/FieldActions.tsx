@@ -13,6 +13,7 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { RejectReason } from 'src/types/wasm';
+import { canRecommendFields } from 'src/utils/fieldSelection-utils';
 import {
     isExcludeOnlyField,
     isRequireOnlyField,
@@ -54,8 +55,7 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
                     bindingUUID={bindingUUID}
                     color="success"
                     disabled={
-                        recommendFields[bindingUUID] === false ||
-                        recommendFields[bindingUUID] === 0 ||
+                        !canRecommendFields(recommendFields?.[bindingUUID]) ||
                         outcome?.reject?.reason === RejectReason.NOT_SELECTED
                     }
                     field={field}

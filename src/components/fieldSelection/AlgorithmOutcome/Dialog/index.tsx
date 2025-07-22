@@ -24,6 +24,7 @@ import Error from 'src/components/shared/Error';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { getAlgorithmicFieldSelection } from 'src/utils/workflow-utils';
 
 const AlgorithmOutcomeDialog = ({
@@ -57,7 +58,12 @@ const AlgorithmOutcomeDialog = ({
                     ? { depth: 0 }
                     : selectedAlgorithm === 'depthTwo'
                       ? { depth: 2 }
-                      : { depth: 1 };
+                      : {
+                            depth:
+                                typeof DEFAULT_RECOMMENDED_FLAG === 'number'
+                                    ? DEFAULT_RECOMMENDED_FLAG
+                                    : 1,
+                        };
 
             validateFieldSelection(config).then(
                 ({ fieldStanza, response }) => {
@@ -68,7 +74,7 @@ const AlgorithmOutcomeDialog = ({
                     const updatedSelections = getAlgorithmicFieldSelection(
                         existingFieldSelection,
                         response.outcomes,
-                        fieldStanza?.recommended ?? true
+                        fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
                     );
 
                     setFieldSelection(updatedSelections);

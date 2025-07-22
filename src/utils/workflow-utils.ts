@@ -40,6 +40,7 @@ import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
 } from 'src/utils/entity-utils';
+import { canRecommendFields } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 // This is the soft limit we recommend to users
@@ -502,9 +503,7 @@ export const getFieldSelection = (
                 }
             }
 
-            const recommended =
-                fieldsStanza.recommended !== false &&
-                fieldsStanza.recommended !== 0;
+            const recommended = canRecommendFields(fieldsStanza.recommended);
 
             updatedSelections[outcome.field] = {
                 mode:
@@ -548,7 +547,7 @@ export const getAlgorithmicFieldSelection = (
     outcomes.forEach((outcome) => {
         let selectionType: FieldSelectionType | null = null;
 
-        if (recommendedFlag === false || recommendedFlag === 0) {
+        if (canRecommendFields(recommendedFlag)) {
             selectionType = isRequireOnlyField(outcome)
                 ? 'require'
                 : isExcludeOnlyField(outcome)

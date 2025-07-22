@@ -16,6 +16,7 @@ import {
     useBinding_recommendFields,
     useBinding_selections,
 } from 'src/stores/Binding/hooks';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
 
@@ -47,7 +48,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
 
                 const recommended = Object.hasOwn(recommendFields, bindingUUID)
                     ? recommendFields[bindingUUID]
-                    : 1;
+                    : DEFAULT_RECOMMENDED_FLAG;
 
                 spec.bindings[bindingIndex].fields = {
                     recommended,

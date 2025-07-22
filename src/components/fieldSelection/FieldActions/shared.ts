@@ -4,6 +4,7 @@ import type {
     FieldSelectionDictionary,
 } from 'src/stores/Binding/slices/FieldSelection';
 
+import { canRecommendFields } from 'src/utils/fieldSelection-utils';
 import {
     isRecommendedField,
     isRequireOnlyField,
@@ -18,12 +19,11 @@ export const evaluateUpdatedFields = (
 
     selections.forEach(({ field, outcome, meta }) => {
         const required = isRequireOnlyField(outcome);
-
         const recommended = isRecommendedField(outcome);
 
         let selectionType = required ? 'require' : selectedValue;
 
-        if (recommendedFlag !== false && recommendedFlag !== 0) {
+        if (canRecommendFields(recommendedFlag)) {
             selectionType =
                 (selectedValue === 'exclude' && required) ||
                 (selectedValue === null && recommended)

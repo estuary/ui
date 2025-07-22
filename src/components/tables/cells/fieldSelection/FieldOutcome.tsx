@@ -9,29 +9,6 @@ const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
         return <TableCell />;
     }
 
-    // if (outcome?.select && outcome?.reject) {
-    //     return (
-    //         <TableCell
-    //             sx={{
-    //                 minWidth: 275,
-    //                 color: (theme) =>
-    //                     theme.palette.mode === 'light'
-    //                         ? theme.palette.warning.dark
-    //                         : theme.palette.warning.main,
-    //             }}
-    //         >
-    //             <Typography sx={{ fontWeight: 500 }}>
-    //                 {singleOutcome.reason.replace(/([A-Z])/g, ' $1').trim()}
-    //             </Typography>
-
-    //             <Typography>
-    //                 {singleOutcome.detail.charAt(0).toUpperCase() +
-    //                     singleOutcome.detail.slice(1)}
-    //             </Typography>
-    //         </TableCell>
-    //     );
-    // }
-
     const output =
         outcome?.select && outcome?.reject && selectionType === 'exclude'
             ? outcome.reject
