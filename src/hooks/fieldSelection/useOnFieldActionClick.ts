@@ -11,7 +11,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     canRecommendFields,
     isFieldSelectionType,
-    isRecommendedField,
+    isSelectedField,
 } from 'src/utils/fieldSelection-utils';
 
 const evaluateSelectionType = (
@@ -59,8 +59,7 @@ export default function useOnFieldActionClick(
             const singleValue = selection?.mode !== value ? value : null;
 
             const selectionType = evaluateSelectionType(
-                canRecommendFields(recommendedFlag) &&
-                    isRecommendedField(outcome),
+                canRecommendFields(recommendedFlag) && isSelectedField(outcome),
                 value,
                 selection?.mode ?? null,
                 singleValue

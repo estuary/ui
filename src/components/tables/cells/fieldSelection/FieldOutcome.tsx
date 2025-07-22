@@ -5,26 +5,35 @@ import { TableCell, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import { fieldOutcomeMessages } from 'src/components/tables/cells/fieldSelection/shared';
+import { RejectReason } from 'src/types/wasm';
+import {
+    hasFieldConflict,
+    isSelectedField,
+    isUnselectedField,
+} from 'src/utils/fieldSelection-utils';
 
 const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
     const intl = useIntl();
 
-    const singleOutcome = outcome?.select ? outcome.select : outcome?.reject;
+    const conflictExists = hasFieldConflict(outcome);
 
-    if ((!outcome?.select && !outcome?.reject) || !singleOutcome) {
+    const output =
+        (conflictExists &&
+            (selectionType === 'exclude' ||
+                outcome?.reject?.reason === RejectReason.NOT_SELECTED)) ||
+        isUnselectedField(outcome)
+            ? outcome?.reject
+            : conflictExists || isSelectedField(outcome)
+              ? outcome.select
+              : undefined;
+
+    if ((!outcome?.select && !outcome?.reject) || !output) {
         return <TableCell />;
     }
 
-    const output =
-        outcome?.select && outcome?.reject && selectionType === 'exclude'
-            ? outcome.reject
-            : outcome?.select && outcome?.reject
-              ? outcome.select
-              : singleOutcome;
-
     const titleId =
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        fieldOutcomeMessages[output.reason]?.id ??
+        fieldOutcomeMessages[output?.reason]?.id ??
         'fieldSelection.table.label.unknown';
 
     return (
@@ -35,13 +44,12 @@ const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
         >
             <Typography
                 sx={{
-                    color:
-                        outcome?.select && outcome?.reject
-                            ? (theme) =>
-                                  theme.palette.mode === 'light'
-                                      ? theme.palette.warning.dark
-                                      : theme.palette.warning.main
-                            : undefined,
+                    color: conflictExists
+                        ? (theme) =>
+                              theme.palette.mode === 'light'
+                                  ? theme.palette.warning.dark
+                                  : theme.palette.warning.main
+                        : undefined,
                     fontWeight: 500,
                 }}
             >

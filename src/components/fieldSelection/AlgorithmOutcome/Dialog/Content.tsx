@@ -4,7 +4,7 @@ import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSele
 import { useMemo } from 'react';
 
 import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
-import { isUnselectedField } from 'src/utils/fieldSelection-utils';
+import { isSelectedField } from 'src/utils/fieldSelection-utils';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,
@@ -20,7 +20,7 @@ const AlgorithmOutcomeContent = ({
                 if (
                     selection.mode === 'default' ||
                     (selection.mode === null &&
-                        !isUnselectedField(selection.outcome))
+                        isSelectedField(selection.outcome))
                 ) {
                     selected.push({ ...selection, field });
 

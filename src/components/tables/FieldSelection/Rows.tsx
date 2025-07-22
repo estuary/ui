@@ -10,12 +10,10 @@ import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
+import FieldName from 'src/components/tables/cells/fieldSelection/FieldName';
 import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
 import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
-import {
-    doubleElevationHoverBackground,
-    getStickyTableCell,
-} from 'src/context/Theme';
+import { doubleElevationHoverBackground } from 'src/context/Theme';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { basicSort_string } from 'src/utils/misc-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
@@ -42,9 +40,7 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <TableCell sx={getStickyTableCell()}>
-                <Typography>{row.field}</Typography>
-            </TableCell>
+            <FieldName field={row.field} outcome={row.outcome} />
 
             {pointerColumnVisible ? (
                 <TableCell>

@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl';
 
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
+import { hasFieldConflict } from 'src/utils/fieldSelection-utils';
 
 const FieldOutcomes = ({
     headerMessageId,
@@ -42,7 +43,7 @@ const FieldOutcomes = ({
                         >
                             <OutlinedChip
                                 color={
-                                    outcome?.select && outcome?.reject
+                                    hasFieldConflict(outcome)
                                         ? 'warning'
                                         : undefined
                                 }

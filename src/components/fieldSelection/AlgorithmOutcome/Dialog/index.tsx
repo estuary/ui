@@ -68,15 +68,14 @@ const AlgorithmOutcomeDialog = ({
                         };
 
             validateFieldSelection(config).then(
-                ({ fieldStanza, response }) => {
+                ({ response }) => {
                     if (!response) {
                         return;
                     }
 
                     const updatedSelections = getAlgorithmicFieldSelection(
                         existingFieldSelection,
-                        response.outcomes,
-                        fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
+                        response.outcomes
                     );
 
                     setFieldSelection(updatedSelections);
