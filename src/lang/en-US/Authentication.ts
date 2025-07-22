@@ -14,10 +14,18 @@ export const Authentication: Record<string, string> = {
     'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
     'login.login.message': `Get started with ${CommonMessages.productName}`,
     'login.register.message': `Get started with ${CommonMessages.productName}`,
+
     'login.register.perks1.emphasis': `No credit card`,
     'login.register.perks1': `{emphasis} required`,
     'login.register.perks2.emphasis': `free trial`,
     'login.register.perks2': `30 days {emphasis}`,
+    'login.register.perks3': `{emphasis}: Build streaming and batch data flows fast, no code or infrastructure.`,
+    'login.register.perks3.emphasis': `Real-time pipelines without the hassle`,
+    'login.register.perks4': `{emphasis}: Move data across 200+ sources and destinations instantly.`,
+    'login.register.perks4.emphasis': `Connect anything, stream anywhere`,
+    'login.register.perks5': `{emphasis}: Choose fully managed, BYOC, or private cloud to fit your needs.`,
+    'login.register.perks5.emphasis': `Flexible deployment options`,
+
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': `Single Sign-On (SSO) Successful`,

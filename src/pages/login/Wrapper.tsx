@@ -9,7 +9,8 @@ import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
-import RegisterPerk from 'src/pages/login/Perk';
+import RegisterMarketing from 'src/pages/login/RegisterMarketing';
+import RegisterPerks from 'src/pages/login/RegisterPerks';
 import LoginTabs from 'src/pages/login/Tabs';
 
 const LoginWrapper = ({
@@ -30,11 +31,10 @@ const LoginWrapper = ({
                 maxWidth: isRegister ? 900 : 550,
             }}
         >
-            <Grid container sx={{ bgcolor: 'blue', width: '100%' }}>
+            <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
                 {isRegister ? (
                     <Grid item xs={12} md={6}>
-                        Estuary Flow is a real-time data platform built for the
-                        cloud
+                        <RegisterMarketing />
                     </Grid>
                 ) : null}
                 <Grid item xs={12} md={isRegister ? 6 : 12}>
@@ -59,19 +59,7 @@ const LoginWrapper = ({
                             isRegister={isRegister}
                         />
 
-                        {isRegister ? (
-                            <Stack
-                                useFlexGap
-                                direction={{ xs: 'column', sm: 'row' }}
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'space-around',
-                                }}
-                            >
-                                <RegisterPerk messageID="login.register.perks1" />
-                                <RegisterPerk messageID="login.register.perks2" />
-                            </Stack>
-                        ) : null}
+                        {isRegister ? <RegisterPerks /> : null}
 
                         {children}
                     </Stack>

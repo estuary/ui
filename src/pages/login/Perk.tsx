@@ -7,9 +7,10 @@ import { registerPerkCheck, registerPerkHighlight } from 'src/context/Theme';
 
 interface Props {
     messageID: string;
+    disableNoWrap?: boolean;
 }
 
-function RegisterPerk({ messageID }: Props) {
+function RegisterPerk({ disableNoWrap, messageID }: Props) {
     return (
         <Stack direction="row" spacing={1}>
             <Box
@@ -22,7 +23,7 @@ function RegisterPerk({ messageID }: Props) {
 
             <Box
                 sx={{
-                    'whiteSpace': 'nowrap',
+                    'whiteSpace': disableNoWrap ? undefined : 'nowrap',
                     '& b': {
                         color: (theme) =>
                             registerPerkHighlight[theme.palette.mode],
