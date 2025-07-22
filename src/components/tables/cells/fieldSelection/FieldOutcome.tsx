@@ -2,7 +2,13 @@ import type { FieldOutcomeProps } from 'src/components/tables/cells/types';
 
 import { TableCell, Typography } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
+import { fieldOutcomeMessages } from 'src/components/tables/cells/fieldSelection/shared';
+
 const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
+    const intl = useIntl();
+
     const singleOutcome = outcome?.select ? outcome.select : outcome?.reject;
 
     if ((!outcome?.select && !outcome?.reject) || !singleOutcome) {
@@ -15,6 +21,11 @@ const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
             : outcome?.select && outcome?.reject
               ? outcome.select
               : singleOutcome;
+
+    const titleId =
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        fieldOutcomeMessages[output.reason]?.id ??
+        'fieldSelection.table.label.unknown';
 
     return (
         <TableCell
@@ -34,7 +45,7 @@ const FieldOutcome = ({ outcome, selectionType }: FieldOutcomeProps) => {
                     fontWeight: 500,
                 }}
             >
-                {output.reason.replace(/([A-Z])/g, ' $1').trim()}
+                {intl.formatMessage({ id: titleId })}
             </Typography>
 
             <Typography>

@@ -5,7 +5,10 @@ import { Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
-import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
+import {
+    fieldOutcomeMessages,
+    TOGGLE_BUTTON_CLASS,
+} from 'src/components/tables/cells/fieldSelection/shared';
 import useOnFieldActionClick from 'src/hooks/fieldSelection/useOnFieldActionClick';
 import { useFormStateStore_isIdle } from 'src/stores/FormState/hooks';
 
@@ -26,15 +29,24 @@ export default function FieldActionButton({
     const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
 
     if (tooltipProps && disabled && formIdle) {
-        // const tooltipReasonId =
-        //     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        //     constraintMessages[outcome.select?.reason]?.translatedId ??
-        //     'fieldSelection.table.label.unknown';
+        const tooltipReasonId =
+            (outcome.select && !outcome.reject) ||
+            (!outcome.select && outcome.reject)
+                ? fieldOutcomeMessages[
+                      outcome.select?.reason ?? outcome.reject?.reason ?? ''
+                  ]?.translatedId
+                : '';
 
         return (
             <Tooltip
                 {...tooltipProps}
-                title={outcome?.select?.reason ?? outcome?.reject?.reason}
+                title={
+                    tooltipReasonId.length > 0
+                        ? intl.formatMessage({
+                              id: tooltipReasonId,
+                          })
+                        : null
+                }
             >
                 <span className={TOGGLE_BUTTON_CLASS}>
                     <OutlinedToggleButton
