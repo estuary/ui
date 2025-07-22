@@ -29,13 +29,11 @@ import {
     useBinding_setBackfilledBindings,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { isDekafConnector } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 function BackfillButton({
@@ -62,10 +60,6 @@ function BackfillButton({
     const backfilledBindings = useBinding_backfilledBindings();
     const setBackfilledBindings = useBinding_setBackfilledBindings();
     const backfillSupported = useBinding_backfillSupported();
-
-    const editingDekaf = useDetailsFormStore((state) =>
-        isDekafConnector(state.details?.data?.connectorImage)
-    );
 
     const setCollectionMetadata = useBindingStore(
         (state) => state.setCollectionMetadata
@@ -171,9 +165,7 @@ function BackfillButton({
                             : undefined;
 
                         setBackfilledBindings(
-                            // Dekaf has issues with collection reset and RARELY will users actually
-                            //  want to do it
-                            editingDekaf ? 'incremental' : 'reset',
+                            'reset',
                             increment,
                             targetBindingUUID
                         );
@@ -215,7 +207,6 @@ function BackfillButton({
             currentBindingUUID,
             currentCollection,
             draftSpec,
-            editingDekaf,
             evaluateServerDifferences,
             evaluateTrialCollections,
             setBackfilledBindings,
