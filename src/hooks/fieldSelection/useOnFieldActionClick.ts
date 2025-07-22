@@ -8,11 +8,11 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_setSingleSelection } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { canRecommendFields } from 'src/utils/fieldSelection-utils';
 import {
+    canRecommendFields,
     isFieldSelectionType,
     isRecommendedField,
-} from 'src/utils/workflow-utils';
+} from 'src/utils/fieldSelection-utils';
 
 const evaluateSelectionType = (
     recommended: boolean,

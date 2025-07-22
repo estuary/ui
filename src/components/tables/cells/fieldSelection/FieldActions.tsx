@@ -13,11 +13,11 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { RejectReason } from 'src/types/wasm';
-import { canRecommendFields } from 'src/utils/fieldSelection-utils';
 import {
+    canRecommendFields,
     isExcludeOnlyField,
     isRequireOnlyField,
-} from 'src/utils/workflow-utils';
+} from 'src/utils/fieldSelection-utils';
 
 function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
     // Bindings Editor Store

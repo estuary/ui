@@ -4,7 +4,7 @@ import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSele
 import { useMemo } from 'react';
 
 import FieldOutcomes from 'src/components/fieldSelection/AlgorithmOutcome/Dialog/FieldOutcomes';
-import { isUnselectedField } from 'src/utils/workflow-utils';
+import { isUnselectedField } from 'src/utils/fieldSelection-utils';
 
 const AlgorithmOutcomeContent = ({
     fieldSelection,

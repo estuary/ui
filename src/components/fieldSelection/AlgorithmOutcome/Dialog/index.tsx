@@ -24,8 +24,10 @@ import Error from 'src/components/shared/Error';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
-import { getAlgorithmicFieldSelection } from 'src/utils/workflow-utils';
+import {
+    DEFAULT_RECOMMENDED_FLAG,
+    getAlgorithmicFieldSelection,
+} from 'src/utils/fieldSelection-utils';
 
 const AlgorithmOutcomeDialog = ({
     bindingUUID,

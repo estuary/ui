@@ -26,8 +26,10 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
-import { getFieldSelection } from 'src/utils/workflow-utils';
+import {
+    DEFAULT_RECOMMENDED_FLAG,
+    getFieldSelection,
+} from 'src/utils/fieldSelection-utils';
 
 interface Props {
     bindingUUID: string;
