@@ -1,6 +1,6 @@
 import type { LoginWrapperProps } from 'src/pages/login/types';
 
-import { Button, Stack } from '@mui/material';
+import { Button, Grid, Stack } from '@mui/material';
 
 import { NavArrowLeft } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -27,43 +27,56 @@ const LoginWrapper = ({
             paperSx={{
                 width: '100%',
                 minWidth: 320,
-                maxWidth: 550,
+                maxWidth: isRegister ? 900 : 550,
             }}
         >
-            {showBack ? (
-                <Button
-                    href={unauthenticatedRoutes.login.path}
-                    startIcon={<NavArrowLeft />}
-                    style={{ alignSelf: 'start' }}
-                    variant="text"
-                >
-                    <FormattedMessage id="login.sso.back" />
-                </Button>
-            ) : null}
-            <Stack spacing={4} style={{ width: '100%' }}>
-                <LoginTabs handleChange={handleChange} tabIndex={tabIndex} />
-
-                <HeaderMessage
-                    headerMessageId={headerMessageId}
-                    isRegister={isRegister}
-                />
-
+            <Grid container sx={{ bgcolor: 'blue', width: '100%' }}>
                 {isRegister ? (
-                    <Stack
-                        useFlexGap
-                        direction={{ xs: 'column', sm: 'row' }}
-                        style={{
-                            alignItems: 'center',
-                            justifyContent: 'space-around',
-                        }}
-                    >
-                        <RegisterPerk messageID="login.register.perks1" />
-                        <RegisterPerk messageID="login.register.perks2" />
-                    </Stack>
+                    <Grid item xs={12} md={6}>
+                        Estuary Flow is a real-time data platform built for the
+                        cloud
+                    </Grid>
                 ) : null}
+                <Grid item xs={12} md={isRegister ? 6 : 12}>
+                    {showBack ? (
+                        <Button
+                            href={unauthenticatedRoutes.login.path}
+                            startIcon={<NavArrowLeft />}
+                            style={{ alignSelf: 'start' }}
+                            variant="text"
+                        >
+                            <FormattedMessage id="login.sso.back" />
+                        </Button>
+                    ) : null}
+                    <Stack spacing={4} style={{ width: '100%' }}>
+                        <LoginTabs
+                            handleChange={handleChange}
+                            tabIndex={tabIndex}
+                        />
 
-                {children}
-            </Stack>
+                        <HeaderMessage
+                            headerMessageId={headerMessageId}
+                            isRegister={isRegister}
+                        />
+
+                        {isRegister ? (
+                            <Stack
+                                useFlexGap
+                                direction={{ xs: 'column', sm: 'row' }}
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'space-around',
+                                }}
+                            >
+                                <RegisterPerk messageID="login.register.perks1" />
+                                <RegisterPerk messageID="login.register.perks2" />
+                            </Stack>
+                        ) : null}
+
+                        {children}
+                    </Stack>
+                </Grid>
+            </Grid>
         </FullPageDialog>
     );
 };
