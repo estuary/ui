@@ -8,7 +8,7 @@ import { getTenantDetails, getTenantHidesPreview } from 'src/api/tenants';
 import {
     DEMO_TENANT,
     hasLength,
-    MARKETING_DEMO_TENANT,
+    PRIVATE_DEMO_TENANT,
     stripPathing,
 } from 'src/utils/misc-utils';
 
@@ -29,7 +29,7 @@ export function useTenantsDetailsForPayment(tenants: string[]) {
 export function useTenantHidesDataPreview(entityName: string) {
     const [tenantName, isDemo] = useMemo<[string, boolean]>(() => {
         const name = stripPathing(entityName, true);
-        return [name, name === DEMO_TENANT || name === MARKETING_DEMO_TENANT];
+        return [name, name === DEMO_TENANT || name === PRIVATE_DEMO_TENANT];
     }, [entityName]);
 
     // If we end up with an entity name that cannot be used
