@@ -26,7 +26,7 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
-    getAlgorithmicFieldSelection,
+    getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 
 const AlgorithmOutcomeDialog = ({
@@ -68,14 +68,15 @@ const AlgorithmOutcomeDialog = ({
                         };
 
             validateFieldSelection(config).then(
-                ({ response }) => {
+                ({ builtBinding, fieldStanza, response }) => {
                     if (!response) {
                         return;
                     }
 
-                    const updatedSelections = getAlgorithmicFieldSelection(
-                        existingFieldSelection,
-                        response.outcomes
+                    const updatedSelections = getFieldSelection(
+                        response.outcomes,
+                        fieldStanza,
+                        builtBinding.collection.projections
                     );
 
                     setFieldSelection(updatedSelections);

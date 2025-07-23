@@ -106,21 +106,3 @@ export const getFieldSelection = (
 
     return updatedSelections;
 };
-
-export const getAlgorithmicFieldSelection = (
-    existingFieldSelection: FieldSelectionDictionary,
-    outcomes: FieldOutcome[]
-): FieldSelectionDictionary => {
-    const updatedFields: FieldSelectionDictionary = {};
-
-    outcomes.forEach((outcome) => {
-        updatedFields[outcome.field] = {
-            meta: existingFieldSelection?.[outcome.field].meta,
-            mode: isSelectedField(outcome) ? 'default' : null,
-            outcome,
-            projection: existingFieldSelection?.[outcome.field].projection,
-        };
-    });
-
-    return updatedFields;
-};
