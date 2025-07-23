@@ -16,6 +16,7 @@ function RegisterPerk({
         <Stack direction="row" spacing={1}>
             <Box
                 sx={{
+                    alignContent: 'center',
                     color: disableEmphasisColor
                         ? undefined
                         : (theme) => registerPerkCheck[theme.palette.mode],

@@ -28,16 +28,14 @@ const LoginWrapper = ({
             paperSx={{
                 width: '100%',
                 minWidth: 320,
-                maxWidth: isRegister ? 900 : 550,
+                maxWidth: 1200,
             }}
         >
             <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
-                {isRegister ? (
-                    <Grid item xs={12} md={6}>
-                        <RegisterMarketing />
-                    </Grid>
-                ) : null}
-                <Grid item xs={12} md={isRegister ? 6 : 12}>
+                <Grid item xs={12} md={6}>
+                    {isRegister ? <RegisterMarketing /> : <>other content</>}
+                </Grid>
+                <Grid item xs={12} md={6}>
                     {showBack ? (
                         <Button
                             href={unauthenticatedRoutes.login.path}
