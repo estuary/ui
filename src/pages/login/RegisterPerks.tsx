@@ -2,7 +2,7 @@ import { Stack } from '@mui/material';
 
 import RegisterPerk from 'src/pages/login/Perk';
 
-function RegisterParks() {
+function RegisterPerks() {
     return (
         <Stack
             useFlexGap
@@ -18,4 +18,4 @@ function RegisterParks() {
     );
 }
 
-export default RegisterParks;
+export default RegisterPerks;
