@@ -15,7 +15,6 @@ import { CustomEvents } from 'src/services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
-export const PRIVATE_DEMO_TENANT = 'Artificial-Industries/'; // This is like the demo tenant but one we do not want to always share with every user that signs up
 
 export const RESPONSE_DATA_LIMIT = 1000;
 
