@@ -28,7 +28,7 @@ const LoginWrapper = ({
             paperSx={{
                 width: '100%',
                 minWidth: 320,
-                maxWidth: 1200,
+                maxWidth: 900,
             }}
         >
             <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
