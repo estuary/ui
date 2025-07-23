@@ -12,10 +12,6 @@ import type { FieldOutcome } from 'src/types/wasm';
 
 export const DEFAULT_RECOMMENDED_FLAG: BaseMaterializationFields['recommended'] = 1;
 
-export const canRecommendFields = (
-    recommendedFlag: BaseMaterializationFields['recommended'] | undefined
-): boolean => recommendedFlag !== false;
-
 export const isSelectedField = (outcome: FieldOutcome): boolean => {
     return Boolean(!outcome?.reject && outcome?.select);
 };

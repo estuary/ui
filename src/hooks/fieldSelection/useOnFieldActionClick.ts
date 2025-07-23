@@ -7,29 +7,25 @@ import { useCallback } from 'react';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_setSingleSelection } from 'src/stores/Binding/hooks';
-import { useBindingStore } from 'src/stores/Binding/Store';
 import {
-    canRecommendFields,
     isFieldSelectionType,
     isSelectedField,
 } from 'src/utils/fieldSelection-utils';
 
 const evaluateSelectionType = (
-    recommended: boolean,
+    selected: boolean,
     toggleValue: FieldSelectionType,
     selectedValue: FieldSelectionType | null,
     targetValue: FieldSelectionType | null
 ) => {
     logRocketEvent(CustomEvents.FIELD_SELECTION, {
-        recommended,
+        selected,
         selectedValue,
         targetValue,
         toggleValue,
     });
 
-    return selectedValue === toggleValue && recommended
-        ? 'default'
-        : targetValue;
+    return selectedValue === toggleValue && selected ? 'default' : targetValue;
 };
 
 export default function useOnFieldActionClick(
@@ -37,9 +33,6 @@ export default function useOnFieldActionClick(
     field: string
 ) {
     // Bindings Editor Store
-    const recommendedFlag = useBindingStore(
-        (state) => state.recommendFields?.[bindingUUID]
-    );
     const setSingleSelection = useBinding_setSingleSelection();
 
     return useCallback(
@@ -59,7 +52,7 @@ export default function useOnFieldActionClick(
             const singleValue = selection?.mode !== value ? value : null;
 
             const selectionType = evaluateSelectionType(
-                canRecommendFields(recommendedFlag) && isSelectedField(outcome),
+                isSelectedField(outcome),
                 value,
                 selection?.mode ?? null,
                 singleValue
@@ -73,6 +66,6 @@ export default function useOnFieldActionClick(
                 selection?.meta
             );
         },
-        [bindingUUID, field, recommendedFlag, setSingleSelection]
+        [bindingUUID, field, setSingleSelection]
     );
 }
