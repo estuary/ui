@@ -31,7 +31,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     ([collection, bindingUUIDs]) => {
                         return bindingUUIDs.some((bindingUUID) => {
                             const expectedBindingIndex =
-                                resourceConfigs[bindingUUID].meta.bindingIndex;
+                                resourceConfigs[bindingUUID]?.meta.bindingIndex;
 
                             if (expectedBindingIndex > -1) {
                                 const binding =
