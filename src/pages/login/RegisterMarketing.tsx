@@ -57,6 +57,62 @@ function RegisterMarketing() {
                     </Stack>
                 </Stack>
             </CardWrapper>
+
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ justifyContent: 'space-between' }}
+            >
+                <Box
+                    sx={{
+                        background: 'green',
+                        width: '25px',
+                        height: '25px',
+                    }}
+                >
+                    logo
+                </Box>
+
+                <Box
+                    sx={{
+                        background: 'green',
+                        width: '25px',
+                        height: '25px',
+                    }}
+                >
+                    logo
+                </Box>
+
+                <Box
+                    sx={{
+                        background: 'green',
+                        width: '25px',
+                        height: '25px',
+                    }}
+                >
+                    logo
+                </Box>
+
+                <Box
+                    sx={{
+                        background: 'green',
+                        width: '25px',
+                        height: '25px',
+                    }}
+                >
+                    logo
+                </Box>
+
+                <Box
+                    sx={{
+                        background: 'green',
+                        width: '25px',
+                        height: '25px',
+                    }}
+                >
+                    logo
+                </Box>
+            </Stack>
         </Stack>
     );
 }
