@@ -11,7 +11,11 @@ import produce from 'immer';
 
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
-export type SelectionAlgorithm = 'depthZero' | 'depthOne' | 'depthTwo';
+export type SelectionAlgorithm =
+    | 'depthZero'
+    | 'depthOne'
+    | 'depthTwo'
+    | 'depthUnlimited';
 
 export interface FieldSelection {
     mode: FieldSelectionType | null;
@@ -118,6 +122,10 @@ export const getStoreWithFieldSelectionSettings = (
                     }
                     case 'depthTwo': {
                         state.recommendFields[bindingUUID] = 2;
+                        break;
+                    }
+                    case 'depthUnlimited': {
+                        state.recommendFields[bindingUUID] = true;
                         break;
                     }
                     default: {

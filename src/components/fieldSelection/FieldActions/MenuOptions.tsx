@@ -54,6 +54,16 @@ export default function MenuOptions() {
                 })}
                 value="depthTwo"
             />
+
+            <RadioMenuItem
+                description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthUnlimited.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthUnlimited.label',
+                })}
+                value="depthUnlimited"
+            />
         </RadioGroup>
     );
 }

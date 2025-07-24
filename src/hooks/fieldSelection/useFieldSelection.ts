@@ -76,43 +76,30 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     )
                     .map(([field]) => field);
 
-                if (
-                    hasLength(requiredFields) ||
-                    hasLength(excludedFields) ||
-                    !recommended
-                ) {
-                    // Remove the require property if no fields are explicitly required, otherwise set the property.
-                    if (hasLength(requiredFields)) {
-                        const formattedFields: Schema = {};
+                // Remove the require property if no fields are explicitly required, otherwise set the property.
+                if (hasLength(requiredFields)) {
+                    const formattedFields: Schema = {};
 
-                        requiredFields.forEach(({ field, meta }) => {
-                            formattedFields[field] = meta ?? {};
-                        });
+                    requiredFields.forEach(({ field, meta }) => {
+                        formattedFields[field] = meta ?? {};
+                    });
 
-                        spec.bindings[bindingIndex].fields.require =
-                            formattedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'require'
-                        );
-                    }
-
-                    // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
-                    if (hasLength(excludedFields)) {
-                        spec.bindings[bindingIndex].fields.exclude =
-                            excludedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'exclude'
-                        );
-                    }
+                    spec.bindings[bindingIndex].fields.require =
+                        formattedFields;
                 } else {
-                    // Remove the fields property from the specification if it equates to default behavior.
-                    spec.bindings[bindingIndex] = omit(
-                        spec.bindings[bindingIndex],
-                        'fields'
+                    spec.bindings[bindingIndex].fields = omit(
+                        spec.bindings[bindingIndex].fields,
+                        'require'
+                    );
+                }
+
+                // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
+                if (hasLength(excludedFields)) {
+                    spec.bindings[bindingIndex].fields.exclude = excludedFields;
+                } else {
+                    spec.bindings[bindingIndex].fields = omit(
+                        spec.bindings[bindingIndex].fields,
+                        'exclude'
                     );
                 }
 
