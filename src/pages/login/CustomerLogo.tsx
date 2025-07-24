@@ -33,12 +33,7 @@ function CustomerLogo() {
         >
             {customers.map(({ logo }, index) => {
                 return (
-                    <Box
-                        key={`customers_${index}`}
-                        sx={{
-                            background: '#a4b6f4',
-                        }}
-                    >
+                    <Box key={`customers_${index}`}>
                         <img
                             style={{ height: 35 }}
                             src={logo}
