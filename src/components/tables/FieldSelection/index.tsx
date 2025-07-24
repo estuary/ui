@@ -8,6 +8,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
+import ExcludeAllButton from 'src/components/fieldSelection/FieldActions/ExcludeAllButton';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
@@ -120,11 +121,23 @@ export default function FieldSelectionTable({
                     justifyContent: 'space-between',
                 }}
             >
-                <AlgorithmMenu
-                    bindingUUID={bindingUUID}
-                    loading={loading}
-                    selections={processedSelections}
-                />
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <AlgorithmMenu
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={selections}
+                    />
+
+                    <ExcludeAllButton
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={processedSelections}
+                    />
+                </Stack>
 
                 <Stack
                     direction="row"

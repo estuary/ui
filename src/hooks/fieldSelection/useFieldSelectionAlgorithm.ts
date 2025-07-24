@@ -1,4 +1,5 @@
 import type {
+    BaseMaterializationFields,
     MaterializationBinding,
     MaterializationFields,
     MaterializationFields_Legacy,
@@ -14,10 +15,12 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { getRelatedBindings } from 'src/utils/workflow-utils';
 
 export interface AlgorithmConfig {
     depth?: number;
+    exclude?: BaseMaterializationFields['exclude'];
     reset?: boolean;
 }
 
@@ -53,6 +56,16 @@ const getDraftedFieldSelections = (
         fieldStanza = config?.reset
             ? { recommended: config.depth }
             : { ...fieldStanza, recommended: config.depth };
+    }
+
+    if (config?.exclude && config.exclude.length > 0) {
+        fieldStanza =
+            fieldStanza?.recommended === undefined
+                ? {
+                      recommended: DEFAULT_RECOMMENDED_FLAG,
+                      exclude: config.exclude,
+                  }
+                : { ...fieldStanza, exclude: config.exclude };
     }
 
     return fieldStanza;
