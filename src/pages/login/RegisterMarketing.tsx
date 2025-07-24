@@ -6,7 +6,7 @@ import RegisterPerk from 'src/pages/login/Perk';
 
 function RegisterMarketing() {
     return (
-        <Stack spacing={4} sx={{ pr: 4 }}>
+        <Stack spacing={4}>
             <Typography component="h1" align="center" variant="h5">
                 Estuary flow is a real-time data platform built for the cloud
             </Typography>
