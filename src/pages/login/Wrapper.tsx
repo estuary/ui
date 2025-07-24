@@ -3,13 +3,12 @@ import type { LoginWrapperProps } from 'src/pages/login/types';
 import { Button, Grid, Stack } from '@mui/material';
 
 import { NavArrowLeft } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
-import LoginMarketing from 'src/pages/login/LoginMarketing';
 import RegisterMarketing from 'src/pages/login/RegisterMarketing';
 import RegisterPerks from 'src/pages/login/RegisterPerks';
 import LoginTabs from 'src/pages/login/Tabs';
@@ -24,19 +23,26 @@ const LoginWrapper = ({
 }: LoginWrapperProps) => {
     useLoginBodyClass();
 
+    const intl = useIntl();
+
     return (
         <FullPageDialog
             paperSx={{
                 width: '100%',
                 minWidth: 320,
-                maxWidth: 1200,
+                maxWidth: isRegister ? 1000 : 550,
             }}
         >
             <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
-                <Grid item xs={12} md={6}>
-                    {isRegister ? <RegisterMarketing /> : <LoginMarketing />}
+                <Grid item xs={12} md={isRegister ? 6 : 0}>
+                    {isRegister ? <RegisterMarketing /> : null}
                 </Grid>
-                <Grid item xs={12} md={6} sx={{ justifyItems: 'center' }}>
+                <Grid
+                    item
+                    xs={12}
+                    md={isRegister ? 6 : 12}
+                    sx={isRegister ? { pl: 5, justifyItems: 'end' } : undefined}
+                >
                     {showBack ? (
                         <Button
                             href={unauthenticatedRoutes.login.path}
@@ -44,10 +50,10 @@ const LoginWrapper = ({
                             style={{ alignSelf: 'start' }}
                             variant="text"
                         >
-                            <FormattedMessage id="login.sso.back" />
+                            {intl.formatMessage({ id: 'login.sso.back' })}
                         </Button>
                     ) : null}
-                    <Stack spacing={4} style={{ width: '80%' }}>
+                    <Stack spacing={4} style={{ width: '100%' }}>
                         <LoginTabs
                             handleChange={handleChange}
                             tabIndex={tabIndex}

@@ -26,6 +26,15 @@ export const Authentication: Record<string, string> = {
     'login.register.perks5': `{emphasis}: Choose fully managed, BYOC, or private cloud to fit your needs.`,
     'login.register.perks5.emphasis': `Flexible deployment options`,
 
+    'login.register.marketing.title': `${CommonMessages.productName} is a real-time data platform built for the cloud`,
+    'login.register.quote.title': `Estuary is a very productive product`,
+    'login.register.quote.name': `Shane Iseminger`,
+    'login.register.quote.employment': `CTO, SocialHP`,
+    'login.register.quote.body': `“Estuary is a very productive product with a great pricing model
+                given the current climate that we're in. I think a lot of
+                cost-conscious data practitioners could benefit from giving it a
+                try.”`,
+
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': `Single Sign-On (SSO) Successful`,

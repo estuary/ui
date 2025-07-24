@@ -1,33 +1,49 @@
 import { Box, Stack, Typography } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import CardWrapper from 'src/components/shared/CardWrapper';
 import Customer from 'src/images/register/customer.png';
 
+const imgSize = 40;
+
 function CustomerQuote() {
+    const intl = useIntl();
+
     return (
-        <CardWrapper message="Estuary is a very productive product">
+        <CardWrapper
+            message={intl.formatMessage({ id: 'login.register.quote.title' })}
+        >
             <Typography
                 sx={{
                     mb: 2,
                 }}
             >
-                “Estuary is a very productive product with a great pricing model
-                given the current climate that we're in. I think a lot of
-                cost-conscious data practitioners could benefit from giving it a
-                try.”
+                {intl.formatMessage({ id: 'login.register.quote.body' })}
             </Typography>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} height={imgSize}>
                 <Box>
                     <img
-                        style={{ height: 50 }}
+                        style={{ height: imgSize }}
                         src={Customer}
                         alt="Shane Iseminger portrait"
                     />
                 </Box>
-                <Stack>
-                    <Typography>Shane Iseminger</Typography>
-
-                    <Typography>CTO, SocialHP</Typography>
+                <Stack
+                    sx={{
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'login.register.quote.name',
+                        })}
+                    </Typography>
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'login.register.quote.employment',
+                        })}
+                    </Typography>
                 </Stack>
             </Stack>
         </CardWrapper>

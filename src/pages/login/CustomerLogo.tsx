@@ -59,7 +59,7 @@ function CustomerLogo() {
                 return (
                     <Box key={`customers_${index}`}>
                         <img
-                            style={{ height: 35 }}
+                            style={{ height: 30 }}
                             src={customer.logo[theme.palette.mode]}
                             alt="customer logo"
                         />
