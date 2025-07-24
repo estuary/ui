@@ -4,7 +4,7 @@ import type {
 } from 'src/components/tables/FieldSelection/types';
 import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 
 import { orderBy } from 'lodash';
 
@@ -44,7 +44,7 @@ function Row({ columns, row }: RowProps) {
 
             {pointerColumnVisible ? (
                 <TableCell>
-                    <Typography>{row?.projection?.ptr}</Typography>
+                    <code>{row?.projection?.ptr}</code>
                 </TableCell>
             ) : null}
 
@@ -57,10 +57,6 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            {outcomeColumnVisible ? (
-                <FieldOutcome outcome={row.outcome} selectionType={row.mode} />
-            ) : null}
-
             {currentBindingUUID ? (
                 <FieldActions
                     bindingUUID={currentBindingUUID}
@@ -71,6 +67,10 @@ function Row({ columns, row }: RowProps) {
             ) : (
                 <TableCell />
             )}
+
+            {outcomeColumnVisible ? (
+                <FieldOutcome outcome={row.outcome} />
+            ) : null}
         </TableRow>
     );
 }

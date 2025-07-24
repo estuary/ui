@@ -21,8 +21,8 @@ const FieldOutput = ({ indicateConflict, output }: FieldOutputProps) => {
                     color: indicateConflict
                         ? (theme) =>
                               theme.palette.mode === 'light'
-                                  ? theme.palette.warning.dark
-                                  : theme.palette.warning.main
+                                  ? theme.palette.error.dark
+                                  : theme.palette.error.main
                         : undefined,
                     fontWeight: 500,
                     marginRight: '4px',

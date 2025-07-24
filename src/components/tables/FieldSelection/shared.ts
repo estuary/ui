@@ -23,12 +23,13 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: optionalColumnIntlKeys.outcome,
+        headerIntlKey: 'data.actions',
+        width: 148,
     },
     {
         field: null,
-        headerIntlKey: 'data.actions',
-        width: 148,
+        headerIntlKey: optionalColumnIntlKeys.outcome,
+        width: 50,
     },
 ];
 

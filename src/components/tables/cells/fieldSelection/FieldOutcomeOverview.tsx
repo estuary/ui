@@ -1,42 +1,26 @@
-import type { FieldConflictOverviewProps } from 'src/components/tables/cells/types';
+import type { BaseFieldOutcomeProps } from 'src/components/tables/cells/types';
 
 import { Box, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import FieldOutput from 'src/components/tables/cells/fieldSelection/FieldOutput';
+import { hasFieldConflict } from 'src/utils/fieldSelection-utils';
 
-const FieldConflictOverview = ({ outcome }: FieldConflictOverviewProps) => {
+const FieldOutcomeOverview = ({ outcome }: BaseFieldOutcomeProps) => {
     const intl = useIntl();
+
+    const conflictExists = hasFieldConflict(outcome);
 
     return (
         <Stack spacing={2}>
-            {/* <Box>
-                <Typography style={{ marginBottom: 4 }} variant="h6">
-                    {intl.formatMessage({
-                        id: 'fieldSelection.conflict.header',
-                    })}
-                </Typography>
-
-                <Typography>
-                    {intl.formatMessage(
-                        {
-                            id: 'fieldSelection.conflict.description',
-                        },
-                        {
-                            field: (
-                                <span style={{ fontWeight: 500 }}>{field}</span>
-                            ),
-                        }
-                    )}
-                </Typography>
-            </Box> */}
-
             {outcome?.select ? (
                 <Box>
                     <Typography style={{ marginBottom: 4 }}>
                         {intl.formatMessage({
-                            id: 'fieldSelection.conflict.select.header',
+                            id: conflictExists
+                                ? 'fieldSelection.outcomeButton.select.header.conflict'
+                                : 'fieldSelection.outcomeButton.select.header',
                         })}
                     </Typography>
 
@@ -50,7 +34,9 @@ const FieldConflictOverview = ({ outcome }: FieldConflictOverviewProps) => {
                 <Box>
                     <Typography style={{ marginBottom: 4 }}>
                         {intl.formatMessage({
-                            id: 'fieldSelection.conflict.reject.header',
+                            id: conflictExists
+                                ? 'fieldSelection.outcomeButton.reject.header.conflict'
+                                : 'fieldSelection.outcomeButton.reject.header',
                         })}
                     </Typography>
 
@@ -63,4 +49,4 @@ const FieldConflictOverview = ({ outcome }: FieldConflictOverviewProps) => {
     );
 };
 
-export default FieldConflictOverview;
+export default FieldOutcomeOverview;

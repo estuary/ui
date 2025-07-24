@@ -6,6 +6,10 @@ import type {
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
+export interface BaseFieldOutcomeProps {
+    outcome: FieldOutcome;
+}
+
 export interface ChipStatusProps {
     messageId: string;
     color: ChipProps['color'];
@@ -31,10 +35,6 @@ export interface FieldActionsProps {
     selectionType: FieldSelectionType | null;
 }
 
-export interface FieldConflictOverviewProps {
-    outcome: FieldOutcome;
-}
-
 export interface FieldListProps {
     field: string;
     pointer: string | undefined;
@@ -42,14 +42,8 @@ export interface FieldListProps {
     sticky?: boolean;
 }
 
-export interface FieldNameProps {
+export interface FieldNameProps extends BaseFieldOutcomeProps {
     field: string;
-    outcome: FieldOutcome;
-}
-
-export interface FieldOutcomeProps {
-    outcome: FieldOutcome;
-    selectionType: FieldSelectionType | null;
 }
 
 export interface FieldOutputProps {

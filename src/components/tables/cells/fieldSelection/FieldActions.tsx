@@ -9,7 +9,6 @@ import FieldActionButton from 'src/components/tables/cells/fieldSelection/FieldA
 import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
 import { useBinding_selections } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { RejectReason } from 'src/types/wasm';
 
 function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
     // Bindings Editor Store
@@ -35,9 +34,9 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
                 size="small"
                 value={selection?.mode}
             >
-                <FieldActionButton
+                {/* <FieldActionButton
                     bindingUUID={bindingUUID}
-                    color="success"
+                    color="primary"
                     disabled={
                         outcome?.reject?.reason === RejectReason.NOT_SELECTED
                     }
@@ -47,11 +46,11 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
                     selection={selection}
                     tooltipProps={{ placement: 'bottom-start' }}
                     value="default"
-                />
+                /> */}
 
                 <FieldActionButton
                     bindingUUID={bindingUUID}
-                    color="warning"
+                    color="primary"
                     field={field}
                     labelId="fieldSelection.table.cta.requireField"
                     outcome={outcome}
@@ -61,7 +60,7 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
 
                 <FieldActionButton
                     bindingUUID={bindingUUID}
-                    color="error"
+                    color="primary"
                     field={field}
                     labelId="fieldSelection.table.cta.excludeField"
                     outcome={outcome}
