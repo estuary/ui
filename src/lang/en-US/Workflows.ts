@@ -216,7 +216,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.depthTwo.label': `Depth Two`,
     'fieldSelection.massActionMenu.depthTwo.description': `Select object fields with two degrees of nesting`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
-    'fieldSelection.massActionMenu.depthUnlimited.description': `Select all object fields`,
+    'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
     'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,

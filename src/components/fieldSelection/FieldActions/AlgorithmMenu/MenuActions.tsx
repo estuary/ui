@@ -4,7 +4,7 @@ import { Box, Button, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import GenerateButton from 'src/components/fieldSelection/AlgorithmOutcome/GenerateButton';
+import SaveButton from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/SaveButton';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
@@ -36,9 +36,9 @@ export default function MenuActions({
                 {intl.formatMessage({ id: 'cta.cancel' })}
             </Button>
 
-            <GenerateButton
+            <SaveButton
                 bindingUUID={bindingUUID}
-                closeMenu={closeMenu}
+                close={closeMenu}
                 loading={loading}
                 selections={selections}
                 selectedAlgorithm={selectionAlgorithm}

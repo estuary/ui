@@ -1,7 +1,5 @@
-import type { Dispatch, SetStateAction } from 'react';
 import type {
     ExpandedFieldSelection,
-    FieldSelectionDictionary,
     SelectionAlgorithm,
 } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
@@ -18,17 +16,6 @@ export enum ConstraintTypes {
 
 export type ConstraintType = keyof typeof ConstraintTypes;
 export type FieldSelectionType = 'default' | 'require' | 'exclude';
-
-export interface AlgorithmOutcomeContentProps {
-    fieldSelection: FieldSelectionDictionary;
-}
-
-export interface AlgorithmOutcomeDialogProps extends BaseProps {
-    closeMenu: () => void;
-    open: boolean;
-    selectedAlgorithm: SelectionAlgorithm | null;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-}
 
 export interface BaseProps {
     bindingUUID: string;
@@ -70,23 +57,11 @@ export interface ConstraintDictionary {
     [key: string]: Constraint;
 }
 
-export interface FieldOutcomesProps {
-    headerMessageId: string;
-    selections: ExpandedFieldSelection[];
-    keyPrefix: string;
-    hideBorder?: boolean;
-}
-
-export interface FieldSelection {
+interface FieldSelection {
     keys: string[];
     values: string[];
     document: string;
     fieldConfig?: { [field: string]: any };
-}
-
-export interface GenerateButtonProps extends BaseProps {
-    closeMenu: () => void;
-    selectedAlgorithm: SelectionAlgorithm | null;
 }
 
 export interface MenuActionProps extends BaseProps {
@@ -102,7 +77,6 @@ export interface Projection {
 
 export interface SaveButtonProps extends BaseProps {
     close: () => void;
-    fieldSelection: FieldSelectionDictionary;
     selectedAlgorithm: SelectionAlgorithm | null;
 }
 

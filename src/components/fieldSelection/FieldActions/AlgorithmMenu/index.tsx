@@ -7,14 +7,10 @@ import { Button, Divider, Menu } from '@mui/material';
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import MenuActions from 'src/components/fieldSelection/FieldActions/MenuActions';
-import MenuOptions from 'src/components/fieldSelection/FieldActions/MenuOptions';
+import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
+import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
 
-export default function FieldActions({
-    bindingUUID,
-    loading,
-    selections,
-}: BaseProps) {
+const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -62,4 +58,6 @@ export default function FieldActions({
             </Menu>
         </>
     );
-}
+};
+
+export default AlgorithmMenu;
