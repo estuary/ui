@@ -1,6 +1,7 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
-import CardWrapper from 'src/components/shared/CardWrapper';
+import CustomerLogo from 'src/pages/login/CustomerLogo';
+import CustomerQuote from 'src/pages/login/CustomerQuote';
 import RegisterPerk from 'src/pages/login/Perk';
 
 function RegisterMarketing() {
@@ -35,84 +36,9 @@ function RegisterMarketing() {
                 />
             </Stack>
 
-            <CardWrapper message="Estuary is a very productive product">
-                "Estuary is a very productive product with a great pricing model
-                given the current climate that we're in. I think a lot of cost
-                conscious data practitioners could benefit from giving it a
-                try."
-                <Stack direction="row" spacing={1}>
-                    <Box
-                        sx={{
-                            background: 'green',
-                            width: '50px',
-                            height: '50px',
-                        }}
-                    >
-                        content
-                    </Box>
-                    <Stack>
-                        <Typography>Shane Iseminger</Typography>
+            <CustomerQuote />
 
-                        <Typography>CTO, SocialHP</Typography>
-                    </Stack>
-                </Stack>
-            </CardWrapper>
-
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{ justifyContent: 'space-between' }}
-            >
-                <Box
-                    sx={{
-                        background: 'green',
-                        width: '25px',
-                        height: '25px',
-                    }}
-                >
-                    logo
-                </Box>
-
-                <Box
-                    sx={{
-                        background: 'green',
-                        width: '25px',
-                        height: '25px',
-                    }}
-                >
-                    logo
-                </Box>
-
-                <Box
-                    sx={{
-                        background: 'green',
-                        width: '25px',
-                        height: '25px',
-                    }}
-                >
-                    logo
-                </Box>
-
-                <Box
-                    sx={{
-                        background: 'green',
-                        width: '25px',
-                        height: '25px',
-                    }}
-                >
-                    logo
-                </Box>
-
-                <Box
-                    sx={{
-                        background: 'green',
-                        width: '25px',
-                        height: '25px',
-                    }}
-                >
-                    logo
-                </Box>
-            </Stack>
+            <CustomerLogo />
         </Stack>
     );
 }

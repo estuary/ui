@@ -9,6 +9,7 @@ import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
+import LoginMarketing from 'src/pages/login/LoginMarketing';
 import RegisterMarketing from 'src/pages/login/RegisterMarketing';
 import RegisterPerks from 'src/pages/login/RegisterPerks';
 import LoginTabs from 'src/pages/login/Tabs';
@@ -28,14 +29,14 @@ const LoginWrapper = ({
             paperSx={{
                 width: '100%',
                 minWidth: 320,
-                maxWidth: 900,
+                maxWidth: 1200,
             }}
         >
             <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
                 <Grid item xs={12} md={6}>
-                    {isRegister ? <RegisterMarketing /> : <>other content</>}
+                    {isRegister ? <RegisterMarketing /> : <LoginMarketing />}
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} sx={{ justifyItems: 'center' }}>
                     {showBack ? (
                         <Button
                             href={unauthenticatedRoutes.login.path}
@@ -46,7 +47,7 @@ const LoginWrapper = ({
                             <FormattedMessage id="login.sso.back" />
                         </Button>
                     ) : null}
-                    <Stack spacing={4} style={{ width: '100%' }}>
+                    <Stack spacing={4} style={{ width: '80%' }}>
                         <LoginTabs
                             handleChange={handleChange}
                             tabIndex={tabIndex}
