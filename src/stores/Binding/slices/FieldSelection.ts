@@ -31,7 +31,10 @@ export interface FieldSelectionDictionary {
 }
 
 interface BindingFieldSelections {
-    [uuid: string]: FieldSelectionDictionary;
+    [uuid: string]: {
+        value: FieldSelectionDictionary;
+        hasConflicts: boolean;
+    };
 }
 
 export interface StoreWithFieldSelection {
@@ -41,7 +44,8 @@ export interface StoreWithFieldSelection {
     selections: BindingFieldSelections;
     initializeSelections: (
         bindingUUID: string,
-        selections: FieldSelectionDictionary
+        selections: FieldSelectionDictionary,
+        hasConflicts: boolean
     ) => void;
     setSingleSelection: (
         bindingUUID: string,
@@ -52,12 +56,14 @@ export interface StoreWithFieldSelection {
     ) => void;
     setMultiSelection: (
         bindingUUID: string,
-        updatedFields: FieldSelectionDictionary
+        updatedFields: FieldSelectionDictionary,
+        hasConflicts: boolean
     ) => void;
     setAlgorithmicSelection: (
         selectedAlgorithm: SelectionAlgorithm,
         bindingUUID: string,
-        value: FieldSelectionDictionary | undefined
+        value: FieldSelectionDictionary | undefined,
+        hasConflicts: boolean
     ) => void;
 
     selectionSaving: boolean;
@@ -94,24 +100,32 @@ export const getStoreWithFieldSelectionSettings = (
 ): StoreWithFieldSelection => ({
     ...getInitialFieldSelectionData(),
 
-    initializeSelections: (bindingUUID, selections) => {
+    initializeSelections: (bindingUUID, selections, hasConflicts) => {
         set(
             produce((state: BindingState) => {
-                state.selections[bindingUUID] = selections;
+                state.selections[bindingUUID] = {
+                    hasConflicts,
+                    value: selections,
+                };
             }),
             false,
             'Selections Initialized'
         );
     },
 
-    setAlgorithmicSelection: (selectedAlgorithm, bindingUUID, value) => {
+    setAlgorithmicSelection: (
+        selectedAlgorithm,
+        bindingUUID,
+        value,
+        hasConflicts
+    ) => {
         if (!value) {
             return;
         }
 
         set(
             produce((state: BindingState) => {
-                state.selections[bindingUUID] = value;
+                state.selections[bindingUUID] = { hasConflicts, value };
 
                 switch (selectedAlgorithm) {
                     case 'depthZero': {
@@ -181,14 +195,17 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setMultiSelection: (bindingUUID, updatedFields) => {
+    setMultiSelection: (bindingUUID, updatedFields, hasConflicts) => {
         set(
             produce((state: BindingState) => {
-                const fields = state.selections[bindingUUID];
+                const fields = state.selections[bindingUUID].value;
 
                 state.selections[bindingUUID] = {
-                    ...fields,
-                    ...updatedFields,
+                    hasConflicts,
+                    value: {
+                        ...fields,
+                        ...updatedFields,
+                    },
                 };
 
                 if (!state.selectionSaving) {
@@ -204,12 +221,12 @@ export const getStoreWithFieldSelectionSettings = (
         set(
             produce((state: BindingState) => {
                 const previousSelectionMode =
-                    state.selections[bindingUUID][field].mode;
+                    state.selections[bindingUUID].value[field].mode;
 
-                state.selections[bindingUUID] = {
-                    ...state.selections[bindingUUID],
+                state.selections[bindingUUID].value = {
+                    ...state.selections[bindingUUID].value,
                     [field]: {
-                        ...state.selections[bindingUUID]?.[field],
+                        ...state.selections[bindingUUID]?.value[field],
                         mode,
                         meta,
                         outcome,

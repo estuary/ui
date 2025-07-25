@@ -11,19 +11,16 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import {
-    useBinding_currentBindingIndex,
-    useBinding_recommendFields,
-    useBinding_selections,
-} from 'src/stores/Binding/hooks';
+import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
 
 function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
-    const recommendFields = useBinding_recommendFields();
-    const selections = useBinding_selections();
+    const recommendFields = useBindingStore((state) => state.recommendFields);
+    const selections = useBindingStore((state) => state.selections);
     const stagedBindingIndex = useBinding_currentBindingIndex();
 
     // Draft Editor Store
@@ -59,7 +56,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 const requiredFields: Pick<
                     ExpandedFieldSelection,
                     'field' | 'meta'
-                >[] = Object.entries(selections[bindingUUID])
+                >[] = Object.entries(selections[bindingUUID].value)
                     .filter(
                         ([_field, selection]) => selection.mode === 'require'
                     )
@@ -69,7 +66,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     }));
 
                 const excludedFields: string[] = Object.entries(
-                    selections[bindingUUID]
+                    selections[bindingUUID].value
                 )
                     .filter(
                         ([_field, selection]) => selection.mode === 'exclude'

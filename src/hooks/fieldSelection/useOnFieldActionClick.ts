@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_setSingleSelection } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     isFieldSelectionType,
     isSelectedField,
@@ -33,7 +33,9 @@ export default function useOnFieldActionClick(
     field: string
 ) {
     // Bindings Editor Store
-    const setSingleSelection = useBinding_setSingleSelection();
+    const setSingleSelection = useBindingStore(
+        (state) => state.setSingleSelection
+    );
 
     return useCallback(
         (

@@ -13,13 +13,8 @@ import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
-import {
-    useBinding_currentBindingIndex,
-    useBinding_initializeSelections,
-    useBinding_selectionSaving,
-    useBinding_setRecommendFields,
-    useBinding_setSelectionSaving,
-} from 'src/stores/Binding/hooks';
+import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
@@ -51,12 +46,18 @@ function FieldSelectionViewer({
     const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
     // Bindings Store
-    const setRecommendFields = useBinding_setRecommendFields();
-    const initializeSelections = useBinding_initializeSelections();
+    const setRecommendFields = useBindingStore(
+        (state) => state.setRecommendFields
+    );
+    const initializeSelections = useBindingStore(
+        (state) => state.initializeSelections
+    );
     const stagedBindingIndex = useBinding_currentBindingIndex();
 
-    const selectionSaving = useBinding_selectionSaving();
-    const setSelectionSaving = useBinding_setSelectionSaving();
+    const selectionSaving = useBindingStore((state) => state.selectionSaving);
+    const setSelectionSaving = useBindingStore(
+        (state) => state.setSelectionSaving
+    );
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -92,7 +93,11 @@ function FieldSelectionViewer({
                         bindingUUID,
                         fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
                     );
-                    initializeSelections(bindingUUID, updatedSelections);
+                    initializeSelections(
+                        bindingUUID,
+                        updatedSelections,
+                        response.hasConflicts
+                    );
                     setData(
                         Object.entries(updatedSelections).map(
                             ([field, selection]) => ({ ...selection, field })

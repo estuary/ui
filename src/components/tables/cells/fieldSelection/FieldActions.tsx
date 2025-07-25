@@ -7,12 +7,12 @@ import { TableCell } from '@mui/material';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import FieldActionButton from 'src/components/tables/cells/fieldSelection/FieldActionButton';
 import { TOGGLE_BUTTON_CLASS } from 'src/components/tables/cells/fieldSelection/shared';
-import { useBinding_selections } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
     // Bindings Editor Store
-    const selections = useBinding_selections();
+    const selections = useBindingStore((state) => state.selections);
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -20,7 +20,7 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
     const selection = useMemo(
         () =>
             Object.hasOwn(selections, bindingUUID)
-                ? selections[bindingUUID][field]
+                ? selections[bindingUUID].value[field]
                 : null,
         [bindingUUID, field, selections]
     );
@@ -34,20 +34,6 @@ function FieldActions({ bindingUUID, field, outcome }: FieldActionsProps) {
                 size="small"
                 value={selection?.mode}
             >
-                {/* <FieldActionButton
-                    bindingUUID={bindingUUID}
-                    color="primary"
-                    disabled={
-                        outcome?.reject?.reason === RejectReason.NOT_SELECTED
-                    }
-                    field={field}
-                    labelId="fieldSelection.table.cta.selectField"
-                    outcome={outcome}
-                    selection={selection}
-                    tooltipProps={{ placement: 'bottom-start' }}
-                    value="default"
-                /> */}
-
                 <FieldActionButton
                     bindingUUID={bindingUUID}
                     color="primary"

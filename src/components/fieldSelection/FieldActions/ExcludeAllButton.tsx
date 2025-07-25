@@ -40,7 +40,11 @@ const ExcludeAllButton = ({ bindingUUID, loading, selections }: BaseProps) => {
                                 builtBinding.collection.projections
                             );
 
-                            setMultiSelection(bindingUUID, updatedSelections);
+                            setMultiSelection(
+                                bindingUUID,
+                                updatedSelections,
+                                response.hasConflicts
+                            );
                             close();
                         },
                         (_errors: string | string[]) => {

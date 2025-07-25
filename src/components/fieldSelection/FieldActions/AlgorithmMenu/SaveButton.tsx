@@ -68,7 +68,8 @@ export default function SaveButton({
                             setAlgorithmicSelection(
                                 selectedAlgorithm,
                                 bindingUUID,
-                                updatedSelections
+                                updatedSelections,
+                                response.hasConflicts
                             );
 
                             close();
