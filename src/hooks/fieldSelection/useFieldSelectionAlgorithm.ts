@@ -59,13 +59,18 @@ const getDraftedFieldSelections = (
     }
 
     if (config?.exclude && config.exclude.length > 0) {
+        const existingExcludedFields: string[] = fieldStanza?.exclude ?? [];
+
         fieldStanza =
             fieldStanza?.recommended === undefined
                 ? {
                       recommended: DEFAULT_RECOMMENDED_FLAG,
                       exclude: config.exclude,
                   }
-                : { ...fieldStanza, exclude: config.exclude };
+                : {
+                      ...fieldStanza,
+                      exclude: existingExcludedFields.concat(config.exclude),
+                  };
     }
 
     return fieldStanza;
