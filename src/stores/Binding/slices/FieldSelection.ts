@@ -1,9 +1,7 @@
-import type {
-    FieldSelectionType,
-    Projection,
-} from 'src/components/fieldSelection/types';
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 import type { FieldOutcome } from 'src/types/wasm';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -21,7 +19,7 @@ export interface FieldSelection {
     mode: FieldSelectionType | null;
     outcome: FieldOutcome;
     meta?: Schema;
-    projection?: Projection;
+    projection?: BuiltProjection;
 }
 
 export interface ExpandedFieldSelection extends FieldSelection {

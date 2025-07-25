@@ -1,9 +1,9 @@
 import type {
-    BuiltSpec_Binding,
-    Projection,
-    ValidationResponse_Binding,
-} from 'src/components/fieldSelection/types';
-import type { MaterializationBinding } from 'src/types/schemaModels';
+    BuiltBinding,
+    BuiltProjection,
+    MaterializationBinding,
+    ValidatedBinding,
+} from 'src/types/schemaModels';
 
 // evaluate_field selection WASM routine documentation can be found here:
 // https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
@@ -55,10 +55,10 @@ interface FieldSelection {
 // Do NOT use the corresponding live spec binding.
 export interface FieldSelectionInput {
     collectionKey: string[];
-    collectionProjections: Projection[];
+    collectionProjections: BuiltProjection[];
     model: MaterializationBinding;
-    validated: ValidationResponse_Binding;
-    liveSpec?: BuiltSpec_Binding;
+    validated: ValidatedBinding;
+    liveSpec?: BuiltBinding;
 }
 
 export interface FieldSelectionResult {

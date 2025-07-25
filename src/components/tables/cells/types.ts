@@ -1,8 +1,5 @@
 import type { ChipProps, ToggleButtonProps, TooltipProps } from '@mui/material';
-import type {
-    FieldSelectionType,
-    TranslatedConstraint,
-} from 'src/components/fieldSelection/types';
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
@@ -13,10 +10,6 @@ export interface BaseFieldOutcomeProps {
 export interface ChipStatusProps {
     messageId: string;
     color: ChipProps['color'];
-}
-
-export interface ConstraintDetailsProps {
-    constraint: TranslatedConstraint;
 }
 
 export interface FieldActionButtonProps extends ToggleButtonProps {

@@ -1,9 +1,5 @@
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
-import type {
-    BuiltSpec_Binding,
-    ValidationResponse_Binding,
-} from 'src/components/fieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
 import type {
@@ -21,7 +17,11 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
-import type { MaterializationBinding } from 'src/types/schemaModels';
+import type {
+    BuiltBinding,
+    MaterializationBinding,
+    ValidatedBinding,
+} from 'src/types/schemaModels';
 
 import { isBoolean, isEmpty, isEqual } from 'lodash';
 
@@ -386,10 +386,10 @@ export const modifyExistingCaptureDraftSpec = async (
 const getBuiltBinding = (
     builtSpec: Schema,
     targetCollection: string
-): BuiltSpec_Binding | undefined => {
-    const builtSpecBindings: BuiltSpec_Binding[] = builtSpec.bindings ?? [];
+): BuiltBinding | undefined => {
+    const builtBindings: BuiltBinding[] = builtSpec.bindings ?? [];
 
-    return builtSpecBindings.find(
+    return builtBindings.find(
         (binding) => binding.collection.name === targetCollection
     );
 };
@@ -468,11 +468,10 @@ export const getRelatedBindings = (
     // The validation phase of a publication produces a document which correlates each binding projection
     // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
     // from the validation document that corresponds to the current collection to extract the constraint types.
-    const validationBinding =
-        getBindingByResourcePath<ValidationResponse_Binding>(
-            builtBinding?.resourcePath ?? [],
-            validationResponse
-        );
+    const validationBinding = getBindingByResourcePath<ValidatedBinding>(
+        builtBinding?.resourcePath ?? [],
+        validationResponse
+    );
 
     // TODO (field-selection): Use the staged binding index to identify the target drafted binding for now.
     //   Determine whether resource path pointer can be used for drafted binding lookup.

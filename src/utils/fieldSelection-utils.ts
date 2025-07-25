@@ -1,10 +1,8 @@
-import type {
-    FieldSelectionType,
-    Projection,
-} from 'src/components/fieldSelection/types';
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 import type {
     BaseMaterializationFields,
+    BuiltProjection,
     MaterializationFields,
     MaterializationFields_Legacy,
 } from 'src/types/schemaModels';
@@ -33,7 +31,7 @@ const isMaterializationFields = (
 export const getFieldSelection = (
     outcomes: FieldOutcome[],
     fieldsStanza?: MaterializationFields | MaterializationFields_Legacy,
-    projections?: Projection[]
+    projections?: BuiltProjection[]
 ): FieldSelectionDictionary => {
     const updatedSelections: FieldSelectionDictionary = {};
 
