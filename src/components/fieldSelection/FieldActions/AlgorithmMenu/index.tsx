@@ -1,4 +1,4 @@
-import type { BaseProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+import type { BaseProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 
@@ -7,14 +7,10 @@ import { Button, Divider, Menu } from '@mui/material';
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import MenuActions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuActions';
-import MenuOptions from 'src/components/editor/Bindings/FieldSelection/FieldActions/MenuOptions';
+import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
+import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
 
-export default function FieldActions({
-    bindingUUID,
-    loading,
-    projections,
-}: BaseProps) {
+const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -57,9 +53,11 @@ export default function FieldActions({
                     bindingUUID={bindingUUID}
                     closeMenu={closeMenu}
                     loading={loading}
-                    projections={projections}
+                    selections={selections}
                 />
             </Menu>
         </>
     );
-}
+};
+
+export default AlgorithmMenu;

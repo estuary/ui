@@ -1,17 +1,17 @@
-import type { MenuActionProps } from 'src/components/editor/Bindings/FieldSelection/FieldActions/types';
+import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Box, Button, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SaveButton from 'src/components/editor/Bindings/FieldSelection/FieldActions/SaveButton';
+import SaveButton from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/SaveButton';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
     bindingUUID,
     closeMenu,
     loading,
-    projections,
+    selections,
 }: MenuActionProps) {
     const intl = useIntl();
 
@@ -38,9 +38,9 @@ export default function MenuActions({
 
             <SaveButton
                 bindingUUID={bindingUUID}
-                closeMenu={closeMenu}
+                close={closeMenu}
                 loading={loading}
-                projections={projections}
+                selections={selections}
                 selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>
