@@ -371,10 +371,20 @@ export const useBinding_backfillSupported = () =>
 export const useBinding_collectionsBeingBackfilled = () =>
     useBindingStore(
         useShallow((state) => {
-            return state.backfilledBindings.map((backfilledBinding) => {
-                return state.resourceConfigs[backfilledBinding].meta
-                    .collectionName;
-            });
+            return (
+                state.backfilledBindings
+                    // There is a chance that during rehydration that the resourceConfigs will be
+                    //  empty for a little bit. This happens during materialization when a user marks
+                    //  things for backfill, edits the endpoint config, and generates a new catalog.Z
+                    .filter((datum) =>
+                        Boolean(state.resourceConfigs?.[datum]?.meta)
+                    )
+                    .map(
+                        (backfilledBinding) =>
+                            state.resourceConfigs[backfilledBinding].meta
+                                .collectionName
+                    )
+            );
         })
     );
 
