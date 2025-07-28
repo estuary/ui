@@ -355,6 +355,7 @@ export interface TableColumns {
     cols?: number;
     display?: string;
     flexGrow?: boolean;
+    columnWraps?: boolean;
     headerIntlKey?: string | null;
     minWidth?: number | string;
     sticky?: boolean;
