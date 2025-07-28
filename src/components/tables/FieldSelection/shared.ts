@@ -2,7 +2,6 @@ import type { TableColumns } from 'src/types';
 
 export const optionalColumnIntlKeys = {
     pointer: 'data.location',
-    outcome: 'data.outcome',
 };
 
 export const optionalColumns = Object.values(optionalColumnIntlKeys);
@@ -25,7 +24,7 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: optionalColumnIntlKeys.outcome,
+        headerIntlKey: 'data.outcome',
         width: 50,
     },
 ];

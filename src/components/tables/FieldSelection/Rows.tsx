@@ -26,11 +26,6 @@ function Row({ columns, row }: RowProps) {
         optionalColumnIntlKeys.pointer
     );
 
-    const outcomeColumnVisible = isColumnVisible(
-        columns,
-        optionalColumnIntlKeys.outcome
-    );
-
     return (
         <TableRow
             sx={{
@@ -68,9 +63,7 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            {outcomeColumnVisible ? (
-                <FieldOutcome outcome={row.outcome} />
-            ) : null}
+            <FieldOutcome outcome={row.outcome} />
         </TableRow>
     );
 }
