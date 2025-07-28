@@ -38,13 +38,14 @@ function LoginProviders({
             })}
             {loginSettings.showSSO ? (
                 <>
-                    <Divider flexItem>
+                    <Divider flexItem style={{ marginTop: 32 }}>
                         {intl.formatMessage({
                             id: isRegister
                                 ? 'login.sso.separator'
                                 : 'login.separator',
                         })}
                     </Divider>
+
                     <SSOButton isRegister={isRegister} />
                 </>
             ) : null}

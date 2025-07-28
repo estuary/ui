@@ -10,8 +10,13 @@ function RegisterMarketing() {
     const intl = useIntl();
 
     return (
-        <Stack spacing={4}>
-            <Typography component="h1" align="center" variant="h5">
+        <Stack spacing={4} style={{ alignItems: 'center' }}>
+            <Typography
+                component="h1"
+                align="center"
+                style={{ fontSize: 20, fontWeight: 300, width: 350 }}
+                variant="h5"
+            >
                 {intl.formatMessage({ id: 'login.register.marketing.title' })}
             </Typography>
 

@@ -5,7 +5,11 @@ import { Box, Stack } from '@mui/material';
 import { CheckCircleSolid, NavArrowRight } from 'iconoir-react';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
-import { registerPerkCheck, registerPerkHighlight } from 'src/context/Theme';
+import {
+    diminishedTextColor,
+    registerPerkCheck,
+    registerPerkHighlight,
+} from 'src/context/Theme';
 
 function RegisterPerk({
     disableEmphasisColor,
@@ -33,10 +37,10 @@ function RegisterPerk({
                 sx={{
                     'whiteSpace': disableNoWrap ? undefined : 'nowrap',
                     '& b': {
-                        color: disableEmphasisColor
-                            ? undefined
-                            : (theme) =>
-                                  registerPerkHighlight[theme.palette.mode],
+                        color: (theme) =>
+                            disableEmphasisColor
+                                ? diminishedTextColor[theme.palette.mode]
+                                : registerPerkHighlight[theme.palette.mode],
                     },
                 }}
             >
