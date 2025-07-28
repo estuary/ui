@@ -61,6 +61,7 @@ const ExcludeAllButton = ({ bindingUUID, loading, selections }: BaseProps) => {
                 }
             }}
             size="small"
+            style={{ textWrap: 'nowrap' }}
             variant="outlined"
         >
             {intl.formatMessage({ id: 'fieldSelection.table.cta.excludeAll' })}
