@@ -19,7 +19,7 @@ export const tableColumns: TableColumns[] = [
     {
         field: 'ptr',
         headerIntlKey: optionalColumnIntlKeys.pointer,
-        collapseHeader: true,
+        columnWraps: true,
     },
     {
         field: null,

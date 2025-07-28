@@ -50,7 +50,7 @@ function Row({ columns, row }: RowProps) {
             </TableCell>
 
             {pointerColumnVisible ? (
-                <TableCell>
+                <TableCell sx={wrappingTableBodyCell}>
                     <Typography>{row.ptr}</Typography>
                 </TableCell>
             ) : null}
