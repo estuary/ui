@@ -7,6 +7,7 @@ import { WarningCircle } from 'iconoir-react';
 import {
     useBinding_collectionMetadataProperty,
     useBinding_fullSourceOfBindingProperty,
+    useBinding_hasFieldConflicts,
     useBinding_resourceConfigOfBindingProperty,
 } from 'src/stores/Binding/hooks';
 
@@ -26,19 +27,23 @@ function BindingsSelectorErrorIndicator({
         'errors'
     );
 
+    const fieldConflictsExist = useBinding_hasFieldConflicts(bindingUUID);
+
     const sourceBackfillRecommended = useBinding_collectionMetadataProperty(
         collection,
         'sourceBackfillRecommended'
     );
 
-    const errorExists = bindingErrors?.length > 0 || configErrors?.length > 0;
+    const errorExists =
+        bindingErrors?.length > 0 ||
+        configErrors?.length > 0 ||
+        fieldConflictsExist;
 
     if (errorExists || Boolean(sourceBackfillRecommended)) {
         return (
             <Typography>
                 <WarningCircle
                     style={{
-                        marginRight: 4,
                         fontSize: 12,
                         color: errorExists
                             ? theme.palette.error.main

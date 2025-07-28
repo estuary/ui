@@ -19,7 +19,7 @@ function EndpointConfigHeader() {
             {endpointConfigErrorsExist ? (
                 <WarningCircle
                     style={{
-                        marginRight: 4,
+                        marginRight: 8,
                         fontSize: 12,
                         color: theme.palette.error.main,
                     }}

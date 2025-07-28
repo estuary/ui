@@ -402,3 +402,13 @@ export const useBinding_setCurrentBindingWithTimeout = (
         [currentBindingUUID, setCurrentBinding]
     );
 };
+
+export const useBinding_hasFieldConflicts = (bindingUUID?: string) => {
+    return useBindingStore((state) =>
+        bindingUUID
+            ? Boolean(state.selections?.[bindingUUID]?.hasConflicts)
+            : Object.values(state.selections).some(
+                  (selection) => selection.hasConflicts
+              )
+    );
+};
