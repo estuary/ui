@@ -26,14 +26,17 @@ export const Authentication: Record<string, string> = {
     'login.register.perks5': `{emphasis}: Choose fully managed, BYOC, or private cloud to fit your needs.`,
     'login.register.perks5.emphasis': `Flexible deployment options`,
 
-    'login.register.marketing.title': `${CommonMessages.productName} is a real-time data platform built for the cloud`,
-    'login.register.quote.title': `Estuary is a very productive product`,
-    'login.register.quote.name': `Shane Iseminger`,
-    'login.register.quote.employment': `CTO, SocialHP`,
-    'login.register.quote.body': `“Estuary is a very productive product with a great pricing model
-                given the current climate that we're in. I think a lot of
-                cost-conscious data practitioners could benefit from giving it a
-                try.”`,
+    'login.register.marketing.title': `${CommonMessages.productName} is the Universal Data Layer for real-time, bidirectional data movement`,
+    'login.register.quote.title': `No more brittle pipelines — just a universal data layer`,
+    'login.register.quote.name': `Jonni Lundy`,
+    'login.register.quote.employment': `COO, Resend`,
+    'login.register.quote.body': `"Estuary Flow transformed how we operationalize our data for fraud, security, support, and beyond.. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
+
+    'login.register.alt.coalesce': `Coalesce`,
+    'login.register.alt.resend': `Resend`,
+    'login.register.alt.xometry': `Xometry`,
+    'login.register.alt.recart': `Recart`,
+    'login.register.alt.chili': `Chili Piper`,
 
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 

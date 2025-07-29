@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import CustomerLogo from 'src/pages/login/CustomerLogo';
+import CustomerLogos from 'src/pages/login/CustomerLogos';
 import CustomerQuote from 'src/pages/login/CustomerQuote';
 import RegisterPerk from 'src/pages/login/Perk';
 
@@ -47,7 +47,7 @@ function RegisterMarketing() {
 
             <CustomerQuote />
 
-            <CustomerLogo />
+            <CustomerLogos />
         </Stack>
     );
 }

@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import Customer from 'src/images/register/customer.png';
+import Customer from 'src/images/register/customer.jpeg';
 
 const imgSize = 40;
 
@@ -26,7 +26,9 @@ function CustomerQuote() {
                     <img
                         style={{ height: imgSize }}
                         src={Customer}
-                        alt="Shane Iseminger portrait"
+                        alt={intl.formatMessage({
+                            id: 'login.register.quote.name',
+                        })}
                     />
                 </Box>
                 <Stack
