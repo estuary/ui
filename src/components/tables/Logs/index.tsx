@@ -13,7 +13,7 @@ import { defaultOutlineColor } from 'src/context/Theme';
 import { useReactWindowReadyToScroll } from 'src/hooks/useReactWindowReadyToScroll';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
-const TABLE_HEIGHT = 500;
+const TABLE_HEIGHT = 600;
 
 function LogsTable() {
     const intl = useIntl();
