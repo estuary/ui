@@ -10,12 +10,17 @@ export const tableColumns: TableColumns[] = [
     {
         field: 'field',
         headerIntlKey: 'data.field',
-        sticky: true,
+        columnWraps: true,
     },
-    { field: 'ptr', headerIntlKey: optionalColumnIntlKeys.pointer },
+    {
+        field: 'ptr',
+        headerIntlKey: optionalColumnIntlKeys.pointer,
+        columnWraps: true,
+    },
     {
         field: null,
         headerIntlKey: 'data.type',
+        collapseHeader: true,
     },
     {
         field: null,

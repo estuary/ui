@@ -13,7 +13,10 @@ import FieldActions from 'src/components/tables/cells/fieldSelection/FieldAction
 import FieldName from 'src/components/tables/cells/fieldSelection/FieldName';
 import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
 import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
-import { doubleElevationHoverBackground } from 'src/context/Theme';
+import {
+    doubleElevationHoverBackground,
+    wrappingTableBodyCell,
+} from 'src/context/Theme';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { basicSort_string } from 'src/utils/misc-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
@@ -38,7 +41,7 @@ function Row({ columns, row }: RowProps) {
             <FieldName field={row.field} outcome={row.outcome} />
 
             {pointerColumnVisible ? (
-                <TableCell>
+                <TableCell sx={wrappingTableBodyCell}>
                     <code>{row?.projection?.ptr}</code>
                 </TableCell>
             ) : null}
