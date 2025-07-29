@@ -28,6 +28,7 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
     bindingUUID,
+    missingServerData,
     selections,
 }: FieldSelectionTableProps) {
     const intl = useIntl();
@@ -68,10 +69,7 @@ export default function FieldSelectionTable({
     );
 
     useEffect(() => {
-        if (
-            formStatus === FormStatus.INIT ||
-            formStatus === FormStatus.FAILED
-        ) {
+        if (formStatus === FormStatus.INIT) {
             setTableState({
                 status: TableStatuses.NO_EXISTING_DATA,
             });
@@ -94,7 +92,6 @@ export default function FieldSelectionTable({
         }
     }, [formStatus, processedSelections, searchQuery]);
 
-    const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
 
     const { tableSettings } = useDisplayTableColumns();
@@ -175,7 +172,7 @@ export default function FieldSelectionTable({
                             columns={columnsToShow}
                             noExistingDataContentIds={{
                                 header: 'fieldSelection.table.empty.header',
-                                message: failed
+                                message: missingServerData
                                     ? 'fieldSelection.table.error.message'
                                     : 'fieldSelection.table.empty.message',
                                 disableDoclink: true,
@@ -183,7 +180,7 @@ export default function FieldSelectionTable({
                             tableState={tableState}
                             loading={loading}
                             rows={
-                                !failed &&
+                                !missingServerData &&
                                 !loading &&
                                 processedSelections &&
                                 processedSelections.length > 0 &&

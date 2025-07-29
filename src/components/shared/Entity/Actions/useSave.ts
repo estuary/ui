@@ -135,7 +135,7 @@ function useSave(
                         title = `${messagePrefix}.testNotification.title`;
 
                         // Materialization field selection sources content from the built spec and validation response
-                        // generated on each successful publication.
+                        // generated on each publication.
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
                         }
@@ -156,6 +156,14 @@ function useSave(
                     trackEvent(logEvent, payload);
                 },
                 async (payload: any) => {
+                    if (dryRun) {
+                        // Materialization field selection sources content from the built spec and validation response
+                        // generated on each publication.
+                        if (mutateDraftSpecs) {
+                            void mutateDraftSpecs();
+                        }
+                    }
+
                     trackEvent(logEvent, payload);
 
                     const incompatibleCollections =

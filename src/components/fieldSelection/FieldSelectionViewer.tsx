@@ -67,16 +67,22 @@ function FieldSelectionViewer({
     const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
+    const serverDataExists = useMemo(
+        () =>
+            Boolean(
+                draftSpecs.length > 0 &&
+                    draftSpecs[0].built_spec &&
+                    draftSpecs[0].validated
+            ),
+        [draftSpecs]
+    );
+
     useEffect(() => {
         if (formActive || selectionSaving || saveInProgress) {
             return;
         }
 
-        if (
-            draftSpecs.length > 0 &&
-            draftSpecs[0].built_spec &&
-            draftSpecs[0].validated
-        ) {
+        if (serverDataExists) {
             validateFieldSelection().then(
                 ({ builtBinding, fieldStanza, response }) => {
                     if (!response) {
@@ -117,6 +123,7 @@ function FieldSelectionViewer({
         initializeSelections,
         saveInProgress,
         selectionSaving,
+        serverDataExists,
         setRecommendFields,
         stagedBindingIndex,
         validateFieldSelection,
@@ -192,7 +199,11 @@ function FieldSelectionViewer({
                 </Stack>
             </Stack>
 
-            <FieldSelectionTable bindingUUID={bindingUUID} selections={data} />
+            <FieldSelectionTable
+                bindingUUID={bindingUUID}
+                missingServerData={!serverDataExists}
+                selections={data}
+            />
         </Box>
     );
 }

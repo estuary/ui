@@ -15,5 +15,6 @@ export interface RowsProps {
 
 export interface FieldSelectionTableProps {
     bindingUUID: string;
+    missingServerData: boolean;
     selections: ExpandedFieldSelection[] | null | undefined;
 }
