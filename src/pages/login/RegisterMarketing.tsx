@@ -24,7 +24,7 @@ function RegisterMarketing() {
                 useFlexGap
                 direction={{ xs: 'column' }}
                 spacing={2}
-                style={{
+                sx={{
                     alignItems: 'start',
                 }}
             >
