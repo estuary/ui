@@ -29,7 +29,7 @@ const LoginWrapper = ({
         <FullPageDialog
             paperSx={{
                 width: '100%',
-                minWidth: 320,
+                minWidth: 350,
                 maxWidth: isRegister ? 1000 : 550,
             }}
         >

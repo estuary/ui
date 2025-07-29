@@ -1,4 +1,4 @@
-import { Box, Stack, useTheme } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -30,6 +30,7 @@ const customers = [
     },
     {
         altMessageId: 'login.register.alt.xometry',
+        height: 23,
         logo: {
             light: XometryLightMode,
             dark: XometryDarkMode,
@@ -60,23 +61,24 @@ function CustomerLogos() {
             direction="row"
             spacing={1}
             sx={{
-                'justifyContent': 'space-between',
+                'width': '100%',
+                'flexWrap': 'wrap',
+                'justifyContent': 'space-evenly',
                 '& img': {
-                    height: 28,
                     width: 'auto',
                 },
             }}
         >
             {customers.map((customer, index) => {
                 return (
-                    <Box key={`customers_${index}`}>
-                        <img
-                            src={customer.logo[theme.palette.mode]}
-                            alt={intl.formatMessage({
-                                id: customer.altMessageId,
-                            })}
-                        />
-                    </Box>
+                    <img
+                        key={`customers_${index}`}
+                        height={customer.height ?? 27}
+                        src={customer.logo[theme.palette.mode]}
+                        alt={intl.formatMessage({
+                            id: customer.altMessageId,
+                        })}
+                    />
                 );
             })}
         </Stack>
