@@ -6,7 +6,11 @@ import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { TABLE_HEADER_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
-import { getStickyTableCell } from 'src/context/Theme';
+import {
+    getStickyTableCell,
+    wrappingTableBodyHeader,
+    zIndexIncrement,
+} from 'src/context/Theme';
 import { getTableComponents } from 'src/utils/table-utils';
 
 function EntityTableHeader({
@@ -35,6 +39,8 @@ function EntityTableHeader({
                         ? 'transparent'
                         : (theme) => theme.palette.background.default,
                     height,
+                    position: 'relative',
+                    zIndex: zIndexIncrement,
                     ['& .MuiTableCell-root']: {
                         background: disableBackground
                             ? 'transparent'
@@ -55,6 +61,12 @@ function EntityTableHeader({
                     if (column.sticky) {
                         tableCellSX = {
                             ...getStickyTableCell(true),
+                        };
+                    }
+
+                    if (column.columnWraps) {
+                        tableCellSX = {
+                            ...wrappingTableBodyHeader,
                         };
                     }
 

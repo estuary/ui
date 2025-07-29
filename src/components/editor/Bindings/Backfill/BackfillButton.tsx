@@ -164,7 +164,11 @@ function BackfillButton({
                             ? currentBindingUUID
                             : undefined;
 
-                        setBackfilledBindings(increment, targetBindingUUID);
+                        setBackfilledBindings(
+                            'reset',
+                            increment,
+                            targetBindingUUID
+                        );
 
                         if (workflow === 'materialization_edit') {
                             evaluateTrialCollections(

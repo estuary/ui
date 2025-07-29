@@ -758,6 +758,25 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
     };
 };
 
+export const wrappingTableCell = {
+    wordWrap: 'break-word',
+    // WARNING - the min width work as you might expect. The max width does NOT
+    //  It looks and feels good but the cell will for sure grow larger than just 300px
+    //  even though that is what the styling says.
+    minWidth: 10,
+    maxWidth: 400,
+};
+
+export const wrappingTableBodyCell: SxProps<Theme> = {
+    ...wrappingTableCell,
+    background: (theme) => tableCellBackground[theme.palette.mode],
+};
+
+export const wrappingTableBodyHeader: SxProps<Theme> = {
+    ...wrappingTableCell,
+    background: (theme) => theme.palette.background.default,
+};
+
 // RGB translation of #CA3B55.
 export const errorOutlinedButtonBackground = {
     light: `rgba(202, 59, 85, 0.12)`,
