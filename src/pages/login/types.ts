@@ -8,6 +8,12 @@ export interface LoginWrapperProps extends BaseComponentProps {
     showBack?: boolean;
 }
 
+export interface RegisterPerkProps {
+    messageID: string;
+    disableNoWrap?: boolean;
+    disableEmphasisColor?: boolean;
+}
+
 export type HeaderMessageProps = Pick<
     LoginWrapperProps,
     'isRegister' | 'headerMessageId'
