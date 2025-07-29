@@ -34,7 +34,12 @@ const LoginWrapper = ({
             }}
         >
             <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
-                <Grid item xs={12} md={isRegister ? 6 : 0}>
+                <Grid
+                    item
+                    xs={12}
+                    md={isRegister ? 6 : 0}
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                >
                     {isRegister ? <RegisterMarketing /> : null}
                 </Grid>
                 <Grid
