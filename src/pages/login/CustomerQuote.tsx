@@ -11,9 +11,7 @@ function CustomerQuote() {
     const intl = useIntl();
 
     return (
-        <CardWrapper
-            message={intl.formatMessage({ id: 'login.register.quote.title' })}
-        >
+        <CardWrapper>
             <Typography
                 sx={{
                     mb: 2,
