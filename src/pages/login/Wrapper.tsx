@@ -1,15 +1,16 @@
 import type { LoginWrapperProps } from 'src/pages/login/types';
 
-import { Button, Stack } from '@mui/material';
+import { Button, Grid, Stack } from '@mui/material';
 
 import { NavArrowLeft } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
-import RegisterPerk from 'src/pages/login/Perk';
+import RegisterMarketing from 'src/pages/login/RegisterMarketing';
+import RegisterPerks from 'src/pages/login/RegisterPerks';
 import LoginTabs from 'src/pages/login/Tabs';
 
 const LoginWrapper = ({
@@ -22,48 +23,58 @@ const LoginWrapper = ({
 }: LoginWrapperProps) => {
     useLoginBodyClass();
 
+    const intl = useIntl();
+
     return (
         <FullPageDialog
             paperSx={{
                 width: '100%',
-                minWidth: 320,
-                maxWidth: 550,
+                minWidth: 350,
+                maxWidth: isRegister ? 1000 : 550,
             }}
         >
-            {showBack ? (
-                <Button
-                    href={unauthenticatedRoutes.login.path}
-                    startIcon={<NavArrowLeft />}
-                    style={{ alignSelf: 'start' }}
-                    variant="text"
+            <Grid container sx={{ flexWrap: 'wrap-reverse', width: '100%' }}>
+                <Grid
+                    item
+                    xs={12}
+                    md={isRegister ? 6 : 0}
+                    sx={{ display: 'flex', alignItems: 'center' }}
                 >
-                    <FormattedMessage id="login.sso.back" />
-                </Button>
-            ) : null}
-            <Stack spacing={4} style={{ width: '100%' }}>
-                <LoginTabs handleChange={handleChange} tabIndex={tabIndex} />
+                    {isRegister ? <RegisterMarketing /> : null}
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    md={isRegister ? 6 : 12}
+                    sx={isRegister ? { pl: 5, justifyItems: 'end' } : undefined}
+                >
+                    {showBack ? (
+                        <Button
+                            href={unauthenticatedRoutes.login.path}
+                            startIcon={<NavArrowLeft />}
+                            style={{ alignSelf: 'start' }}
+                            variant="text"
+                        >
+                            {intl.formatMessage({ id: 'login.sso.back' })}
+                        </Button>
+                    ) : null}
+                    <Stack spacing={4} style={{ width: '100%' }}>
+                        <LoginTabs
+                            handleChange={handleChange}
+                            tabIndex={tabIndex}
+                        />
 
-                <HeaderMessage
-                    headerMessageId={headerMessageId}
-                    isRegister={isRegister}
-                />
+                        <HeaderMessage
+                            headerMessageId={headerMessageId}
+                            isRegister={isRegister}
+                        />
 
-                {isRegister ? (
-                    <Stack
-                        useFlexGap
-                        direction={{ xs: 'column', sm: 'row' }}
-                        style={{
-                            alignItems: 'center',
-                            justifyContent: 'space-around',
-                        }}
-                    >
-                        <RegisterPerk messageID="login.register.perks1" />
-                        <RegisterPerk messageID="login.register.perks2" />
+                        {isRegister ? <RegisterPerks /> : null}
+
+                        {children}
                     </Stack>
-                ) : null}
-
-                {children}
-            </Stack>
+                </Grid>
+            </Grid>
         </FullPageDialog>
     );
 };

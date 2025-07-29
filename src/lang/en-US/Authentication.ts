@@ -14,10 +14,29 @@ export const Authentication: Record<string, string> = {
     'login.magicLink.login.message': `Please use your work email address to sign in and continue to ${CommonMessages.productName}.`,
     'login.login.message': `Get started with ${CommonMessages.productName}`,
     'login.register.message': `Get started with ${CommonMessages.productName}`,
+
     'login.register.perks1.emphasis': `No credit card`,
     'login.register.perks1': `{emphasis} required`,
     'login.register.perks2.emphasis': `free trial`,
     'login.register.perks2': `30 days {emphasis}`,
+    'login.register.perks3': `Build streaming and batch data flows fast, no code or infrastructure.`,
+    'login.register.perks3.emphasis': ``,
+    'login.register.perks4': `Move data across 200+ sources and destinations instantly.`,
+    'login.register.perks4.emphasis': ``,
+    'login.register.perks5': `Choose fully managed, BYOC, or private cloud to fit your needs.`,
+    'login.register.perks5.emphasis': ``,
+
+    'login.register.marketing.title': `${CommonMessages.productName} is the Universal Data Layer for real-time streaming and batch data integration`,
+    'login.register.quote.name': `Jonni Lundy`,
+    'login.register.quote.employment': `COO, Resend`,
+    'login.register.quote.body': `"Estuary Flow transformed how we operationalize our data for fraud, security, support, and beyond.. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
+
+    'login.register.alt.coalesce': `Coalesce`,
+    'login.register.alt.resend': `Resend`,
+    'login.register.alt.xometry': `Xometry`,
+    'login.register.alt.recart': `Recart`,
+    'login.register.alt.chili': `Chili Piper`,
+
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
     'login.sso': `Single Sign-On (SSO) Successful`,
