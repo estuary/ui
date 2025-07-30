@@ -41,7 +41,10 @@ const COLUMNS = [
 
 const QUERY = COLUMNS.join(',');
 
-const getDataPlaneOptions = async (dataPlaneNames?: string[]) => {
+const getDataPlaneOptions = async (
+    dataPlaneNames?: string[],
+    prefix?: string
+) => {
     let queryBuilder = supabaseClient
         .from(TABLES.DATA_PLANES)
         .select(QUERY)
@@ -49,6 +52,12 @@ const getDataPlaneOptions = async (dataPlaneNames?: string[]) => {
 
     if (dataPlaneNames && dataPlaneNames.length > 0) {
         queryBuilder = queryBuilder.in('data_plane_name', dataPlaneNames);
+    }
+
+    if (prefix && prefix.length > 0) {
+        queryBuilder = queryBuilder.or(
+            `data_plane_name.like.%/public/%,data_plane_name.like.%/private/${prefix}%`
+        );
     }
 
     const data = await supabaseRetry(
@@ -98,4 +107,4 @@ const getDataPlanesForTable = (
 //     return data;
 // };
 
-export { getDataPlanesForTable, getDataPlaneOptions };
+export { getDataPlaneOptions, getDataPlanesForTable };

@@ -3,23 +3,19 @@ import type { CloudProviderCodes } from 'src/components/admin/Settings/StorageMa
 import type { JsonFormsData } from 'src/types';
 
 export interface StorageMappingState {
-    provider: CloudProviderCodes | null;
-    updateProvider: (value: CloudProviderCodes) => void;
-
+    dataPlaneName: string;
     formValue: JsonFormsData;
-    updateFormValue: (value: JsonFormsData) => void;
-
-    pubId: string;
-    setPubId: (value: string) => void;
-
     logToken: string;
-    setLogToken: (value: string) => void;
-
+    provider: CloudProviderCodes | null;
+    pubId: string;
     saving: boolean;
-    setSaving: (value: boolean) => void;
-
     serverError: PostgrestError | null;
-    setServerError: (value: PostgrestError | string | null) => void;
-
     resetState: () => void;
+    setDataPlaneName: (value: StorageMappingState['dataPlaneName']) => void;
+    setLogToken: (value: string) => void;
+    setPubId: (value: string) => void;
+    setSaving: (value: boolean) => void;
+    setServerError: (value: PostgrestError | string | null) => void;
+    updateFormValue: (value: JsonFormsData) => void;
+    updateProvider: (value: CloudProviderCodes) => void;
 }
