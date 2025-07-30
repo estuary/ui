@@ -4,7 +4,7 @@ import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
-import { omit } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -41,7 +41,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             if (!mutateDraftSpecs || bindingIndex === -1) {
                 return Promise.reject();
             } else {
-                const spec: Schema = draftSpec.spec;
+                const spec: Schema = cloneDeep(draftSpec.spec);
 
                 const recommended = Object.hasOwn(recommendFields, bindingUUID)
                     ? recommendFields[bindingUUID]
