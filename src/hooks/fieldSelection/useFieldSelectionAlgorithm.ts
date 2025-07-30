@@ -9,6 +9,7 @@ import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
 import { useCallback } from 'react';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
+import { cloneDeep } from 'lodash';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
@@ -88,10 +89,13 @@ export default function useFieldSelectionAlgorithm() {
 
     const validateFieldSelection = useCallback(
         async (config?: AlgorithmConfig) => {
+            const draftSpecsQuery =
+                draftSpecs.length !== 0 ? cloneDeep(draftSpecs[0]) : undefined;
+
             if (
-                draftSpecs.length === 0 ||
-                !draftSpecs[0].built_spec ||
-                !draftSpecs[0].validated ||
+                !draftSpecsQuery ||
+                !draftSpecsQuery.built_spec ||
+                !draftSpecsQuery.validated ||
                 !currentCollection
             ) {
                 return Promise.reject(
@@ -101,11 +105,11 @@ export default function useFieldSelectionAlgorithm() {
 
             const { builtBinding, draftedBinding, validationBinding } =
                 getRelatedBindings(
-                    draftSpecs[0].built_spec,
-                    draftSpecs[0].spec,
+                    draftSpecsQuery.built_spec,
+                    draftSpecsQuery.spec,
                     stagedBindingIndex,
                     currentCollection,
-                    draftSpecs[0].validated
+                    draftSpecsQuery.validated
                 );
 
             if (!builtBinding || !draftedBinding || !validationBinding) {
