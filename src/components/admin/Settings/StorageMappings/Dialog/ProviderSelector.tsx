@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
@@ -22,7 +22,9 @@ function ProviderSelector() {
     return (
         <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel id={INPUT_ID}>
-                <FormattedMessage id="storageMappings.provider.label" />
+                {intl.formatMessage({
+                    id: 'storageMappings.provider.label',
+                })}
             </InputLabel>
 
             <Select
@@ -42,9 +44,9 @@ function ProviderSelector() {
             >
                 {Object.keys(CloudProviderCodes).map((code) => (
                     <MenuItem key={code} value={code}>
-                        <FormattedMessage
-                            id={`storageMappings.dialog.generate.providerOption.${code}`}
-                        />
+                        {intl.formatMessage({
+                            id: `storageMappings.dialog.generate.providerOption.${code}`,
+                        })}
                     </MenuItem>
                 ))}
             </Select>
