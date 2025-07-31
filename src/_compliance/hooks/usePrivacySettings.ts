@@ -1,3 +1,5 @@
+import type { DurationLike } from 'luxon';
+
 import { useCallback, useMemo } from 'react';
 
 import { DateTime } from 'luxon';
@@ -16,6 +18,8 @@ function usePrivacySettings() {
         }
     );
 
+    console.log('currentSetting', currentSetting);
+
     const user = useUserStore((state) => state.user);
 
     const idUser = useCallback(() => {
@@ -25,16 +29,14 @@ function usePrivacySettings() {
     }, [user]);
 
     const setPrivacySettings = useCallback(
-        (newVal: boolean) => {
+        (newVal: boolean, duration: DurationLike) => {
             if (newVal) {
                 setVal(
                     {
                         enhancedSupportEnabled: true,
                         sessionRecordingEnabled: true,
                     },
-                    {
-                        seconds: 60,
-                    }
+                    duration
                 );
 
                 idUser();
@@ -47,11 +49,14 @@ function usePrivacySettings() {
 
     const [enhancedSupportEnabled, enhancedSupportExpiration]: [boolean, any] =
         useMemo(() => {
-            if (currentSetting) {
+            if (currentSetting?.expiry) {
+                console.log('>>>', currentSetting);
+                console.log('>>>', currentSetting.expiry);
+
                 return [
                     Boolean(currentSetting.value.enhancedSupportEnabled),
-                    DateTime.utc(currentSetting.expiry ?? 0).toLocaleString(
-                        DateTime.DATE_FULL
+                    DateTime.fromMillis(currentSetting.expiry).toLocaleString(
+                        DateTime.DATETIME_FULL
                     ),
                 ];
             }

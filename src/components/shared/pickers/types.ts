@@ -8,5 +8,7 @@ export interface PickerProps {
     onChange: (formattedValue: any, rawValue: any) => void;
     state: PopupState;
     value: any;
+    futureOnly?: boolean;
+    maxDate?: any;
     removeOffset?: boolean;
 }

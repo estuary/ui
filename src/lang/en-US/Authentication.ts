@@ -146,18 +146,24 @@ export const Authentication: Record<string, string> = {
 
     // Support Consent
     'supportConsent.benefits.title': `What's included`,
-    'supportConsent.benefits.list1': `Priority support with Estuary's technical team`,
-    'supportConsent.benefits.list2': `Session replay: with your consent, our support team can securely view dashboard activity to resolve issues faster-no sensitive info is shared, and your privacy is protected`,
-    'supportConsent.benefits.list3': `Full control: turn this off at any time in your dashboard settings`,
+    'supportConsent.benefits.list1': `{emphasis} with Estuary's technical team`,
+    'supportConsent.benefits.list1.emphasis': `Priority support`,
+    'supportConsent.benefits.list2': `{emphasis}: with your consent, our support team can securely view dashboard activity to resolve issues faster-no sensitive info is shared, and your privacy is protected`,
+    'supportConsent.benefits.list2.emphasis': `Session replay`,
+    'supportConsent.benefits.list3': `{emphasis}: turn this off at any time in your dashboard settings`,
+    'supportConsent.benefits.list3.emphasis': `Full control`,
 
     'supportConsent.details.title': `How it works`,
-    'supportConsent.details.list1': `Session recording only starts after you accept below`,
+    'supportConsent.details.list1': `Session recording only starts {emphasis}`,
+    'supportConsent.details.list1.emphasis': `after you accept below`,
     'supportConsent.details.list2': `All recordings are used only for support and deleted after 30 days`,
-    'supportConsent.details.list3': `You may opt out or request deletion of any recording at any time`,
+    'supportConsent.details.list2.emphasis': ``,
+    'supportConsent.details.list3': `You may opt out or request deletion of any recording {emphasis}`,
+    'supportConsent.details.list3.emphasis': `at any time`,
     'supportConsent.details.list4': ``,
 
+    'supportConsent.enhancedSupport.title': `Control ${CommonMessages['enhancedSupport']}`,
     'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,
-    'supportConsent.enhancedSupport.disabled': `${CommonMessages['enhancedSupport']} disabled`,
 
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,

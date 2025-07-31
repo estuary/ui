@@ -1,8 +1,7 @@
-import { Divider, Grid, Stack, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 
 import DeleteRecordings from 'src/_compliance/components/admin/Support/DeleteRecordings';
 import EnhancedSupportChip from 'src/_compliance/components/admin/Support/EnhancedSupportChip';
-import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
 import SupportBenefits from 'src/_compliance/guards/EnhancedSupport/SupportBenefits';
 import SupportDetails from 'src/_compliance/guards/EnhancedSupport/SupportDetails';
 import { authenticatedRoutes } from 'src/app/routes';
@@ -18,7 +17,7 @@ function AdminLegal() {
         <>
             <AdminTabs />
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12} md={9}>
+                <Grid item xs={12}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         Enhanced Support
                     </Typography>
@@ -28,19 +27,19 @@ function AdminLegal() {
                         provide Enhanced Support
                     </Typography>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} lg={6}>
-                            <SupportBenefits />
-                        </Grid>
-                        <Grid item xs={12} lg={6}>
-                            <SupportDetails />
+                    <Grid item xs={12} md={8} lg={6}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <SupportBenefits />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <SupportDetails />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <EnhancedSupportChip />
+                            </Grid>
                         </Grid>
                     </Grid>
-
-                    <Stack direction="row" spacing={2}>
-                        <EnhancedSupportChip />
-                        <RecordingConsentModal />
-                    </Stack>
                 </Grid>
             </Grid>
 

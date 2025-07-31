@@ -9,15 +9,15 @@ export enum LocalStorageKeys {
     NAVIGATION_SETTINGS = 'estuary.navigation-settings',
     SIDE_PANEL_DOCS = 'estuary.side-panel-docs',
     TABLE_SETTINGS = 'estuary.table-settings',
-    // ENABLE_DATA_FLOW_RESET = 'estuary.enable-data-flow-reset', // Went Live
 }
 
+// These are Zustand stores that are persisted with these keys
+export enum PersistedStoresKeys {
+    DETAILS_USAGE = 'estuary.details-usage-store',
+    TENANTS = 'estuary.tenants-store',
+}
+
+// These should only ever be interacted with through getWithExpiry and setWithExpiry
 export type ExpiringLocalStorageKeys =
     | ComplianceLocalStorageKeys
     | 'estuary.chunk_failed';
-
-export enum PersistedStoresKeys {
-    DETAILS_USAGE = 'estuary.details-usage-store',
-    ENHANCED_SUPPORT = 'estuary.enhanced-support-store',
-    TENANTS = 'estuary.tenants-store',
-}
