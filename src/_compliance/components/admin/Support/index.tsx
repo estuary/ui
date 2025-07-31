@@ -22,26 +22,23 @@ function AdminLegal() {
                 sx={{ p: 2, maxWidth: 850 }}
             >
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Enhanced Support
-                    </Typography>
-
+                    <Typography variant="h6">Enhanced Support</Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <Typography>
                         Below you may control when and for how long we may
                         provide Enhanced Support
                     </Typography>
+                </Grid>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                            <SupportBenefits />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <SupportDetails />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <EnhancedSupportChip />
-                        </Grid>
-                    </Grid>
+                <Grid item xs={12} md={6}>
+                    <SupportBenefits />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <SupportDetails />
+                </Grid>
+                <Grid item xs={12}>
+                    <EnhancedSupportChip />
                 </Grid>
             </Grid>
 
