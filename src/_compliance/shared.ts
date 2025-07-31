@@ -17,7 +17,7 @@ export const defaultPrivacySettings: PrivacySettingsState = {
 export const setWithExpiry = <T = unknown>(
     key: ExpiringLocalStorageKeys,
     value: any | T,
-    expirationSetting: DurationLike | null
+    expirationSetting: DurationLike | DateTime | null
 ) => {
     if (value === null) {
         localStorage.removeItem(key);
@@ -26,9 +26,12 @@ export const setWithExpiry = <T = unknown>(
             key,
             JSON.stringify({
                 value,
-                expiry: expirationSetting
-                    ? DateTime.utc().plus(expirationSetting).toMillis()
-                    : null,
+                expiry:
+                    expirationSetting && DateTime.isDateTime(expirationSetting)
+                        ? expirationSetting.toUTC().toMillis()
+                        : expirationSetting
+                          ? DateTime.utc().plus(expirationSetting).toMillis()
+                          : null,
             })
         );
     }

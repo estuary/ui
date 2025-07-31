@@ -18,8 +18,6 @@ function usePrivacySettings() {
         }
     );
 
-    console.log('currentSetting', currentSetting);
-
     const user = useUserStore((state) => state.user);
 
     const idUser = useCallback(() => {

@@ -53,22 +53,12 @@ function RecordingConsentModal() {
                 onClick={() => {
                     console.log('localValue', localValue);
 
-                    // Fetch todays date every time the user clicks the button
-                    const today = DateTime.utc();
-
                     // Fetch when it should end (do NOT used begin/end of day as we want to match the hour they enable)
                     const supportEnd = DateTime.fromISO(localValue, {
                         zone: 'utc',
-                    });
+                    }).endOf('day');
 
-                    // Get the duration in days
-                    const supportDuration = supportEnd
-                        .diff(today, 'days')
-                        .toObject();
-
-                    console.log('supportDuration', supportDuration);
-
-                    setPrivacySettings(true, supportDuration);
+                    setPrivacySettings(true, supportEnd);
                 }}
             >
                 Enable Support
