@@ -10,7 +10,10 @@ import { identifyUser } from 'src/services/logrocket';
 function usePrivacySettings() {
     const [currentSetting, setVal, revokeAccess] = useExpiringLocalStorage(
         'estuary.privacy-settings',
-        defaultPrivacySettings
+        {
+            expiry: null,
+            value: defaultPrivacySettings,
+        }
     );
 
     const user = useUserStore((state) => state.user);
@@ -46,8 +49,10 @@ function usePrivacySettings() {
         useMemo(() => {
             if (currentSetting) {
                 return [
-                    Boolean(currentSetting.enhancedSupportEnabled),
-                    DateTime.utc(currentSetting.expiry ?? 0),
+                    Boolean(currentSetting.value.enhancedSupportEnabled),
+                    DateTime.utc(currentSetting.expiry ?? 0).toLocaleString(
+                        DateTime.DATE_FULL
+                    ),
                 ];
             }
 

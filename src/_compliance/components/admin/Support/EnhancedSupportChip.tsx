@@ -1,39 +1,46 @@
-import { Box, Stack } from '@mui/material';
+import { Box } from '@mui/material';
 
-import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
+import { useIntl } from 'react-intl';
+
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
 import { truncateTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function EnhancedSupportChip() {
-    const { enhancedSupportEnabled, revokeAccess } = usePrivacySettings();
+    const intl = useIntl();
+    const { enhancedSupportEnabled, enhancedSupportExpiration, revokeAccess } =
+        usePrivacySettings();
+
+    if (!enhancedSupportEnabled) {
+        return null;
+    }
 
     return (
-        <Stack direction="row" spacing={2}>
-            <OutlinedChip
-                color={enhancedSupportEnabled ? 'success' : 'info'}
-                label={
-                    <Box
-                        sx={{
-                            ...truncateTextSx,
-                            minWidth: 100,
-                            p: 1,
-                        }}
-                    >
-                        {enhancedSupportEnabled
-                            ? 'Enhanced Support Enabled (ex: 2025-00-00)'
-                            : 'Enhanced Support Disabled'}
-                    </Box>
-                }
-                onDelete={revokeAccess}
-                style={{
-                    maxWidth: '50%',
-                    minHeight: 40,
-                }}
-                variant="outlined"
-            />
-            <RecordingConsentModal />
-        </Stack>
+        <OutlinedChip
+            color="success"
+            label={
+                <Box
+                    sx={{
+                        ...truncateTextSx,
+                        minWidth: 100,
+                        p: 1,
+                    }}
+                >
+                    {intl.formatMessage(
+                        { id: 'supportConsent.enhancedSupport.enabled' },
+                        {
+                            expiration: enhancedSupportExpiration,
+                        }
+                    )}
+                </Box>
+            }
+            onDelete={revokeAccess}
+            style={{
+                maxWidth: '50%',
+                minHeight: 40,
+            }}
+            variant="outlined"
+        />
     );
 }
 

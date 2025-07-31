@@ -4,6 +4,9 @@ export const CommonMessages: Record<string, string> = {
     'company': `Estuary`,
     'productName': `Estuary Flow`,
     'expressFlowIntegration': `Powered by Estuary`,
+
+    'enhancedSupport': `Enhanced Support`,
+
     'common.browserTitle': `Flow`,
     'common.loading': `Loading...`,
     'common.running': `Running...`,

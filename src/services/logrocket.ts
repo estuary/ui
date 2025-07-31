@@ -227,7 +227,7 @@ export const initLogRocket = () => {
         settings.shouldSendData = () => {
             return (
                 getWithExpiry<PrivacySettingsState>('estuary.privacy-settings')
-                    ?.enhancedSupportEnabled === true
+                    ?.value.enhancedSupportEnabled === true
             );
         };
 
@@ -237,7 +237,9 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    const enhancedSupport = getWithExpiry('estuary.privacy-settings');
+    const enhancedSupport = getWithExpiry<PrivacySettingsState>(
+        'estuary.privacy-settings'
+    )?.value.enhancedSupportEnabled;
 
     if (
         logRocketSettings?.idUser.enabled &&

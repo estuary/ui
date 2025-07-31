@@ -156,6 +156,9 @@ export const Authentication: Record<string, string> = {
     'supportConsent.details.list3': `You may opt out or request deletion of any recording at any time`,
     'supportConsent.details.list4': ``,
 
+    'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,
+    'supportConsent.enhancedSupport.disabled': `${CommonMessages['enhancedSupport']} disabled`,
+
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,
     'register.main.message': `Please enter your information and our team will approve your account.`,

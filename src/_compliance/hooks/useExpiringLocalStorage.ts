@@ -1,6 +1,7 @@
 // Based on https://usehooks-ts.com/react-hook/use-local-storage#hook
 
 import type {
+    ExpiryLocalStorage,
     SetWithExpiryFunction,
     UseExpiringLocalStorageOptions,
 } from 'src/_compliance/types';
@@ -18,20 +19,20 @@ import {
 
 export function useExpiringLocalStorage<T>(
     key: ExpiringLocalStorageKeys,
-    initialValue: T | (() => T),
+    initialValue: ExpiryLocalStorage<T> | (() => ExpiryLocalStorage<T>),
     options: UseExpiringLocalStorageOptions<T> = {}
-): [T, SetWithExpiryFunction<T>, () => void] {
+): [ExpiryLocalStorage<T>, SetWithExpiryFunction<T>, () => void] {
     const { initializeWithValue = true } = options;
 
     // Get from local storage then
     // parse stored json or return initialValue
-    const readValue = useCallback((): T => {
+    const readValue = useCallback((): ExpiryLocalStorage<T> => {
         const initialValueToUse =
             initialValue instanceof Function ? initialValue() : initialValue;
 
         try {
             const raw = getWithExpiry<T>(key);
-            return raw ?? initialValueToUse;
+            return raw ? raw : initialValueToUse;
         } catch (error) {
             console.warn(`Error reading localStorage key “${key}”:`, error);
             return initialValueToUse;

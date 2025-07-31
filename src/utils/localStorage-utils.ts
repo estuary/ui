@@ -5,7 +5,6 @@ export enum LocalStorageKeys {
     DATAPLANE_CHOICE = 'estuary.dataplane-choice',
     CIDR_BLOCK_CHOICE = 'estuary.cidr-block-choice',
     DASHBOARD_WELCOME = 'estuary.dashboard-welcome',
-    LAZY_LOAD_FAILED_KEY = 'estuary.chunk_failed',
     MARKETPLACE_VERIFY = 'estuary.marketplace-verify',
     NAVIGATION_SETTINGS = 'estuary.navigation-settings',
     SIDE_PANEL_DOCS = 'estuary.side-panel-docs',
