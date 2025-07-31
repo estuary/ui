@@ -118,23 +118,11 @@ export default function FieldSelectionTable({
                     justifyContent: 'space-between',
                 }}
             >
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <AlgorithmMenu
-                        bindingUUID={bindingUUID}
-                        loading={loading}
-                        selections={selections}
-                    />
-
-                    <ExcludeAllButton
-                        bindingUUID={bindingUUID}
-                        loading={loading}
-                        selections={processedSelections}
-                    />
-                </Stack>
+                <AlgorithmMenu
+                    bindingUUID={bindingUUID}
+                    loading={loading}
+                    selections={selections}
+                />
 
                 <Stack
                     direction="row"
@@ -142,6 +130,12 @@ export default function FieldSelectionTable({
                     sx={{ alignItems: 'center' }}
                 >
                     <FieldFilter disabled={loading} />
+
+                    <ExcludeAllButton
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={processedSelections}
+                    />
 
                     <TableColumnSelector
                         loading={loading}

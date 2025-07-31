@@ -60,7 +60,6 @@ const ExcludeAllButton = ({ bindingUUID, loading, selections }: BaseProps) => {
                     );
                 }
             }}
-            size="small"
             style={{ textWrap: 'nowrap' }}
             variant="outlined"
         >
