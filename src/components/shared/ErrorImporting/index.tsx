@@ -3,6 +3,7 @@ import type { LazyLoadFailureStates } from 'src/components/shared/ErrorImporting
 
 import { useEffect, useState } from 'react';
 
+import { getWithExpiry, setWithExpiry } from 'src/_compliance/shared';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import Error from 'src/components/shared/Error';
 import {
@@ -11,11 +12,7 @@ import {
     logRocketEvent,
 } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import {
-    getWithExpiry,
-    LocalStorageKeys,
-    setWithExpiry,
-} from 'src/utils/localStorage-utils';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 export function ErrorImporting({ error }: FallbackProps) {
     const [stopTrying, setStopTrying] = useState(false);
@@ -40,6 +37,7 @@ export function ErrorImporting({ error }: FallbackProps) {
                 setStopTrying(true);
                 setWithExpiry<LazyLoadFailureStates>(
                     LocalStorageKeys.LAZY_LOAD_FAILED_KEY,
+                    null,
                     null
                 );
                 return;
@@ -49,7 +47,8 @@ export function ErrorImporting({ error }: FallbackProps) {
             logRocketEvent(CustomEvents.LAZY_LOADING, 'reloaded');
             setWithExpiry<LazyLoadFailureStates>(
                 LocalStorageKeys.LAZY_LOAD_FAILED_KEY,
-                'reloaded'
+                'reloaded',
+                null
             );
 
             // Wait just a bit before reloading incase there was a network blip

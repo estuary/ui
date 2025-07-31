@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useLocalStorage } from 'react-use';
+import { DateTime } from 'luxon';
 
+import { useExpiringLocalStorage } from 'src/_compliance/hooks/useExpiringLocalStorage';
 import { defaultPrivacySettings } from 'src/_compliance/shared';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { identifyUser } from 'src/services/logrocket';
-import { LocalStorageKeys, setWithExpiry } from 'src/utils/localStorage-utils';
 
 function usePrivacySettings() {
-    const [privacySettings, setPrivacySettings] = useLocalStorage(
-        LocalStorageKeys.PRIVACY_SETTINGS,
+    const [currentSetting, setVal, revokeAccess] = useExpiringLocalStorage(
+        'estuary.privacy-settings',
         defaultPrivacySettings
     );
 
@@ -21,23 +21,44 @@ function usePrivacySettings() {
         }
     }, [user]);
 
-    const setPrivacySettings2 = useCallback(
+    const setPrivacySettings = useCallback(
         (newVal: boolean) => {
-            setWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS, newVal, {
-                seconds: 15,
-            });
-
             if (newVal) {
+                setVal(
+                    {
+                        enhancedSupportEnabled: true,
+                        sessionRecordingEnabled: true,
+                    },
+                    {
+                        seconds: 60,
+                    }
+                );
+
                 idUser();
+            } else {
+                revokeAccess();
             }
         },
-        [idUser]
+        [idUser, revokeAccess, setVal]
     );
 
+    const [enhancedSupportEnabled, enhancedSupportExpiration]: [boolean, any] =
+        useMemo(() => {
+            if (currentSetting) {
+                return [
+                    Boolean(currentSetting.enhancedSupportEnabled),
+                    DateTime.utc(currentSetting.expiry ?? 0),
+                ];
+            }
+
+            return [false, null];
+        }, [currentSetting]);
+
     return {
-        privacySettings,
+        enhancedSupportEnabled,
+        enhancedSupportExpiration,
+        revokeAccess,
         setPrivacySettings,
-        setPrivacySettings2,
     };
 }
 

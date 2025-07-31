@@ -1,17 +1,17 @@
 import { Box, Stack } from '@mui/material';
 
 import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
-import useEnhancedSupport from 'src/_compliance/hooks/useEnhancedSupport';
+import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
 import { truncateTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function EnhancedSupportChip() {
-    const { setEnhancedSupport } = useEnhancedSupport();
+    const { enhancedSupportEnabled, revokeAccess } = usePrivacySettings();
+
     return (
         <Stack direction="row" spacing={2}>
             <OutlinedChip
-                // color={sourceCapture ? 'success' : 'info'}
-                color="success"
+                color={enhancedSupportEnabled ? 'success' : 'info'}
                 label={
                     <Box
                         sx={{
@@ -20,12 +20,12 @@ function EnhancedSupportChip() {
                             p: 1,
                         }}
                     >
-                        Enhanced Support Enabled (ex: 2025-00-00)
+                        {enhancedSupportEnabled
+                            ? 'Enhanced Support Enabled (ex: 2025-00-00)'
+                            : 'Enhanced Support Disabled'}
                     </Box>
                 }
-                onDelete={async () => {
-                    setEnhancedSupport(false);
-                }}
+                onDelete={revokeAccess}
                 style={{
                     maxWidth: '50%',
                     minHeight: 40,

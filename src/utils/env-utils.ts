@@ -1,4 +1,4 @@
-import { getWithExpiry, LocalStorageKeys } from 'src/utils/localStorage-utils';
+import { getWithExpiry } from 'src/_compliance/shared';
 
 declare global {
     interface Window {
@@ -132,7 +132,7 @@ const getLogRocketDefaultSettings = (): Settings | null => {
 export const getLogRocketSettings = (): Settings | null => {
     const defaults = getLogRocketDefaultSettings();
 
-    const foo = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
+    const foo = getWithExpiry('estuary.privacy-settings');
 
     console.log('foo', foo);
 

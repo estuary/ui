@@ -1,14 +1,15 @@
 import type { User } from '@supabase/supabase-js';
+import type { PrivacySettingsState } from 'src/_compliance/types';
 
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 
+import { getWithExpiry } from 'src/_compliance/shared';
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
 import { getLogRocketSettings } from 'src/utils/env-utils';
-import { getWithExpiry, LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -224,10 +225,10 @@ export const initLogRocket = () => {
         settings.shouldCaptureIP = logRocketSettings.trackUserIP;
 
         settings.shouldSendData = () => {
-            const isEnabled =
-                getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS) === true;
-            console.log('shouldSendData = ', isEnabled);
-            return isEnabled;
+            return (
+                getWithExpiry<PrivacySettingsState>('estuary.privacy-settings')
+                    ?.enhancedSupportEnabled === true
+            );
         };
 
         LogRocket.init(logRocketSettings.appID, settings);
@@ -236,7 +237,7 @@ export const initLogRocket = () => {
 };
 
 export const identifyUser = (user: User) => {
-    const enhancedSupport = getWithExpiry(LocalStorageKeys.PRIVACY_SETTINGS);
+    const enhancedSupport = getWithExpiry('estuary.privacy-settings');
 
     if (
         logRocketSettings?.idUser.enabled &&

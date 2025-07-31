@@ -10,20 +10,29 @@ import {
 
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
+import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import KeyValueList from 'src/components/shared/KeyValueList';
 
 const popupId = 'recordingConsentModal';
 function RecordingConsentModal() {
-    const { close, open, isOpen } = usePopupState({
+    const { close, isOpen } = usePopupState({
         variant: 'dialog',
         popupId: popupId,
         disableAutoFocus: true,
     });
 
+    const { setPrivacySettings } = usePrivacySettings();
+
     return (
         <>
-            <Button onClick={open}>Modify</Button>
+            <Button
+                onClick={() => {
+                    setPrivacySettings(true);
+                }}
+            >
+                Modify
+            </Button>
             <Dialog id={popupId} open={isOpen} fullWidth maxWidth="md">
                 <DialogTitle>Recording Consent Settings</DialogTitle>
 

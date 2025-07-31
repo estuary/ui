@@ -11,7 +11,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import useEnhancedSupport from 'src/_compliance/hooks/useEnhancedSupport';
 import IconMenu from 'src/components/menus/IconMenu';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -30,8 +29,6 @@ const nonInteractiveMenuStyling: SxProps = {
 const UserMenu = ({ iconColor }: Props) => {
     const intl = useIntl();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
-
-    const { setEnhancedSupport: toggleEnhancedSupport } = useEnhancedSupport();
 
     const handlers = {
         logout: async () => {
@@ -89,14 +86,6 @@ const UserMenu = ({ iconColor }: Props) => {
                     </ListItemIcon>
 
                     <FormattedMessage id="cta.logout" />
-                </MenuItem>
-
-                <MenuItem
-                    onClick={() => {
-                        toggleEnhancedSupport(true);
-                    }}
-                >
-                    Enable LogRocket
                 </MenuItem>
             </IconMenu>
         );
