@@ -22,6 +22,7 @@ function SupportWrapper({ titleMessageId, children }: SupportWrapperProps) {
                 sx={{
                     alignItems: 'start',
                     pl: 2,
+                    width: '100%',
                 }}
             >
                 {children}

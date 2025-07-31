@@ -16,7 +16,11 @@ function AdminLegal() {
     return (
         <>
             <AdminTabs />
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+            <Grid
+                container
+                spacing={{ xs: 3, md: 2 }}
+                sx={{ p: 2, maxWidth: 850 }}
+            >
                 <Grid item xs={12}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         Enhanced Support
@@ -27,17 +31,15 @@ function AdminLegal() {
                         provide Enhanced Support
                     </Typography>
 
-                    <Grid item xs={12} md={8} lg={6}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <SupportBenefits />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <SupportDetails />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <EnhancedSupportChip />
-                            </Grid>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                            <SupportBenefits />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <SupportDetails />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <EnhancedSupportChip />
                         </Grid>
                     </Grid>
                 </Grid>

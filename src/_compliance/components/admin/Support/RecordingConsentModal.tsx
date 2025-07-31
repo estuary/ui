@@ -17,7 +17,12 @@ function RecordingConsentModal() {
     );
 
     return (
-        <Stack direction="row">
+        <Stack
+            direction="row"
+            sx={{
+                justifyContent: 'space-between',
+            }}
+        >
             <Stack direction="row">
                 <TextField
                     id={INPUT_ID}

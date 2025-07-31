@@ -162,7 +162,7 @@ export const Authentication: Record<string, string> = {
     'supportConsent.details.list3.emphasis': `at any time`,
     'supportConsent.details.list4': ``,
 
-    'supportConsent.enhancedSupport.title': `Control ${CommonMessages['enhancedSupport']}`,
+    'supportConsent.enhancedSupport.title': `${CommonMessages['enhancedSupport']} Settings`,
     'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,
 
     // Registration
