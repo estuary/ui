@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Button, Stack, TextField } from '@mui/material';
 
+import { DateTime } from 'luxon';
+
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
 import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
@@ -41,17 +43,32 @@ function RecordingConsentModal() {
                     removeOffset
                     value={localValue}
                     onChange={(value) => {
-                        console.log('>>>>', value);
                         setLocalValue(value);
                     }}
                 />
             </Stack>
             <Button
                 disabled={localValue.length < 1}
+                size="small"
                 onClick={() => {
-                    setPrivacySettings(true, {
-                        seconds: 60,
+                    console.log('localValue', localValue);
+
+                    // Fetch todays date every time the user clicks the button
+                    const today = DateTime.utc();
+
+                    // Fetch when it should end (do NOT used begin/end of day as we want to match the hour they enable)
+                    const supportEnd = DateTime.fromISO(localValue, {
+                        zone: 'utc',
                     });
+
+                    // Get the duration in days
+                    const supportDuration = supportEnd
+                        .diff(today, 'days')
+                        .toObject();
+
+                    console.log('supportDuration', supportDuration);
+
+                    setPrivacySettings(true, supportDuration);
                 }}
             >
                 Enable Support

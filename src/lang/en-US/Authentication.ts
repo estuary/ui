@@ -150,7 +150,7 @@ export const Authentication: Record<string, string> = {
     'supportConsent.benefits.list1.emphasis': `Priority support`,
     'supportConsent.benefits.list2': `{emphasis}: with your consent, our support team can securely view dashboard activity to resolve issues faster-no sensitive info is shared, and your privacy is protected`,
     'supportConsent.benefits.list2.emphasis': `Session replay`,
-    'supportConsent.benefits.list3': `{emphasis}: turn this off at any time in your dashboard settings`,
+    'supportConsent.benefits.list3': `{emphasis}: turn this off at any time`,
     'supportConsent.benefits.list3.emphasis': `Full control`,
 
     'supportConsent.details.title': `How it works`,
