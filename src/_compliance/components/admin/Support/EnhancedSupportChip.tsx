@@ -1,10 +1,12 @@
 import { Box, Stack } from '@mui/material';
 
 import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
+import useEnhancedSupport from 'src/_compliance/hooks/useEnhancedSupport';
 import { truncateTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function EnhancedSupportChip() {
+    const { setEnhancedSupport } = useEnhancedSupport();
     return (
         <Stack direction="row" spacing={2}>
             <OutlinedChip
@@ -22,7 +24,7 @@ function EnhancedSupportChip() {
                     </Box>
                 }
                 onDelete={async () => {
-                    console.log('call server to remove');
+                    setEnhancedSupport(false);
                 }}
                 style={{
                     maxWidth: '50%',

@@ -29,6 +29,9 @@ export const setWithExpiry = <T = unknown>(
 ) => {
     if (value === null) {
         localStorage.removeItem(key);
+        // window.dispatchEvent(new Event('EST_LOCAL_STORAGE_UPDATE', {
+        //     value
+        // }));
     } else {
         localStorage.setItem(
             key,
