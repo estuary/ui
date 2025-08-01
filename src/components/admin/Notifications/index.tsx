@@ -30,7 +30,7 @@ function Notifications() {
 
                 <Divider />
             </Stack>
-            <AlertHistoryTable tablePrefix="ahi" />
+            <AlertHistoryTable />
         </>
     );
 }
