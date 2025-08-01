@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_bindingErrorsExist,
     useBinding_fullSourceErrorsExist,
+    useBinding_hasFieldConflicts,
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'src/stores/Binding/hooks';
@@ -26,6 +27,7 @@ export default function SectionAlertIndicator() {
             (meta) => meta.sourceBackfillRecommended
         )
     );
+    const fieldConflictsExist = useBinding_hasFieldConflicts();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
@@ -33,7 +35,8 @@ export default function SectionAlertIndicator() {
     const hasErrors =
         bindingHydrationErrorsExist ||
         resourceConfigErrorsExist ||
-        fullSourceErrorsExist;
+        fullSourceErrorsExist ||
+        fieldConflictsExist;
 
     const hasWarnings = bindingErrorsExist || sourceBackfillRecommended;
 
@@ -42,7 +45,7 @@ export default function SectionAlertIndicator() {
             {hasErrors || hasWarnings ? (
                 <WarningCircle
                     style={{
-                        marginRight: 4,
+                        marginRight: 8,
                         fontSize: 12,
                         color: hasErrors
                             ? theme.palette.error.main

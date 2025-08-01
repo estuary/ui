@@ -1,36 +1,31 @@
-import type {
-    ConstraintTypes,
-    FieldSelectionType,
-} from 'src/components/editor/Bindings/FieldSelection/types';
+import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldOutcome } from 'src/types/wasm';
 
 import { useCallback } from 'react';
 
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_setSingleSelection } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     isFieldSelectionType,
-    isRecommendedField,
-} from 'src/utils/workflow-utils';
+    isSelectedField,
+} from 'src/utils/fieldSelection-utils';
 
 const evaluateSelectionType = (
-    recommended: boolean,
+    selected: boolean,
     toggleValue: FieldSelectionType,
     selectedValue: FieldSelectionType | null,
     targetValue: FieldSelectionType | null
 ) => {
     logRocketEvent(CustomEvents.FIELD_SELECTION, {
-        recommended,
+        selected,
         selectedValue,
         targetValue,
         toggleValue,
     });
 
-    return selectedValue === toggleValue && recommended
-        ? 'default'
-        : targetValue;
+    return selectedValue === toggleValue && selected ? 'default' : targetValue;
 };
 
 export default function useOnFieldActionClick(
@@ -38,16 +33,15 @@ export default function useOnFieldActionClick(
     field: string
 ) {
     // Bindings Editor Store
-    const recommended = useBindingStore(
-        (state) => state.recommendFields[bindingUUID]
+    const setSingleSelection = useBindingStore(
+        (state) => state.setSingleSelection
     );
-    const setSingleSelection = useBinding_setSingleSelection();
 
     return useCallback(
         (
             value: any,
             selection: FieldSelection | null,
-            constraintType: ConstraintTypes
+            outcome: FieldOutcome
         ) => {
             if (!isFieldSelectionType(value)) {
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
@@ -60,7 +54,7 @@ export default function useOnFieldActionClick(
             const singleValue = selection?.mode !== value ? value : null;
 
             const selectionType = evaluateSelectionType(
-                recommended && isRecommendedField(constraintType),
+                isSelectedField(outcome),
                 value,
                 selection?.mode ?? null,
                 singleValue
@@ -70,9 +64,10 @@ export default function useOnFieldActionClick(
                 bindingUUID,
                 field,
                 selectionType,
+                outcome,
                 selection?.meta
             );
         },
-        [bindingUUID, field, recommended, setSingleSelection]
+        [bindingUUID, field, setSingleSelection]
     );
 }

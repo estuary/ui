@@ -6,8 +6,8 @@ import { BindingsEditorConfigSkeleton } from 'src/components/collection/Collecti
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
 import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
 import Backfill from 'src/components/editor/Bindings/Backfill';
-import FieldSelectionViewer from 'src/components/editor/Bindings/FieldSelection';
 import { useEditorStore_queryResponse_draftedBindingIndex } from 'src/components/editor/Store/hooks';
+import FieldSelectionViewer from 'src/components/fieldSelection/FieldSelectionViewer';
 import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';

@@ -20,6 +20,7 @@ export interface ButtonWithPopperProps extends BaseComponentProps {
     buttonProps: Partial<ButtonProps>;
     popper: ReactNode;
     popperProps?: Partial<PopperProps>;
+    trigger?: 'click' | 'hover';
 }
 
 export interface CopyToClipboardButtonProps extends BaseComponentProps {
