@@ -2,7 +2,7 @@ import type { PickerProps } from 'src/components/shared/pickers/types';
 
 import { StaticDatePicker } from '@mui/x-date-pickers';
 
-import { format, parseISO } from 'date-fns';
+import { add, format, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
 
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
@@ -10,7 +10,7 @@ import { INVALID_DATE } from 'src/components/shared/pickers/shared';
 import { Patterns } from 'src/types/jsonforms';
 
 function DatePickerCTA(props: PickerProps) {
-    const { enabled, state, value, onChange } = props;
+    const { enabled, state, value, onChange, disablePast, maxDays } = props;
 
     const formatDate = (formatValue: Date) => {
         try {
@@ -27,6 +27,14 @@ function DatePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDatePicker
+                maxDate={
+                    maxDays
+                        ? add(new Date(), {
+                              days: maxDays,
+                          })
+                        : undefined
+                }
+                disablePast={Boolean(disablePast)}
                 displayStaticWrapperAs="desktop"
                 openTo="day"
                 disabled={!enabled}

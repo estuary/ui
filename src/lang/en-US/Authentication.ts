@@ -164,6 +164,7 @@ export const Authentication: Record<string, string> = {
 
     'supportConsent.enhancedSupport.title': `${CommonMessages['enhancedSupport']} Settings`,
     'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,
+    'supportConsent.enhancedSupport.date.label': `Expiration Date`,
 
     // Registration
     'register.heading': `We're currently accepting Beta partners.`,
