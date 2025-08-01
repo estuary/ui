@@ -21,6 +21,10 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
+                label: 'admin.tabs.notifications',
+                path: authenticatedRoutes.admin.notifications.fullPath,
+            },
+            {
                 label: 'admin.tabs.settings',
                 path: authenticatedRoutes.admin.settings.fullPath,
             },

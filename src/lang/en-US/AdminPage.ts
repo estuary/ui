@@ -135,6 +135,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
 
     'admin.tabs.users': `Account Access`,
+    'admin.tabs.notifications': `Notifications`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
