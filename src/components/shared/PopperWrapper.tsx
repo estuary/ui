@@ -14,7 +14,7 @@ import { paperBackground, popperIndex } from 'src/context/Theme';
 
 interface Props {
     children: ReactNode;
-    anchorEl: HTMLElement | null;
+    anchorEl: HTMLElement | (EventTarget & Element) | null;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     popperProps?: Partial<PopperProps>;

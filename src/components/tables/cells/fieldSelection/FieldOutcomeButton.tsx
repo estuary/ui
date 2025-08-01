@@ -1,9 +1,8 @@
 import type { BaseFieldOutcomeProps } from 'src/components/tables/cells/types';
 
-import { Tooltip, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 
 import { Bookmark, BookmarkSolid, WarningTriangle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import IconButtonWithPopper from 'src/components/shared/buttons/IconButtonWithPopper';
 import FieldOutcomeOverview from 'src/components/tables/cells/fieldSelection/FieldOutcomeOverview';
@@ -13,7 +12,6 @@ import {
 } from 'src/utils/fieldSelection-utils';
 
 const FieldOutcomeButton = ({ outcome }: BaseFieldOutcomeProps) => {
-    const intl = useIntl();
     const theme = useTheme();
 
     const conflictExists = hasFieldConflict(outcome);
@@ -27,29 +25,19 @@ const FieldOutcomeButton = ({ outcome }: BaseFieldOutcomeProps) => {
           : Bookmark;
 
     return (
-        <Tooltip
-            placement="right-start"
-            title={intl.formatMessage({
-                id: conflictExists
-                    ? 'fieldSelection.outcomeButton.tooltip.conflict'
-                    : 'fieldSelection.outcomeButton.tooltip',
-            })}
+        <IconButtonWithPopper
+            buttonProps={{ style: { padding: 4 } }}
+            popper={<FieldOutcomeOverview outcome={outcome} />}
+            popperProps={{ placement: 'right' }}
+            trigger="hover"
         >
-            <span>
-                <IconButtonWithPopper
-                    buttonProps={{ style: { padding: 4 } }}
-                    popper={<FieldOutcomeOverview outcome={outcome} />}
-                    popperProps={{ placement: 'right' }}
-                >
-                    <Icon
-                        style={{
-                            color: theme.palette[colorKey].main,
-                            fontSize: 14,
-                        }}
-                    />
-                </IconButtonWithPopper>
-            </span>
-        </Tooltip>
+            <Icon
+                style={{
+                    color: theme.palette[colorKey].main,
+                    fontSize: 14,
+                }}
+            />
+        </IconButtonWithPopper>
     );
 };
 

@@ -12,6 +12,7 @@ function ButtonWithPopper({
     children,
     popper,
     popperProps,
+    trigger = 'click',
 }: ButtonWithPopperProps) {
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -23,7 +24,16 @@ function ButtonWithPopper({
 
     return (
         <>
-            <Button {...buttonProps} onClick={togglePopper}>
+            <Button
+                {...buttonProps}
+                onClick={
+                    trigger === 'click' || trigger === undefined
+                        ? togglePopper
+                        : undefined
+                }
+                onMouseEnter={trigger === 'hover' ? togglePopper : undefined}
+                onMouseLeave={trigger === 'hover' ? togglePopper : undefined}
+            >
                 {children}
             </Button>
 
