@@ -17,9 +17,9 @@ function ButtonWithPopper({
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const togglePopper = (event: MouseEvent<HTMLElement>) => {
+    const togglePopper = (event: MouseEvent<HTMLElement>, value?: boolean) => {
         setAnchorEl(event.currentTarget);
-        setOpen((previousOpen) => !previousOpen);
+        setOpen(value ? value : (previousOpen) => !previousOpen);
     };
 
     return (
@@ -33,18 +33,12 @@ function ButtonWithPopper({
                 }
                 onMouseEnter={
                     trigger === 'hover'
-                        ? (event: MouseEvent<HTMLElement>) => {
-                              setAnchorEl(event.currentTarget);
-                              setOpen(true);
-                          }
+                        ? (event) => togglePopper(event, true)
                         : undefined
                 }
                 onMouseLeave={
                     trigger === 'hover'
-                        ? (event: MouseEvent<HTMLElement>) => {
-                              setAnchorEl(event.currentTarget);
-                              setOpen(false);
-                          }
+                        ? (event) => togglePopper(event, false)
                         : undefined
                 }
             >

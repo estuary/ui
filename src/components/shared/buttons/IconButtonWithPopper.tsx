@@ -19,9 +19,9 @@ const IconButtonWithPopper = ({
         null | HTMLElement | (EventTarget & Element)
     >(null);
 
-    const togglePopper = (event: MouseEvent<HTMLElement>) => {
+    const togglePopper = (event: MouseEvent<HTMLElement>, value?: boolean) => {
         setAnchorEl(event.currentTarget);
-        setOpen((previousOpen) => !previousOpen);
+        setOpen(value ? value : (previousOpen) => !previousOpen);
     };
 
     return (
@@ -35,18 +35,12 @@ const IconButtonWithPopper = ({
                 }
                 onMouseEnter={
                     trigger === 'hover'
-                        ? (event: MouseEvent<HTMLElement>) => {
-                              setAnchorEl(event.currentTarget);
-                              setOpen(true);
-                          }
+                        ? (event) => togglePopper(event, true)
                         : undefined
                 }
                 onMouseLeave={
                     trigger === 'hover'
-                        ? (event: MouseEvent<HTMLElement>) => {
-                              setAnchorEl(event.currentTarget);
-                              setOpen(false);
-                          }
+                        ? (event) => togglePopper(event, false)
                         : undefined
                 }
             >
