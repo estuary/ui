@@ -31,8 +31,22 @@ function ButtonWithPopper({
                         ? togglePopper
                         : undefined
                 }
-                onMouseEnter={trigger === 'hover' ? togglePopper : undefined}
-                onMouseLeave={trigger === 'hover' ? togglePopper : undefined}
+                onMouseEnter={
+                    trigger === 'hover'
+                        ? (event: MouseEvent<HTMLElement>) => {
+                              setAnchorEl(event.currentTarget);
+                              setOpen(true);
+                          }
+                        : undefined
+                }
+                onMouseLeave={
+                    trigger === 'hover'
+                        ? (event: MouseEvent<HTMLElement>) => {
+                              setAnchorEl(event.currentTarget);
+                              setOpen(false);
+                          }
+                        : undefined
+                }
             >
                 {children}
             </Button>

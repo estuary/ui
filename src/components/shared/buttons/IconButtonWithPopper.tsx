@@ -1,4 +1,4 @@
-import type { FocusEvent, MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import type { ButtonWithPopperProps } from 'src/components/shared/buttons/types';
 
 import { useState } from 'react';
@@ -19,7 +19,7 @@ const IconButtonWithPopper = ({
         null | HTMLElement | (EventTarget & Element)
     >(null);
 
-    const togglePopper = (event: MouseEvent<HTMLElement> | FocusEvent) => {
+    const togglePopper = (event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setOpen((previousOpen) => !previousOpen);
     };
@@ -33,8 +33,22 @@ const IconButtonWithPopper = ({
                         ? togglePopper
                         : undefined
                 }
-                onMouseEnter={trigger === 'hover' ? togglePopper : undefined}
-                onMouseLeave={trigger === 'hover' ? togglePopper : undefined}
+                onMouseEnter={
+                    trigger === 'hover'
+                        ? (event: MouseEvent<HTMLElement>) => {
+                              setAnchorEl(event.currentTarget);
+                              setOpen(true);
+                          }
+                        : undefined
+                }
+                onMouseLeave={
+                    trigger === 'hover'
+                        ? (event: MouseEvent<HTMLElement>) => {
+                              setAnchorEl(event.currentTarget);
+                              setOpen(false);
+                          }
+                        : undefined
+                }
             >
                 {children}
             </IconButton>
