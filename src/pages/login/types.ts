@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { BaseComponentProps } from 'src/types';
 
 export interface LoginWrapperProps extends BaseComponentProps {
@@ -12,6 +13,7 @@ export interface RegisterPerkProps {
     messageID: string;
     disableNoWrap?: boolean;
     disableEmphasisColor?: boolean;
+    customChild?: ReactNode;
 }
 
 export type HeaderMessageProps = Pick<

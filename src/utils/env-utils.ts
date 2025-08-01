@@ -62,21 +62,20 @@ export const getLoginSettings = () => {
     };
 };
 
-// TODO (refactor) We should switch this to a provider
-export const getUrls = () => {
-    const privacyPolicy = import.meta.env.VITE_URLS_PRIVACY_POLICY;
-    const termsOfService = import.meta.env.VITE_URLS_TERMS_OF_SERVICE;
+const privacyPolicy = import.meta.env.VITE_URLS_PRIVACY_POLICY;
+const termsOfService = import.meta.env.VITE_URLS_TERMS_OF_SERVICE;
+const enhancedSupportTerms = import.meta.env
+    .VITE_URLS_ENHANCED_SUPPORT_TERMS_OF_SERVICE;
 
-    if (privacyPolicy && termsOfService) {
-        return {
-            privacyPolicy,
-            termsOfService,
-        };
-    } else {
-        throw new Error(
-            'Missing legal doc settings: [VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
-        );
-    }
+if (!privacyPolicy || !termsOfService || !enhancedSupportTerms) {
+    throw new Error(
+        'Missing legal doc settings: [VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE, VITE_URLS_ENHANCED_SUPPORT_TERMS_OF_SERVICE]'
+    );
+}
+export const importantUrls = {
+    enhancedSupportTerms,
+    privacyPolicy,
+    termsOfService,
 };
 
 // IOptions from .../node_modules/logrocket/dist/types.d.ts

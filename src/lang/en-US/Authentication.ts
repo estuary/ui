@@ -158,9 +158,10 @@ export const Authentication: Record<string, string> = {
     'supportConsent.details.list1.emphasis': `after you accept below`,
     'supportConsent.details.list2': `All recordings are used only for support and deleted after 30 days`,
     'supportConsent.details.list2.emphasis': ``,
-    'supportConsent.details.list3': `You may opt out or request deletion of any recording {emphasis}`,
+    'supportConsent.details.list3': `You may opt out or request deletion of your recordings {emphasis}`,
     'supportConsent.details.list3.emphasis': `at any time`,
-    'supportConsent.details.list4': ``,
+    'supportConsent.details.list4': `For more details, see our: {privacy} and {terms}`,
+    'supportConsent.details.list4.terms': `Support Terms`,
 
     'supportConsent.enhancedSupport.title': `${CommonMessages['enhancedSupport']} Settings`,
     'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,

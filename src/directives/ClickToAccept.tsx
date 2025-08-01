@@ -26,9 +26,8 @@ import {
 } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
-import { getUrls } from 'src/utils/env-utils';
+import { importantUrls } from 'src/utils/env-utils';
 
-const urls = getUrls();
 const directiveName = 'clickToAccept';
 
 const submit_clickToAccept = async (directive: any) => {
@@ -172,11 +171,11 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 </Typography>
 
                 <Stack spacing={1}>
-                    <ExternalLink link={urls.privacyPolicy}>
+                    <ExternalLink link={importantUrls.privacyPolicy}>
                         {intl.formatMessage({ id: 'legal.docs.privacy' })}
                     </ExternalLink>
 
-                    <ExternalLink link={urls.termsOfService}>
+                    <ExternalLink link={importantUrls.termsOfService}>
                         {intl.formatMessage({ id: 'legal.docs.terms' })}
                     </ExternalLink>
                 </Stack>

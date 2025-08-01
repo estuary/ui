@@ -1,7 +1,15 @@
+import { Box } from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
 import SupportWrapper from 'src/_compliance/guards/EnhancedSupport/SupportWrapper';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import RegisterPerk from 'src/pages/login/Perk';
+import { importantUrls } from 'src/utils/env-utils';
 
 function SupportDetails() {
+    const intl = useIntl();
+
     return (
         <SupportWrapper titleMessageId="supportConsent.details.title">
             <RegisterPerk
@@ -22,7 +30,40 @@ function SupportDetails() {
             <RegisterPerk
                 disableNoWrap
                 disableEmphasisColor
-                messageID="For details, see our Privacy Policy and Support Terms"
+                messageID=""
+                customChild={
+                    <Box>
+                        {intl.formatMessage(
+                            {
+                                id: 'supportConsent.details.list4',
+                            },
+                            {
+                                privacy: (
+                                    <ExternalLink
+                                        link={importantUrls.privacyPolicy}
+                                        hideIcon
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'legal.docs.privacy',
+                                        })}
+                                    </ExternalLink>
+                                ),
+                                terms: (
+                                    <ExternalLink
+                                        link={
+                                            importantUrls.enhancedSupportTerms
+                                        }
+                                        hideIcon
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'supportConsent.details.list4.terms',
+                                        })}
+                                    </ExternalLink>
+                                ),
+                            }
+                        )}
+                    </Box>
+                }
             />
         </SupportWrapper>
     );

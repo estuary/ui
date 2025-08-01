@@ -15,6 +15,7 @@ function RegisterPerk({
     disableEmphasisColor,
     disableNoWrap,
     messageID,
+    customChild,
 }: RegisterPerkProps) {
     return (
         <Stack direction="row" spacing={1}>
@@ -44,7 +45,11 @@ function RegisterPerk({
                     },
                 }}
             >
-                <MessageWithEmphasis messageID={messageID} />
+                {customChild ? (
+                    customChild
+                ) : (
+                    <MessageWithEmphasis messageID={messageID} />
+                )}
             </Box>
         </Stack>
     );
