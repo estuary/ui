@@ -44,7 +44,7 @@ function SupportDetails() {
                                         hideIcon
                                     >
                                         {intl.formatMessage({
-                                            id: 'legal.docs.privacy',
+                                            id: 'supportConsent.details.list4.privacy',
                                         })}
                                     </ExternalLink>
                                 ),

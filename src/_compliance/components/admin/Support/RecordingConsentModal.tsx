@@ -57,7 +57,6 @@ function RecordingConsentModal() {
             </Stack>
             <Button
                 disabled={localValue.length < 1}
-                size="small"
                 onClick={() => {
                     // Fetch when it should end (do NOT used begin/end of day as we want to match the hour they enable)
                     const supportEnd = DateTime.fromISO(localValue, {

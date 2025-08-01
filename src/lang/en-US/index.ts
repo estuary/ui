@@ -1,3 +1,4 @@
+import { ComplianceContent } from 'src/_compliance/lang/en-US/Content';
 import { AccessGrants } from 'src/lang/en-US/AccessGrants';
 import { AdminPage } from 'src/lang/en-US/AdminPage';
 import { Authentication } from 'src/lang/en-US/Authentication';
@@ -53,6 +54,8 @@ const enUSMessages: Record<string, string> = {
     ...RouteTitles,
     ...Transforms,
     ...Workflows,
+    // This MUST come last so there is a lower chance of anything being overwritten
+    ...ComplianceContent,
 };
 
 export default enUSMessages;

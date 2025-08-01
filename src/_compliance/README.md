@@ -1,12 +1,20 @@
-# WIP
+# WIP !This directory and document are a work in progress!
 
-!This directory and document are a work in progress!
+# WIP !This directory and document are a work in progress!
+
+# WIP !This directory and document are a work in progress!
 
 # ! ! ! Be careful - even minor changes could cause compliance issues ! ! !
 
 # What is this?
 
 Any code that is directly tied to legal and compliance matters (e.g. HIPAA, GDPR, CCPA) lives here. It is VERY important that changes are monitored and reviewed with the highest scrutiny. Many times technological decisions made in this directory are tied to business operating procedures.
+
+# Features
+
+## Enhanced Support
+
+This is the feature that allows users to give us consent to record their sessions with LogRocket and see their entities in the Dashboard.
 
 # How to make a change
 
