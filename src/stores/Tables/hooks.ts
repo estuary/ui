@@ -30,6 +30,7 @@ export enum TablePrefixes {
     entitySelector = 'esl',
     fieldSelection = 'fs',
     materializations = 'mat',
+    notifications = 'not',
     prefixes = 'pr',
     prefixAlerts = 'pal',
     refreshTokens = 'rt',

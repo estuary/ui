@@ -167,4 +167,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
+
+    'admin.notifications.title': `Alert History`,
+    'admin.notifications.message': `Below you can see a history of all notifications`,
 };

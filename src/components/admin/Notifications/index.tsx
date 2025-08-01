@@ -1,7 +1,10 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
+import NotificationsTable from 'src/components/tables/Notifications';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 function Notifications() {
@@ -10,20 +13,24 @@ function Notifications() {
         headerLink: 'https://docs.estuary.dev/reference/notifications/',
     });
 
+    const intl = useIntl();
+
     return (
         <>
             <AdminTabs />
             <Stack spacing={2} sx={{ m: 2 }}>
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
-                        title
+                        {intl.formatMessage({
+                            id: 'admin.notifications.title',
+                        })}
                     </Typography>
-                    message
+                    {intl.formatMessage({ id: 'admin.notifications.message' })}
                 </Box>
 
                 <Divider />
             </Stack>
-            table
+            <NotificationsTable tablePrefix="not" />
         </>
     );
 }
