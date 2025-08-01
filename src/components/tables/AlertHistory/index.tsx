@@ -4,15 +4,14 @@ import { Box } from '@mui/material';
 
 interface Props {
     tablePrefix: TablePrefix;
-    showUser?: boolean;
 }
 
-function NotificationsTable({ tablePrefix, showUser }: Props) {
+function AlertHistoryTable({ tablePrefix }: Props) {
     return (
-        <Box sx={{ mb: showUser ? 8 : 0 }}>
+        <Box>
             <textarea value="Notifications Table" />
         </Box>
     );
 }
 
-export default NotificationsTable;
+export default AlertHistoryTable;

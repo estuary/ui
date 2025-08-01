@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
-import NotificationsTable from 'src/components/tables/Notifications';
+import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 function Notifications() {
@@ -30,7 +30,7 @@ function Notifications() {
 
                 <Divider />
             </Stack>
-            <NotificationsTable tablePrefix="not" />
+            <AlertHistoryTable tablePrefix="ahi" />
         </>
     );
 }
