@@ -5,24 +5,27 @@ import PageContainer from 'src/components/shared/PageContainer';
 
 import 'graphiql/style.css';
 
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { stringifyJSON } from 'src/services/stringify';
+import { getAuthHeader } from 'src/utils/misc-utils';
 
 const fetcher = createGraphiQLFetcher({ url: import.meta.env.VITE_GQL_URL });
 
 const GqlExplorer = () => {
+    const theme = useTheme();
     const session = useUserStore((state) => state.session);
 
     return (
         <PageContainer>
-            <Box sx={{ height: 1000 }}>
+            <Box sx={{ height: '79vh', minHeight: 250 }}>
                 <GraphiQL
                     fetcher={fetcher}
-                    defaultHeaders={stringifyJSON({
-                        Authentication: `Bearer ${session?.access_token}`,
-                    })}
+                    defaultHeaders={stringifyJSON(
+                        getAuthHeader(session?.access_token)
+                    )}
+                    forcedTheme={theme.palette.mode}
                 />
             </Box>
         </PageContainer>

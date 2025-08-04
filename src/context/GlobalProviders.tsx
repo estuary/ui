@@ -8,6 +8,7 @@ import { cacheExchange, Client, fetchExchange, Provider } from 'urql';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { initLogRocket } from 'src/services/logrocket';
+import { getAuthHeader } from 'src/utils/misc-utils';
 
 // This is not a normal provider... more like a guard... kind of. This is here so that we know createClient is called early and also
 //  so it is called in a somewhat consistent order. This is also waiting until the client has been
@@ -60,9 +61,10 @@ function GlobalProviders({ children }: BaseComponentProps) {
                 return {
                     addAuthToOperation(operation) {
                         if (session?.access_token) {
-                            return utils.appendHeaders(operation, {
-                                Authorization: `Bearer ${session?.access_token}`,
-                            });
+                            return utils.appendHeaders(
+                                operation,
+                                getAuthHeader(session?.access_token)
+                            );
                         }
                         return operation;
                     },
