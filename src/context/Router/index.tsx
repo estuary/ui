@@ -31,6 +31,7 @@ import Admin from 'src/pages/Admin';
 import Auth from 'src/pages/Auth';
 import Collections from 'src/pages/Collections';
 import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
+import GqlExplorer from 'src/pages/dev/gqlExplorer';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
 import PageNotFound from 'src/pages/error/PageNotFound';
 import HomePage from 'src/pages/Home';
@@ -38,6 +39,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { isProduction } from 'src/utils/env-utils';
 
 // Capture
 const CaptureCreateRoute = lazy(
@@ -706,16 +708,33 @@ const router = createBrowserRouter(
                         />
                     </Route>
 
-                    <Route
-                        path="test/jsonforms"
-                        element={
-                            <ErrorBoundary FallbackComponent={ErrorImporting}>
-                                <EntityContextProvider value="capture">
-                                    <TestJsonForms />
-                                </EntityContextProvider>
-                            </ErrorBoundary>
-                        }
-                    />
+                    {!isProduction ? (
+                        <>
+                            <Route
+                                path="test/jsonforms"
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <EntityContextProvider value="capture">
+                                            <TestJsonForms />
+                                        </EntityContextProvider>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path="test/gql"
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <GqlExplorer />
+                                    </ErrorBoundary>
+                                }
+                            />
+                        </>
+                    ) : null}
 
                     <Route
                         path={authenticatedRoutes.pageNotFound.path}
