@@ -4,6 +4,7 @@ import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { stringifyJSON } from 'src/services/stringify';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 const AlertHistoryQuery = gql`
     query ($prefixes: [String!]!) {
@@ -18,9 +19,11 @@ const AlertHistoryQuery = gql`
 `;
 
 function AlertHistoryTable() {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const [{ fetching, data, error }] = useQuery({
         query: AlertHistoryQuery,
-        variables: { prefixes: ['fee_fi_foo_fm/'] },
+        variables: { prefixes: [selectedTenant] },
     });
 
     if (error) {

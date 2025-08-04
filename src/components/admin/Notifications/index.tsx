@@ -1,9 +1,11 @@
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
 import AdminTabs from 'src/components/admin/Tabs';
+import TenantSelector from 'src/components/shared/TenantSelector';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
 
@@ -18,6 +20,24 @@ function Notifications() {
     return (
         <>
             <AdminTabs />
+
+            <Grid
+                container
+                spacing={{ xs: 3, md: 2 }}
+                sx={{ p: 2, justifyContent: 'flex-end' }}
+            >
+                <Grid
+                    item
+                    xs={12}
+                    md={3}
+                    sx={{ mt: 2.5, display: 'flex', alignItems: 'end' }}
+                >
+                    <TenantSelector />
+                </Grid>
+            </Grid>
+
+            <PrefixAlerts />
+
             <Stack spacing={2} sx={{ m: 2 }}>
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
