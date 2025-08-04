@@ -5,7 +5,7 @@ import PageContainer from 'src/components/shared/PageContainer';
 
 import 'graphiql/style.css';
 
-import { Box, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { stringifyJSON } from 'src/services/stringify';
@@ -19,6 +19,7 @@ const GqlExplorer = () => {
 
     return (
         <PageContainer>
+            <Typography variant="h6">Graphiql v3</Typography>
             <Box sx={{ height: '79vh', minHeight: 250 }}>
                 <GraphiQL
                     fetcher={fetcher}
