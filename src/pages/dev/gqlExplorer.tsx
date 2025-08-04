@@ -5,17 +5,25 @@ import PageContainer from 'src/components/shared/PageContainer';
 
 import 'graphiql/style.css';
 
+import { useMemo } from 'react';
+
 import { Box, Typography, useTheme } from '@mui/material';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { stringifyJSON } from 'src/services/stringify';
 import { getAuthHeader } from 'src/utils/misc-utils';
 
-const fetcher = createGraphiQLFetcher({ url: import.meta.env.VITE_GQL_URL });
-
 const GqlExplorer = () => {
     const theme = useTheme();
     const session = useUserStore((state) => state.session);
+
+    const fetcher = useMemo(
+        () =>
+            createGraphiQLFetcher({
+                url: import.meta.env.VITE_GQL_URL,
+            }),
+        []
+    );
 
     return (
         <PageContainer>
