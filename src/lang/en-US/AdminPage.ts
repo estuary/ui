@@ -171,6 +171,9 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.title': `Alert History`,
     'admin.notifications.message': `Below you can see a history of all notifications`,
 
+    'admin.notifications.table.data.firedAt': `Fired At`,
+    'admin.notifications.table.data.recipients': `Recipients`,
+    'admin.notifications.table.data.resolvedAt': `Resolved At`,
     'admin.notifications.table.label': `List of all alerts for tenant`,
     'admin.notifications.table.empty.header': `No alerts found`,
     'admin.notifications.table.empty.message': `This tenant has no historical alerts`,

@@ -25,15 +25,15 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.recipients',
+        headerIntlKey: 'admin.notifications.table.data.recipients',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.firedAt',
+        headerIntlKey: 'admin.notifications.table.data.firedAt',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.resolvedAt',
+        headerIntlKey: 'admin.notifications.table.data.resolvedAt',
     },
 ];
 
