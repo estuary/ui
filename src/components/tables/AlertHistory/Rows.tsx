@@ -3,6 +3,7 @@ import type { TableColumns } from 'src/types';
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -39,7 +40,15 @@ function Row({
                 entityStatusTypes={[alertDetails.spec_type]}
             />
 
+            <ChipList
+                stripPath={false}
+                values={alertDetails.recipients.map(
+                    (recipient: any) => recipient.email
+                )}
+            />
+
             <TimeStamp time={firedAt} />
+
             <TableCell>{resolvedAt}</TableCell>
         </TableRow>
     );

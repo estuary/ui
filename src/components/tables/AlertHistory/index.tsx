@@ -25,6 +25,10 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
+        headerIntlKey: 'entityTable.data.recipients',
+    },
+    {
+        field: null,
         headerIntlKey: 'entityTable.data.firedAt',
     },
     {
@@ -88,6 +92,8 @@ function AlertHistoryTable() {
         tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
         tableState.status === TableStatuses.NETWORK_FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
+    const hasData =
+        !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
 
     return (
         <Box>
@@ -96,7 +102,7 @@ function AlertHistoryTable() {
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
-                        id: 'fieldSelection.table.label',
+                        id: 'admin.notifications.table.label',
                     })}
                 >
                     <EntityTableHeader columns={columns} selectData={true} />
@@ -104,14 +110,16 @@ function AlertHistoryTable() {
                     <EntityTableBody
                         columns={columns}
                         noExistingDataContentIds={{
-                            header: 'fieldSelection.table.empty.header',
-                            message: 'fieldSelection.table.empty.message',
+                            header: 'admin.notifications.table.empty.header',
+                            message: failed
+                                ? 'admin.notifications.table.error.message'
+                                : 'admin.notifications.table.empty.message',
                             disableDoclink: true,
                         }}
                         tableState={tableState}
                         loading={loading}
                         rows={
-                            !failed && !loading && data ? (
+                            hasData ? (
                                 <Rows columns={columns} data={data.alerts} />
                             ) : null
                         }
