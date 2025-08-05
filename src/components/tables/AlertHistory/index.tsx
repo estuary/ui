@@ -39,7 +39,7 @@ const AlertHistoryQuery = gql`
             catalogName
             firedAt
             alertType
-            arguments
+            alertDetails: arguments
             resolvedAt
         }
     }

@@ -17,11 +17,17 @@ interface RowProps {
     row: any;
 }
 
-function Row({ row: { catalogName, firedAt, resolvedAt } }: RowProps) {
+function Row({
+    row: { catalogName, firedAt, resolvedAt, alertDetails },
+}: RowProps) {
     const theme = useTheme();
 
     const { generatePath } = useDetailsNavigator(
-        authenticatedRoutes.captures.details.overview.fullPath
+        alertDetails.spec_type === 'capture'
+            ? authenticatedRoutes.captures.details.overview.fullPath
+            : alertDetails.spec_type === 'materialization'
+              ? authenticatedRoutes.materializations.details.overview.fullPath
+              : authenticatedRoutes.collections.details.overview.fullPath
     );
 
     return (
@@ -30,7 +36,7 @@ function Row({ row: { catalogName, firedAt, resolvedAt } }: RowProps) {
                 name={catalogName}
                 showEntityStatus={false}
                 detailsLink={generatePath({ catalog_name: catalogName })}
-                entityStatusTypes={['capture']}
+                entityStatusTypes={[alertDetails.spec_type]}
             />
 
             <TimeStamp time={firedAt} />
