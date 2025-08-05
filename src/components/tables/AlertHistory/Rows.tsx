@@ -2,7 +2,11 @@ import type { TableColumns } from 'src/types';
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
+import { authenticatedRoutes } from 'src/app/routes';
+import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 
 interface RowsProps {
     columns: TableColumns[];
@@ -13,14 +17,24 @@ interface RowProps {
     row: any;
 }
 
-function Row({ row }: RowProps) {
+function Row({ row: { catalogName, firedAt, resolvedAt } }: RowProps) {
     const theme = useTheme();
+
+    const { generatePath } = useDetailsNavigator(
+        authenticatedRoutes.captures.details.overview.fullPath
+    );
 
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
-            <TableCell>{row.catalogName}</TableCell>
-            <TableCell>{row.firedAt}</TableCell>
-            <TableCell>{row.resolvedAt}</TableCell>
+            <EntityNameLink
+                name={catalogName}
+                showEntityStatus={false}
+                detailsLink={generatePath({ catalog_name: catalogName })}
+                entityStatusTypes={['capture']}
+            />
+
+            <TimeStamp time={firedAt} />
+            <TableCell>{resolvedAt}</TableCell>
         </TableRow>
     );
 }

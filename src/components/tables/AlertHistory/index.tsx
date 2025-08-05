@@ -21,15 +21,15 @@ import { TableStatuses } from 'src/types';
 const columns: TableColumns[] = [
     {
         field: null,
-        headerIntlKey: 'entityTable.data.catalogPrefix',
+        headerIntlKey: 'entityTable.data.entity',
     },
     {
         field: null,
-        headerIntlKey: 'admin.alerts.table.label.alertMethod',
+        headerIntlKey: 'entityTable.data.firedAt',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.actions',
+        headerIntlKey: 'entityTable.data.resolvedAt',
     },
 ];
 

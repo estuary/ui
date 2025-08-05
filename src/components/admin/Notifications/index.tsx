@@ -49,8 +49,8 @@ function Notifications() {
                 </Box>
 
                 <Divider />
+                <AlertHistoryTable />
             </Stack>
-            <AlertHistoryTable />
         </>
     );
 }
