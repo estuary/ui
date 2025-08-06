@@ -4,8 +4,7 @@ import type { RefreshTokenData } from 'src/types';
 import { isArray } from 'lodash';
 
 const GIT_POD_URL = `https://gitpod.io/#`;
-const GIT_REPO =
-    'https://github.com/estuary/flow-gitpod-base/tree/travjenkins/bug/read-from-json';
+const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base';
 const GIT_REPO_PATH = `/${GIT_REPO}`; // Must start with a slash to separate it from the variables
 
 // WARNING GitPod can change the URL format at anytime
