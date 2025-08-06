@@ -3,11 +3,14 @@ import type { RefreshTokenData } from 'src/types';
 
 import { isArray } from 'lodash';
 
-const GIT_REPO = 'https://github.com/estuary/flow-gitpod-base';
+const GIT_POD_URL = `https://gitpod.io/#`;
+const GIT_REPO =
+    'https://github.com/estuary/flow-gitpod-base/tree/travjenkins/bug/read-from-json';
+const GIT_REPO_PATH = `/${GIT_REPO}`; // Must start with a slash to separate it from the variables
 
 // WARNING GitPod can change the URL format at anytime
-// https://www.gitpod.io/docs/configure/repositories/environment-variables#providing-one-time-environment-variables-via-the-context-url
-//  Last verified Q4 2024
+// https://www.gitpod.io/docs/classic/user/configure/workspaces/environment-variables#one-time-environment-variables-via-context-url
+//  Last verified Q3 2025
 export const generateGitPodURL = (
     draftId: string,
     token: RefreshTokenData,
@@ -19,18 +22,21 @@ export const generateGitPodURL = (
         ? sourceCollections.length
         : sourceCollections.size;
 
-    const gitPodURL = `https://gitpod.io/#`;
+    // https://github.com/estuary/flow-gitpod-base/blob/main/init.sh
+    // This object is consumed by GitPod init.sh and has to stay in sync
+    const settingsPart = `FLOW_SETTINGS=${encodeURIComponent(
+        Buffer.from(
+            JSON.stringify({
+                id: draftId,
+                rt: token,
 
-    const urlVariables = `FLOW_DRAFT_ID=${encodeURIComponent(
-        draftId
-    )},FLOW_REFRESH_TOKEN=${encodeURIComponent(
-        Buffer.from(JSON.stringify(token)).toString('base64')
-    )},FLOW_TEMPLATE_TYPE=${derivationLanguage},FLOW_TEMPLATE_MODE=${
-        sourceCollectionCount > 1 ? 'multi' : 'single'
-    },FLOW_COLLECTION_NAME=${encodeURIComponent(computedEntityName)}`;
+                // TODO - (GitPod) These all seem unused in the script but need to double check
+                dl: derivationLanguage,
+                tt: sourceCollectionCount > 1 ? 'multi' : 'single',
+                cn: computedEntityName,
+            })
+        ).toString('base64')
+    )}`;
 
-    // Must start with a slash to separate it from the variables
-    const gitRepoPath = `/${GIT_REPO}`;
-
-    return `${gitPodURL}${urlVariables}${gitRepoPath}`;
+    return `${GIT_POD_URL}${settingsPart}${GIT_REPO_PATH}`;
 };
