@@ -20,3 +20,9 @@ export type ExpiryLocalStorage<T> = {
     expiry: number | null;
     value: T;
 } | null;
+
+export interface ConsentAuditArgs {
+    userId: string;
+    supportEnabled: boolean; // may need revoke stand alone or make this "enable"/"revoke"
+    expiration: any;
+}

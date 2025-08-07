@@ -58,13 +58,13 @@ function RecordingConsentModal() {
             </Stack>
             <Button
                 disabled={localValue.length < 1}
-                onClick={() => {
+                onClick={async () => {
                     // Fetch when it should end (do NOT used begin/end of day as we want to match the hour they enable)
                     const supportEnd = DateTime.fromISO(localValue, {
                         zone: 'utc',
                     }).endOf('day');
 
-                    setPrivacySettings(true, supportEnd);
+                    await setPrivacySettings(true, supportEnd);
                 }}
             >
                 Enable Support

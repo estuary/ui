@@ -41,7 +41,9 @@ function EnhancedSupportChip() {
                         )}
                     </AlertBox>
                     <Button onClick={revokeAccess} color="error" variant="text">
-                        Revoke
+                        {intl.formatMessage({
+                            id: 'supportConsent.enhancedSupport.revoke',
+                        })}
                     </Button>
                 </Stack>
             ) : (
