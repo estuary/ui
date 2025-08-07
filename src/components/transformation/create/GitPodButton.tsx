@@ -181,8 +181,6 @@ function GitPodButton({
                 return generateGitPodURL(
                     evaluatedDraftId,
                     token.data,
-                    language,
-                    sourceCollectionSet ?? sourceCollectionArray,
                     catalogName
                 );
             } catch (e: unknown) {
@@ -197,15 +195,7 @@ function GitPodButton({
                 setUrlLoading(false);
             }
         },
-        [
-            catalogName,
-            displayError,
-            generateDraftWithSpecs,
-            intl,
-            language,
-            sourceCollectionArray,
-            sourceCollectionSet,
-        ]
+        [catalogName, displayError, generateDraftWithSpecs, intl]
     );
 
     return (
