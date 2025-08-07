@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-import { Button, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
 
@@ -13,7 +14,7 @@ const INPUT_ID = 'EnhancedSupportDatePicker';
 function RecordingConsentModal() {
     const intl = useIntl();
 
-    const { setPrivacySettings } = usePrivacySettings();
+    const { updatingSetting, setPrivacySettings } = usePrivacySettings();
 
     const [localValue, setLocalValue] = useState<any>('');
 
@@ -41,8 +42,7 @@ function RecordingConsentModal() {
                 />
                 <DatePickerCTA
                     disablePast
-                    // TODO - need to decide if we allow 29 or 30 days since today will be included
-                    maxDays={29}
+                    maxDays={29} // TODO - need to decide if we allow 29 or 30 days since today will be included
                     enabled={true}
                     label={intl.formatMessage({
                         id: 'supportConsent.enhancedSupport.date.label',
@@ -56,10 +56,11 @@ function RecordingConsentModal() {
                     }}
                 />
             </Stack>
-            <Button
-                disabled={localValue.length < 1}
+            <SafeLoadingButton
+                disabled={updatingSetting || localValue.length < 1}
+                loading={updatingSetting}
                 onClick={async () => {
-                    // Fetch when it should end (do NOT used begin/end of day as we want to match the hour they enable)
+                    // do not use begin/end of day as we want to match the hour they started
                     const supportEnd = DateTime.fromISO(localValue, {
                         zone: 'utc',
                     }).endOf('day');
@@ -67,8 +68,10 @@ function RecordingConsentModal() {
                     await setPrivacySettings(true, supportEnd);
                 }}
             >
-                Enable Support
-            </Button>
+                {intl.formatMessage({
+                    id: 'supportConsent.enhancedSupport.enable',
+                })}
+            </SafeLoadingButton>
         </Stack>
     );
 }

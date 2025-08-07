@@ -1,6 +1,6 @@
 import type { DurationLike } from 'luxon';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { DateTime } from 'luxon';
 
@@ -11,6 +11,11 @@ import { useUserStore } from 'src/context/User/useUserContextStore';
 import { identifyUser } from 'src/services/logrocket';
 
 function usePrivacySettings() {
+    const [updatingSetting, setUpdatingSetting] = useState(false);
+
+    console.log('updatingSetting', updatingSetting);
+
+    const { consentAudit } = useUpdateAuditTable();
     const [currentSetting, setVal, resetValue] = useExpiringLocalStorage(
         'estuary.privacy-settings',
         {
@@ -19,10 +24,7 @@ function usePrivacySettings() {
         }
     );
 
-    const { consentAudit } = useUpdateAuditTable();
-
     const user = useUserStore((state) => state.user);
-
     const idUser = useCallback(() => {
         if (user) {
             identifyUser(user);
@@ -31,14 +33,19 @@ function usePrivacySettings() {
 
     const grantAccess = useCallback(
         async (duration) => {
+            if (!user) {
+                // error handling
+                return;
+            }
+
             const consentResponse = await consentAudit({
                 supportEnabled: true,
                 expiration: duration,
-                userId: '',
+                userId: user.id,
             });
 
             if (consentResponse?.error) {
-                // need to show an error
+                // error handling
                 return;
             }
 
@@ -52,26 +59,30 @@ function usePrivacySettings() {
 
             idUser();
         },
-        [consentAudit, idUser, setVal]
+        [consentAudit, idUser, setVal, user]
     );
 
     const revokeAccess = useCallback(async () => {
-        resetValue();
-
         await consentAudit({
             supportEnabled: false,
             expiration: null,
             userId: '',
         });
+
+        resetValue();
     }, [consentAudit, resetValue]);
 
     const setPrivacySettings = useCallback(
-        async (newVal: boolean, duration: DurationLike) => {
-            if (newVal) {
+        async (newVal: boolean, duration?: DurationLike) => {
+            setUpdatingSetting(true);
+
+            if (newVal && duration) {
                 await grantAccess(duration);
             } else {
                 await revokeAccess();
             }
+
+            setUpdatingSetting(false);
         },
         [grantAccess, revokeAccess]
     );
@@ -93,8 +104,8 @@ function usePrivacySettings() {
     return {
         enhancedSupportEnabled,
         enhancedSupportExpiration,
-        revokeAccess,
         setPrivacySettings,
+        updatingSetting,
     };
 }
 
