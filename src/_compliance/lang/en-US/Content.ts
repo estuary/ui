@@ -1,4 +1,5 @@
 import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const ComplianceContent: Record<string, string> = {
     // Support Consent
@@ -26,4 +27,7 @@ export const ComplianceContent: Record<string, string> = {
     'supportConsent.enhancedSupport.date.label': `Expiration Date`,
     'supportConsent.enhancedSupport.enable': `Enable Support`,
     'supportConsent.enhancedSupport.revoke': `revoke`,
+
+    'supportConsent.error.title': `Network Failure`,
+    'supportConsent.error.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 };

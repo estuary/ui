@@ -14,6 +14,12 @@ export const defaultPrivacySettings: PrivacySettingsState = {
     sessionRecordingEnabled: false,
 };
 
+export const setLogRocketLastChecked = (newVal: number) => {
+    window.Estuary ??= {};
+    window.Estuary.logRocket ??= {};
+    window.Estuary.logRocket.lastTimeChecked = newVal;
+};
+
 export const setWithExpiry = <T = unknown>(
     key: ExpiringLocalStorageKeys,
     value: any | T,

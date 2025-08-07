@@ -1,19 +1,22 @@
 import type { DurationLike } from 'luxon';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { DateTime } from 'luxon';
 
 import { useExpiringLocalStorage } from 'src/_compliance/hooks/useExpiringLocalStorage';
 import useUpdateAuditTable from 'src/_compliance/hooks/useUpdateAuditTable';
 import { defaultPrivacySettings } from 'src/_compliance/shared';
+import { usePrivacySettingStore } from 'src/_compliance/stores/usePrivacySettingStore';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { identifyUser } from 'src/services/logrocket';
 
 function usePrivacySettings() {
-    const [updatingSetting, setUpdatingSetting] = useState(false);
-
-    console.log('updatingSetting', updatingSetting);
+    const [setUpdatingSetting, setUpdateError] = usePrivacySettingStore(
+        (state) => {
+            return [state.setUpdatingSetting, state.setUpdateError];
+        }
+    );
 
     const { consentAudit } = useUpdateAuditTable();
     const [currentSetting, setVal, resetValue] = useExpiringLocalStorage(
@@ -35,7 +38,9 @@ function usePrivacySettings() {
         async (duration) => {
             if (!user) {
                 // error handling
-                return;
+                return Promise.resolve({
+                    error: true,
+                });
             }
 
             const consentResponse = await consentAudit({
@@ -46,7 +51,9 @@ function usePrivacySettings() {
 
             if (consentResponse?.error) {
                 // error handling
-                return;
+                return Promise.resolve({
+                    error: true,
+                });
             }
 
             setVal(
@@ -58,33 +65,50 @@ function usePrivacySettings() {
             );
 
             idUser();
+
+            return Promise.resolve({
+                error: false,
+            });
         },
         [consentAudit, idUser, setVal, user]
     );
 
     const revokeAccess = useCallback(async () => {
-        await consentAudit({
+        const consentResponse = await consentAudit({
             supportEnabled: false,
             expiration: null,
             userId: '',
         });
 
+        if (consentResponse?.error) {
+            // error handling
+            return Promise.resolve({ error: true });
+        }
+
         resetValue();
+
+        return Promise.resolve({ error: false });
     }, [consentAudit, resetValue]);
 
     const setPrivacySettings = useCallback(
         async (newVal: boolean, duration?: DurationLike) => {
             setUpdatingSetting(true);
 
+            let serverCallSuccess = false;
             if (newVal && duration) {
-                await grantAccess(duration);
+                const grantAccessResponse = await grantAccess(duration);
+                serverCallSuccess = Boolean(!grantAccessResponse.error);
+                setUpdatingSetting(false);
             } else {
-                await revokeAccess();
+                const revokeAccessResponse = await revokeAccess();
+                serverCallSuccess = Boolean(!revokeAccessResponse.error);
             }
 
             setUpdatingSetting(false);
+            setUpdateError(!serverCallSuccess);
+            return serverCallSuccess;
         },
-        [grantAccess, revokeAccess]
+        [grantAccess, revokeAccess, setUpdateError, setUpdatingSetting]
     );
 
     const [enhancedSupportEnabled, enhancedSupportExpiration]: [boolean, any] =
@@ -105,7 +129,6 @@ function usePrivacySettings() {
         enhancedSupportEnabled,
         enhancedSupportExpiration,
         setPrivacySettings,
-        updatingSetting,
     };
 }
 

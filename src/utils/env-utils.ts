@@ -2,10 +2,11 @@ import { getWithExpiry } from 'src/_compliance/shared';
 
 declare global {
     interface Window {
-        Estuary: {
-            api_endpoint: string | null;
-            auth_url: string | null;
-            enableDataFlowReset: boolean;
+        Estuary?: {
+            logRocket?: {
+                lastTimeChecked?: number | null;
+                userIded?: boolean;
+            };
         } | null;
         dataLayer?: any[]; // Must match name we pass to GTM in index.html
         monaco: any;
@@ -36,18 +37,6 @@ export const defaultDataPlaneSuffix = ((): string => {
         );
     }
 })();
-
-export const getAuthPath = () => {
-    return window.Estuary?.auth_url
-        ? window.Estuary.auth_url
-        : import.meta.env.VITE_AUTH_BASE_URL;
-};
-
-export const getAPIPath = () => {
-    return window.Estuary?.api_endpoint
-        ? window.Estuary.api_endpoint
-        : import.meta.env.VITE_API_BASE_URL;
-};
 
 export const getLoginSettings = () => {
     const showEmail = import.meta.env.VITE_SHOW_EMAIL_LOGIN === ENABLED;

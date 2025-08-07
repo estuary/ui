@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { mockServerCall } from 'src/_compliance/api/controlPlane';
 
 function useUpdateAuditTable() {
-    const consentAudit = useCallback((args: ConsentAuditArgs) => {
+    const consentAudit = useCallback(async (args: ConsentAuditArgs) => {
         return mockServerCall({
             data: true,
         });

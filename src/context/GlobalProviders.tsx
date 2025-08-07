@@ -20,6 +20,14 @@ if (
     );
 }
 
+// Setup the few global props we use
+window.Estuary = {
+    logRocket: {
+        lastTimeChecked: null,
+        userIded: false,
+    },
+};
+
 // Put global initializing code early. The LogRocket one _MUST_ be done
 //  before the `createClient` call made below for Supabase
 initLogRocket();

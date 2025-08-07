@@ -5,8 +5,9 @@ import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
+import { DateTime } from 'luxon';
 
-import { getWithExpiry } from 'src/_compliance/shared';
+import { getWithExpiry, setLogRocketLastChecked } from 'src/_compliance/shared';
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
 import { getLogRocketSettings } from 'src/utils/env-utils';
@@ -225,6 +226,8 @@ export const initLogRocket = () => {
         settings.shouldCaptureIP = logRocketSettings.trackUserIP;
 
         settings.shouldSendData = () => {
+            setLogRocketLastChecked(DateTime.now().toMillis());
+
             return (
                 getWithExpiry<PrivacySettingsState>('estuary.privacy-settings')
                     ?.value.enhancedSupportEnabled === true
@@ -236,7 +239,25 @@ export const initLogRocket = () => {
     }
 };
 
+export const checkIfLogRocketMightHaveStopped = () => {
+    const lastChecked = window.Estuary?.logRocket?.lastTimeChecked;
+    const nowish = DateTime.utc().toMillis();
+
+    if (lastChecked) {
+        // TODO (LogRocket) no clue how we want to check this
+        return nowish - lastChecked > 900000;
+    }
+
+    // If we have no last time checked then LR has not been polling the "shouldSendData"
+    return false;
+};
+
 export const identifyUser = (user: User) => {
+    console.log(
+        'checkIfLogRocketMightHaveStopped',
+        checkIfLogRocketMightHaveStopped()
+    );
+
     const enhancedSupport = getWithExpiry<PrivacySettingsState>(
         'estuary.privacy-settings'
     )?.value.enhancedSupportEnabled;
@@ -260,6 +281,7 @@ export const identifyUser = (user: User) => {
         // Just want to be very very safe
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (LogRocket) {
+            LogRocket.startNewSession();
             LogRocket.identify(user.id, traits);
         }
     }

@@ -6,6 +6,7 @@ import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
+import { usePrivacySettingStore } from 'src/_compliance/stores/usePrivacySettingStore';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
@@ -14,7 +15,10 @@ const INPUT_ID = 'EnhancedSupportDatePicker';
 function EnhancedSupportForm() {
     const intl = useIntl();
 
-    const { updatingSetting, setPrivacySettings } = usePrivacySettings();
+    const { setPrivacySettings } = usePrivacySettings();
+    const [updatingSetting] = usePrivacySettingStore((state) => {
+        return [state.updatingSetting];
+    });
 
     const [localValue, setLocalValue] = useState<any>('');
 
@@ -65,7 +69,7 @@ function EnhancedSupportForm() {
                         zone: 'utc',
                     }).endOf('day');
 
-                    await setPrivacySettings(true, supportEnd);
+                    return setPrivacySettings(true, supportEnd);
                 }}
             >
                 {intl.formatMessage({

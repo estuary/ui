@@ -3,13 +3,18 @@ import { Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
+import { usePrivacySettingStore } from 'src/_compliance/stores/usePrivacySettingStore';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 
 function EnhancedSupportEnabled() {
     const intl = useIntl();
-    const { enhancedSupportExpiration, setPrivacySettings, updatingSetting } =
+
+    const { enhancedSupportExpiration, setPrivacySettings } =
         usePrivacySettings();
+    const [updatingSetting] = usePrivacySettingStore((state) => {
+        return [state.updatingSetting];
+    });
 
     return (
         <Stack

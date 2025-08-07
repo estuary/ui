@@ -26,3 +26,12 @@ export interface ConsentAuditArgs {
     supportEnabled: boolean; // may need revoke stand alone or make this "enable"/"revoke"
     expiration: any;
 }
+
+export interface PrivacySettingStore {
+    updatingSetting: boolean;
+    updateError: null | any;
+    setUpdateError: (newVal: PrivacySettingStore['updateError']) => void;
+    setUpdatingSetting: (
+        newVal: PrivacySettingStore['updatingSetting']
+    ) => void;
+}

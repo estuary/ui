@@ -1,21 +1,15 @@
-const forceReject = false;
+const FORCE_ERROR = false;
 
 export const mockServerCall = (responseData: any) => {
-    return new Promise<any>((resolve, reject) => {
-        setTimeout(
-            () => {
-                if (forceReject) {
-                    reject({
-                        error: { message: 'foo' },
-                    });
-                    return;
-                }
+    return new Promise<any>((resolve) => {
+        setTimeout(() => {
+            if (FORCE_ERROR) {
                 resolve({
-                    error: null,
-                    ...responseData,
+                    error: new Error('Forced server error'),
                 });
-            },
-            Math.floor(Math.random() * 2000) + 1000
-        );
+            } else {
+                resolve({ error: null, ...responseData });
+            }
+        }, 500);
     });
 };
