@@ -22,6 +22,6 @@ export const ComplianceContent: Record<string, string> = {
     'supportConsent.details.list4.terms': `Support Terms`,
 
     'supportConsent.enhancedSupport.title': `${CommonMessages['enhancedSupport']} Settings`,
-    'supportConsent.enhancedSupport.enabled': `${CommonMessages['enhancedSupport']} enabled until {expiration}`,
+    'supportConsent.enhancedSupport.enabled': `expires on {expiration}`,
     'supportConsent.enhancedSupport.date.label': `Expiration Date`,
 };
