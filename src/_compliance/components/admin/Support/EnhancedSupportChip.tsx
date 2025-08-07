@@ -1,12 +1,11 @@
-import { Box } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import RecordingConsentModal from 'src/_compliance/components/admin/Support/RecordingConsentModal';
 import usePrivacySettings from 'src/_compliance/hooks/usePrivacySettings';
+import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import { truncateTextSx } from 'src/context/Theme';
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function EnhancedSupportChip() {
     const intl = useIntl();
@@ -20,34 +19,31 @@ function EnhancedSupportChip() {
             })}
         >
             {enhancedSupportEnabled ? (
-                <OutlinedChip
-                    color="success"
-                    label={
-                        <Box
-                            sx={{
-                                ...truncateTextSx,
-                                minWidth: 100,
-                                p: 1,
-                            }}
-                        >
-                            {intl.formatMessage(
-                                {
-                                    id: 'supportConsent.enhancedSupport.enabled',
-                                },
-                                {
-                                    expiration: enhancedSupportExpiration,
-                                }
-                            )}
-                        </Box>
-                    }
-                    onDelete={revokeAccess}
-                    style={{
-                        maxWidth: 'fit-content',
-                        minWidth: 'fit-content',
-                        minHeight: 40,
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                        alignItems: 'center',
                     }}
-                    variant="outlined"
-                />
+                >
+                    <AlertBox
+                        short
+                        severity="success"
+                        title="Enhanced Support Enabled"
+                    >
+                        {intl.formatMessage(
+                            {
+                                id: 'supportConsent.enhancedSupport.enabled',
+                            },
+                            {
+                                expiration: enhancedSupportExpiration,
+                            }
+                        )}
+                    </AlertBox>
+                    <Button onClick={revokeAccess} color="error" variant="text">
+                        Revoke
+                    </Button>
+                </Stack>
             ) : (
                 <RecordingConsentModal />
             )}
