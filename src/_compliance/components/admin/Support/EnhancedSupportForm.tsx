@@ -11,7 +11,7 @@ import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
 
 const INPUT_ID = 'EnhancedSupportDatePicker';
-function RecordingConsentModal() {
+function EnhancedSupportForm() {
     const intl = useIntl();
 
     const { updatingSetting, setPrivacySettings } = usePrivacySettings();
@@ -76,4 +76,4 @@ function RecordingConsentModal() {
     );
 }
 
-export default RecordingConsentModal;
+export default EnhancedSupportForm;
