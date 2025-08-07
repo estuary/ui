@@ -27,6 +27,10 @@ function DetailTabs() {
                 path: 'overview',
             },
             {
+                label: 'details.tabs.alerts',
+                path: 'alerts',
+            },
+            {
                 label: 'details.tabs.spec',
                 path: 'spec',
             },

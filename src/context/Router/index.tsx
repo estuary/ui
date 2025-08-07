@@ -285,6 +285,22 @@ const router = createBrowserRouter(
 
                             <Route
                                 path={
+                                    authenticatedRoutes.collections.details
+                                        .alerts.path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="alerts" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
                                     authenticatedRoutes.collections.details.spec
                                         .path
                                 }
@@ -435,6 +451,22 @@ const router = createBrowserRouter(
 
                             <Route
                                 path={
+                                    authenticatedRoutes.captures.details.alerts
+                                        .path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="alerts" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
                                     authenticatedRoutes.captures.details.spec
                                         .path
                                 }
@@ -560,6 +592,22 @@ const router = createBrowserRouter(
                                     >
                                         <Suspense fallback={null}>
                                             <MaterializationDetailsRoute tab="overview" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .alerts.path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="alerts" />
                                         </Suspense>
                                     </ErrorBoundary>
                                 }

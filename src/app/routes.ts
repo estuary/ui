@@ -67,6 +67,11 @@ const captures = {
         title: 'routeTitle.captureDetails',
         path: 'details',
         fullPath: '/captures/details',
+        alerts: {
+            title: 'routeTitle.captureDetails.alerts',
+            path: 'alerts',
+            fullPath: '/captures/details/alerts',
+        },
         overview: {
             title: 'routeTitle.captureDetails.overview',
             path: 'overview',
@@ -113,6 +118,11 @@ const collections = {
         title: 'routeTitle.collectionDetails',
         path: 'details',
         fullPath: '/collections/details',
+        alerts: {
+            title: 'routeTitle.collectionDetails.alerts',
+            path: 'alerts',
+            fullPath: '/collections/details/alerts',
+        },
         overview: {
             title: 'routeTitle.collectionDetails.overview',
             path: 'overview',
@@ -193,6 +203,11 @@ const materializations = {
         title: 'routeTitle.materializationDetails',
         path: 'details',
         fullPath: '/materializations/details',
+        alerts: {
+            title: 'routeTitle.materializationDetails.alerts',
+            path: 'alerts',
+            fullPath: '/materializations/details/alerts',
+        },
         overview: {
             title: 'routeTitle.materializationDetails.overview',
             path: 'overview',

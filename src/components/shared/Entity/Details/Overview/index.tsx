@@ -8,6 +8,7 @@ import { Grid } from '@mui/material';
 import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
+import LatestAlert from 'src/components/shared/Entity/Alerts/LatestAlert';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import Usage from 'src/components/shared/Entity/Details/Usage';
@@ -39,6 +40,10 @@ function Overview({ name }: DetailsOverviewProps) {
 
     return (
         <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <LatestAlert taskName={entityName} />
+            </Grid>
+
             <Grid item xs={12} md={8} lg={9}>
                 <Usage catalogName={entityName} />
             </Grid>
