@@ -149,7 +149,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
     'storageMappings.status.active': `Primary`,
     'storageMappings.prefix.description': `The Flow prefix you want to configure`,
-    'storageMappings.provider.label': `Provider`,
+    'storageMappings.provider.label': `Provider *`,
     'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
     'storageMappings.bucket.label': `Bucket`,
     'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
