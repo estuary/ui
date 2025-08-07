@@ -93,6 +93,7 @@ function usePrivacySettings() {
     const setPrivacySettings = useCallback(
         async (newVal: boolean, duration?: DurationLike) => {
             setUpdatingSetting(true);
+            setUpdateError(false);
 
             let serverCallSuccess = false;
             if (newVal && duration) {
