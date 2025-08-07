@@ -72,14 +72,8 @@ function usePrivacySettings() {
             } else {
                 await revokeAccess();
             }
-
-            await consentAudit({
-                supportEnabled: newVal,
-                expiration: duration,
-                userId: '',
-            });
         },
-        [consentAudit, grantAccess, revokeAccess]
+        [grantAccess, revokeAccess]
     );
 
     const [enhancedSupportEnabled, enhancedSupportExpiration]: [boolean, any] =
