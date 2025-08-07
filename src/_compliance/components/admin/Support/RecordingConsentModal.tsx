@@ -25,6 +25,7 @@ function RecordingConsentModal() {
         <Stack
             direction="row"
             sx={{
+                alignItems: 'center',
                 justifyContent: 'space-between',
             }}
         >
