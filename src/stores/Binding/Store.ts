@@ -268,6 +268,7 @@ const getInitialState = (
 
             if (entityType === 'materialization') {
                 const boundCollections = Object.keys(get().bindings);
+                const bindingUUIDs = Object.keys(get().resourceConfigs);
 
                 if (hasLength(boundCollections)) {
                     const trialCollections = await evaluateTrialCollections(
@@ -279,6 +280,10 @@ const getInitialState = (
                         trialCollections,
                         specHydrationResponse.bindingChanges.addedCollections
                     );
+                }
+
+                if (bindingUUIDs.length > 0) {
+                    get().stubSelections(bindingUUIDs);
                 }
             }
         } else {

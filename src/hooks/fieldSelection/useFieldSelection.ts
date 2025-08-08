@@ -4,25 +4,23 @@ import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
-import { omit } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import {
-    useBinding_currentBindingIndex,
-    useBinding_recommendFields,
-    useBinding_selections,
-} from 'src/stores/Binding/hooks';
+import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
 
 function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Bindings Editor Store
-    const recommendFields = useBinding_recommendFields();
-    const selections = useBinding_selections();
+    const recommendFields = useBindingStore((state) => state.recommendFields);
+    const selections = useBindingStore((state) => state.selections);
     const stagedBindingIndex = useBinding_currentBindingIndex();
 
     // Draft Editor Store
@@ -43,11 +41,11 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             if (!mutateDraftSpecs || bindingIndex === -1) {
                 return Promise.reject();
             } else {
-                const spec: Schema = draftSpec.spec;
+                const spec: Schema = cloneDeep(draftSpec.spec);
 
                 const recommended = Object.hasOwn(recommendFields, bindingUUID)
                     ? recommendFields[bindingUUID]
-                    : true;
+                    : DEFAULT_RECOMMENDED_FLAG;
 
                 spec.bindings[bindingIndex].fields = {
                     recommended,
@@ -58,7 +56,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 const requiredFields: Pick<
                     ExpandedFieldSelection,
                     'field' | 'meta'
-                >[] = Object.entries(selections[bindingUUID])
+                >[] = Object.entries(selections[bindingUUID].value)
                     .filter(
                         ([_field, selection]) => selection.mode === 'require'
                     )
@@ -68,50 +66,37 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     }));
 
                 const excludedFields: string[] = Object.entries(
-                    selections[bindingUUID]
+                    selections[bindingUUID].value
                 )
                     .filter(
                         ([_field, selection]) => selection.mode === 'exclude'
                     )
                     .map(([field]) => field);
 
-                if (
-                    hasLength(requiredFields) ||
-                    hasLength(excludedFields) ||
-                    !recommended
-                ) {
-                    // Remove the require property if no fields are explicitly required, otherwise set the property.
-                    if (hasLength(requiredFields)) {
-                        const formattedFields: Schema = {};
+                // Remove the require property if no fields are explicitly required, otherwise set the property.
+                if (hasLength(requiredFields)) {
+                    const formattedFields: Schema = {};
 
-                        requiredFields.forEach(({ field, meta }) => {
-                            formattedFields[field] = meta ?? {};
-                        });
+                    requiredFields.forEach(({ field, meta }) => {
+                        formattedFields[field] = meta ?? {};
+                    });
 
-                        spec.bindings[bindingIndex].fields.require =
-                            formattedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'require'
-                        );
-                    }
-
-                    // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
-                    if (hasLength(excludedFields)) {
-                        spec.bindings[bindingIndex].fields.exclude =
-                            excludedFields;
-                    } else {
-                        spec.bindings[bindingIndex].fields = omit(
-                            spec.bindings[bindingIndex].fields,
-                            'exclude'
-                        );
-                    }
+                    spec.bindings[bindingIndex].fields.require =
+                        formattedFields;
                 } else {
-                    // Remove the fields property from the specification if it equates to default behavior.
-                    spec.bindings[bindingIndex] = omit(
-                        spec.bindings[bindingIndex],
-                        'fields'
+                    spec.bindings[bindingIndex].fields = omit(
+                        spec.bindings[bindingIndex].fields,
+                        'require'
+                    );
+                }
+
+                // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
+                if (hasLength(excludedFields)) {
+                    spec.bindings[bindingIndex].fields.exclude = excludedFields;
+                } else {
+                    spec.bindings[bindingIndex].fields = omit(
+                        spec.bindings[bindingIndex].fields,
+                        'exclude'
                     );
                 }
 
