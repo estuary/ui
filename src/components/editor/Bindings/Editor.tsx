@@ -39,6 +39,7 @@ interface Props {
 }
 
 function BindingsEditor({ itemType, readOnly = false }: Props) {
+    console.log('BindingsEditor');
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();

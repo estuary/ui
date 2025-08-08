@@ -5,14 +5,17 @@ import { useEffect } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useBinding_rediscoveryRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import {
+    useFormStateStore_status,
+    useFormStateStore_updateStatus,
+} from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
@@ -29,6 +32,7 @@ function CaptureGenerateButton({
     disabled,
     createWorkflowMetadata,
 }: Props) {
+    const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
     const rediscoveryRequired = useBinding_rediscoveryRequired();
 
@@ -56,6 +60,8 @@ function CaptureGenerateButton({
         (state) => state.entityNameChanged
     );
 
+    const updateStatus = useFormStateStore_updateStatus();
+
     // Form State Store
     const formStatus = useFormStateStore_status();
 
@@ -80,12 +86,13 @@ function CaptureGenerateButton({
     return (
         <Button
             onClick={() => {
+                updateStatus(FormStatus.GENERATING);
                 void generateCatalog();
             }}
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            <FormattedMessage id="cta.generateCatalog.capture" />
+            {intl.formatMessage({ id: 'cta.generateCatalog.capture' })}
         </Button>
     );
 }

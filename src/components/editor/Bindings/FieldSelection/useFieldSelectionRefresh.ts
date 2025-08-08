@@ -5,6 +5,8 @@ import useSave from 'src/components/shared/Entity/Actions/useSave';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { CustomEvents } from 'src/services/types';
+import { useFormStateStore_updateStatus } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 function useFieldSelectionRefresh() {
     const [updating, setUpdating] = useState(false);
@@ -13,6 +15,7 @@ function useFieldSelectionRefresh() {
 
     const generateCatalog = useGenerateCatalog();
     const mutateDraftSpec = useMutateDraftSpec();
+    const updateStatus = useFormStateStore_updateStatus();
 
     const saveCatalog = useSave(
         CustomEvents.MATERIALIZATION_TEST,
@@ -22,6 +25,7 @@ function useFieldSelectionRefresh() {
 
     const refresh = useCallback(
         async (draftIdToUse?: string | null) => {
+            updateStatus(FormStatus.TESTING, true);
             setUpdating(true);
 
             let evaluatedDraftId = draftIdToUse;
@@ -49,7 +53,7 @@ function useFieldSelectionRefresh() {
             // I do not think this is truly needed but being safe so the user is not stuck with a disabled button
             setUpdating(false);
         },
-        [generateCatalog, mutateDraftSpec, saveCatalog]
+        [generateCatalog, mutateDraftSpec, saveCatalog, updateStatus]
     );
 
     return {

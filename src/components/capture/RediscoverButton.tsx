@@ -7,6 +7,8 @@ import { useIntl } from 'react-intl';
 
 import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
 import { disabledButtonText } from 'src/context/Theme';
+import { useFormStateStore_updateStatus } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
     entityType: Entity;
@@ -18,6 +20,8 @@ function RediscoverButton({ entityType, disabled }: Props) {
         entityType,
         { initiateRediscovery: true }
     );
+
+    const updateStatus = useFormStateStore_updateStatus();
 
     const intl = useIntl();
     const theme = useTheme();
@@ -35,6 +39,7 @@ function RediscoverButton({ entityType, disabled }: Props) {
                 <IconButton
                     disabled={disable}
                     onClick={() => {
+                        updateStatus(FormStatus.GENERATING);
                         void generateCatalog();
                     }}
                     sx={{ borderRadius: 0 }}

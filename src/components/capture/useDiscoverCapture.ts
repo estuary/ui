@@ -24,7 +24,6 @@ import {
 import {
     useFormStateStore_isActive,
     useFormStateStore_setFormState,
-    useFormStateStore_updateStatus,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
@@ -54,7 +53,6 @@ function useDiscoverCapture(
     // Form State Store
     const formActive = useFormStateStore_isActive();
     const setFormState = useFormStateStore_setFormState();
-    const updateFormStatus = useFormStateStore_updateStatus();
 
     // Details Form Store
     const detailsFormsHasErrors = useDetailsFormStore(
@@ -82,8 +80,6 @@ function useDiscoverCapture(
     );
 
     const generateCatalog = useCallback(async () => {
-        updateFormStatus(FormStatus.GENERATING);
-
         if (
             detailsFormsHasErrors ||
             endpointConfigErrorsExist ||
@@ -156,7 +152,6 @@ function useDiscoverCapture(
         setCatalogName,
         setFormState,
         startDiscovery,
-        updateFormStatus,
     ]);
 
     return useMemo(() => {
